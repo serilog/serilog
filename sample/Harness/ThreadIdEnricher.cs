@@ -7,8 +7,7 @@ namespace Harness
     {
         public void Enrich(LogEvent logEvent)
         {
-            logEvent.AddPropertyIfAbsent(
-                new LogEventProperty("thread-id", LogEventPropertyValue.For(Thread.CurrentThread.ManagedThreadId)));
+            logEvent.AddPropertyIfAbsent("thread-id", Thread.CurrentThread.ManagedThreadId);
         }
     }
 }

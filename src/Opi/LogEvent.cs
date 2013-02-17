@@ -49,10 +49,20 @@ namespace Opi
             get { return _exception; }
         }
 
+        public void AddOrUpdateProperty(string propertyName, object value)
+        {
+            AddOrUpdateProperty(new LogEventProperty(propertyName, LogEventPropertyValue.For(value)));
+        }
+
         public void AddOrUpdateProperty(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException("property");
             _properties[property.Name] = property;
+        }
+
+        public void AddPropertyIfAbsent(string propertyName, object value)
+        {
+            AddPropertyIfAbsent(new LogEventProperty(propertyName, LogEventPropertyValue.For(value)));
         }
 
         public void AddPropertyIfAbsent(LogEventProperty property)
