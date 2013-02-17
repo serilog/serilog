@@ -19,5 +19,21 @@ namespace Opi.Parsing
             if (output == null) throw new ArgumentNullException("output");
             output.Write(_text);
         }
+
+        public override bool Equals(object obj)
+        {
+            var tt = obj as TextToken;
+            return tt != null && tt._text == _text;
+        }
+
+        public override int GetHashCode()
+        {
+            return _text.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return _text;
+        }
     }
 }

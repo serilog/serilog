@@ -16,12 +16,18 @@ namespace Opi.Parsing
             var nextIndex = 0;
             while (true)
             {
-                yield return ParseTextToken(nextIndex, messageTemplate, out nextIndex);
+                var beforeText = nextIndex;
+                var tt = ParseTextToken(nextIndex, messageTemplate, out nextIndex);
+                if (nextIndex > beforeText)
+                    yield return tt;
 
                 if (nextIndex == messageTemplate.Length)
                     yield break;
 
-                yield return ParsePropertyToken(nextIndex, messageTemplate, out nextIndex);
+                var beforeProp = nextIndex;
+                var pt =  ParsePropertyToken(nextIndex, messageTemplate, out nextIndex);
+                if (beforeProp < nextIndex)
+                    yield return pt;
 
                 if (nextIndex == messageTemplate.Length)
                     yield break;
@@ -126,7 +132,16 @@ namespace Opi.Parsing
                 else
                 {
                     accum.Append(nc);
+                    if (nc == '}')
+                    {
+                        if (startAt + 1 < messageTemplate.Length &&
+                            messageTemplate[startAt + 1] == '}')
+                        {
+                            startAt++;
+                        }
+                    }
                 }
+
                 startAt++;
             } while (startAt < messageTemplate.Length);
 

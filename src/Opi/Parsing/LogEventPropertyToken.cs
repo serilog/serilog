@@ -41,5 +41,25 @@ namespace Opi.Parsing
 
             return LogEventPropertyValue.For(value);
         }
+
+        public override bool Equals(object obj)
+        {
+            var pt = obj as LogEventPropertyToken;
+            return pt != null &&
+                pt._destructuringHint == _destructuringHint &&
+                pt._format == _format &&
+                pt._propertyName == _propertyName &&
+                pt._rawText == _rawText;
+        }
+
+        public override int GetHashCode()
+        {
+            return _propertyName.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return _rawText;
+        }
     }
 }
