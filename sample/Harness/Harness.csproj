@@ -49,9 +49,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Opi\Opi.csproj">
+    <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
-      <Name>Opi</Name>
+      <Name>Serilog</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

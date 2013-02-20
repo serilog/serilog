@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using Opi;
+using Serilog;
 
 namespace Harness
 {
@@ -7,7 +7,7 @@ namespace Harness
     {
         public void Enrich(LogEvent logEvent)
         {
-            logEvent.AddPropertyIfAbsent("thread-id", Thread.CurrentThread.ManagedThreadId);
+            logEvent.AddPropertyIfAbsent("ThreadId", Thread.CurrentThread.ManagedThreadId);
         }
     }
 }

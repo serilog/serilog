@@ -1,5 +1,5 @@
 ﻿using System;
-using Opi;
+using Serilog;
 
 namespace Harness
 {
@@ -8,8 +8,10 @@ namespace Harness
         static void Main()
         {
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel(LogEventLevel.Debug)
                 .WithConsoleSink()
                 .WithDumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
+                .WithHttpServerSink("http://localhost:16782", LogEventLevel.Warning)
                 .WithFixedProperty("app", "Test Harness")
                 .EnrichedBy(new ThreadIdEnricher())
                 .CreateLogger();
@@ -20,7 +22,7 @@ namespace Harness
             Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Log.Information("I sat at {Chair:s}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
 
-            var context = Log.Logger.CreateContext(new LogEventProperty("uow", LogEventPropertyValue.For(567)));
+            var context = Log.Logger.CreateContext(LogEventProperty.For("MessageId", 567));
             context.Information("Processing a message");
             context.Warning("Rolling back transaction!");
 
