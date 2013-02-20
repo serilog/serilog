@@ -5,13 +5,13 @@ namespace Serilog
 {
     public class LogEvent
     {
-        private readonly DateTime _timeStamp;
+        private readonly DateTimeOffset _timeStamp;
         private readonly LogEventLevel _level;
         private readonly Exception _exception;
         private readonly string _messageTemplate;
         private readonly Dictionary<string, LogEventProperty> _properties;
 
-        public LogEvent(DateTime timeStamp, LogEventLevel level, Exception exception, string messageTemplate, IEnumerable<LogEventProperty> properties)
+        public LogEvent(DateTimeOffset timeStamp, LogEventLevel level, Exception exception, string messageTemplate, IEnumerable<LogEventProperty> properties)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
             if (properties == null) throw new ArgumentNullException("properties");
@@ -24,7 +24,7 @@ namespace Serilog
                 AddOrUpdateProperty(p);
         }
 
-        public DateTime TimeStamp
+        public DateTimeOffset TimeStamp
         {
             get { return _timeStamp; }
         }

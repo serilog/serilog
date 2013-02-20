@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Sinks;
+using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.Http;
+using Serilog.Sinks.SystemConsole;
 
 namespace Serilog
 {

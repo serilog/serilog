@@ -25,7 +25,7 @@ namespace Harness
             var context = Log.Logger.CreateContext(LogEventProperty.For("MessageId", 567));
             context.Information("Processing a message");
             context.Warning("Rolling back transaction!");
-
+            
             Console.ReadKey(true);
         }
     }

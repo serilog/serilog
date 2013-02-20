@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,12 +20,18 @@ namespace Serilog
             if (value is int)
                 return new LogEventPropertyIntValue((int)value);
 
+            if (value is bool)
+                return new LogEventPropertyBooleanValue((bool)value);
+
             if (value is decimal)
                 return new LogEventPropertyDecimalValue((decimal)value);
 
             var s = value as string;
             if (s != null)
                 return new LogEventPropertyStringValue(s);
+
+            if (value is DateTimeOffset)
+                return new LogEventPropertyDateTimeOffsetValue((DateTimeOffset)value);
 
             var enumerable = value as IEnumerable;
             if (enumerable != null)

@@ -56,7 +56,7 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            var now = DateTime.Now;
+            var now = DateTimeOffset.Now;
             var parsedTemplate = _messageTemplateRepository.GetParsedTemplate(messageTemplate);
             var properties = parsedTemplate.ConstructPositionalProperties(propertyValues);
 

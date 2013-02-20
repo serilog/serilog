@@ -2,7 +2,7 @@
 using System.IO;
 using Serilog.Core;
 
-namespace Serilog.Sinks
+namespace Serilog.Sinks.DumpFile
 {
     class DumpFileSink : ILogEventSink
     {
