@@ -1,55 +1,63 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Serilog.Core;
 using Serilog.Parsing;
 
 namespace Serilog.Tests.Core
 {
-    [TestClass]
+    [TestFixture]
     public class MessageTemplateTests
     {
         class Chair
         {
+            // ReSharper disable UnusedMember.Local
             public string Back { get { return "straight"; } }
             public int[] Legs { get { return new[] { 1, 2, 3, 4 }; } }
+            // ReSharper restore UnusedMember.Local
             public override string ToString()
             {
                 return "a chair";
             }
         }
 
-        [TestMethod]
+        [Test]
         public void AnObjectIsRenderedInSimpleNotation()
         {
-            var m = Render("I sat at {Chair}", new Chair());
+            var m = Render("I sat at {Chair:*}", new Chair());
             Assert.AreEqual("I sat at Chair { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
         }
 
-        [TestMethod]
+        [Test]
         public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutType()
         {
-            var m = Render("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+            var m = Render("I sat at {Chair:*}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Assert.AreEqual("I sat at { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
         }
 
-        [TestMethod]
+        [Test]
+        public void AnObjectWithDefaultDestructuringIsRenderedAsALiteral()
+        {
+            var m = Render("I sat at {Chair}", new Chair());
+            Assert.AreEqual("I sat at a chair", m);
+        }
+
+        [Test]
         public void AnObjectWithStringifyDestructuringIsRenderedAsAString()
         {
-            var m = Render("I sat at {Chair:s}", new Chair());
+            var m = Render("I sat at {Chair:@}", new Chair());
             Assert.AreEqual("I sat at \"a chair\"", m);
         }
 
-
-        [TestMethod]
+        [Test]
         public void MultiplePropertiesAreRenderedInOrder()
         {
             var m = Render("Just biting {Fruit} number {Count}", "Apple", 12);
             Assert.AreEqual("Just biting \"Apple\" number 12", m);
         }
 
-        [TestMethod]
+        [Test]
         public void FormatStringsArePropagated()
         {
             var m = Render("Welcome, customer {CustomerId:0000}", 12);

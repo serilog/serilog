@@ -34,13 +34,7 @@ namespace Serilog.Parsing
 
         public string PropertyName { get { return _propertyName; } }
 
-        public LogEventPropertyValue Destructure(object value)
-        {
-            if (value != null && _destructuringHint == DestructuringHint.Stringify)
-                return LogEventPropertyValue.For(value.ToString());
-
-            return LogEventPropertyValue.For(value);
-        }
+        public DestructuringHint DestructuringHint { get { return _destructuringHint; } }
 
         public override bool Equals(object obj)
         {

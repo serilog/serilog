@@ -26,7 +26,9 @@ namespace Serilog.Core
                 if (next < positionalValues.Length)
                 {
                     var value = positionalValues[next];
-                    yield return new LogEventProperty(propertyToken.PropertyName, propertyToken.Destructure(value));
+                    yield return new LogEventProperty(
+                        propertyToken.PropertyName,
+                        LogEventPropertyValue.For(value, propertyToken.DestructuringHint));
                     next++;
                 }
                 else

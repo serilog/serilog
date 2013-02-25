@@ -2,7 +2,21 @@
 {
     enum DestructuringHint
     {
+        /// <summary>
+        /// Convert known types to literals, convert objects
+        /// to strings.
+        /// </summary>
         Default,
-        Stringify
+
+        /// <summary>
+        /// Convert all types to strings.
+        /// </summary>
+        Stringify,
+        
+        /// <summary>
+        /// Convert known types to literals, destructure objects
+        /// into literals.
+        /// </summary>
+        Destructure
     }
 }

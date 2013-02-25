@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
+using Serilog.Values;
 
 namespace Serilog.Sinks
 {
@@ -20,7 +21,7 @@ namespace Serilog.Sinks
 
             result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(messageTemplate, logEvent.Properties)));
             result.Add(TimeStampPropertyName, LogEventProperty.For(TimeStampPropertyName, logEvent.TimeStamp));
-            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new LogEventPropertyTokenValue(logEvent.Level.ToString())));
+            result.Add(LevelPropertyName, LogEventProperty.For(LevelPropertyName, logEvent.Level));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new LogEventPropertyTokenValue(Environment.NewLine)));
 
             return result;

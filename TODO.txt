@@ -1,2 +1,2 @@
 Limit destructuring depth/prevent cycles
-Stringify by default, destructure only when hinted
+More permissive format strings - allow anything including ':'

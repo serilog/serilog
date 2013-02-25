@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Parsing;
 
 namespace Serilog
 {
@@ -6,9 +7,12 @@ namespace Serilog
     {
         private readonly string _name;
 
-        public static LogEventProperty For(string name, object value)
+        public static LogEventProperty For(string name, object value, bool destructureObjects = false)
         {
-            return new LogEventProperty(name, LogEventPropertyValue.For(value));
+            return new LogEventProperty(name, LogEventPropertyValue.For(value,
+                    destructureObjects ?
+                        DestructuringHint.Destructure :
+                        DestructuringHint.Default));
         }
 
         public LogEventProperty(string name, LogEventPropertyValue value)

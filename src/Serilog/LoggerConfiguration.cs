@@ -56,7 +56,7 @@ namespace Serilog
 
         public LoggerConfiguration WithFixedProperty(string propertyName, object value)
         {
-            return EnrichedBy(new FixedPropertyEnricher(new[] { new LogEventProperty(propertyName, LogEventPropertyValue.For(value)) }));
+            return EnrichedBy(new FixedPropertyEnricher(new[] { LogEventProperty.For(propertyName, value) }));
         }
 
         public LoggerConfiguration WithHttpServerSink(string baseUrl, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)

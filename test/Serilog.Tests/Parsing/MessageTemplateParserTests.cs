@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Serilog.Parsing;
 
 namespace Serilog.Tests.Parsing
 {
-    [TestClass]
+    [TestFixture]
     public class MessageTemplateParserTests
     {
         static MessageTemplateToken[] Parse(string messsageTemplate)
@@ -20,57 +20,54 @@ namespace Serilog.Tests.Parsing
                 messageTemplateTokens);
         }
 
-        [TestMethod]
+        [Test]
         public void AnEmptyMessageIsASingleTextToken()
         {
             var t = Parse("");
             Assert.AreEqual(1, t.Length);
-            Assert.IsInstanceOfType(t.Single(), typeof(TextToken));
+            Assert.IsInstanceOf<TextToken>(t.Single());
         }
 
-        [TestMethod]
+        [Test]
         public void AMessageWithoutPropertiesIsASingleTextToken()
         {
             AssertParsedAs("Hello, world!",
                 new TextToken("Hello, world!"));
         }
 
-        [TestMethod]
+        [Test]
         public void AMessageWithPropertyOnlyIsASinglePropertyToken()
         {
             AssertParsedAs("{Hello}",
                 new LogEventPropertyToken("Hello", "{Hello}"));
         }
 
-        [TestMethod]
+        [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("{{ Hi! }",
                 new TextToken("{ Hi! }"));
         }
 
-        [TestMethod]
+        [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracketInsideText()
         {
             AssertParsedAs("Well, {{ Hi!",
                 new TextToken("Well, { Hi!"));
         }
 
-        [TestMethod]
+        [Test]
         public void DoubledRightBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("Nice }}-: mo",
                 new TextToken("Nice }-: mo"));
         }
 
-        // Internal details of the parser leak out here, ideally
-        // we'd combine these into a single text token.
-        [TestMethod]
+        [Test]
         public void AMalformedPropertyTagIsParsedAsText()
         {
             AssertParsedAs("{0 space}",
-                new TextToken("{0"),
-                new TextToken(" space}"));
+                new TextToken("{0 space}"));
         }
     }
 }

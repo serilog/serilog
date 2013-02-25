@@ -51,7 +51,7 @@ namespace Serilog
 
         public void AddOrUpdateProperty(string propertyName, object value)
         {
-            AddOrUpdateProperty(new LogEventProperty(propertyName, LogEventPropertyValue.For(value)));
+            AddOrUpdateProperty(LogEventProperty.For(propertyName, value));
         }
 
         public void AddOrUpdateProperty(LogEventProperty property)
@@ -62,7 +62,7 @@ namespace Serilog
 
         public void AddPropertyIfAbsent(string propertyName, object value)
         {
-            AddPropertyIfAbsent(new LogEventProperty(propertyName, LogEventPropertyValue.For(value)));
+            AddPropertyIfAbsent(LogEventProperty.For(propertyName, value));
         }
 
         public void AddPropertyIfAbsent(LogEventProperty property)

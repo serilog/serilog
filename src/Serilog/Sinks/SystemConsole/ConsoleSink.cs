@@ -5,7 +5,7 @@ namespace Serilog.Sinks.SystemConsole
 {
     class ConsoleSink : ILogEventSink
     {
-        const string DefaultOutputTemplate = "{TimeStamp} {Level}: {Message}{NewLine}";
+        const string DefaultOutputTemplate = "{TimeStamp} [{Level}] {Message}{NewLine}";
 
         private readonly IMessageTemplateRepository _messageTemplateRepository;
         private readonly MessageTemplate _outputTemplate;

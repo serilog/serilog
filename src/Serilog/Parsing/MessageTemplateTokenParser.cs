@@ -73,10 +73,20 @@ namespace Serilog.Parsing
                     if (!IsValidInFormat(c))
                         return new TextToken(rawText);
 
-                if (format == "s" || format == "S")
+                switch (format)
                 {
-                    destructuringHint = DestructuringHint.Stringify;
-                    format = null;
+                    case "*":
+                    {
+                        destructuringHint = DestructuringHint.Destructure;
+                        format = null;
+                        break;
+                    }
+                    case "@":
+                    {
+                        destructuringHint = DestructuringHint.Stringify;
+                        format = null;
+                        break;
+                    }
                 }
             }
 
@@ -104,10 +114,10 @@ namespace Serilog.Parsing
 
         private static bool IsValidInFormat(char c)
         {
-            return char.IsLetterOrDigit(c) ||
-                c == '#' ||
-                c == '-' ||
-                c == '.';
+            return c != '}' &&
+                (char.IsLetterOrDigit(c) ||
+                 char.IsPunctuation(c) ||
+                 c == ' ');
         }
 
         private static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)

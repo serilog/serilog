@@ -2,11 +2,11 @@
 
 namespace Serilog.Values
 {
-    class LogEventPropertyIntValue : LogEventPropertyValue
+    class LogEventPropertyLongValue : LogEventPropertyValue
     {
-        private readonly int _value;
+        private readonly long _value;
 
-        public LogEventPropertyIntValue(int value)
+        public LogEventPropertyLongValue(long value)
         {
             _value = value;
         }
