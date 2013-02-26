@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Serilog.Core;
-using Serilog.Sinks;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.Http;
 using Serilog.Sinks.SystemConsole;
+using Serilog.Sinks.Trace;
 
 namespace Serilog
 {
@@ -52,6 +52,11 @@ namespace Serilog
         public LoggerConfiguration WithDumpFile(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             return WithSink(new DumpFileSink(path), restrictedToMinimumLevel);
+        }
+
+        public LoggerConfiguration WithDiagnosticTraceSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        {
+            return WithSink(new DiagnosticTraceSink(_messageTemplateRepository), restrictedToMinimumLevel);
         }
 
         public LoggerConfiguration WithFixedProperty(string propertyName, object value)

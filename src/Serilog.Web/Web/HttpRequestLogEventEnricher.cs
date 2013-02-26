@@ -33,7 +33,8 @@ namespace Serilog.Web
                     request.RawUrl,
                     request.IsAuthenticated,
                     Id = requestId,
-                }));
+                },
+                true));
         }
     }
 }

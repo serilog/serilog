@@ -13,6 +13,7 @@ namespace Harness
                 .WithDumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
                 .WithHttpServerSink("http://localhost:16782", LogEventLevel.Warning)
                 .WithFixedProperty("app", "Test Harness")
+                .WithDiagnosticTraceSink()
                 .EnrichedBy(new ThreadIdEnricher())
                 .CreateLogger();
 
