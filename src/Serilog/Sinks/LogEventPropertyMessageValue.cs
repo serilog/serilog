@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Serilog.Core;
+using Serilog.Values;
 
 namespace Serilog.Sinks
 {

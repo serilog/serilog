@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Debugging;
 
 namespace Serilog.Core
 {
@@ -70,7 +71,14 @@ namespace Serilog.Core
 
             foreach (var enricher in _enrichers)
             {
-                enricher.Enrich(logEvent);
+                try
+                {
+                    enricher.Enrich(logEvent);
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Exception {0} caught while enriching {1} with {2}.", ex, logEvent, enricher);
+                }
             }
 
             _sink.Write(logEvent);

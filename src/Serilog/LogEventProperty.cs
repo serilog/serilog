@@ -1,5 +1,6 @@
 ﻿using System;
 using Serilog.Parsing;
+using Serilog.Values;
 
 namespace Serilog
 {

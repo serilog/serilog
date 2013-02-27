@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\AggregateSink.cs" />
+    <Compile Include="Core\SafeAggregateSink.cs" />
     <Compile Include="Core\RestrictedSink.cs" />
     <Compile Include="Core\FixedPropertyEnricher.cs" />
     <Compile Include="Core\IMessageTemplateRepository.cs" />
@@ -55,6 +55,7 @@
     <Compile Include="Core\ILogEventSink.cs" />
     <Compile Include="Core\MessageTemplate.cs" />
     <Compile Include="Core\MessageTemplateRepository.cs" />
+    <Compile Include="Debugging\SelfLog.cs" />
     <Compile Include="ILogEventEnricher.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Log.cs" />
@@ -77,7 +78,7 @@
     <Compile Include="Values\LogEventPropertyLongValue.cs" />
     <Compile Include="Values\LogEventPropertyNullValue.cs" />
     <Compile Include="Values\LogEventPropertyStringValue.cs" />
-    <Compile Include="LogEventPropertyValue.cs" />
+    <Compile Include="Values\LogEventPropertyValue.cs" />
     <Compile Include="LoggerConfiguration.cs" />
     <Compile Include="Parsing\DestructuringHint.cs" />
     <Compile Include="Parsing\LogEventPropertyToken.cs" />

@@ -46,7 +46,7 @@ namespace Serilog
 
         public ILogger CreateLogger()
         {
-            return new Logger(_messageTemplateRepository, _minimumLevel, new AggregateSink(_logEventSinks), _enrichers);
+            return new Logger(_messageTemplateRepository, _minimumLevel, new SafeAggregateSink(_logEventSinks), _enrichers);
         }
 
         public LoggerConfiguration WithDumpFile(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)

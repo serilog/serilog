@@ -5,9 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Serilog.Parsing;
-using Serilog.Values;
 
-namespace Serilog
+namespace Serilog.Values
 {
     public abstract class LogEventPropertyValue
     {
@@ -15,6 +14,8 @@ namespace Serilog
 
         internal static LogEventPropertyValue For(object value, DestructuringHint destructuringHint)
         {
+            // Requires some significant optimisation :)
+
             if (value == null)
                 return new LogEventPropertyNullValue();
 

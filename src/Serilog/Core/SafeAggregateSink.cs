@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Serilog.Debugging;
 
 namespace Serilog.Core
 {
-    class AggregateSink : ILogEventSink
+    class SafeAggregateSink : ILogEventSink
     {
         private readonly IEnumerable<ILogEventSink> _sinks;
 
-        public AggregateSink(IEnumerable<ILogEventSink> sinks)
+        public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
         {
             if (sinks == null) throw new ArgumentNullException("sinks");
             _sinks = sinks;
@@ -17,8 +18,16 @@ namespace Serilog.Core
         {
             foreach (var sink in _sinks)
             {
-                sink.Write(logEvent);
+                try
+                {
+                    sink.Write(logEvent);
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Caught exception {0} while writing to sink {1}.", ex, sink);
+                }
             }
         }
     }
 }
+
