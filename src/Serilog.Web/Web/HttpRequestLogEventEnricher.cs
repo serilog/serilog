@@ -24,14 +24,15 @@ namespace Serilog.Web
             else
                 requestId = (int)requestIdItem;
 
-            var request = HttpContext.Current.Request;
+            string sessionId = null;
+            if (HttpContext.Current.Session != null)
+                sessionId = HttpContext.Current.Session.SessionID;
 
             logEvent.AddPropertyIfAbsent(
                 LogEventProperty.For(HttpRequestPropertyName,
                 new
                 {
-                    request.RawUrl,
-                    request.IsAuthenticated,
+                    SessionId = sessionId,
                     Id = requestId,
                 },
                 true));

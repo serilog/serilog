@@ -204,6 +204,16 @@
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Serilog.Web\Serilog.Web.csproj">
+      <Project>{13cec8dd-6087-4fee-aec1-0511b8959ccd}</Project>
+      <Name>Serilog.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
+      <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
+      <Name>Serilog</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

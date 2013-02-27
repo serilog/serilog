@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Serilog;
 
 namespace WebHarness
 {
@@ -33,6 +34,8 @@ namespace WebHarness
 
         protected void Application_Start()
         {
+            ConfigureLog();
+
             AreaRegistration.RegisterAllAreas();
 
             // Use LocalDB for Entity Framework by default
@@ -40,6 +43,14 @@ namespace WebHarness
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+        }
+
+        void ConfigureLog()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .WithDiagnosticTraceSink()
+                .EnrichedWithHttpRequestProperties()
+                .CreateLogger();
         }
     }
 }

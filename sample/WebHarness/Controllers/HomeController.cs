@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using Serilog;
 
 namespace WebHarness.Controllers
 {
@@ -12,12 +10,14 @@ namespace WebHarness.Controllers
         {
             ViewBag.Message = "Welcome to ASP.NET MVC!";
 
+            Log.Information("Hello from Index().");
+
             return View();
         }
 
         public ActionResult About()
         {
-            return View();
+            throw new NotImplementedException("Maybe another day...");
         }
     }
 }

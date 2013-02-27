@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web\ApplicationLifecycleModule.cs" />
     <Compile Include="Web\HttpRequestLogEventEnricher.cs" />
   </ItemGroup>
   <ItemGroup>
