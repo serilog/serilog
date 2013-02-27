@@ -16,11 +16,27 @@ namespace Serilog.Tests.Core
             var s = new SafeAggregateSink(new[] { new DelegatingSink(le => {
                 thrown = true;
                 throw new Exception("No go, pal.");
-            }) }); 
+            }) });
 
             s.Write(Some.LogEvent());
 
             Assert.IsTrue(thrown);
+        }
+
+        [Test]
+        public void WhenASinkThrowsOtherSinksAreStillInvoked()
+        {
+            bool called1 = false, called2 = false;
+
+            var s = new SafeAggregateSink(new[] {
+                new DelegatingSink(le => called1 = true), 
+                new DelegatingSink(le => { throw new Exception("No go, pal."); }),
+                new DelegatingSink(le => called2 = true) 
+            });
+
+            s.Write(Some.LogEvent());
+
+            Assert.IsTrue(called1 && called2);
         }
     }
 }

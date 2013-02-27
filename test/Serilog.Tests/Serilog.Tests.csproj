@@ -55,11 +55,13 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Core\LoggerTests.cs" />
     <Compile Include="Core\SafeAggregateSinkTests.cs" />
     <Compile Include="Core\MessageTemplateTests.cs" />
     <Compile Include="LogEventPropertyValueTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\DelegatingEnricher.cs" />
     <Compile Include="Support\DelegatingSink.cs" />
     <Compile Include="Support\Some.cs" />
   </ItemGroup>
