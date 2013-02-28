@@ -63,7 +63,6 @@
     <Compile Include="LogEventLevel.cs" />
     <Compile Include="LogEventProperty.cs" />
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />
-    <Compile Include="Sinks\Http\HttpServerSink.cs" />
     <Compile Include="Sinks\LogEventPropertyMessageValue.cs" />
     <Compile Include="Sinks\OutputProperties.cs" />
     <Compile Include="Sinks\Trace\DiagnosticTraceSink.cs" />

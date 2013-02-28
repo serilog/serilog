@@ -1,3 +1,5 @@
 Limit destructuring depth/prevent cycles/truncate long sequences and large strings
 
 More permissive format strings - allow anything including ':'
+
+Format string display hint for quoted vs. 'literal' strings

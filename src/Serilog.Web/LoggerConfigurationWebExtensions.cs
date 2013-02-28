@@ -3,7 +3,7 @@ using Serilog.Web;
 
 namespace Serilog
 {
-    public static class LoggerConfigurationExtensions
+    public static class LoggerConfigurationWebExtensions
     {
         public static LoggerConfiguration EnrichedWithHttpRequestProperties(this LoggerConfiguration loggerConfiguration)
         {

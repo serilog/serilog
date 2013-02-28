@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Sinks.DumpFile;
-using Serilog.Sinks.Http;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.Trace;
 
@@ -21,7 +20,7 @@ namespace Serilog
             return WithSink(new ConsoleSink(_messageTemplateRepository), restrictedToMinimumLevel);
         }
 
-        private LoggerConfiguration WithSink(ILogEventSink logEventSink, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public LoggerConfiguration WithSink(ILogEventSink logEventSink, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             var sink = logEventSink;
             if (restrictedToMinimumLevel > LogEventLevel.Minimum)
@@ -62,11 +61,6 @@ namespace Serilog
         public LoggerConfiguration WithFixedProperty(string propertyName, object value)
         {
             return EnrichedBy(new FixedPropertyEnricher(new[] { LogEventProperty.For(propertyName, value) }));
-        }
-
-        public LoggerConfiguration WithHttpServerSink(string baseUrl, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
-        {
-            return WithSink(new HttpServerSink(baseUrl), restrictedToMinimumLevel);
         }
     }
 }

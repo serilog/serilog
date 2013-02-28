@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Serilog;
 
 namespace Harness
@@ -11,8 +12,8 @@ namespace Harness
                 .MinimumLevel(LogEventLevel.Debug)
                 .WithConsoleSink()
                 .WithDumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
-                .WithHttpServerSink("http://localhost:16782", LogEventLevel.Warning)
-                .WithFixedProperty("app", "Test Harness")
+                .WithHttpSink("http://localhost:5371", LogEventLevel.Information)
+                .WithFixedProperty("App", "Test Harness")
                 .WithDiagnosticTraceSink()
                 .EnrichedBy(new ThreadIdEnricher())
                 .CreateLogger();
@@ -22,6 +23,8 @@ namespace Harness
             Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
             Log.Information("I sat at {Chair:*}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+
+            Thread.Sleep(10000);
 
             var context = Log.Logger.CreateContext(LogEventProperty.For("MessageId", 567));
             context.Information("Processing a message");
