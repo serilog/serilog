@@ -21,12 +21,12 @@ namespace Serilog.Events
                 typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan)
             }; 
 
-        internal static LogEventPropertyValue For(object value, DestructuringHint destructuringHint)
+        internal static LogEventPropertyValue For(object value, Destructuring destructuring)
         {
             if (value == null)
                 return new LogEventPropertyLiteralValue(null);
 
-            if (destructuringHint == DestructuringHint.Stringify)
+            if (destructuring == Destructuring.Stringify)
                 return new LogEventPropertyLiteralValue(value.ToString());
 
             // Known literals
@@ -38,12 +38,12 @@ namespace Serilog.Events
             if (enumerable != null)
             {
                 return new LogEventPropertySequenceValue(
-                    enumerable.Cast<object>().Select(o => For(o, destructuringHint)));
+                    enumerable.Cast<object>().Select(o => For(o, destructuring)));
             }
 
             // Unknown types
 
-            if (destructuringHint == DestructuringHint.Destructure)
+            if (destructuring == Destructuring.Destructure)
             {
                 var typeTag = value.GetType().Name;
                 if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
@@ -51,17 +51,17 @@ namespace Serilog.Events
 
                 return new LogEventPropertyStructureValue(
                     typeTag,
-                    GetProperties(value, destructuringHint));
+                    GetProperties(value, destructuring));
             }
 
             return new LogEventPropertyLiteralValue(value);
         }
 
-        private static IEnumerable<LogEventProperty> GetProperties(object value, DestructuringHint destructuringHint)
+        private static IEnumerable<LogEventProperty> GetProperties(object value, Destructuring destructuring)
         {
             return value.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty)
-                .Select(p => new LogEventProperty(p.Name, For(p.GetValue(value), destructuringHint)));
+                .Select(p => new LogEventProperty(p.Name, For(p.GetValue(value), destructuring)));
         }
     }
 }

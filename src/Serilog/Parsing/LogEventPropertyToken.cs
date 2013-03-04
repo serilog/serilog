@@ -9,16 +9,16 @@ namespace Serilog.Parsing
     {
         private readonly string _propertyName;
         private readonly string _format;
-        private readonly DestructuringHint _destructuringHint;
+        private readonly Destructuring _destructuring;
         private readonly string _rawText;
 
-        public LogEventPropertyToken(string propertyName, string rawText, string format = null, DestructuringHint destructuringHint = DestructuringHint.Default)
+        public LogEventPropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
             if (rawText == null) throw new ArgumentNullException("rawText");
             _propertyName = propertyName;
             _format = format;
-            _destructuringHint = destructuringHint;
+            _destructuring = destructuring;
             _rawText = rawText;
         }
 
@@ -35,13 +35,13 @@ namespace Serilog.Parsing
 
         public string PropertyName { get { return _propertyName; } }
 
-        public DestructuringHint DestructuringHint { get { return _destructuringHint; } }
+        public Destructuring Destructuring { get { return _destructuring; } }
 
         public override bool Equals(object obj)
         {
             var pt = obj as LogEventPropertyToken;
             return pt != null &&
-                pt._destructuringHint == _destructuringHint &&
+                pt._destructuring == _destructuring &&
                 pt._format == _format &&
                 pt._propertyName == _propertyName &&
                 pt._rawText == _rawText;

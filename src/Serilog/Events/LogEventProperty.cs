@@ -11,8 +11,8 @@ namespace Serilog.Events
         {
             return new LogEventProperty(name, LogEventPropertyValue.For(value,
                     destructureObjects ?
-                        DestructuringHint.Destructure :
-                        DestructuringHint.Default));
+                        Destructuring.Destructure :
+                        Destructuring.Default));
         }
 
         public LogEventProperty(string name, LogEventPropertyValue value)

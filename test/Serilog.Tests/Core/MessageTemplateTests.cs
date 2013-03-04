@@ -25,14 +25,14 @@ namespace Serilog.Tests.Core
         [Test]
         public void AnObjectIsRenderedInSimpleNotation()
         {
-            var m = Render("I sat at {Chair:*}", new Chair());
+            var m = Render("I sat at {@Chair}", new Chair());
             Assert.AreEqual("I sat at Chair { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
         }
 
         [Test]
         public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutType()
         {
-            var m = Render("I sat at {Chair:*}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+            var m = Render("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Assert.AreEqual("I sat at { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
         }
 
@@ -46,7 +46,7 @@ namespace Serilog.Tests.Core
         [Test]
         public void AnObjectWithStringifyDestructuringIsRenderedAsAString()
         {
-            var m = Render("I sat at {Chair:@}", new Chair());
+            var m = Render("I sat at {$Chair}", new Chair());
             Assert.AreEqual("I sat at \"a chair\"", m);
         }
 

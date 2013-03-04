@@ -38,7 +38,7 @@ namespace Serilog.Parsing
         {
             var first = startAt;
             startAt++;
-            while (startAt < messageTemplate.Length && IsValidInPropetyTag(messageTemplate[startAt]))
+            while (startAt < messageTemplate.Length && IsValidInPropertyTag(messageTemplate[startAt]))
                 startAt++;
 
             if (startAt == messageTemplate.Length || messageTemplate[startAt] != '}')
@@ -52,64 +52,82 @@ namespace Serilog.Parsing
             var rawText = messageTemplate.Substring(first, next - first);
             var tagContent = messageTemplate.Substring(first + 1, next - (first + 2));
             if (tagContent.Length == 0 ||
-                !char.IsLetter(tagContent[0]))
+                !IsValidInPropertyTag(tagContent[0]))
                 return new TextToken(rawText);
 
             var parts = tagContent.Split(':');
             if (parts.Length > 2)
                 return new TextToken(rawText);
 
-            var propertyName = parts[0];
+            var propertyNameAndDestructuring = parts[0];
             var format = parts.Length == 2 ? parts[1] : null;
 
+            var propertyName = propertyNameAndDestructuring;
+            Destructuring destructuring;
+            if (TryGetDestructuringHint(propertyName[0], out destructuring))
+                propertyName = propertyName.Substring(1);
+
+            if (propertyName == "" || !char.IsLetter(propertyName[0]))
+                return new TextToken(rawText);
+
             foreach (var c in propertyName)
-                if (!IsValidInPropetyName(c))
+                if (!IsValidInPropertyName(c))
                     return new TextToken(rawText);
 
-            var destructuringHint = DestructuringHint.Default;
             if (format != null)
             {
                 foreach (var c in format)
                     if (!IsValidInFormat(c))
                         return new TextToken(rawText);
-
-                switch (format)
-                {
-                    case "*":
-                    {
-                        destructuringHint = DestructuringHint.Destructure;
-                        format = null;
-                        break;
-                    }
-                    case "@":
-                    {
-                        destructuringHint = DestructuringHint.Stringify;
-                        format = null;
-                        break;
-                    }
-                }
             }
 
             return new LogEventPropertyToken(
                 propertyName,
                 rawText,
                 format,
-                destructuringHint);
+                destructuring);
         }
 
-        private static bool IsValidInPropetyTag(char c)
+        private static bool IsValidInPropertyTag(char c)
         {
-            return IsValidInPropetyName(c) ||
+            return IsValidInDestructuringHint(c) ||
+                IsValidInPropertyName(c) ||
                 IsValidInFormat(c) ||
                 c == ':';
                 
         }
 
-        private static bool IsValidInPropetyName(char c)
+        private static bool IsValidInPropertyName(char c)
         {
-            return char.IsLetterOrDigit(c) ||
-                c == '-' ||
-                c == '.';
+            return char.IsLetterOrDigit(c);
+        }
+
+        private static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
+        {
+            switch (c)
+            {
+                case '@':
+                {
+                    destructuring = Destructuring.Destructure;
+                    return true;
+                }
+                case '$':
+                {
+                    destructuring = Destructuring.Stringify;
+                    return true;
+                }
+                default:
+                {
+                    destructuring = Destructuring.Default;
+                    return false;
+                }
+            }
+        }
+
+        private static bool IsValidInDestructuringHint(char c)
+        {
+            return c == '@' ||
+                   c == '$';
         }
 
         private static bool IsValidInFormat(char c)

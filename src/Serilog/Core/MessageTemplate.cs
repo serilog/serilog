@@ -29,7 +29,7 @@ namespace Serilog.Core
                     var value = positionalValues[next];
                     yield return new LogEventProperty(
                         propertyToken.PropertyName,
-                        LogEventPropertyValue.For(value, propertyToken.DestructuringHint));
+                        LogEventPropertyValue.For(value, propertyToken.Destructuring));
                     next++;
                 }
                 else

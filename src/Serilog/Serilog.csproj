@@ -71,7 +71,7 @@
     <Compile Include="Events\LogEventPropertyLiteralValue.cs" />
     <Compile Include="Events\LogEventValue.cs" />
     <Compile Include="LoggerConfiguration.cs" />
-    <Compile Include="Parsing\DestructuringHint.cs" />
+    <Compile Include="Parsing\Destructuring.cs" />
     <Compile Include="Parsing\LogEventPropertyToken.cs" />
     <Compile Include="Parsing\MessageTemplateToken.cs" />
     <Compile Include="Parsing\MessageTemplateTokenParser.cs" />

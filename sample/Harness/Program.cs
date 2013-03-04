@@ -21,8 +21,10 @@ namespace Harness
 
             Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);
             Log.Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
+// ReSharper disable CoVariantArrayConversion
             Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
-            Log.Information("I sat at {Chair:*}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+// ReSharper restore CoVariantArrayConversion
+            Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
 
             Thread.Sleep(10000);

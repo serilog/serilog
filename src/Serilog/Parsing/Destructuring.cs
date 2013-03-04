@@ -1,6 +1,6 @@
 ﻿namespace Serilog.Parsing
 {
-    enum DestructuringHint
+    enum Destructuring
     {
         /// <summary>
         /// Convert known types to literals, arrays to sequences, objects
@@ -9,13 +9,13 @@
         Default,
 
         /// <summary>
-        /// Convert all types to strings.
+        /// Convert all types to strings. Prefix name with '$'.
         /// </summary>
         Stringify,
         
         /// <summary>
         /// Convert known types to literals, destructure objects and collections
-        /// into sequences and structures.
+        /// into sequences and structures. Prefix name with '@'.
         /// </summary>
         Destructure
     }
