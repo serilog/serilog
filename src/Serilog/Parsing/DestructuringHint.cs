@@ -3,7 +3,7 @@
     enum DestructuringHint
     {
         /// <summary>
-        /// Convert known types to literals, convert objects
+        /// Convert known types to literals, arrays to sequences, objects
         /// to strings.
         /// </summary>
         Default,
@@ -14,8 +14,8 @@
         Stringify,
         
         /// <summary>
-        /// Convert known types to literals, destructure objects
-        /// into literals.
+        /// Convert known types to literals, destructure objects and collections
+        /// into sequences and structures.
         /// </summary>
         Destructure
     }

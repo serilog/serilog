@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Serilog.Debugging;
+using Serilog.Events;
 
 namespace Serilog.Core
 {

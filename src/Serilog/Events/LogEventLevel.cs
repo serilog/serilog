@@ -1,4 +1,4 @@
-﻿namespace Serilog
+﻿namespace Serilog.Events
 {
     public enum LogEventLevel
     {

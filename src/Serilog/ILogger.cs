@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Events;
 
 namespace Serilog
 {
@@ -13,6 +14,9 @@ namespace Serilog
 
         void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues);
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
+
+        bool IsEnabled(LogEventLevel level);
+
         void Verbose(string messageTemplate, params object[] propertyValues);
         void Verbose(Exception exception, string messageTemplate, params object[] propertyValues);
         void Debug(string messageTemplate, params object[] propertyValues);

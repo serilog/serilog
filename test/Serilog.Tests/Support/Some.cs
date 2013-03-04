@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using Serilog.Events;
 
 namespace Serilog.Tests.Support
 {

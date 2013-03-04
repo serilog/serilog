@@ -9,6 +9,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Serilog.Core;
 using Seriline.Contracts;
+using Serilog.Events;
 
 namespace Serilog.Sinks.Http
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Web;
+using Serilog.Events;
 
 namespace Serilog.Web
 {

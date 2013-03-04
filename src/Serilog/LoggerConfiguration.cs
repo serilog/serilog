@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.Trace;

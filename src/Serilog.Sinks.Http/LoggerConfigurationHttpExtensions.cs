@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Events;
 using Serilog.Sinks.Http;
 
 namespace Serilog

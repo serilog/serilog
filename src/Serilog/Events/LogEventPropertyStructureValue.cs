@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Serilog.Values
+namespace Serilog.Events
 {
-    class LogEventPropertyObjectValue : LogEventPropertyValue
+    public class LogEventPropertyStructureValue : LogEventPropertyValue
     {
         private readonly string _typeTag;
         private readonly LogEventProperty[] _properties;
 
-        public LogEventPropertyObjectValue(string typeTag, IEnumerable<LogEventProperty> properties)
+        public LogEventPropertyStructureValue(string typeTag, IEnumerable<LogEventProperty> properties)
         {
             if (properties == null) throw new ArgumentNullException("properties");
             _typeTag = typeTag;

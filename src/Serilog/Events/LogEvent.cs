@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Serilog
+namespace Serilog.Events
 {
     public class LogEvent
     {

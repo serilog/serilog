@@ -1,4 +1,6 @@
-﻿namespace Serilog.Core
+﻿using Serilog.Events;
+
+namespace Serilog.Core
 {
     public interface ILogEventSink
     {

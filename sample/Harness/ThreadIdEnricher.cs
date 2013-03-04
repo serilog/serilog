@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Serilog;
+using Serilog.Events;
 
 namespace Harness
 {

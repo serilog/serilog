@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Values;
 
 namespace Serilog.Tests
 {
@@ -11,7 +11,7 @@ namespace Serilog.Tests
         public void AnEnumIsConvertedToALiteralValue()
         {
             var value = LogEventPropertyValue.For(LogEventLevel.Debug, DestructuringHint.Default);
-            Assert.IsInstanceOf<LogEventPropertyTokenValue>(value);
+            Assert.IsInstanceOf<LogEventPropertyLiteralValue>(value);
         }
 
     }

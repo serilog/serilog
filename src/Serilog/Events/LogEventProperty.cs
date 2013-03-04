@@ -1,8 +1,7 @@
 ﻿using System;
 using Serilog.Parsing;
-using Serilog.Values;
 
-namespace Serilog
+namespace Serilog.Events
 {
     public class LogEventProperty
     {

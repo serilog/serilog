@@ -1,11 +1,13 @@
 ﻿using System;
 using Serilog.Core;
+using Serilog.Display;
+using Serilog.Events;
 
 namespace Serilog.Sinks.SystemConsole
 {
     class ConsoleSink : ILogEventSink
     {
-        const string DefaultOutputTemplate = "{TimeStamp} [{Level}] {Message}{NewLine}";
+        const string DefaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}";
 
         private readonly IMessageTemplateRepository _messageTemplateRepository;
         private readonly MessageTemplate _outputTemplate;

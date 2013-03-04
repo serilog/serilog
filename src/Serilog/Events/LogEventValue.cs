@@ -6,50 +6,38 @@ using System.Linq;
 using System.Reflection;
 using Serilog.Parsing;
 
-namespace Serilog.Values
+namespace Serilog.Events
 {
     public abstract class LogEventPropertyValue
     {
         internal abstract void Render(TextWriter output, string format = null);
 
+        static readonly HashSet<Type> KnownLiteralTypes = new HashSet<Type>
+            {
+                typeof(bool),
+                typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
+                    typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
+                typeof(string),
+                typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan)
+            }; 
+
         internal static LogEventPropertyValue For(object value, DestructuringHint destructuringHint)
         {
-            // Requires some significant optimisation :)
-
             if (value == null)
-                return new LogEventPropertyNullValue();
+                return new LogEventPropertyLiteralValue(null);
 
             if (destructuringHint == DestructuringHint.Stringify)
-                return new LogEventPropertyStringValue(value.ToString());
+                return new LogEventPropertyLiteralValue(value.ToString());
 
             // Known literals
-
-            if (value is int || value is uint || value is long || value is short || value is ushort)
-                return new LogEventPropertyLongValue((long)Convert.ChangeType(value, typeof(long)));
-
-            if (value is bool)
-                return new LogEventPropertyBooleanValue((bool)value);
-
-            if (value is decimal || value is float || value is double)
-                return new LogEventPropertyDecimalValue((decimal)Convert.ChangeType(value, typeof(decimal)));
-
-            var s = value as string;
-            if (s != null)
-                return new LogEventPropertyStringValue(s);
-
-            if (value is DateTimeOffset)
-                return new LogEventPropertyDateTimeOffsetValue((DateTimeOffset)value);
-
-            if (value is DateTime)
-                return new LogEventPropertyDateTimeValue((DateTime)value);
-
-            if (value is TimeSpan)
-                return new LogEventPropertyTimeSpanValue((TimeSpan)value);
+            var valueType = value.GetType();
+            if (KnownLiteralTypes.Contains(valueType) || valueType.IsEnum)
+                return new LogEventPropertyLiteralValue(value);
 
             var enumerable = value as IEnumerable;
             if (enumerable != null)
             {
-                return new LogEventPropertyArrayValue(
+                return new LogEventPropertySequenceValue(
                     enumerable.Cast<object>().Select(o => For(o, destructuringHint)));
             }
 
@@ -61,12 +49,12 @@ namespace Serilog.Values
                 if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
                     typeTag = null;
 
-                return new LogEventPropertyObjectValue(
+                return new LogEventPropertyStructureValue(
                     typeTag,
                     GetProperties(value, destructuringHint));
             }
 
-            return new LogEventPropertyTokenValue(value.ToString());
+            return new LogEventPropertyLiteralValue(value);
         }
 
         private static IEnumerable<LogEventProperty> GetProperties(object value, DestructuringHint destructuringHint)

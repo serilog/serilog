@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Serilog.Values
+namespace Serilog.Events
 {
-    class LogEventPropertyArrayValue : LogEventPropertyValue
+    public class LogEventPropertySequenceValue : LogEventPropertyValue
     {
         private readonly LogEventPropertyValue[] _elements;
 
-        public LogEventPropertyArrayValue(IEnumerable<LogEventPropertyValue> elements)
+        public LogEventPropertySequenceValue(IEnumerable<LogEventPropertyValue> elements)
         {
             if (elements == null) throw new ArgumentNullException("elements");
             _elements = elements.ToArray();

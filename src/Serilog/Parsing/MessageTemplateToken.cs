@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Serilog.Events;
 
 namespace Serilog.Parsing
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Debugging;
+using Serilog.Events;
 
 namespace Serilog.Core
 {
@@ -63,6 +64,11 @@ namespace Serilog.Core
 
             var logEvent = new LogEvent(now, level, exception, messageTemplate, properties);
             Write(logEvent);
+        }
+
+        public bool IsEnabled(LogEventLevel level)
+        {
+            return (int)level >= (int)_minimumLevel;
         }
 
         public void Write(LogEvent logEvent)

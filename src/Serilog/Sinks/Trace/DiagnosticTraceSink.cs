@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 using Serilog.Core;
+using Serilog.Display;
+using Serilog.Events;
 
 namespace Serilog.Sinks.Trace
 {
     class DiagnosticTraceSink : ILogEventSink
     {
-        const string DefaultOutputTemplate = "[{Level}] {Message}{NewLine}";
+        const string DefaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}";
 
         private readonly IMessageTemplateRepository _messageTemplateRepository;
         private readonly MessageTemplate _outputTemplate;

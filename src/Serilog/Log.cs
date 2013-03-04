@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Events;
 
 namespace Serilog
 {
@@ -20,6 +21,12 @@ namespace Serilog
             var logger = Logger;
             if (logger != null)
                 logger.Write(level, exception, messageTemplate, propertyValues);
+        }
+
+        public static bool IsEnabled(LogEventLevel level)
+        {
+            var logger = Logger;
+            return logger != null && logger.IsEnabled(level);
         }
 
         public static void Verbose(string messageTemplate, params object[] propertyValues)
