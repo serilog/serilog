@@ -4,7 +4,7 @@ namespace Serilog
 {
     /// <summary>
     /// The methods on <see cref="ILogger"/> (and its static sibling <see cref="Log"/>) are guaranteed
-    /// never to throw. All other methods may.
+    /// never to throw exceptions. Methods on all other types may.
     /// </summary>
     public interface ILogger
     {

@@ -4,7 +4,7 @@ namespace Serilog
 {
     /// <summary>
     /// The methods on <see cref="Log"/> (and its dynamic sibling <see cref="ILogger"/>) are guaranteed
-    /// never to throw. All other methods may.
+    /// never to throw exceptions. Methods on all other types may.
     /// </summary>
     public static class Log
     {
