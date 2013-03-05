@@ -8,7 +8,7 @@ namespace Serilog.Sinks.Trace
 {
     class DiagnosticTraceSink : ILogEventSink
     {
-        const string DefaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}";
+        const string DefaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}{Exception:l}";
 
         private readonly IMessageTemplateRepository _messageTemplateRepository;
         private readonly MessageTemplate _outputTemplate;

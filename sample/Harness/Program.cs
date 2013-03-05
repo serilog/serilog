@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using System.Threading;
 using Serilog;
 using Serilog.Events;
@@ -27,11 +28,16 @@ namespace Harness
             Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
 
-            Thread.Sleep(10000);
-
             var context = Log.Logger.ForContext(LogEventProperty.For("MessageId", 567));
-            context.Information("Processing a message");
-            context.Warning("Rolling back transaction!");
+            try
+            {
+                context.Information("Processing a message");
+                throw new NotImplementedException("Nothing doing.");
+            }
+            catch (Exception ex)
+            {
+                context.Warning(ex, "Rolling back transaction!");
+            }
             
             Console.ReadKey(true);
         }

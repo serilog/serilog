@@ -12,6 +12,7 @@ namespace Serilog.Display
         public const string TimeStampPropertyName = "TimeStamp";
         public const string LevelPropertyName = "Level";
         public const string NewLinePropertyName = "NewLine";
+        public const string ExceptionPropertyName = "Exception";
 
         public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent, IMessageTemplateRepository messageTemplateRepository)
         {
@@ -23,6 +24,9 @@ namespace Serilog.Display
             result.Add(TimeStampPropertyName, LogEventProperty.For(TimeStampPropertyName, logEvent.TimeStamp));
             result.Add(LevelPropertyName, LogEventProperty.For(LevelPropertyName, logEvent.Level));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new LogEventPropertyLiteralValue(Environment.NewLine)));
+
+            var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
+            result.Add(ExceptionPropertyName, LogEventProperty.For(ExceptionPropertyName, exception));
 
             return result;
         }

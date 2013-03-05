@@ -114,7 +114,7 @@ namespace Serilog.Core
 
         public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Verbose, null, messageTemplate, propertyValues);
+            Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValues);
         }
 
         public void Debug(string messageTemplate, params object[] propertyValues)
@@ -124,7 +124,7 @@ namespace Serilog.Core
 
         public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Debug, null, messageTemplate, propertyValues);
+            Write(LogEventLevel.Debug, exception, messageTemplate, propertyValues);
         }
 
         public void Information(string messageTemplate, params object[] propertyValues)
@@ -134,7 +134,7 @@ namespace Serilog.Core
 
         public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Information, null, messageTemplate, propertyValues);
+            Write(LogEventLevel.Information, exception, messageTemplate, propertyValues);
         }
 
         public void Warning(string messageTemplate, params object[] propertyValues)
@@ -144,7 +144,7 @@ namespace Serilog.Core
 
         public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Warning, null, messageTemplate, propertyValues);
+            Write(LogEventLevel.Warning, exception, messageTemplate, propertyValues);
         }
 
         public void Error(string messageTemplate, params object[] propertyValues)
@@ -154,7 +154,7 @@ namespace Serilog.Core
 
         public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Error, null, messageTemplate, propertyValues);
+            Write(LogEventLevel.Error, exception, messageTemplate, propertyValues);
         }
 
         public void Fatal(string messageTemplate, params object[] propertyValues)
@@ -164,7 +164,7 @@ namespace Serilog.Core
 
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Fatal, null, messageTemplate, propertyValues);
+            Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValues);
         }
     }
 }
