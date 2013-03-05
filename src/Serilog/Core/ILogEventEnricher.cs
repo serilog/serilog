@@ -1,4 +1,6 @@
-﻿namespace Serilog.Events
+﻿using Serilog.Events;
+
+namespace Serilog.Core
 {
     public interface ILogEventEnricher
     {

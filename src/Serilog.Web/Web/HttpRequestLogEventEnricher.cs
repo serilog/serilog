@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Web;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Web
@@ -36,7 +37,7 @@ namespace Serilog.Web
                     SessionId = sessionId,
                     Id = requestId,
                 },
-                true));
+                destructureObjects: true));
         }
     }
 }

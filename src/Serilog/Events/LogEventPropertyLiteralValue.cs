@@ -13,6 +13,8 @@ namespace Serilog.Events
             _value = value;
         }
 
+        public object Value { get { return _value; } }
+
         internal override void Render(TextWriter output, string format = null)
         {
             if (_value == null)

@@ -29,7 +29,7 @@ namespace Harness
 
             Thread.Sleep(10000);
 
-            var context = Log.Logger.CreateContext(LogEventProperty.For("MessageId", 567));
+            var context = Log.Logger.ForContext(LogEventProperty.For("MessageId", 567));
             context.Information("Processing a message");
             context.Warning("Rolling back transaction!");
             

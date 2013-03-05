@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Tests.Support

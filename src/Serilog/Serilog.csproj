@@ -55,8 +55,9 @@
     <Compile Include="Core\ILogEventSink.cs" />
     <Compile Include="Core\MessageTemplate.cs" />
     <Compile Include="Core\MessageTemplateRepository.cs" />
+    <Compile Include="Core\SilentLogger.cs" />
     <Compile Include="Debugging\SelfLog.cs" />
-    <Compile Include="Events\ILogEventEnricher.cs" />
+    <Compile Include="Core\ILogEventEnricher.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Events\LogEvent.cs" />

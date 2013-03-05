@@ -8,6 +8,8 @@ namespace Serilog.Core
 {
     class Logger : ILogger, ILogEventSink
     {
+        public const string SourceContextPropertyName = "SourceContext";
+
         private readonly IMessageTemplateRepository _messageTemplateRepository;
         private readonly LogEventLevel _minimumLevel;
         private readonly ILogEventSink _sink;
@@ -23,7 +25,7 @@ namespace Serilog.Core
             _enrichers = enrichers.ToArray();
         }
 
-        public ILogger CreateContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        public ILogger ForContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
         {
             var safeEnrichers = (enrichers ?? new ILogEventEnricher[0]).ToList();
             if (fixedProperties != null && fixedProperties.Length != 0)
@@ -34,9 +36,23 @@ namespace Serilog.Core
             return new Logger(_messageTemplateRepository, _minimumLevel, this, safeEnrichers);
         }
 
-        public ILogger CreateContext(params LogEventProperty[] fixedProperties)
+        public ILogger ForContext(params LogEventProperty[] fixedProperties)
         {
-            return CreateContext(null, fixedProperties);
+            return ForContext(null, fixedProperties);
+        }
+
+        public ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        {
+            var oldSize = fixedProperties.Length;
+            // Odd signature - this is non-destructive/pure
+            Array.Resize(ref fixedProperties, oldSize + 1);
+            fixedProperties[oldSize] = LogEventProperty.For(SourceContextPropertyName, typeof(TSource).FullName);
+            return ForContext(enrichers, fixedProperties);
+        }
+
+        public ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties)
+        {
+            return ForContext<TSource>(null, fixedProperties);
         }
 
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)

@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog
@@ -9,84 +10,111 @@ namespace Serilog
     /// </summary>
     public static class Log
     {
-        public static ILogger Logger { get; set; }
+        static ILogger _logger = new SilentLogger();
+
+        public static ILogger Logger
+        {
+            get { return _logger; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                _logger = value;
+            }
+        }
+
+        public static ILogger ForContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        {
+            return Logger.ForContext(enrichers, fixedProperties);
+        }
+
+        public static ILogger ForContext(params LogEventProperty[] fixedProperties)
+        {
+            return Logger.ForContext(fixedProperties);
+        }
+
+        public static ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        {
+            return Logger.ForContext<TSource>(enrichers, fixedProperties);
+        }
+
+        public static ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties)
+        {
+            return Logger.ForContext<TSource>(fixedProperties);
+        }
 
         public static void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
-            Write(level, null, messageTemplate, propertyValues);
+            Logger.Write(level, messageTemplate, propertyValues);
         }
 
         public static void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            var logger = Logger;
-            if (logger != null)
-                logger.Write(level, exception, messageTemplate, propertyValues);
+            Logger.Write(level, exception, messageTemplate, propertyValues);
         }
 
         public static bool IsEnabled(LogEventLevel level)
         {
-            var logger = Logger;
-            return logger != null && logger.IsEnabled(level);
+            return Logger.IsEnabled(level);
         }
 
         public static void Verbose(string messageTemplate, params object[] propertyValues)
         {
-            Verbose(null, messageTemplate, propertyValues);
+            Logger.Verbose(messageTemplate, propertyValues);
         }
 
         public static void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Verbose, null, messageTemplate, propertyValues);
+            Logger.Verbose(exception, messageTemplate, propertyValues);
         }
 
         public static void Debug(string messageTemplate, params object[] propertyValues)
         {
-            Debug(null, messageTemplate, propertyValues);
+            Logger.Debug(messageTemplate, propertyValues);
         }
 
         public static void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Debug, null, messageTemplate, propertyValues);
+            Logger.Debug(exception, messageTemplate, propertyValues);
         }
 
         public static void Information(string messageTemplate, params object[] propertyValues)
         {
-            Information(null, messageTemplate, propertyValues);
+            Logger.Information(messageTemplate, propertyValues);
         }
 
         public static void Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Information, null, messageTemplate, propertyValues);
+            Logger.Information(exception, messageTemplate, propertyValues);
         }
 
         public static void Warning(string messageTemplate, params object[] propertyValues)
         {
-            Warning(null, messageTemplate, propertyValues);
+            Logger.Warning(messageTemplate, propertyValues);
         }
 
         public static void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Warning, null, messageTemplate, propertyValues);
+            Logger.Warning(exception, messageTemplate, propertyValues);
         }
 
         public static void Error(string messageTemplate, params object[] propertyValues)
         {
-            Error(null, messageTemplate, propertyValues);
+            Logger.Error(messageTemplate, propertyValues);
         }
 
         public static void Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Error, null, messageTemplate, propertyValues);
+            Logger.Error(exception, messageTemplate, propertyValues);
         }
 
         public static void Fatal(string messageTemplate, params object[] propertyValues)
         {
-            Fatal(null, messageTemplate, propertyValues);
+            Logger.Fatal(messageTemplate, propertyValues);
         }
 
         public static void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Fatal, null, messageTemplate, propertyValues);
+            Logger.Fatal(exception, messageTemplate, propertyValues);
         }
     }
 }

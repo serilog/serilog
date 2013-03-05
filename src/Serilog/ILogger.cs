@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog
@@ -9,8 +10,10 @@ namespace Serilog
     /// </summary>
     public interface ILogger
     {
-        ILogger CreateContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties);
-        ILogger CreateContext(params LogEventProperty[] fixedProperties);
+        ILogger ForContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties);
+        ILogger ForContext(params LogEventProperty[] fixedProperties);
+        ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties);
+        ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties);
 
         void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues);
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
