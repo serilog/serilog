@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Serilog.Core;
+using Serilog.Display;
 using Serilog.Events;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.SystemConsole;
@@ -10,15 +11,17 @@ namespace Serilog
 {
     public class LoggerConfiguration
     {
-        readonly IList<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
-        readonly IList<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
+        readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
+        readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly IMessageTemplateRepository _messageTemplateRepository = new MessageTemplateRepository();
 
         LogEventLevel _minimumLevel = LogEventLevel.Information;
 
         public LoggerConfiguration WithConsoleSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
-            return WithSink(new ConsoleSink(_messageTemplateRepository), restrictedToMinimumLevel);
+            const string defaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+            var formatter = new MessageTemplateDisplayFormatter(defaultOutputTemplate, _messageTemplateRepository);
+            return WithSink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
         public LoggerConfiguration WithSink(ILogEventSink logEventSink, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
@@ -37,10 +40,10 @@ namespace Serilog
             return this;
         }
 
-        public LoggerConfiguration EnrichedBy(ILogEventEnricher enricher)
+        public LoggerConfiguration EnrichedBy(params ILogEventEnricher[] enrichers)
         {
-            if (enricher == null) throw new ArgumentNullException("enricher");
-            _enrichers.Add(enricher);
+            if (enrichers == null) throw new ArgumentNullException("enrichers");
+            _enrichers.AddRange(enrichers);
             return this;
         }
 
@@ -56,7 +59,9 @@ namespace Serilog
 
         public LoggerConfiguration WithDiagnosticTraceSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
-            return WithSink(new DiagnosticTraceSink(_messageTemplateRepository), restrictedToMinimumLevel);
+            const string defaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}{Exception:l}";
+            var formatter = new MessageTemplateDisplayFormatter(defaultOutputTemplate, _messageTemplateRepository);
+            return WithSink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
 
         public LoggerConfiguration WithFixedProperty(string propertyName, object value)

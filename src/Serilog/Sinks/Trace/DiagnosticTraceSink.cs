@@ -8,24 +8,19 @@ namespace Serilog.Sinks.Trace
 {
     class DiagnosticTraceSink : ILogEventSink
     {
-        const string DefaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        readonly IDisplayFormatter _displayFormatter;
 
-        private readonly IMessageTemplateRepository _messageTemplateRepository;
-        private readonly MessageTemplate _outputTemplate;
-
-        public DiagnosticTraceSink(IMessageTemplateRepository messageTemplateRepository)
+        public DiagnosticTraceSink(IDisplayFormatter displayFormatter)
         {
-            if (messageTemplateRepository == null) throw new ArgumentNullException("messageTemplateRepository");
-            _messageTemplateRepository = messageTemplateRepository;
-            _outputTemplate = _messageTemplateRepository.GetParsedTemplate(DefaultOutputTemplate);
+            if (displayFormatter == null) throw new ArgumentNullException("displayFormatter");
+            _displayFormatter = displayFormatter;
         }
 
         public void Write(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            var outputProperties = OutputProperties.GetOutputProperties(logEvent, _messageTemplateRepository);
             var sr = new StringWriter();
-            _outputTemplate.Render(outputProperties, sr);
+            _displayFormatter.Format(logEvent, sr);
             System.Diagnostics.Trace.Write(sr.ToString());
         }
     }

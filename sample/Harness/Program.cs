@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Security.Principal;
-using System.Threading;
 using Serilog;
 using Serilog.Events;
 
@@ -17,14 +15,17 @@ namespace Harness
                 .WithHttpSink("http://localhost:5371", LogEventLevel.Information)
                 .WithFixedProperty("App", "Test Harness")
                 .WithDiagnosticTraceSink()
-                .EnrichedBy(new ThreadIdEnricher())
+                .EnrichedBy(new ThreadIdEnricher(),
+                            new HostNameEnricher())
                 .CreateLogger();
 
             Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);
             Log.Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
-// ReSharper disable CoVariantArrayConversion
+            
+            // ReSharper disable CoVariantArrayConversion
             Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
-// ReSharper restore CoVariantArrayConversion
+            // ReSharper restore CoVariantArrayConversion
+            
             Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
 
@@ -36,7 +37,7 @@ namespace Harness
             }
             catch (Exception ex)
             {
-                context.Warning(ex, "Rolling back transaction!");
+                context.Error(ex, "Rolling back transaction!");
             }
             
             Console.ReadKey(true);
