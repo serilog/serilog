@@ -20,7 +20,7 @@ namespace Harness
                 .CreateLogger();
 
             Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);
-            Log.Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
+            Log.ForContext<Program>().Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
             
             // ReSharper disable CoVariantArrayConversion
             Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
