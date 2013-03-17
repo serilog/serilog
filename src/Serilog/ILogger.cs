@@ -15,6 +15,7 @@ namespace Serilog
         ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties);
         ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties);
 
+        void Write(LogEvent logEvent);
         void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues);
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
 

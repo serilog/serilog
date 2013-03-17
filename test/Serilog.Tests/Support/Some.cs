@@ -38,5 +38,10 @@ namespace Serilog.Tests.Support
         {
             return new LogEvent(OffsetInstant(), LogEventLevel.Information, null, String(), Enumerable.Empty<LogEventProperty>());
         }
+
+        public static LogEventProperty LogEventProperty()
+        {
+            return Serilog.Events.LogEventProperty.For(String(), Int());
+        }
     }
 }

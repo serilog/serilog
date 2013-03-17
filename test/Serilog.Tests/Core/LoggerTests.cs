@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 using Serilog.Core;
 using Serilog.Events;
@@ -29,18 +28,37 @@ namespace Serilog.Tests.Core
         [Test]
         public void AContextualLoggerAddsTheSourceTypeName()
         {
-            IReadOnlyDictionary<string, LogEventProperty> properties = null;
+            var evt = GetLogEvent(l => l.ForContext<LoggerTests>()
+                                        .Information(Some.String()));
+
+            var lv = evt.Properties[Logger.SourceContextPropertyName].LiteralValue();
+            Assert.AreEqual(typeof(LoggerTests).FullName, lv);
+        }
+
+        [Test]
+        public void PropertiesInANestedContextOverrideParentContextValues()
+        {
+            var p1 = Some.LogEventProperty();
+            var p2 = LogEventProperty.For(p1.Name, Some.Int());
+            Assert.AreNotEqual(p1.LiteralValue(), p2.LiteralValue());
+
+            var evt = GetLogEvent(l => l.ForContext(p1)
+                                        .ForContext(p2)
+                                        .Write(Some.LogEvent()));
+
+            var pActual = evt.Properties[p1.Name];
+            Assert.AreEqual(p2.LiteralValue(), pActual.LiteralValue());
+        }
+
+        static LogEvent GetLogEvent(Action<ILogger> writeAction)
+        {
+            LogEvent result = null;
             var l = new LoggerConfiguration()
-                .WithSink(new DelegatingSink(le => {
-                    properties = le.Properties;
-                }))
+                .WithSink(new DelegatingSink(le => result = le))
                 .CreateLogger();
 
-            var ctx = l.ForContext<LoggerTests>();
-            ctx.Information(Some.String());
-
-            var lv = (LogEventPropertyLiteralValue)properties[Logger.SourceContextPropertyName].Value;
-            Assert.AreEqual(typeof(LoggerTests).FullName, lv.Value);
+            writeAction(l);
+            return result;
         }
     }
 }

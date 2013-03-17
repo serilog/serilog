@@ -25,6 +25,10 @@ namespace Serilog.Core
             return this;
         }
 
+        public void Write(LogEvent logEvent)
+        {
+        }
+
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
         }
