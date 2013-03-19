@@ -12,7 +12,6 @@ namespace Harness
                 .MinimumLevel(LogEventLevel.Debug)
                 .WithConsoleSink()
                 .WithDumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
-                .WithHttpSink("http://localhost:5371", LogEventLevel.Information)
                 .WithFixedProperty("App", "Test Harness")
                 .WithDiagnosticTraceSink()
                 .EnrichedBy(new ThreadIdEnricher(),
