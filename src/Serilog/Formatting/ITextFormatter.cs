@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using Serilog.Events;
 
-namespace Serilog.Display
+namespace Serilog.Formatting
 {
-    public interface IDisplayFormatter
+    public interface ITextFormatter
     {
         void Format(LogEvent logEvent, TextWriter output);
     }

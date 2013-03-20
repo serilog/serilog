@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Serilog.Core;
-using Serilog.Display;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.Trace;
@@ -20,7 +20,7 @@ namespace Serilog
         public LoggerConfiguration WithConsoleSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             const string defaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateDisplayFormatter(defaultOutputTemplate, _messageTemplateRepository);
+            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, _messageTemplateRepository);
             return WithSink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
@@ -60,7 +60,7 @@ namespace Serilog
         public LoggerConfiguration WithDiagnosticTraceSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             const string defaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateDisplayFormatter(defaultOutputTemplate, _messageTemplateRepository);
+            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, _messageTemplateRepository);
             return WithSink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
 

@@ -1,26 +1,26 @@
 ﻿using System;
 using System.IO;
 using Serilog.Core;
-using Serilog.Display;
 using Serilog.Events;
+using Serilog.Formatting;
 
 namespace Serilog.Sinks.Trace
 {
     class DiagnosticTraceSink : ILogEventSink
     {
-        readonly IDisplayFormatter _displayFormatter;
+        readonly ITextFormatter _textFormatter;
 
-        public DiagnosticTraceSink(IDisplayFormatter displayFormatter)
+        public DiagnosticTraceSink(ITextFormatter textFormatter)
         {
-            if (displayFormatter == null) throw new ArgumentNullException("displayFormatter");
-            _displayFormatter = displayFormatter;
+            if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            _textFormatter = textFormatter;
         }
 
         public void Write(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             var sr = new StringWriter();
-            _displayFormatter.Format(logEvent, sr);
+            _textFormatter.Format(logEvent, sr);
             System.Diagnostics.Trace.Write(sr.ToString());
         }
     }

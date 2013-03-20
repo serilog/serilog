@@ -15,6 +15,8 @@ namespace Serilog.Events
             _elements = elements.ToArray();
         }
 
+        public LogEventPropertyValue[] Elements { get { return _elements; } }
+
         internal override void Render(TextWriter output, string format = null)
         {
             // Format string to limit length?

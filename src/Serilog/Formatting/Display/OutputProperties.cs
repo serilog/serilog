@@ -4,7 +4,7 @@ using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Display
+namespace Serilog.Formatting.Display
 {
     static class OutputProperties
     {

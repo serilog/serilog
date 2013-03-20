@@ -3,14 +3,14 @@ using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Display
+namespace Serilog.Formatting.Display
 {
-    class MessageTemplateDisplayFormatter : IDisplayFormatter
+    class MessageTemplateTextFormatter : ITextFormatter
     {
         private readonly MessageTemplate _outputTemplate;
         readonly IMessageTemplateRepository _messageTemplateRepository;
 
-        public MessageTemplateDisplayFormatter(string outputTemplate, IMessageTemplateRepository messageTemplateRepository)
+        public MessageTemplateTextFormatter(string outputTemplate, IMessageTemplateRepository messageTemplateRepository)
         {
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             if (messageTemplateRepository == null) throw new ArgumentNullException("messageTemplateRepository");

@@ -3,7 +3,7 @@ using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Display
+namespace Serilog.Formatting.Display
 {
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {

@@ -17,6 +17,10 @@ namespace Serilog.Events
             _properties = properties.ToArray();
         }
 
+        public string TypeTag { get { return _typeTag; } }
+
+        public LogEventProperty[] Properties { get { return _properties; } }
+
         internal override void Render(TextWriter output, string format = null)
         {
             if (_typeTag != null)
