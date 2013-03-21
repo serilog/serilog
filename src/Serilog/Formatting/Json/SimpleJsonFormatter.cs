@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Json
@@ -8,10 +9,32 @@ namespace Serilog.Formatting.Json
     class SimpleJsonFormatter : ITextFormatter
     {
         readonly bool _omitEnclosingObject;
+        readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
 
         public SimpleJsonFormatter(bool omitEnclosingObject = false)
         {
             _omitEnclosingObject = omitEnclosingObject;
+
+            _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
+            {
+                { typeof(byte), WriteToString },
+                { typeof(sbyte), WriteToString },
+                { typeof(short), WriteToString },
+                { typeof(ushort), WriteToString },
+                { typeof(int), WriteToString },
+                { typeof(uint), WriteToString },
+                { typeof(long), WriteToString },
+                { typeof(ulong), WriteToString },
+                { typeof(float), WriteToString },
+                { typeof(double), WriteToString },
+                { typeof(decimal), WriteToString },
+                { typeof(string), (v, w) => WriteString((string)v, w) },
+                { typeof(DateTime), (v, w) => WriteDateTime((DateTime)v, w) },
+                { typeof(DateTimeOffset), (v, w) => WriteOffset((DateTimeOffset)v, w) },
+                { typeof(LogEventPropertyLiteralValue), (v, w) => WriteLiteral(((LogEventPropertyLiteralValue)v).Value, w) },
+                { typeof(LogEventPropertySequenceValue), (v, w) => WriteSequence(((LogEventPropertySequenceValue)v).Elements, w) },
+                { typeof(LogEventPropertyStructureValue), (v, w) => WriteStructure(((LogEventPropertyStructureValue)v).TypeTag, ((LogEventPropertyStructureValue)v).Properties, w) },
+            };
         }
 
         public void Format(LogEvent logEvent, TextWriter output)
@@ -22,75 +45,95 @@ namespace Serilog.Formatting.Json
             if (!_omitEnclosingObject)
                 output.Write("{");
 
-            WriteOffset("TimeStamp", logEvent.TimeStamp, output);
-            WriteString("Level", logEvent.Level.ToString(), output);
-            WriteString("MessageTemplate", logEvent.MessageTemplate, output, escape: true);
+            WriteJsonProperty("TimeStamp", logEvent.TimeStamp, output);
+            WriteJsonProperty("Level", logEvent.Level, output);
+            WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate, output);
 
             if (logEvent.Exception != null)
-                WriteString("Exception", logEvent.Exception.ToString(), output, escape: true);
+                WriteJsonProperty("Exception", logEvent.Exception, output);
 
             if (logEvent.Properties.Count != 0)
             {
-                output.Write("\"Properties\":{");
+                output.Write("\"Properties\": {");
                 foreach (var property in logEvent.Properties.Values)
                 {
-                    WriteProperty(property, output);
+                    WriteJsonProperty(property.Name, property.Value, output);
                 }
-                output.Write("},");
+                output.Write("}, ");
             }
 
             if (!_omitEnclosingObject)
                 output.Write("}");
         }
 
-        static void WriteProperty(LogEventProperty property, TextWriter output)
+        void WriteStructure(string typeTag, LogEventProperty[] properties, TextWriter output)
         {
-            var lp = property.Value as LogEventPropertyLiteralValue;
-            if (lp != null)
-            {
-                WriteLiteral(property.Name, lp.Value, output);
-            }
-            else
-            {
-                var sqp = property.Value as LogEventPropertySequenceValue;
-                if (sqp != null)
-                {
-                    WriteSequence(property.Name, sqp.Elements, output);
-                }
-                else
-                {
-                    var stp = property.Value as LogEventPropertyStructureValue;
-                    if (stp != null)
-                    {
-                        WriteStructure(property.Name, stp, output);
-                    }
-                    else
-                    {
-                        SelfLog.WriteLine("Unsupported property value type {0}", property.Value.GetType());
-                        output.Write("null");
-                    }
-                }
-            }
+            throw new NotImplementedException();
         }
 
-        static void WriteOffset(string name, DateTimeOffset value, TextWriter output)
+        void WriteSequence(IEnumerable elements, TextWriter output)
         {
-            WriteString(name, value.ToString("o"), output);
+            output.Write("[");
+            foreach (var value in elements)
+            {
+                WriteLiteral(value, output);
+                output.Write(", ");
+            }
+            output.Write("]");
         }
 
-        static void WriteString(string name, string value, TextWriter output, bool escape = false)
+        void WriteJsonProperty(string name, object value, TextWriter output)
         {
-            var content = escape ? JsonEscape(value) : value;
             output.Write("\"");
             output.Write(name);
-            output.Write("\":\"");
-            output.Write(content);
-            output.Write("\",");
+            output.Write("\": ");
+            WriteLiteral(value, output);
+            output.Write(", ");
         }
 
-        static string JsonEscape(string value)
+        void WriteLiteral(object value, TextWriter output)
         {
-            return value.Replace("\"", "\\\"");
+            if (value == null)
+            {
+                output.Write("null");
+                return;
+            }
+
+            Action<object, TextWriter> writer;
+            if (_literalWriters.TryGetValue(value.GetType(), out writer))
+            {
+                writer(value, output);
+                return;
+            }
+
+            WriteString(value.ToString(), output);
+        }
+
+        static void WriteToString(object number, TextWriter output)
+        {
+            output.Write(number.ToString());
+        }
+
+        static void WriteOffset(DateTimeOffset value, TextWriter output)
+        {
+            output.Write("\"");
+            output.Write(value.ToString("o"));
+            output.Write("\"");
+        }
+
+        static void WriteDateTime(DateTime value, TextWriter output)
+        {
+            output.Write("\"");
+            output.Write(value.ToString("o"));
+            output.Write("\"");
+        }
+
+        static void WriteString(string value, TextWriter output)
+        {
+            var content = value.Replace("\"", "\\\"");
+            output.Write("\"");
+            output.Write(content);
+            output.Write("\"");
         }
     }
 }

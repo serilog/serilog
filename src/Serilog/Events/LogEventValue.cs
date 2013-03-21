@@ -34,6 +34,9 @@ namespace Serilog.Events
             if (KnownLiteralTypes.Contains(valueType) || valueType.IsEnum)
                 return new LogEventPropertyLiteralValue(value);
 
+            // Dictionaries should be treated here, probably as
+            // structures...
+
             var enumerable = value as IEnumerable;
             if (enumerable != null)
             {

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using Newtonsoft.Json;
 using Serilog.Events;
@@ -37,5 +39,36 @@ namespace Serilog.Tests.Formatting.Json
             var serializer = new JsonSerializer { DateParseHandling = DateParseHandling.None };
             return serializer.Deserialize(new JsonTextReader(new StringReader(output.ToString())));
         }
+
+        [Test]
+        public void AnIntegerPropertySerializesAsIntegerValue()
+        {
+            var name = Some.String();
+            var value = Some.Int();
+            var @event = Some.LogEvent();
+            @event.AddOrUpdateProperty(name, value);
+
+            var formatted = FormatJson(@event);
+
+            Assert.AreEqual(value, (int)formatted.Properties[name]);
+        }
+
+        [Test]
+        public void ASequencePropertySerializesAsArrayValue()
+        {
+            var name = Some.String();
+            var ints = new[]{ Some.Int(), Some.Int() };
+            var value = new LogEventPropertySequenceValue(ints.Select(i => new LogEventPropertyLiteralValue(i)));
+            var @event = Some.LogEvent();
+            @event.AddOrUpdateProperty(new LogEventProperty(name, value));
+
+            var formatted = FormatJson(@event);
+            var result = new List<int>();
+            foreach (var el in formatted.Properties[name])
+                result.Add((int)el);
+
+            CollectionAssert.AreEqual(ints, result);
+        }
+
     }
 }
