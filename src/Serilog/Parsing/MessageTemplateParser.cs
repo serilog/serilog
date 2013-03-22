@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Serilog.Parsing
 {
-    class MessageTemplateTokenParser
+    public class MessageTemplateParser
     {
         public static IEnumerable<MessageTemplateToken> Parse(string messageTemplate)
         {

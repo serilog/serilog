@@ -5,7 +5,7 @@ using Serilog.Events;
 
 namespace Serilog.Parsing
 {
-    class LogEventPropertyToken : MessageTemplateToken
+    public class LogEventPropertyToken : MessageTemplateToken
     {
         private readonly string _propertyName;
         private readonly string _format;

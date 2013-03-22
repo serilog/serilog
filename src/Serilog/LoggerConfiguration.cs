@@ -13,14 +13,16 @@ namespace Serilog
     {
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
-        readonly IMessageTemplateRepository _messageTemplateRepository = new MessageTemplateRepository();
+        readonly IMessageTemplateCache _parsedMessageTemplateCache = new MessageTemplateCache();
 
         LogEventLevel _minimumLevel = LogEventLevel.Information;
+
+        public IMessageTemplateCache ParsedMessageTemplateCache { get { return _parsedMessageTemplateCache; } }
 
         public LoggerConfiguration WithConsoleSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             const string defaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, _messageTemplateRepository);
+            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, ParsedMessageTemplateCache);
             return WithSink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
@@ -49,7 +51,7 @@ namespace Serilog
 
         public ILogger CreateLogger()
         {
-            return new Logger(_messageTemplateRepository, _minimumLevel, new SafeAggregateSink(_logEventSinks), _enrichers);
+            return new Logger(_parsedMessageTemplateCache, _minimumLevel, new SafeAggregateSink(_logEventSinks), _enrichers);
         }
 
         public LoggerConfiguration WithDumpFile(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
@@ -60,7 +62,7 @@ namespace Serilog
         public LoggerConfiguration WithDiagnosticTraceSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             const string defaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, _messageTemplateRepository);
+            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, ParsedMessageTemplateCache);
             return WithSink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
 

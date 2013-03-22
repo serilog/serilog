@@ -4,7 +4,7 @@ using Serilog.Parsing;
 
 namespace Serilog.Core
 {
-    class MessageTemplateRepository : IMessageTemplateRepository
+    class MessageTemplateCache : IMessageTemplateCache
     {
         readonly ConcurrentDictionary<string, MessageTemplate> _templates = new ConcurrentDictionary<string,MessageTemplate>();
 
@@ -16,7 +16,7 @@ namespace Serilog.Core
 
         static MessageTemplate Parse(string messageTemplate)
         {
-            return new MessageTemplate(MessageTemplateTokenParser.Parse(messageTemplate));
+            return new MessageTemplate(MessageTemplateParser.Parse(messageTemplate));
         }
     }
 }

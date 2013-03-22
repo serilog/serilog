@@ -1,6 +1,6 @@
 namespace Serilog.Core
 {
-    interface IMessageTemplateRepository
+    public interface IMessageTemplateCache
     {
         MessageTemplate GetParsedTemplate(string messageTemplate);
     }

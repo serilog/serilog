@@ -70,5 +70,19 @@ namespace Serilog.Tests.Formatting.Json
             CollectionAssert.AreEqual(ints, result);
         }
 
+        [Test]
+        public void AStructureSerializesAsAnObject()
+        {
+            var value = Some.Int();
+            var memberProp = new LogEventProperty(Some.String(), new LogEventPropertyLiteralValue(value));
+            var structure = new LogEventPropertyStructureValue(null, new[] { memberProp });
+            var structureProp = new LogEventProperty(Some.String(), structure);
+            var @event = Some.LogEvent();
+            @event.AddOrUpdateProperty(structureProp);
+
+            var formatted = FormatJson(@event);
+            var result = (int)formatted.Properties[structureProp.Name][memberProp.Name];
+            Assert.AreEqual(value, result);
+        }
     }
 }

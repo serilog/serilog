@@ -66,7 +66,7 @@ namespace Serilog.Tests.Core
 
         static string Render(string messageTemplate, params object[] properties)
         {
-            var mt = new MessageTemplate(MessageTemplateTokenParser.Parse(messageTemplate));
+            var mt = new MessageTemplate(MessageTemplateParser.Parse(messageTemplate));
             var props = mt.ConstructPositionalProperties(properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);

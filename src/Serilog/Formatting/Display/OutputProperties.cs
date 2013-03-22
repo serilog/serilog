@@ -14,11 +14,11 @@ namespace Serilog.Formatting.Display
         public const string NewLinePropertyName = "NewLine";
         public const string ExceptionPropertyName = "Exception";
 
-        public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent, IMessageTemplateRepository messageTemplateRepository)
+        public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent, IMessageTemplateCache messageTemplateCache)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            var messageTemplate = messageTemplateRepository.GetParsedTemplate(logEvent.MessageTemplate);
+            var messageTemplate = messageTemplateCache.GetParsedTemplate(logEvent.MessageTemplate);
 
             result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(messageTemplate, logEvent.Properties)));
             result.Add(TimeStampPropertyName, LogEventProperty.For(TimeStampPropertyName, logEvent.TimeStamp));

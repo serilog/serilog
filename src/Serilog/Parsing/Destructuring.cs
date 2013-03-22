@@ -1,6 +1,6 @@
 ﻿namespace Serilog.Parsing
 {
-    enum Destructuring
+    public enum Destructuring
     {
         /// <summary>
         /// Convert known types to literals, arrays to sequences, objects

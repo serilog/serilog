@@ -9,7 +9,7 @@ namespace Serilog.Tests.Parsing
     {
         static MessageTemplateToken[] Parse(string messsageTemplate)
         {
-            return MessageTemplateTokenParser.Parse(messsageTemplate).ToArray();
+            return MessageTemplateParser.Parse(messsageTemplate).ToArray();
         }
 
         private static void AssertParsedAs(string message, params MessageTemplateToken[] messageTemplateTokens)

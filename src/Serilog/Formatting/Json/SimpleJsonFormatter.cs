@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace Serilog.Formatting.Json
 {
-    class SimpleJsonFormatter : ITextFormatter
+    public class SimpleJsonFormatter : ITextFormatter
     {
         readonly bool _omitEnclosingObject;
         readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
@@ -45,30 +45,41 @@ namespace Serilog.Formatting.Json
             if (!_omitEnclosingObject)
                 output.Write("{");
 
-            WriteJsonProperty("TimeStamp", logEvent.TimeStamp, output);
-            WriteJsonProperty("Level", logEvent.Level, output);
-            WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate, output);
+            var delim = "";
+            WriteJsonProperty("TimeStamp", logEvent.TimeStamp, ref delim, output);
+            WriteJsonProperty("Level", logEvent.Level, ref delim, output);
+            WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate, ref delim, output);
 
             if (logEvent.Exception != null)
-                WriteJsonProperty("Exception", logEvent.Exception, output);
+                WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
 
             if (logEvent.Properties.Count != 0)
             {
-                output.Write("\"Properties\": {");
+                output.Write(",\"Properties\":{");
+                var pdelim = "";
                 foreach (var property in logEvent.Properties.Values)
                 {
-                    WriteJsonProperty(property.Name, property.Value, output);
+                    WriteJsonProperty(property.Name, property.Value, ref pdelim, output);
                 }
-                output.Write("}, ");
+                output.Write("}");
             }
 
             if (!_omitEnclosingObject)
                 output.Write("}");
         }
 
-        void WriteStructure(string typeTag, LogEventProperty[] properties, TextWriter output)
+        void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
         {
-            throw new NotImplementedException();
+            output.Write("{");
+
+            var delim = "";
+            if (typeTag != null)
+                WriteJsonProperty("$typeTag", typeTag, ref delim, output);
+            
+            foreach (var property in properties)
+                WriteJsonProperty(property.Name, property.Value, ref delim, output);
+
+            output.Write("}");
         }
 
         void WriteSequence(IEnumerable elements, TextWriter output)
@@ -77,18 +88,19 @@ namespace Serilog.Formatting.Json
             foreach (var value in elements)
             {
                 WriteLiteral(value, output);
-                output.Write(", ");
+                output.Write(",");
             }
             output.Write("]");
         }
 
-        void WriteJsonProperty(string name, object value, TextWriter output)
+        void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
         {
+            output.Write(precedingDelimiter);
             output.Write("\"");
             output.Write(name);
-            output.Write("\": ");
+            output.Write("\":");
             WriteLiteral(value, output);
-            output.Write(", ");
+            precedingDelimiter = ",";
         }
 
         void WriteLiteral(object value, TextWriter output)

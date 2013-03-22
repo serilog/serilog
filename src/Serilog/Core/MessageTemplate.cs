@@ -7,16 +7,16 @@ using Serilog.Parsing;
 
 namespace Serilog.Core
 {
-    class MessageTemplate
+    public class MessageTemplate
     {
         private readonly IEnumerable<MessageTemplateToken> _tokens;
 
-        public MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
+        internal MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
         {
             _tokens = tokens;
         }
 
-        public IEnumerable<LogEventProperty> ConstructPositionalProperties(object[] positionalValues)
+        internal IEnumerable<LogEventProperty> ConstructPositionalProperties(object[] positionalValues)
         {
             if (positionalValues == null)
                 yield break;
@@ -37,6 +37,13 @@ namespace Serilog.Core
                     yield break;
                 }
             }
+        }
+
+        public string Render(IReadOnlyDictionary<string, LogEventProperty> properties)
+        {
+            var writer = new StringWriter();
+            Render(properties, writer);
+            return writer.ToString();
         }
 
         public void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output)
