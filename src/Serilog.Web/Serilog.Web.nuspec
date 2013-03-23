@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog</id>
+    <version>0.1.0</version>
+    <authors>Nicholas Blumhardt</authors>
+    <description>An event enricher for Serilog that adds details of the executing ASP.NET HTTP request.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <dependencies>
+      <dependency id="Serilog" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Serilog.Web.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Web.xml" target="lib\net45" />
+  </files>
+</package>

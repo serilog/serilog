@@ -21,16 +21,20 @@ namespace Demo
                 .CreateLogger();
 
             ProcessInput(new Position { Lat = 24.7, Long = 132.2 });
+            ProcessInput(new Position { Lat = 24.71, Long = 132.15 });
+            ProcessInput(new Position { Lat = 24.72, Long = 132.2 });
 
             Console.ReadKey(true);
         }
+
+        static readonly Random Rng = new Random();
 
         static void ProcessInput(Position sensorInput)
         {
             var sw = new Stopwatch();
             sw.Start();
             Console.WriteLine("Processing some input...");
-            Thread.Sleep(10);
+            Thread.Sleep(Rng.Next(0, 100));
             sw.Stop();
 
             Log.Information("Processed {@SensorInput} in {Time} ms", sensorInput, sw.ElapsedMilliseconds);

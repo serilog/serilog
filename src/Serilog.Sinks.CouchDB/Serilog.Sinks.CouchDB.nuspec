@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Sinks.CouchDB</id>
+    <version>0.1.0</version>
+    <authors>Nicholas Blumhardt</authors>
+    <description>Serilog event sink that writes to a CouchDB database over HTTP.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <dependencies>
+      <dependency id="Serilog" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Serilog.Sinks.CouchDB.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.CouchDB.xml" target="lib\net45" />
+  </files>
+</package>
