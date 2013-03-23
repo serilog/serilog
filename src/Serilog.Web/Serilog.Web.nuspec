@@ -13,7 +13,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Serilog.Web.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Web.xml" target="lib\net45" />
+    <file src="src\Serilog.Web\bin\Release\Serilog.Web.dll" target="lib\net45" />
+    <file src="src\Serilog.Web\bin\Release\Serilog.Web.xml" target="lib\net45" />
   </files>
 </package>

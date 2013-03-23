@@ -10,7 +10,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
   </metadata>
   <files>
-    <file src="bin\Release\Serilog.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.xml" target="lib\net45" />
+    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\net45" />
+    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\net45" />
   </files>
 </package>
