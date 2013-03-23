@@ -8,6 +8,7 @@
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-logo-64.png</iconUrl>
     <dependencies>
       <dependency id="Serilog" />
     </dependencies>
