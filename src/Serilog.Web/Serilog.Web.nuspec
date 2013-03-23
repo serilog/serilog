@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Serilog</id>
+    <id>Serilog.Web</id>
     <version>0.1.0</version>
     <authors>Nicholas Blumhardt</authors>
-    <description>An event enricher for Serilog that adds details of the executing ASP.NET HTTP request.</description>
+    <description>An event enricher for Serilog that adds details of the executing ASP.NET HTTP request, logs requests and errors.</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
