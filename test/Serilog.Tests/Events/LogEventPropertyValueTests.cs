@@ -2,7 +2,7 @@
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Events
 {
     [TestFixture]
     public class LogEventPropertyValueTests

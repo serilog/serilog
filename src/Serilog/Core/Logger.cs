@@ -20,22 +20,29 @@ using Serilog.Events;
 
 namespace Serilog.Core
 {
-    class Logger : ILogger, ILogEventSink
+    sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         public const string SourceContextPropertyName = "SourceContext";
 
         private readonly IMessageTemplateCache _messageTemplateCache;
         private readonly LogEventLevel _minimumLevel;
         private readonly ILogEventSink _sink;
+        readonly Action _dispose;
         private readonly ILogEventEnricher[] _enrichers;
 
-        public Logger(IMessageTemplateCache messageTemplateCache, LogEventLevel minimumLevel, ILogEventSink sink, IEnumerable<ILogEventEnricher> enrichers)
+        public Logger(
+            IMessageTemplateCache messageTemplateCache,
+            LogEventLevel minimumLevel,
+            ILogEventSink sink,
+            IEnumerable<ILogEventEnricher> enrichers,
+            Action dispose = null)
         {
             if (sink == null) throw new ArgumentNullException("sink");
             if (enrichers == null) throw new ArgumentNullException("enrichers");
             _messageTemplateCache = messageTemplateCache;
             _minimumLevel = minimumLevel;
             _sink = sink;
+            _dispose = dispose;
             _enrichers = enrichers.ToArray();
         }
 
@@ -179,6 +186,12 @@ namespace Serilog.Core
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValues);
+        }
+
+        public void Dispose()
+        {
+            if (_dispose != null)
+                _dispose();
         }
     }
 }

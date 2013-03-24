@@ -62,7 +62,8 @@
     <Compile Include="Core\LoggerTests.cs" />
     <Compile Include="Core\SafeAggregateSinkTests.cs" />
     <Compile Include="Core\MessageTemplateTests.cs" />
-    <Compile Include="LogEventPropertyValueTests.cs" />
+    <Compile Include="Events\LogEventPropertyValueTests.cs" />
+    <Compile Include="LoggerConfigurationTests.cs" />
     <Compile Include="LogTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
