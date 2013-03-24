@@ -59,7 +59,9 @@
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
-    <None Include="Serilog.Web.nuspec" />
+    <None Include="Serilog.Web.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog.csproj">

@@ -110,7 +110,7 @@ namespace Serilog.Sinks.CouchDB
                 var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
                 var result = await _httpClient.PostAsync(BulkUploadResource, content);
                 if (!result.IsSuccessStatusCode)
-                    (SelfLog.Out ?? new StringWriter()).Write("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
+                    SelfLog.WriteLine("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
             }
             // ReSharper disable EmptyGeneralCatchClause
             catch { }

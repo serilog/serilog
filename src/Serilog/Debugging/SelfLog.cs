@@ -30,7 +30,14 @@ namespace Serilog.Debugging
         /// </example>
         public static TextWriter Out { get; set; }
 
-        internal static void WriteLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
+        /// <summary>
+        /// Write a message to the self-log.
+        /// </summary>
+        /// <param name="format">Standard .NET format string containing the message.</param>
+        /// <param name="arg0">First argument, if supplied.</param>
+        /// <param name="arg1">Second argument, if supplied.</param>
+        /// <param name="arg2">Third argument, if supplied.</param>
+        public static void WriteLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
         {
             var o = Out;
             if (o != null)

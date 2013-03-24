@@ -14,7 +14,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Parsing
@@ -50,6 +52,18 @@ namespace Serilog.Parsing
         public string PropertyName { get { return _propertyName; } }
 
         public Destructuring Destructuring { get { return _destructuring; } }
+        
+        public bool IsPositional
+        {
+            get { return _propertyName.All(char.IsNumber); }
+        }
+
+        public bool TryGetPositionalValue(out int position)
+        {
+            return
+                int.TryParse(_propertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
+                position >= 0;
+        }
 
         public override bool Equals(object obj)
         {

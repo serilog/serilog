@@ -81,7 +81,7 @@ namespace Serilog.Parsing
             if (TryGetDestructuringHint(propertyName[0], out destructuring))
                 propertyName = propertyName.Substring(1);
 
-            if (propertyName == "" || !char.IsLetter(propertyName[0]))
+            if (propertyName == "" || !char.IsLetterOrDigit(propertyName[0]))
                 return new TextToken(rawText);
 
             foreach (var c in propertyName)

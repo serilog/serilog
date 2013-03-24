@@ -69,5 +69,13 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("{0 space}",
                 new TextToken("{0 space}"));
         }
+
+        [Test]
+        public void AnIntegerPropertyNameIsParsedAsPositionalProperty()
+        {
+            var parsed = (LogEventPropertyToken) Parse("{0}").Single();
+            Assert.AreEqual("0", parsed.PropertyName);
+            Assert.IsTrue(parsed.IsPositional);
+        }
     }
 }

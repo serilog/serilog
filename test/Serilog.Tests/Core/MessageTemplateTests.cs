@@ -67,12 +67,34 @@ namespace Serilog.Tests.Core
         static string Render(string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplate(MessageTemplateParser.Parse(messageTemplate));
-            var props = mt.ConstructPositionalProperties(properties);
+            var props = mt.ConstructProperties(properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
             mt.Render(props.ToDictionary(p => p.Name), writer);
             writer.Flush();
             return output.ToString();
+        }
+
+        [Test]
+        public void ATemplateWithOnlyPositionalPropertiesIsAnalyzedAndRenderedPositionally()
+        {
+            var m = Render("{1}, {0}", "world", "Hello");
+            Assert.AreEqual("\"Hello\", \"world\"", m);
+        }
+
+        // Debatable what the behavior should be, here.
+        [Test]
+        public void ATemplateWithNamesAndPositionalsUsesNamesForAllValues()
+        {
+            var m = Render("{1}, {Place}", "world", "Hello");
+            Assert.AreEqual("\"world\", \"Hello\"", m);
+        }
+
+        [Test]
+        public void MissingPositionalParametersRenderAsTextLikeStandardFormats()
+        {
+            var m = Render("{1}, {0}", "world");
+            Assert.AreEqual("{1}, \"world\"", m);
         }
     }
 }

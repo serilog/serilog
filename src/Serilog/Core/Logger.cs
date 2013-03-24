@@ -90,7 +90,7 @@ namespace Serilog.Core
 
             var now = DateTimeOffset.Now;
             var parsedTemplate = _messageTemplateCache.GetParsedTemplate(messageTemplate);
-            var properties = parsedTemplate.ConstructPositionalProperties(propertyValues);
+            var properties = parsedTemplate.ConstructProperties(propertyValues);
 
             var logEvent = new LogEvent(now, level, exception, messageTemplate, properties);
             Write(logEvent);
