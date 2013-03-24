@@ -16,35 +16,33 @@ using System;
 using System.IO;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting;
 
-namespace Serilog.Sinks.DumpFile
+namespace Serilog.Sinks.File
 {
-    class DumpFileSink : ILogEventSink
+    sealed class FileSink : ILogEventSink, IDisposable
     {
         readonly TextWriter _output;
+        readonly ITextFormatter _textFormatter;
 
-        public DumpFileSink(string path)
+        public FileSink(string path, ITextFormatter textFormatter)
         {
-            _output = new StreamWriter(System.IO.File.OpenWrite(path));
+            if (path == null) throw new ArgumentNullException("path");
+            if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            _textFormatter = textFormatter;
+            _output = new StreamWriter(System.IO.File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read));
         }
 
         public void Write(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-
-            _output.Write("[" + logEvent.TimeStamp + "] " + logEvent.Level + ": \"");
-            _output.Write(logEvent.MessageTemplate);
-            _output.WriteLine("\"");
-            if (logEvent.Exception != null)
-                _output.WriteLine(logEvent.Exception);
-            foreach (var property in logEvent.Properties.Values)
-            {
-                _output.Write(property.Name + " = ");
-                property.Value.Render(_output);
-                _output.WriteLine();
-            }
-            _output.WriteLine();
+            _textFormatter.Format(logEvent, _output);
             _output.Flush();
+        }
+
+        public void Dispose()
+        {
+            _output.Dispose();
         }
     }
 }

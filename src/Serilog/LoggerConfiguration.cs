@@ -19,6 +19,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.DumpFile;
+using Serilog.Sinks.File;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.Trace;
 
@@ -125,6 +126,20 @@ namespace Serilog
         public LoggerConfiguration WithDumpFileSink(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             return WithSink(new DumpFileSink(path), restrictedToMinimumLevel);
+        }
+
+        /// <summary>
+        /// Write log events to the specified file.
+        /// </summary>
+        /// <param name="path">Path to the file.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration WithFileSink(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        {
+            const string defaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, ParsedMessageTemplateCache);
+            return WithSink(new FileSink(path, formatter), restrictedToMinimumLevel);
         }
 
         /// <summary>

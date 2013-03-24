@@ -67,6 +67,7 @@
     <Compile Include="LogTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sinks\File\FileSinkTests.cs" />
     <Compile Include="Support\DelegatingEnricher.cs" />
     <Compile Include="Support\DelegatingSink.cs" />
     <Compile Include="Support\Extensions.cs" />

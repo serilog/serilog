@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Serilog.Events;
@@ -42,6 +43,16 @@ namespace Serilog.Tests.Support
         public static LogEventProperty LogEventProperty()
         {
             return Serilog.Events.LogEventProperty.For(String(), Int());
+        }
+
+        public static string NonexistentFilePath()
+        {
+            return Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".txt");
+        }
+
+        public static string ExistentFilePath()
+        {
+            return Path.GetTempFileName();
         }
     }
 }
