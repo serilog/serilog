@@ -17,8 +17,20 @@ using System.Text;
 
 namespace Serilog.Parsing
 {
+    /// <summary>
+    /// Parses message template strings into sequences of text or property
+    /// tokens.
+    /// </summary>
     public class MessageTemplateParser
     {
+        /// <summary>
+        /// Parse the supplied message template.
+        /// </summary>
+        /// <param name="messageTemplate">The message template to parse.</param>
+        /// <returns>A sequence of text or property tokens. Where the template
+        /// is not syntactically valid, text tokens will be returned. The parser
+        /// will make a best effort to extract valid property tokens even in the
+        /// presence of parsing issues.</returns>
         public static IEnumerable<MessageTemplateToken> Parse(string messageTemplate)
         {
             if (messageTemplate == "")
@@ -69,12 +81,20 @@ namespace Serilog.Parsing
                 !IsValidInPropertyTag(tagContent[0]))
                 return new TextToken(rawText);
 
-            var parts = tagContent.Split(':');
-            if (parts.Length > 2)
-                return new TextToken(rawText);
-
-            var propertyNameAndDestructuring = parts[0];
-            var format = parts.Length == 2 ? parts[1] : null;
+            string propertyNameAndDestructuring, format;
+            var formatDelim = tagContent.IndexOf(':');
+            if (formatDelim == -1)
+            {
+                propertyNameAndDestructuring = tagContent;
+                format = null;
+            }
+            else
+            {
+                propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
+                format = formatDelim == tagContent.Length - 1 ?
+                    null :
+                    tagContent.Substring(formatDelim + 1);
+            }
 
             var propertyName = propertyNameAndDestructuring;
             Destructuring destructuring;

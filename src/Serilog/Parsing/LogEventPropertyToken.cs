@@ -52,6 +52,8 @@ namespace Serilog.Parsing
         public string PropertyName { get { return _propertyName; } }
 
         public Destructuring Destructuring { get { return _destructuring; } }
+
+        public string Format { get { return _format; } }
         
         public bool IsPositional
         {

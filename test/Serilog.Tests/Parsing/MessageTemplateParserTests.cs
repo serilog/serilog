@@ -77,5 +77,12 @@ namespace Serilog.Tests.Parsing
             Assert.AreEqual("0", parsed.PropertyName);
             Assert.IsTrue(parsed.IsPositional);
         }
+
+        [Test]
+        public void FormatsCanContainColons()
+        {
+            var parsed = (LogEventPropertyToken) Parse("{Time:hh:mm}").Single();
+            Assert.AreEqual("hh:mm", parsed.Format);
+        }
     }
 }
