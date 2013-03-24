@@ -30,6 +30,8 @@ namespace Serilog
     /// </summary>
     public class LoggerConfiguration
     {
+        const string DefaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly IMessageTemplateCache _parsedMessageTemplateCache = new MessageTemplateCache();
@@ -46,11 +48,14 @@ namespace Serilog
         /// </summary>
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration WithConsoleSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public LoggerConfiguration WithConsoleSink(
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            string outputTemplate = DefaultOutputTemplate)
         {
-            const string defaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
             return WithSink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
@@ -134,11 +139,15 @@ namespace Serilog
         /// <param name="path">Path to the file.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration WithFileSink(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public LoggerConfiguration WithFileSink(
+            string path,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            string outputTemplate = DefaultOutputTemplate)
         {
-            const string defaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
             return WithSink(new FileSink(path, formatter), restrictedToMinimumLevel);
         }
 
@@ -147,11 +156,14 @@ namespace Serilog
         /// </summary>
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration WithDiagnosticTraceSink(LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public LoggerConfiguration WithDiagnosticTraceSink(
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            string outputTemplate = DefaultOutputTemplate)
         {
-            const string defaultOutputTemplate = "[{Level}] {Message:l}{NewLine:l}{Exception:l}";
-            var formatter = new MessageTemplateTextFormatter(defaultOutputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
             return WithSink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
 

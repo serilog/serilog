@@ -16,8 +16,15 @@ using Serilog.Events;
 
 namespace Serilog.Core
 {
+    /// <summary>
+    /// A destination for log events.
+    /// </summary>
     public interface ILogEventSink
     {
+        /// <summary>
+        /// Write the provided log event to the sink.
+        /// </summary>
+        /// <param name="logEvent">The log event to write.</param>
         void Write(LogEvent logEvent);
     }
 }

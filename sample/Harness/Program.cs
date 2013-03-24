@@ -10,7 +10,8 @@ namespace Harness
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel(LogEventLevel.Debug)
-                .WithConsoleSink()
+                .WithConsoleSink(
+                    outputTemplate: "{TimeStamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{Exception:l}{NewLine:l}")
                 .WithDumpFileSink("Dumps\\" + DateTime.Now.Ticks + ".slog")
                 .WithFixedProperty("App", "Test Harness")
                 .WithDiagnosticTraceSink()
