@@ -13,28 +13,24 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Serilog.Events;
 
 namespace Serilog.Core
 {
     class SilentLogger : ILogger
     {
-        public ILogger ForContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
             return this;
         }
 
-        public ILogger ForContext(params LogEventProperty[] fixedProperties)
+        public ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
         {
             return this;
         }
 
-        public ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
-        {
-            return this;
-        }
-
-        public ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties)
+        public ILogger ForContext<TSource>()
         {
             return this;
         }

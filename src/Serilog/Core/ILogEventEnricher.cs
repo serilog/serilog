@@ -16,8 +16,15 @@ using Serilog.Events;
 
 namespace Serilog.Core
 {
+    /// <summary>
+    /// Applied during logging to add additional information to log events.
+    /// </summary>
     public interface ILogEventEnricher
     {
+        /// <summary>
+        /// Enrich the log event.
+        /// </summary>
+        /// <param name="logEvent">The log event to enrich.</param>
         void Enrich(LogEvent logEvent);
     }
 }

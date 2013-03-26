@@ -198,7 +198,7 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration EnrichedWithProperty(string propertyName, object value, bool destructureObjects = false)
         {
-            return EnrichedBy(new FixedPropertyEnricher(new[] { LogEventProperty.For(propertyName, value, destructureObjects) }));
+            return EnrichedBy(new FixedPropertyEnricher(LogEventProperty.For(propertyName, value, destructureObjects)));
         }
     }
 }

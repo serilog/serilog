@@ -13,28 +13,24 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using Serilog.Events;
 
 namespace Serilog.Core
 {
-    public class FixedPropertyEnricher : ILogEventEnricher
+    class FixedPropertyEnricher : ILogEventEnricher
     {
-        private readonly IEnumerable<LogEventProperty> _logEventProperties;
+        private readonly LogEventProperty _logEventProperty;
 
-        public FixedPropertyEnricher(IEnumerable<LogEventProperty> logEventProperties)
+        public FixedPropertyEnricher(LogEventProperty logEventProperty)
         {
-            if (logEventProperties == null) throw new ArgumentNullException("logEventProperties");
-            _logEventProperties = logEventProperties;
+            if (logEventProperty == null) throw new ArgumentNullException("logEventProperty");
+            _logEventProperty = logEventProperty;
         }
 
         public void Enrich(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            foreach (var property in _logEventProperties)
-            {
-                logEvent.AddPropertyIfAbsent(property);
-            }
+            logEvent.AddPropertyIfAbsent(_logEventProperty);
         }
     }
 }

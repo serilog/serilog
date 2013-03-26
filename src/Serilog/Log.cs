@@ -54,51 +54,33 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Create a logger that enriches log events with additional information
-        /// via specified properties or enricher objects.
+        /// Create a logger that enriches log events via the provided enrichers.
         /// </summary>
         /// <param name="enrichers">Enrichers that apply in the context.</param>
-        /// <param name="fixedProperties">Properties set in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        public static ILogger ForContext(ILogEventEnricher[] enrichers)
         {
-            return Logger.ForContext(enrichers, fixedProperties);
+            return Logger.ForContext(enrichers);
         }
 
         /// <summary>
-        /// Create a logger that enriches log events with additional information
-        /// via specified properties.
+        /// Create a logger that enriches log events with the specified property.
         /// </summary>
-        /// <param name="fixedProperties">Properties set in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(params LogEventProperty[] fixedProperties)
+        public static ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
         {
-            return Logger.ForContext(fixedProperties);
+            return Logger.ForContext(propertyName, value, destructureObjects);
         }
 
         /// <summary>
-        /// Create a logger that enriches log events with additional information
-        /// via specified properties or enricher objects.
+        /// Create a logger that marks log events as being from the specified
+        /// source type.
         /// </summary>
-        /// <param name="enrichers">Enrichers that apply in the context.</param>
-        /// <param name="fixedProperties">Properties set in the context.</param>
         /// <typeparam name="TSource">Type generating log messages in the context.</typeparam>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        public static ILogger ForContext<TSource>()
         {
-            return Logger.ForContext<TSource>(enrichers, fixedProperties);
-        }
-
-        /// <summary>
-        /// Create a logger that enriches log events with additional information
-        /// via specified properties or enricher objects.
-        /// </summary>
-        /// <param name="fixedProperties">Properties set in the context.</param>
-        /// <typeparam name="TSource">Type generating log messages in the context.</typeparam>
-        /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties)
-        {
-            return Logger.ForContext<TSource>(fixedProperties);
+            return Logger.ForContext<TSource>();
         }
 
         /// <summary>

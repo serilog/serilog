@@ -46,34 +46,25 @@ namespace Serilog.Core
             _enrichers = enrichers.ToArray();
         }
 
-        public ILogger ForContext(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
-            var safeEnrichers = (enrichers ?? new ILogEventEnricher[0]).ToList();
-            if (fixedProperties != null && fixedProperties.Length != 0)
-            {
-                safeEnrichers.Add(new FixedPropertyEnricher(fixedProperties));
-            }
-
-            return new Logger(_messageTemplateCache, _minimumLevel, this, safeEnrichers);
+            return new Logger(
+                _messageTemplateCache,
+                _minimumLevel, 
+                this,
+                (enrichers ?? new ILogEventEnricher[0]).ToArray());
         }
 
-        public ILogger ForContext(params LogEventProperty[] fixedProperties)
+        public ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
         {
-            return ForContext(null, fixedProperties);
+            return ForContext(new[] {
+                new FixedPropertyEnricher(
+                    LogEventProperty.For(propertyName, value, destructureObjects)) });
         }
 
-        public ILogger ForContext<TSource>(ILogEventEnricher[] enrichers, params LogEventProperty[] fixedProperties)
+        public ILogger ForContext<TSource>()
         {
-            var oldSize = fixedProperties.Length;
-            // Odd signature - this is non-destructive/pure
-            Array.Resize(ref fixedProperties, oldSize + 1);
-            fixedProperties[oldSize] = LogEventProperty.For(SourceContextPropertyName, typeof(TSource).FullName);
-            return ForContext(enrichers, fixedProperties);
-        }
-
-        public ILogger ForContext<TSource>(params LogEventProperty[] fixedProperties)
-        {
-            return ForContext<TSource>(null, fixedProperties);
+            return ForContext(SourceContextPropertyName, typeof(TSource).FullName);
         }
 
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)

@@ -29,7 +29,7 @@ namespace Harness
             Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
 
-            var context = Log.Logger.ForContext(LogEventProperty.For("MessageId", 567));
+            var context = Log.Logger.ForContext("MessageId", 567);
             try
             {
                 context.Information("Processing a message");

@@ -38,16 +38,15 @@ namespace Serilog.Tests.Core
         [Test]
         public void PropertiesInANestedContextOverrideParentContextValues()
         {
-            var p1 = Some.LogEventProperty();
-            var p2 = LogEventProperty.For(p1.Name, Some.Int());
-            Assert.AreNotEqual(p1.LiteralValue(), p2.LiteralValue());
-
-            var evt = GetLogEvent(l => l.ForContext(p1)
-                                        .ForContext(p2)
+            var name = Some.String();
+            var v1 = Some.Int();
+            var v2 = Some.Int();
+            var evt = GetLogEvent(l => l.ForContext(name, v1)
+                                        .ForContext(name, v2)
                                         .Write(Some.LogEvent()));
 
-            var pActual = evt.Properties[p1.Name];
-            Assert.AreEqual(p2.LiteralValue(), pActual.LiteralValue());
+            var pActual = evt.Properties[name];
+            Assert.AreEqual(v2, pActual.LiteralValue());
         }
 
         static LogEvent GetLogEvent(Action<ILogger> writeAction)
