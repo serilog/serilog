@@ -58,7 +58,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             var name = Some.String();
             var ints = new[]{ Some.Int(), Some.Int() };
-            var value = new LogEventPropertySequenceValue(ints.Select(i => new LogEventPropertyLiteralValue(i)));
+            var value = new SequenceValue(ints.Select(i => new ScalarValue(i)));
             var @event = Some.LogEvent();
             @event.AddOrUpdateProperty(new LogEventProperty(name, value));
 
@@ -74,8 +74,8 @@ namespace Serilog.Tests.Formatting.Json
         public void AStructureSerializesAsAnObject()
         {
             var value = Some.Int();
-            var memberProp = new LogEventProperty(Some.String(), new LogEventPropertyLiteralValue(value));
-            var structure = new LogEventPropertyStructureValue(null, new[] { memberProp });
+            var memberProp = new LogEventProperty(Some.String(), new ScalarValue(value));
+            var structure = new StructureValue(new[] { memberProp });
             var structureProp = new LogEventProperty(Some.String(), structure);
             var @event = Some.LogEvent();
             @event.AddOrUpdateProperty(structureProp);

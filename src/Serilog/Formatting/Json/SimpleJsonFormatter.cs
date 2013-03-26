@@ -45,9 +45,9 @@ namespace Serilog.Formatting.Json
                 { typeof(string), (v, w) => WriteString((string)v, w) },
                 { typeof(DateTime), (v, w) => WriteDateTime((DateTime)v, w) },
                 { typeof(DateTimeOffset), (v, w) => WriteOffset((DateTimeOffset)v, w) },
-                { typeof(LogEventPropertyLiteralValue), (v, w) => WriteLiteral(((LogEventPropertyLiteralValue)v).Value, w) },
-                { typeof(LogEventPropertySequenceValue), (v, w) => WriteSequence(((LogEventPropertySequenceValue)v).Elements, w) },
-                { typeof(LogEventPropertyStructureValue), (v, w) => WriteStructure(((LogEventPropertyStructureValue)v).TypeTag, ((LogEventPropertyStructureValue)v).Properties, w) },
+                { typeof(ScalarValue), (v, w) => WriteLiteral(((ScalarValue)v).Value, w) },
+                { typeof(SequenceValue), (v, w) => WriteSequence(((SequenceValue)v).Elements, w) },
+                { typeof(StructureValue), (v, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
             };
         }
 

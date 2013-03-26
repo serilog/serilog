@@ -19,16 +19,27 @@ using System.Linq;
 
 namespace Serilog.Events
 {
-    public class LogEventPropertySequenceValue : LogEventPropertyValue
+    /// <summary>
+    /// A value represented as and ordered sequence of values.
+    /// </summary>
+    public class SequenceValue : LogEventPropertyValue
     {
         private readonly LogEventPropertyValue[] _elements;
 
-        public LogEventPropertySequenceValue(IEnumerable<LogEventPropertyValue> elements)
+        /// <summary>
+        /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
+        /// </summary>
+        /// <param name="elements">The elements of the sequence.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
         {
             if (elements == null) throw new ArgumentNullException("elements");
             _elements = elements.ToArray();
         }
 
+        /// <summary>
+        /// The elements of the sequence.
+        /// </summary>
         public LogEventPropertyValue[] Elements { get { return _elements; } }
 
         internal override void Render(TextWriter output, string format = null)

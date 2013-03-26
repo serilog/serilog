@@ -6,7 +6,7 @@ namespace Serilog.Tests.Support
     {
         public static object LiteralValue(this LogEventProperty @this)
         {
-            return ((LogEventPropertyLiteralValue)@this.Value).Value;
+            return ((ScalarValue)@this.Value).Value;
         }
     }
 }

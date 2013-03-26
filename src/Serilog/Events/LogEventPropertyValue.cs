@@ -22,6 +22,10 @@ using Serilog.Parsing;
 
 namespace Serilog.Events
 {
+    /// <summary>
+    /// The value associated with a <see cref="LogEventProperty"/>. Divided into scalar,
+    /// sequence and structure values to direct serialization into various formats.
+    /// </summary>
     public abstract class LogEventPropertyValue
     {
         internal abstract void Render(TextWriter output, string format = null);
@@ -35,18 +39,25 @@ namespace Serilog.Events
                 typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan)
             }; 
 
-        internal static LogEventPropertyValue For(object value, Destructuring destructuring)
+        /// <summary>
+        /// Create a property value from a .NET object.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="destructuring">Directs the algorithm for determining how the
+        /// object will be represented (e.g. sclar, sequence, structure).</param>
+        /// <returns></returns>
+        public static LogEventPropertyValue For(object value, Destructuring destructuring)
         {
             if (value == null)
-                return new LogEventPropertyLiteralValue(null);
+                return new ScalarValue(null);
 
             if (destructuring == Destructuring.Stringify)
-                return new LogEventPropertyLiteralValue(value.ToString());
+                return new ScalarValue(value.ToString());
 
             // Known literals
             var valueType = value.GetType();
             if (KnownLiteralTypes.Contains(valueType) || valueType.IsEnum)
-                return new LogEventPropertyLiteralValue(value);
+                return new ScalarValue(value);
 
             // Dictionaries should be treated here, probably as
             // structures...
@@ -54,7 +65,7 @@ namespace Serilog.Events
             var enumerable = value as IEnumerable;
             if (enumerable != null)
             {
-                return new LogEventPropertySequenceValue(
+                return new SequenceValue(
                     enumerable.Cast<object>().Select(o => For(o, destructuring)));
             }
 
@@ -66,12 +77,10 @@ namespace Serilog.Events
                 if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
                     typeTag = null;
 
-                return new LogEventPropertyStructureValue(
-                    typeTag,
-                    GetProperties(value, destructuring));
+                return new StructureValue(GetProperties(value, destructuring), typeTag);
             }
 
-            return new LogEventPropertyLiteralValue(value);
+            return new ScalarValue(value);
         }
 
         private static IEnumerable<LogEventProperty> GetProperties(object value, Destructuring destructuring)

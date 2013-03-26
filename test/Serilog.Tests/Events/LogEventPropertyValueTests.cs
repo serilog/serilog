@@ -11,7 +11,7 @@ namespace Serilog.Tests.Events
         public void AnEnumIsConvertedToALiteralValue()
         {
             var value = LogEventPropertyValue.For(LogEventLevel.Debug, Destructuring.Default);
-            Assert.IsInstanceOf<LogEventPropertyLiteralValue>(value);
+            Assert.IsInstanceOf<ScalarValue>(value);
         }
 
     }

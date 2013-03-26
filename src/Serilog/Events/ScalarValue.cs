@@ -18,15 +18,26 @@ using System.IO;
 
 namespace Serilog.Events
 {
-    public class LogEventPropertyLiteralValue : LogEventPropertyValue
+    /// <summary>
+    /// A property value corresponding to a simple, scalar type.
+    /// </summary>
+    public class ScalarValue : LogEventPropertyValue
     {
         readonly object _value;
 
-        public LogEventPropertyLiteralValue(object value)
+        /// <summary>
+        /// Construct a <see cref="ScalarValue"/> with the specified
+        /// value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        public ScalarValue(object value)
         {
             _value = value;
         }
 
+        /// <summary>
+        /// The value.
+        /// </summary>
         public object Value { get { return _value; } }
 
         internal override void Render(TextWriter output, string format = null)

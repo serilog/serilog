@@ -17,6 +17,9 @@ using System.Collections.Generic;
 
 namespace Serilog.Events
 {
+    /// <summary>
+    /// A log event.
+    /// </summary>
     public class LogEvent
     {
         private readonly DateTimeOffset _timeStamp;
@@ -25,6 +28,14 @@ namespace Serilog.Events
         private readonly string _messageTemplate;
         private readonly Dictionary<string, LogEventProperty> _properties;
 
+        /// <summary>
+        /// Construct a new <seealso cref="LogEvent"/>.
+        /// </summary>
+        /// <param name="timeStamp">The time at which the event occurred.</param>
+        /// <param name="level">The level of the event.</param>
+        /// <param name="exception">An exception associated with the event, or null.</param>
+        /// <param name="messageTemplate">The message template describing the event.</param>
+        /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
         public LogEvent(DateTimeOffset timeStamp, LogEventLevel level, Exception exception, string messageTemplate, IEnumerable<LogEventProperty> properties)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
@@ -38,47 +49,86 @@ namespace Serilog.Events
                 AddOrUpdateProperty(p);
         }
 
+        /// <summary>
+        /// The time at which the event occurred.
+        /// </summary>
         public DateTimeOffset TimeStamp
         {
             get { return _timeStamp; }
         }
 
+        /// <summary>
+        /// The level of the event.
+        /// </summary>
         public LogEventLevel Level
         {
             get { return _level; }
         }
 
+        /// <summary>
+        /// The message template describing the event.
+        /// </summary>
         public string MessageTemplate
         {
             get { return _messageTemplate; }
         }
 
+        /// <summary>
+        /// Properties associated with the event, including those presented in <see cref="LogEvent.MessageTemplate"/>.
+        /// </summary>
         public IReadOnlyDictionary<string, LogEventProperty> Properties
         {
             get { return _properties; }
         }
 
+        /// <summary>
+        /// An exception associated with the event, or null.
+        /// </summary>
         public Exception Exception
         {
             get { return _exception; }
         }
 
-        public void AddOrUpdateProperty(string propertyName, object value)
+        /// <summary>
+        /// Add a property to the event if not already present, otherwise, update its value. 
+        /// </summary>
+        /// <param name="propertyName">The name of the property to add or update.</param>
+        /// <param name="value">The property value.</param>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be stored as a structure; otherwise, unknown types will be rendered as strings.</param>
+        public void AddOrUpdateProperty(string propertyName, object value, bool destructureObjects = false)
         {
-            AddOrUpdateProperty(LogEventProperty.For(propertyName, value));
+            AddOrUpdateProperty(LogEventProperty.For(propertyName, value, destructureObjects));
         }
 
+        /// <summary>
+        /// Add a property to the event if not already present, otherwise, update its value. 
+        /// </summary>
+        /// <param name="property">The property to add or update.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void AddOrUpdateProperty(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException("property");
             _properties[property.Name] = property;
         }
 
-        public void AddPropertyIfAbsent(string propertyName, object value)
+        /// <summary>
+        /// Add a property to the event, if not already present.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to add.</param>
+        /// <param name="value">The property value.</param>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be stored as a structure; otherwise, unknown types will be rendered as strings.</param>
+        public void AddPropertyIfAbsent(string propertyName, object value, bool destructureObjects = false)
         {
             AddPropertyIfAbsent(LogEventProperty.For(propertyName, value));
         }
 
+        /// <summary>
+        /// Add a property to the event if not already present. 
+        /// </summary>
+        /// <param name="property">The property to add.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void AddPropertyIfAbsent(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException("property");
@@ -86,6 +136,11 @@ namespace Serilog.Events
                 _properties.Add(property.Name, property);
         }
 
+        /// <summary>
+        /// Remove a property from the event, if present. Otherwise no action
+        /// is performed.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to remove.</param>
         public void RemovePropertyIfPresent(string propertyName)
         {
             _properties.Remove(propertyName);

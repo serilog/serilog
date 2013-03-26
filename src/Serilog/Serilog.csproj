@@ -74,10 +74,10 @@
     <Compile Include="Sinks\File\FileSink.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
     <Compile Include="Sinks\Trace\DiagnosticTraceSink.cs" />
-    <Compile Include="Events\LogEventPropertyStructureValue.cs" />
-    <Compile Include="Events\LogEventPropertySequenceValue.cs" />
-    <Compile Include="Events\LogEventPropertyLiteralValue.cs" />
-    <Compile Include="Events\LogEventValue.cs" />
+    <Compile Include="Events\StructureValue.cs" />
+    <Compile Include="Events\SequenceValue.cs" />
+    <Compile Include="Events\ScalarValue.cs" />
+    <Compile Include="Events\LogEventPropertyValue.cs" />
     <Compile Include="LoggerConfiguration.cs" />
     <Compile Include="Parsing\Destructuring.cs" />
     <Compile Include="Parsing\LogEventPropertyToken.cs" />

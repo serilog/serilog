@@ -17,10 +17,22 @@ using Serilog.Parsing;
 
 namespace Serilog.Events
 {
+    /// <summary>
+    /// A property associated with a <see cref="LogEvent"/>.
+    /// </summary>
     public class LogEventProperty
     {
         private readonly string _name;
+        private readonly LogEventPropertyValue _value;
 
+        /// <summary>
+        /// Construct a <see cref="LogEventProperty"/> with the specified name and value.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be stored as a structure; otherwise, unknown types will be rendered as strings.</param>
+        /// <returns></returns>
         public static LogEventProperty For(string name, object value, bool destructureObjects = false)
         {
             return new LogEventProperty(name, LogEventPropertyValue.For(value,
@@ -29,22 +41,44 @@ namespace Serilog.Events
                         Destructuring.Default));
         }
 
+        /// <summary>
+        /// Construct a <see cref="LogEventProperty"/> with the specified name and value.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public LogEventProperty(string name, LogEventPropertyValue value)
         {
+            if (value == null) throw new ArgumentNullException("value");
             if (!IsValidName(name))
                 throw new ArgumentException("Property name is not valid.");
 
             _name = name;
-            Value = value;
+            _value = value;
         }
 
+        /// <summary>
+        /// The name of the property.
+        /// </summary>
         public string Name
         {
             get { return _name; }
         }
 
-        public LogEventPropertyValue Value { get; set; }
+        /// <summary>
+        /// The value of the property.
+        /// </summary>
+        public LogEventPropertyValue Value
+        {
+            get { return _value; }
+        }
 
+        /// <summary>
+        /// Test <paramref name="name" /> to determine if it is a valid property name.
+        /// </summary>
+        /// <param name="name">The name to check.</param>
+        /// <returns>True if the name is valid; otherwise, false.</returns>
         public static bool IsValidName(string name)
         {
             return !string.IsNullOrWhiteSpace(name);

@@ -19,20 +19,37 @@ using System.Linq;
 
 namespace Serilog.Events
 {
-    public class LogEventPropertyStructureValue : LogEventPropertyValue
+    /// <summary>
+    /// A value represented as a collection of name-value properties.
+    /// </summary>
+    public class StructureValue : LogEventPropertyValue
     {
         private readonly string _typeTag;
         private readonly LogEventProperty[] _properties;
 
-        public LogEventPropertyStructureValue(string typeTag, IEnumerable<LogEventProperty> properties)
+        /// <summary>
+        /// Construct a <see cref="StructureValue"/> with the provided properties.
+        /// </summary>
+        /// <param name="typeTag">Optionally, a piece of metadata describing the "type" of the
+        /// structure.</param>
+        /// <param name="properties">The properties of the structure.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null)
         {
             if (properties == null) throw new ArgumentNullException("properties");
             _typeTag = typeTag;
             _properties = properties.ToArray();
         }
 
+        /// <summary>
+        /// A piece of metadata describing the "type" of the
+        /// structure, or null.
+        /// </summary>
         public string TypeTag { get { return _typeTag; } }
 
+        /// <summary>
+        /// The properties of the structure.
+        /// </summary>
         public LogEventProperty[] Properties { get { return _properties; } }
 
         internal override void Render(TextWriter output, string format = null)
