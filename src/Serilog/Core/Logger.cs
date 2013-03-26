@@ -24,11 +24,11 @@ namespace Serilog.Core
     {
         public const string SourceContextPropertyName = "SourceContext";
 
-        private readonly IMessageTemplateCache _messageTemplateCache;
-        private readonly LogEventLevel _minimumLevel;
-        private readonly ILogEventSink _sink;
+        readonly IMessageTemplateCache _messageTemplateCache;
+        readonly LogEventLevel _minimumLevel;
+        readonly ILogEventSink _sink;
         readonly Action _dispose;
-        private readonly ILogEventEnricher[] _enrichers;
+        readonly ILogEventEnricher[] _enrichers;
 
         public Logger(
             IMessageTemplateCache messageTemplateCache,
@@ -124,7 +124,7 @@ namespace Serilog.Core
                 }
             }
 
-            _sink.Write(logEvent);
+            _sink.Emit(logEvent);
         }
 
 
@@ -192,6 +192,11 @@ namespace Serilog.Core
         {
             if (_dispose != null)
                 _dispose();
+        }
+
+        public void Emit(LogEvent logEvent)
+        {
+            Write(logEvent);
         }
     }
 }

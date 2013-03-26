@@ -24,6 +24,7 @@ namespace Serilog.Sinks.File
     {
         readonly TextWriter _output;
         readonly ITextFormatter _textFormatter;
+        readonly object _syncRoot = new object();
 
         public FileSink(string path, ITextFormatter textFormatter)
         {
@@ -33,11 +34,14 @@ namespace Serilog.Sinks.File
             _output = new StreamWriter(System.IO.File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read));
         }
 
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            _textFormatter.Format(logEvent, _output);
-            _output.Flush();
+            lock (_syncRoot)
+            {
+                _textFormatter.Format(logEvent, _output);
+                _output.Flush();
+            }
         }
 
         public void Dispose()

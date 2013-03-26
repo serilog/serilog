@@ -30,7 +30,7 @@ namespace Serilog.Sinks.Trace
             _textFormatter = textFormatter;
         }
 
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             var sr = new StringWriter();

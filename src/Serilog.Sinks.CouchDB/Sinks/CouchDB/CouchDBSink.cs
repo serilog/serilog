@@ -123,11 +123,11 @@ namespace Serilog.Sinks.CouchDB
         }
 
         /// <summary>
-        /// Write the provided log event to the sink.
+        /// Emit the provided log event to the sink.
         /// </summary>
-        /// <param name="logEvent">Log event to write.</param>
+        /// <param name="logEvent">Log event to emit.</param>
         /// <exception cref="ArgumentNullException">The event is null.</exception>
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             if (!_unloading)

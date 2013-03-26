@@ -45,14 +45,21 @@ namespace Serilog.Tests.Support
             return Serilog.Events.LogEventProperty.For(String(), Int());
         }
 
-        public static string NonexistentFilePath()
+        public static string NonexistentTempFilePath()
         {
             return Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".txt");
         }
 
-        public static string ExistentFilePath()
+        public static string TempFilePath()
         {
             return Path.GetTempFileName();
+        }
+
+        public static string TempFolderPath()
+        {
+            var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(dir);
+            return dir;
         }
     }
 }

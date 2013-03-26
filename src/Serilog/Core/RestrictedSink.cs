@@ -29,14 +29,14 @@ namespace Serilog.Core
             _restrictedMinimumLevel = restrictedMinimumLevel;
         }
 
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
 
             if (logEvent.Level < _restrictedMinimumLevel)
                 return;
 
-            _sink.Write(logEvent);
+            _sink.Emit(logEvent);
         }
     }
 }

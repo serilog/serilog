@@ -22,6 +22,7 @@ namespace Serilog.Sinks.SystemConsole
     class ConsoleSink : ILogEventSink
     {
         readonly ITextFormatter _textFormatter;
+        readonly object _syncRoot = new object();
 
         public ConsoleSink(ITextFormatter textFormatter)
         {
@@ -29,10 +30,13 @@ namespace Serilog.Sinks.SystemConsole
             _textFormatter = textFormatter;
         }
 
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            _textFormatter.Format(logEvent, Console.Out);
+            lock (_syncRoot)
+            {
+                _textFormatter.Format(logEvent, Console.Out);
+            }
         }
     }
 }

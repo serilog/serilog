@@ -18,7 +18,7 @@ namespace Serilog.Tests.Core
                 throw new Exception("No go, pal.");
             }) });
 
-            s.Write(Some.LogEvent());
+            s.Emit(Some.LogEvent());
 
             Assert.IsTrue(thrown);
         }
@@ -34,7 +34,7 @@ namespace Serilog.Tests.Core
                 new DelegatingSink(le => called2 = true) 
             });
 
-            s.Write(Some.LogEvent());
+            s.Emit(Some.LogEvent());
 
             Assert.IsTrue(called1 && called2);
         }

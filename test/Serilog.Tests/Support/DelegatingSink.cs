@@ -14,7 +14,7 @@ namespace Serilog.Tests.Support
             _write = write;
         }
 
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             _write(logEvent);
         }

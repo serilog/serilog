@@ -29,17 +29,17 @@ namespace Serilog.Core
             _sinks = sinks;
         }
 
-        public void Write(LogEvent logEvent)
+        public void Emit(LogEvent logEvent)
         {
             foreach (var sink in _sinks)
             {
                 try
                 {
-                    sink.Write(logEvent);
+                    sink.Emit(logEvent);
                 }
                 catch (Exception ex)
                 {
-                    SelfLog.WriteLine("Caught exception {0} while writing to sink {1}.", ex, sink);
+                    SelfLog.WriteLine("Caught exception {0} while emitting to sink {1}.", ex, sink);
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace Serilog.Tests
         {
             public bool IsDisposed { get; set; }
 
-            public void Write(LogEvent logEvent) { }
+            public void Emit(LogEvent logEvent) { }
 
             public void Dispose()
             {

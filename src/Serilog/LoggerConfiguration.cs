@@ -20,6 +20,7 @@ using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.File;
+using Serilog.Sinks.RollingFile;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.Trace;
 
@@ -150,6 +151,27 @@ namespace Serilog
             var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
             return WithSink(new FileSink(path, formatter), restrictedToMinimumLevel);
         }
+        /// <summary>
+        /// Write log events to a series of files. Each file will be named according to
+        /// the date of the first log entry written to it. Only simple date-based rolling is
+        /// currently supported.
+        /// </summary>
+        /// <param name="pathFormat">.NET format string describing the location of the log files,
+        /// with {0} in the place of the file date. E.g. "Logs\myapp-{0}.log" will result in log
+        /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration WithRollingFileSink(
+            string pathFormat,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            string outputTemplate = DefaultOutputTemplate)
+        {
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
+            return WithSink(new RollingFileSink(pathFormat, formatter), restrictedToMinimumLevel);
+        }
 
         /// <summary>
         /// Write log events to the <see cref="System.Diagnostics.Trace"/>.
@@ -174,7 +196,7 @@ namespace Serilog
         /// <param name="value">The property value to add.</param>
         /// <param name="destructureObjects">If true, objects of unknown type will be logged as structures; otherwise they will be converted using <see cref="Object.ToString"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration WithFixedProperty(string propertyName, object value, bool destructureObjects = false)
+        public LoggerConfiguration EnrichedWithProperty(string propertyName, object value, bool destructureObjects = false)
         {
             return EnrichedBy(new FixedPropertyEnricher(new[] { LogEventProperty.For(propertyName, value, destructureObjects) }));
         }

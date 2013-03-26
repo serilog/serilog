@@ -72,6 +72,7 @@
     <Compile Include="Formatting\Display\LogEventPropertyMessageValue.cs" />
     <Compile Include="Formatting\Display\OutputProperties.cs" />
     <Compile Include="Sinks\File\FileSink.cs" />
+    <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
     <Compile Include="Sinks\Trace\DiagnosticTraceSink.cs" />
     <Compile Include="Events\LogEventPropertyStructureValue.cs" />
     <Compile Include="Events\LogEventPropertySequenceValue.cs" />

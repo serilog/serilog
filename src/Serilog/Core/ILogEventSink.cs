@@ -22,9 +22,9 @@ namespace Serilog.Core
     public interface ILogEventSink
     {
         /// <summary>
-        /// Write the provided log event to the sink.
+        /// Emit the provided log event to the sink.
         /// </summary>
         /// <param name="logEvent">The log event to write.</param>
-        void Write(LogEvent logEvent);
+        void Emit(LogEvent logEvent);
     }
 }

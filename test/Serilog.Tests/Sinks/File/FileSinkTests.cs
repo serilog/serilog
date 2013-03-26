@@ -13,14 +13,14 @@ namespace Serilog.Tests.Sinks.File
         [Test]
         public void FileIsWrittenIfNonexistent()
         {
-            var path = Some.NonexistentFilePath();
+            var path = Some.NonexistentTempFilePath();
             TestLoggingAndDelete(path);
         }
 
         [Test]
         public void FileIsAppendedToWhenAlreadyCreated()
         {
-            var path = Some.ExistentFilePath();
+            var path = Some.TempFilePath();
             TestLoggingAndDelete(path);
         }
 

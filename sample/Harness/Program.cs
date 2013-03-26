@@ -13,8 +13,8 @@ namespace Harness
                 .WithConsoleSink(
                     outputTemplate: "{TimeStamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{Exception:l}{NewLine:l}")
                 .WithDumpFileSink("Dumps\\" + DateTime.Now.Ticks + ".slog")
-                .WithFixedProperty("App", "Test Harness")
                 .WithDiagnosticTraceSink()
+                .EnrichedWithProperty("App", "Test Harness")
                 .EnrichedBy(new ThreadIdEnricher(),
                             new HostNameEnricher())
                 .CreateLogger();
