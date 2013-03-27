@@ -17,8 +17,16 @@ using Serilog.Events;
 
 namespace Serilog.Formatting
 {
+    /// <summary>
+    /// Formats log events in a textual representation.
+    /// </summary>
     public interface ITextFormatter
     {
+        /// <summary>
+        /// Format the log event into the output.
+        /// </summary>
+        /// <param name="logEvent">The event to format.</param>
+        /// <param name="output">The output.</param>
         void Format(LogEvent logEvent, TextWriter output);
     }
 }

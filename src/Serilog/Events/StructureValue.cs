@@ -52,8 +52,17 @@ namespace Serilog.Events
         /// </summary>
         public LogEventProperty[] Properties { get { return _properties; } }
 
-        internal override void Render(TextWriter output, string format = null)
+        /// <summary>
+        /// Render the value to the output.
+        /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
+            if (output == null) throw new ArgumentNullException("output");
+
             if (_typeTag != null)
             {
                 output.Write(_typeTag);

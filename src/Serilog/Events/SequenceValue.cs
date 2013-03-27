@@ -42,20 +42,27 @@ namespace Serilog.Events
         /// </summary>
         public LogEventPropertyValue[] Elements { get { return _elements; } }
 
-        internal override void Render(TextWriter output, string format = null)
+        /// <summary>
+        /// Render the value to the output.
+        /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            // Format string to limit length?
+            if (output == null) throw new ArgumentNullException("output");
 
             output.Write('[');
             var allButLast = _elements.Length - 1;
             for (var i = 0; i < allButLast; ++i )
             {
-                _elements[i].Render(output);
+                _elements[i].Render(output, format, formatProvider);
                 output.Write(", ");
             }
 
             if (_elements.Length > 0)
-                _elements[_elements.Length - 1].Render(output);
+                _elements[_elements.Length - 1].Render(output, format, formatProvider);
 
             output.Write(']');
         }

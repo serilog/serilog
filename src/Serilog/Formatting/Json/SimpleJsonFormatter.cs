@@ -20,11 +20,20 @@ using Serilog.Events;
 
 namespace Serilog.Formatting.Json
 {
+    /// <summary>
+    /// Formats log events in a simple JSON structure.
+    /// </summary>
     public class SimpleJsonFormatter : ITextFormatter
     {
         readonly bool _omitEnclosingObject;
         readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
 
+        /// <summary>
+        /// Construct a <see cref="SimpleJsonFormatter"/>.
+        /// </summary>
+        /// <param name="omitEnclosingObject">If true, the properties of the event will be written to
+        /// the output without enclosing braces. Otherwise, if false, each event will be written as a well-formed
+        /// JSON object.</param>
         public SimpleJsonFormatter(bool omitEnclosingObject = false)
         {
             _omitEnclosingObject = omitEnclosingObject;
@@ -51,6 +60,11 @@ namespace Serilog.Formatting.Json
             };
         }
 
+        /// <summary>
+        /// Format the log event into the output.
+        /// </summary>
+        /// <param name="logEvent">The event to format.</param>
+        /// <param name="output">The output.</param>
         public void Format(LogEvent logEvent, TextWriter output)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");

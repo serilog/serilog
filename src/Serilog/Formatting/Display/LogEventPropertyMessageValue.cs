@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Serilog.Core;
@@ -30,7 +31,7 @@ namespace Serilog.Formatting.Display
             _properties = properties;
         }
 
-        internal override void Render(TextWriter output, string format = null)
+        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             _template.Render(_properties, output);
         }

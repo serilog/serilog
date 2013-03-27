@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Globalization;
 using System.IO;
 
 namespace Serilog.Events
@@ -40,8 +39,17 @@ namespace Serilog.Events
         /// </summary>
         public object Value { get { return _value; } }
 
-        internal override void Render(TextWriter output, string format = null)
+        /// <summary>
+        /// Render the value to the output.
+        /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
+            if (output == null) throw new ArgumentNullException("output");
+
             if (_value == null)
             {
                 output.Write("null");
@@ -67,7 +75,7 @@ namespace Serilog.Events
                     var f = _value as IFormattable;
                     if (f != null)
                     {
-                        output.Write(f.ToString(format, CultureInfo.InvariantCulture));
+                        output.Write(f.ToString(format, formatProvider));
                     }
                     else
                     {
