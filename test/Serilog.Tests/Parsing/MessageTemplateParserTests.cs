@@ -39,7 +39,7 @@ namespace Serilog.Tests.Parsing
         public void AMessageWithPropertyOnlyIsASinglePropertyToken()
         {
             AssertParsedAs("{Hello}",
-                new LogEventPropertyToken("Hello", "{Hello}"));
+                new PropertyToken("Hello", "{Hello}"));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace Serilog.Tests.Parsing
         [Test]
         public void AnIntegerPropertyNameIsParsedAsPositionalProperty()
         {
-            var parsed = (LogEventPropertyToken) Parse("{0}").Single();
+            var parsed = (PropertyToken) Parse("{0}").Single();
             Assert.AreEqual("0", parsed.PropertyName);
             Assert.IsTrue(parsed.IsPositional);
         }
@@ -81,7 +81,7 @@ namespace Serilog.Tests.Parsing
         [Test]
         public void FormatsCanContainColons()
         {
-            var parsed = (LogEventPropertyToken) Parse("{Time:hh:mm}").Single();
+            var parsed = (PropertyToken) Parse("{Time:hh:mm}").Single();
             Assert.AreEqual("hh:mm", parsed.Format);
         }
     }

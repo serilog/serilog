@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Serilog.Events
@@ -75,7 +76,7 @@ namespace Serilog.Events
                     var f = _value as IFormattable;
                     if (f != null)
                     {
-                        output.Write(f.ToString(format, formatProvider));
+                        output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
                     }
                     else
                     {

@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\Serilog.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\Serilog.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -80,7 +80,7 @@
     <Compile Include="Events\LogEventPropertyValue.cs" />
     <Compile Include="LoggerConfiguration.cs" />
     <Compile Include="Parsing\Destructuring.cs" />
-    <Compile Include="Parsing\LogEventPropertyToken.cs" />
+    <Compile Include="Parsing\PropertyToken.cs" />
     <Compile Include="Parsing\MessageTemplateToken.cs" />
     <Compile Include="Parsing\MessageTemplateParser.cs" />
     <Compile Include="Parsing\TextToken.cs" />

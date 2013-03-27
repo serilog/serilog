@@ -115,7 +115,7 @@ namespace Serilog.Parsing
                         return new TextToken(rawText);
             }
 
-            return new LogEventPropertyToken(
+            return new PropertyToken(
                 propertyName,
                 rawText,
                 format,

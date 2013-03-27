@@ -1,6 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System.Globalization;
+using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Events
 {
@@ -14,5 +16,13 @@ namespace Serilog.Tests.Events
             Assert.IsInstanceOf<ScalarValue>(value);
         }
 
+        [Test]
+        public void AScalarValueToStringRendersTheValue()
+        {
+            var num = Some.Int();
+            var value = LogEventPropertyValue.For(num, Destructuring.Default);
+            var str = value.ToString();
+            Assert.AreEqual(num.ToString(CultureInfo.InvariantCulture), str);
+        }
     }
 }

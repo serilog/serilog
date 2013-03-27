@@ -55,9 +55,9 @@ namespace Serilog.Core
         {
             var pcount = 0;
             var pmax = -1;
-            List<Tuple<int, LogEventPropertyToken>> positionalsInTemplate = null;
+            List<Tuple<int, PropertyToken>> positionalsInTemplate = null;
 
-            foreach (var propertyToken in _tokens.OfType<LogEventPropertyToken>())
+            foreach (var propertyToken in _tokens.OfType<PropertyToken>())
             {
                 int position;
                 if (!propertyToken.TryGetPositionalValue(out position))
@@ -65,7 +65,7 @@ namespace Serilog.Core
 
                 ++pcount;
                 pmax = Math.Max(pmax, position);
-                positionalsInTemplate = positionalsInTemplate ?? new List<Tuple<int, LogEventPropertyToken>>(messageTemplateParameters.Length);
+                positionalsInTemplate = positionalsInTemplate ?? new List<Tuple<int, PropertyToken>>(messageTemplateParameters.Length);
                 positionalsInTemplate.Add(Tuple.Create(position, propertyToken));
             }
 
@@ -85,7 +85,7 @@ namespace Serilog.Core
             var mismatchWarningIssued = false;
 
             var next = 0;
-            foreach (var propertyToken in _tokens.OfType<LogEventPropertyToken>())
+            foreach (var propertyToken in _tokens.OfType<PropertyToken>())
             {
                 if (propertyToken.IsPositional && !mismatchWarningIssued)
                 {
@@ -113,7 +113,7 @@ namespace Serilog.Core
                 SelfLog.WriteLine("Too many parameters provided for message template: {0}.", this);
         }
 
-        static LogEventProperty ConstructProperty(LogEventPropertyToken propertyToken, object value)
+        static LogEventProperty ConstructProperty(PropertyToken propertyToken, object value)
         {
             return new LogEventProperty(
                         propertyToken.PropertyName,

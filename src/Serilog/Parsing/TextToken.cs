@@ -19,33 +19,67 @@ using Serilog.Events;
 
 namespace Serilog.Parsing
 {
+    /// <summary>
+    /// A message template token representing literal text.
+    /// </summary>
     public class TextToken : MessageTemplateToken
     {
         private readonly string _text;
 
+        /// <summary>
+        /// Construct a <see cref="TextToken"/>.
+        /// </summary>
+        /// <param name="text">The text of the token.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TextToken(string text)
         {
             if (text == null) throw new ArgumentNullException("text");
             _text = text;
         }
 
+        /// <summary>
+        /// Render the token to the output.
+        /// </summary>
+        /// <param name="properties">Properties that may be represented by the token.</param>
+        /// <param name="output">Output for the rendered string.</param>
         public override void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output)
         {
             if (output == null) throw new ArgumentNullException("output");
             output.Write(_text);
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified object  is equal to the current object; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
         public override bool Equals(object obj)
         {
             var tt = obj as TextToken;
             return tt != null && tt._text == _text;
         }
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
             return _text.GetHashCode();
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
             return _text;

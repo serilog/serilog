@@ -24,7 +24,7 @@ namespace Serilog.Parsing
     /// <summary>
     /// A message template token representing a log event property.
     /// </summary>
-    public class LogEventPropertyToken : MessageTemplateToken
+    public class PropertyToken : MessageTemplateToken
     {
         private readonly string _propertyName;
         private readonly string _format;
@@ -32,14 +32,14 @@ namespace Serilog.Parsing
         private readonly string _rawText;
 
         /// <summary>
-        /// Construct a <see cref="LogEventPropertyToken"/>.
+        /// Construct a <see cref="PropertyToken"/>.
         /// </summary>
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="rawText">The token as it appears in the message template.</param>
         /// <param name="format">The format applied to the property, if any.</param>
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public LogEventPropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default)
+        public PropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
             if (rawText == null) throw new ArgumentNullException("rawText");
@@ -109,7 +109,7 @@ namespace Serilog.Parsing
         /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
         public override bool Equals(object obj)
         {
-            var pt = obj as LogEventPropertyToken;
+            var pt = obj as PropertyToken;
             return pt != null &&
                 pt._destructuring == _destructuring &&
                 pt._format == _format &&
