@@ -18,8 +18,16 @@ using Serilog.Events;
 
 namespace Serilog.Parsing
 {
+    /// <summary>
+    /// An element parsed from a message template string.
+    /// </summary>
     public abstract class MessageTemplateToken
     {
+        /// <summary>
+        /// Render the token to the output.
+        /// </summary>
+        /// <param name="properties">Properties that may be represented by the token.</param>
+        /// <param name="output">Output for the rendered string.</param>
         public abstract void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output);
     }
 }

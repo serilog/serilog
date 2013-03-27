@@ -21,6 +21,9 @@ using Serilog.Events;
 
 namespace Serilog.Parsing
 {
+    /// <summary>
+    /// A message template token representing a log event property.
+    /// </summary>
     public class LogEventPropertyToken : MessageTemplateToken
     {
         private readonly string _propertyName;
@@ -28,6 +31,14 @@ namespace Serilog.Parsing
         private readonly Destructuring _destructuring;
         private readonly string _rawText;
 
+        /// <summary>
+        /// Construct a <see cref="LogEventPropertyToken"/>.
+        /// </summary>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="rawText">The token as it appears in the message template.</param>
+        /// <param name="format">The format applied to the property, if any.</param>
+        /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public LogEventPropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
@@ -38,6 +49,11 @@ namespace Serilog.Parsing
             _rawText = rawText;
         }
 
+        /// <summary>
+        /// Render the token to the output.
+        /// </summary>
+        /// <param name="properties">Properties that may be represented by the token.</param>
+        /// <param name="output">Output for the rendered string.</param>
         public override void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output)
         {
             if (properties == null) throw new ArgumentNullException("properties");
@@ -49,17 +65,34 @@ namespace Serilog.Parsing
                 output.Write(_rawText);
         }
 
+        /// <summary>
+        /// The property name.
+        /// </summary>
         public string PropertyName { get { return _propertyName; } }
 
+        /// <summary>
+        /// Destructuring strategy applied to the property.
+        /// </summary>
         public Destructuring Destructuring { get { return _destructuring; } }
 
+        /// <summary>
+        /// Format applied to the property.
+        /// </summary>
         public string Format { get { return _format; } }
         
+        /// <summary>
+        /// True if the property name is a positional index; otherwise, false.
+        /// </summary>
         public bool IsPositional
         {
             get { return _propertyName.All(char.IsNumber); }
         }
 
+        /// <summary>
+        /// Try to get the integer value represented by the property name.
+        /// </summary>
+        /// <param name="position">The integer value, if present.</param>
+        /// <returns>True if the property is positional, otherwise false.</returns>
         public bool TryGetPositionalValue(out int position)
         {
             return
@@ -67,6 +100,13 @@ namespace Serilog.Parsing
                 position >= 0;
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified object  is equal to the current object; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
         public override bool Equals(object obj)
         {
             var pt = obj as LogEventPropertyToken;
@@ -77,11 +117,25 @@ namespace Serilog.Parsing
                 pt._rawText == _rawText;
         }
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
             return _propertyName.GetHashCode();
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
             return _rawText;
