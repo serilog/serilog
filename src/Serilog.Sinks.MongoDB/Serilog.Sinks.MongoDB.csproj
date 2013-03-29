@@ -53,7 +53,7 @@
     <Compile Include="Sinks\MongoDB\MongoDBSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Serilog\Serilog.csproj">
+    <ProjectReference Include="..\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>
     </ProjectReference>

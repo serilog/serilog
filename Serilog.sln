@@ -36,10 +36,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "sample\Demo\Demo.cs
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{ECA6C3FE-609A-4BF2-A01E-54477FBB7839}"
 	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MongoDB", "Serilog.Sinks.MongoDB\Serilog.Sinks.MongoDB.csproj", "{8164BDE4-48FE-4A81-B33E-FEE348904BB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MongoDB", "src\Serilog.Sinks.MongoDB\Serilog.Sinks.MongoDB.csproj", "{8164BDE4-48FE-4A81-B33E-FEE348904BB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
