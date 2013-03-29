@@ -18,6 +18,7 @@ namespace Demo
             Log.Logger = new LoggerConfiguration()
                 .WithConsoleSink()
                 .WithCouchDBSink("http://localhost:5984/log/")
+                .WithMongoDBSink("mongodb://localhost/logdb")
                 .CreateLogger();
 
             ProcessInput(new Position { Lat = 24.7, Long = 132.2 });
