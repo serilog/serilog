@@ -11,6 +11,8 @@
     <iconUrl>http://jobs.mongodb.org/files/logos/889002/889002.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Official 10gen supported C# driver for MongoDB</description>
+    <releaseNotes />
+    <copyright />
     <language>en-US</language>
     <tags>mongodb mongo nosql</tags>
     <references>

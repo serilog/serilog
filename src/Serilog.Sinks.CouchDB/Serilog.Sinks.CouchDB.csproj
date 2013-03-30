@@ -46,7 +46,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoggerConfigurationHttpExtensions.cs" />
+    <Compile Include="LoggerConfigurationCouchDBExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\CouchDB\CouchDBSink.cs" />
   </ItemGroup>

@@ -102,7 +102,7 @@ namespace Serilog.Formatting.Json
 
             var delim = "";
             if (typeTag != null)
-                WriteJsonProperty("typeTag", typeTag, ref delim, output);
+                WriteJsonProperty("_typeTag", typeTag, ref delim, output);
             
             foreach (var property in properties)
                 WriteJsonProperty(property.Name, property.Value, ref delim, output);

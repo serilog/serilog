@@ -16,5 +16,8 @@
             <dependency id="Serilog" />
         </dependencies>
     </metadata>
-    <files />
+    <files>
+      <file src="src\Serilog.Sinks.MongoDB\bin\Release\Serilog.Sinks.MongoDB.dll" target="lib\net45" />
+      <file src="src\Serilog.Sinks.MongoDB\bin\Release\Serilog.Sinks.MongoDB.xml" target="lib\net45" />
+    </files>
 </package>
