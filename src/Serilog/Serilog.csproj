@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\FilteringSink.cs" />
+    <Compile Include="Core\ILogEventFilter.cs" />
     <Compile Include="Core\SafeAggregateSink.cs" />
     <Compile Include="Core\RestrictedSink.cs" />
     <Compile Include="Core\FixedPropertyEnricher.cs" />

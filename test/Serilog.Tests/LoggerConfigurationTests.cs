@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Tests.Support;
 
 namespace Serilog.Tests
 {
@@ -43,6 +45,25 @@ namespace Serilog.Tests
 
             logger.Dispose();
             Assert.IsFalse(sink.IsDisposed);
+        }
+
+        [Test]
+        public void AFilterPreventsMatchedEventsFromPassingToTheSink()
+        {
+            var excluded = Some.LogEvent();
+            var included = Some.LogEvent();
+
+            var filter = new DelegateFilter(e => e.MessageTemplate != excluded.MessageTemplate);
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+            var logger = new LoggerConfiguration()
+                .WithSink(sink)
+                .FilteredBy(filter)
+                .CreateLogger();
+            logger.Write(included);
+            logger.Write(excluded);
+            Assert.AreEqual(1, events.Count);
+            Assert.That(events.Contains(included));
         }
     }
 }

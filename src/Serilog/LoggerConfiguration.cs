@@ -35,6 +35,7 @@ namespace Serilog
 
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
+        readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly IMessageTemplateCache _parsedMessageTemplateCache = new MessageTemplateCache();
 
         LogEventLevel _minimumLevel = LogEventLevel.Information;
@@ -119,7 +120,12 @@ namespace Serilog
                     disp.Dispose();
             };
 
-            return new Logger(_parsedMessageTemplateCache, _minimumLevel, new SafeAggregateSink(_logEventSinks), _enrichers, dispose);
+            var sink = new SafeAggregateSink(_logEventSinks);
+            
+            if (_filters.Any())
+                sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
+
+            return new Logger(_parsedMessageTemplateCache, _minimumLevel, sink, _enrichers, dispose);
         }
 
         /// <summary>
@@ -199,6 +205,18 @@ namespace Serilog
         public LoggerConfiguration EnrichedWithProperty(string propertyName, object value, bool destructureObjects = false)
         {
             return EnrichedBy(new FixedPropertyEnricher(LogEventProperty.For(propertyName, value, destructureObjects)));
+        }
+
+        /// <summary>
+        /// Filter out log events from the stream based on the provided filter.
+        /// </summary>
+        /// <param name="filter">The filter to apply.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration FilteredBy(ILogEventFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException("filter");
+            _filters.Add(filter);
+            return this;
         }
     }
 }
