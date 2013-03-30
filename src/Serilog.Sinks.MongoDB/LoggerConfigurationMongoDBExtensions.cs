@@ -21,7 +21,7 @@ namespace Serilog
     /// <summary>
     /// Adds the WithCouchDBSink() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public static class LoggerConfigurationHttpExtensions
+    public static class LoggerConfigurationMongoDBExtensions
     {
         /// <summary>
         /// Adds a sink that writes log events as documents to a MongoDb database.
