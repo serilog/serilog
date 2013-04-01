@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -23,6 +24,15 @@ namespace Serilog.Tests.Events
             var value = LogEventPropertyValue.For(num, Destructuring.Default);
             var str = value.ToString();
             Assert.AreEqual(num.ToString(CultureInfo.InvariantCulture), str);
+        }
+
+        [Test]
+        public void WhenDestructuringAKnownLiteralTypeIsScalar()
+        {
+            var guid = Guid.NewGuid();
+            var value = LogEventPropertyValue.For(guid, Destructuring.Destructure);
+            var str = value.ToString();
+            Assert.AreEqual(guid.ToString(), str);
         }
     }
 }

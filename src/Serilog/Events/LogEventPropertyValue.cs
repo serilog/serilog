@@ -34,7 +34,7 @@ namespace Serilog.Events
                 typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
                     typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
                 typeof(string),
-                typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan)
+                typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan), typeof(Guid), typeof(Uri)
             };
 
         /// <summary>
