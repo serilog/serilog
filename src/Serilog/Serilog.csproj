@@ -63,7 +63,6 @@
     <Compile Include="Core\SilentLogger.cs" />
     <Compile Include="Debugging\SelfLog.cs" />
     <Compile Include="Core\ILogEventEnricher.cs" />
-    <Compile Include="LoggerExtensions.cs" />
     <Compile Include="Parameters\ParameterMatcher.cs" />
     <Compile Include="Formatting\ITextFormatter.cs" />
     <Compile Include="Formatting\Display\MessageTemplateDisplayFormatter.cs" />
