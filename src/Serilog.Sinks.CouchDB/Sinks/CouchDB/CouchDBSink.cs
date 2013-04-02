@@ -32,7 +32,6 @@ namespace Serilog.Sinks.CouchDB
     /// </summary>
     public class CouchDBSink : ILogEventSink, IDisposable
     {
-        readonly IMessageTemplateCache _parsedTemplateCache;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly Timer _timer;
         readonly HttpClient _httpClient;
@@ -47,12 +46,9 @@ namespace Serilog.Sinks.CouchDB
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
-        /// <param name="parsedTemplateCache">Cache for parsed templates.</param>
-        public CouchDBSink(string databaseUrl, IMessageTemplateCache parsedTemplateCache)
+        public CouchDBSink(string databaseUrl)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
-            if (parsedTemplateCache == null) throw new ArgumentNullException("parsedTemplateCache");
-            _parsedTemplateCache = parsedTemplateCache;
             _queue = new ConcurrentQueue<LogEvent>();
             _httpClient = new HttpClient { BaseAddress = new Uri(databaseUrl) };
             _timer = new Timer(async s => await OnTick());
@@ -96,7 +92,7 @@ namespace Serilog.Sinks.CouchDB
             {
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                var renderedMessage = _parsedTemplateCache.GetParsedTemplate(logEvent.MessageTemplate).Render(logEvent.Properties);
+                var renderedMessage = logEvent.RenderedMessage;
                 payload.Write(",\"UtcTimeStamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
                     logEvent.TimeStamp.ToUniversalTime().DateTime,
                     renderedMessage);

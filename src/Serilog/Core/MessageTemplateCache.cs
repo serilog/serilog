@@ -14,16 +14,22 @@
 
 using System;
 using System.Collections.Concurrent;
-using Serilog.Parsing;
 
 namespace Serilog.Core
 {
-    class MessageTemplateCache : IMessageTemplateCache
+    class MessageTemplateCache : IMessageTemplateParser
     {
+        readonly IMessageTemplateParser _innerParser;
         readonly ConcurrentDictionary<string, MessageTemplate> _templates = new ConcurrentDictionary<string,MessageTemplate>();
         const int MaxCacheItems = 1000;
 
-        public MessageTemplate GetParsedTemplate(string messageTemplate)
+        public MessageTemplateCache(IMessageTemplateParser innerParser)
+        {
+            if (innerParser == null) throw new ArgumentNullException("innerParser");
+            _innerParser = innerParser;
+        }
+
+        public MessageTemplate Parse(string messageTemplate)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
             
@@ -34,16 +40,11 @@ namespace Serilog.Core
             {
                 MessageTemplate result;
                 if (!_templates.TryGetValue(messageTemplate, out result))
-                    result = Parse(messageTemplate);
+                    result = _innerParser.Parse(messageTemplate);
                 return result;
             }
 
-            return _templates.GetOrAdd(messageTemplate, Parse);
-        }
-
-        static MessageTemplate Parse(string messageTemplate)
-        {
-            return new MessageTemplate(MessageTemplateParser.Parse(messageTemplate));
+            return _templates.GetOrAdd(messageTemplate, _innerParser.Parse);
         }
     }
 }

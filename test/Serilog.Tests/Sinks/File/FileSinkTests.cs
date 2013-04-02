@@ -34,7 +34,7 @@ namespace Serilog.Tests.Sinks.File
                     .WithFileSink(path)
                     .CreateLogger();
 
-                var message = Some.String("Hello");
+                var message = Some.MessageTemplate();
 
                 log.Write(new LogEvent(
                     DateTimeOffset.Now,
@@ -47,7 +47,7 @@ namespace Serilog.Tests.Sinks.File
                 var content = new StreamReader(refile).ReadToEnd();
                 refile.Dispose();
 
-                Assert.That(content.Contains(message));
+                Assert.That(content.Contains(message.Text));
             }
             finally
             {

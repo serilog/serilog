@@ -19,7 +19,7 @@ namespace Serilog.Tests.Sinks.RollingFile
         public void WhenTheDateChangesTheCorrectFileIsWritten()
         {
             var e1 = Some.LogEvent();
-            var e2 = new LogEvent(e1.TimeStamp.AddDays(1), LogEventLevel.Information, null, Some.String(), new LogEventProperty[0]);
+            var e2 = new LogEvent(e1.TimeStamp.AddDays(1), LogEventLevel.Information, null, Some.MessageTemplate(), new LogEventProperty[0]);
             TestRollingEventSequence(e1, e2);
         }
 

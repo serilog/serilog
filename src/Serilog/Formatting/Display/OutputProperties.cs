@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Display
@@ -28,13 +27,11 @@ namespace Serilog.Formatting.Display
         public const string NewLinePropertyName = "NewLine";
         public const string ExceptionPropertyName = "Exception";
 
-        public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent, IMessageTemplateCache messageTemplateCache)
+        public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            var messageTemplate = messageTemplateCache.GetParsedTemplate(logEvent.MessageTemplate);
-
-            result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(messageTemplate, logEvent.Properties)));
+            result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties)));
             result.Add(TimeStampPropertyName, LogEventProperty.For(TimeStampPropertyName, logEvent.TimeStamp));
             result.Add(LevelPropertyName, LogEventProperty.For(LevelPropertyName, logEvent.Level));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new ScalarValue(Environment.NewLine)));

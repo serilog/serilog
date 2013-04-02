@@ -20,7 +20,7 @@ namespace Serilog.Tests.Formatting.Json
                 new DateTimeOffset(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
                 LogEventLevel.Information,
                 null,
-                Some.String(),
+                Some.MessageTemplate(),
                 new LogEventProperty[0]);
 
             var formatted = FormatJson(@event);

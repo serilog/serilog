@@ -35,7 +35,7 @@ namespace Serilog
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
-            return loggerConfiguration.WithSink(new MongoDBSink(databaseUrl, loggerConfiguration.ParsedMessageTemplateCache), restrictedToMinimumLevel);
+            return loggerConfiguration.WithSink(new MongoDBSink(databaseUrl), restrictedToMinimumLevel);
         }
     }
 }

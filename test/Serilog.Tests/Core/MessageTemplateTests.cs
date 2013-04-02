@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Serilog.Core;
-using Serilog.Parsing;
+using Serilog.Parameters;
+using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
 namespace Serilog.Tests.Core
 {
@@ -66,8 +66,8 @@ namespace Serilog.Tests.Core
 
         static string Render(string messageTemplate, params object[] properties)
         {
-            var mt = new MessageTemplate(MessageTemplateParser.Parse(messageTemplate));
-            var props = mt.ConstructProperties(properties);
+            var mt = new MessageTemplateParser().Parse(messageTemplate);
+            var props = new ParameterMatcher().ConstructProperties(mt, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
             mt.Render(props.ToDictionary(p => p.Name), writer);

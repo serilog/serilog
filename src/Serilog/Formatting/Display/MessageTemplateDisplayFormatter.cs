@@ -16,27 +16,25 @@ using System;
 using System.IO;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
     class MessageTemplateTextFormatter : ITextFormatter
     {
         private readonly MessageTemplate _outputTemplate;
-        readonly IMessageTemplateCache _messageTemplateCache;
 
-        public MessageTemplateTextFormatter(string outputTemplate, IMessageTemplateCache messageTemplateCache)
+        public MessageTemplateTextFormatter(string outputTemplate)
         {
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            if (messageTemplateCache == null) throw new ArgumentNullException("messageTemplateCache");
-            _messageTemplateCache = messageTemplateCache;
-            _outputTemplate = _messageTemplateCache.GetParsedTemplate(outputTemplate);
+            _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
         }
 
         public void Format(LogEvent logEvent, TextWriter output)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             if (output == null) throw new ArgumentNullException("output");
-            var outputProperties = OutputProperties.GetOutputProperties(logEvent, _messageTemplateCache);
+            var outputProperties = OutputProperties.GetOutputProperties(logEvent);
             _outputTemplate.Render(outputProperties, output);            
         }
     }

@@ -36,14 +36,8 @@ namespace Serilog
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
-        readonly IMessageTemplateCache _parsedMessageTemplateCache = new MessageTemplateCache();
 
         LogEventLevel _minimumLevel = LogEventLevel.Information;
-
-        /// <summary>
-        /// Used by extenders; provides access to a shared cache of parsed message templates.
-        /// </summary>
-        public IMessageTemplateCache ParsedMessageTemplateCache { get { return _parsedMessageTemplateCache; } }
 
         /// <summary>
         /// Writes log events to <see cref="System.Console"/>.
@@ -57,7 +51,7 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return WithSink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
@@ -125,7 +119,9 @@ namespace Serilog
             if (_filters.Any())
                 sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
 
-            return new Logger(_parsedMessageTemplateCache, _minimumLevel, sink, _enrichers, dispose);
+            var processor = new MessageTemplateProcessor();
+
+            return new Logger(processor, _minimumLevel, sink, _enrichers, dispose);
         }
 
         /// <summary>
@@ -154,7 +150,7 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return WithSink(new FileSink(path, formatter), restrictedToMinimumLevel);
         }
         /// <summary>
@@ -175,7 +171,7 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return WithSink(new RollingFileSink(pathFormat, formatter), restrictedToMinimumLevel);
         }
 
@@ -191,7 +187,7 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate, ParsedMessageTemplateCache);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return WithSink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
 

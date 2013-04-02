@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Serilog.Core;
 
 namespace Serilog.Parsing
 {
@@ -21,7 +23,7 @@ namespace Serilog.Parsing
     /// Parses message template strings into sequences of text or property
     /// tokens.
     /// </summary>
-    public class MessageTemplateParser
+    public class MessageTemplateParser : IMessageTemplateParser
     {
         /// <summary>
         /// Parse the supplied message template.
@@ -31,7 +33,13 @@ namespace Serilog.Parsing
         /// is not syntactically valid, text tokens will be returned. The parser
         /// will make a best effort to extract valid property tokens even in the
         /// presence of parsing issues.</returns>
-        public static IEnumerable<MessageTemplateToken> Parse(string messageTemplate)
+        public MessageTemplate Parse(string messageTemplate)
+        {
+            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
+            return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
+        }
+
+        static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
         {
             if (messageTemplate == "")
             {

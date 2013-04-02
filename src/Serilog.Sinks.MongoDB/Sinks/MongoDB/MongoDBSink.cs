@@ -30,7 +30,6 @@ namespace Serilog.Sinks.MongoDB
     /// </summary>
     public class MongoDBSink : ILogEventSink, IDisposable
     {
-        readonly IMessageTemplateCache _parsedTemplateCache;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly Timer _timer;
         readonly MongoUrl _mongoUrl;
@@ -43,12 +42,9 @@ namespace Serilog.Sinks.MongoDB
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
-        /// <param name="parsedTemplateCache">Cache for parsed templates.</param>
-        public MongoDBSink(string databaseUrl, IMessageTemplateCache parsedTemplateCache)
+        public MongoDBSink(string databaseUrl)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
-            if (parsedTemplateCache == null) throw new ArgumentNullException("parsedTemplateCache");
-            _parsedTemplateCache = parsedTemplateCache;
             _queue = new ConcurrentQueue<LogEvent>();
             _mongoUrl = new MongoUrl(databaseUrl);
             _timer = new Timer(s => OnTick());
@@ -103,7 +99,7 @@ namespace Serilog.Sinks.MongoDB
             {
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                var renderedMessage = _parsedTemplateCache.GetParsedTemplate(logEvent.MessageTemplate).Render(logEvent.Properties);
+                var renderedMessage = logEvent.RenderedMessage;
                 payload.Write(",\"UtcTimeStamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
                     logEvent.TimeStamp.ToUniversalTime().DateTime,
                     renderedMessage);

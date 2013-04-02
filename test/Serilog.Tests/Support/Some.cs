@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Serilog.Core;
 using Serilog.Events;
+using Serilog.Parsing;
 
 namespace Serilog.Tests.Support
 {
@@ -37,7 +39,7 @@ namespace Serilog.Tests.Support
 
         public static LogEvent LogEvent()
         {
-            return new LogEvent(OffsetInstant(), LogEventLevel.Information, null, String(), Enumerable.Empty<LogEventProperty>());
+            return new LogEvent(OffsetInstant(), LogEventLevel.Information, null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
         }
 
         public static LogEventProperty LogEventProperty()
@@ -60,6 +62,11 @@ namespace Serilog.Tests.Support
             var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dir);
             return dir;
+        }
+
+        public static MessageTemplate MessageTemplate()
+        {
+            return new MessageTemplateParser().Parse(String());
         }
     }
 }

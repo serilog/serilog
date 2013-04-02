@@ -24,14 +24,14 @@ namespace Serilog.Core
     {
         public const string SourceContextPropertyName = "SourceContext";
 
-        readonly IMessageTemplateCache _messageTemplateCache;
+        readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly LogEventLevel _minimumLevel;
         readonly ILogEventSink _sink;
         readonly Action _dispose;
         readonly ILogEventEnricher[] _enrichers;
 
         public Logger(
-            IMessageTemplateCache messageTemplateCache,
+            MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             IEnumerable<ILogEventEnricher> enrichers,
@@ -39,7 +39,7 @@ namespace Serilog.Core
         {
             if (sink == null) throw new ArgumentNullException("sink");
             if (enrichers == null) throw new ArgumentNullException("enrichers");
-            _messageTemplateCache = messageTemplateCache;
+            _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
             _sink = sink;
             _dispose = dispose;
@@ -49,7 +49,7 @@ namespace Serilog.Core
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
             return new Logger(
-                _messageTemplateCache,
+                _messageTemplateProcessor,
                 _minimumLevel, 
                 this,
                 (enrichers ?? new ILogEventEnricher[0]).ToArray());
@@ -87,10 +87,12 @@ namespace Serilog.Core
                 propertyValues = new object[] { propertyValues };
 
             var now = DateTimeOffset.Now;
-            var parsedTemplate = _messageTemplateCache.GetParsedTemplate(messageTemplate);
-            var properties = parsedTemplate.ConstructProperties(propertyValues);
 
-            var logEvent = new LogEvent(now, level, exception, messageTemplate, properties);
+            MessageTemplate parsedTemplate;
+            IEnumerable<LogEventProperty> properties;
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out properties);
+
+            var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties);
             Write(logEvent);
         }
 

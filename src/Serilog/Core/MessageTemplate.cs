@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 
@@ -24,100 +22,34 @@ namespace Serilog.Core
 {
     /// <summary>
     /// Represents a message template passed to a log method. The template
-    /// can create properties based on an ordered list of provided values, and
     /// can subsequently render the template in textual form given the list
     /// of properties.
     /// </summary>
     public class MessageTemplate
     {
-        static readonly object[] NoParameters = new object[0];
-        static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
+        readonly string _text;
         readonly IEnumerable<MessageTemplateToken> _tokens;
 
-        internal MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
+        internal MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
-            _tokens = tokens;
+            _text = text;
+            _tokens = tokens.ToArray();
         }
 
         /// <summary>
-        /// Create properties based on an ordered list of provided values.
+        /// The raw text describing the template.
         /// </summary>
-        /// <param name="messageTemplateParameters">Objects corresponding to the properties
-        /// represented in the message template.</param>
-        /// <returns>A list of properties; if the template is malformed then
-        /// this will be empty.</returns>
-        public IEnumerable<LogEventProperty> ConstructProperties(object[] messageTemplateParameters)
+        public string Text
         {
-            return ConstructPositionalProperties(messageTemplateParameters ?? NoParameters);
+            get { return _text; }
         }
 
-        IEnumerable<LogEventProperty> ConstructPositionalProperties(object[] messageTemplateParameters)
+        /// <summary>
+        /// The tokens parsed from the template.
+        /// </summary>
+        public IEnumerable<MessageTemplateToken> Tokens
         {
-            var pcount = 0;
-            var pmax = -1;
-            List<Tuple<int, PropertyToken>> positionalsInTemplate = null;
-
-            foreach (var propertyToken in _tokens.OfType<PropertyToken>())
-            {
-                int position;
-                if (!propertyToken.TryGetPositionalValue(out position))
-                    return ConstructNamedProperties(messageTemplateParameters);
-
-                ++pcount;
-                pmax = Math.Max(pmax, position);
-                positionalsInTemplate = positionalsInTemplate ?? new List<Tuple<int, PropertyToken>>(messageTemplateParameters.Length);
-                positionalsInTemplate.Add(Tuple.Create(position, propertyToken));
-            }
-
-            if (pcount != messageTemplateParameters.Length || pmax != pcount - 1)
-                SelfLog.WriteLine("Positional properties in {0} do not line up with parameters.", this);
-
-            if (positionalsInTemplate == null)
-                return NoProperties;
-
-            return positionalsInTemplate
-                .Where(p => p.Item1 < messageTemplateParameters.Length)
-                .Select(p => ConstructProperty(p.Item2, messageTemplateParameters[p.Item1]));
-        }
-
-        IEnumerable<LogEventProperty> ConstructNamedProperties(object[] messageTemplateParameters)
-        {
-            var mismatchWarningIssued = false;
-
-            var next = 0;
-            foreach (var propertyToken in _tokens.OfType<PropertyToken>())
-            {
-                if (propertyToken.IsPositional && !mismatchWarningIssued)
-                {
-                    mismatchWarningIssued = true;
-                    SelfLog.WriteLine("Message template is malformed: {0}.", this);
-                }
-
-                if (next < messageTemplateParameters.Length)
-                {
-                    var value = messageTemplateParameters[next];
-                    yield return ConstructProperty(propertyToken, value);
-                }
-                else
-                {
-                    if (!mismatchWarningIssued)
-                    {
-                        mismatchWarningIssued = true;
-                        SelfLog.WriteLine("Message template has more parameters than provided: {0}.", this);
-                    }
-                }
-                next++;
-            }
-
-            if (next != messageTemplateParameters.Length - 1 && !mismatchWarningIssued)
-                SelfLog.WriteLine("Too many parameters provided for message template: {0}.", this);
-        }
-
-        static LogEventProperty ConstructProperty(PropertyToken propertyToken, object value)
-        {
-            return new LogEventProperty(
-                        propertyToken.PropertyName,
-                        LogEventPropertyValue.For(value, propertyToken.Destructuring));
+            get { return _tokens; }
         }
 
         /// <summary>
