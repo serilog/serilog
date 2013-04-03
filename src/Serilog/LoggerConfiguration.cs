@@ -37,7 +37,8 @@ namespace Serilog
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
-
+        readonly List<Type> _additionalScalarTypes = new List<Type>();
+        
         LogEventLevel _minimumLevel = LogEventLevel.Information;
 
         /// <summary>
@@ -120,7 +121,8 @@ namespace Serilog
             if (_filters.Any())
                 sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
 
-            var processor = new MessageTemplateProcessor();
+            var converter = CreatePropertyValueConverter();
+            var processor = new MessageTemplateProcessor(converter);
 
             return new Logger(processor, _minimumLevel, sink, _enrichers, dispose);
         }
@@ -217,9 +219,31 @@ namespace Serilog
             return this;
         }
 
+        /// <summary>
+        /// Treat objects of the specified type as scalar values, i.e., don't break
+        /// them down into properties event when destructuring complex types.
+        /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration TreatingAsScalar(Type scalarType)
+        {
+            if (scalarType == null) throw new ArgumentNullException("scalarType");
+            _additionalScalarTypes.Add(scalarType);
+            return this;
+        }
+
+        /// <summary>
+        /// Transform logged instances with the provided transformer. Applied
+        /// prior to any other parameter processing.
+        /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration TransformingValuesWith()
+        {
+            throw new NotImplementedException();
+        }
+
         PropertyValueConverter CreatePropertyValueConverter()
         {
-            return new PropertyValueConverter(Enumerable.Empty<Type>());
+            return new PropertyValueConverter(_additionalScalarTypes);
         }
     }
 }

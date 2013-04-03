@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -13,10 +11,9 @@ namespace Serilog.Parameters
         readonly PropertyBinder _propertyBinder;
         readonly PropertyValueConverter _propertyValueConverter;
 
-        public MessageTemplateProcessor()
+        public MessageTemplateProcessor(PropertyValueConverter propertyValueConverter)
         {
-            var scalarTypes = Enumerable.Empty<Type>();
-            _propertyValueConverter = new PropertyValueConverter(scalarTypes);
+            _propertyValueConverter = propertyValueConverter;
             _propertyBinder = new PropertyBinder(_propertyValueConverter);
         }
 

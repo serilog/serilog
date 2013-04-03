@@ -24,9 +24,9 @@ namespace Serilog.Parameters
 
         readonly HashSet<Type> _scalarTypes;
 
-        public PropertyValueConverter(IEnumerable<Type> scalarTypes)
+        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes)
         {
-            _scalarTypes = new HashSet<Type>(scalarTypes);
+            _scalarTypes = new HashSet<Type>(additionalScalarTypes);
             _scalarTypes.UnionWith(BuiltInScalarTypes);
         }
 
@@ -48,7 +48,7 @@ namespace Serilog.Parameters
 
             // Known literals
             var valueType = value.GetType();
-            if (BuiltInScalarTypes.Contains(valueType) || valueType.IsEnum)
+            if (_scalarTypes.Contains(valueType) || valueType.IsEnum)
                 return new ScalarValue(value);
 
             // Dictionaries should be treated here, probably as

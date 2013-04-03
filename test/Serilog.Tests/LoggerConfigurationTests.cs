@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Serilog.Core;
 using Serilog.Events;
@@ -64,6 +65,26 @@ namespace Serilog.Tests
             logger.Write(excluded);
             Assert.AreEqual(1, events.Count);
             Assert.That(events.Contains(included));
+        }
+
+        class AB { public int A { get; set; } public int B { get; set; } }
+
+        [Test]
+        public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+            
+            var logger = new LoggerConfiguration()
+                .WithSink(sink)
+                .TreatingAsScalar(typeof(AB))
+                .CreateLogger();
+
+            logger.Information("{@AB}", new AB());
+
+            var ev = events.Single();
+            var prop = ev.Properties["AB"];
+            Assert.IsInstanceOf<ScalarValue>(prop.Value);
         }
     }
 }
