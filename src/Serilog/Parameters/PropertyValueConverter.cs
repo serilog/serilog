@@ -18,7 +18,8 @@ namespace Serilog.Parameters
                 typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
-            typeof(Guid), typeof(Uri)
+            typeof(Guid), typeof(Uri),
+            typeof(byte[])
         };
 
         readonly HashSet<Type> _scalarTypes;

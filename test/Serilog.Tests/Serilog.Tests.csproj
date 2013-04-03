@@ -67,6 +67,7 @@
     <Compile Include="Events\LogEventPropertyValueTests.cs" />
     <Compile Include="LoggerConfigurationTests.cs" />
     <Compile Include="LogTests.cs" />
+    <Compile Include="Parameters\PropertyValueConverterTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\File\FileSinkTests.cs" />
