@@ -28,15 +28,6 @@ namespace Serilog.Events
     /// </summary>
     public abstract class LogEventPropertyValue : IFormattable
     {
-        static readonly HashSet<Type> KnownLiteralTypes = new HashSet<Type>
-            {
-                typeof(bool),
-                typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-                    typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
-                typeof(string),
-                typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan), typeof(Guid), typeof(Uri)
-            };
-
         /// <summary>
         /// Render the value to the output.
         /// </summary>
@@ -74,57 +65,6 @@ namespace Serilog.Events
             var output = new StringWriter();
             Render(output, format, formatProvider);
             return output.ToString();
-        }
-
-        /// <summary>
-        /// Create a property value from a .NET object.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="destructuring">Directs the algorithm for determining how the
-        /// object will be represented (e.g. sclar, sequence, structure).</param>
-        /// <returns></returns>
-        public static LogEventPropertyValue For(object value, Destructuring destructuring)
-        {
-            if (value == null)
-                return new ScalarValue(null);
-
-            if (destructuring == Destructuring.Stringify)
-                return new ScalarValue(value.ToString());
-
-            // Known literals
-            var valueType = value.GetType();
-            if (KnownLiteralTypes.Contains(valueType) || valueType.IsEnum)
-                return new ScalarValue(value);
-
-            // Dictionaries should be treated here, probably as
-            // structures...
-
-            var enumerable = value as IEnumerable;
-            if (enumerable != null)
-            {
-                return new SequenceValue(
-                    enumerable.Cast<object>().Select(o => For(o, destructuring)));
-            }
-
-            // Unknown types
-
-            if (destructuring == Destructuring.Destructure)
-            {
-                var typeTag = value.GetType().Name;
-                if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
-                    typeTag = null;
-
-                return new StructureValue(GetProperties(value, destructuring), typeTag);
-            }
-
-            return new ScalarValue(value);
-        }
-
-        private static IEnumerable<LogEventProperty> GetProperties(object value, Destructuring destructuring)
-        {
-            return value.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty)
-                .Select(p => new LogEventProperty(p.Name, For(p.GetValue(value), destructuring)));
         }
     }
 }

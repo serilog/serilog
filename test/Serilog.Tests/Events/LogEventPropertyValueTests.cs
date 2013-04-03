@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
 using Serilog.Events;
+using Serilog.Parameters;
 using Serilog.Parsing;
 using Serilog.Tests.Support;
 
@@ -10,18 +12,23 @@ namespace Serilog.Tests.Events
     [TestFixture]
     public class LogEventPropertyValueTests
     {
+        readonly PropertyValueConverter _converter = new PropertyValueConverter(Enumerable.Empty<Type>());
+
         [Test]
-        public void AnEnumIsConvertedToALiteralValue()
+        public void AnEnumIsConvertedToANonStringScalarValue()
         {
-            var value = LogEventPropertyValue.For(LogEventLevel.Debug, Destructuring.Default);
+            var value = _converter.CreatePropertyValue(LogEventLevel.Debug, Destructuring.Default);
             Assert.IsInstanceOf<ScalarValue>(value);
+            var sv = (ScalarValue)value;
+            Assert.IsNotNull(sv.Value);
+            Assert.IsInstanceOf<LogEventLevel>(sv.Value);
         }
 
         [Test]
         public void AScalarValueToStringRendersTheValue()
         {
             var num = Some.Int();
-            var value = LogEventPropertyValue.For(num, Destructuring.Default);
+            var value = _converter.CreatePropertyValue(num, Destructuring.Default);
             var str = value.ToString();
             Assert.AreEqual(num.ToString(CultureInfo.InvariantCulture), str);
         }
@@ -30,7 +37,7 @@ namespace Serilog.Tests.Events
         public void WhenDestructuringAKnownLiteralTypeIsScalar()
         {
             var guid = Guid.NewGuid();
-            var value = LogEventPropertyValue.For(guid, Destructuring.Destructure);
+            var value = _converter.CreatePropertyValue(guid, Destructuring.Destructure);
             var str = value.ToString();
             Assert.AreEqual(guid.ToString(), str);
         }

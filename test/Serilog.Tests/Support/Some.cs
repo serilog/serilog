@@ -44,7 +44,7 @@ namespace Serilog.Tests.Support
 
         public static LogEventProperty LogEventProperty()
         {
-            return Serilog.Events.LogEventProperty.For(String(), Int());
+            return new LogEventProperty(String(), new ScalarValue(Int()));
         }
 
         public static string NonexistentTempFilePath()

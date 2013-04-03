@@ -15,7 +15,7 @@ namespace Serilog.Tests.Core
             var thrown = false;
 
             var l = new LoggerConfiguration()
-                .EnrichedBy(new DelegatingEnricher(le => {
+                .EnrichedBy(new DelegatingEnricher((le, pf) => {
                     thrown = true;
                     throw new Exception("No go, pal."); }))
                 .CreateLogger();

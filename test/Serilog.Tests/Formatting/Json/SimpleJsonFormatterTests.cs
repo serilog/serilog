@@ -46,7 +46,7 @@ namespace Serilog.Tests.Formatting.Json
             var name = Some.String();
             var value = Some.Int();
             var @event = Some.LogEvent();
-            @event.AddOrUpdateProperty(name, value);
+            @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
 
             var formatted = FormatJson(@event);
 

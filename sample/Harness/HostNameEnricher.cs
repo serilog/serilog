@@ -6,9 +6,10 @@ namespace Harness
 {
     class HostNameEnricher : ILogEventEnricher
     {
-        public void Enrich(LogEvent logEvent)
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            logEvent.AddPropertyIfAbsent("HostName", Environment.MachineName);
+            var property = propertyFactory.CreateProperty("HostName", Environment.MachineName);
+            logEvent.AddPropertyIfAbsent(property);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -37,7 +38,7 @@ namespace Serilog.Tests.Core
         }
 
         [Test]
-        public void AnObjectWithDefaultDestructuringIsRenderedAsALiteral()
+        public void AnObjectWithDefaultDestructuringIsRenderedAsAStringLiteral()
         {
             var m = Render("I sat at {Chair}", new Chair());
             Assert.AreEqual("I sat at a chair", m);
@@ -67,7 +68,8 @@ namespace Serilog.Tests.Core
         static string Render(string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
-            var props = new ParameterMatcher().ConstructProperties(mt, properties);
+            var binder = new PropertyBinder(new PropertyValueConverter(Enumerable.Empty<Type>()));
+            var props = binder.ConstructProperties(mt, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
             mt.Render(props.ToDictionary(p => p.Name), writer);

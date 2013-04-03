@@ -102,36 +102,12 @@ namespace Serilog.Events
         /// <summary>
         /// Add a property to the event if not already present, otherwise, update its value. 
         /// </summary>
-        /// <param name="propertyName">The name of the property to add or update.</param>
-        /// <param name="value">The property value.</param>
-        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
-        /// then the value will be stored as a structure; otherwise, unknown types will be rendered as strings.</param>
-        public void AddOrUpdateProperty(string propertyName, object value, bool destructureObjects = false)
-        {
-            AddOrUpdateProperty(LogEventProperty.For(propertyName, value, destructureObjects));
-        }
-
-        /// <summary>
-        /// Add a property to the event if not already present, otherwise, update its value. 
-        /// </summary>
         /// <param name="property">The property to add or update.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public void AddOrUpdateProperty(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException("property");
             _properties[property.Name] = property;
-        }
-
-        /// <summary>
-        /// Add a property to the event, if not already present.
-        /// </summary>
-        /// <param name="propertyName">The name of the property to add.</param>
-        /// <param name="value">The property value.</param>
-        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
-        /// then the value will be stored as a structure; otherwise, unknown types will be rendered as strings.</param>
-        public void AddPropertyIfAbsent(string propertyName, object value, bool destructureObjects = false)
-        {
-            AddPropertyIfAbsent(LogEventProperty.For(propertyName, value));
         }
 
         /// <summary>

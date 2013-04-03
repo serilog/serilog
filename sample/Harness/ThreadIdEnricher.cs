@@ -6,9 +6,10 @@ namespace Harness
 {
     class ThreadIdEnricher : ILogEventEnricher
     {
-        public void Enrich(LogEvent logEvent)
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            logEvent.AddPropertyIfAbsent("ThreadId", Thread.CurrentThread.ManagedThreadId);
+            logEvent.AddPropertyIfAbsent(
+                propertyFactory.CreateProperty("ThreadId", Thread.CurrentThread.ManagedThreadId));
         }
     }
 }

@@ -51,7 +51,8 @@
   <ItemGroup>
     <Compile Include="Core\FilteringSink.cs" />
     <Compile Include="Core\ILogEventFilter.cs" />
-    <Compile Include="Core\MessageTemplateProcessor.cs" />
+    <Compile Include="Core\ILogEventPropertyFactory.cs" />
+    <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\SafeAggregateSink.cs" />
     <Compile Include="Core\RestrictedSink.cs" />
     <Compile Include="Core\FixedPropertyEnricher.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Core\SilentLogger.cs" />
     <Compile Include="Debugging\SelfLog.cs" />
     <Compile Include="Core\ILogEventEnricher.cs" />
-    <Compile Include="Parameters\ParameterMatcher.cs" />
+    <Compile Include="Parameters\PropertyBinder.cs" />
     <Compile Include="Formatting\ITextFormatter.cs" />
     <Compile Include="Formatting\Display\MessageTemplateDisplayFormatter.cs" />
     <Compile Include="Formatting\Json\SimpleJsonFormatter.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Events\LogEvent.cs" />
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
+    <Compile Include="Parameters\PropertyValueConverter.cs" />
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />
     <Compile Include="Formatting\Display\LogEventPropertyMessageValue.cs" />
     <Compile Include="Formatting\Display\OutputProperties.cs" />

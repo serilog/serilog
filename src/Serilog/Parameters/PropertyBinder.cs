@@ -8,10 +8,17 @@ using Serilog.Parsing;
 
 namespace Serilog.Parameters
 {
-    class ParameterMatcher
+    class PropertyBinder
     {
+        readonly PropertyValueConverter _valueConverter;
+
         static readonly object[] NoParameters = new object[0];
         static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
+
+        public PropertyBinder(PropertyValueConverter valueConverter)
+        {
+            _valueConverter = valueConverter;
+        }
 
         /// <summary>
         /// Create properties based on an ordered list of provided values.
@@ -88,11 +95,11 @@ namespace Serilog.Parameters
                 SelfLog.WriteLine("Too many parameters provided for message template: {0}.", this);
         }
 
-        static LogEventProperty ConstructProperty(PropertyToken propertyToken, object value)
+        LogEventProperty ConstructProperty(PropertyToken propertyToken, object value)
         {
             return new LogEventProperty(
                         propertyToken.PropertyName,
-                        LogEventPropertyValue.For(value, propertyToken.Destructuring));
+                        _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring));
         }
     }
 }

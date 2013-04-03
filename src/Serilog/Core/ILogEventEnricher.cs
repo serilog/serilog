@@ -25,6 +25,7 @@ namespace Serilog.Core
         /// Enrich the log event.
         /// </summary>
         /// <param name="logEvent">The log event to enrich.</param>
-        void Enrich(LogEvent logEvent);
+        /// <param name="propertyFactory"></param>
+        void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory);
     }
 }

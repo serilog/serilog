@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Parameters;
 
 namespace Serilog.Core
 {
@@ -59,7 +60,7 @@ namespace Serilog.Core
         {
             return ForContext(new[] {
                 new FixedPropertyEnricher(
-                    LogEventProperty.For(propertyName, value, destructureObjects)) });
+                    _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects)) });
         }
 
         public ILogger ForContext<TSource>()
@@ -109,7 +110,7 @@ namespace Serilog.Core
             {
                 try
                 {
-                    enricher.Enrich(logEvent);
+                    enricher.Enrich(logEvent, _messageTemplateProcessor);
                 }
                 catch (Exception ex)
                 {

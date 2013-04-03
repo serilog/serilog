@@ -30,22 +30,6 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
-        /// then the value will be stored as a structure; otherwise, unknown types will be rendered as strings.</param>
-        /// <returns></returns>
-        public static LogEventProperty For(string name, object value, bool destructureObjects = false)
-        {
-            return new LogEventProperty(name, LogEventPropertyValue.For(value,
-                    destructureObjects ?
-                        Destructuring.Destructure :
-                        Destructuring.Default));
-        }
-
-        /// <summary>
-        /// Construct a <see cref="LogEventProperty"/> with the specified name and value.
-        /// </summary>
-        /// <param name="name">The name of the property.</param>
-        /// <param name="value">The value of the property.</param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         public LogEventProperty(string name, LogEventPropertyValue value)

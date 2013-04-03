@@ -18,6 +18,7 @@ using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
+using Serilog.Parameters;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.File;
 using Serilog.Sinks.RollingFile;
@@ -200,7 +201,8 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration EnrichedWithProperty(string propertyName, object value, bool destructureObjects = false)
         {
-            return EnrichedBy(new FixedPropertyEnricher(LogEventProperty.For(propertyName, value, destructureObjects)));
+            var propertyValueConverter = CreatePropertyValueConverter();
+            return EnrichedBy(new FixedPropertyEnricher(propertyValueConverter.CreateProperty(propertyName, value, destructureObjects)));
         }
 
         /// <summary>
@@ -213,6 +215,11 @@ namespace Serilog
             if (filter == null) throw new ArgumentNullException("filter");
             _filters.Add(filter);
             return this;
+        }
+
+        PropertyValueConverter CreatePropertyValueConverter()
+        {
+            return new PropertyValueConverter(Enumerable.Empty<Type>());
         }
     }
 }

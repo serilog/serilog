@@ -32,12 +32,12 @@ namespace Serilog.Formatting.Display
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties)));
-            result.Add(TimeStampPropertyName, LogEventProperty.For(TimeStampPropertyName, logEvent.TimeStamp));
-            result.Add(LevelPropertyName, LogEventProperty.For(LevelPropertyName, logEvent.Level));
+            result.Add(TimeStampPropertyName, new LogEventProperty(TimeStampPropertyName, new ScalarValue(logEvent.TimeStamp)));
+            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level)));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new ScalarValue(Environment.NewLine)));
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
-            result.Add(ExceptionPropertyName, LogEventProperty.For(ExceptionPropertyName, exception));
+            result.Add(ExceptionPropertyName, new LogEventProperty(ExceptionPropertyName, new ScalarValue(exception)));
 
             return result;
         }

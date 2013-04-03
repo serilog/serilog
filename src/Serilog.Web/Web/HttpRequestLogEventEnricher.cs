@@ -26,10 +26,11 @@ namespace Serilog.Web
         static int LastRequestId;
         static readonly string RequestIdItemName = typeof(HttpRequestLogEventEnricher).Name + "+RequestId";
 
-        public void Enrich(LogEvent logEvent)
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            
+            if (propertyFactory == null) throw new ArgumentNullException("propertyFactory");
+
             if (HttpContext.Current == null)
                 return;
 
@@ -45,7 +46,7 @@ namespace Serilog.Web
                 sessionId = HttpContext.Current.Session.SessionID;
 
             logEvent.AddPropertyIfAbsent(
-                LogEventProperty.For(HttpRequestPropertyName,
+                propertyFactory.CreateProperty(HttpRequestPropertyName,
                 new
                 {
                     SessionId = sessionId,
