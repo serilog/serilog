@@ -6,10 +6,11 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Policies;
 
 namespace Serilog.Parameters
 {
-    class PropertyValueConverter : ILogEventPropertyFactory
+    class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
         static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
         {
@@ -22,12 +23,20 @@ namespace Serilog.Parameters
             typeof(byte[])
         };
 
+        static readonly List<IDestructuringPolicy> BuiltInDestructuringPolicies = new List<IDestructuringPolicy>
+        {
+            new NullableDestructuringPolicy()
+        }; 
+
         readonly HashSet<Type> _scalarTypes;
+        readonly List<IDestructuringPolicy> _destructuringPolicies; 
 
         public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes)
         {
             _scalarTypes = new HashSet<Type>(additionalScalarTypes);
             _scalarTypes.UnionWith(BuiltInScalarTypes);
+
+            _destructuringPolicies = new List<IDestructuringPolicy>(BuiltInDestructuringPolicies);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
@@ -65,6 +74,13 @@ namespace Serilog.Parameters
 
             if (destructuring == Destructuring.Destructure)
             {
+                foreach (var destructuringPolicy in _destructuringPolicies)
+                {
+                    LogEventPropertyValue result;
+                    if (destructuringPolicy.TryDestructure(value, destructuring, this, out result))
+                        return result;
+                }
+
                 var typeTag = value.GetType().Name;
                 if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
                     typeTag = null;

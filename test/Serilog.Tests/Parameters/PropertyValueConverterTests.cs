@@ -19,5 +19,17 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<ScalarValue>(pv);
             Assert.IsInstanceOf<byte[]>(((ScalarValue)pv).Value);
         }
+
+        [Test]
+        public void ByDefaultADestructuredNullNullableIsAScalarNull()
+        {
+            Assert.Inconclusive();
+        }
+
+        [Test]
+        public void ByDefaultADestructuredNonNullNullableIsItsValue()
+        {
+            Assert.Inconclusive();
+        }
     }
 }

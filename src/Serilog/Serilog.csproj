@@ -50,8 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\FilteringSink.cs" />
+    <Compile Include="Core\IDestructuringPolicy.cs" />
     <Compile Include="Core\ILogEventFilter.cs" />
     <Compile Include="Core\ILogEventPropertyFactory.cs" />
+    <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\SafeAggregateSink.cs" />
     <Compile Include="Core\RestrictedSink.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter.cs" />
+    <Compile Include="Policies\NullableDestructuringPolicy.cs" />
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />
     <Compile Include="Formatting\Display\LogEventPropertyMessageValue.cs" />
     <Compile Include="Formatting\Display\OutputProperties.cs" />

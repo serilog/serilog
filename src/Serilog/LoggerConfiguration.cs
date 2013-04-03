@@ -232,8 +232,7 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Transform logged instances with the provided transformer. Applied
-        /// prior to any other parameter processing.
+        /// Transform logged instances with the provided transformer.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration TransformingValuesWith()
