@@ -23,13 +23,17 @@ namespace Serilog.Tests.Parameters
         [Test]
         public void ByDefaultADestructuredNullNullableIsAScalarNull()
         {
-            Assert.Inconclusive();
+            var pv = _converter.CreatePropertyValue(new int?(), Destructuring.Destructure);
+            Assert.IsNull(((ScalarValue)pv).Value);
         }
 
         [Test]
         public void ByDefaultADestructuredNonNullNullableIsItsValue()
         {
-            Assert.Inconclusive();
+            // ReSharper disable RedundantExplicitNullableCreation
+            var pv = _converter.CreatePropertyValue(new int?(2), Destructuring.Destructure);
+            // ReSharper restore RedundantExplicitNullableCreation
+            Assert.AreEqual(2, ((ScalarValue)pv).Value);
         }
     }
 }
