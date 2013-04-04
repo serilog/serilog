@@ -67,7 +67,9 @@ namespace Serilog.Tests
             Assert.That(events.Contains(included));
         }
 
+// ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
         class AB { public int A { get; set; } public int B { get; set; } }
+// ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
         [Test]
         public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
@@ -85,6 +87,26 @@ namespace Serilog.Tests
             var ev = events.Single();
             var prop = ev.Properties["AB"];
             Assert.IsInstanceOf<ScalarValue>(prop.Value);
+        }
+
+        [Test]
+        public void TransformationsAreAppliedToEventProperties()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WithSink(sink)
+                .TransformingValuesOf<AB>(ab => new { C = ab.B })
+                .CreateLogger();
+
+            logger.Information("{@AB}", new AB());
+
+            var ev = events.Single();
+            var prop = ev.Properties["AB"];
+            var sv = (StructureValue)prop.Value;
+            var c = sv.Properties.Single();
+            Assert.AreEqual("C", c.Name);
         }
     }
 }

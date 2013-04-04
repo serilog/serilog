@@ -19,6 +19,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Parameters;
+using Serilog.Policies;
 using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.File;
 using Serilog.Sinks.RollingFile;
@@ -38,6 +39,7 @@ namespace Serilog
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
+        readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
         
         LogEventLevel _minimumLevel = LogEventLevel.Information;
 
@@ -232,17 +234,36 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Transform logged instances with the provided transformer.
+        /// When destructuring objects, transform instances with the provided policy.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration TransformingValuesWith()
+        public LoggerConfiguration TransformingValuesWith(IDestructuringPolicy destructuringPolicy)
         {
-            throw new NotImplementedException();
+            if (destructuringPolicy == null) throw new ArgumentNullException("destructuringPolicy");
+            _additionalDestructuringPolicies.Add(destructuringPolicy);
+            return this;
+        }
+
+        /// <summary>
+        /// When destructuring objects, transform instances of the specified type with
+        /// the provided function.
+        /// </summary>
+        /// <param name="transformation">Function mapping instances of <typeparamref name="TValue"/>
+        /// to an alternative representation.</param>
+        /// <typeparam name="TValue">Type of values to transform.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public LoggerConfiguration TransformingValuesOf<TValue>(Func<TValue, object> transformation)
+        {
+            if (transformation == null) throw new ArgumentNullException("transformation");
+            var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
+                                                          o => transformation((TValue)o));
+            return TransformingValuesWith(policy);
         }
 
         PropertyValueConverter CreatePropertyValueConverter()
         {
-            return new PropertyValueConverter(_additionalScalarTypes);
+            return new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
         }
     }
 }

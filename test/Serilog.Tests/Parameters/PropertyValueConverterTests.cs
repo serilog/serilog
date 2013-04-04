@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parameters;
 using Serilog.Parsing;
@@ -10,7 +11,7 @@ namespace Serilog.Tests.Parameters
     [TestFixture]
     public class PropertyValueConverterTests
     {
-        readonly PropertyValueConverter _converter = new PropertyValueConverter(Enumerable.Empty<Type>());
+        readonly PropertyValueConverter _converter = new PropertyValueConverter(Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
 
         [Test]
         public void UnderDestructuringAByteArrayIsAScalarValue()
@@ -18,6 +19,13 @@ namespace Serilog.Tests.Parameters
             var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
             Assert.IsInstanceOf<ScalarValue>(pv);
             Assert.IsInstanceOf<byte[]>(((ScalarValue)pv).Value);
+        }
+
+        [Test]
+        public void UnderDestructuringAnIntegerArrayIsASequenceValue()
+        {
+            var pv = _converter.CreatePropertyValue(new int[0], Destructuring.Destructure);
+            Assert.IsInstanceOf<SequenceValue>(pv);
         }
 
         [Test]

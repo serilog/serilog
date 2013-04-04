@@ -31,12 +31,12 @@ namespace Serilog.Parameters
         readonly HashSet<Type> _scalarTypes;
         readonly List<IDestructuringPolicy> _destructuringPolicies; 
 
-        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes)
+        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
             _scalarTypes = new HashSet<Type>(additionalScalarTypes);
             _scalarTypes.UnionWith(BuiltInScalarTypes);
 
-            _destructuringPolicies = new List<IDestructuringPolicy>(BuiltInDestructuringPolicies);
+            _destructuringPolicies = new List<IDestructuringPolicy>(BuiltInDestructuringPolicies.Concat(additionalDestructuringPolicies));
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using Serilog.Core;
 using Serilog.Parameters;
 using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
@@ -68,7 +69,7 @@ namespace Serilog.Tests.Core
         static string Render(string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
-            var binder = new PropertyBinder(new PropertyValueConverter(Enumerable.Empty<Type>()));
+            var binder = new PropertyBinder(new PropertyValueConverter(Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>()));
             var props = binder.ConstructProperties(mt, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);

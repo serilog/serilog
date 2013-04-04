@@ -19,22 +19,32 @@ using Serilog.Parsing;
 
 namespace Serilog.Policies
 {
-    class NullableDestructuringPolicy : IDestructuringPolicy
+    class ProjectedDestructuringPolicy : IDestructuringPolicy
     {
+        readonly Func<Type, bool> _canApply;
+        readonly Func<object, object> _projection;
+
+        public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
+        {
+            if (canApply == null) throw new ArgumentNullException("canApply");
+            if (projection == null) throw new ArgumentNullException("projection");
+            _canApply = canApply;
+            _projection = projection;
+        }
+
         public bool TryDestructure(object value, Destructuring destructuring, ILogEventPropertyValueFactory propertyValueFactory,
                                    out LogEventPropertyValue result)
         {
-            var type = value.GetType();
-            if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+            if (value == null) throw new ArgumentNullException("value");
+
+            if (!_canApply(value.GetType()))
             {
                 result = null;
                 return false;
             }
 
-            var dynamicValue = (dynamic)value;
-            result = propertyValueFactory.CreatePropertyValue(
-                dynamicValue.HasValue ? dynamicValue.Value : null, destructuring);
-
+            var projected = _projection(value);
+            result = propertyValueFactory.CreatePropertyValue(projected, destructuring);
             return true;
         }
     }
