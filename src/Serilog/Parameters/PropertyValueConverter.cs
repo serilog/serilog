@@ -46,13 +46,25 @@ namespace Serilog.Parameters
 
         public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
         {
-            return CreatePropertyValue(value,
-                    destructureObjects ?
-                        Destructuring.Destructure :
-                        Destructuring.Default);
+            return CreatePropertyValue(value, destructureObjects, 1);
+        }
+
+        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
+        {
+            return CreatePropertyValue(
+                value,
+                destructureObjects ?
+                    Destructuring.Destructure :
+                    Destructuring.Default,
+                depth);
         }
 
         public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        {
+            return CreatePropertyValue(value, destructuring, 1);
+        }
+
+        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
         {
             if (value == null)
                 return new ScalarValue(null);
@@ -79,10 +91,12 @@ namespace Serilog.Parameters
 
             if (destructuring == Destructuring.Destructure)
             {
+                var limiter = new DepthLimiter(depth, this);
+
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {
                     LogEventPropertyValue result;
-                    if (destructuringPolicy.TryDestructure(value, this, out result))
+                    if (destructuringPolicy.TryDestructure(value, limiter, out result))
                         return result;
                 }
 
@@ -90,17 +104,17 @@ namespace Serilog.Parameters
                 if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
                     typeTag = null;
 
-                return new StructureValue(GetProperties(value, destructuring), typeTag);
+                return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
             return new ScalarValue(value);
         }
 
-        private IEnumerable<LogEventProperty> GetProperties(object value, Destructuring destructuring)
+        static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
             return value.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty)
-                .Select(p => new LogEventProperty(p.Name, CreatePropertyValue(p.GetValue(value), destructuring)));
+                .Select(p => new LogEventProperty(p.Name, recursive.CreatePropertyValue(p.GetValue(value), true)));
         }
     }
 }

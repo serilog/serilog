@@ -43,5 +43,27 @@ namespace Serilog.Tests.Parameters
             // ReSharper restore RedundantExplicitNullableCreation
             Assert.AreEqual(2, ((ScalarValue)pv).Value);
         }
+
+        class A
+        {
+            public B B { get; set; }
+        }
+
+        class B
+        {
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+            public A A { get; set; }
+// ReSharper restore UnusedAutoPropertyAccessor.Local
+        }
+
+        [Test]
+        public void DestructuringACyclicStructureDoesNotStackOverflow()
+        {
+            var ab = new A { B = new B() };
+            ab.B.A = ab;
+
+            var pv = _converter.CreatePropertyValue(ab, true);
+            Assert.IsInstanceOf<StructureValue>(pv);
+        }
     }
 }

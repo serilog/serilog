@@ -54,6 +54,7 @@
     <Compile Include="Core\ILogEventFilter.cs" />
     <Compile Include="Core\ILogEventPropertyFactory.cs" />
     <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
+    <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\SafeAggregateSink.cs" />
     <Compile Include="Core\RestrictedSink.cs" />
