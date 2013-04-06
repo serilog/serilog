@@ -15,7 +15,7 @@ namespace Serilog.Tests.Core
             var thrown = false;
 
             var l = new LoggerConfiguration()
-                .EnrichedBy(new DelegatingEnricher((le, pf) => {
+                .Enrich.With(new DelegatingEnricher((le, pf) => {
                     thrown = true;
                     throw new Exception("No go, pal."); }))
                 .CreateLogger();
@@ -53,7 +53,7 @@ namespace Serilog.Tests.Core
         {
             LogEvent result = null;
             var l = new LoggerConfiguration()
-                .WithSink(new DelegatingSink(le => result = le))
+                .WriteTo.Sink(new DelegatingSink(le => result = le))
                 .CreateLogger();
 
             writeAction(l);

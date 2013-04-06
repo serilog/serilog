@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Serilog.Configuration;
 using Serilog.Web;
 
 namespace Serilog
@@ -28,10 +29,10 @@ namespace Serilog
         /// </summary>
         /// <param name="loggerConfiguration">The configuration to modify.</param>
         /// <returns>Configuration object allowing configuration to continue.</returns>
-        public static LoggerConfiguration EnrichedWithHttpRequestProperties(this LoggerConfiguration loggerConfiguration)
+        public static LoggerConfiguration WithHttpRequestProperties(this LoggerEnrichmentConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            return loggerConfiguration.EnrichedBy(new HttpRequestLogEventEnricher());
+            return loggerConfiguration.With(new HttpRequestLogEventEnricher());
         }
     }
 }

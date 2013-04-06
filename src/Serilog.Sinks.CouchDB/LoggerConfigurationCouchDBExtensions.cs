@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.CouchDB;
 
@@ -31,11 +32,11 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration WithCouchDBSink(this LoggerConfiguration loggerConfiguration, string databaseUrl, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public static LoggerConfiguration CouchDB(this LoggerSinkConfiguration loggerConfiguration, string databaseUrl, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
-            return loggerConfiguration.WithSink(new CouchDBSink(databaseUrl), restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(new CouchDBSink(databaseUrl), restrictedToMinimumLevel);
         }
     }
 }

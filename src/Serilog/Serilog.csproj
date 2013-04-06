@@ -49,6 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\LoggerDestructuringConfiguration.cs" />
+    <Compile Include="Configuration\LoggerFilterConfiguration.cs" />
+    <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
+    <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
+    <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
+    <Compile Include="Core\DelegateFilter.cs" />
     <Compile Include="Core\FilteringSink.cs" />
     <Compile Include="Core\IDestructuringPolicy.cs" />
     <Compile Include="Core\ILogEventFilter.cs" />

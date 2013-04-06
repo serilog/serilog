@@ -48,8 +48,8 @@ namespace WebHarness
         void ConfigureLog()
         {
             Log.Logger = new LoggerConfiguration()
-                .WithDiagnosticTraceSink()
-                .EnrichedWithHttpRequestProperties()
+                .WriteTo.Trace()
+                .Enrich.WithHttpRequestProperties()
                 .CreateLogger();
         }
     }

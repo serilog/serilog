@@ -28,7 +28,7 @@ namespace Serilog.Tests
         {
             var sink = new DisposableSink();
             var logger = (IDisposable) new LoggerConfiguration()
-                .WithSink(sink)
+                .WriteTo.Sink(sink)
                 .CreateLogger();
 
             logger.Dispose(); 
@@ -40,7 +40,7 @@ namespace Serilog.Tests
         {
             var sink = new DisposableSink();
             var logger = (IDisposable) new LoggerConfiguration()
-                .WithSink(sink)
+                .WriteTo.Sink(sink)
                 .CreateLogger()
                 .ForContext<LoggerConfigurationTests>();
 
@@ -58,8 +58,8 @@ namespace Serilog.Tests
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
             var logger = new LoggerConfiguration()
-                .WithSink(sink)
-                .FilteredBy(filter)
+                .WriteTo.Sink(sink)
+                .Filter.With(filter)
                 .CreateLogger();
             logger.Write(included);
             logger.Write(excluded);
@@ -78,8 +78,8 @@ namespace Serilog.Tests
             var sink = new DelegatingSink(events.Add);
             
             var logger = new LoggerConfiguration()
-                .WithSink(sink)
-                .TreatingAsScalar(typeof(AB))
+                .WriteTo.Sink(sink)
+                .Destructure.AsScalar(typeof(AB))
                 .CreateLogger();
 
             logger.Information("{@AB}", new AB());
@@ -96,8 +96,8 @@ namespace Serilog.Tests
             var sink = new DelegatingSink(events.Add);
 
             var logger = new LoggerConfiguration()
-                .WithSink(sink)
-                .TransformingValuesOf<AB>(ab => new { C = ab.B })
+                .WriteTo.Sink(sink)
+                .Destructure.ByTransforming<AB>(ab => new { C = ab.B })
                 .CreateLogger();
 
             logger.Information("{@AB}", new AB());

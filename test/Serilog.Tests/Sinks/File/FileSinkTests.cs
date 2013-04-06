@@ -31,7 +31,7 @@ namespace Serilog.Tests.Sinks.File
             try
             {
                 log = new LoggerConfiguration()
-                    .WithFileSink(path)
+                    .WriteTo.File(path)
                     .CreateLogger();
 
                 var message = Some.MessageTemplate();

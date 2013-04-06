@@ -1,6 +1,5 @@
 ﻿using System;
 using Serilog;
-using Serilog.Events;
 
 namespace Harness
 {
@@ -9,14 +8,14 @@ namespace Harness
         static void Main()
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel(LogEventLevel.Debug)
-                .WithConsoleSink(
+                .MinimumLevel.Debug()
+                .WriteTo.Console(
                     outputTemplate: "{TimeStamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
-                .WithDumpFileSink("Dumps\\" + DateTime.Now.Ticks + ".slog")
-                .WithDiagnosticTraceSink()
-                .EnrichedWithProperty("App", "Test Harness")
-                .EnrichedBy(new ThreadIdEnricher(),
-                            new HostNameEnricher())
+                .WriteTo.DumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
+                .WriteTo.Trace()
+                .Enrich.WithProperty("App", "Test Harness")
+                .Enrich.With(new ThreadIdEnricher(),
+                             new HostNameEnricher())
                 .CreateLogger();
 
             Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);

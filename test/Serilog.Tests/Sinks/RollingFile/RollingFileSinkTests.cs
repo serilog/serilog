@@ -30,7 +30,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             var pathFormat = Path.Combine(folder, fileName);
 
             var log = new LoggerConfiguration()
-                .WithRollingFileSink(pathFormat)
+                .WriteTo.RollingFile(pathFormat)
                 .CreateLogger();
 
             try
