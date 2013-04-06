@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using Serilog.Events;
 
 namespace Serilog.Core
 {

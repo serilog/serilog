@@ -15,10 +15,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Core
+namespace Serilog.Events
 {
     /// <summary>
     /// Represents a message template passed to a log method. The template
