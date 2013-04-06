@@ -41,10 +41,15 @@ namespace Serilog.Parameters
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
         {
-            return new LogEventProperty(name, CreatePropertyValue(value,
+            return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
+        }
+
+        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        {
+            return CreatePropertyValue(value,
                     destructureObjects ?
                         Destructuring.Destructure :
-                        Destructuring.Default));
+                        Destructuring.Default);
         }
 
         public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
@@ -77,7 +82,7 @@ namespace Serilog.Parameters
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {
                     LogEventPropertyValue result;
-                    if (destructuringPolicy.TryDestructure(value, destructuring, this, out result))
+                    if (destructuringPolicy.TryDestructure(value, this, out result))
                         return result;
                 }
 

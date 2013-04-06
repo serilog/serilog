@@ -15,7 +15,7 @@ namespace Serilog.Core
         /// <param name="value">The value of the property.</param>
         /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
         /// then the value will be converted to a structure; otherwise, unknown types will
-        /// be converted to scalar strings.</param>
+        /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
         LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false);
     }

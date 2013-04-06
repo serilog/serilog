@@ -1,5 +1,4 @@
 ﻿using Serilog.Events;
-using Serilog.Parsing;
 
 namespace Serilog.Core
 {
@@ -14,8 +13,10 @@ namespace Serilog.Core
         /// strategy.
         /// </summary>
         /// <param name="value">The value of the property.</param>
-        /// <param name="destructuring">Directs the algorithm converting the value.</param>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be converted to a structure; otherwise, unknown types will
+        /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns>The value.</returns>
-        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring);
+        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false);
     }
 }

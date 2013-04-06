@@ -15,7 +15,6 @@
 using System;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Parsing;
 
 namespace Serilog.Policies
 {
@@ -32,8 +31,7 @@ namespace Serilog.Policies
             _projection = projection;
         }
 
-        public bool TryDestructure(object value, Destructuring destructuring, ILogEventPropertyValueFactory propertyValueFactory,
-                                   out LogEventPropertyValue result)
+        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
             if (value == null) throw new ArgumentNullException("value");
 
@@ -44,7 +42,7 @@ namespace Serilog.Policies
             }
 
             var projected = _projection(value);
-            result = propertyValueFactory.CreatePropertyValue(projected, destructuring);
+            result = propertyValueFactory.CreatePropertyValue(projected, true);
             return true;
         }
     }

@@ -12,10 +12,9 @@ namespace Serilog.Core
         /// If supported, destructure the provided value.
         /// </summary>
         /// <param name="value">The value to destructure.</param>
-        /// <param name="destructuring">The specified destructuring setting.</param>
         /// <param name="propertyValueFactory">Recursively apply policies to destructure additional values.</param>
         /// <param name="result">The destructured value, or null.</param>
         /// <returns>True if the value could be destructured under this policy.</returns>
-        bool TryDestructure(object value, Destructuring destructuring, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result);
+        bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result);
     }
 }
