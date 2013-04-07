@@ -23,7 +23,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             TestRollingEventSequence(e1, e2);
         }
 
-        void TestRollingEventSequence(params LogEvent[] events)
+        static void TestRollingEventSequence(params LogEvent[] events)
         {
             var fileName = Some.String() + "{0}.txt";
             var folder = Some.TempFolderPath();

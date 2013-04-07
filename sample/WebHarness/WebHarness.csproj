@@ -207,6 +207,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
+      <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
+      <Name>Serilog.FullNetFx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog.Web\Serilog.Web.csproj">
       <Project>{13cec8dd-6087-4fee-aec1-0511b8959ccd}</Project>
       <Name>Serilog.Web</Name>

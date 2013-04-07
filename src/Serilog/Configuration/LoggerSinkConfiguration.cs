@@ -16,10 +16,6 @@ using System;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
-using Serilog.Sinks.DumpFile;
-using Serilog.Sinks.File;
-using Serilog.Sinks.RollingFile;
-using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.Trace;
 
 namespace Serilog.Configuration
@@ -43,22 +39,6 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// Writes log events to <see cref="System.Console"/>.
-        /// </summary>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Console(
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
-        {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
-            return Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
-        }
-
-        /// <summary>
         /// Write log events to the specified <see cref="ILogEventSink"/>.
         /// </summary>
         /// <param name="logEventSink">The sink.</param>
@@ -73,58 +53,6 @@ namespace Serilog.Configuration
 
             _addSink(sink);
             return _loggerConfiguration;
-        }
-
-        /// <summary>
-        /// Write log events in a simple text dump format to the specified file.
-        /// </summary>
-        /// <param name="path">Path to the dump file.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration DumpFile(string path, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
-        {
-            return Sink(new DumpFileSink(path), restrictedToMinimumLevel);
-        }
-
-        /// <summary>
-        /// Write log events to the specified file.
-        /// </summary>
-        /// <param name="path">Path to the file.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration File(
-            string path,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
-        {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
-            return Sink(new FileSink(path, formatter), restrictedToMinimumLevel);
-        }
-
-        /// <summary>
-        /// Write log events to a series of files. Each file will be named according to
-        /// the date of the first log entry written to it. Only simple date-based rolling is
-        /// currently supported.
-        /// </summary>
-        /// <param name="pathFormat">.NET format string describing the location of the log files,
-        /// with {0} in the place of the file date. E.g. "Logs\myapp-{0}.log" will result in log
-        /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration RollingFile(
-            string pathFormat,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
-        {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
-            return Sink(new RollingFileSink(pathFormat, formatter), restrictedToMinimumLevel);
         }
 
         /// <summary>

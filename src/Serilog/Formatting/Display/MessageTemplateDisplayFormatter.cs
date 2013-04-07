@@ -14,22 +14,35 @@
 
 using System;
 using System.IO;
-using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
-    class MessageTemplateTextFormatter : ITextFormatter
+    /// <summary>
+    /// A <see cref="ITextFormatter"/> that supports the Serilog
+    /// message template format.
+    /// </summary>
+    public class MessageTemplateTextFormatter : ITextFormatter
     {
         private readonly MessageTemplate _outputTemplate;
 
+        /// <summary>
+        /// Construct a <see cref="MessageTemplateTextFormatter"/>.
+        /// </summary>
+        /// <param name="outputTemplate">A message template describing the
+        /// output messages.</param>
         public MessageTemplateTextFormatter(string outputTemplate)
         {
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
         }
 
+        /// <summary>
+        /// Format the log event into the output.
+        /// </summary>
+        /// <param name="logEvent">The event to format.</param>
+        /// <param name="output">The output.</param>
         public void Format(LogEvent logEvent, TextWriter output)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
