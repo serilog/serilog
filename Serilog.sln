@@ -15,7 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests", "test\Seril
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
