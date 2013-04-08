@@ -85,7 +85,7 @@ namespace Serilog.Parsing
         /// </summary>
         public bool IsPositional
         {
-            get { return _propertyName.All(char.IsNumber); }
+            get { return _propertyName.ToCharArray().All(char.IsNumber); }
         }
 
         /// <summary>

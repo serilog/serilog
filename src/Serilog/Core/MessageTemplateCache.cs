@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Serilog.Events;
 
 namespace Serilog.Core
@@ -21,7 +21,9 @@ namespace Serilog.Core
     class MessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
-        readonly ConcurrentDictionary<string, MessageTemplate> _templates = new ConcurrentDictionary<string,MessageTemplate>();
+        readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string,MessageTemplate>();
+        readonly object _templatesLock = new object();
+
         const int MaxCacheItems = 1000;
 
         public MessageTemplateCache(IMessageTemplateParser innerParser)
@@ -33,19 +35,25 @@ namespace Serilog.Core
         public MessageTemplate Parse(string messageTemplate)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
-            
-            // This is *not* the sunny day scenario; all we're doing here is preventing out-of-memory
-            // conditions when the library is used incorrectly. Correct use (templates, rather than
-            // direct message strings) should barely ever overflow this cache.
-            if (_templates.Count > MaxCacheItems)
+
+            MessageTemplate result;
+            lock(_templatesLock)
+                if (_templates.TryGetValue(messageTemplate, out result))
+                    return result;
+
+            result = _innerParser.Parse(messageTemplate);
+
+            lock (_templatesLock)
             {
-                MessageTemplate result;
-                if (!_templates.TryGetValue(messageTemplate, out result))
-                    result = _innerParser.Parse(messageTemplate);
-                return result;
+                // Exceeding MaxCacheItems is *not* the sunny day scenario; all we're doing here is preventing out-of-memory
+                // conditions when the library is used incorrectly. Correct use (templates, rather than
+                // direct message strings) should barely, if ever, overflow this cache.
+
+                if (_templates.Count <= MaxCacheItems)
+                    _templates[messageTemplate] = result;
             }
 
-            return _templates.GetOrAdd(messageTemplate, _innerParser.Parse);
+            return result;
         }
     }
 }

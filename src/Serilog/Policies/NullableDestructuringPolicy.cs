@@ -23,7 +23,7 @@ namespace Serilog.Policies
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
             var type = value.GetType();
-            if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+            if (!type.IsConstructedGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
             {
                 result = null;
                 return false;

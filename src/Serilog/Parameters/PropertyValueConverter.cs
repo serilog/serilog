@@ -88,7 +88,7 @@ namespace Serilog.Parameters
 
             // Known literals
             var valueType = value.GetType();
-            if (_scalarTypes.Contains(valueType) || valueType.IsEnum)
+            if (_scalarTypes.Contains(valueType) || valueType.GetTypeInfo().IsEnum)
                 return new ScalarValue(value);
 
             // Dictionaries should be treated here, probably as
@@ -126,9 +126,20 @@ namespace Serilog.Parameters
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
-            return value.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty)
-                .Select(p => new LogEventProperty(p.Name, recursive.CreatePropertyValue(p.GetValue(value), true)));
+            var valueType = value.GetType().GetTypeInfo();
+            while (valueType.AsType() != typeof(object))
+            {
+                var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
+                                                                    p.GetMethod.IsPublic &&
+                                                                    !p.GetMethod.IsStatic);
+
+                foreach (var prop in props)
+                {
+                    yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(prop.GetValue(value), true));
+                }
+                
+                valueType = valueType.BaseType.GetTypeInfo();
+            }
         }
     }
 }
