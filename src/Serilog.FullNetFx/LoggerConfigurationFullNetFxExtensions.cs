@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Formatting.Display;
@@ -19,6 +20,7 @@ using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.File;
 using Serilog.Sinks.RollingFile;
 using Serilog.Sinks.SystemConsole;
+using Serilog.Sinks.Trace;
 
 namespace Serilog
 {
@@ -44,6 +46,8 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
+            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
+            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
@@ -61,6 +65,8 @@ namespace Serilog
             string path, 
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
         {
+            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
+            if (path == null) throw new ArgumentNullException("path");
             return sinkConfiguration.Sink(new DumpFileSink(path), restrictedToMinimumLevel);
         }
 
@@ -80,6 +86,8 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
+            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
+            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return sinkConfiguration.Sink(new FileSink(path, formatter), restrictedToMinimumLevel);
         }
@@ -104,9 +112,30 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
+            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
+            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return sinkConfiguration.Sink(new RollingFileSink(pathFormat, formatter), restrictedToMinimumLevel);
         }
 
+        /// <summary>
+        /// Write log events to the <see cref="System.Diagnostics.Trace"/>.
+        /// </summary>
+        /// <param name="sinkConfiguration">Logger sink configuration.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration Trace(
+            this LoggerSinkConfiguration sinkConfiguration,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            string outputTemplate = DefaultOutputTemplate)
+        {
+            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
+            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
+        }
     }
 }

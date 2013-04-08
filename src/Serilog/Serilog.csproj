@@ -87,7 +87,6 @@
     <Compile Include="Policies\ProjectedDestructuringPolicy.cs" />
     <Compile Include="Formatting\Display\LogEventPropertyMessageValue.cs" />
     <Compile Include="Formatting\Display\OutputProperties.cs" />
-    <Compile Include="Sinks\Trace\DiagnosticTraceSink.cs" />
     <Compile Include="Events\StructureValue.cs" />
     <Compile Include="Events\SequenceValue.cs" />
     <Compile Include="Events\ScalarValue.cs" />
@@ -105,6 +104,9 @@
       <Link>Serilog.snk</Link>
     </None>
     <None Include="Serilog.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sinks\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

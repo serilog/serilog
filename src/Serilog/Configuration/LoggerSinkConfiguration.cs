@@ -15,8 +15,6 @@
 using System;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting.Display;
-using Serilog.Sinks.Trace;
 
 namespace Serilog.Configuration
 {
@@ -53,22 +51,6 @@ namespace Serilog.Configuration
 
             _addSink(sink);
             return _loggerConfiguration;
-        }
-
-        /// <summary>
-        /// Write log events to the <see cref="System.Diagnostics.Trace"/>.
-        /// </summary>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Trace(
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
-        {
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
-            return Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
     }
 }
