@@ -48,10 +48,10 @@
     <Compile Include="LoggerConfigurationFullNetFxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />
-    <Compile Include="Sinks\File\FileSink.cs" />
+    <Compile Include="Sinks\IOFile\FileSink.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
     <Compile Include="Sinks\SystemConsole\ConsoleSink.cs" />
-    <Compile Include="Sinks\Trace\DiagnosticTraceSink.cs" />
+    <Compile Include="Sinks\DiagnosticTrace\DiagnosticTraceSink.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

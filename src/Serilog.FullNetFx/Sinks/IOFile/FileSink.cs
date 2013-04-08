@@ -18,7 +18,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.File
+namespace Serilog.Sinks.IOFile
 {
     sealed class FileSink : ILogEventSink, IDisposable
     {
@@ -31,7 +31,7 @@ namespace Serilog.Sinks.File
             if (path == null) throw new ArgumentNullException("path");
             if (textFormatter == null) throw new ArgumentNullException("textFormatter");
             _textFormatter = textFormatter;
-            _output = new StreamWriter(System.IO.File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read));
+            _output = new StreamWriter(File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read));
         }
 
         public void Emit(LogEvent logEvent)

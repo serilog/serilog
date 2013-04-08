@@ -13,8 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting.Display;
+using Serilog.Sinks.IOTextWriter;
 
 namespace Serilog.Configuration
 {
@@ -50,6 +53,23 @@ namespace Serilog.Configuration
                 sink = new RestrictedSink(sink, restrictedToMinimumLevel);
 
             _addSink(sink);
+            return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// Write log events to the provided <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="textWriter">The text writer to write log events to.</param>
+        /// <param name="outputTemplate">Message template describing the output format.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public LoggerConfiguration TextWriter(TextWriter textWriter, string outputTemplate = DefaultOutputTemplate)
+        {
+            if (textWriter == null) throw new ArgumentNullException("textWriter");
+            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            _addSink(new TextWriterSink(textWriter, formatter));
             return _loggerConfiguration;
         }
     }

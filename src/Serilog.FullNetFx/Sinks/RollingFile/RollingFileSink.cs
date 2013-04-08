@@ -16,7 +16,7 @@ using System;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
-using Serilog.Sinks.File;
+using Serilog.Sinks.IOFile;
 
 namespace Serilog.Sinks.RollingFile
 {

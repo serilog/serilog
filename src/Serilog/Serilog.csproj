@@ -94,6 +94,7 @@
     <Compile Include="Parsing\MessageTemplateParser.cs" />
     <Compile Include="Parsing\TextToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
@@ -101,9 +102,7 @@
     </None>
     <None Include="Serilog.nuspec" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sinks\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

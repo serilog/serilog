@@ -16,11 +16,11 @@ using System;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Formatting.Display;
+using Serilog.Sinks.DiagnosticTrace;
 using Serilog.Sinks.DumpFile;
-using Serilog.Sinks.File;
+using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
 using Serilog.Sinks.SystemConsole;
-using Serilog.Sinks.Trace;
 
 namespace Serilog
 {

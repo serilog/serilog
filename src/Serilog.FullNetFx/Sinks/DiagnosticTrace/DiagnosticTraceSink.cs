@@ -13,12 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.Trace
+namespace Serilog.Sinks.DiagnosticTrace
 {
     class DiagnosticTraceSink : ILogEventSink
     {
@@ -35,7 +36,7 @@ namespace Serilog.Sinks.Trace
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             var sr = new StringWriter();
             _textFormatter.Format(logEvent, sr);
-            System.Diagnostics.Trace.Write(sr.ToString());
+            Trace.Write(sr.ToString());
         }
     }
 }
