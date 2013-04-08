@@ -11,7 +11,9 @@
     <iconUrl>http://serilog.net/images/serilog-logo-64.png</iconUrl>
   </metadata>
   <files>
-    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\net45" />
-    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\net45" />
+    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
+    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
   </files>
 </package>
