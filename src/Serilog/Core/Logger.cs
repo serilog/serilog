@@ -63,9 +63,15 @@ namespace Serilog.Core
                     _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects)) });
         }
 
+        public ILogger ForContext(Type source)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            return ForContext(SourceContextPropertyName, source.FullName);
+        }
+
         public ILogger ForContext<TSource>()
         {
-            return ForContext(SourceContextPropertyName, typeof(TSource).FullName);
+            return ForContext(typeof(TSource));
         }
 
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)

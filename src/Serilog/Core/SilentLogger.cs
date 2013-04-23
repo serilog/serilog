@@ -35,6 +35,11 @@ namespace Serilog.Core
             return this;
         }
 
+        public ILogger ForContext(Type source)
+        {
+            return this;
+        }
+
         public void Write(LogEvent logEvent)
         {
         }
