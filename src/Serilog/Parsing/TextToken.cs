@@ -45,7 +45,7 @@ namespace Serilog.Parsing
         public override void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output)
         {
             if (output == null) throw new ArgumentNullException("output");
-            output.Write(_text);
+            output.Write(Text);
         }
 
         /// <summary>
@@ -82,7 +82,15 @@ namespace Serilog.Parsing
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return _text;
+            return Text;
+        }
+
+        /// <summary>
+        /// The text of the token.
+        /// </summary>
+        public string Text
+        {
+            get { return _text; }
         }
     }
 }
