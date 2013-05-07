@@ -95,7 +95,7 @@ namespace Serilog.Sinks.CouchDB
                 var renderedMessage = logEvent.RenderedMessage;
                 payload.Write(",\"UtcTimeStamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
                     logEvent.TimeStamp.ToUniversalTime().DateTime,
-                    renderedMessage);
+                    renderedMessage.Replace("\"", "\\\""));
                 delimStart = ",{";
             }
 
