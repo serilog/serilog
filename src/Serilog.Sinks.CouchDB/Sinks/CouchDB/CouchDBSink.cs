@@ -32,23 +32,30 @@ namespace Serilog.Sinks.CouchDB
     /// </summary>
     public class CouchDBSink : ILogEventSink, IDisposable
     {
+        readonly int _batchPostingLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly Timer _timer;
         readonly HttpClient _httpClient;
-
-        const int MaxPost = 50;     // "
         readonly TimeSpan TickInterval = TimeSpan.FromSeconds(2);
         const string BulkUploadResource = "_bulk_docs";
 
         volatile bool _unloading;
 
         /// <summary>
+        /// A reasonable default for the number of events posted in
+        /// each batch.
+        /// </summary>
+        public const int DefaultBatchPostingLimit = 50;
+
+        /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
-        public CouchDBSink(string databaseUrl)
+        /// <param name="batchPostingLimit">The maximium number of events to post in a single batch.</param>
+        public CouchDBSink(string databaseUrl, int batchPostingLimit)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+            _batchPostingLimit = batchPostingLimit;
             _queue = new ConcurrentQueue<LogEvent>();
             _httpClient = new HttpClient { BaseAddress = new Uri(databaseUrl) };
             _timer = new Timer(async s => await OnTick());
@@ -74,7 +81,7 @@ namespace Serilog.Sinks.CouchDB
             var count = 0;
             var events = new Queue<LogEvent>();
             LogEvent next;
-            while (count < MaxPost && _queue.TryDequeue(out next))
+            while (count < _batchPostingLimit && _queue.TryDequeue(out next))
             {
                 count++;
                 events.Enqueue(next);

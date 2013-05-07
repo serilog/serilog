@@ -30,11 +30,17 @@ namespace Serilog.Sinks.MongoDB
     /// </summary>
     public class MongoDBSink : ILogEventSink, IDisposable
     {
+        readonly int _batchPostingLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly Timer _timer;
         readonly MongoUrl _mongoUrl;
-        const int MaxPost = 50;     // "
         readonly TimeSpan TickInterval = TimeSpan.FromSeconds(2);
+
+        /// <summary>
+        /// A reasonable default for the number of events posted in
+        /// each batch.
+        /// </summary>
+        public const int DefaultBatchPostingLimit = 50;
 
         volatile bool _unloading;
 
@@ -42,8 +48,10 @@ namespace Serilog.Sinks.MongoDB
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
-        public MongoDBSink(string databaseUrl)
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        public MongoDBSink(string databaseUrl, int batchPostingLimit)
         {
+            _batchPostingLimit = batchPostingLimit;
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
             _queue = new ConcurrentQueue<LogEvent>();
             _mongoUrl = new MongoUrl(databaseUrl);
@@ -81,7 +89,7 @@ namespace Serilog.Sinks.MongoDB
             var count = 0;
             var events = new Queue<LogEvent>();
             LogEvent next;
-            while (count < MaxPost && _queue.TryDequeue(out next))
+            while (count < _batchPostingLimit && _queue.TryDequeue(out next))
             {
                 count++;
                 events.Enqueue(next);

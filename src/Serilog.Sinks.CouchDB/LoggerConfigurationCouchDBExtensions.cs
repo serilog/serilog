@@ -30,13 +30,18 @@ namespace Serilog
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="databaseUrl">The URL of a created CouchDB database that log events will be written to.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration CouchDB(this LoggerSinkConfiguration loggerConfiguration, string databaseUrl, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public static LoggerConfiguration CouchDB(
+            this LoggerSinkConfiguration loggerConfiguration,
+            string databaseUrl,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            int batchPostingLimit = CouchDBSink.DefaultBatchPostingLimit)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
-            return loggerConfiguration.Sink(new CouchDBSink(databaseUrl), restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(new CouchDBSink(databaseUrl, batchPostingLimit), restrictedToMinimumLevel);
         }
     }
 }
