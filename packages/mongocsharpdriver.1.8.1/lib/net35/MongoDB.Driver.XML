@@ -4212,23 +4212,10 @@
             Represents the result of a command (there are also subclasses for various commands).
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.CommandResult.#ctor">
+        <member name="M:MongoDB.Driver.CommandResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the CommandResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.CommandResult"/> class.
             </summary>
-        </member>
-        <member name="M:MongoDB.Driver.CommandResult.#ctor(MongoDB.Driver.IMongoCommand,MongoDB.Bson.BsonDocument)">
-            <summary>
-            Initializes a new instance of the CommandResult class.
-            </summary>
-            <param name="command">The command.</param>
-            <param name="response">The response.</param>
-        </member>
-        <member name="M:MongoDB.Driver.CommandResult.Initialize(MongoDB.Driver.IMongoCommand,MongoDB.Bson.BsonDocument)">
-            <summary>
-            Initializes an existing instance of the CommandResult class.
-            </summary>
-            <param name="command">The command.</param>
             <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.CommandResult.Code">
@@ -4261,10 +4248,11 @@
             Gets the Ok value from the response.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.AggregateResult.#ctor">
+        <member name="M:MongoDB.Driver.AggregateResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the AggregateResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.AggregateResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.AggregateResult.ResultDocuments">
             <summary>
@@ -4306,10 +4294,11 @@
             Represents the results of the collection stats command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.CollectionStatsResult.#ctor">
+        <member name="M:MongoDB.Driver.CollectionStatsResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the CollectionStatsResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.CollectionStatsResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.CollectionStatsResult.AverageObjectSize">
             <summary>
@@ -4431,15 +4420,33 @@
             Gets the sizes of the indexes.
             </summary>
         </member>
+        <member name="T:MongoDB.Driver.CommandResultSerializer">
+            <summary>
+            Represents a serializer for a CommandResult.
+            </summary>
+        </member>
+        <member name="M:MongoDB.Driver.CommandResultSerializer.Deserialize(MongoDB.Bson.IO.BsonReader,System.Type,System.Type,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Deserializes an object from a BsonReader.
+            </summary>
+            <param name="bsonReader">The BsonReader.</param>
+            <param name="nominalType">The nominal type of the object.</param>
+            <param name="actualType">The actual type of the object.</param>
+            <param name="options">The serialization options.</param>
+            <returns>
+            An object.
+            </returns>
+        </member>
         <member name="T:MongoDB.Driver.DatabaseStatsResult">
             <summary>
             Represents the result of the database stats command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.DatabaseStatsResult.#ctor">
+        <member name="M:MongoDB.Driver.DatabaseStatsResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the DatabaseStatsResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.DatabaseStatsResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.DatabaseStatsResult.AverageObjectSize">
             <summary>
@@ -4486,15 +4493,66 @@
             Gets the storage size.
             </summary>
         </member>
+        <member name="T:MongoDB.Driver.DistinctCommandResult`1">
+            <summary>
+            Represents the result of a command (there are also subclasses for various commands).
+            </summary>
+        </member>
+        <member name="M:MongoDB.Driver.DistinctCommandResult`1.#ctor(MongoDB.Bson.BsonDocument,System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.DistinctCommandResult`1"/> class.
+            </summary>
+            <param name="response">The response.</param>
+            <param name="values">The values.</param>
+        </member>
+        <member name="P:MongoDB.Driver.DistinctCommandResult`1.Values">
+            <summary>
+            Gets the values.
+            </summary>
+            <value>
+            The values.
+            </value>
+        </member>
+        <member name="T:MongoDB.Driver.DistinctCommandResultSerializer`1">
+            <summary>
+            Represents a serializer for a DistinctCommandResult with values of type TValue.
+            </summary>
+            <typeparam name="TValue">The type of the value.</typeparam>
+        </member>
+        <member name="M:MongoDB.Driver.DistinctCommandResultSerializer`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.DistinctCommandResultSerializer`1"/> class.
+            </summary>
+        </member>
+        <member name="M:MongoDB.Driver.DistinctCommandResultSerializer`1.#ctor(MongoDB.Bson.Serialization.IBsonSerializer,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.DistinctCommandResultSerializer`1"/> class.
+            </summary>
+            <param name="valueSerializer">The value serializer.</param>
+            <param name="valueSerializationOptions">The value serialization options.</param>
+        </member>
+        <member name="M:MongoDB.Driver.DistinctCommandResultSerializer`1.Deserialize(MongoDB.Bson.IO.BsonReader,System.Type,System.Type,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Deserializes an object from a BsonReader.
+            </summary>
+            <param name="bsonReader">The BsonReader.</param>
+            <param name="nominalType">The nominal type of the object.</param>
+            <param name="actualType">The actual type of the object.</param>
+            <param name="options">The serialization options.</param>
+            <returns>
+            An object.
+            </returns>
+        </member>
         <member name="T:MongoDB.Driver.FindAndModifyResult">
             <summary>
             Represents the result of a FindAndModify command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.FindAndModifyResult.#ctor">
+        <member name="M:MongoDB.Driver.FindAndModifyResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the FindAndModifyResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.FindAndModifyResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="M:MongoDB.Driver.FindAndModifyResult.GetModifiedDocumentAs``1">
             <summary>
@@ -4520,10 +4578,11 @@
             Represents the result of a GeoHaystackSearch command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.GeoHaystackSearchResult.#ctor">
+        <member name="M:MongoDB.Driver.GeoHaystackSearchResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the GeoHaystackSearchResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.GeoHaystackSearchResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.GeoHaystackSearchResult.Hits">
             <summary>
@@ -4639,10 +4698,11 @@
             </summary>
             <typeparam name="TDocument">The type of the returned documents.</typeparam>
         </member>
-        <member name="M:MongoDB.Driver.GeoHaystackSearchResult`1.#ctor">
+        <member name="M:MongoDB.Driver.GeoHaystackSearchResult`1.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the GeoHaystackSearchResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.GeoHaystackSearchResult`1"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.GeoHaystackSearchResult`1.Hits">
             <summary>
@@ -4722,10 +4782,11 @@
             Represents the result of a GeoNear command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.GeoNearResult.#ctor">
+        <member name="M:MongoDB.Driver.GeoNearResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the GeoNearResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.GeoNearResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.GeoNearResult.Hits">
             <summary>
@@ -4866,10 +4927,11 @@
             </summary>
             <typeparam name="TDocument">The type of the returned documents.</typeparam>
         </member>
-        <member name="M:MongoDB.Driver.GeoNearResult`1.#ctor">
+        <member name="M:MongoDB.Driver.GeoNearResult`1.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the GeoNearResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.GeoNearResult`1"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.GeoNearResult`1.Hits">
             <summary>
@@ -4959,10 +5021,11 @@
             Represents the results of a GetLastError command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.GetLastErrorResult.#ctor">
+        <member name="M:MongoDB.Driver.GetLastErrorResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the GetLastErrorResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.GetLastErrorResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.GetLastErrorResult.DocumentsAffected">
             <summary>
@@ -4984,15 +5047,28 @@
             Gets whether the last command updated an existing document.
             </summary>
         </member>
+        <member name="M:MongoDB.Driver.SafeModeResult.#ctor(MongoDB.Bson.BsonDocument)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.SafeModeResult"/> class.
+            </summary>
+            <param name="response">The response.</param>
+        </member>
+        <member name="M:MongoDB.Driver.WriteConcernResult.#ctor(MongoDB.Bson.BsonDocument)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.WriteConcernResult"/> class.
+            </summary>
+            <param name="response">The response.</param>
+        </member>
         <member name="T:MongoDB.Driver.GetProfilingLevelResult">
             <summary>
             Represents the results of a GetProfilingLevel command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.GetProfilingLevelResult.#ctor">
+        <member name="M:MongoDB.Driver.GetProfilingLevelResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the GetProfilingLevelResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.GetProfilingLevelResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.GetProfilingLevelResult.Level">
             <summary>
@@ -5008,6 +5084,12 @@
             <summary>
             Represents the result of an isMaster command.
             </summary>
+        </member>
+        <member name="M:MongoDB.Driver.IsMasterResult.#ctor(MongoDB.Bson.BsonDocument)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.IsMasterResult"/> class.
+            </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.IsMasterResult.Arbiters">
             <summary>
@@ -5113,10 +5195,11 @@
             Represents the results of a validate collection command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.ValidateCollectionResult.#ctor">
+        <member name="M:MongoDB.Driver.ValidateCollectionResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the ValidateCollectionResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.ValidateCollectionResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="P:MongoDB.Driver.ValidateCollectionResult.DataSize">
             <summary>
@@ -16380,6 +16463,23 @@
             <param name="query">The query (usually a QueryDocument or constructed using the Query builder).</param>
             <returns>The distint values of the field.</returns>
         </member>
+        <member name="M:MongoDB.Driver.MongoCollection.Distinct``1(System.String)">
+            <summary>
+            Returns the distinct values for a given field.
+            </summary>
+            <typeparam name="TValue">The type of the value.</typeparam>
+            <param name="key">The key of the field.</param>
+            <returns>The distint values of the field.</returns>
+        </member>
+        <member name="M:MongoDB.Driver.MongoCollection.Distinct``1(System.String,MongoDB.Driver.IMongoQuery)">
+            <summary>
+            Returns the distinct values for a given field for documents that match a query.
+            </summary>
+            <typeparam name="TValue">The type of the value.</typeparam>
+            <param name="key">The key of the field.</param>
+            <param name="query">The query (usually a QueryDocument or constructed using the Query builder).</param>
+            <returns>The distint values of the field.</returns>
+        </member>
         <member name="M:MongoDB.Driver.MongoCollection.Drop">
             <summary>
             Drops this collection.
@@ -17542,10 +17642,11 @@
             Represents the result of a map/reduce command.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.MapReduceResult.#ctor">
+        <member name="M:MongoDB.Driver.MapReduceResult.#ctor(MongoDB.Bson.BsonDocument)">
             <summary>
-            Initializes a new instance of the MapReduceResult class.
+            Initializes a new instance of the <see cref="T:MongoDB.Driver.MapReduceResult"/> class.
             </summary>
+            <param name="response">The response.</param>
         </member>
         <member name="M:MongoDB.Driver.MapReduceResult.GetInlineResultsAs``1">
             <summary>
@@ -18019,15 +18120,17 @@
             to the server until you begin enumerating the results.
             </summary>
         </member>
-        <member name="M:MongoDB.Driver.MongoCursor.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference)">
+        <member name="M:MongoDB.Driver.MongoCursor.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
             <summary>
             Creates a new MongoCursor. It is very unlikely that you will call this constructor. Instead, see all the Find methods in MongoCollection.
             </summary>
             <param name="collection">The collection.</param>
             <param name="query">The query.</param>
             <param name="readPreference">The read preference.</param>
+            <param name="serializer">The serializer.</param>
+            <param name="serializationOptions">The serialization options.</param>
         </member>
-        <member name="M:MongoDB.Driver.MongoCursor.Create(System.Type,MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference)">
+        <member name="M:MongoDB.Driver.MongoCursor.Create(System.Type,MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
             <summary>
             Creates a cursor.
             </summary>
@@ -18035,7 +18138,11 @@
             <param name="collection">The collection to query.</param>
             <param name="query">A query.</param>
             <param name="readPreference">The read preference.</param>
-            <returns>A cursor.</returns>
+            <param name="serializer">The serializer.</param>
+            <param name="serializationOptions">The serialization options.</param>
+            <returns>
+            A cursor.
+            </returns>
         </member>
         <member name="M:MongoDB.Driver.MongoCursor.Clone``1">
             <summary>
@@ -18044,12 +18151,34 @@
             <typeparam name="TDocument">The type of the documents returned.</typeparam>
             <returns>A clone of the cursor.</returns>
         </member>
+        <member name="M:MongoDB.Driver.MongoCursor.Clone``1(MongoDB.Bson.Serialization.IBsonSerializer,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Creates a clone of the cursor.
+            </summary>
+            <typeparam name="TDocument">The type of the documents returned.</typeparam>
+            <param name="serializer">The serializer to use.</param>
+            <param name="serializationOptions">The serialization options.</param>
+            <returns>
+            A clone of the cursor.
+            </returns>
+        </member>
         <member name="M:MongoDB.Driver.MongoCursor.Clone(System.Type)">
             <summary>
             Creates a clone of the cursor.
             </summary>
             <param name="documentType">The type of the documents returned.</param>
             <returns>A clone of the cursor.</returns>
+        </member>
+        <member name="M:MongoDB.Driver.MongoCursor.Clone(System.Type,MongoDB.Bson.Serialization.IBsonSerializer,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Creates a clone of the cursor.
+            </summary>
+            <param name="documentType">The type of the documents returned.</param>
+            <param name="serializer">The serializer to use.</param>
+            <param name="serializationOptions">The serialization options.</param>
+            <returns>
+            A clone of the cursor.
+            </returns>
         </member>
         <member name="M:MongoDB.Driver.MongoCursor.Count">
             <summary>
@@ -18288,6 +18417,11 @@
             Gets or sets the serialization options (only needed in rare cases).
             </summary>
         </member>
+        <member name="P:MongoDB.Driver.MongoCursor.Serializer">
+            <summary>
+            Gets the serializer.
+            </summary>
+        </member>
         <member name="P:MongoDB.Driver.MongoCursor.IsFrozen">
             <summary>
             Gets whether the cursor has been frozen to prevent further changes.
@@ -18300,13 +18434,15 @@
             </summary>
             <typeparam name="TDocument">The type of the documents returned.</typeparam>
         </member>
-        <member name="M:MongoDB.Driver.MongoCursor`1.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference)">
+        <member name="M:MongoDB.Driver.MongoCursor`1.#ctor(MongoDB.Driver.MongoCollection,MongoDB.Driver.IMongoQuery,MongoDB.Driver.ReadPreference,MongoDB.Bson.Serialization.IBsonSerializer,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
             <summary>
             Creates a new MongoCursor. It is very unlikely that you will call this constructor. Instead, see all the Find methods in MongoCollection.
             </summary>
             <param name="collection">The collection.</param>
             <param name="query">The query.</param>
             <param name="readPreference">The read preference.</param>
+            <param name="serializer">The serializer.</param>
+            <param name="serializationOptions">The serialization options.</param>
         </member>
         <member name="M:MongoDB.Driver.MongoCursor`1.GetEnumerator">
             <summary>

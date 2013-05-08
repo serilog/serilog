@@ -6683,9 +6683,17 @@
             <param name="node">The ParameterExpression.</param>
             <returns>The ParameterExpression (possibly modified).</returns>
         </member>
-        <member name="T:MongoDB.Bson.Serialization.IdGenerators.BsonBinaryDataGuidGenerator">
+        <member name="T:MongoDB.Bson.Serialization.IdGenerators.AscendingGuidGenerator">
             <summary>
-            Represents an Id generator for Guids stored in BsonBinaryData values.
+            A GUID generator that generates GUIDs in ascending order. To enable 
+            an index to make use of the ascending nature make sure to use
+            <see cref="F:MongoDB.Bson.GuidRepresentation.Standard">GuidRepresentation.Standard</see>
+            as the storage representation.
+            Internally the GUID is of the form
+            8 bytes: Ticks from DateTime.UtcNow.Ticks
+            3 bytes: hash of machine name
+            2 bytes: low order bytes of process Id
+            3 bytes: increment
             </summary>
         </member>
         <member name="T:MongoDB.Bson.Serialization.IIdGenerator">
@@ -6707,6 +6715,56 @@
             </summary>
             <param name="id">The Id.</param>
             <returns>True if the Id is empty.</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.IdGenerators.AscendingGuidGenerator.GenerateId(System.Object,System.Object)">
+            <summary>
+            Generates an ascending Guid for a document. Consecutive invocations
+            should generate Guids that are ascending from a MongoDB perspective
+            </summary>
+            <param name="container">The container of the document (will be a 
+            MongoCollection when called from the driver). </param>
+            <param name="document">The document it was generated for.</param>
+            <returns>A Guid.</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.IdGenerators.AscendingGuidGenerator.GenerateId(System.Int64,System.Byte[],System.Int32)">
+            <summary>
+            Generates a Guid for a document. Note - this is purely used for
+            unit testing
+            </summary>
+            <param name="tickCount">The time portion of the Guid</param>
+            <param name="machineProcessId">A 5 byte array with the first 3 bytes
+            representing a machine id and the next 2 representing a process
+            id</param>
+            <param name="increment">The increment portion of the Guid. Used
+            to distinguish between 2 Guids that have the timestamp. Note
+            only the least significant 3 bytes are used.</param>
+            <returns>A Guid.</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.IdGenerators.AscendingGuidGenerator.IsEmpty(System.Object)">
+            <summary>
+            Tests whether an id is empty.
+            </summary>
+            <param name="id">The id to test.</param>
+            <returns>True if the Id is empty. False otherwise</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.IdGenerators.AscendingGuidGenerator.GetCurrentProcessId">
+            <summary>
+            Gets the current process id.  This method exists because of how
+            CAS operates on the call stack, checking for permissions before
+            executing the method.  Hence, if we inlined this call, the calling
+            method would not execute before throwing an exception requiring the
+            try/catch at an even higher level that we don't necessarily control.
+            </summary>
+        </member>
+        <member name="P:MongoDB.Bson.Serialization.IdGenerators.AscendingGuidGenerator.Instance">
+            <summary>
+            Gets an instance of AscendingGuidGenerator.
+            </summary>
+        </member>
+        <member name="T:MongoDB.Bson.Serialization.IdGenerators.BsonBinaryDataGuidGenerator">
+            <summary>
+            Represents an Id generator for Guids stored in BsonBinaryData values.
+            </summary>
         </member>
         <member name="M:MongoDB.Bson.Serialization.IdGenerators.BsonBinaryDataGuidGenerator.#ctor(MongoDB.Bson.GuidRepresentation)">
             <summary>
@@ -6815,6 +6873,14 @@
             </summary>
             <param name="id">The Id.</param>
             <returns>True if the Id is empty.</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.IdGenerators.CombGuidGenerator.NewCombGuid(System.Guid,System.DateTime)">
+            <summary>
+            Create a new CombGuid from a given Guid and timestamp.
+            </summary>
+            <param name="guid">The base Guid.</param>
+            <param name="timestamp">The timestamp.</param>
+            <returns>A new CombGuid created by combining the base Guid with the timestamp.</returns>
         </member>
         <member name="P:MongoDB.Bson.Serialization.IdGenerators.CombGuidGenerator.Instance">
             <summary>
@@ -11621,6 +11687,49 @@
         <member name="P:MongoDB.Bson.Serialization.Serializers.Int64Serializer.Instance">
             <summary>
             Gets an instance of the Int64Serializer class.
+            </summary>
+        </member>
+        <member name="T:MongoDB.Bson.Serialization.Serializers.InterfaceSerializer">
+            <summary>
+            Represents a serializer for Interfaces.
+            </summary>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.Serializers.InterfaceSerializer.#ctor">
+            <summary>
+            Initializes a new instance of the InterfaceSerializer class.
+            </summary>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.Serializers.InterfaceSerializer.Deserialize(MongoDB.Bson.IO.BsonReader,System.Type,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Deserializes a document from a BsonReader.
+            </summary>
+            <param name="bsonReader">The BsonReader.</param>
+            <param name="nominalType">The nominal type of the document.</param>
+            <param name="options">The serialization options.</param>
+            <returns>A document.</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.Serializers.InterfaceSerializer.Deserialize(MongoDB.Bson.IO.BsonReader,System.Type,System.Type,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Deserializes a document from a BsonReader.
+            </summary>
+            <param name="bsonReader">The BsonReader.</param>
+            <param name="nominalType">The nominal type of the document.</param>
+            <param name="actualType">The actual type of the document..</param>
+            <param name="options">The serialization options.</param>
+            <returns>A document.</returns>
+        </member>
+        <member name="M:MongoDB.Bson.Serialization.Serializers.InterfaceSerializer.Serialize(MongoDB.Bson.IO.BsonWriter,System.Type,System.Object,MongoDB.Bson.Serialization.IBsonSerializationOptions)">
+            <summary>
+            Serializes a document to a BsonWriter.
+            </summary>
+            <param name="bsonWriter">The BsonWriter.</param>
+            <param name="nominalType">The nominal type.</param>
+            <param name="value">The document.</param>
+            <param name="options">The serialization options.</param>
+        </member>
+        <member name="P:MongoDB.Bson.Serialization.Serializers.InterfaceSerializer.Instance">
+            <summary>
+            Gets an instance of the InterfaceSerializer class.
             </summary>
         </member>
         <member name="T:MongoDB.Bson.Serialization.Serializers.IPAddressSerializer">
