@@ -19,21 +19,51 @@ using Serilog.Events;
 
 namespace Serilog.Formatting.Display
 {
-    static class OutputProperties
+    /// <summary>
+    /// Describes the properties available in standard message template-based
+    /// output format strings.
+    /// </summary>
+    public static class OutputProperties
     {
+        /// <summary>
+        /// The message rendered from the log event.
+        /// </summary>
         public const string MessagePropertyName = "Message";
+
+        /// <summary>
+        /// The timestamp of the log event.
+        /// </summary>
         public const string TimeStampPropertyName = "TimeStamp";
+
+        /// <summary>
+        /// The level of the log event.
+        /// </summary>
         public const string LevelPropertyName = "Level";
+
+        /// <summary>
+        /// A new line.
+        /// </summary>
         public const string NewLinePropertyName = "NewLine";
+
+        /// <summary>
+        /// The exception associated with the log event.
+        /// </summary>
         public const string ExceptionPropertyName = "Exception";
 
+        enum OutputLevel { Verbose }
+
+        /// <summary>
+        /// Create properties from the provided log event.
+        /// </summary>
+        /// <param name="logEvent">The log event.</param>
+        /// <returns>A dictionary with properties representing the log event.</returns>
         public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties)));
             result.Add(TimeStampPropertyName, new LogEventProperty(TimeStampPropertyName, new ScalarValue(logEvent.TimeStamp)));
-            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level)));
+            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level == LogEventLevel.Verbose ? (object)OutputLevel.Verbose : logEvent.Level)));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new ScalarValue(Environment.NewLine)));
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);

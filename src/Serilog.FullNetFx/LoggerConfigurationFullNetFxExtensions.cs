@@ -31,7 +31,7 @@ namespace Serilog
     public static class LoggerConfigurationFullNetFxExtensions
     {
         const string DefaultOutputTemplate = "{TimeStamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-        const string DefaultConsoleOutputTemplate = "{TimeStamp:HH:mm} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultConsoleOutputTemplate = "{TimeStamp:G} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
 
         /// <summary>
         /// Writes log events to <see cref="System.Console"/>.
@@ -70,8 +70,7 @@ namespace Serilog
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
-            return sinkConfiguration.Sink(new ColoredConsoleSink(formatter), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate), restrictedToMinimumLevel);
         }
 
         /// <summary>

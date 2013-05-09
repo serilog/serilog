@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -22,7 +23,6 @@ namespace Serilog.Sinks.SystemConsole
     class ConsoleSink : ILogEventSink
     {
         readonly ITextFormatter _textFormatter;
-        readonly object _syncRoot = new object();
 
         public ConsoleSink(ITextFormatter textFormatter)
         {
@@ -33,10 +33,9 @@ namespace Serilog.Sinks.SystemConsole
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            lock (_syncRoot)
-            {
-                _textFormatter.Format(logEvent, Console.Out);
-            }
+            var renderSpace = new StringWriter();
+            _textFormatter.Format(logEvent, renderSpace);
+            Console.Out.Write(renderSpace.ToString());
         }
     }
 }
