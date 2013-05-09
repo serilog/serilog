@@ -30,7 +30,8 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationFullNetFxExtensions
     {
-        const string DefaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultOutputTemplate = "{TimeStamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultConsoleOutputTemplate = "{TimeStamp:HH:mm} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
 
         /// <summary>
         /// Writes log events to <see cref="System.Console"/>.
@@ -44,12 +45,33 @@ namespace Serilog
         public static LoggerConfiguration Console(
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
+            string outputTemplate = DefaultConsoleOutputTemplate)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate);
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
+        }
+
+        /// <summary>
+        /// Writes log events to <see cref="System.Console"/>, using color to differentiate
+        /// between levels.
+        /// </summary>
+        /// <param name="sinkConfiguration">Logger sink configuration.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration ColoredConsole(
+            this LoggerSinkConfiguration sinkConfiguration,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            string outputTemplate = DefaultConsoleOutputTemplate)
+        {
+            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
+            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            return sinkConfiguration.Sink(new ColoredConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
         /// <summary>

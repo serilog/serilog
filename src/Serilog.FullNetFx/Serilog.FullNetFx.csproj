@@ -50,6 +50,7 @@
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />
     <Compile Include="Sinks\IOFile\FileSink.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
+    <Compile Include="Sinks\SystemConsole\ColoredConsoleSink.cs" />
     <Compile Include="Sinks\SystemConsole\ConsoleSink.cs" />
     <Compile Include="Sinks\DiagnosticTrace\DiagnosticTraceSink.cs" />
   </ItemGroup>

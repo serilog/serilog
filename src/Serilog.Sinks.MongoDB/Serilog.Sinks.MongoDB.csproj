@@ -75,7 +75,9 @@
       <Link>Serilog.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Serilog.Sinks.MongoDB.nuspec" />
+    <None Include="Serilog.Sinks.MongoDB.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
