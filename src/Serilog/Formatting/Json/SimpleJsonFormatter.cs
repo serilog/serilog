@@ -170,10 +170,23 @@ namespace Serilog.Formatting.Json
 
         static void WriteString(string value, TextWriter output)
         {
-            var content = value.Replace("\"", "\\\"");
+            var content = Escape(value);
             output.Write("\"");
             output.Write(content);
             output.Write("\"");
+        }
+
+        /// <summary>
+        /// Perform simple JSON string escaping on <paramref name="s"/>.
+        /// </summary>
+        /// <param name="s">A raw string.</param>
+        /// <returns>A JSON-escaped version of <paramref name="s"/>.</returns>
+        public static string Escape(string s)
+        {
+            if (s == null) return null;
+
+            return s.Replace("\\", "\\\\")
+                    .Replace("\"", "\\\"");
         }
     }
 }
