@@ -84,5 +84,13 @@ namespace Serilog.Tests.Formatting.Json
             var result = (int)formatted.Properties[structureProp.Name][memberProp.Name];
             Assert.AreEqual(value, result);
         }
+
+        [Test]
+        public void BackslashesAndDoubleQuotesAreEscaped()
+        {
+            const string s = "\\\"";
+            var escaped = SimpleJsonFormatter.Escape(s);
+            Assert.AreEqual("\\\\\\\"", escaped);
+        }
     }
 }
