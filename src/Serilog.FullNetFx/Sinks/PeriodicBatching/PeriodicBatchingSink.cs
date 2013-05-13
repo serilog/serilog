@@ -53,7 +53,7 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             _batchSizeLimit = batchSizeLimit;
             _queue = new ConcurrentQueue<LogEvent>();
-            _timer = new Timer(async s => await OnTick());
+            _timer = new Timer(s => OnTick());
             _period = period;
 
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
@@ -64,9 +64,6 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             CloseAndFlush();
         }
-
-        // See: http://www.danielfortunov.com/software/$daniel_fortunovs_adventures_in_software_development/2010/01/31/invalid_wait_handle
-        class InvalidWaitHandle : WaitHandle { }
 
         void CloseAndFlush()
         {
@@ -80,9 +77,12 @@ namespace Serilog.Sinks.PeriodicBatching
 
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
-            
-            _timer.Dispose(new InvalidWaitHandle());
-            OnTick().Wait();
+
+            var wh = new ManualResetEvent(false);
+            if (_timer.Dispose(wh))
+                wh.WaitOne();
+
+            OnTick();
         }
 
         /// <summary>
@@ -113,6 +113,9 @@ namespace Serilog.Sinks.PeriodicBatching
         /// not both.</remarks>
         protected virtual void EmitBatch(IEnumerable<LogEvent> events)
         {
+            // Wait so that the timer thread stays busy and thus
+            // we know we're working when flushing.
+            EmitBatchAsync(events).Wait();
         }
 
         /// <summary>
@@ -120,12 +123,11 @@ namespace Serilog.Sinks.PeriodicBatching
         /// </summary>
         /// <param name="events">The events to emit.</param>
         /// <remarks>Override either <see cref="EmitBatch"/> or <see cref="EmitBatchAsync"/>,
-        /// not both.</remarks>
+        /// not both. Overriding EmitBatch() is preferred.</remarks>
 #pragma warning disable 1998
         protected virtual async Task EmitBatchAsync(IEnumerable<LogEvent> events)
 #pragma warning restore 1998
         {
-            EmitBatch(events);
         }
 
         void SetTimer()
@@ -135,7 +137,7 @@ namespace Serilog.Sinks.PeriodicBatching
             _timer.Change(_period, Timeout.InfiniteTimeSpan);
         }
 
-        async Task OnTick()
+        void OnTick()
         {
             try
             {
@@ -153,7 +155,7 @@ namespace Serilog.Sinks.PeriodicBatching
                     if (events.Count == 0)
                         return;
 
-                    await EmitBatchAsync(events);
+                    EmitBatch(events);
                 }
                 while (true);
             }
