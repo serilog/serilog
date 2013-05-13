@@ -88,7 +88,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void SetTimer()
         {
-            _timer.Change(TickInterval, TimeSpan.FromMilliseconds(-1));
+            _timer.Change(TickInterval, Timeout.InfiniteTimeSpan);
         }
 
         async Task OnTick()
