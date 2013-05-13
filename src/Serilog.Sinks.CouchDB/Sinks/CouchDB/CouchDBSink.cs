@@ -58,6 +58,20 @@ namespace Serilog.Sinks.CouchDB
         }
 
         /// <summary>
+        /// Free resources held by the sink.
+        /// </summary>
+        /// <param name="disposing">If true, called because the object is being disposed; if false,
+        /// the object is being disposed from the finalizer.</param>
+        protected override void Dispose(bool disposing)
+        {
+            // First flush the buffer
+            base.Dispose(disposing);
+
+            if (disposing)
+                _httpClient.Dispose();
+        }
+
+        /// <summary>
         /// Emit a batch of log events, running asynchronously.
         /// </summary>
         /// <param name="events">The events to emit.</param>

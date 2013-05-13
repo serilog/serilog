@@ -40,7 +40,9 @@ namespace Serilog.Sinks.PeriodicBatching
         readonly Timer _timer;
         readonly TimeSpan _period;
 
-        volatile bool _unloading;
+        readonly object _stateLock = new object(); 
+        bool _unloading;
+        bool _started;
 
         /// <summary>
         /// Construct a sink posting to the specified database.
@@ -56,7 +58,51 @@ namespace Serilog.Sinks.PeriodicBatching
 
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
-            SetTimer();
+        }
+
+        void OnAppDomainUnloading(object sender, EventArgs args)
+        {
+            CloseAndFlush();
+        }
+
+        // See: http://www.danielfortunov.com/software/$daniel_fortunovs_adventures_in_software_development/2010/01/31/invalid_wait_handle
+        class InvalidWaitHandle : WaitHandle { }
+
+        void CloseAndFlush()
+        {
+            lock (_stateLock)
+            {
+                if (!_started || _unloading)
+                    return;
+
+                _unloading = true;
+            }
+
+            AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
+            AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
+            
+            _timer.Dispose(new InvalidWaitHandle());
+            OnTick().Wait();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Free resources held by the sink.
+        /// </summary>
+        /// <param name="disposing">If true, called because the object is being disposed; if false,
+        /// the object is being disposed from the finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+            CloseAndFlush();
         }
 
         /// <summary>
@@ -82,14 +128,10 @@ namespace Serilog.Sinks.PeriodicBatching
             EmitBatch(events);
         }
 
-        void OnAppDomainUnloading(object sender, EventArgs args)
-        {
-            _unloading = true;
-            OnTick().Wait();
-        }
-
         void SetTimer()
         {
+            // Note, called under _stateLock
+            
             _timer.Change(_period, Timeout.InfiniteTimeSpan);
         }
 
@@ -97,9 +139,9 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             try
             {
-                var count = 0;
                 do
                 {
+                    var count = 0;
                     var events = new Queue<LogEvent>();
                     LogEvent next;
                     while (count < _batchSizeLimit && _queue.TryDequeue(out next))
@@ -117,35 +159,44 @@ namespace Serilog.Sinks.PeriodicBatching
             }
             catch (Exception ex)
             {
-                SelfLog.WriteLine("Exception while emitting periodic batch: {0}", ex);
+                SelfLog.WriteLine("Exception while emitting periodic batch from {0}: {1}", this, ex);
             }
             finally
             {
-                if (!_unloading)
-                    SetTimer();
+                lock (_stateLock)
+                {
+                    if (!_unloading)
+                        SetTimer();
+                }
             }
         }
 
         /// <summary>
-        /// Emit the provided log event to the sink.
+        /// Emit the provided log event to the sink. If the sink is being disposed or
+        /// the app domain unloaded, then the event is ignored.
         /// </summary>
         /// <param name="logEvent">Log event to emit.</param>
         /// <exception cref="ArgumentNullException">The event is null.</exception>
+        /// <remarks>
+        /// The sink implements the contract that any events whose Emit() method has
+        /// completed at the time of sink disposal will be flushed (or attempted to,
+        /// depending on app domain state).
+        /// </remarks>
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            if (!_unloading)
-                _queue.Enqueue(logEvent);
-        }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
-            AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
+            lock (_stateLock)
+            {
+                if (_unloading) return;
+                if (!_started)
+                {
+                    _started = true;
+                    SetTimer();
+                }
+            }
+
+            _queue.Enqueue(logEvent);
         }
     }
 }

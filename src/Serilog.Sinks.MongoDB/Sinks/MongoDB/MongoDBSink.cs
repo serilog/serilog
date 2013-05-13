@@ -54,15 +54,12 @@ namespace Serilog.Sinks.MongoDB
             _mongoUrl = new MongoUrl(databaseUrl);
         }
 
-        MongoCollection<BsonDocument> LogCollection
+        MongoCollection<BsonDocument> GetLogCollection()
         {
-            get
-            {
-                var mongoClient = new MongoClient(_mongoUrl);
-                var server = mongoClient.GetServer();
-                var logDb = server.GetDatabase(_mongoUrl.DatabaseName);
-                return logDb.GetCollection("log");
-            }
+            var mongoClient = new MongoClient(_mongoUrl);
+            var server = mongoClient.GetServer();
+            var logDb = server.GetDatabase(_mongoUrl.DatabaseName);
+            return logDb.GetCollection("log");
         }
 
         /// <summary>
@@ -93,7 +90,7 @@ namespace Serilog.Sinks.MongoDB
 
             var bson = BsonDocument.Parse(payload.ToString());
             var docs = bson["d"].AsBsonArray;
-            LogCollection.InsertBatch(docs);
+            GetLogCollection().InsertBatch(docs);
         }
     }
 }
