@@ -35,22 +35,24 @@ namespace Serilog.Sinks.PeriodicBatching
     /// </remarks>
     public abstract class PeriodicBatchingSink : ILogEventSink, IDisposable
     {
-        readonly int _batchPostingLimit;
+        readonly int _batchSizeLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly Timer _timer;
-        readonly TimeSpan TickInterval = TimeSpan.FromSeconds(2);
+        readonly TimeSpan _period;
 
         volatile bool _unloading;
-        
+
         /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
-        /// <param name="batchPostingLimit">The maximium number of events to include in a single batch.</param>
-        protected PeriodicBatchingSink(int batchPostingLimit)
+        /// <param name="batchSizeLimit">The maximium number of events to include in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        protected PeriodicBatchingSink(int batchSizeLimit, TimeSpan period)
         {
-            _batchPostingLimit = batchPostingLimit;
+            _batchSizeLimit = batchSizeLimit;
             _queue = new ConcurrentQueue<LogEvent>();
             _timer = new Timer(async s => await OnTick());
+            _period = period;
 
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
@@ -88,7 +90,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void SetTimer()
         {
-            _timer.Change(TickInterval, Timeout.InfiniteTimeSpan);
+            _timer.Change(_period, Timeout.InfiniteTimeSpan);
         }
 
         async Task OnTick()
@@ -96,18 +98,22 @@ namespace Serilog.Sinks.PeriodicBatching
             try
             {
                 var count = 0;
-                var events = new Queue<LogEvent>();
-                LogEvent next;
-                while (count < _batchPostingLimit && _queue.TryDequeue(out next))
+                do
                 {
-                    count++;
-                    events.Enqueue(next);
+                    var events = new Queue<LogEvent>();
+                    LogEvent next;
+                    while (count < _batchSizeLimit && _queue.TryDequeue(out next))
+                    {
+                        count++;
+                        events.Enqueue(next);
+                    }
+
+                    if (events.Count == 0)
+                        return;
+
+                    await EmitBatchAsync(events);
                 }
-
-                if (events.Count == 0)
-                    return;
-
-                await EmitBatchAsync(events);
+                while (true);
             }
             catch (Exception ex)
             {

@@ -71,6 +71,7 @@
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\File\FileSinkTests.cs" />
+    <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSinkTests.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSinkTests.cs" />
     <Compile Include="Sinks\TextWriter\TextWriterSinkTests.cs" />
     <Compile Include="Support\DelegatingEnricher.cs" />

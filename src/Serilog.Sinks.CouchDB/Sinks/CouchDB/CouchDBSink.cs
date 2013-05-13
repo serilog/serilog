@@ -40,12 +40,18 @@ namespace Serilog.Sinks.CouchDB
         public const int DefaultBatchPostingLimit = 50;
 
         /// <summary>
+        /// A reasonable default time to wait between checking for event batches.
+        /// </summary>
+        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
+
+        /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
         /// <param name="batchPostingLimit">The maximium number of events to post in a single batch.</param>
-        public CouchDBSink(string databaseUrl, int batchPostingLimit)
-            : base(batchPostingLimit)
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        public CouchDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period)
+            : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
             _httpClient = new HttpClient { BaseAddress = new Uri(databaseUrl) };
