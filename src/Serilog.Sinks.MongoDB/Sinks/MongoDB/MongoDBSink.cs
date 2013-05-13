@@ -13,28 +13,22 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Json;
+using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.MongoDB
 {
     /// <summary>
     /// Writes log events as documents to a CouchDB database.
     /// </summary>
-    public class MongoDBSink : ILogEventSink, IDisposable
+    public class MongoDBSink : PeriodicBatchingSink
     {
-        readonly int _batchPostingLimit;
-        readonly ConcurrentQueue<LogEvent> _queue;
-        readonly Timer _timer;
         readonly MongoUrl _mongoUrl;
-        readonly TimeSpan TickInterval = TimeSpan.FromSeconds(2);
 
         /// <summary>
         /// A reasonable default for the number of events posted in
@@ -42,24 +36,16 @@ namespace Serilog.Sinks.MongoDB
         /// </summary>
         public const int DefaultBatchPostingLimit = 50;
 
-        volatile bool _unloading;
-
         /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         public MongoDBSink(string databaseUrl, int batchPostingLimit)
+            : base(batchPostingLimit)
         {
-            _batchPostingLimit = batchPostingLimit;
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
-            _queue = new ConcurrentQueue<LogEvent>();
             _mongoUrl = new MongoUrl(databaseUrl);
-            _timer = new Timer(s => OnTick());
-
-            AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
-            AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
-            SetTimer();
         }
 
         MongoCollection<BsonDocument> LogCollection
@@ -73,31 +59,14 @@ namespace Serilog.Sinks.MongoDB
             }
         }
 
-        void OnAppDomainUnloading(object sender, EventArgs args)
+        /// <summary>
+        /// Emit a batch of log events, running to completion synchronously.
+        /// </summary>
+        /// <param name="events">The events to emit.</param>
+        /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
+        /// not both.</remarks>
+        protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
-            _unloading = true;
-            OnTick();
-        }
-
-        void SetTimer()
-        {
-            _timer.Change(TickInterval, TimeSpan.FromMilliseconds(-1));
-        }
-
-        void OnTick()
-        {
-            var count = 0;
-            var events = new Queue<LogEvent>();
-            LogEvent next;
-            while (count < _batchPostingLimit && _queue.TryDequeue(out next))
-            {
-                count++;
-                events.Enqueue(next);
-            }
-
-            if (events.Count == 0)
-                return;
-
             var payload = new StringWriter();
             payload.Write("{\"d\":[");
 
@@ -109,49 +78,16 @@ namespace Serilog.Sinks.MongoDB
                 formatter.Format(logEvent, payload);
                 var renderedMessage = logEvent.RenderedMessage;
                 payload.Write(",\"UtcTimeStamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-                    logEvent.TimeStamp.ToUniversalTime().DateTime,
-                    SimpleJsonFormatter.Escape(renderedMessage));
+                              logEvent.TimeStamp.ToUniversalTime().DateTime,
+                              SimpleJsonFormatter.Escape(renderedMessage));
                 delimStart = ",{";
             }
 
             payload.Write("]}");
 
-            try
-            {
-                var bson = BsonDocument.Parse(payload.ToString());
-                var docs = bson["d"].AsBsonArray;
-                LogCollection.InsertBatch(docs);
-            }
-            // ReSharper disable EmptyGeneralCatchClause
-            catch { }
-            // ReSharper restore EmptyGeneralCatchClause
-            finally
-            {
-                if (!_unloading)
-                    SetTimer();
-            }
-        }
-
-        /// <summary>
-        /// Emit the provided log event to the sink.
-        /// </summary>
-        /// <param name="logEvent">Log event to emit.</param>
-        /// <exception cref="ArgumentNullException">The event is null.</exception>
-        public void Emit(LogEvent logEvent)
-        {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
-            if (!_unloading)
-                _queue.Enqueue(logEvent);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
-            AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
+            var bson = BsonDocument.Parse(payload.ToString());
+            var docs = bson["d"].AsBsonArray;
+            LogCollection.InsertBatch(docs);
         }
     }
 }

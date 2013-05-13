@@ -65,6 +65,10 @@
     <Compile Include="Sinks\MongoDB\MongoDBSink.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
+      <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
+      <Name>Serilog.FullNetFx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>
