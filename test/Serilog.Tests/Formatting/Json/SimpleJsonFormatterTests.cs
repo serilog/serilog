@@ -86,11 +86,35 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Test]
-        public void BackslashesAndDoubleQuotesAreEscaped()
+        public void WellKnownSpecialCharactersAreEscapedAsNormal()
         {
-            const string s = "\\\"";
+            const string s = "\\\"\t\r\n\f";
             var escaped = SimpleJsonFormatter.Escape(s);
-            Assert.AreEqual("\\\\\\\"", escaped);
+            Assert.AreEqual("\\\\\\\"\\t\\r\\n\\f", escaped);
+        }
+
+        [Test]
+        public void StringsWithoutSpecialCharactersAreUnchanged()
+        {
+            const string s = "Hello, world!";
+            var escaped = SimpleJsonFormatter.Escape(s);
+            Assert.AreSame(s, escaped);
+        }
+
+        [Test]
+        public void UnprintableCharactersAreEscapedAsUnicodeSequences()
+        {
+            const string s = "\u0001";
+            var escaped = SimpleJsonFormatter.Escape(s);
+            Assert.AreEqual("\\u0001", escaped);
+        }
+
+        [Test]
+        public void EmbeddedEscapesPreservePrefixAndSuffix()
+        {
+            const string s = "a\nb";
+            var escaped = SimpleJsonFormatter.Escape(s);
+            Assert.AreEqual("a\\nb", escaped);
         }
     }
 }

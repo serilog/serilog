@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Json
@@ -185,9 +186,71 @@ namespace Serilog.Formatting.Json
         {
             if (s == null) return null;
 
-            return s.Replace("\\", "\\\\")
-                    .Replace("\"", "\\\"")
-                    .Replace(Environment.NewLine, "\\n");
+            StringBuilder escapedResult = null;
+            var cleanSegmentStart = 0;
+            for (var i = 0; i < s.Length; ++i)
+            {
+                var c = s[i];
+                if (c < (char)32 || c == '\\' || c == '"')
+                {
+
+                    if (escapedResult == null)
+                        escapedResult = new StringBuilder();
+
+                    escapedResult.Append(s.Substring(cleanSegmentStart, i - cleanSegmentStart));
+                    cleanSegmentStart = i + 1;
+
+                    switch (c)
+                    {
+                        case '"':
+                        {
+                            escapedResult.Append("\\\"");
+                            break;
+                        }
+                        case '\\':
+                        {
+                            escapedResult.Append("\\\\");
+                            break;
+                        }
+                        case '\n':
+                        {
+                            escapedResult.Append("\\n");
+                            break;
+                        }
+                        case '\r':
+                        {
+                            escapedResult.Append("\\r");
+                            break;
+                        }
+                        case '\f':
+                        {
+                            escapedResult.Append("\\f");
+                            break;
+                        }
+                        case '\t':
+                        {
+                            escapedResult.Append("\\t");
+                            break;
+                        }
+                        default:
+                        {
+                            escapedResult.Append("\\u");
+                            escapedResult.Append(((int)c).ToString("X4"));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (escapedResult != null)
+            {
+                if (cleanSegmentStart != s.Length)
+                    escapedResult.Append(s.Substring(cleanSegmentStart));
+
+                return escapedResult.ToString();
+            }
+
+            return s;
         }
     }
 }
