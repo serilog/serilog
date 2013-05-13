@@ -105,7 +105,7 @@ namespace Serilog.Parameters
                 next++;
             }
 
-            if (next != messageTemplateParameters.Length - 1 && !mismatchWarningIssued)
+            if (next > messageTemplateParameters.Length && !mismatchWarningIssued)
                 SelfLog.WriteLine("Too many parameters provided for message template: {0}.", this);
         }
 

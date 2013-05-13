@@ -186,7 +186,8 @@ namespace Serilog.Formatting.Json
             if (s == null) return null;
 
             return s.Replace("\\", "\\\\")
-                    .Replace("\"", "\\\"");
+                    .Replace("\"", "\\\"")
+                    .Replace(Environment.NewLine, "\\n");
         }
     }
 }
