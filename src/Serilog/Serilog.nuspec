@@ -9,6 +9,7 @@
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-logo-64.png</iconUrl>
+    <releaseNotes>Important: this version corrects the spelling of "timestamp" as one (non-compound) word. This affects the output of the included JSON serialisation - existing log events will need to be deleted or updated in document storage.</releaseNotes>
   </metadata>
   <files>
     <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
