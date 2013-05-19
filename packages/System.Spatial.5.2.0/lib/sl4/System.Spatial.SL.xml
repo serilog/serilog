@@ -1,0 +1,1100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Spatial</name>
+  </assembly>
+  <members>
+    <member name="T:System.Spatial.CoordinateSystem">
+      <summary>   Coordinate System Reference </summary>
+    </member>
+    <member name="F:System.Spatial.CoordinateSystem.DefaultGeography">
+      <summary>   Default Geography Reference (SRID 4326, WGS84) </summary>
+    </member>
+    <member name="F:System.Spatial.CoordinateSystem.DefaultGeometry">
+      <summary>   Default Geometry Reference </summary>
+    </member>
+    <member name="P:System.Spatial.CoordinateSystem.EpsgId">
+      <summary>   The coordinate system ID according to the EPSG, or NULL if this is not an EPSG coordinate system. </summary>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.Equals(System.Object)">
+      <summary>   Equals overload </summary>
+      <returns>True if equal</returns>
+      <param name="obj">The other CoordinateSystem</param>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.Equals(System.Spatial.CoordinateSystem)">
+      <summary>   Equals overload </summary>
+      <returns>True if equal</returns>
+      <param name="other">The other CoordinateSystem</param>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.Geography(System.Nullable{System.Int32})">
+      <summary>   Gets or creates a Geography coordinate system with the ID, or the default if null is given. </summary>
+      <returns>The coordinate system</returns>
+      <param name="epsgId">The coordinate system id, according to the EPSG. Null indicates the default should be returned</param>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.Geometry(System.Nullable{System.Int32})">
+      <summary>   Gets or creates a Geometry coordinate system with the ID, or the default if null is given. </summary>
+      <returns>The coordinate system</returns>
+      <param name="epsgId">The coordinate system id, according to the EPSG. Null indicates the default should be returned</param>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.GetHashCode">
+      <summary>   Returns a hash code for this instance. </summary>
+      <returns>   A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.  </returns>
+    </member>
+    <member name="P:System.Spatial.CoordinateSystem.Id">
+      <summary>   The coordinate system Id, no matter what scheme is used. </summary>
+    </member>
+    <member name="P:System.Spatial.CoordinateSystem.Name">
+      <summary>   The Name of the Reference </summary>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.ToString">
+      <summary>   Display the coordinate system for debugging </summary>
+      <returns>String representation of the coordinate system, for debugging</returns>
+    </member>
+    <member name="M:System.Spatial.CoordinateSystem.ToWktId">
+      <summary>   To a string that can be used with extended WKT. </summary>
+      <returns>String representation in the form of SRID=#;</returns>
+    </member>
+    <member name="T:System.Spatial.FormatterExtensions">
+      <summary>Represents the extensions to formatters.</summary>
+    </member>
+    <member name="M:System.Spatial.FormatterExtensions.Write(System.Spatial.SpatialFormatter{System.IO.TextReader,System.IO.TextWriter},System.Spatial.ISpatial)">
+      <summary>Writes the specified formatter.</summary>
+      <returns>A string value of the formatted object.</returns>
+      <param name="formatter">The formatter.</param>
+      <param name="spatial">The spatial object.</param>
+    </member>
+    <member name="M:System.Spatial.FormatterExtensions.Write(System.Spatial.SpatialFormatter{System.Xml.XmlReader,System.Xml.XmlWriter},System.Spatial.ISpatial)">
+      <summary>Writes the specified formatter.</summary>
+      <returns>A string value of the formatted object.</returns>
+      <param name="formatter">The formatter.</param>
+      <param name="spatial">The spatial object.</param>
+    </member>
+    <member name="T:System.Spatial.Geography">
+      <summary>Represents a base class of geography shapes.</summary>
+    </member>
+    <member name="M:System.Spatial.Geography.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.Geography" /> class.</summary>
+      <param name="coordinateSystem">The coordinate system of this geography.</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="P:System.Spatial.Geography.CoordinateSystem">
+      <summary>Gets the coordinate system of the geography.</summary>
+      <returns>The coordinate system of the geography.</returns>
+    </member>
+    <member name="P:System.Spatial.Geography.IsEmpty">
+      <summary>Gets a value that indicates whether the geography is empty.</summary>
+      <returns>true if the geography is empty; otherwise, false.</returns>
+    </member>
+    <member name="M:System.Spatial.Geography.SendTo(System.Spatial.GeographyPipeline)">
+      <summary>Sends the current spatial object to the given pipeline.</summary>
+      <param name="chain">The spatial pipeline.</param>
+    </member>
+    <member name="T:System.Spatial.GeographyCollection">
+      <summary>Represents the collection of geographies.</summary>
+    </member>
+    <member name="M:System.Spatial.GeographyCollection.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeographyCollection" /> class.</summary>
+      <param name="coordinateSystem">The coordinate system of this geography collection.</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyCollection.Equals(System.Object)">
+      <summary>Determines whether this instance and the specified object have the same value.</summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The object to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyCollection.Equals(System.Spatial.GeographyCollection)">
+      <summary>Determines whether this instance and another specified geography instance have the same value.</summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="P:System.Spatial.GeographyCollection.Geographies">
+      <summary>Gets the collection of geographies.</summary>
+      <returns>The collection of geographies.</returns>
+    </member>
+    <member name="M:System.Spatial.GeographyCollection.GetHashCode">
+      <summary>Gets the hash code.</summary>
+      <returns>The hash code.</returns>
+    </member>
+    <member name="T:System.Spatial.GeographyCurve">
+      <summary>Represents the curve of geography.</summary>
+    </member>
+    <member name="M:System.Spatial.GeographyCurve.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeographyCurve" /> class.</summary>
+      <param name="coordinateSystem">The coordinate system of this geography curve.</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="T:System.Spatial.GeographyFullGlobe">
+      <summary>Represents the full globe of geography.</summary>
+    </member>
+    <member name="M:System.Spatial.GeographyFullGlobe.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeographyFullGlobe" /> class.</summary>
+      <param name="coordinateSystem">The coordinate system of this instance.</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyFullGlobe.Equals(System.Object)">
+      <summary>Determines whether this instance and the specified object have the same value.</summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The object to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyFullGlobe.Equals(System.Spatial.GeographyFullGlobe)">
+      <summary>Determines whether this instance and another specified geography instance have the same value.</summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyFullGlobe.GetHashCode">
+      <summary>Gets the hash code.</summary>
+      <returns>The hash code.</returns>
+    </member>
+    <member name="T:System.Spatial.GeographyLineString">
+      <summary>Represents a geography line string consist of an array of geo points.</summary>
+    </member>
+    <member name="M:System.Spatial.GeographyLineString.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeographyLineString" /> class.</summary>
+      <param name="coordinateSystem">The coordinate system of this instance.</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyLineString.Equals(System.Object)">
+      <summary>Determines whether this instance and the specified object have the same value.</summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The object to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyLineString.Equals(System.Spatial.GeographyLineString)">
+      <summary>Determines whether this instance and another specified geography instance have the same value.</summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyLineString.GetHashCode">
+      <summary>Gets the hash code.</summary>
+      <returns>The hash code.</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyLineString.Points">
+      <summary>Gets the point list.</summary>
+      <returns>The point list.</returns>
+    </member>
+    <member name="T:System.Spatial.GeographyMultiCurve">
+      <summary>Represents the multi curve of geography.</summary>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiCurve.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeographyMultiCurve" /> class.</summary>
+      <param name="coordinateSystem">The coordinate system of this instance.</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="T:System.Spatial.GeographyMultiLineString">
+      <summary> Geography Multi-LineString </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiLineString.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiLineString.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiLineString.Equals(System.Spatial.GeographyMultiLineString)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiLineString.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyMultiLineString.LineStrings">
+      <summary> Line Strings </summary>
+    </member>
+    <member name="T:System.Spatial.GeographyMultiPoint">
+      <summary> Geography Multi-Point </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPoint.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPoint.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPoint.Equals(System.Spatial.GeographyMultiPoint)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPoint.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyMultiPoint.Points">
+      <summary> Points </summary>
+    </member>
+    <member name="T:System.Spatial.GeographyMultiPolygon">
+      <summary> Geography Multi-Polygon </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPolygon.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPolygon.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPolygon.Equals(System.Spatial.GeographyMultiPolygon)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiPolygon.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyMultiPolygon.Polygons">
+      <summary> Polygons </summary>
+    </member>
+    <member name="T:System.Spatial.GeographyMultiSurface">
+      <summary> Geography MultiSurface </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyMultiSurface.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="T:System.Spatial.GeographyOperationsExtensions">
+      <summary>   Extension methods for the Geography operations </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyOperationsExtensions.Distance(System.Spatial.Geography,System.Spatial.Geography)">
+      <summary>   Geography Distance </summary>
+      <returns>The operation result</returns>
+      <param name="operand1">Operand 1</param>
+      <param name="operand2">Operand 2</param>
+    </member>
+    <member name="T:System.Spatial.GeographyPipeline">
+      <summary> This is definition of the GeographyPipeline api </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeographyPipeline" /> class.</summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.BeginFigure(System.Spatial.GeographyPosition)">
+      <summary> Begin drawing a figure </summary>
+      <param name="position">Next position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.BeginGeography(System.Spatial.SpatialType)">
+      <summary> Begin drawing a spatial object </summary>
+      <param name="type">The spatial type of the object</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.EndFigure">
+      <summary> Ends the current figure </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.EndGeography">
+      <summary> Ends the current spatial object </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.LineTo(System.Spatial.GeographyPosition)">
+      <summary> Draw a point in the specified coordinate </summary>
+      <param name="position">Next position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.Reset">
+      <summary> Setup the pipeline for reuse </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPipeline.SetCoordinateSystem(System.Spatial.CoordinateSystem)">
+      <summary> Set the coordinate system </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+    </member>
+    <member name="T:System.Spatial.GeographyPoint">
+      <summary> Geography point </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Create a empty point </summary>
+      <param name="coordinateSystem">CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.Create(System.Double,System.Double)">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="latitude">The latitude.</param>
+      <param name="longitude">The longitude.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.Create(System.Double,System.Double,System.Nullable{System.Double})">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="latitude">The latitude.</param>
+      <param name="longitude">The longitude.</param>
+      <param name="z">The z dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.Create(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="latitude">The latitude.</param>
+      <param name="longitude">The longitude.</param>
+      <param name="z">The z dimension.</param>
+      <param name="m">The m dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.Create(System.Spatial.CoordinateSystem,System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="coordinateSystem">the coordinate system to use</param>
+      <param name="latitude">The latitude.</param>
+      <param name="longitude">The longitude.</param>
+      <param name="z">The z dimension.</param>
+      <param name="m">The m dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.Equals(System.Spatial.GeographyPoint)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPoint.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyPoint.Latitude">
+      <summary> Latitude </summary>
+    </member>
+    <member name="P:System.Spatial.GeographyPoint.Longitude">
+      <summary> Longitude </summary>
+    </member>
+    <member name="P:System.Spatial.GeographyPoint.M">
+      <summary> Nullable M </summary>
+    </member>
+    <member name="P:System.Spatial.GeographyPoint.Z">
+      <summary> Nullable Z </summary>
+    </member>
+    <member name="T:System.Spatial.GeographyPolygon">
+      <summary> Geography polygon </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPolygon.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPolygon.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPolygon.Equals(System.Spatial.GeographyPolygon)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPolygon.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyPolygon.Rings">
+      <summary> Set of rings </summary>
+    </member>
+    <member name="T:System.Spatial.GeographyPosition">
+      <summary> Represents one position in the Geographyal coordinate system </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.#ctor(System.Double,System.Double)">
+      <summary> Creates a GeographyPosition from components </summary>
+      <param name="latitude">lattitude portion of position</param>
+      <param name="longitude">longitude portion of position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.#ctor(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary> Creates a GeographyPosition from components </summary>
+      <param name="latitude">lattitude portion of position</param>
+      <param name="longitude">longitude portion of position</param>
+      <param name="z">altitude portion of position</param>
+      <param name="m">arbitrary measure associated with a position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.Equals(System.Object)">
+      <summary> Equality comparison </summary>
+      <returns>true if each pair of coordinates is equal</returns>
+      <param name="obj">other position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.Equals(System.Spatial.GeographyPosition)">
+      <summary> Equality comparison </summary>
+      <returns>true if each pair of coordinates is equal</returns>
+      <param name="other">other position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.GetHashCode">
+      <summary> Computes a hash code </summary>
+      <returns>a hash code</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyPosition.Latitude">
+      <summary> lattitude portion of position </summary>
+    </member>
+    <member name="P:System.Spatial.GeographyPosition.Longitude">
+      <summary> longitude portion of position </summary>
+    </member>
+    <member name="P:System.Spatial.GeographyPosition.M">
+      <summary> arbitrary measure associated with a position </summary>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.op_Equality(System.Spatial.GeographyPosition,System.Spatial.GeographyPosition)">
+      <summary> Equality comparison </summary>
+      <returns>true if each pair of coordinates is equal</returns>
+      <param name="left">first position</param>
+      <param name="right">second position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.op_Inequality(System.Spatial.GeographyPosition,System.Spatial.GeographyPosition)">
+      <summary> Inequality comparison </summary>
+      <returns>true if left is not equal to right</returns>
+      <param name="left">first position</param>
+      <param name="right">other position</param>
+    </member>
+    <member name="M:System.Spatial.GeographyPosition.ToString">
+      <summary> Formats this instance to a readable string </summary>
+      <returns>The string representation of this instance</returns>
+    </member>
+    <member name="P:System.Spatial.GeographyPosition.Z">
+      <summary> altitude portion of position </summary>
+    </member>
+    <member name="T:System.Spatial.GeographySurface">
+      <summary> Geography Surface </summary>
+    </member>
+    <member name="M:System.Spatial.GeographySurface.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="T:System.Spatial.GeoJsonObjectFormatter">
+      <summary> Formatter for Json Object </summary>
+    </member>
+    <member name="M:System.Spatial.GeoJsonObjectFormatter.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeoJsonObjectFormatter" /> class.</summary>
+    </member>
+    <member name="M:System.Spatial.GeoJsonObjectFormatter.Create">
+      <summary> Creates the implementation of the formatter </summary>
+      <returns>Returns the created GeoJsonFormatter implementation</returns>
+    </member>
+    <member name="M:System.Spatial.GeoJsonObjectFormatter.Read``1(System.Collections.Generic.IDictionary{System.String,System.Object})">
+      <summary> Read from the source </summary>
+      <param name="source">The source json object</param>
+      <typeparam name="T">The spatial type to read</typeparam>
+    </member>
+    <member name="M:System.Spatial.GeoJsonObjectFormatter.Write(System.Spatial.ISpatial)">
+      <summary> Convert spatial value to a Json Object </summary>
+      <returns>The json object</returns>
+      <param name="value">The spatial value</param>
+    </member>
+    <member name="T:System.Spatial.Geometry">
+      <summary> Base class of Geography Shapes </summary>
+    </member>
+    <member name="M:System.Spatial.Geometry.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Geometry Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="P:System.Spatial.Geometry.CoordinateSystem">
+      <summary> SRID of this instance of geometry </summary>
+    </member>
+    <member name="P:System.Spatial.Geometry.IsEmpty">
+      <summary> Is Geometry Empty </summary>
+    </member>
+    <member name="M:System.Spatial.Geometry.SendTo(System.Spatial.GeometryPipeline)">
+      <summary> Sends the current spatial object to the given pipeline </summary>
+      <param name="chain">The spatial pipeline</param>
+    </member>
+    <member name="T:System.Spatial.GeometryCollection">
+      <summary> Geometry Collection </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryCollection.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryCollection.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryCollection.Equals(System.Spatial.GeometryCollection)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="P:System.Spatial.GeometryCollection.Geometries">
+      <summary> Returns the Geometry instances in this collection. </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryCollection.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="T:System.Spatial.GeometryCurve">
+      <summary> Geometry Curve </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryCurve.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="T:System.Spatial.GeometryLineString">
+      <summary> Geometry Line String </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryLineString.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryLineString.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryLineString.Equals(System.Spatial.GeometryLineString)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryLineString.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryLineString.Points">
+      <summary> Point list </summary>
+    </member>
+    <member name="T:System.Spatial.GeometryMultiCurve">
+      <summary> Geometry MultiCurve </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiCurve.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="T:System.Spatial.GeometryMultiLineString">
+      <summary> Geometry Multi-LineString </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiLineString.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiLineString.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiLineString.Equals(System.Spatial.GeometryMultiLineString)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiLineString.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryMultiLineString.LineStrings">
+      <summary> Line Strings </summary>
+    </member>
+    <member name="T:System.Spatial.GeometryMultiPoint">
+      <summary> Geometry Multi-Point </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPoint.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPoint.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPoint.Equals(System.Spatial.GeometryMultiPoint)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPoint.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryMultiPoint.Points">
+      <summary> Points </summary>
+    </member>
+    <member name="T:System.Spatial.GeometryMultiPolygon">
+      <summary> Geometry Multi-Polygon </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPolygon.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPolygon.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPolygon.Equals(System.Spatial.GeometryMultiPolygon)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryMultiPolygon.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryMultiPolygon.Polygons">
+      <summary> Polygons </summary>
+    </member>
+    <member name="T:System.Spatial.GeometryMultiSurface"></member>
+    <member name="T:System.Spatial.GeometryOperationsExtensions">
+      <summary> Extension methods for the Geography operations </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryOperationsExtensions.Distance(System.Spatial.Geometry,System.Spatial.Geometry)">
+      <summary> Geometry Distance </summary>
+      <returns>The operation result</returns>
+      <param name="operand1">Operand 1</param>
+      <param name="operand2">Operand 2</param>
+    </member>
+    <member name="T:System.Spatial.GeometryPipeline">
+      <summary> This is definition of the GeometryPipeline api </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.GeometryPipeline" /> class.</summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.BeginFigure(System.Spatial.GeometryPosition)">
+      <summary> Begin drawing a figure </summary>
+      <param name="position">Next position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.BeginGeometry(System.Spatial.SpatialType)">
+      <summary> Begin drawing a spatial object </summary>
+      <param name="type">The spatial type of the object</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.EndFigure">
+      <summary> Ends the current figure </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.EndGeometry">
+      <summary> Ends the current spatial object </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.LineTo(System.Spatial.GeometryPosition)">
+      <summary> Draw a point in the specified coordinate </summary>
+      <param name="position">Next position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.Reset">
+      <summary> Setup the pipeline for reuse </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPipeline.SetCoordinateSystem(System.Spatial.CoordinateSystem)">
+      <summary> Set the coordinate system </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+    </member>
+    <member name="T:System.Spatial.GeometryPoint">
+      <summary> Geometry Point </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Empty Point constructor </summary>
+      <param name="coordinateSystem">CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.Create(System.Double,System.Double)">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="x">The x dimension.</param>
+      <param name="y">The y dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.Create(System.Double,System.Double,System.Nullable{System.Double})">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="x">The x dimension.</param>
+      <param name="y">The y dimension.</param>
+      <param name="z">The z dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.Create(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="x">The x dimension.</param>
+      <param name="y">The y dimension.</param>
+      <param name="z">The z dimension.</param>
+      <param name="m">The m dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.Create(System.Spatial.CoordinateSystem,System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary> Creates the specified latitude. </summary>
+      <returns>The GeographyPoint that was created</returns>
+      <param name="coordinateSystem">the coordinate system to use</param>
+      <param name="x">The x dimension.</param>
+      <param name="y">The y dimension.</param>
+      <param name="z">The z dimension.</param>
+      <param name="m">The m dimension.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.Equals(System.Spatial.GeometryPoint)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPoint.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryPoint.M">
+      <summary> Nullable M </summary>
+    </member>
+    <member name="P:System.Spatial.GeometryPoint.X">
+      <summary> Latitude </summary>
+    </member>
+    <member name="P:System.Spatial.GeometryPoint.Y">
+      <summary> Longitude </summary>
+    </member>
+    <member name="P:System.Spatial.GeometryPoint.Z">
+      <summary> Nullable Z </summary>
+    </member>
+    <member name="T:System.Spatial.GeometryPolygon">
+      <summary> Geometry polygon </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPolygon.#ctor(System.Spatial.CoordinateSystem,System.Spatial.SpatialImplementation)">
+      <summary> Constructor </summary>
+      <param name="coordinateSystem">The CoordinateSystem</param>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPolygon.Equals(System.Object)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="obj">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPolygon.Equals(System.Spatial.GeometryPolygon)">
+      <summary> Determines whether this instance and another specified geography instance have the same value.  </summary>
+      <returns>true if the value of the value parameter is the same as this instance; otherwise, false.</returns>
+      <param name="other">The geography to compare to this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPolygon.GetHashCode">
+      <summary> Get Hashcode </summary>
+      <returns>The hashcode</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryPolygon.Rings">
+      <summary> Set of rings </summary>
+    </member>
+    <member name="T:System.Spatial.GeometryPosition">
+      <summary> Represents one position in the Geometry coordinate system </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.#ctor(System.Double,System.Double)">
+      <summary> Creates a GeometryPosition from components </summary>
+      <param name="x">x portion of position</param>
+      <param name="y">y portion of position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.#ctor(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary> Creates a GeometryPosition from components </summary>
+      <param name="x">x portion of position</param>
+      <param name="y">y portion of position</param>
+      <param name="z">altitude portion of position</param>
+      <param name="m">arbitrary measure associated with a position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.Equals(System.Object)">
+      <summary> Equality comparison </summary>
+      <returns>true if each pair of coordinates is equal</returns>
+      <param name="obj">other position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.Equals(System.Spatial.GeometryPosition)">
+      <summary> Equality comparison </summary>
+      <returns>true if each pair of coordinates is equal</returns>
+      <param name="other">other position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.GetHashCode">
+      <summary> Computes a hash code </summary>
+      <returns>a hash code</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryPosition.M">
+      <summary> arbitrary measure associated with a position </summary>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.op_Equality(System.Spatial.GeometryPosition,System.Spatial.GeometryPosition)">
+      <summary> Equality comparison </summary>
+      <returns>true if each pair of coordinates is equal</returns>
+      <param name="left">first position</param>
+      <param name="right">second position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.op_Inequality(System.Spatial.GeometryPosition,System.Spatial.GeometryPosition)">
+      <summary> Inequality comparison </summary>
+      <returns>true if left is not equal to right</returns>
+      <param name="left">first position</param>
+      <param name="right">other position</param>
+    </member>
+    <member name="M:System.Spatial.GeometryPosition.ToString">
+      <summary> Formats this instance to a readable string </summary>
+      <returns>The string representation of this instance</returns>
+    </member>
+    <member name="P:System.Spatial.GeometryPosition.X">
+      <summary> x portion of position </summary>
+    </member>
+    <member name="P:System.Spatial.GeometryPosition.Y">
+      <summary> y portion of position </summary>
+    </member>
+    <member name="P:System.Spatial.GeometryPosition.Z">
+      <summary> altitude portion of position </summary>
+    </member>
+    <member name="T:System.Spatial.GeometrySurface"></member>
+    <member name="T:System.Spatial.GmlFormatter">
+      <summary>   The object to move spatial types to and from the GML format </summary>
+    </member>
+    <member name="M:System.Spatial.GmlFormatter.#ctor(System.Spatial.SpatialImplementation)">
+      <summary> Initializes a new instance of the <see cref="T:System.Spatial.GmlFormatter" /> class. </summary>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.GmlFormatter.Create">
+      <summary> Creates the implementation of the formatter </summary>
+      <returns>Returns the created GmlFormatter implementation</returns>
+    </member>
+    <member name="T:System.Spatial.IGeographyProvider">
+      <summary> Provides access to the geography objects that this object constructs </summary>
+    </member>
+    <member name="P:System.Spatial.IGeographyProvider.ConstructedGeography">
+      <summary>Gets the geography object that was constructed most recently.</summary>
+    </member>
+    <member name="E:System.Spatial.IGeographyProvider.ProduceGeography">
+      <summary>Fires when the provider constructs a geography object.</summary>
+    </member>
+    <member name="T:System.Spatial.IGeometryProvider">
+      <summary> Provides access to the geometry objects that this object constructs </summary>
+    </member>
+    <member name="P:System.Spatial.IGeometryProvider.ConstructedGeometry">
+      <summary>Gets the geometry object that was constructed most recently.</summary>
+    </member>
+    <member name="E:System.Spatial.IGeometryProvider.ProduceGeometry">
+      <summary>Fires when the provider constructs a geometry object.</summary>
+    </member>
+    <member name="T:System.Spatial.IShapeProvider"></member>
+    <member name="T:System.Spatial.ISpatial">
+      <summary> The spatial interface </summary>
+    </member>
+    <member name="P:System.Spatial.ISpatial.CoordinateSystem">
+      <summary> Coordinate System </summary>
+    </member>
+    <member name="P:System.Spatial.ISpatial.IsEmpty">
+      <summary> Is spatial type empty </summary>
+    </member>
+    <member name="T:System.Spatial.ParseErrorException">
+      <summary> the exception thrown on an unsuccessful parsing of the serialized format. </summary>
+    </member>
+    <member name="M:System.Spatial.ParseErrorException.#ctor">
+      <summary> Creates a ParseErrorException </summary>
+    </member>
+    <member name="M:System.Spatial.ParseErrorException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary> Creates a ParseErrorException from serialized data. </summary>
+      <param name="info">The instance that hosld the serialized object data about the exception being thrown.</param>
+      <param name="context">The instance that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Spatial.ParseErrorException.#ctor(System.String)">
+      <summary> Creates a ParseErrorException from a message </summary>
+      <param name="message">The message about the exception.</param>
+    </member>
+    <member name="M:System.Spatial.ParseErrorException.#ctor(System.String,System.Exception)">
+      <summary> Creates a ParseErrorException from a message and previous exception </summary>
+      <param name="message">The message about the exception.</param>
+      <param name="innerException">The exception that preceeded this one.</param>
+    </member>
+    <member name="T:System.Spatial.SpatialBuilder">
+      <summary>   Creates Geometry or Geography instances from spatial data pipelines. </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialBuilder.#ctor(System.Spatial.GeographyPipeline,System.Spatial.GeometryPipeline,System.Spatial.IGeographyProvider,System.Spatial.IGeometryProvider)">
+      <summary> Initializes a new instance of the <see cref="T:System.Spatial.SpatialBuilder" /> class. </summary>
+      <param name="geographyInput">The geography input.</param>
+      <param name="geometryInput">The geometry input.</param>
+      <param name="geographyOutput">The geography output.</param>
+      <param name="geometryOutput">The geometry output.</param>
+    </member>
+    <member name="P:System.Spatial.SpatialBuilder.ConstructedGeography">
+      <summary>   Gets the geography object that was constructed most recently. </summary>
+    </member>
+    <member name="P:System.Spatial.SpatialBuilder.ConstructedGeometry">
+      <summary>   Gets the geometry object that was constructed most recently. </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialBuilder.Create">
+      <summary>   Creates an implementation of the builder </summary>
+      <returns>Returns the created SpatialBuilder implementation</returns>
+    </member>
+    <member name="E:System.Spatial.SpatialBuilder.ProduceGeography">
+      <summary>   Fires when the provider constructs a geography object. </summary>
+    </member>
+    <member name="E:System.Spatial.SpatialBuilder.ProduceGeometry">
+      <summary>   Fires when the provider constructs a geometry object. </summary>
+    </member>
+    <member name="T:System.Spatial.SpatialFormatter`2">
+      <summary> Base class for all Spatial Formats </summary>
+      <typeparam name="TReaderStream">The type of reader to be read from.</typeparam>
+      <typeparam name="TWriterStream">The type of reader to be read from.</typeparam>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.#ctor(System.Spatial.SpatialImplementation)">
+      <summary> Initializes a new instance of the &lt;see cref="T:System.Spatial.SpatialFormatter`2" /&gt; class. </summary>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.CreateWriter(`1)">
+      <summary> Creates the writerStream. </summary>
+      <returns>The writerStream that was created.</returns>
+      <param name="writerStream">The stream that should be written to.</param>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.MakeValidatingBuilder">
+      <summary> Creates the builder that will be called by the parser to build the new type. </summary>
+      <returns>the builder that was created.</returns>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.Read``1(`0)">
+      <summary> Parses the input, and produces the object </summary>
+      <param name="input">The input to be parsed.</param>
+      <typeparam name="TResult">The type of object to produce</typeparam>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.Read``1(`0,System.Spatial.SpatialPipeline)">
+      <summary> Parses the input, and produces the object </summary>
+      <param name="input">The input to be parsed.</param>
+      <param name="pipeline">The pipeline to call during reading.</param>
+      <typeparam name="TResult">The type of object to produce</typeparam>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.ReadGeography(`0,System.Spatial.SpatialPipeline)">
+      <summary> Read the Geography from the readerStream and call the appopriate pipeline methods </summary>
+      <param name="readerStream">The stream to read from.</param>
+      <param name="pipeline">The pipeline to call based on what is read.</param>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.ReadGeometry(`0,System.Spatial.SpatialPipeline)">
+      <summary> Read the Geometry from the readerStream and call the appopriate pipeline methods </summary>
+      <param name="readerStream">The stream to read from.</param>
+      <param name="pipeline">The pipeline to call based on what is read.</param>
+    </member>
+    <member name="M:System.Spatial.SpatialFormatter`2.Write(System.Spatial.ISpatial,`1)">
+      <summary> Creates a valid format from the spatial object. </summary>
+      <param name="spatial">The object that the format is being created for.</param>
+      <param name="writerStream">The stream to write the formatted object to.</param>
+    </member>
+    <member name="T:System.Spatial.SpatialImplementation">
+      <summary> Class responsible for knowing how to create the Geography and Geometry builders for  a particular implemenation of Spatial types </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.SpatialImplementation" /> class.</summary>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.CreateBuilder">
+      <summary> Creates a SpatialBuilder for this implemenation </summary>
+      <returns>The SpatialBuilder created.</returns>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.CreateGeoJsonObjectFormatter">
+      <summary> Creates a Formatter for Json Object </summary>
+      <returns>The JsonObjectFormatter created</returns>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.CreateGmlFormatter">
+      <summary> Creates a GmlFormatter for this implementation </summary>
+      <returns>The GmlFormatter created.</returns>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.CreateValidator">
+      <summary> Creates a spatial Validator </summary>
+      <returns>The SpatialValidator created.</returns>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.CreateWellKnownTextSqlFormatter">
+      <summary> Creates a WellKnownTextSqlFormatter for this implementation </summary>
+      <returns>The WellKnownTextSqlFormatter created.</returns>
+    </member>
+    <member name="M:System.Spatial.SpatialImplementation.CreateWellKnownTextSqlFormatter(System.Boolean)">
+      <summary> Creates a WellKnownTextSqlFormatter for this implementation </summary>
+      <returns>The WellKnownTextSqlFormatter created.</returns>
+      <param name="allowOnlyTwoDimensions">Controls the writing and reading of the Z and M dimension</param>
+    </member>
+    <member name="P:System.Spatial.SpatialImplementation.CurrentImplementation">
+      <summary> Returns an instance of SpatialImplementation that is currently being used. </summary>
+    </member>
+    <member name="P:System.Spatial.SpatialImplementation.Operations">
+      <summary> Property used to register Spatial operations implementation. </summary>
+    </member>
+    <member name="T:System.Spatial.SpatialOperations">
+      <summary> Class responsible for knowing how to perform operations for a particular implemenation of Spatial types </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialOperations.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Spatial.SpatialOperations" /> class.</summary>
+    </member>
+    <member name="M:System.Spatial.SpatialOperations.Distance(System.Spatial.Geography,System.Spatial.Geography)">
+      <summary> Geography Distance </summary>
+      <returns>The operation result</returns>
+      <param name="operand1">Operand 1</param>
+      <param name="operand2">Operand 2</param>
+    </member>
+    <member name="M:System.Spatial.SpatialOperations.Distance(System.Spatial.Geometry,System.Spatial.Geometry)">
+      <summary> Geometry Distance </summary>
+      <returns>The operation result</returns>
+      <param name="operand1">Operand 1</param>
+      <param name="operand2">Operand 2</param>
+    </member>
+    <member name="T:System.Spatial.SpatialPipeline">
+      <summary> One link of a geospatial pipeline </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialPipeline.#ctor">
+      <summary> Initializes a new instance of the <see cref="T:System.Spatial.SpatialPipeline" /> class. </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialPipeline.#ctor(System.Spatial.GeographyPipeline,System.Spatial.GeometryPipeline)">
+      <summary> Initializes a new instance of the <see cref="T:System.Spatial.SpatialPipeline" /> class. </summary>
+      <param name="geographyPipeline">The geography chain.</param>
+      <param name="geometryPipeline">The geometry chain.</param>
+    </member>
+    <member name="M:System.Spatial.SpatialPipeline.ChainTo(System.Spatial.SpatialPipeline)">
+      <summary> Add the next pipeline </summary>
+      <returns>The last pipesegment in the chain, usually the one just created</returns>
+      <param name="destination">the next pipleine</param>
+    </member>
+    <member name="P:System.Spatial.SpatialPipeline.GeographyPipeline">
+      <summary> Gets the geography side of the pipeline. </summary>
+    </member>
+    <member name="P:System.Spatial.SpatialPipeline.GeometryPipeline">
+      <summary> Gets the geometry side of the pipeline. </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialPipeline.op_Implicit(System.Spatial.SpatialPipeline)~System.Spatial.GeographyPipeline"></member>
+    <member name="M:System.Spatial.SpatialPipeline.op_Implicit(System.Spatial.SpatialPipeline)~System.Spatial.GeometryPipeline"></member>
+    <member name="P:System.Spatial.SpatialPipeline.StartingLink">
+      <summary> Gets or sets the starting link. </summary>
+      <returns> The starting link. </returns>
+    </member>
+    <member name="T:System.Spatial.SpatialType">
+      <summary> Defines a list of allowed OpenGisTypes types.  </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.Unknown">
+      <summary> Unknown </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.Point">
+      <summary> Point </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.LineString">
+      <summary> Line String </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.Polygon">
+      <summary> Polygon </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.MultiPoint">
+      <summary> Multi-Point </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.MultiLineString">
+      <summary> Multi-Line-String </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.MultiPolygon">
+      <summary> Multi-Polygon </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.Collection">
+      <summary> Collection </summary>
+    </member>
+    <member name="F:System.Spatial.SpatialType.FullGlobe">
+      <summary> Full Globe </summary>
+    </member>
+    <member name="T:System.Spatial.SpatialTypeExtensions">
+      <summary> This class provides a place to add extension methods that work with ISpatial </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialTypeExtensions.SendTo(System.Spatial.ISpatial,System.Spatial.SpatialPipeline)">
+      <summary> Allows the delegation of the call to the proper type (geography or Geometry) </summary>
+      <param name="shape">The instance that will have SendTo called.</param>
+      <param name="destination">The pipeline that the instance will be sent to.</param>
+    </member>
+    <member name="T:System.Spatial.SpatialValidator">
+      <summary> Base class for Spatial Type Validator implementations </summary>
+    </member>
+    <member name="M:System.Spatial.SpatialValidator.Create">
+      <summary> Factory for creating the currently registered SpatialValidator implementation </summary>
+      <returns>The created SpatialValidator</returns>
+    </member>
+    <member name="T:System.Spatial.WellKnownTextSqlFormatter">
+      <summary> The object to move spatial types to and from the WellKnownTextSql format </summary>
+    </member>
+    <member name="M:System.Spatial.WellKnownTextSqlFormatter.#ctor(System.Spatial.SpatialImplementation)">
+      <summary> Initializes a new instance of the <see cref="T:System.Spatial.WellKnownTextSqlFormatter" /> class. </summary>
+      <param name="creator">The implementation that created this instance.</param>
+    </member>
+    <member name="M:System.Spatial.WellKnownTextSqlFormatter.Create">
+      <summary> Creates the implementation of the formatter </summary>
+      <returns>Returns the created WellKnownTextSqlFormatter implementation</returns>
+    </member>
+    <member name="M:System.Spatial.WellKnownTextSqlFormatter.Create(System.Boolean)">
+      <summary> Creates the specified has Z. </summary>
+      <returns>The created WellKnownTextSqlFormatter.</returns>
+      <param name="allowOnlyTwoDimensions">Restricts the formatter to allow only two dimensions.</param>
+    </member>
+  </members>
+</doc>

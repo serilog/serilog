@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>WindowsAzure.Storage</id>
+    <version>2.0.5.1</version>
+    <title>Windows Azure Storage</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://go.microsoft.com/fwlink/?LinkId=235170</licenseUrl>
+    <projectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>This client library enables working with the Windows Azure storage services which include the blob service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client. 
+For this release see notes - http://msdn.microsoft.com/en-us/library/windowsazure/jj721952.aspx
+Windows Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/</description>
+    <summary>A client library for working with Windows Azure storage services including blobs, tables, and queues.</summary>
+    <tags>Microsoft, Azure, Storage, Table, Blob, Queue, Scalable, windowsazureofficial</tags>
+    <dependencies>
+      <dependency id="Microsoft.Data.OData" version="5.2.0" />
+      <dependency id="Microsoft.WindowsAzure.ConfigurationManager" version="1.8.0.0" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Data" targetFramework="" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="" />
+      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework="" />
+      <frameworkAssembly assemblyName="System.Data.Services.Client" targetFramework="" />
+    </frameworkAssemblies>
+    <references>
+      <reference file="Microsoft.WindowsAzure.Storage.dll" />
+    </references>
+  </metadata>
+</package>
