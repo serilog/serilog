@@ -37,7 +37,7 @@ namespace Serilog
         public static LoggerConfiguration CouchDB(
             this LoggerSinkConfiguration loggerConfiguration,
             string databaseUrl,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = CouchDBSink.DefaultBatchPostingLimit,
             TimeSpan? period = null)
         {

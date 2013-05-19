@@ -26,11 +26,6 @@ namespace Serilog.Events
         Verbose,
 
         /// <summary>
-        /// A synonym for the lowest level of logging.
-        /// </summary>
-        Minimum = Verbose,
-
-        /// <summary>
         /// Internal system events that aren't necessarily
         /// observable from the outside.
         /// </summary>
@@ -57,11 +52,6 @@ namespace Serilog.Events
         /// If you have a pager, it goes off when one of these
         /// occurs.
         /// </summary>
-        Fatal,
-
-        /// <summary>
-        /// A synonym for the highest level of logging.
-        /// </summary>
-        Maximum = Fatal
+        Fatal
     }
 }

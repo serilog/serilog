@@ -37,7 +37,7 @@ namespace Serilog
         public static LoggerConfiguration MongoDB(
             this LoggerSinkConfiguration loggerConfiguration,
             string databaseUrl,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = MongoDBSink.DefaultBatchPostingLimit,
             TimeSpan? period = null)
         {

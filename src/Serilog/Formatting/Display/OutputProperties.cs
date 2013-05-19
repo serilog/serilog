@@ -50,8 +50,6 @@ namespace Serilog.Formatting.Display
         /// </summary>
         public const string ExceptionPropertyName = "Exception";
 
-        enum OutputLevel { Verbose }
-
         /// <summary>
         /// Create properties from the provided log event.
         /// </summary>
@@ -63,7 +61,7 @@ namespace Serilog.Formatting.Display
 
             result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties)));
             result.Add(TimeStampPropertyName, new LogEventProperty(TimeStampPropertyName, new ScalarValue(logEvent.TimeStamp)));
-            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level == LogEventLevel.Verbose ? (object)OutputLevel.Verbose : logEvent.Level)));
+            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level)));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new ScalarValue(Environment.NewLine)));
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);

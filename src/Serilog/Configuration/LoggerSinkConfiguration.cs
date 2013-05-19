@@ -46,10 +46,12 @@ namespace Serilog.Configuration
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Sink(ILogEventSink logEventSink, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+        public LoggerConfiguration Sink(
+            ILogEventSink logEventSink,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             var sink = logEventSink;
-            if (restrictedToMinimumLevel > LogEventLevel.Minimum)
+            if (restrictedToMinimumLevel > LevelAlias.Minimum)
                 sink = new RestrictedSink(sink, restrictedToMinimumLevel);
 
             _addSink(sink);
@@ -61,16 +63,21 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="textWriter">The text writer to write log events to.</param>
         /// <param name="outputTemplate">Message template describing the output format.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public LoggerConfiguration TextWriter(TextWriter textWriter, string outputTemplate = DefaultOutputTemplate)
+        public LoggerConfiguration TextWriter(
+            TextWriter textWriter,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            string outputTemplate = DefaultOutputTemplate)
         {
             if (textWriter == null) throw new ArgumentNullException("textWriter");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate);
-            _addSink(new TextWriterSink(textWriter, formatter));
-            return _loggerConfiguration;
+            var sink = new TextWriterSink(textWriter, formatter);
+            return Sink(sink);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Console(
             this LoggerSinkConfiguration sinkConfiguration,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultConsoleOutputTemplate)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
@@ -65,7 +65,7 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration ColoredConsole(
             this LoggerSinkConfiguration sinkConfiguration,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultConsoleOutputTemplate)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
@@ -83,8 +83,8 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration DumpFile(
             this LoggerSinkConfiguration sinkConfiguration,
-            string path, 
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum)
+            string path,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (path == null) throw new ArgumentNullException("path");
@@ -104,7 +104,7 @@ namespace Serilog
         public static LoggerConfiguration File(
             this LoggerSinkConfiguration sinkConfiguration,
             string path,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
@@ -130,7 +130,7 @@ namespace Serilog
         public static LoggerConfiguration RollingFile(
             this LoggerSinkConfiguration sinkConfiguration,
             string pathFormat,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
@@ -150,7 +150,7 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Trace(
             this LoggerSinkConfiguration sinkConfiguration,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Minimum,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
