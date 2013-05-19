@@ -70,6 +70,7 @@
     <Compile Include="LoggerConfigurationAzureTableStorageExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\AzureTableStorage\AzureTableStorageSink.cs" />
+    <Compile Include="Sinks\AzureTableStorage\LogEventEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\Serilog.snk">
