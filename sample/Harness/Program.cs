@@ -10,7 +10,7 @@ namespace Harness
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console(
-                    outputTemplate: "{TimeStamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
+                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
                 .WriteTo.DumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
                 .WriteTo.Trace()
                 .Enrich.WithProperty("App", "Test Harness")

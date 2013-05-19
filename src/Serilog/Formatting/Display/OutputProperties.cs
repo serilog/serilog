@@ -33,7 +33,7 @@ namespace Serilog.Formatting.Display
         /// <summary>
         /// The timestamp of the log event.
         /// </summary>
-        public const string TimeStampPropertyName = "TimeStamp";
+        public const string TimestampPropertyName = "Timestamp";
 
         /// <summary>
         /// The level of the log event.
@@ -60,7 +60,7 @@ namespace Serilog.Formatting.Display
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties)));
-            result.Add(TimeStampPropertyName, new LogEventProperty(TimeStampPropertyName, new ScalarValue(logEvent.TimeStamp)));
+            result.Add(TimestampPropertyName, new LogEventProperty(TimestampPropertyName, new ScalarValue(logEvent.Timestamp)));
             result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level)));
             result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new ScalarValue(Environment.NewLine)));
 

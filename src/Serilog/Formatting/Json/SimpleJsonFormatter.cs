@@ -75,7 +75,7 @@ namespace Serilog.Formatting.Json
                 output.Write("{");
 
             var delim = "";
-            WriteJsonProperty("TimeStamp", logEvent.TimeStamp, ref delim, output);
+            WriteJsonProperty("Timestamp", logEvent.Timestamp, ref delim, output);
             WriteJsonProperty("Level", logEvent.Level, ref delim, output);
             WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
 

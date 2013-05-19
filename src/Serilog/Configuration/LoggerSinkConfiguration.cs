@@ -29,7 +29,7 @@ namespace Serilog.Configuration
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventSink> _addSink;
 
-        const string DefaultOutputTemplate = "{TimeStamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
 
         internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {

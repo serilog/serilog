@@ -53,7 +53,7 @@ namespace Serilog.Sinks.RollingFile
             {
                 if (_isDisposed) throw new ObjectDisposedException("The rolling file has been disposed.");
 
-                AlignCurrentFileTo(logEvent.TimeStamp);
+                AlignCurrentFileTo(logEvent.Timestamp);
                 _currentFile.Emit(logEvent);
             }
         }

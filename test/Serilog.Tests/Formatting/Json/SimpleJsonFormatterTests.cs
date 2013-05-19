@@ -14,7 +14,7 @@ namespace Serilog.Tests.Formatting.Json
     public class SimpleJsonFormatterTests
     {
         [Test]
-        public void JsonFormattedEventsIncludeTimeStamp()
+        public void JsonFormattedEventsIncludeTimestamp()
         {
             var @event = new LogEvent(
                 new DateTimeOffset(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
@@ -27,7 +27,7 @@ namespace Serilog.Tests.Formatting.Json
             
             Assert.AreEqual(
                 "2013-03-11T15:59:00.1230000+10:00",
-                (string)formatted.TimeStamp);
+                (string)formatted.Timestamp);
         }
 
         static dynamic FormatJson(LogEvent @event)

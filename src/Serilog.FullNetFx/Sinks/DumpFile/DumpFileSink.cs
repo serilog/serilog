@@ -35,7 +35,7 @@ namespace Serilog.Sinks.DumpFile
 
             lock (_syncRoot)
             {
-                _output.Write("[" + logEvent.TimeStamp + "] " + logEvent.Level + ": \"");
+                _output.Write("[" + logEvent.Timestamp + "] " + logEvent.Level + ": \"");
                 _output.Write(logEvent.MessageTemplate);
                 _output.WriteLine("\"");
                 if (logEvent.Exception != null)

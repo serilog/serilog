@@ -23,7 +23,7 @@ namespace Serilog.Events
     /// </summary>
     public class LogEvent
     {
-        private readonly DateTimeOffset _timeStamp;
+        private readonly DateTimeOffset _timestamp;
         private readonly LogEventLevel _level;
         private readonly Exception _exception;
         private readonly MessageTemplate _messageTemplate;
@@ -32,16 +32,16 @@ namespace Serilog.Events
         /// <summary>
         /// Construct a new <seealso cref="LogEvent"/>.
         /// </summary>
-        /// <param name="timeStamp">The time at which the event occurred.</param>
+        /// <param name="timestamp">The time at which the event occurred.</param>
         /// <param name="level">The level of the event.</param>
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        public LogEvent(DateTimeOffset timeStamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
+        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
             if (properties == null) throw new ArgumentNullException("properties");
-            _timeStamp = timeStamp;
+            _timestamp = timestamp;
             _level = level;
             _exception = exception;
             _messageTemplate = messageTemplate;
@@ -53,9 +53,9 @@ namespace Serilog.Events
         /// <summary>
         /// The time at which the event occurred.
         /// </summary>
-        public DateTimeOffset TimeStamp
+        public DateTimeOffset Timestamp
         {
-            get { return _timeStamp; }
+            get { return _timestamp; }
         }
 
         /// <summary>

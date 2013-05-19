@@ -80,8 +80,8 @@ namespace Serilog.Sinks.MongoDB
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
                 var renderedMessage = logEvent.RenderedMessage;
-                payload.Write(",\"UtcTimeStamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-                              logEvent.TimeStamp.ToUniversalTime().DateTime,
+                payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
+                              logEvent.Timestamp.ToUniversalTime().DateTime,
                               SimpleJsonFormatter.Escape(renderedMessage));
                 delimStart = ",{";
             }
