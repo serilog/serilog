@@ -80,19 +80,19 @@ namespace Serilog.Sinks.SystemConsole
                             if (messagePropertyToken != null)
                             {
                                 SetHighlightColors(palette);
-                                messageToken.Render(logEvent.Properties, Console.Out);
+                                messageToken.Render(logEvent.Properties, Console.Out, logEvent.FormatProvider);
                             }
                             else
                             {
                                 SetBaseColors(palette);
-                                messageToken.Render(logEvent.Properties, Console.Out);
+                                messageToken.Render(logEvent.Properties, Console.Out, logEvent.FormatProvider);
                             }
                         }
                     }
                     else
                     {
                         SetBaseColors(palette);
-                        outputToken.Render(outputProperties, Console.Out);
+                        outputToken.Render(outputProperties, Console.Out, logEvent.FormatProvider);
                     }
                 }
                 Console.ResetColor();

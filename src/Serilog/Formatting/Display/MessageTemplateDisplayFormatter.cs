@@ -48,7 +48,7 @@ namespace Serilog.Formatting.Display
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             if (output == null) throw new ArgumentNullException("output");
             var outputProperties = OutputProperties.GetOutputProperties(logEvent);
-            _outputTemplate.Render(outputProperties, output);            
+            _outputTemplate.Render(outputProperties, output, logEvent.FormatProvider);            
         }
     }
 }

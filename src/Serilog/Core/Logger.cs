@@ -76,10 +76,20 @@ namespace Serilog.Core
 
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
-            Write(level, null, messageTemplate, propertyValues);
+            Write(level, null, null, messageTemplate, propertyValues);
+        }
+
+        public void Write(LogEventLevel level, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(level, null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            Write(level, exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Write(LogEventLevel level, Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
             if (messageTemplate == null)
                 return;
@@ -99,7 +109,7 @@ namespace Serilog.Core
             IEnumerable<LogEventProperty> properties;
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out properties);
 
-            var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties);
+            var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties, formatProvider);
             Write(logEvent);
         }
 
@@ -130,62 +140,122 @@ namespace Serilog.Core
 
         public void Verbose(string messageTemplate, params object[] propertyValues)
         {
-            Verbose(null, messageTemplate, propertyValues);
+            Verbose(null, null, messageTemplate, propertyValues);
+        }
+
+        public void Verbose(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Verbose(null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValues);
+            Verbose(exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Verbose(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(LogEventLevel.Verbose, exception, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Debug(string messageTemplate, params object[] propertyValues)
         {
-            Debug(null, messageTemplate, propertyValues);
+            Debug(null, null, messageTemplate, propertyValues);
+        }
+
+        public void Debug(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Debug(null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Debug, exception, messageTemplate, propertyValues);
+            Debug(exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Debug(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(LogEventLevel.Debug, exception, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Information(string messageTemplate, params object[] propertyValues)
         {
-            Information(null, messageTemplate, propertyValues);
+            Information(null, null, messageTemplate, propertyValues);
+        }
+
+        public void Information(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Information(null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Information, exception, messageTemplate, propertyValues);
+            Information(exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Information(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(LogEventLevel.Information, exception, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Warning(string messageTemplate, params object[] propertyValues)
         {
-            Warning(null, messageTemplate, propertyValues);
+            Warning(null, null, messageTemplate, propertyValues);
+        }
+
+        public void Warning(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Warning(null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Warning, exception, messageTemplate, propertyValues);
+            Warning(exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Warning(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(LogEventLevel.Warning, exception, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Error(string messageTemplate, params object[] propertyValues)
         {
-            Error(null, messageTemplate, propertyValues);
+            Error(null, null, messageTemplate, propertyValues);
+        }
+
+        public void Error(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Error(null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Error, exception, messageTemplate, propertyValues);
+            Error(exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Error(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(LogEventLevel.Error, exception, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Fatal(string messageTemplate, params object[] propertyValues)
         {
-            Fatal(null, messageTemplate, propertyValues);
+            Fatal(null, null, messageTemplate, propertyValues);
+        }
+
+        public void Fatal(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Fatal(null, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValues);
+            Fatal(exception, null, messageTemplate, propertyValues);
+        }
+
+        public void Fatal(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
+        {
+            Write(LogEventLevel.Fatal, exception, formatProvider, messageTemplate, propertyValues);
         }
 
         public void Dispose()

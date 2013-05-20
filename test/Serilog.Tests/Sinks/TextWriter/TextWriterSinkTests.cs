@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using NUnit.Framework;
 using Serilog.Tests.Support;
 
@@ -18,6 +20,23 @@ namespace Serilog.Tests.Sinks.TextWriter
 
             var mt = Some.String();
             log.Information(mt);
+
+            var s = sw.ToString();
+            Assert.That(s.Contains(mt));
+        }
+
+        [Test]
+        public void EventsAreWrittenToTheTextWriterUsingFormatProvider()
+        {
+            var sw = new StringWriter();
+
+            var log = new LoggerConfiguration()
+                .WriteTo.TextWriter(sw)
+                .CreateLogger();
+
+            var french = CultureInfo.GetCultureInfo("fr-FR");
+            var mt = String.Format(french, "{0}", 12.345);
+            log.Information(french, "{0}", 12.345);
 
             var s = sw.ToString();
             Assert.That(s.Contains(mt));
