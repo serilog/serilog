@@ -20,6 +20,11 @@ namespace Serilog.Core
 {
     class SilentLogger : ILogger
     {
+        public IFormatProvider FormatProvider
+        {
+            get { return null; }
+        }
+
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
             return this;

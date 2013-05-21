@@ -23,6 +23,11 @@ namespace Serilog
     public interface ILogger
     {
         /// <summary>
+        /// Supplies culture-specific formatting information for all logging operations, or null.
+        /// </summary>
+        IFormatProvider FormatProvider { get; }
+
+        /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
         /// </summary>
         /// <param name="enrichers">Enrichers that apply in the context.</param>
@@ -69,7 +74,7 @@ namespace Serilog
         /// Write a log event using format provider with the specified level.
         /// </summary>
         /// <param name="level">The level of the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate"></param>
         /// <param name="propertyValues"></param>
         void Write(LogEventLevel level, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
@@ -88,7 +93,7 @@ namespace Serilog
         /// </summary>
         /// <param name="level">The level of the event.</param>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         void Write(LogEventLevel level, Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
@@ -114,7 +119,7 @@ namespace Serilog
         /// <summary>
         /// Write a log event using format provider with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
         /// </summary>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -137,7 +142,7 @@ namespace Serilog
         /// Write a log event using format provider with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -159,7 +164,7 @@ namespace Serilog
         /// <summary>
         /// Write a log event using format provider with the <see cref="LogEventLevel.Debug"/> level and associated exception.
         /// </summary>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -182,7 +187,7 @@ namespace Serilog
         /// Write a log event using format provider with the <see cref="LogEventLevel.Debug"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -203,7 +208,7 @@ namespace Serilog
         /// <summary>
         /// Write a log event using format provider with the <see cref="LogEventLevel.Information"/> level and associated exception.
         /// </summary>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -226,7 +231,7 @@ namespace Serilog
         /// Write a log event using format provider with the <see cref="LogEventLevel.Information"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -247,7 +252,7 @@ namespace Serilog
         /// <summary>
         /// Write a log event using format provider with the <see cref="LogEventLevel.Warning"/> level and associated exception.
         /// </summary>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -270,7 +275,7 @@ namespace Serilog
         /// Write a log event using format provider with the <see cref="LogEventLevel.Warning"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -291,7 +296,7 @@ namespace Serilog
         /// <summary>
         /// Write a log event using format provider with the <see cref="LogEventLevel.Error"/> level and associated exception.
         /// </summary>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -314,7 +319,7 @@ namespace Serilog
         /// Write a log event using format provider with the <see cref="LogEventLevel.Error"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -335,7 +340,7 @@ namespace Serilog
         /// <summary>
         /// Write a log event using format provider with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
         /// </summary>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>
@@ -358,7 +363,7 @@ namespace Serilog
         /// Write a log event using format provider with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         /// <example>

@@ -30,13 +30,15 @@ namespace Serilog.Core
         readonly ILogEventSink _sink;
         readonly Action _dispose;
         readonly ILogEventEnricher[] _enrichers;
+        readonly IFormatProvider _formatProvider;
 
         public Logger(
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             IEnumerable<ILogEventEnricher> enrichers,
-            Action dispose = null)
+            Action dispose = null,
+            IFormatProvider formatProvider = null)
         {
             if (sink == null) throw new ArgumentNullException("sink");
             if (enrichers == null) throw new ArgumentNullException("enrichers");
@@ -44,7 +46,13 @@ namespace Serilog.Core
             _minimumLevel = minimumLevel;
             _sink = sink;
             _dispose = dispose;
+            _formatProvider = formatProvider;
             _enrichers = enrichers.ToArray();
+        }
+
+        public IFormatProvider FormatProvider
+        {
+            get { return _formatProvider; }
         }
 
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
@@ -109,7 +117,8 @@ namespace Serilog.Core
             IEnumerable<LogEventProperty> properties;
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out properties);
 
-            var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties, formatProvider);
+            var actualFormatProvider = formatProvider ?? _formatProvider;
+            var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties, actualFormatProvider);
             Write(logEvent);
         }
 
