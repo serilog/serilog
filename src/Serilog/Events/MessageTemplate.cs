@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,13 +57,14 @@ namespace Serilog.Events
         /// properties matching the tokens in the message template.
         /// </summary>
         /// <param name="properties">Properties matching template tokens.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>The message created from the template and properties. If the
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</returns>
-        public string Render(IReadOnlyDictionary<string, LogEventProperty> properties)
+        public string Render(IReadOnlyDictionary<string, LogEventProperty> properties, IFormatProvider formatProvider = null)
         {
-            var writer = new StringWriter();
-            Render(properties, writer);
+            var writer = new StringWriter(formatProvider);
+            Render(properties, writer, formatProvider);
             return writer.ToString();
         }
 
@@ -74,11 +76,12 @@ namespace Serilog.Events
         /// <param name="output">The message created from the template and properties. If the
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</param>
-        public void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output)
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
             foreach (var token in _tokens)
             {
-                token.Render(properties, output);
+                token.Render(properties, output, formatProvider);
             }
         }
     }

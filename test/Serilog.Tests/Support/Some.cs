@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
 
@@ -15,6 +14,11 @@ namespace Serilog.Tests.Support
         public static int Int()
         {
             return Interlocked.Increment(ref Counter);
+        }
+
+        public static decimal Decimal()
+        {
+            return Int() + 0.123m;
         }
 
         public static string String(string tag = null)

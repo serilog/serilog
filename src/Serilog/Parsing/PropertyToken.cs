@@ -54,13 +54,14 @@ namespace Serilog.Parsing
         /// </summary>
         /// <param name="properties">Properties that may be represented by the token.</param>
         /// <param name="output">Output for the rendered string.</param>
-        public override void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output)
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public override void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
             if (properties == null) throw new ArgumentNullException("properties");
             if (output == null) throw new ArgumentNullException("output");
             LogEventProperty property;
             if (properties.TryGetValue(_propertyName, out property))
-                property.Value.Render(output, _format);
+                property.Value.Render(output, _format, formatProvider);
             else
                 output.Write(_rawText);
         }

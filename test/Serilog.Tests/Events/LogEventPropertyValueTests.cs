@@ -49,6 +49,24 @@ namespace Serilog.Tests.Events
         }
 
         [Test]
+        public void AScalarValueToStringRendersTheValueUsingFormat()
+        {
+            var num = Some.Decimal();
+            var value = _converter.CreatePropertyValue(num, Destructuring.Default);
+            var str = value.ToString("N2", null);
+            Assert.AreEqual(num.ToString("N2", CultureInfo.InvariantCulture), str);
+        }
+
+        [Test]
+        public void AScalarValueToStringRendersTheValueUsingFormatProvider()
+        {
+            var num = Some.Decimal();
+            var value = _converter.CreatePropertyValue(num, Destructuring.Default);
+            var str = value.ToString(null, CultureInfo.GetCultureInfo("fr-FR"));
+            Assert.AreEqual(num.ToString(CultureInfo.GetCultureInfo("fr-FR")), str);
+        }
+
+        [Test]
         public void WhenDestructuringAKnownLiteralTypeIsScalar()
         {
             var guid = Guid.NewGuid();

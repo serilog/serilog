@@ -23,6 +23,11 @@ namespace Serilog
     public interface ILogger
     {
         /// <summary>
+        /// Supplies culture-specific formatting information for all logging operations, or null.
+        /// </summary>
+        IFormatProvider FormatProvider { get; }
+
+        /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
         /// </summary>
         /// <param name="enrichers">Enrichers that apply in the context.</param>
@@ -66,6 +71,15 @@ namespace Serilog
         void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the specified level.
+        /// </summary>
+        /// <param name="level">The level of the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate"></param>
+        /// <param name="propertyValues"></param>
+        void Write(LogEventLevel level, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the specified level and associated exception.
         /// </summary>
         /// <param name="level">The level of the event.</param>
@@ -73,6 +87,16 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event using format provider with the specified level and associated exception.
+        /// </summary>
+        /// <param name="level">The level of the event.</param>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        void Write(LogEventLevel level, Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
         /// Determine if events at the specified level will be passed through
@@ -93,6 +117,17 @@ namespace Serilog
         void Verbose(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
+        /// </summary>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Verbose(CultureInfo.CurrentCulture, "Staring into space, wondering if we're alone.");
+        /// </example>
+        void Verbose(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
@@ -104,6 +139,18 @@ namespace Serilog
         void Verbose(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Verbose(ex, CultureInfo.CurrentCulture, ""Staring into space, wondering where this comet came from.");
+        /// </example>
+        void Verbose(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Debug"/> level and associated exception.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
@@ -112,6 +159,18 @@ namespace Serilog
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
         /// </example>
         void Debug(string messageTemplate, params object[] propertyValues);
+
+
+        /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Debug"/> level and associated exception.
+        /// </summary>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Debug(CultureInfo.CurrentCulture, ""Starting up at {StartedAt}.", DateTime.Now);
+        /// </example>
+        void Debug(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Debug"/> level and associated exception.
@@ -125,6 +184,18 @@ namespace Serilog
         void Debug(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Debug"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Debug(ex, CultureInfo.CurrentCulture, ""Swallowing a mundane exception.");
+        /// </example>
+        void Debug(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Information"/> level and associated exception.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
@@ -133,6 +204,17 @@ namespace Serilog
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
         /// </example>
         void Information(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Information"/> level and associated exception.
+        /// </summary>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Information(CultureInfo.CurrentCulture, ""Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
+        /// </example>
+        void Information(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Information"/> level and associated exception.
@@ -146,6 +228,18 @@ namespace Serilog
         void Information(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Information"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Information(ex, CultureInfo.CurrentCulture, ""Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
+        /// </example>
+        void Information(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Warning"/> level and associated exception.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
@@ -154,6 +248,17 @@ namespace Serilog
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
         /// </example>
         void Warning(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Warning"/> level and associated exception.
+        /// </summary>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Warning(CultureInfo.CurrentCulture, ""Skipped {SkipCount} records.", skippedRecords.Length);
+        /// </example>
+        void Warning(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Warning"/> level and associated exception.
@@ -167,6 +272,18 @@ namespace Serilog
         void Warning(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Warning"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Warning(ex, CultureInfo.CurrentCulture, ""Skipped {SkipCount} records.", skippedRecords.Length);
+        /// </example>
+        void Warning(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Error"/> level and associated exception.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
@@ -175,6 +292,17 @@ namespace Serilog
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
         /// </example>
         void Error(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Error"/> level and associated exception.
+        /// </summary>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Error(CultureInfo.CurrentCulture, ""Failed {ErrorCount} records.", brokenRecords.Length);
+        /// </example>
+        void Error(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Error"/> level and associated exception.
@@ -188,6 +316,18 @@ namespace Serilog
         void Error(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Error"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Error(ex, CultureInfo.CurrentCulture, ""Failed {ErrorCount} records.", brokenRecords.Length);
+        /// </example>
+        void Error(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
@@ -196,6 +336,17 @@ namespace Serilog
         /// Log.Fatal("Process terminating.");
         /// </example>
         void Fatal(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
+        /// </summary>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Fatal(CultureInfo.CurrentCulture, ""Process terminating.");
+        /// </example>
+        void Fatal(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
@@ -207,5 +358,17 @@ namespace Serilog
         /// Log.Fatal(ex, "Process terminating.");
         /// </example>
         void Fatal(Exception exception, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event using format provider with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="formatProvider">A format provider to apply to messageTemplate, or null to use the default.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <example>
+        /// Log.Fatal(ex, CultureInfo.CurrentCulture, ""Process terminating.");
+        /// </example>
+        void Fatal(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues);
     }
 }
