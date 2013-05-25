@@ -73,24 +73,24 @@ namespace Serilog.Events
             for (var i = 0; i < allButLast; i++)
             {
                 var property = _properties[i];
-                Render(output, property);
+                Render(output, property, formatProvider);
                 output.Write(", ");
             }
 
             if (_properties.Length > 0)
             {
                 var last = _properties[_properties.Length - 1];
-                Render(output, last);
+                Render(output, last, formatProvider);
             }
 
             output.Write(" }");
         }
 
-        private static void Render(TextWriter output, LogEventProperty property)
+        private static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null)
         {
             output.Write(property.Name);
             output.Write(": ");
-            property.Value.Render(output);
+            property.Value.Render(output, null, formatProvider);
         }
     }
 }

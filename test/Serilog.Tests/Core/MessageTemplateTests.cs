@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,18 @@ namespace Serilog.Tests.Core
             }
         }
 
+        class Receipt
+        {
+            // ReSharper disable UnusedMember.Local
+            public decimal Sum { get { return 12.345m; } }
+            public DateTime When { get { return new DateTime(2013, 5, 20, 16, 39, 0); } }
+            // ReSharper restore UnusedMember.Local
+            public override string ToString()
+            {
+                return "a receipt";
+            }
+        }
+
         [Test]
         public void AnObjectIsRenderedInSimpleNotation()
         {
@@ -32,10 +45,24 @@ namespace Serilog.Tests.Core
         }
 
         [Test]
+        public void AnObjectIsRenderedInSimpleNotationUsingFormatProvider()
+        {
+            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "I received {@Receipt}", new Receipt());
+            Assert.AreEqual("I received Receipt { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
+        }
+
+        [Test]
         public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutType()
         {
             var m = Render("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
             Assert.AreEqual("I sat at { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
+        }
+
+        [Test]
+        public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutTypeUsingFormatProvider()
+        {
+            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "I received {@Receipt}", new { Sum = 12.345, When = new DateTime(2013, 5, 20, 16, 39, 0) });
+            Assert.AreEqual("I received { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
         }
 
         [Test]
@@ -60,20 +87,39 @@ namespace Serilog.Tests.Core
         }
 
         [Test]
+        public void MultiplePropertiesUseFormatProvider()
+        {
+            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Income was {Income} at {Date:d}", 1234.567, new DateTime(2013, 5, 20));
+            Assert.AreEqual("Income was 1234,567 at 20/05/2013", m);
+        }
+
+        [Test]
         public void FormatStringsArePropagated()
         {
             var m = Render("Welcome, customer {CustomerId:0000}", 12);
             Assert.AreEqual("Welcome, customer 0012", m);
         }
 
+        [Test]
+        public void FormatProviderIsUsed()
+        {
+            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Please pay {Sum}", 12.345);
+            Assert.AreEqual("Please pay 12,345", m);
+        }
+
         static string Render(string messageTemplate, params object[] properties)
+        {
+            return Render(null, messageTemplate, properties);
+        }
+
+        static string Render(IFormatProvider formatProvider, string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
             var binder = new PropertyBinder(new PropertyValueConverter(Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>()));
             var props = binder.ConstructProperties(mt, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
-            mt.Render(props.ToDictionary(p => p.Name), writer);
+            mt.Render(props.ToDictionary(p => p.Name), writer, formatProvider);
             writer.Flush();
             return output.ToString();
         }
@@ -83,6 +129,13 @@ namespace Serilog.Tests.Core
         {
             var m = Render("{1}, {0}", "world", "Hello");
             Assert.AreEqual("\"Hello\", \"world\"", m);
+        }
+
+        [Test]
+        public void ATemplateWithOnlyPositionalPropertiesUsesFormatProvider()
+        {
+            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "{1}, {0}", 12.345, "Hello");
+            Assert.AreEqual("\"Hello\", 12,345", m);
         }
 
         // Debatable what the behavior should be, here.

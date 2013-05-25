@@ -33,7 +33,7 @@ namespace Serilog.Formatting.Display
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            _template.Render(_properties, output);
+            _template.Render(_properties, output, formatProvider);
         }
     }
 }

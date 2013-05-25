@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
@@ -28,6 +29,7 @@ namespace Serilog.Parsing
         /// </summary>
         /// <param name="properties">Properties that may be represented by the token.</param>
         /// <param name="output">Output for the rendered string.</param>
-        public abstract void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output);
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public abstract void Render(IReadOnlyDictionary<string, LogEventProperty> properties, TextWriter output, IFormatProvider formatProvider = null);
     }
 }

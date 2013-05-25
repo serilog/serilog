@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using Serilog.Core;
@@ -107,6 +108,21 @@ namespace Serilog.Tests
             var sv = (StructureValue)prop.Value;
             var c = sv.Properties.Single();
             Assert.AreEqual("C", c.Name);
+        }
+
+        [Test]
+        public void FormatUsingAssignsFormatProviderToLogger()
+        {
+            var french = CultureInfo.GetCultureInfo("fr-FR");
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .FormatUsing(french)
+                .CreateLogger();
+
+            Assert.AreEqual(CultureInfo.GetCultureInfo("fr-FR"), logger.FormatProvider);
         }
     }
 }
