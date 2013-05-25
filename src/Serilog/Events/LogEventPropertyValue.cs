@@ -62,7 +62,7 @@ namespace Serilog.Events
         /// setting of the operating system. </param><filterpriority>2</filterpriority>
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            var output = new StringWriter(formatProvider);
+            var output = new StringWriter();
             Render(output, format, formatProvider);
             return output.ToString();
         }
