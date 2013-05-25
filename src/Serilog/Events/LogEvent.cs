@@ -14,6 +14,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Serilog.Core;
 
 namespace Serilog.Events
 {
@@ -27,7 +29,6 @@ namespace Serilog.Events
         private readonly Exception _exception;
         private readonly MessageTemplate _messageTemplate;
         private readonly Dictionary<string, LogEventProperty> _properties;
-        private readonly IFormatProvider _formatProvider;
 
         /// <summary>
         /// Construct a new <seealso cref="LogEvent"/>.
@@ -37,8 +38,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties, IFormatProvider formatProvider = null)
+        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
             if (properties == null) throw new ArgumentNullException("properties");
@@ -46,7 +46,6 @@ namespace Serilog.Events
             _level = level;
             _exception = exception;
             _messageTemplate = messageTemplate;
-            _formatProvider = formatProvider;
             _properties = new Dictionary<string, LogEventProperty>();
             foreach (var p in properties)
                 AddOrUpdateProperty(p);
@@ -77,12 +76,24 @@ namespace Serilog.Events
         }
 
         /// <summary>
-        /// The result of rendering the message template given the properties associated
+        /// Render the message template to the specified output, given the properties associated
         /// with the event.
         /// </summary>
-        public string RenderedMessage
+        /// <param name="output">The output.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public void RenderMessage(TextWriter output, IFormatProvider formatProvider = null)
         {
-            get { return MessageTemplate.Render(Properties, FormatProvider); }
+            MessageTemplate.Render(Properties, output, formatProvider);
+        }
+
+        /// <summary>
+        /// Render the message template given the properties associated
+        /// with the event, and return the result.
+        /// </summary>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public string RenderMessage(IFormatProvider formatProvider = null)
+        {
+            return MessageTemplate.Render(Properties, formatProvider);
         }
 
         /// <summary>
@@ -99,14 +110,6 @@ namespace Serilog.Events
         public Exception Exception
         {
             get { return _exception; }
-        }
-
-        /// <summary>
-        /// Supplies culture-specific formatting information, or null.
-        /// </summary>
-        public IFormatProvider FormatProvider
-        {
-            get { return _formatProvider; }
         }
 
         /// <summary>

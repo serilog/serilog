@@ -15,16 +15,22 @@ namespace Serilog
         /// Adds a sink that writes log events as records in the 'LogEventEntity' Azure Table Storage table in the given storage account.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="storageAccount">The Cloud Storage Account to use to insert the log entries to</param>
+        /// <param name="storageAccount">The Cloud Storage Account to use to insert the log entries to.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration AzureTableStorage(this LoggerSinkConfiguration loggerConfiguration,
-            CloudStorageAccount storageAccount, LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        public static LoggerConfiguration AzureTableStorage(
+            this LoggerSinkConfiguration loggerConfiguration,
+            CloudStorageAccount storageAccount,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
-            return loggerConfiguration.Sink(new AzureTableStorageSink(storageAccount), restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(
+                new AzureTableStorageSink(storageAccount, formatProvider),
+                restrictedToMinimumLevel);
         }
     }
 }

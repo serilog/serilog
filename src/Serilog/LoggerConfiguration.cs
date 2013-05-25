@@ -32,7 +32,6 @@ namespace Serilog
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-        IFormatProvider _formatProvider;
         
         LogEventLevel _minimumLevel = LogEventLevel.Information;
 
@@ -94,17 +93,6 @@ namespace Serilog
                 return new LoggerDestructuringConfiguration(this, _additionalScalarTypes.Add, _additionalDestructuringPolicies.Add);
             }
         }
-
-        /// <summary>
-        /// Configures logger's culture-specific formatting information.
-        /// </summary>
-        /// <param name="formatProvider">Supplies culture-specific formatting information for all logging operations, or null.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration FormatUsing(IFormatProvider formatProvider)
-        {
-            _formatProvider = formatProvider;
-            return this;
-        }
         
         /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
@@ -129,7 +117,7 @@ namespace Serilog
             var converter = CreatePropertyValueConverter();
             var processor = new MessageTemplateProcessor(converter);
 
-            return new Logger(processor, _minimumLevel, sink, _enrichers, dispose, _formatProvider);
+            return new Logger(processor, _minimumLevel, sink, _enrichers, dispose);
         }
 
         PropertyValueConverter CreatePropertyValueConverter()

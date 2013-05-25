@@ -65,6 +65,7 @@
     <Compile Include="Core\SafeAggregateSinkTests.cs" />
     <Compile Include="Core\MessageTemplateTests.cs" />
     <Compile Include="Events\LogEventPropertyValueTests.cs" />
+    <Compile Include="Formatting\Display\MessageTemplateTextFormatterTests.cs" />
     <Compile Include="LoggerConfigurationTests.cs" />
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />

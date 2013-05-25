@@ -30,13 +30,13 @@ namespace Serilog.Tests.Sinks.TextWriter
         {
             var sw = new StringWriter();
 
+            var french = CultureInfo.GetCultureInfo("fr-FR");
             var log = new LoggerConfiguration()
-                .WriteTo.TextWriter(sw)
+                .WriteTo.TextWriter(sw, formatProvider: french)
                 .CreateLogger();
 
-            var french = CultureInfo.GetCultureInfo("fr-FR");
             var mt = String.Format(french, "{0}", 12.345);
-            log.Information(french, "{0}", 12.345);
+            log.Information("{0}", 12.345);
 
             var s = sw.ToString();
             Assert.That(s.Contains(mt));

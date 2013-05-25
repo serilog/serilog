@@ -26,10 +26,9 @@ namespace Serilog.Sinks.DumpFile
 
         public DumpFileSink(string path)
         {
-            _output = new StreamWriter(System.IO.File.OpenWrite(path));
+            _output = new StreamWriter(File.OpenWrite(path));
         }
 
-        // Ignores FormatProvider because DumpFile is a "canonical" representation
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");

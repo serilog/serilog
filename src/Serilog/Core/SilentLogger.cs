@@ -20,11 +20,6 @@ namespace Serilog.Core
 {
     class SilentLogger : ILogger
     {
-        public IFormatProvider FormatProvider
-        {
-            get { return null; }
-        }
-
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
             return this;
@@ -53,15 +48,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Write(LogEventLevel level, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Write(LogEventLevel level, Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
 
@@ -74,15 +61,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Verbose(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Verbose(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
 
@@ -90,15 +69,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Debug(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Debug(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
 
@@ -106,15 +77,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Information(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Information(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
 
@@ -122,15 +85,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Warning(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Warning(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
 
@@ -138,15 +93,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Error(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Error(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
 
@@ -154,15 +101,7 @@ namespace Serilog.Core
         {
         }
 
-        public void Fatal(IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-        }
-
-        public void Fatal(Exception exception, IFormatProvider formatProvider, string messageTemplate, params object[] propertyValues)
         {
         }
     }

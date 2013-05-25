@@ -23,6 +23,8 @@ namespace Serilog.Sinks.SystemConsole
 {
     class ColoredConsoleSink : ILogEventSink
     {
+        readonly IFormatProvider _formatProvider;
+
         class Palette
         {
             public ConsoleColor Base { get; set; }
@@ -53,10 +55,11 @@ namespace Serilog.Sinks.SystemConsole
         readonly object _syncRoot = new object();
         readonly MessageTemplate _outputTemplate;
 
-        public ColoredConsoleSink(string outputTemplate)
+        public ColoredConsoleSink(string outputTemplate, IFormatProvider formatProvider)
         {
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
+            _formatProvider = formatProvider;
         }
 
         public void Emit(LogEvent logEvent)
@@ -80,19 +83,19 @@ namespace Serilog.Sinks.SystemConsole
                             if (messagePropertyToken != null)
                             {
                                 SetHighlightColors(palette);
-                                messageToken.Render(logEvent.Properties, Console.Out, logEvent.FormatProvider);
+                                messageToken.Render(logEvent.Properties, Console.Out, _formatProvider);
                             }
                             else
                             {
                                 SetBaseColors(palette);
-                                messageToken.Render(logEvent.Properties, Console.Out, logEvent.FormatProvider);
+                                messageToken.Render(logEvent.Properties, Console.Out, _formatProvider);
                             }
                         }
                     }
                     else
                     {
                         SetBaseColors(palette);
-                        outputToken.Render(outputProperties, Console.Out, logEvent.FormatProvider);
+                        outputToken.Render(outputProperties, Console.Out, _formatProvider);
                     }
                 }
                 Console.ResetColor();

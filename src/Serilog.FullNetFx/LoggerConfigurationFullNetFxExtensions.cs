@@ -41,15 +41,17 @@ namespace Serilog
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Console(
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultConsoleOutputTemplate)
+            string outputTemplate = DefaultConsoleOutputTemplate,
+            IFormatProvider formatProvider = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
@@ -62,15 +64,17 @@ namespace Serilog
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration ColoredConsole(
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultConsoleOutputTemplate)
+            string outputTemplate = DefaultConsoleOutputTemplate,
+            IFormatProvider formatProvider = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -98,6 +102,7 @@ namespace Serilog
         /// <param name="path">Path to the file.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
         /// <returns>Configuration object allowing method chaining.</returns>
@@ -105,11 +110,12 @@ namespace Serilog
             this LoggerSinkConfiguration sinkConfiguration,
             string path,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
+            string outputTemplate = DefaultOutputTemplate,
+            IFormatProvider formatProvider = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new FileSink(path, formatter), restrictedToMinimumLevel);
         }
 
@@ -126,16 +132,18 @@ namespace Serilog
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration RollingFile(
             this LoggerSinkConfiguration sinkConfiguration,
             string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
+            string outputTemplate = DefaultOutputTemplate,
+            IFormatProvider formatProvider = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new RollingFileSink(pathFormat, formatter), restrictedToMinimumLevel);
         }
 
@@ -147,15 +155,17 @@ namespace Serilog
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Trace(
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
+            string outputTemplate = DefaultOutputTemplate,
+            IFormatProvider formatProvider = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
     }

@@ -25,17 +25,20 @@ namespace Serilog.Formatting.Display
     /// </summary>
     public class MessageTemplateTextFormatter : ITextFormatter
     {
-        private readonly MessageTemplate _outputTemplate;
+        readonly IFormatProvider _formatProvider;
+        readonly MessageTemplate _outputTemplate;
 
         /// <summary>
         /// Construct a <see cref="MessageTemplateTextFormatter"/>.
         /// </summary>
         /// <param name="outputTemplate">A message template describing the
         /// output messages.</param>
-        public MessageTemplateTextFormatter(string outputTemplate)
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider formatProvider)
         {
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
+            _formatProvider = formatProvider;
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace Serilog.Formatting.Display
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             if (output == null) throw new ArgumentNullException("output");
             var outputProperties = OutputProperties.GetOutputProperties(logEvent);
-            _outputTemplate.Render(outputProperties, output, logEvent.FormatProvider);            
+            _outputTemplate.Render(outputProperties, output, _formatProvider);            
         }
     }
 }

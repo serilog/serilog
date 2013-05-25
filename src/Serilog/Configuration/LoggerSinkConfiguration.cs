@@ -66,16 +66,18 @@ namespace Serilog.Configuration
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public LoggerConfiguration TextWriter(
             TextWriter textWriter,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultOutputTemplate)
+            string outputTemplate = DefaultOutputTemplate,
+            IFormatProvider formatProvider = null)
         {
             if (textWriter == null) throw new ArgumentNullException("textWriter");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
 
-            var formatter = new MessageTemplateTextFormatter(outputTemplate);
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             var sink = new TextWriterSink(textWriter, formatter);
             return Sink(sink);
         }

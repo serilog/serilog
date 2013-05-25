@@ -30,6 +30,7 @@ namespace Serilog.Sinks.CouchDB
     /// </summary>
     public class CouchDBSink : PeriodicBatchingSink
     {
+        readonly IFormatProvider _formatProvider;
         readonly HttpClient _httpClient;
         const string BulkUploadResource = "_bulk_docs";
 
@@ -50,10 +51,12 @@ namespace Serilog.Sinks.CouchDB
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
         /// <param name="batchPostingLimit">The maximium number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
-        public CouchDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period)
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public CouchDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+            _formatProvider = formatProvider;
             _httpClient = new HttpClient { BaseAddress = new Uri(databaseUrl) };
         }
 
@@ -88,7 +91,7 @@ namespace Serilog.Sinks.CouchDB
             {
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                var renderedMessage = logEvent.RenderedMessage;
+                var renderedMessage = logEvent.RenderMessage(_formatProvider);
                 payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
                     logEvent.Timestamp.ToUniversalTime().DateTime,
                     SimpleJsonFormatter.Escape(renderedMessage));

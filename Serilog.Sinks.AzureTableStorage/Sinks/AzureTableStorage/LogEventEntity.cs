@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.WindowsAzure.Storage.Table;
 using Serilog.Events;
@@ -28,7 +29,8 @@ namespace Serilog.Sinks.AzureTableStorage
         /// Create a log event entity from a Serilog <see cref="LogEvent"/>.
         /// </summary>
         /// <param name="log">The event to log</param>
-        public LogEventEntity(LogEvent log)
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public LogEventEntity(LogEvent log, IFormatProvider formatProvider)
         {
             Timestamp = log.Timestamp.ToUniversalTime().DateTime;
             PartitionKey = string.Format("0{0}", Timestamp.Ticks);
@@ -36,7 +38,7 @@ namespace Serilog.Sinks.AzureTableStorage
             MessageTemplate = log.MessageTemplate.Text;
             Level = log.Level.ToString();
             Exception = log.Exception.ToString();
-            RenderedMessage = log.RenderedMessage;
+            RenderedMessage = log.RenderMessage(formatProvider);
             var s = new StringWriter();
             new SimpleJsonFormatter().Format(log, s);
             Data = s.ToString();
