@@ -39,7 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MongoDB", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.FullNetFx", "src\Serilog.FullNetFx\Serilog.FullNetFx.csproj", "{7A9E1095-167D-402A-B43D-B36B97FF183D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.AzureTableStorage", "Serilog.Sinks.AzureTableStorage\Serilog.Sinks.AzureTableStorage.csproj", "{DA0432BD-FDA0-40C9-BCF1-A38F601600D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.AzureTableStorage", "src\Serilog.Sinks.AzureTableStorage\Serilog.Sinks.AzureTableStorage.csproj", "{DA0432BD-FDA0-40C9-BCF1-A38F601600D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
