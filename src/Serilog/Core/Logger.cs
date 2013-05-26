@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parameters;
@@ -79,13 +80,15 @@ namespace Serilog.Core
             Write(level, null, messageTemplate, propertyValues);
         }
 
+        public bool IsEnabled(LogEventLevel level)
+        {
+            return (int)level >= (int)_minimumLevel;
+        }
+
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            if (messageTemplate == null)
-                return;
-
-            if ((int)level < (int)_minimumLevel)
-                return;
+            if (messageTemplate == null) return;
+            if (!IsEnabled(level)) return;
 
             // Catch a common pitfall when a single non-object array is cast to object[]
             // Needs some more thought
@@ -100,18 +103,24 @@ namespace Serilog.Core
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out properties);
 
             var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties);
-            Write(logEvent);
-        }
-
-        public bool IsEnabled(LogEventLevel level)
-        {
-            return (int)level >= (int)_minimumLevel;
+            Dispatch(logEvent);
         }
 
         public void Write(LogEvent logEvent)
         {
             if (logEvent == null) return;
+            if (!IsEnabled(logEvent.Level)) return;
+            Dispatch(logEvent);
+        }
 
+        public void Emit(LogEvent logEvent)
+        {
+            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            Write(logEvent);
+        }
+
+        void Dispatch(LogEvent logEvent)
+        {
             foreach (var enricher in _enrichers)
             {
                 try
@@ -126,7 +135,6 @@ namespace Serilog.Core
 
             _sink.Emit(logEvent);
         }
-
 
         public void Verbose(string messageTemplate, params object[] propertyValues)
         {
@@ -192,11 +200,6 @@ namespace Serilog.Core
         {
             if (_dispose != null)
                 _dispose();
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            Write(logEvent);
         }
     }
 }

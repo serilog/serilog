@@ -44,7 +44,7 @@ namespace Serilog.Tests.Core
             var v2 = Some.Int();
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext(name, v1)
                                         .ForContext(name, v2)
-                                        .Write(Some.LogEvent()));
+                                        .Write(Some.InformationEvent()));
 
             var pActual = evt.Properties[name];
             Assert.AreEqual(v2, pActual.LiteralValue());

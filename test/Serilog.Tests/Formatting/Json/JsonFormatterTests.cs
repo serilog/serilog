@@ -45,7 +45,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             var name = Some.String();
             var value = Some.Int();
-            var @event = Some.LogEvent();
+            var @event = Some.InformationEvent();
             @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
 
             var formatted = FormatJson(@event);
@@ -59,7 +59,7 @@ namespace Serilog.Tests.Formatting.Json
             var name = Some.String();
             var ints = new[]{ Some.Int(), Some.Int() };
             var value = new SequenceValue(ints.Select(i => new ScalarValue(i)));
-            var @event = Some.LogEvent();
+            var @event = Some.InformationEvent();
             @event.AddOrUpdateProperty(new LogEventProperty(name, value));
 
             var formatted = FormatJson(@event);
@@ -77,7 +77,7 @@ namespace Serilog.Tests.Formatting.Json
             var memberProp = new LogEventProperty(Some.String(), new ScalarValue(value));
             var structure = new StructureValue(new[] { memberProp });
             var structureProp = new LogEventProperty(Some.String(), structure);
-            var @event = Some.LogEvent();
+            var @event = Some.InformationEvent();
             @event.AddOrUpdateProperty(structureProp);
 
             var formatted = FormatJson(@event);

@@ -68,7 +68,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnFlush()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
-            var evt = Some.LogEvent();
+            var evt = Some.InformationEvent();
             pbs.Emit(evt);
             pbs.Dispose();
             Assert.AreEqual(1, pbs.Batches.Count);
@@ -81,7 +81,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
-            var evt = Some.LogEvent();
+            var evt = Some.InformationEvent();
             pbs.Emit(evt);
             Thread.Sleep(TinyWait + TinyWait);
             pbs.Stop();
@@ -93,7 +93,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_FlushWhileRunning()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, MicroWait, TinyWait + TinyWait);
-            var evt = Some.LogEvent();
+            var evt = Some.InformationEvent();
             pbs.Emit(evt);
             Thread.Sleep(TinyWait);
             pbs.Dispose();

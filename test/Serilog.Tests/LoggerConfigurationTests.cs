@@ -51,8 +51,8 @@ namespace Serilog.Tests
         [Test]
         public void AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
-            var excluded = Some.LogEvent();
-            var included = Some.LogEvent();
+            var excluded = Some.InformationEvent();
+            var included = Some.InformationEvent();
 
             var filter = new DelegateFilter(e => e.MessageTemplate != excluded.MessageTemplate);
             var events = new List<LogEvent>();
@@ -107,6 +107,37 @@ namespace Serilog.Tests
             var sv = (StructureValue)prop.Value;
             var c = sv.Properties.Single();
             Assert.AreEqual("C", c.Name);
+        }
+
+        [Test]
+        public void WritingToALoggerWritesToSubLogger()
+        {
+            var eventReceived = false;
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Logger(l => l
+                    .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.That(eventReceived);
+        }
+
+        [Test]
+        public void SubLoggerRestrictsFilter()
+        {
+            var eventReceived = false;
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Logger(l => l
+                    .MinimumLevel.Fatal()
+                    .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.That(!eventReceived);
         }
     }
 }

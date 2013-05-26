@@ -41,7 +41,7 @@ namespace Serilog.Tests.Support
             return new DateTimeOffset(Instant());
         }
 
-        public static LogEvent LogEvent()
+        public static LogEvent InformationEvent()
         {
             return new LogEvent(OffsetInstant(), LogEventLevel.Information, null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
         }

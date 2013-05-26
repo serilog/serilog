@@ -81,5 +81,22 @@ namespace Serilog.Configuration
             var sink = new TextWriterSink(textWriter, formatter);
             return Sink(sink);
         }
+
+        /// <summary>
+        /// Write log events to a sub-logger, where further processing may occur. Events through
+        /// the sub-logger will be constrained by filters and enriched by enrichers that are
+        /// active in the parent. A sub-logger cannot be used to log at a more verbose level, but
+        /// a less verbose level is possible.
+        /// </summary>
+        /// <param name="configureLogger">An action that configures the sub-logger.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Logger(
+            Action<LoggerConfiguration> configureLogger)
+        {
+            if (configureLogger == null) throw new ArgumentNullException("configureLogger");
+            var lc = new LoggerConfiguration();
+            configureLogger(lc);
+            return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()));
+        }
     }
 }

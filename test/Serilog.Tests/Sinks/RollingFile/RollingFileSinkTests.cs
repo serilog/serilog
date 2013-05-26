@@ -12,13 +12,13 @@ namespace Serilog.Tests.Sinks.RollingFile
         [Test]
         public void LogEventsAreEmittedToTheFileNamedAccordingToTheEventTimestamp()
         {
-            TestRollingEventSequence(Some.LogEvent());
+            TestRollingEventSequence(Some.InformationEvent());
         }
 
         [Test]
         public void WhenTheDateChangesTheCorrectFileIsWritten()
         {
-            var e1 = Some.LogEvent();
+            var e1 = Some.InformationEvent();
             var e2 = new LogEvent(e1.Timestamp.AddDays(1), LogEventLevel.Information, null, Some.MessageTemplate(), new LogEventProperty[0]);
             TestRollingEventSequence(e1, e2);
         }
