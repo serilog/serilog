@@ -76,7 +76,7 @@ namespace Serilog.Sinks.MongoDB
             var payload = new StringWriter();
             payload.Write("{\"d\":[");
 
-            var formatter = new SimpleJsonFormatter(true);
+            var formatter = new JsonFormatter(true);
             var delimStart = "{";
             foreach (var logEvent in events)
             {
@@ -85,7 +85,7 @@ namespace Serilog.Sinks.MongoDB
                 var renderedMessage = logEvent.RenderMessage(_formatProvider);
                 payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
                               logEvent.Timestamp.ToUniversalTime().DateTime,
-                              SimpleJsonFormatter.Escape(renderedMessage));
+                              JsonFormatter.Escape(renderedMessage));
                 delimStart = ",{";
             }
 

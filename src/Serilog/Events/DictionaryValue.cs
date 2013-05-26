@@ -20,27 +20,27 @@ using System.Linq;
 namespace Serilog.Events
 {
     /// <summary>
-    /// A value represented as an ordered sequence of values.
+    /// A value represented as a mapping from keys to values.
     /// </summary>
-    public class SequenceValue : LogEventPropertyValue
+    public class DictionaryValue : LogEventPropertyValue
     {
-        private readonly LogEventPropertyValue[] _elements;
+        private readonly IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> _elements;
 
         /// <summary>
-        /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
+        /// Create a <see cref="DictionaryValue"/> with the provided <paramref name="elements"/>.
         /// </summary>
-        /// <param name="elements">The elements of the sequence.</param>
+        /// <param name="elements">The key-value mappings represented in the dictionary.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
+        public DictionaryValue(IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> elements)
         {
             if (elements == null) throw new ArgumentNullException("elements");
-            _elements = elements.ToArray();
+            _elements = elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         /// <summary>
-        /// The elements of the sequence.
+        /// The dictionary mapping.
         /// </summary>
-        public LogEventPropertyValue[] Elements { get { return _elements; } }
+        public IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> Elements { get { return _elements; } }
 
         /// <summary>
         /// Render the value to the output.
@@ -54,15 +54,16 @@ namespace Serilog.Events
             if (output == null) throw new ArgumentNullException("output");
 
             output.Write('[');
-            var allButLast = _elements.Length - 1;
-            for (var i = 0; i < allButLast; ++i )
+            var delim = "(";
+            foreach (var kvp in _elements)
             {
-                _elements[i].Render(output, format, formatProvider);
-                output.Write(", ");
+                output.Write(delim);
+                delim = ", (";
+                kvp.Key.Render(output, null, formatProvider);
+                output.Write(": ");
+                kvp.Value.Render(output, null, formatProvider);
+                output.Write(")");
             }
-
-            if (_elements.Length > 0)
-                _elements[_elements.Length - 1].Render(output, format, formatProvider);
 
             output.Write(']');
         }

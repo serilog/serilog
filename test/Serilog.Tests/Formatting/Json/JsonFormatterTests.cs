@@ -11,7 +11,7 @@ using Serilog.Tests.Support;
 namespace Serilog.Tests.Formatting.Json
 {
     [TestFixture]
-    public class SimpleJsonFormatterTests
+    public class JsonFormatterTests
     {
         [Test]
         public void JsonFormattedEventsIncludeTimestamp()
@@ -32,7 +32,7 @@ namespace Serilog.Tests.Formatting.Json
 
         static dynamic FormatJson(LogEvent @event)
         {
-            var formatter = new SimpleJsonFormatter();
+            var formatter = new JsonFormatter();
             var output = new StringWriter();            
             formatter.Format(@event, output);
 
@@ -89,7 +89,7 @@ namespace Serilog.Tests.Formatting.Json
         public void WellKnownSpecialCharactersAreEscapedAsNormal()
         {
             const string s = "\\\"\t\r\n\f";
-            var escaped = SimpleJsonFormatter.Escape(s);
+            var escaped = JsonFormatter.Escape(s);
             Assert.AreEqual("\\\\\\\"\\t\\r\\n\\f", escaped);
         }
 
@@ -97,7 +97,7 @@ namespace Serilog.Tests.Formatting.Json
         public void StringsWithoutSpecialCharactersAreUnchanged()
         {
             const string s = "Hello, world!";
-            var escaped = SimpleJsonFormatter.Escape(s);
+            var escaped = JsonFormatter.Escape(s);
             Assert.AreSame(s, escaped);
         }
 
@@ -105,7 +105,7 @@ namespace Serilog.Tests.Formatting.Json
         public void UnprintableCharactersAreEscapedAsUnicodeSequences()
         {
             const string s = "\u0001";
-            var escaped = SimpleJsonFormatter.Escape(s);
+            var escaped = JsonFormatter.Escape(s);
             Assert.AreEqual("\\u0001", escaped);
         }
 
@@ -113,8 +113,25 @@ namespace Serilog.Tests.Formatting.Json
         public void EmbeddedEscapesPreservePrefixAndSuffix()
         {
             const string s = "a\nb";
-            var escaped = SimpleJsonFormatter.Escape(s);
+            var escaped = JsonFormatter.Escape(s);
             Assert.AreEqual("a\\nb", escaped);
+        }
+
+        [Test]
+        public void DictionariesAreSerialisedAsObjects()
+        {
+            var dict = new DictionaryValue(new[] {
+                new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                    new ScalarValue(1), new ScalarValue("hello")),
+                new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                    new ScalarValue("world"), new SequenceValue(new [] { new ScalarValue(1.2)  }))
+            });
+
+            var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
+            var f = FormatJson(e);
+
+            Assert.AreEqual("hello", (string)f.Properties.ADictionary["1"]);
+            Assert.AreEqual(1.2, (double)f.Properties.ADictionary.world[0]);
         }
     }
 }

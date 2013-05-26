@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Serilog.Core;
@@ -64,6 +65,24 @@ namespace Serilog.Tests.Parameters
 
             var pv = _converter.CreatePropertyValue(ab, true);
             Assert.IsInstanceOf<StructureValue>(pv);
+        }
+
+        [Test]
+        public void ByDefaultAScalarDictionaryIsADictionaryValue()
+        {
+            var pv = _converter.CreatePropertyValue(new Dictionary<int, string> { { 1, "hello" } }, Destructuring.Default);
+            Assert.IsInstanceOf<DictionaryValue>(pv);
+            var dv = (DictionaryValue)pv;
+            Assert.AreEqual(1, dv.Elements.Count);
+        }
+
+        [Test]
+        public void ByDefaultANonScalarDictionaryIsASequenceValue()
+        {
+            var pv = _converter.CreatePropertyValue(new Dictionary<A, string> { { new A(), "hello" } }, Destructuring.Default);
+            Assert.IsInstanceOf<SequenceValue>(pv);
+            var sv = (SequenceValue)pv;
+            Assert.AreEqual(1, sv.Elements.Length);
         }
     }
 }

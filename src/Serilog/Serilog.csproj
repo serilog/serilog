@@ -56,6 +56,7 @@
     <Compile Include="Core\ILogEventFilter.cs" />
     <Compile Include="Core\ILogEventPropertyFactory.cs" />
     <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
+    <Compile Include="Events\DictionaryValue.cs" />
     <Compile Include="Events\LevelAlias.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
@@ -73,7 +74,7 @@
     <Compile Include="Parameters\PropertyBinder.cs" />
     <Compile Include="Formatting\ITextFormatter.cs" />
     <Compile Include="Formatting\Display\MessageTemplateDisplayFormatter.cs" />
-    <Compile Include="Formatting\Json\SimpleJsonFormatter.cs" />
+    <Compile Include="Formatting\Json\JsonFormatter.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Events\LogEvent.cs" />

@@ -24,22 +24,22 @@ namespace Serilog.Formatting.Json
     /// <summary>
     /// Formats log events in a simple JSON structure.
     /// </summary>
-    public class SimpleJsonFormatter : ITextFormatter
+    public class JsonFormatter : ITextFormatter
     {
         readonly bool _omitEnclosingObject;
-        readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
+        readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
 
         /// <summary>
-        /// Construct a <see cref="SimpleJsonFormatter"/>.
+        /// Construct a <see cref="JsonFormatter"/>.
         /// </summary>
         /// <param name="omitEnclosingObject">If true, the properties of the event will be written to
         /// the output without enclosing braces. Otherwise, if false, each event will be written as a well-formed
         /// JSON object.</param>
-        public SimpleJsonFormatter(bool omitEnclosingObject = false)
+        public JsonFormatter(bool omitEnclosingObject = false)
         {
             _omitEnclosingObject = omitEnclosingObject;
 
-            _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
+            _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
@@ -52,12 +52,13 @@ namespace Serilog.Formatting.Json
                 { typeof(float), WriteToString },
                 { typeof(double), WriteToString },
                 { typeof(decimal), WriteToString },
-                { typeof(string), (v, w) => WriteString((string)v, w) },
-                { typeof(DateTime), (v, w) => WriteDateTime((DateTime)v, w) },
-                { typeof(DateTimeOffset), (v, w) => WriteOffset((DateTimeOffset)v, w) },
-                { typeof(ScalarValue), (v, w) => WriteLiteral(((ScalarValue)v).Value, w) },
-                { typeof(SequenceValue), (v, w) => WriteSequence(((SequenceValue)v).Elements, w) },
-                { typeof(StructureValue), (v, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
+                { typeof(string), (v, q, w) => WriteString((string)v, w) },
+                { typeof(DateTime), (v, q, w) => WriteDateTime((DateTime)v, w) },
+                { typeof(DateTimeOffset), (v, q, w) => WriteOffset((DateTimeOffset)v, w) },
+                { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w) },
+                { typeof(SequenceValue), (v, q, w) => WriteSequence(((SequenceValue)v).Elements, w) },
+                { typeof(DictionaryValue), (v, q, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },
+                { typeof(StructureValue), (v, q, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
             };
         }
 
@@ -114,12 +115,29 @@ namespace Serilog.Formatting.Json
         void WriteSequence(IEnumerable elements, TextWriter output)
         {
             output.Write("[");
+            var delim = "";
             foreach (var value in elements)
             {
+                output.Write(delim);
+                delim = ",";
                 WriteLiteral(value, output);
-                output.Write(",");
             }
             output.Write("]");
+        }
+
+        void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
+        {
+            output.Write("{");
+            var delim = "";
+            foreach (var e in elements)
+            {
+                output.Write(delim);
+                delim = ",";
+                WriteLiteral(e.Key, output, true);
+                output.Write(":");
+                WriteLiteral(e.Value, output);
+            }
+            output.Write("}");
         }
 
         void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
@@ -132,7 +150,7 @@ namespace Serilog.Formatting.Json
             precedingDelimiter = ",";
         }
 
-        void WriteLiteral(object value, TextWriter output)
+        void WriteLiteral(object value, TextWriter output, bool forceQuotation = false)
         {
             if (value == null)
             {
@@ -140,19 +158,21 @@ namespace Serilog.Formatting.Json
                 return;
             }
 
-            Action<object, TextWriter> writer;
+            Action<object, bool, TextWriter> writer;
             if (_literalWriters.TryGetValue(value.GetType(), out writer))
             {
-                writer(value, output);
+                writer(value, forceQuotation, output);
                 return;
             }
 
             WriteString(value.ToString(), output);
         }
 
-        static void WriteToString(object number, TextWriter output)
+        static void WriteToString(object number, bool quote, TextWriter output)
         {
+            if (quote) output.Write('"');
             output.Write(number.ToString());
+            if (quote) output.Write('"');
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)

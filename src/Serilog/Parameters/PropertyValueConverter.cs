@@ -24,6 +24,10 @@ using Serilog.Policies;
 
 namespace Serilog.Parameters
 {
+    // Values in Serilog are simplified down into a lowest-common-denominator internal
+    // type system so that there is a better chance of code written with one sink in
+    // mind working correctly with any other. This techniqe also makes the programmer
+    // writing a log event (roughly) in control of the cost of recording that event.
     class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
         static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
@@ -88,15 +92,31 @@ namespace Serilog.Parameters
 
             // Known literals
             var valueType = value.GetType();
-            if (_scalarTypes.Contains(valueType) || valueType.GetTypeInfo().IsEnum)
+            if (IsScalarType(valueType) || valueType.GetTypeInfo().IsEnum)
                 return new ScalarValue(value);
-
-            // Dictionaries should be treated here, probably as
-            // structures...
 
             var enumerable = value as IEnumerable;
             if (enumerable != null)
             {
+                // Only dictionaries with 'scalar' keys are permitted, as
+                // more complex keys may not serialize to unique values for
+                // representation in sinks. This check strengthens the expectation
+                // that resulting dictionary is representable in JSON as well
+                // as richer formats (e.g. XML, .NET type-aware...).
+                // Only actual dictionaries are supported, as arbitrary types
+                // can implement multiple IDictionary interfaces and thus introduce
+                // multiple different interpretations.
+                if (valueType.IsConstructedGenericType &&
+                    valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
+                    IsScalarType(valueType.GenericTypeArguments[0]))
+                {
+                    return new DictionaryValue(
+                        enumerable.Cast<dynamic>().Select(kvp =>
+                            new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                                (ScalarValue)CreatePropertyValue(kvp.Key, destructuring),
+                                CreatePropertyValue(kvp.Value, destructuring))));
+                }
+
                 return new SequenceValue(
                     enumerable.Cast<object>().Select(o => CreatePropertyValue(o, destructuring)));
             }
@@ -121,7 +141,14 @@ namespace Serilog.Parameters
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
+            // It is likely that, given the extensibility points around scalars and
+            // destructuring, this should now be stringified.
             return new ScalarValue(value);
+        }
+
+        bool IsScalarType(Type valueType)
+        {
+            return _scalarTypes.Contains(valueType);
         }
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)

@@ -85,5 +85,27 @@ namespace Serilog.Events
                 }
             }
         }
+
+        /// <summary>
+        /// Determine if this instance is equal to <paramref name="obj"/>.
+        /// </summary>
+        /// <param name="obj">The instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            var sv = obj as ScalarValue;
+            if (sv == null) return false;
+            return Equals(_value, sv._value);
+        }
+
+        /// <summary>
+        /// Get a hash code representing the value.
+        /// </summary>
+        /// <returns>The instance's hash code.</returns>
+        public override int GetHashCode()
+        {
+            if (_value == null) return 0;
+            return _value.GetHashCode();
+        }
     }
 }
