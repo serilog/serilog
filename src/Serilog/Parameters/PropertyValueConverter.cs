@@ -141,8 +141,6 @@ namespace Serilog.Parameters
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
-            // It is likely that, given the extensibility points around scalars and
-            // destructuring, this should now be stringified.
             return new ScalarValue(value);
         }
 
