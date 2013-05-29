@@ -80,7 +80,9 @@
       <Link>Serilog.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Serilog.Sinks.AzureTableStorage.nuspec" />
+    <None Include="Serilog.Sinks.AzureTableStorage.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog.csproj">

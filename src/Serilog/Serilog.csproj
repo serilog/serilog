@@ -59,6 +59,7 @@
     <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
     <Compile Include="Events\DictionaryValue.cs" />
     <Compile Include="Events\LevelAlias.cs" />
+    <Compile Include="Filters\Matching.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\SafeAggregateSink.cs" />
