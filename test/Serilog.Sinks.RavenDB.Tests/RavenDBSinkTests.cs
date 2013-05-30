@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
 using NUnit.Framework;
 using Raven.Client.Embedded;
 using Serilog.Events;

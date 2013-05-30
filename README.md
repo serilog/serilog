@@ -1,10 +1,10 @@
 Serilog
 =======
 
-A no-nonsense logging library for the NoSQL era.
+A no-nonsense logging library for the NoSQL era. Combines the best of traditional and structured logging in an easy-to-use package.
 
-*Serilog is a fresh project currently in the proof-of-concept stages; it has enough
-functionality to use in real applications, but lacks many features. Expect to submit
-a pull request or two before it meets all of your needs.*
+* [[Homepage|http://serilog.net]]
+* [[Documentation|https://github.com/nblumhardt/serilog/wiki]]
 
-See: http://serilog.net
+**Status** - Serilog is still working towards 1.0. It is capable of satisfying the needs of many applications, but still has room to evolve. If you're interested, and don't mind the occasional (well-considered) breaking change, Serilog can work for you. We'd like the project to reach its first RTM milestone in late 2013/early 2014.
+
