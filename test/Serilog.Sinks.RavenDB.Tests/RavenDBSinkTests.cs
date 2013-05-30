@@ -30,7 +30,7 @@ namespace Serilog.Sinks.RavenDB.Tests
                 {
                     var events = session.Query<LogEventEntity>().Customize(x => x.WaitForNonStaleResults()).ToList();
                     Assert.AreEqual(1, events.Count);
-                    Assert.AreEqual(timestamp, events.First().TimeStamp);
+                    Assert.AreEqual(timestamp, events.First().Timestamp);
                     Assert.AreEqual(LogEventLevel.Information, events.First().Level);
                     Assert.AreEqual(1, events.First().Properties.Count);
                 }

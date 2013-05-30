@@ -22,7 +22,7 @@ namespace Serilog.Sinks.RavenDB
         /// </summary>
         public LogEventEntity(LogEvent logEvent, IFormatProvider formatProvider)
         {
-            TimeStamp = logEvent.Timestamp;
+            Timestamp = logEvent.Timestamp;
             Exception = logEvent.Exception;
             MessageTemplate = logEvent.MessageTemplate.Text;
             Level = logEvent.Level;
@@ -37,7 +37,7 @@ namespace Serilog.Sinks.RavenDB
         /// <summary>
         /// The time at which the event occurred.
         /// </summary>
-        public DateTimeOffset TimeStamp { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
         /// <summary>
         /// The template that was used for the log message.
         /// </summary>
