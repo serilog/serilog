@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Nicholas Blumhardt
+﻿// Copyright 2013 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Raven.Client;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
+using LogEvent = Serilog.Sinks.RavenDB.Data.LogEvent;
 
 namespace Serilog.Sinks.RavenDB
 {
@@ -61,13 +62,13 @@ namespace Serilog.Sinks.RavenDB
         /// <param name="events">The events to emit.</param>
         /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
         /// not both.</remarks>
-        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        protected override async Task EmitBatchAsync(IEnumerable<Events.LogEvent> events)
         {
             using (var session = _documentStore.OpenAsyncSession())
             {
                 foreach (var logEvent in events)
                 {
-                    await session.StoreAsync(new LogEventEntity(logEvent, _formatProvider));
+                    await session.StoreAsync(new LogEvent(logEvent, _formatProvider));
                 }
                 await session.SaveChangesAsync();
             }

@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="RavenDBSinkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RavenPropertyFormatterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
