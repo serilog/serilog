@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 using System.Collections.Generic;
@@ -62,44 +63,83 @@ namespace Serilog.Sinks.SystemConsole
             _formatProvider = formatProvider;
         }
 
+        const string StackFrameLinePrefix = "   ";
+
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
 
             var outputProperties = OutputProperties.GetOutputProperties(logEvent);
             var palette = GetPalette(logEvent.Level);
+            var output = Console.Out;
             
             lock (_syncRoot)
             {
-                foreach (var outputToken in _outputTemplate.Tokens)
+                try
                 {
-                    var propertyToken = outputToken as PropertyToken;
-                    if (propertyToken != null &&
-                        propertyToken.PropertyName == OutputProperties.MessagePropertyName)
+                    foreach (var outputToken in _outputTemplate.Tokens)
                     {
-                        foreach (var messageToken in logEvent.MessageTemplate.Tokens)
+                        var propertyToken = outputToken as PropertyToken;
+                        if (propertyToken == null)
                         {
-                            var messagePropertyToken = messageToken as PropertyToken;
-                            if (messagePropertyToken != null)
-                            {
-                                SetHighlightColors(palette);
-                                messageToken.Render(logEvent.Properties, Console.Out, _formatProvider);
-                            }
-                            else
-                            {
-                                SetBaseColors(palette);
-                                messageToken.Render(logEvent.Properties, Console.Out, _formatProvider);
-                            }
+                            RenderOutputToken(palette, outputToken, outputProperties, output);
+                        }
+                        else switch (propertyToken.PropertyName)
+                        {
+                            case OutputProperties.MessagePropertyName:
+                                RenderMessageToken(logEvent, palette, output);
+                                break;
+                            case OutputProperties.ExceptionPropertyName:
+                                RenderExceptionToken(palette, propertyToken, outputProperties, output);
+                                break;
+                            default:
+                                RenderOutputToken(palette, outputToken, outputProperties, output);
+                                break;
                         }
                     }
-                    else
-                    {
-                        SetBaseColors(palette);
-                        outputToken.Render(outputProperties, Console.Out, _formatProvider);
-                    }
                 }
-                Console.ResetColor();
+                finally { Console.ResetColor(); }
             }
+        }
+
+        void RenderExceptionToken(Palette palette, MessageTemplateToken outputToken, IReadOnlyDictionary<string, LogEventProperty> outputProperties, TextWriter output)
+        {
+            var sw = new StringWriter();
+            outputToken.Render(outputProperties, sw, _formatProvider);
+            var lines = new StringReader(sw.ToString());
+            string nextLine;
+            while ((nextLine = lines.ReadLine()) != null)
+            {
+                if (nextLine.StartsWith(StackFrameLinePrefix))
+                    SetBaseColors(palette);
+                else
+                    SetHighlightColors(palette);
+                output.WriteLine(nextLine);
+            }
+        }
+
+        void RenderMessageToken(LogEvent logEvent, Palette palette, TextWriter output)
+        {
+            foreach (var messageToken in logEvent.MessageTemplate.Tokens)
+            {
+                var messagePropertyToken = messageToken as PropertyToken;
+                if (messagePropertyToken != null)
+                {
+                    SetHighlightColors(palette);
+                    messageToken.Render(logEvent.Properties, output, _formatProvider);
+                }
+                else
+                {
+                    SetBaseColors(palette);
+                    messageToken.Render(logEvent.Properties, output, _formatProvider);
+                }
+            }
+        }
+
+        void RenderOutputToken(Palette palette, MessageTemplateToken outputToken, IReadOnlyDictionary<string, LogEventProperty> outputProperties, TextWriter output)
+        {
+            SetBaseColors(palette);
+            outputToken.Render(outputProperties, output, _formatProvider);
         }
 
         static Palette GetPalette(LogEventLevel level)

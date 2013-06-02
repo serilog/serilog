@@ -35,7 +35,7 @@ namespace Demo
 
             try
             {
-                throw new InvalidOperationException("Everything's broken!");
+                DoBad();
             }
             catch (Exception ex)
             {
@@ -44,6 +44,11 @@ namespace Demo
 
             Log.Fatal("That's all folks - and all done using {WorkingSet} bytes of RAM", Environment.WorkingSet);
             Console.ReadKey(true);
+        }
+
+        static void DoBad()
+        {
+            throw new InvalidOperationException("Everything's broken!");
         }
 
         static readonly Random Rng = new Random();
