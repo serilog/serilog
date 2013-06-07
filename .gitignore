@@ -28,6 +28,8 @@ ipch/
 obj/
 [Bb]in
 Ankh.NoLoad
+*.vspx
+*.psess
 
 #MonoDevelop
 *.pidb

@@ -30,6 +30,7 @@ namespace Serilog.Parsing
         private readonly string _format;
         private readonly Destructuring _destructuring;
         private readonly string _rawText;
+        private readonly int? _position;
 
         /// <summary>
         /// Construct a <see cref="PropertyToken"/>.
@@ -47,6 +48,13 @@ namespace Serilog.Parsing
             _format = format;
             _destructuring = destructuring;
             _rawText = rawText;
+
+            int position;
+            if (int.TryParse(_propertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
+                position >= 0)
+            {
+                _position = position;
+            }
         }
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace Serilog.Parsing
         /// </summary>
         public bool IsPositional
         {
-            get { return _propertyName.ToCharArray().All(char.IsNumber); }
+            get { return _position != null; }
         }
 
         /// <summary>
@@ -96,9 +104,14 @@ namespace Serilog.Parsing
         /// <returns>True if the property is positional, otherwise false.</returns>
         public bool TryGetPositionalValue(out int position)
         {
-            return
-                int.TryParse(_propertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
-                position >= 0;
+            if (_position == null)
+            {
+                position = 0;
+                return false;
+            }
+
+            position = _position.Value;
+            return true;
         }
 
         /// <summary>

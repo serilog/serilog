@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Serilog.Debugging;
 using Serilog.Parsing;
 
 namespace Serilog.Events
@@ -28,12 +29,43 @@ namespace Serilog.Events
     public class MessageTemplate
     {
         readonly string _text;
-        readonly IEnumerable<MessageTemplateToken> _tokens;
+        readonly MessageTemplateToken[] _tokens;
+
+        // Optimisation for when the template is bound to
+        // property values.
+        readonly PropertyToken[] _positionalProperties;
+        readonly PropertyToken[] _namedProperties;
 
         internal MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
             _text = text;
             _tokens = tokens.ToArray();
+
+            var propertyTokens = _tokens.OfType<PropertyToken>().ToArray();
+            if (propertyTokens.Length != 0)
+            {
+                var allPositional = true;
+                var anyPositional = false;
+                foreach (var propertyToken in propertyTokens)
+                {
+                    if (propertyToken.IsPositional)
+                        anyPositional = true;
+                    else
+                        allPositional = false;
+                }
+
+                if (allPositional)
+                {
+                    _positionalProperties = propertyTokens;
+                }
+                else
+                {
+                    if (anyPositional)
+                        SelfLog.WriteLine("Message template is malformed: {0}", text);
+
+                    _namedProperties = propertyTokens;
+                }
+            }
         }
 
         /// <summary>
@@ -45,11 +77,30 @@ namespace Serilog.Events
         }
 
         /// <summary>
+        /// Render the template as a string.
+        /// </summary>
+        /// <returns>The string representation of the template.</returns>
+        public override string ToString()
+        {
+            return Text;
+        }
+
+        /// <summary>
         /// The tokens parsed from the template.
         /// </summary>
         public IEnumerable<MessageTemplateToken> Tokens
         {
             get { return _tokens; }
+        }
+
+        internal PropertyToken[] NamedProperties
+        {
+            get { return _namedProperties; }
+        }
+
+        internal PropertyToken[] PositionalProperties
+        {
+            get { return _positionalProperties; }
         }
 
         /// <summary>

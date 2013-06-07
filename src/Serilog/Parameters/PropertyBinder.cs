@@ -22,6 +22,7 @@ using Serilog.Parsing;
 
 namespace Serilog.Parameters
 {
+    // Performance relevant - on the hot path when creating log events from existing templates.
     class PropertyBinder
     {
         readonly PropertyValueConverter _valueConverter;
@@ -44,69 +45,76 @@ namespace Serilog.Parameters
         /// this will be empty.</returns>
         public IEnumerable<LogEventProperty> ConstructProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
         {
-            return ConstructPositionalProperties(messageTemplate, messageTemplateParameters ?? NoParameters);
+            if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
+            {
+                if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
+                    SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
+
+                return NoProperties;
+            }
+
+            if (messageTemplate.PositionalProperties != null)
+                return ConstructPositionalProperties(messageTemplate, messageTemplateParameters);
+
+            return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
         }
 
-        IEnumerable<LogEventProperty> ConstructPositionalProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
+        IEnumerable<LogEventProperty> ConstructPositionalProperties(MessageTemplate template, object[] messageTemplateParameters)
         {
-            var pcount = 0;
-            var pmax = -1;
-            List<Tuple<int, PropertyToken>> positionalsInTemplate = null;
+            var positionalProperties = template.PositionalProperties;
 
-            foreach (var propertyToken in messageTemplate.Tokens.OfType<PropertyToken>())
+            if (positionalProperties.Length != messageTemplateParameters.Length)
+                SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
+
+            var result = new LogEventProperty[messageTemplateParameters.Length];
+            foreach (var property in positionalProperties)
             {
                 int position;
-                if (!propertyToken.TryGetPositionalValue(out position))
-                    return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
-
-                ++pcount;
-                pmax = Math.Max(pmax, position);
-                positionalsInTemplate = positionalsInTemplate ?? new List<Tuple<int, PropertyToken>>(messageTemplateParameters.Length);
-                positionalsInTemplate.Add(Tuple.Create(position, propertyToken));
+                if (property.TryGetPositionalValue(out position))
+                {
+                    if (position < 0 || position >= messageTemplateParameters.Length)
+                        SelfLog.WriteLine("Unassigned positional value {0} in: {1}", position, template);
+                    else
+                        result[position] = ConstructProperty(property, messageTemplateParameters[position]);
+                }
             }
-
-            if (pcount != messageTemplateParameters.Length || pmax != pcount - 1)
-                SelfLog.WriteLine("Positional properties in {0} do not line up with parameters.", this);
-
-            if (positionalsInTemplate == null)
-                return NoProperties;
-
-            return positionalsInTemplate
-                .Where(p => p.Item1 < messageTemplateParameters.Length)
-                .Select(p => ConstructProperty(p.Item2, messageTemplateParameters[p.Item1]));
-        }
-
-        IEnumerable<LogEventProperty> ConstructNamedProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
-        {
-            var mismatchWarningIssued = false;
 
             var next = 0;
-            foreach (var propertyToken in messageTemplate.Tokens.OfType<PropertyToken>())
+            for (var i = 0; i < result.Length; ++i)
             {
-                if (propertyToken.IsPositional && !mismatchWarningIssued)
+                if (result[i] != null)
                 {
-                    mismatchWarningIssued = true;
-                    SelfLog.WriteLine("Message template is malformed: {0}.", this);
+                    result[next] = result[i];
+                    ++next;
                 }
-
-                if (next < messageTemplateParameters.Length)
-                {
-                    var value = messageTemplateParameters[next];
-                    yield return ConstructProperty(propertyToken, value);
-                }
-                else
-                {
-                    if (!mismatchWarningIssued)
-                    {
-                        mismatchWarningIssued = true;
-                        SelfLog.WriteLine("Message template has more parameters than provided: {0}.", this);
-                    }
-                }
-                next++;
             }
 
-            if (next > messageTemplateParameters.Length && !mismatchWarningIssued)
-                SelfLog.WriteLine("Too many parameters provided for message template: {0}.", this);
+            if (next != result.Length)
+                Array.Resize(ref result, next);
+
+            return result;
+        }
+
+        IEnumerable<LogEventProperty> ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
+        {
+            var namedProperties = template.NamedProperties;
+
+            var matchedRun = namedProperties.Length;
+            if (namedProperties.Length != messageTemplateParameters.Length)
+            {
+                matchedRun = Math.Min(namedProperties.Length, messageTemplateParameters.Length);
+                SelfLog.WriteLine("Named property count does not match parameter count: ", template);
+            }
+
+            var result = new LogEventProperty[matchedRun];
+            for (var i = 0; i < matchedRun; ++i)
+            {
+                var property = template.NamedProperties[i];
+                var value = messageTemplateParameters[i];
+                result[i] = ConstructProperty(property, value);
+            }
+
+            return result;
         }
 
         LogEventProperty ConstructProperty(PropertyToken propertyToken, object value)
