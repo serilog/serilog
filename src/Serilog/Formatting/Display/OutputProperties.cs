@@ -55,17 +55,17 @@ namespace Serilog.Formatting.Display
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
-        public static IReadOnlyDictionary<string, LogEventProperty> GetOutputProperties(LogEvent logEvent)
+        public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            result.Add(MessagePropertyName, new LogEventProperty(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties)));
-            result.Add(TimestampPropertyName, new LogEventProperty(TimestampPropertyName, new ScalarValue(logEvent.Timestamp)));
-            result.Add(LevelPropertyName, new LogEventProperty(LevelPropertyName, new ScalarValue(logEvent.Level)));
-            result.Add(NewLinePropertyName, new LogEventProperty(NewLinePropertyName, new ScalarValue(Environment.NewLine)));
+            result.Add(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties));
+            result.Add(TimestampPropertyName, new ScalarValue(logEvent.Timestamp));
+            result.Add(LevelPropertyName, new ScalarValue(logEvent.Level));
+            result.Add(NewLinePropertyName, new ScalarValue(Environment.NewLine));
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
-            result.Add(ExceptionPropertyName, new LogEventProperty(ExceptionPropertyName, new ScalarValue(exception)));
+            result.Add(ExceptionPropertyName, new ScalarValue(exception));
 
             return result;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Serilog;
+using Serilog.Enrichers;
 
 namespace Harness
 {
@@ -15,7 +16,7 @@ namespace Harness
                 .WriteTo.Trace()
                 .Enrich.WithProperty("App", "Test Harness")
                 .Enrich.With(new ThreadIdEnricher(),
-                             new HostNameEnricher())
+                             new MachineNameEnricher())
                 .CreateLogger();
 
             Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);

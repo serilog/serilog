@@ -86,7 +86,7 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            Assert.IsInstanceOf<ScalarValue>(prop.Value);
+            Assert.IsInstanceOf<ScalarValue>(prop);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            var sv = (StructureValue)prop.Value;
+            var sv = (StructureValue)prop;
             var c = sv.Properties.Single();
             Assert.AreEqual("C", c.Name);
         }

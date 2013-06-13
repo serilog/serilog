@@ -32,7 +32,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration MongoDB(
+        public static LoggerConfiguration Log4Net(
             this LoggerSinkConfiguration loggerConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)

@@ -40,9 +40,9 @@ namespace Serilog.Sinks.DumpFile
                 _output.WriteLine("\"");
                 if (logEvent.Exception != null)
                     _output.WriteLine(logEvent.Exception);
-                foreach (var property in logEvent.Properties.Values)
+                foreach (var property in logEvent.Properties)
                 {
-                    _output.Write(property.Name + " = ");
+                    _output.Write(property.Key + " = ");
                     property.Value.Render(_output);
                     _output.WriteLine();
                 }

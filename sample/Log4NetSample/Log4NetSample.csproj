@@ -4,13 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{73627364-CB90-4707-8F44-789883BD8D50}</ProjectGuid>
+    <ProjectGuid>{73245B81-2175-4EA2-84E6-E5D58A91B839}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Harness</RootNamespace>
-    <AssemblyName>Harness</AssemblyName>
+    <RootNamespace>Log4NetSample</RootNamespace>
+    <AssemblyName>Log4NetSample</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,11 +51,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Serilog.Sinks.Log4Net\Serilog.Sinks.Log4Net.csproj">
+      <Project>{83ea2b05-ff47-40c8-92c3-1f58aeec7ce0}</Project>
+      <Name>Serilog.Sinks.Log4Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
@@ -58,6 +68,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -43,7 +43,7 @@ namespace Serilog.Sinks.RavenDB.Data
             Properties = new Dictionary<string, object>();
             foreach (var pair in logEvent.Properties)
             {
-                Properties.Add(pair.Key, RavenPropertyFormatter.Simplify(pair.Value.Value));
+                Properties.Add(pair.Key, RavenPropertyFormatter.Simplify(pair.Value));
             }
         }
 

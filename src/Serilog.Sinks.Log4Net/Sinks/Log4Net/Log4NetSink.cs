@@ -33,10 +33,10 @@ namespace Serilog.Sinks.Log4Net
         {
             string loggerName = null;
 
-            LogEventProperty sourceContext;
+            LogEventPropertyValue sourceContext;
             if (logEvent.Properties.TryGetValue("SourceContext", out sourceContext))
             {
-                var sv = sourceContext.Value as ScalarValue;
+                var sv = sourceContext as ScalarValue;
                 if (sv != null && sv.Value is string)
                     loggerName = (string)sv.Value;
             }

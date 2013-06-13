@@ -87,9 +87,9 @@ namespace Serilog.Formatting.Json
             {
                 output.Write(",\"Properties\":{");
                 var pdelim = "";
-                foreach (var property in logEvent.Properties.Values)
+                foreach (var property in logEvent.Properties)
                 {
-                    WriteJsonProperty(property.Name, property.Value, ref pdelim, output);
+                    WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
                 }
                 output.Write("}");
             }

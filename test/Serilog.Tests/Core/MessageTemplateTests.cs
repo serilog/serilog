@@ -119,7 +119,7 @@ namespace Serilog.Tests.Core
             var props = binder.ConstructProperties(mt, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
-            mt.Render(props.ToDictionary(p => p.Name), writer, formatProvider);
+            mt.Render(props.ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);
             writer.Flush();
             return output.ToString();
         }

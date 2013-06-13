@@ -28,7 +28,7 @@ namespace Serilog.Events
         private readonly LogEventLevel _level;
         private readonly Exception _exception;
         private readonly MessageTemplate _messageTemplate;
-        private readonly Dictionary<string, LogEventProperty> _properties;
+        private readonly Dictionary<string, LogEventPropertyValue> _properties;
 
         /// <summary>
         /// Construct a new <seealso cref="LogEvent"/>.
@@ -46,7 +46,7 @@ namespace Serilog.Events
             _level = level;
             _exception = exception;
             _messageTemplate = messageTemplate;
-            _properties = new Dictionary<string, LogEventProperty>();
+            _properties = new Dictionary<string, LogEventPropertyValue>();
             foreach (var p in properties)
                 AddOrUpdateProperty(p);
         }
@@ -99,7 +99,7 @@ namespace Serilog.Events
         /// <summary>
         /// Properties associated with the event, including those presented in <see cref="LogEvent.MessageTemplate"/>.
         /// </summary>
-        public IReadOnlyDictionary<string, LogEventProperty> Properties
+        public IReadOnlyDictionary<string, LogEventPropertyValue> Properties
         {
             get { return _properties; }
         }
@@ -120,7 +120,7 @@ namespace Serilog.Events
         public void AddOrUpdateProperty(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException("property");
-            _properties[property.Name] = property;
+            _properties[property.Name] = property.Value;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Serilog.Events
         {
             if (property == null) throw new ArgumentNullException("property");
             if (!_properties.ContainsKey(property.Name))
-                _properties.Add(property.Name, property);
+                _properties.Add(property.Name, property.Value);
         }
 
         /// <summary>

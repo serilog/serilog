@@ -4,9 +4,9 @@ namespace Serilog.Tests.Support
 {
     static class Extensions
     {
-        public static object LiteralValue(this LogEventProperty @this)
+        public static object LiteralValue(this LogEventPropertyValue @this)
         {
-            return ((ScalarValue)@this.Value).Value;
+            return ((ScalarValue)@this).Value;
         }
     }
 }

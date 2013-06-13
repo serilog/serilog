@@ -102,7 +102,7 @@ namespace Serilog.Sinks.SystemConsole
             }
         }
 
-        void RenderExceptionToken(Palette palette, MessageTemplateToken outputToken, IReadOnlyDictionary<string, LogEventProperty> outputProperties, TextWriter output)
+        void RenderExceptionToken(Palette palette, MessageTemplateToken outputToken, IReadOnlyDictionary<string, LogEventPropertyValue> outputProperties, TextWriter output)
         {
             var sw = new StringWriter();
             outputToken.Render(outputProperties, sw, _formatProvider);
@@ -136,7 +136,7 @@ namespace Serilog.Sinks.SystemConsole
             }
         }
 
-        void RenderOutputToken(Palette palette, MessageTemplateToken outputToken, IReadOnlyDictionary<string, LogEventProperty> outputProperties, TextWriter output)
+        void RenderOutputToken(Palette palette, MessageTemplateToken outputToken, IReadOnlyDictionary<string, LogEventPropertyValue> outputProperties, TextWriter output)
         {
             SetBaseColors(palette);
             outputToken.Render(outputProperties, output, _formatProvider);
