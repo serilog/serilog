@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
-using Serilog.Sinks.RavenDB.Data;
 
 namespace Serilog.Sinks.RavenDB
 {
@@ -60,9 +59,9 @@ namespace Serilog.Sinks.RavenDB
             if (str != null)
             {
                 var props = str.Properties.ToDictionary(p => p.Name, p => Simplify(p.Value));
-                if (str.TypeTag == null) return props;
-
-                return new Structure(str.TypeTag, props);
+                if (str.TypeTag != null)
+                    props["$typeTag"] = str.TypeTag;
+                return props;
             }
 
             return null;

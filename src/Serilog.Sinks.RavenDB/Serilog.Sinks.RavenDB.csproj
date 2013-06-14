@@ -79,7 +79,6 @@
     <Compile Include="Sinks\RavenDB\Data\LogEvent.cs" />
     <Compile Include="Sinks\RavenDB\RavenDBSink.cs" />
     <Compile Include="Sinks\RavenDB\RavenPropertyFormatter.cs" />
-    <Compile Include="Sinks\RavenDB\Data\Structure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
