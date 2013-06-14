@@ -33,13 +33,13 @@ namespace Serilog.Sinks.RavenDB.Data
         /// <summary>
         /// Construct a new <see cref="LogEvent"/>.
         /// </summary>
-        public LogEvent(Events.LogEvent logEvent, IFormatProvider formatProvider)
+        public LogEvent(Events.LogEvent logEvent, string renderedMessage)
         {
             Timestamp = logEvent.Timestamp;
             Exception = logEvent.Exception;
             MessageTemplate = logEvent.MessageTemplate.Text;
             Level = logEvent.Level;
-            RenderedMessage = logEvent.RenderMessage(formatProvider);
+            RenderedMessage = renderedMessage;
             Properties = new Dictionary<string, object>();
             foreach (var pair in logEvent.Properties)
             {

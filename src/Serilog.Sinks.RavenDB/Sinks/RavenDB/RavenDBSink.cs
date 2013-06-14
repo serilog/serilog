@@ -16,14 +16,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Raven.Client;
-using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using LogEvent = Serilog.Sinks.RavenDB.Data.LogEvent;
 
 namespace Serilog.Sinks.RavenDB
 {
     /// <summary>
-    /// Writes log events as documents to a CouchDB database.
+    /// Writes log events as documents to a RavenDB database.
     /// </summary>
     public class RavenDBSink : PeriodicBatchingSink
     {   
@@ -68,7 +67,7 @@ namespace Serilog.Sinks.RavenDB
             {
                 foreach (var logEvent in events)
                 {
-                    await session.StoreAsync(new LogEvent(logEvent, _formatProvider));
+                    await session.StoreAsync(new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
                 }
                 await session.SaveChangesAsync();
             }
