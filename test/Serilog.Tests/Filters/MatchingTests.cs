@@ -40,5 +40,19 @@ namespace Serilog.Tests.Filters
 
             Assert.AreEqual(3, seen);
         }
+
+        [Test]
+        public void SourceFiltersWorkOnNamespaces()
+        {
+            var written = false;
+            var log = new LoggerConfiguration()
+                .Filter.ByExcluding(Matching.FromSource("Serilog.Tests"))
+                .WriteTo.Sink(new DelegatingSink(e => written = true))
+                .CreateLogger()
+                .ForContext<MatchingTests>();
+
+            log.Write(Some.InformationEvent());
+            Assert.IsFalse(written);
+        }
     }
 }

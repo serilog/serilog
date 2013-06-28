@@ -34,6 +34,19 @@ namespace Serilog.Filters
         }
 
         /// <summary>
+        /// Matches events from the specified source type or namespace and
+        /// nested types or namespaces.
+        /// </summary>
+        /// <param name="source">A dotted source type or namespace identifier.</param>
+        /// <returns>A function that matches log events emitted by the source.</returns>
+        public static Func<LogEvent, bool> FromSource(string source)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            var sourcePrefix = source + ".";
+            return WithProperty<string>(Logger.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix)));
+        }
+
+        /// <summary>
         /// Matches events with the specified property attached,
         /// regardless of its value.
         /// </summary>
