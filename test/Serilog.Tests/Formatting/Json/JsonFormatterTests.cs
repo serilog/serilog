@@ -120,18 +120,16 @@ namespace Serilog.Tests.Formatting.Json
         [Test]
         public void DictionariesAreSerialisedAsObjects()
         {
-            var dict = new DictionaryValue(new[] {
-                new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                    new ScalarValue(1), new ScalarValue("hello")),
-                new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                    new ScalarValue("world"), new SequenceValue(new [] { new ScalarValue(1.2)  }))
-            });
+            var dict = new Dictionary<string, object> {
+                { "hello", "world" },
+                { "nums", new[] { 1.2 } }
+            };
 
             var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
             var f = FormatJson(e);
 
-            Assert.AreEqual("hello", (string)f.Properties.ADictionary["1"]);
-            Assert.AreEqual(1.2, (double)f.Properties.ADictionary.world[0]);
+            Assert.AreEqual("world", (string)f.Properties.ADictionary["hello"]);
+            Assert.AreEqual(1.2, (double)f.Properties.ADictionary.nums[0]);
         }
     }
 }

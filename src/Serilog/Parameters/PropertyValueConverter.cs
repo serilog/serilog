@@ -141,7 +141,7 @@ namespace Serilog.Parameters
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
-            return new ScalarValue(value);
+            return new ScalarValue(value.ToString());
         }
 
         bool IsScalarType(Type valueType)

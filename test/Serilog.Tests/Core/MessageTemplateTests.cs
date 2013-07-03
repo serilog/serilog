@@ -69,7 +69,7 @@ namespace Serilog.Tests.Core
         public void AnObjectWithDefaultDestructuringIsRenderedAsAStringLiteral()
         {
             var m = Render("I sat at {Chair}", new Chair());
-            Assert.AreEqual("I sat at a chair", m);
+            Assert.AreEqual("I sat at \"a chair\"", m);
         }
 
         [Test]
