@@ -15,6 +15,7 @@
 using System;
 using System.IO;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting;
 
@@ -31,7 +32,26 @@ namespace Serilog.Sinks.IOFile
             if (path == null) throw new ArgumentNullException("path");
             if (textFormatter == null) throw new ArgumentNullException("textFormatter");
             _textFormatter = textFormatter;
+
+            TryCreateDirectory(path);
+
             _output = new StreamWriter(File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read));
+        }
+
+        static void TryCreateDirectory(string path)
+        {
+            try
+            {
+                var directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Failed to create directory {0}: {1}", path, ex);
+            }
         }
 
         public void Emit(LogEvent logEvent)
