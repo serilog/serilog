@@ -18,14 +18,23 @@ using System.Web;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Web
+namespace Serilog.Web.Enrichers
 {
-    class HttpRequestLogEventEnricher : ILogEventEnricher
+    /// <summary>
+    /// Enrich log events with a 'HttpRequest' property carrying
+    /// details of the request, session and so-on.
+    /// </summary>
+    public class HttpRequestPropertiesEnricher : ILogEventEnricher
     {
         const string HttpRequestPropertyName = "HttpRequest";
         static int LastRequestId;
-        static readonly string RequestIdItemName = typeof(HttpRequestLogEventEnricher).Name + "+RequestId";
+        static readonly string RequestIdItemName = typeof(HttpRequestPropertiesEnricher).Name + "+RequestId";
 
+        /// <summary>
+        /// Enrich the log event with properties from the currently-executing HTTP request, if any.
+        /// </summary>
+        /// <param name="logEvent">The log event to enrich.</param>
+        /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");

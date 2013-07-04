@@ -14,13 +14,14 @@
 
 using System;
 using Serilog.Configuration;
-using Serilog.Web;
+using Serilog.Web.Enrichers;
 
 namespace Serilog
 {
     /// <summary>
     /// Extend the <see cref="LoggerConfiguration"/> DSL with web-related methods.
     /// </summary>
+    [Obsolete("Use Enrich.With(new HttpRequestPropertiesEnricher()) directly")]
     public static class LoggerConfigurationWebExtensions
     {
         /// <summary>
@@ -32,7 +33,7 @@ namespace Serilog
         public static LoggerConfiguration WithHttpRequestProperties(this LoggerEnrichmentConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            return loggerConfiguration.With(new HttpRequestLogEventEnricher());
+            return loggerConfiguration.With(new HttpRequestPropertiesEnricher());
         }
     }
 }
