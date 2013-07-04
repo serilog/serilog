@@ -59,6 +59,19 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
+        /// Write log events to the specified <see cref="ILogEventSink"/>.
+        /// </summary>
+        /// <typeparam name="TSink">The sink.</typeparam>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Sink<TSink>(LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            where TSink : ILogEventSink, new()
+        {
+            return Sink(new TSink(), restrictedToMinimumLevel);
+        }
+
+        /// <summary>
         /// Write log events to the provided <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="textWriter">The text writer to write log events to.</param>

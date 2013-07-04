@@ -84,6 +84,17 @@ namespace Serilog
         }
 
         /// <summary>
+        /// Create a logger that marks log events as being from the specified
+        /// source type.
+        /// </summary>
+        /// <param name="source">Type generating log messages in the context.</param>
+        /// <returns>A logger that will enrich log events as specified.</returns>
+        public static ILogger ForContext(Type source)
+        {
+            return Logger.ForContext(source);
+        }
+
+        /// <summary>
         /// Write an event to the log.
         /// </summary>
         /// <param name="logEvent">The event to write.</param>

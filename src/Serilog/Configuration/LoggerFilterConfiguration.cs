@@ -55,6 +55,17 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
+        /// Filter out log events from the stream based on the provided filter.
+        /// </summary>
+        /// <typeparam name="TFilter">The filters to apply.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration With<TFilter>()
+            where TFilter : ILogEventFilter, new()
+        {
+            return With(new TFilter());
+        }
+
+        /// <summary>
         /// Filter out log events that match a predicate.
         /// </summary>
         /// <param name="exclusionPredicate">Function that returns true when an event

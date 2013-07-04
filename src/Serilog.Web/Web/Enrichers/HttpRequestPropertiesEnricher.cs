@@ -60,6 +60,7 @@ namespace Serilog.Web.Enrichers
                 {
                     SessionId = sessionId,
                     Id = requestId,
+                    HttpContext.Current.Request.RawUrl
                 },
                 destructureObjects: true));
         }

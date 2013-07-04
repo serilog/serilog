@@ -44,6 +44,7 @@ namespace Serilog.Configuration
         /// Treat objects of the specified type as scalar values, i.e., don't break
         /// them down into properties event when destructuring complex types.
         /// </summary>
+        /// <param name="scalarType">Type to treat as scalar.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration AsScalar(Type scalarType)
         {
@@ -53,8 +54,20 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// When destructuring objects, transform instances with the provided policy.
+        /// Treat objects of the specified type as scalar values, i.e., don't break
+        /// them down into properties event when destructuring complex types.
         /// </summary>
+        /// <typeparam name="TScalar">Type to treat as scalar.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration AsScalar<TScalar>()
+        {
+            return AsScalar(typeof(TScalar));
+        }
+
+        /// <summary>
+        /// When destructuring objects, transform instances with the provided policies.
+        /// </summary>
+        /// <param name="destructuringPolicies">Policies to apply when destructuring.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
         {
@@ -66,6 +79,17 @@ namespace Serilog.Configuration
                 _addPolicy(destructuringPolicy);
             }
             return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// When destructuring objects, transform instances with the provided policy.
+        /// </summary>
+        /// <typeparam name="TDestructuringPolicy">Policy to apply when destructuring.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration With<TDestructuringPolicy>()
+            where TDestructuringPolicy : IDestructuringPolicy, new()
+        {
+            return With(new TDestructuringPolicy());
         }
 
         /// <summary>

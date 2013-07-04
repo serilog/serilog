@@ -59,6 +59,19 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
+        /// Specificies an enricher that may add properties dynamically to
+        /// log events.
+        /// </summary>
+        /// <typeparam name="TEnricher">Enricher type to apply to all events passing through
+        /// the logger.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration With<TEnricher>()
+            where TEnricher : ILogEventEnricher, new()
+        {
+            return With(new TEnricher());
+        }
+
+        /// <summary>
         /// Include the specified property value in all events logged to the logger.
         /// </summary>
         /// <param name="propertyName">The name of the property to add.</param>
