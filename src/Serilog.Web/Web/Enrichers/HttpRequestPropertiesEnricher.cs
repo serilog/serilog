@@ -21,8 +21,8 @@ using Serilog.Events;
 namespace Serilog.Web.Enrichers
 {
     /// <summary>
-    /// Enrich log events with a 'HttpRequest' property carrying
-    /// details of the request, session and so-on.
+    /// Enrich log events with a 'HttpRequest' property that supports correlation of events within the
+    /// request and session.
     /// </summary>
     public class HttpRequestPropertiesEnricher : ILogEventEnricher
     {
@@ -59,8 +59,7 @@ namespace Serilog.Web.Enrichers
                 new
                 {
                     SessionId = sessionId,
-                    Id = requestId,
-                    HttpContext.Current.Request.RawUrl
+                    Id = requestId
                 },
                 destructureObjects: true));
         }

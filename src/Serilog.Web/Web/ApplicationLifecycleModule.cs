@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using System.Web;
+using Serilog.Events;
 
 namespace Serilog.Web
 {
@@ -44,13 +46,22 @@ namespace Serilog.Web
         static void Error(object sender, EventArgs e)
         {
             var ex = ((HttpApplication)sender).Server.GetLastError();
-            Log.Error(ex, "Error caught in global handler.");
+            Log.Error(ex, "Error caught in global handler");
         }
 
         static void BeginRequest(object sender, EventArgs e)
         {
             var request = HttpContext.Current.Request;
-            Log.Information("Beginning HTTP request for {RawUrl}.", request.RawUrl);
+            Log.Information("Beginning HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
+            if (Log.IsEnabled(LogEventLevel.Debug))
+            {
+                var form = request.Form;
+                if (form.HasKeys())
+                {
+                    var formData = form.AllKeys.SelectMany(k => (form.GetValues(k) ?? new string[0]).Select(v => new { Name = k, Value = v }));
+                    Log.Debug("Client provided {@FormData}", formData);
+                }
+            }
         }
 
         /// <summary>

@@ -14,8 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -27,7 +25,6 @@ namespace Serilog.Parameters
     {
         readonly PropertyValueConverter _valueConverter;
 
-        static readonly object[] NoParameters = new object[0];
         static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
 
         public PropertyBinder(PropertyValueConverter valueConverter)
