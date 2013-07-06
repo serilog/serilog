@@ -21,12 +21,13 @@ using Serilog.Events;
 namespace Serilog.Web.Enrichers
 {
     /// <summary>
-    /// Enrich log events with a 'HttpRequest' property that supports correlation of events within the
-    /// request and session.
+    /// Enrich log events with HttpRequestId and HttpSessionId properties.
     /// </summary>
     public class HttpRequestPropertiesEnricher : ILogEventEnricher
     {
-        const string HttpRequestPropertyName = "HttpRequest";
+        const string HttpRequestIdPropertyName = "HttpRequestId";
+        const string HttpSessionIdPropertyName = "HttpSessionId";
+
         static int LastRequestId;
         static readonly string RequestIdItemName = typeof(HttpRequestPropertiesEnricher).Name + "+RequestId";
 
@@ -50,18 +51,15 @@ namespace Serilog.Web.Enrichers
             else
                 requestId = (int)requestIdItem;
 
-            string sessionId = null;
-            if (HttpContext.Current.Session != null)
-                sessionId = HttpContext.Current.Session.SessionID;
+            var requestIdProperty = propertyFactory.CreateProperty(HttpRequestIdPropertyName, requestId);
+            logEvent.AddPropertyIfAbsent(requestIdProperty);
 
-            logEvent.AddPropertyIfAbsent(
-                propertyFactory.CreateProperty(HttpRequestPropertyName,
-                new
-                {
-                    SessionId = sessionId,
-                    Id = requestId
-                },
-                destructureObjects: true));
+            if (HttpContext.Current.Session != null)
+            {
+                var sessionId = HttpContext.Current.Session.SessionID;
+                var sesionIdProperty = propertyFactory.CreateProperty(HttpSessionIdPropertyName, sessionId);
+                logEvent.AddPropertyIfAbsent(sesionIdProperty);
+            }
         }
     }
 }
