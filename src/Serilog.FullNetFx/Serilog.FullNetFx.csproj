@@ -45,6 +45,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enrichers\ProcessIdEnricher.cs" />
     <Compile Include="Enrichers\MachineNameEnricher.cs" />
     <Compile Include="Enrichers\ThreadIdEnricher.cs" />
     <Compile Include="LoggerConfigurationFullNetFxExtensions.cs" />

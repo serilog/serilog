@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading;
+using System.Diagnostics;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Enrichers
 {
     /// <summary>
-    /// Enriches log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.
+    /// Enriches log events with a ProcessId property containing the current <see cref="Process.Id"/>.
     /// </summary>
-    public class ThreadIdEnricher : ILogEventEnricher
+    public class ProcessIdEnricher : ILogEventEnricher
     {
+        LogEventProperty _cachedProperty;
+
         /// <summary>
         /// The name of the property the enricher provides.
         /// </summary>
-        public const string PropertyName = "ThreadId";
+        public const string PropertyName = "ProcessId";
 
         /// <summary>
         /// Enrich the log event.
@@ -35,7 +37,8 @@ namespace Serilog.Enrichers
         /// <param name="propertyFactory"></param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            logEvent.AddPropertyIfAbsent(new LogEventProperty(PropertyName, new ScalarValue(Thread.CurrentThread.ManagedThreadId)));
+            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(PropertyName, Process.GetCurrentProcess().Id);
+            logEvent.AddPropertyIfAbsent(_cachedProperty);
         }
     }
 }

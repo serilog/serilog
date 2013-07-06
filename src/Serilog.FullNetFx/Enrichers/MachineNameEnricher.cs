@@ -19,7 +19,7 @@ using Serilog.Events;
 namespace Serilog.Enrichers
 {
     /// <summary>
-    /// Enriches log events with <see cref="Environment.MachineName"/>.
+    /// Enriches log events with a MachineName property containing <see cref="Environment.MachineName"/>.
     /// </summary>
     public class MachineNameEnricher : ILogEventEnricher
     {
