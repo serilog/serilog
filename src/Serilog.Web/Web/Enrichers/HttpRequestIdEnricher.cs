@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Threading;
 using System.Web;
 using Serilog.Core;
 using Serilog.Events;
@@ -21,45 +20,38 @@ using Serilog.Events;
 namespace Serilog.Web.Enrichers
 {
     /// <summary>
-    /// Enrich log events with HttpRequestId and HttpSessionId properties.
+    /// Enrich log events with a HttpRequestId GUID.
     /// </summary>
-    public class HttpRequestPropertiesEnricher : ILogEventEnricher
+    public class HttpRequestIdEnricher : ILogEventEnricher
     {
-        const string HttpRequestIdPropertyName = "HttpRequestId";
-        const string HttpSessionIdPropertyName = "HttpSessionId";
+        /// <summary>
+        /// The property name added to enriched log events.
+        /// </summary>
+        public const string HttpRequestIdPropertyName = "HttpRequestId";
 
-        static int LastRequestId;
-        static readonly string RequestIdItemName = typeof(HttpRequestPropertiesEnricher).Name + "+RequestId";
+        static readonly string RequestIdItemName = typeof(HttpRequestIdEnricher).Name + "+RequestId";
 
         /// <summary>
-        /// Enrich the log event with properties from the currently-executing HTTP request, if any.
+        /// Enrich the log event with an id assigned to the currently-executing HTTP request, if any.
         /// </summary>
         /// <param name="logEvent">The log event to enrich.</param>
         /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            if (propertyFactory == null) throw new ArgumentNullException("propertyFactory");
 
             if (HttpContext.Current == null)
                 return;
 
-            int requestId;
+            Guid requestId;
             var requestIdItem = HttpContext.Current.Items[RequestIdItemName];
             if (requestIdItem == null)
-                HttpContext.Current.Items[RequestIdItemName] = requestId = Interlocked.Increment(ref LastRequestId);
+                HttpContext.Current.Items[RequestIdItemName] = requestId = Guid.NewGuid();
             else
-                requestId = (int)requestIdItem;
+                requestId = (Guid)requestIdItem;
 
-            var requestIdProperty = propertyFactory.CreateProperty(HttpRequestIdPropertyName, requestId);
+            var requestIdProperty = new LogEventProperty(HttpRequestIdPropertyName, new ScalarValue(requestId));
             logEvent.AddPropertyIfAbsent(requestIdProperty);
-
-            if (HttpContext.Current.Session != null)
-            {
-                var sessionId = HttpContext.Current.Session.SessionID;
-                var sesionIdProperty = propertyFactory.CreateProperty(HttpSessionIdPropertyName, sessionId);
-                logEvent.AddPropertyIfAbsent(sesionIdProperty);
-            }
         }
     }
 }

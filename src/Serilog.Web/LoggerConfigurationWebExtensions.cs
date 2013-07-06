@@ -33,7 +33,7 @@ namespace Serilog
         public static LoggerConfiguration WithHttpRequestProperties(this LoggerEnrichmentConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            return loggerConfiguration.With(new HttpRequestPropertiesEnricher());
+            return loggerConfiguration.With(new HttpRequestIdEnricher());
         }
     }
 }

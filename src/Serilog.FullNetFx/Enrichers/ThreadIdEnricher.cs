@@ -24,18 +24,18 @@ namespace Serilog.Enrichers
     public class ThreadIdEnricher : ILogEventEnricher
     {
         /// <summary>
-        /// The name of the property the enricher provides.
+        /// The property name added to enriched log events.
         /// </summary>
-        public const string PropertyName = "ThreadId";
+        public const string ThreadIdPropertyName = "ThreadId";
 
         /// <summary>
         /// Enrich the log event.
         /// </summary>
         /// <param name="logEvent">The log event to enrich.</param>
-        /// <param name="propertyFactory"></param>
+        /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            logEvent.AddPropertyIfAbsent(new LogEventProperty(PropertyName, new ScalarValue(Thread.CurrentThread.ManagedThreadId)));
+            logEvent.AddPropertyIfAbsent(new LogEventProperty(ThreadIdPropertyName, new ScalarValue(Thread.CurrentThread.ManagedThreadId)));
         }
     }
 }

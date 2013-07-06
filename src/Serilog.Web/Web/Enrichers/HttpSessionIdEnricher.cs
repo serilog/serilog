@@ -13,32 +13,39 @@
 // limitations under the License.
 
 using System;
+using System.Web;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Enrichers
+namespace Serilog.Web.Enrichers
 {
     /// <summary>
-    /// Enriches log events with a MachineName property containing <see cref="Environment.MachineName"/>.
+    /// Enrich log events with HttpRequestId and HttpSessionId properties.
     /// </summary>
-    public class MachineNameEnricher : ILogEventEnricher
+    public class HttpSessionIdEnricher : ILogEventEnricher
     {
-        LogEventProperty _cachedProperty;
-
         /// <summary>
         /// The property name added to enriched log events.
         /// </summary>
-        public const string MachineNamePropertyName = "MachineName";
+        public const string HttpSessionIdPropertyName = "HttpSessionId";
 
         /// <summary>
-        /// Enrich the log event.
-        /// </summary>
+        /// Enrich the log event with the current ASP.NET session id, if sessions are enabled.</summary>
         /// <param name="logEvent">The log event to enrich.</param>
         /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(MachineNamePropertyName, Environment.MachineName);
-            logEvent.AddPropertyIfAbsent(_cachedProperty);
+            if (logEvent == null) throw new ArgumentNullException("logEvent");
+
+            if (HttpContext.Current == null)
+                return;
+
+            if (HttpContext.Current.Session == null)
+                return;
+
+            var sessionId = HttpContext.Current.Session.SessionID;
+            var sesionIdProperty = new LogEventProperty(HttpSessionIdPropertyName, new ScalarValue(sessionId));
+            logEvent.AddPropertyIfAbsent(sesionIdProperty);
         }
     }
 }
