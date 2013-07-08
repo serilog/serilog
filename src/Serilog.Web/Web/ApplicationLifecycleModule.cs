@@ -24,6 +24,8 @@ namespace Serilog.Web
     /// </summary>
     public class ApplicationLifecycleModule : IHttpModule
     {
+        static volatile bool _logPostedFormData;
+
         /// <summary>
         /// Register the module with the application (called automatically;
         /// do not call this explicitly from your code).
@@ -31,6 +33,15 @@ namespace Serilog.Web
         public static void Register()
         {
             HttpApplication.RegisterModule(typeof(ApplicationLifecycleModule));
+        }
+
+        /// <summary>
+        /// When set to true, form data will be written via a debug-level event.
+        /// </summary>
+        public static bool DebugLogPostedFormData
+        {
+            get { return _logPostedFormData; }
+            set { _logPostedFormData = value; }
         }
 
         /// <summary>
@@ -53,7 +64,7 @@ namespace Serilog.Web
         {
             var request = HttpContext.Current.Request;
             Log.Information("Beginning HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
-            if (Log.IsEnabled(LogEventLevel.Debug))
+            if (_logPostedFormData && Log.IsEnabled(LogEventLevel.Debug))
             {
                 var form = request.Form;
                 if (form.HasKeys())
