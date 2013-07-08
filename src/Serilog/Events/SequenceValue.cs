@@ -40,7 +40,7 @@ namespace Serilog.Events
         /// <summary>
         /// The elements of the sequence.
         /// </summary>
-        public LogEventPropertyValue[] Elements { get { return _elements; } }
+        public IReadOnlyList<LogEventPropertyValue> Elements { get { return _elements; } }
 
         /// <summary>
         /// Render the value to the output.

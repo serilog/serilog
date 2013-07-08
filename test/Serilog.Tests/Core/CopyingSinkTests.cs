@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using Serilog.Events;
+using Serilog.Sinks.Copying;
 using Serilog.Tests.Support;
 using Serilog.Core;
 

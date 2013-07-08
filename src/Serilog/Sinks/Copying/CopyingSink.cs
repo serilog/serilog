@@ -14,15 +14,18 @@
 
 using System;
 using System.Linq;
+using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Core
+namespace Serilog.Sinks.Copying
 {
     /// <summary>
     /// Copies log events so that mutations performed on the copies do not
     /// affect the originals.
     /// </summary>
-    /// <remarks>May implement COW at some point.</remarks>
+    /// <remarks>The properties dictionary is copied, however the values within
+    /// the dictionary (of type <see cref="LogEventProperty"/> are expected to
+    /// be immutable.</remarks>
     class CopyingSink : ILogEventSink
     {
         readonly ILogEventSink _copyToSink;

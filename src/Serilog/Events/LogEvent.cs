@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Serilog.Core;
 
 namespace Serilog.Events
 {

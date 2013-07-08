@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using Serilog.Parsing;
 
 namespace Serilog.Events
 {

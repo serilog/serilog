@@ -82,7 +82,7 @@ namespace Serilog.Tests.Parameters
             var pv = _converter.CreatePropertyValue(new Dictionary<A, string> { { new A(), "hello" } }, Destructuring.Default);
             Assert.IsInstanceOf<SequenceValue>(pv);
             var sv = (SequenceValue)pv;
-            Assert.AreEqual(1, sv.Elements.Length);
+            Assert.AreEqual(1, sv.Elements.Count);
         }
     }
 }

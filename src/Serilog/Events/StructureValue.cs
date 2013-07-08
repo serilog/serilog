@@ -50,7 +50,10 @@ namespace Serilog.Events
         /// <summary>
         /// The properties of the structure.
         /// </summary>
-        public LogEventProperty[] Properties { get { return _properties; } }
+        /// <remarks>Not presented as a dictionary because dictionary construction is
+        /// relatively expensive; it is cheaper to build a dictionary over properties only
+        /// when the structure is of interest.</remarks>
+        public IReadOnlyList<LogEventProperty> Properties { get { return _properties; } }
 
         /// <summary>
         /// Render the value to the output.
