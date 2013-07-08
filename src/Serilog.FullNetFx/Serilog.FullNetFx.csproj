@@ -51,6 +51,7 @@
     <Compile Include="LoggerConfigurationFullNetFxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />
+    <Compile Include="Sinks\IOFile\CharacterCountLimitedTextWriter.cs" />
     <Compile Include="Sinks\IOFile\FileSink.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />

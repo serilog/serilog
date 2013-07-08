@@ -14,6 +14,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -23,11 +24,12 @@ namespace Serilog.Sinks.IOFile
 {
     sealed class FileSink : ILogEventSink, IDisposable
     {
+        const int BytesPerCharacterApproximate = 1;
         readonly TextWriter _output;
         readonly ITextFormatter _textFormatter;
         readonly object _syncRoot = new object();
 
-        public FileSink(string path, ITextFormatter textFormatter)
+        public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes)
         {
             if (path == null) throw new ArgumentNullException("path");
             if (textFormatter == null) throw new ArgumentNullException("textFormatter");
@@ -35,7 +37,18 @@ namespace Serilog.Sinks.IOFile
 
             TryCreateDirectory(path);
 
-            _output = new StreamWriter(File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read));
+            var file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
+            var outputWriter = new StreamWriter(file, Encoding.UTF8);
+            if (fileSizeLimitBytes != null)
+            {
+                var initialBytes = file.Length;
+                var remainingCharacters = Math.Max(fileSizeLimitBytes.Value - initialBytes, 0L) / BytesPerCharacterApproximate;
+                _output = new CharacterCountLimitedTextWriter(outputWriter, remainingCharacters);
+            }
+            else
+            {
+                _output = outputWriter;
+            }
         }
 
         static void TryCreateDirectory(string path)

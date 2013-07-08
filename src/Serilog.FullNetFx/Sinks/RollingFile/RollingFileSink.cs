@@ -28,17 +28,19 @@ namespace Serilog.Sinks.RollingFile
     {
         readonly string _pathFormat;
         readonly ITextFormatter _textFormatter;
+        readonly long? _fileSizeLimitBytes;
         readonly object _syncRoot = new object();
 
         bool _isDisposed;
         DateTime? _limitOfCurrentFile;
         FileSink _currentFile;
 
-        public RollingFileSink(string pathFormat, ITextFormatter textFormatter)
+        public RollingFileSink(string pathFormat, ITextFormatter textFormatter, long? fileSizeLimitBytes)
         {
             if (pathFormat == null) throw new ArgumentNullException("pathFormat");
             _pathFormat = pathFormat;
             _textFormatter = textFormatter;
+            _fileSizeLimitBytes = fileSizeLimitBytes;
         }
 
         // Simplifications:
@@ -75,7 +77,7 @@ namespace Serilog.Sinks.RollingFile
         {
             var limit = timeStamp.Date.AddDays(1);
             var path = string.Format(_pathFormat, timeStamp.Date.ToString("yyyy-MM-dd"));
-            _currentFile = new FileSink(path, _textFormatter);
+            _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
             _limitOfCurrentFile = limit;
         }
 

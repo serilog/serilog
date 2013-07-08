@@ -32,6 +32,7 @@ namespace Serilog
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
         const string DefaultConsoleOutputTemplate = "{Timestamp:G} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
 
         /// <summary>
         /// Writes log events to <see cref="System.Console"/>.
@@ -105,18 +106,22 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
+        /// For unrestricted growth, pass null. The default is 1 GB.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public static LoggerConfiguration File(
             this LoggerSinkConfiguration sinkConfiguration,
             string path,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new FileSink(path, formatter), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new FileSink(path, formatter, fileSizeLimitBytes), restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -133,18 +138,22 @@ namespace Serilog
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which any single log file will be allowed to grow.
+        /// For unrestricted growth, pass null. The default is 1 GB.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public static LoggerConfiguration RollingFile(
             this LoggerSinkConfiguration sinkConfiguration,
             string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new RollingFileSink(pathFormat, formatter), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new RollingFileSink(pathFormat, formatter, fileSizeLimitBytes), restrictedToMinimumLevel);
         }
 
         /// <summary>
