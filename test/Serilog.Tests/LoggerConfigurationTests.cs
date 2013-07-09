@@ -140,5 +140,21 @@ namespace Serilog.Tests
 
             Assert.That(!eventReceived);
         }
+
+        [Test]
+        public void EnrichersExecuteInConfigurationOrder()
+        {
+            var property = Some.LogEventProperty();
+            var enrichedPropertySeen = false;
+
+            var logger = new LoggerConfiguration()
+                .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
+                .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.That(enrichedPropertySeen);
+        }
     }
 }
