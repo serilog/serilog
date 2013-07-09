@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Serilog;
+using Serilog.Web.Enrichers;
 
 namespace WebHarness
 {
@@ -48,8 +45,8 @@ namespace WebHarness
         void ConfigureLog()
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Trace()
-                .Enrich.WithHttpRequestProperties()
+                .WriteTo.Trace(outputTemplate: "{Timestamp} [{Level}] ({HttpRequestId}) {Message:l}{NewLine:l}{Exception:l}")
+                .Enrich.With<HttpRequestIdEnricher>()
                 .CreateLogger();
         }
     }

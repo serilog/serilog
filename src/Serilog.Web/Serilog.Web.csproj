@@ -50,9 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoggerConfigurationWebExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\ApplicationLifecycleModule.cs" />
+    <Compile Include="Web\Enrichers\HttpRequestTraceIdEnricher.cs" />
     <Compile Include="Web\Enrichers\HttpRequestNumberEnricher.cs" />
     <Compile Include="Web\Enrichers\HttpSessionIdEnricher.cs" />
     <Compile Include="Web\Enrichers\HttpRequestIdEnricher.cs" />
