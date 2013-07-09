@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using Serilog.Events;
 
-namespace Serilog.Core
+namespace Serilog.Core.Pipeline
 {
     class MessageTemplateCache : IMessageTemplateParser
     {

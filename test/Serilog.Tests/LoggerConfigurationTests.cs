@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Serilog.Core;
+using Serilog.Core.Filters;
 using Serilog.Events;
 using Serilog.Tests.Support;
 

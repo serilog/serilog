@@ -14,10 +14,9 @@
 
 using System;
 using System.Linq;
-using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Sinks.Copying
+namespace Serilog.Core.Sinks
 {
     /// <summary>
     /// Copies log events so that mutations performed on the copies do not

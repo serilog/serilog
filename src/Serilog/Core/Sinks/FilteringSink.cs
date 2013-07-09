@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
 
-namespace Serilog.Core
+namespace Serilog.Core.Sinks
 {
     class FilteringSink : ILogEventSink
     {

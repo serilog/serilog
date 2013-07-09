@@ -15,12 +15,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using Serilog.Core.Enrichers;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parameters;
 
-namespace Serilog.Core
+namespace Serilog.Core.Pipeline
 {
     sealed class Logger : ILogger, ILogEventSink, IDisposable
     {

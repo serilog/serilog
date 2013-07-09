@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Core.Pipeline;
+using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Parameters;
 

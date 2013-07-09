@@ -2,6 +2,7 @@
 using System.Globalization;
 using NUnit.Framework;
 using Serilog.Core;
+using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Tests.Support;
 

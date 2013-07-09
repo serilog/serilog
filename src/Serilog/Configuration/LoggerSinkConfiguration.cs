@@ -15,9 +15,9 @@
 using System;
 using System.IO;
 using Serilog.Core;
+using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Formatting.Display;
-using Serilog.Sinks.Copying;
 using Serilog.Sinks.IOTextWriter;
 
 namespace Serilog.Configuration

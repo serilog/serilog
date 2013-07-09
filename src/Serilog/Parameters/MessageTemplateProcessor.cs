@@ -14,6 +14,7 @@
 
 using System.Collections.Generic;
 using Serilog.Core;
+using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Parsing;
 

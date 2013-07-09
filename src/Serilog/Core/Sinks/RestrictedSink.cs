@@ -13,36 +13,30 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using Serilog.Debugging;
 using Serilog.Events;
 
-namespace Serilog.Core
+namespace Serilog.Core.Sinks
 {
-    class SafeAggregateSink : ILogEventSink
+    class RestrictedSink : ILogEventSink
     {
-        private readonly IEnumerable<ILogEventSink> _sinks;
+        private readonly ILogEventSink _sink;
+        private readonly LogEventLevel _restrictedMinimumLevel;
 
-        public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
+        public RestrictedSink(ILogEventSink sink, LogEventLevel restrictedMinimumLevel)
         {
-            if (sinks == null) throw new ArgumentNullException("sinks");
-            _sinks = sinks;
+            if (sink == null) throw new ArgumentNullException("sink");
+            _sink = sink;
+            _restrictedMinimumLevel = restrictedMinimumLevel;
         }
 
         public void Emit(LogEvent logEvent)
         {
-            foreach (var sink in _sinks)
-            {
-                try
-                {
-                    sink.Emit(logEvent);
-                }
-                catch (Exception ex)
-                {
-                    SelfLog.WriteLine("Caught exception {0} while emitting to sink {1}.", ex, sink);
-                }
-            }
+            if (logEvent == null) throw new ArgumentNullException("logEvent");
+
+            if (logEvent.Level < _restrictedMinimumLevel)
+                return;
+
+            _sink.Emit(logEvent);
         }
     }
 }
-

@@ -1,4 +1,4 @@
-// Copyright 2013 Nicholas Blumhardt
+﻿// Copyright 2013 Nicholas Blumhardt
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,22 +15,22 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core
+namespace Serilog.Core.Filters
 {
-    class FixedPropertyEnricher : ILogEventEnricher
+    class DelegateFilter : ILogEventFilter
     {
-        private readonly LogEventProperty _logEventProperty;
+        readonly Func<LogEvent, bool> _isEnabled;
 
-        public FixedPropertyEnricher(LogEventProperty logEventProperty)
+        public DelegateFilter(Func<LogEvent, bool> isEnabled)
         {
-            if (logEventProperty == null) throw new ArgumentNullException("logEventProperty");
-            _logEventProperty = logEventProperty;
+            if (isEnabled == null) throw new ArgumentNullException("isEnabled");
+            _isEnabled = isEnabled;
         }
 
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+        public bool IsEnabled(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
-            logEvent.AddPropertyIfAbsent(_logEventProperty);
+            return _isEnabled(logEvent);
         }
     }
 }
