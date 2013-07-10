@@ -21,24 +21,23 @@ using Serilog.Sinks.IOFile;
 namespace Serilog.Sinks.RollingFile
 {
     /// <summary>
-    /// Very simple date-only based roller. Does not delete old
-    /// files.
+    /// Date-based rolling only is supported.
     /// </summary>
     sealed class RollingFileSink : ILogEventSink, IDisposable
     {
-        readonly string _pathFormat;
+        readonly TemplatedPathRoller _roller;
         readonly ITextFormatter _textFormatter;
         readonly long? _fileSizeLimitBytes;
         readonly object _syncRoot = new object();
 
         bool _isDisposed;
-        DateTime? _limitOfCurrentFile;
+        DateTime? _nextCheckpoint;
         FileSink _currentFile;
 
-        public RollingFileSink(string pathFormat, ITextFormatter textFormatter, long? fileSizeLimitBytes)
+        public RollingFileSink(string pathTemplate, ITextFormatter textFormatter, long? fileSizeLimitBytes)
         {
-            if (pathFormat == null) throw new ArgumentNullException("pathFormat");
-            _pathFormat = pathFormat;
+            if (pathTemplate == null) throw new ArgumentNullException("pathTemplate");
+            _roller = new TemplatedPathRoller(pathTemplate);
             _textFormatter = textFormatter;
             _fileSizeLimitBytes = fileSizeLimitBytes;
         }
@@ -55,30 +54,31 @@ namespace Serilog.Sinks.RollingFile
             {
                 if (_isDisposed) throw new ObjectDisposedException("The rolling file has been disposed.");
 
-                AlignCurrentFileTo(logEvent.Timestamp);
+                AlignCurrentFileTo(Clock.DateTimeNow);
                 _currentFile.Emit(logEvent);
             }
         }
 
-        void AlignCurrentFileTo(DateTimeOffset timeStamp)
+        void AlignCurrentFileTo(DateTime now)
         {
-            if (!_limitOfCurrentFile.HasValue)
+            if (!_nextCheckpoint.HasValue)
             {
-                OpenFile(timeStamp);
+                OpenFile(now);
             }
-            else if (timeStamp >= _limitOfCurrentFile.Value)
+            else if (now >= _nextCheckpoint.Value)
             {
                 CloseFile();
-                OpenFile(timeStamp);
+                OpenFile(now);
             }
         }
 
-        void OpenFile(DateTimeOffset timeStamp)
+        void OpenFile(DateTime now)
         {
-            var limit = timeStamp.Date.AddDays(1);
-            var path = string.Format(_pathFormat, timeStamp.Date.ToString("yyyy-MM-dd"));
+            string path;
+            DateTime nextCheckpoint;
+            _roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            _nextCheckpoint = nextCheckpoint;
             _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
-            _limitOfCurrentFile = limit;
         }
 
         public void Dispose()
@@ -95,7 +95,7 @@ namespace Serilog.Sinks.RollingFile
         {
             _currentFile.Dispose();
             _currentFile = null;
-            _limitOfCurrentFile = null;
+            _nextCheckpoint = null;
         }
     }
 }

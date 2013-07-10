@@ -2,6 +2,7 @@
 using System.IO;
 using NUnit.Framework;
 using Serilog.Events;
+using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.RollingFile
@@ -25,7 +26,7 @@ namespace Serilog.Tests.Sinks.RollingFile
 
         static void TestRollingEventSequence(params LogEvent[] events)
         {
-            var fileName = Some.String() + "{0}.txt";
+            var fileName = Some.String() + "-{Date}.txt";
             var folder = Some.TempFolderPath();
             var pathFormat = Path.Combine(folder, fileName);
 
@@ -37,9 +38,10 @@ namespace Serilog.Tests.Sinks.RollingFile
             {
                 foreach (var @event in events)
                 {
+                    Clock.SetTestDateTimeNow(@event.Timestamp.DateTime);
                     log.Write(@event);
 
-                    var expected = string.Format(pathFormat, @event.Timestamp.ToString("yyyy-MM-dd"));
+                    var expected = pathFormat.Replace("{Date}", @event.Timestamp.ToString("yyyyMMdd"));
                     Assert.That(System.IO.File.Exists(expected));
                 }
             }

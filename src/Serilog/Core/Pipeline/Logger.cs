@@ -91,7 +91,6 @@ namespace Serilog.Core.Pipeline
             if (!IsEnabled(level)) return;
 
             // Catch a common pitfall when a single non-object array is cast to object[]
-            // Needs some more thought
             if (propertyValues != null &&
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
