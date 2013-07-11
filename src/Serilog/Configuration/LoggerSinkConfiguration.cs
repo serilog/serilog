@@ -19,6 +19,7 @@ using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.IOTextWriter;
+using Serilog.Sinks.Observable;
 
 namespace Serilog.Configuration
 {
@@ -93,7 +94,7 @@ namespace Serilog.Configuration
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             var sink = new TextWriterSink(textWriter, formatter);
-            return Sink(sink);
+            return Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -103,14 +104,35 @@ namespace Serilog.Configuration
         /// a less verbose level is possible.
         /// </summary>
         /// <param name="configureLogger">An action that configures the sub-logger.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Logger(
-            Action<LoggerConfiguration> configureLogger)
+            Action<LoggerConfiguration> configureLogger,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             if (configureLogger == null) throw new ArgumentNullException("configureLogger");
             var lc = new LoggerConfiguration();
             configureLogger(lc);
-            return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()));
+            return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()), restrictedToMinimumLevel);
+        }
+
+        /// <summary>
+        /// Write events to Rx observers.
+        /// </summary>
+        /// <param name="configureObservers">An action that provides an observable
+        /// to which observers can subscribe.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Observers(
+            Action<IObservable<LogEvent>> configureObservers,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        {
+            if (configureObservers == null) throw new ArgumentNullException("configureObservers");
+            var observable = new ObservableSink();
+            configureObservers(observable);
+            return Sink(observable, restrictedToMinimumLevel);
         }
     }
 }
