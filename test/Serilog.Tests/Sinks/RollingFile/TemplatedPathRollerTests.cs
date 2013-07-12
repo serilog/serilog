@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using Serilog.Sinks.RollingFile;
 
@@ -31,6 +32,82 @@ namespace Serilog.Tests.Sinks.RollingFile
             roller.GetLogFilePath(now, out path, out nextCheckpoint);
             Assert.AreEqual("Logs\\log.20130714.txt", path);
             Assert.AreEqual(new DateTime(2013, 7, 15), nextCheckpoint);
+        }
+
+        [Test]
+        public void TheRollerReturnsTheLogFileDirectory()
+        {
+            var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
+            Assert.AreEqual("Logs", roller.LogFileDirectory);
+        }
+
+        [Test]
+        public void IfNoTokenIsSpecifiedDashFollowedByTheDateIsImplied()
+        {
+            var roller = new TemplatedPathRoller("Logs\\log.txt");
+            var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
+            string path;
+            DateTime nextCheckpoint;
+            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            Assert.AreEqual("Logs\\log-20130714.txt", path);
+        }
+
+        [Test]
+        public void TheLogFileIsNotRequiredToIncludeAnExtension()
+        {
+            var roller = new TemplatedPathRoller("Logs\\log-{Date}");
+            var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
+            string path;
+            DateTime nextCheckpoint;
+            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            Assert.AreEqual("Logs\\log-20130714", path);
+        }
+
+        [Test]
+        public void TheLogFileIsNotRequiredToIncludeADirectory()
+        {
+            var roller = new TemplatedPathRoller("log-{Date}");
+            var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
+            string path;
+            DateTime nextCheckpoint;
+            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            Assert.AreEqual("log-20130714", path);
+        }
+
+        [Test]
+        public void TheDirectorSearchPatternUsesWildcardInPlaceOfDate()
+        {
+            var roller = new TemplatedPathRoller("Logs\\log-{Date}.txt");
+            Assert.AreEqual("log-*.txt", roller.DirectorySearchPattern);
+        }
+
+        [Test]
+        public void OrderingMatchesFiles()
+        {
+            var roller = new TemplatedPathRoller("log-{Date}.txt");
+            const string example = "log-20131210.txt";
+            var matched = roller.OrderMatchingByAge(new[] { example });
+            Assert.AreEqual(1, matched.Count());
+        }
+
+        [Test]
+        public void OrderingExcludesSimilarButNonmatchingFiles()
+        {
+            var roller = new TemplatedPathRoller("log-{Date}.txt");
+            const string similar1 = "log-0.txt";
+            const string similar2 = "log-helloyou.txt";
+            var matched = roller.OrderMatchingByAge(new[] { similar1, similar2 });
+            Assert.AreEqual(0, matched.Count());
+        }
+
+        [Test]
+        public void OrderingPresentsNewerFilesFirst()
+        {
+            var roller = new TemplatedPathRoller("log-{Date}.txt");
+            const string newer = "log-20150101.txt";
+            const string older = "log-20141231.txt";
+            var matched = roller.OrderMatchingByAge(new[] { older, newer });
+            CollectionAssert.AreEqual(new[] { newer, older }, matched);
         }
     }
 }

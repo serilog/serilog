@@ -13,7 +13,10 @@
 // limitations under the License.
 
 using System;
+using System.IO;
+using System.Linq;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.IOFile;
@@ -28,18 +31,26 @@ namespace Serilog.Sinks.RollingFile
         readonly TemplatedPathRoller _roller;
         readonly ITextFormatter _textFormatter;
         readonly long? _fileSizeLimitBytes;
+        readonly int? _retainedFileCountLimit;
         readonly object _syncRoot = new object();
 
         bool _isDisposed;
         DateTime? _nextCheckpoint;
         FileSink _currentFile;
 
-        public RollingFileSink(string pathTemplate, ITextFormatter textFormatter, long? fileSizeLimitBytes)
+        public RollingFileSink(string pathTemplate, 
+                              ITextFormatter textFormatter,
+                              long? fileSizeLimitBytes,
+                              int? retainedFileCountLimit)
         {
             if (pathTemplate == null) throw new ArgumentNullException("pathTemplate");
+            if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
+            if (retainedFileCountLimit.HasValue && retainedFileCountLimit < 1) throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1");
+            
             _roller = new TemplatedPathRoller(pathTemplate);
             _textFormatter = textFormatter;
             _fileSizeLimitBytes = fileSizeLimitBytes;
+            _retainedFileCountLimit = retainedFileCountLimit;
         }
 
         // Simplifications:
@@ -76,9 +87,44 @@ namespace Serilog.Sinks.RollingFile
         {
             string path;
             DateTime nextCheckpoint;
+
             _roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            ApplyRetentionPolicy(path);
+
             _nextCheckpoint = nextCheckpoint;
             _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
+        }
+
+        void ApplyRetentionPolicy(string currentFilePath)
+        {
+            if (_retainedFileCountLimit == null) return;
+            
+            var currentFileName = Path.GetFileName(currentFilePath);
+
+            // We consider the current file to exist, even if nothing's been written yet,
+            // because files are only opened on response to an event being processed.
+            var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
+                .Union(new [] { currentFileName })
+                .Select(Path.GetFileName);
+
+            var newestFirst = _roller.OrderMatchingByAge(potentialMatches);
+            var toRemove = newestFirst
+                .Where(n => StringComparer.OrdinalIgnoreCase.Compare(currentFileName, n) != 0)
+                .Skip(_retainedFileCountLimit.Value - 1)
+                .ToList();
+
+            foreach (var obsolete in toRemove)
+            {
+                var fullPath = Path.Combine(_roller.LogFileDirectory, obsolete);
+                try
+                {
+                    File.Delete(fullPath);
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Error {0} while removing obsolete file {1}", ex, fullPath);
+                }
+            }
         }
 
         public void Dispose()

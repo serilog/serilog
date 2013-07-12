@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
-namespace Serilog.Tests.Sinks.File
+namespace Serilog.Tests.Sinks.IOFile
 {
     [TestFixture]
     public class FileSinkTests

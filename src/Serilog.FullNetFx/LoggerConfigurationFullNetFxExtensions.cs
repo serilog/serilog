@@ -33,6 +33,7 @@ namespace Serilog
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
         const string DefaultConsoleOutputTemplate = "{Timestamp:G} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
         const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
+        const int DefaultRetainedFileCountLimit = 31; // A long month of logs
 
         /// <summary>
         /// Writes log events to <see cref="System.Console"/>.
@@ -140,6 +141,8 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which any single log file will be allowed to grow.
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
+        /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
+        /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public static LoggerConfiguration RollingFile(
@@ -148,12 +151,14 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
-            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes)
+            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
+            int? retainedFileCountLimit = DefaultRetainedFileCountLimit)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new RollingFileSink(pathFormat, formatter, fileSizeLimitBytes), restrictedToMinimumLevel);
+            var sink = new RollingFileSink(pathFormat, formatter, fileSizeLimitBytes, retainedFileCountLimit);
+            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>

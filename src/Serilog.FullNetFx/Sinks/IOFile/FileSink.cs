@@ -33,6 +33,8 @@ namespace Serilog.Sinks.IOFile
         {
             if (path == null) throw new ArgumentNullException("path");
             if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
+
             _textFormatter = textFormatter;
 
             TryCreateDirectory(path);
