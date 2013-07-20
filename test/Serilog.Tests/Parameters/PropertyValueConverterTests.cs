@@ -67,6 +67,26 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<StructureValue>(pv);
         }
 
+        struct C
+        {
+            public D D { get; set; }
+        }
+
+        class D
+        {
+            public IList<C?> C { get; set; } 
+        }
+
+        [Test]
+        public void CollectionsAndCustomPoliciesInCyclesDoNotStackOverflow()
+        {
+            var cd = new C { D = new D() };
+            cd.D.C = new List<C?> { cd };
+
+            var pv = _converter.CreatePropertyValue(cd, true);
+            Assert.IsInstanceOf<StructureValue>(pv);
+        }
+
         [Test]
         public void ByDefaultAScalarDictionaryIsADictionaryValue()
         {

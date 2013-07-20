@@ -28,7 +28,7 @@ namespace Serilog.Parameters
     // type system so that there is a better chance of code written with one sink in
     // mind working correctly with any other. This techniqe also makes the programmer
     // writing a log event (roughly) in control of the cost of recording that event.
-    class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
+    partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
         static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
         {
@@ -67,7 +67,12 @@ namespace Serilog.Parameters
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
+        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        {
+            return CreatePropertyValue(value, destructuring, 1);
+        }
+
+        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
         {
             return CreatePropertyValue(
                 value,
@@ -75,11 +80,6 @@ namespace Serilog.Parameters
                     Destructuring.Destructure :
                     Destructuring.Default,
                 depth);
-        }
-
-        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
-        {
-            return CreatePropertyValue(value, destructuring, 1);
         }
 
         LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
@@ -94,6 +94,8 @@ namespace Serilog.Parameters
             var valueType = value.GetType();
             if (IsScalarType(valueType) || valueType.GetTypeInfo().IsEnum)
                 return new ScalarValue(value);
+
+            var limiter = new DepthLimiter(depth, this);
 
             var enumerable = value as IEnumerable;
             if (enumerable != null)
@@ -113,20 +115,18 @@ namespace Serilog.Parameters
                     return new DictionaryValue(
                         enumerable.Cast<dynamic>().Select(kvp =>
                             new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                                (ScalarValue)CreatePropertyValue(kvp.Key, destructuring),
-                                CreatePropertyValue(kvp.Value, destructuring))));
+                                (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
+                                limiter.CreatePropertyValue(kvp.Value, destructuring))));
                 }
 
                 return new SequenceValue(
-                    enumerable.Cast<object>().Select(o => CreatePropertyValue(o, destructuring)));
+                    enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
 
             // Unknown types
 
             if (destructuring == Destructuring.Destructure)
             {
-                var limiter = new DepthLimiter(depth, this);
-
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {
                     LogEventPropertyValue result;
