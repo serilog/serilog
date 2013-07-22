@@ -8,7 +8,7 @@
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <iconUrl>http://serilog.net/images/serilog-logo-64.png</iconUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging couchdb</tags>
     <dependencies>
       <dependency id="Serilog" />

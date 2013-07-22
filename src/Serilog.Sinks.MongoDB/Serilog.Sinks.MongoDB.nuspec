@@ -8,7 +8,7 @@
       <owners />
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
-      <iconUrl>http://serilog.net/images/serilog-logo-64.png</iconUrl>
+      <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Serilog event sink that writes to a MongoDB database.</description>
       <tags>serilog logging mongodb</tags>
