@@ -25,6 +25,7 @@ namespace Serilog.Web
     public class ApplicationLifecycleModule : IHttpModule
     {
         static volatile bool _logPostedFormData;
+        static volatile bool _isEnabled = true;
 
         /// <summary>
         /// Register the module with the application (called automatically;
@@ -37,11 +38,23 @@ namespace Serilog.Web
 
         /// <summary>
         /// When set to true, form data will be written via a debug-level event.
+        /// The default is false. Requires that <see cref="IsEnabled"/> is also
+        /// true (which it is, by default).
         /// </summary>
         public static bool DebugLogPostedFormData
         {
             get { return _logPostedFormData; }
             set { _logPostedFormData = value; }
+        }
+
+        /// <summary>
+        /// When set to true, request details and errors will be logged. The default
+        /// is true.
+        /// </summary>
+        public static bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set { _isEnabled = value; }
         }
 
         /// <summary>
@@ -56,12 +69,16 @@ namespace Serilog.Web
 
         static void Error(object sender, EventArgs e)
         {
+            if (!_isEnabled) return;
+
             var ex = ((HttpApplication)sender).Server.GetLastError();
             Log.Error(ex, "Error caught in global handler");
         }
 
         static void BeginRequest(object sender, EventArgs e)
         {
+            if (!_isEnabled) return;
+
             var request = HttpContext.Current.Request;
             Log.Information("Beginning HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
             if (_logPostedFormData && Log.IsEnabled(LogEventLevel.Debug))
