@@ -37,7 +37,7 @@ namespace Serilog.Sinks.AzureTableStorage
             RowKey = GetValidRowKey(string.Format("{0}|{1}", log.Level, log.MessageTemplate.Text));
             MessageTemplate = log.MessageTemplate.Text;
             Level = log.Level.ToString();
-            Exception = log.Exception.ToString();
+            Exception = log.Exception != null ? log.Exception.ToString() : null;
             RenderedMessage = log.RenderMessage(formatProvider);
             var s = new StringWriter();
             new JsonFormatter().Format(log, s);
