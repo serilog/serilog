@@ -41,6 +41,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Glimpse.AspNet">
+      <HintPath>..\..\packages\Glimpse.AspNet.1.3.1\lib\net45\Glimpse.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Core">
+      <HintPath>..\..\packages\Glimpse.1.4.2\lib\net45\Glimpse.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Mvc3">
+      <HintPath>..\..\packages\Glimpse.Mvc3.1.3.2\lib\net40\Glimpse.Mvc3.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System" />
@@ -210,6 +219,10 @@
     <ProjectReference Include="..\..\src\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Serilog.Sinks.Glimpse\Serilog.Sinks.Glimpse.csproj">
+      <Project>{48e6827a-6878-4764-a957-7542891e7f5b}</Project>
+      <Name>Serilog.Sinks.Glimpse</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog.Web\Serilog.Web.csproj">
       <Project>{13cec8dd-6087-4fee-aec1-0511b8959ccd}</Project>
