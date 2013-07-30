@@ -46,6 +46,7 @@ namespace WebHarness
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Trace(outputTemplate: "{Timestamp} [{Level}] ({HttpRequestId}) {Message:l}{NewLine:l}{Exception:l}")
+                .WriteTo.Glimpse()
                 .Enrich.With<HttpRequestIdEnricher>()
                 .CreateLogger();
         }
