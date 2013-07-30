@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Glimpse</id>
+    <version>1.4.2</version>
+    <title>Glimpse Core</title>
+    <authors>nmolnar,  avanderhoorn</authors>
+    <owners>nmolnar,  avanderhoorn</owners>
+    <licenseUrl>http://www.opensource.org/licenses/apache2.0</licenseUrl>
+    <projectUrl>http://getglimpse.com/</projectUrl>
+    <iconUrl>http://getglimpse.com/content/glimpse100.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Glimpse is a web debugging and diagnostics tool used to gain a better understanding of whats happening inside of your ASP.NET 4.0 application. For ASP.NET MVC3 support, please NuGet Glimpse.MVC3.</description>
+    <summary>ASP.NET 4.0 web debugging and diagnostics tool.</summary>
+    <releaseNotes>Lightweight release for MVC:
+ - Bug fix on the back end to prevent ajax results that return Json causing errors
+ - Bug fix in the client which prevents a possible race condition from occurring between when HUD can detect Ajax requests and when it can display them
+ - Minor fix to client to only render Action/View timings if that information is available
+ - Minor fix to client to prevent host event data from overflowing in some cases
+ - Minor optimization improvement in the client to prevent it from calling out when either the ajax/history tab is selected and the client is closed</releaseNotes>
+    <tags>ASP.NET Web WebForms Glimpse diagnostics performance profiling timing</tags>
+  </metadata>
+</package>

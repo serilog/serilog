@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Glimpse.Mvc3</id>
+    <version>1.3.2</version>
+    <title>Glimpse Mvc3</title>
+    <authors>nmolnar,  avanderhoorn</authors>
+    <owners>nmolnar,  avanderhoorn</owners>
+    <licenseUrl>http://www.opensource.org/licenses/apache2.0</licenseUrl>
+    <projectUrl>http://getglimpse.com/</projectUrl>
+    <iconUrl>http://getglimpse.com/content/glimpse100.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Glimpse is a web debugging and diagnostics tool used to gain a better understanding of whats happening inside of your ASP.NET MVC 3.0 application.</description>
+    <summary>ASP.NET MVC 3.0 web debugging and diagnostics tool.</summary>
+    <releaseNotes>Lightweight release for MVC:
+ - Minor fix to client to only render Action/View timings if that information is available</releaseNotes>
+    <copyright />
+    <language />
+    <tags>ASP.NET Web MVC Glimpse diagnostics performance profiling timing</tags>
+    <dependencies>
+      <dependency id="Glimpse.AspNet" version="1.3.0" />
+    </dependencies>
+  </metadata>
+</package>
