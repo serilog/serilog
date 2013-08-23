@@ -3,7 +3,7 @@
   <metadata>
     <id>Serilog</id>
     <version>0.1.0</version>
-    <authors>Nicholas Blumhardt</authors>
+    <authors>Serilog Contributors</authors>
     <description>The best of traditional and structured logging for .NET</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>

@@ -3,7 +3,7 @@
   <metadata>
     <id>Serilog.Web</id>
     <version>0.1.0</version>
-    <authors>Nicholas Blumhardt</authors>
+    <authors>Serilog Contributors</authors>
     <description>An event enricher for Serilog that adds details of the executing ASP.NET HTTP request, logs requests and errors.</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>

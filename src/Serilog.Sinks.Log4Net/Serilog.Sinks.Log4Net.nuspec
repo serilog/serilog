@@ -4,7 +4,7 @@
       <id>Serilog.Sinks.Log4Net</id>
       <version>0.1.0</version>
       <title />
-      <authors>Nicholas Blumhardt</authors>
+      <authors>Serilog Contributors</authors>
       <owners />
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>

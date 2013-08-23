@@ -3,7 +3,7 @@ using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.MongoDB;
 
-// Copyright 2013 Nicholas Blumhardt
+// Copyright 2013 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

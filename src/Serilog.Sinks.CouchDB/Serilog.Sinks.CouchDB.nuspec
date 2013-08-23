@@ -3,7 +3,7 @@
   <metadata>
     <id>Serilog.Sinks.CouchDB</id>
     <version>0.1.0</version>
-    <authors>Nicholas Blumhardt</authors>
+    <authors>Serilog Contributors</authors>
     <description>Serilog event sink that writes to a CouchDB database over HTTP.</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>TopShelf</id>
+    <version>3.1.1</version>
+    <title>Topshelf</title>
+    <authors>Chris Patterson,  Dru Sellers,  Travis Smith</authors>
+    <owners>Chris Patterson,  Dru Sellers,  Travis Smith</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://github.com/Topshelf/Topshelf</projectUrl>
+    <iconUrl>http://topshelf-project.com/wp-content/themes/pandora/slide.1.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Topshelf is an open source project for hosting services without friction. By referencing Topshelf, your console application *becomes* a service installer with a comprehensive set of command-line options for installing, configuring, and running your application as a service.</description>
+    <summary>Topshelf, Friction-free Windows Services</summary>
+    <releaseNotes />
+    <copyright />
+    <language>en-US</language>
+  </metadata>
+</package>
