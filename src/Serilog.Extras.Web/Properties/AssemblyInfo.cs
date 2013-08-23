@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Web;
-using Serilog.Web;
+using Serilog.Extras.Web;
 
 [assembly: AssemblyTitle("Serilog.Web")]
 [assembly: AssemblyDescription("")]

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Serilog</RootNamespace>
-    <AssemblyName>Serilog.Web</AssemblyName>
+    <AssemblyName>Serilog.Extras.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Debug\Serilog.Web.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Serilog.Extras.Web.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\Serilog.Web.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Serilog.Extras.Web.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -51,17 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Web\ApplicationLifecycleModule.cs" />
-    <Compile Include="Web\Enrichers\HttpRequestTraceIdEnricher.cs" />
-    <Compile Include="Web\Enrichers\HttpRequestNumberEnricher.cs" />
-    <Compile Include="Web\Enrichers\HttpSessionIdEnricher.cs" />
-    <Compile Include="Web\Enrichers\HttpRequestIdEnricher.cs" />
+    <Compile Include="Extras\Web\ApplicationLifecycleModule.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestTraceIdEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestNumberEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpSessionIdEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestIdEnricher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
-    <None Include="Serilog.Web.nuspec">
+    <None Include="Serilog.Extras.Web.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

@@ -15,6 +15,7 @@
 using System;
 using System.IO;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Sinks.DumpFile
@@ -26,6 +27,7 @@ namespace Serilog.Sinks.DumpFile
 
         public DumpFileSink(string path)
         {
+            TryCreateDirectory(path);
             _output = new StreamWriter(File.OpenWrite(path));
         }
 
@@ -48,6 +50,22 @@ namespace Serilog.Sinks.DumpFile
                 }
                 _output.WriteLine();
                 _output.Flush();
+            }
+        }
+
+        static void TryCreateDirectory(string path)
+        {
+            try
+            {
+                var directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Failed to create directory {0}: {1}", path, ex);
             }
         }
     }

@@ -17,7 +17,7 @@ using System.Web;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Web.Enrichers
+namespace Serilog.Extras.Web.Enrichers
 {
     /// <summary>
     /// Enrich log events with a HttpRequestId GUID.

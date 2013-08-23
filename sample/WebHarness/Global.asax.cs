@@ -3,7 +3,7 @@ using System.Data.Entity.Infrastructure;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Serilog;
-using Serilog.Web.Enrichers;
+using Serilog.Extras.Web.Enrichers;
 
 namespace WebHarness
 {
