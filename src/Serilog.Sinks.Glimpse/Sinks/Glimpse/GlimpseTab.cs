@@ -1,16 +1,26 @@
-﻿using System;
-using System.Dynamic;
+﻿// Copyright 2013 Serilog Contributors
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System.Collections.Generic;
 using System.Linq;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Extensions;
-using Microsoft.SqlServer.Server;
-using Serilog.Events;
 
 namespace Serilog.Sinks.Glimpse
 {
-    public class GlimpseTab : TabBase, IDocumentation, ITabSetup
+    class GlimpseTab : TabBase, IDocumentation, ITabSetup
     {
-
         internal static IMessageBroker MessageBroker { get; set; }
 
         public override string Name
@@ -49,7 +59,11 @@ namespace Serilog.Sinks.Glimpse
             {
                 Level = msg.LogEvent.Level.ToString(),
                 Message = msg.LogEvent.RenderMessage(msg.FormatProvider),
-                Exception = msg.LogEvent.Exception,
+                Properties = msg.LogEvent.Properties
+                    .OrderBy(p => p.Key)
+                    .Select(pv => new { Name = pv.Key, Value = GlimpsePropertyFormatter.Simplify(pv.Value) })
+                    .ToList(),
+                msg.LogEvent.Exception,
             };
         }
     }

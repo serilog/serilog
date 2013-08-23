@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
 using Serilog;
-using Serilog.Events;
 
 namespace WebHarness.Controllers
 {
@@ -29,7 +28,7 @@ namespace WebHarness.Controllers
                 Log.Error(ex2, "Error occured trying to Bar");
             }
 
-            Log.Warning("{0}",
+            Log.Warning("{@Complex}",
                 new
                 {
                     This = "is",

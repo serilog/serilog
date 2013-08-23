@@ -4,7 +4,7 @@
       <id>Serilog.Sinks.Glimpse</id>
       <version>0.1.0</version>
       <title />
-      <authors>Nicholas Blumhardt, Robert Wagner</authors>
+      <authors>Robert Wagner, Serilog Contributors</authors>
       <owners />
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
