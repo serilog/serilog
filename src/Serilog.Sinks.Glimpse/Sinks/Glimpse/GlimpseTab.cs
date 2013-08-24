@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Extensions;
+using Glimpse.Core.Tab.Assist;
+using Serilog.Events;
 
 namespace Serilog.Sinks.Glimpse
 {
@@ -43,28 +45,54 @@ namespace Serilog.Sinks.Glimpse
 
             // Will persist any messages raised by the broker to a per-thread store (HttpContext)
             // Messages on non-ASP.NET threads get dumped
-            context.PersistMessages<LogEventMessage>();
+            context.PersistMessages<LogEventItem>();
         }
 
         public override object GetData(ITabContext context)
         {
-            // Retrieve from the per-thread store
-            return context.GetMessages<LogEventMessage>().Select(Format).ToArray();
+            var plugin = Plugin.Create("Level", "Timestamp", "Message", "Properties");
 
+            foreach (var item in context.GetMessages<LogEventItem>())
+            {
+                var properties = item.LogEvent.Properties
+                        .Select(pv => new { Name = pv.Key, Value = GlimpsePropertyFormatter.Simplify(pv.Value) })
+                        .ToList();
+
+                if (item.LogEvent.Exception != null)
+                    properties.Add(new { Name = "Exception", Value = (object)item.LogEvent.Exception });
+
+                properties = properties.OrderBy(p => p.Name).ToList();
+
+
+                var row = plugin.AddRow();
+                row.Column(item.LogEvent.Level.ToString());
+                row.Column(item.LogEvent.Timestamp.ToString("HH:mm:ss.fff", item.FormatProvider));
+                row.Column(item.LogEvent.RenderMessage(item.FormatProvider)).Strong();
+                row.Column(properties);
+
+                ApplyRowLevelStyle(item.LogEvent.Level, row);
+            }
+
+            return plugin;
         }
 
-        private object Format(LogEventMessage msg)
+        void ApplyRowLevelStyle(LogEventLevel level, TabSectionRow row)
         {
-            return new
+            switch (level)
             {
-                Level = msg.LogEvent.Level.ToString(),
-                Message = msg.LogEvent.RenderMessage(msg.FormatProvider),
-                Properties = msg.LogEvent.Properties
-                    .OrderBy(p => p.Key)
-                    .Select(pv => new { Name = pv.Key, Value = GlimpsePropertyFormatter.Simplify(pv.Value) })
-                    .ToList(),
-                msg.LogEvent.Exception,
-            };
+                case LogEventLevel.Debug:
+                    row.Sub();
+                    break;
+                case LogEventLevel.Warning:
+                    row.Warn();
+                    break;
+                case LogEventLevel.Error:
+                    row.Error();
+                    break;
+                case LogEventLevel.Fatal:
+                    row.Fail();
+                    break;
+            }
         }
     }
 }

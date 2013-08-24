@@ -17,9 +17,9 @@ using Serilog.Events;
 
 namespace Serilog.Sinks.Glimpse
 {
-    class LogEventMessage
+    class LogEventItem
     {
-        internal LogEventMessage(LogEvent logEvent, IFormatProvider formatProvider)
+        internal LogEventItem(LogEvent logEvent, IFormatProvider formatProvider)
         {
             LogEvent = logEvent;
             FormatProvider = formatProvider;

@@ -58,7 +58,7 @@
     <Compile Include="Sinks\Glimpse\GlimpsePropertyFormatter.cs" />
     <Compile Include="Sinks\Glimpse\GlimpseTab.cs" />
     <Compile Include="Sinks\Glimpse\GlimpseSink.cs" />
-    <Compile Include="Sinks\Glimpse\LogEventMessage.cs" />
+    <Compile Include="Sinks\Glimpse\LogEventItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

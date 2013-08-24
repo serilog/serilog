@@ -36,7 +36,7 @@ namespace Serilog.Sinks.Glimpse
             if (messageBroker == null)
                 return;
 
-            messageBroker.Publish(new LogEventMessage(logEvent, _formatProvider));
+            messageBroker.Publish(new LogEventItem(logEvent, _formatProvider));
         }
 
     }
