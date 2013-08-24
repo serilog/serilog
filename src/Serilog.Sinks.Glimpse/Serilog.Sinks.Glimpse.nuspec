@@ -18,7 +18,7 @@
         </dependencies>
     </metadata>
     <files>
-      <file src="src\Serilog.Sinks.Log4Net\bin\Release\Serilog.Sinks.Glimpse.dll" target="lib\net45" />
-      <file src="src\Serilog.Sinks.Log4Net\bin\Release\Serilog.Sinks.Glimpse.xml" target="lib\net45" />
+      <file src="src\Serilog.Sinks.Glimpse\bin\Release\Serilog.Sinks.Glimpse.dll" target="lib\net45" />
+      <file src="src\Serilog.Sinks.Glimpse\bin\Release\Serilog.Sinks.Glimpse.xml" target="lib\net45" />
     </files>
 </package>

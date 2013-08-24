@@ -4,7 +4,7 @@
     <id>Serilog.Extras.Web</id>
     <version>0.1.0</version>
     <authors>Serilog Contributors</authors>
-    <description>An event enricher for Serilog that adds details of the executing ASP.NET HTTP request.</description>
+    <description>An event enricher for Serilog that adds details of the executing ASP.NET HTTP request. Replaces the deprecated Serilog.Web package.</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
