@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Topshelf", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Web", "src\Serilog.Extras.Web\Serilog.Extras.Web.csproj", "{13CEC8DD-6087-4FEE-AEC1-0511B8959CCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.SignalR", "Serilog.Sinks.SignalR\Serilog.Sinks.SignalR.csproj", "{0D51B456-A1B0-4048-9E90-E98CEB95E976}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.SignalR", "src\Serilog.Sinks.SignalR\Serilog.Sinks.SignalR.csproj", "{0D51B456-A1B0-4048-9E90-E98CEB95E976}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
