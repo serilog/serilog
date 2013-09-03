@@ -50,6 +50,7 @@
     <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
+    <Compile Include="Core\Enrichers\LazyFixedPropertyEnricher.cs" />
     <Compile Include="Core\Sinks\CopyingSink.cs" />
     <Compile Include="Core\Filters\DelegateFilter.cs" />
     <Compile Include="Core\Sinks\FilteringSink.cs" />

@@ -45,9 +45,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Context\ImmutableStack.cs" />
+    <Compile Include="Enrichers\LogContextEnricher.cs" />
     <Compile Include="Enrichers\ProcessIdEnricher.cs" />
     <Compile Include="Enrichers\MachineNameEnricher.cs" />
     <Compile Include="Enrichers\ThreadIdEnricher.cs" />
+    <Compile Include="Context\LogContext.cs" />
     <Compile Include="LoggerConfigurationFullNetFxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\DumpFile\DumpFileSink.cs" />

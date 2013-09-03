@@ -25,19 +25,15 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventEnricher> _addEnricher;
-        readonly Func<ILogEventPropertyFactory> _createPropertyValueConverter;
 
         internal LoggerEnrichmentConfiguration(
             LoggerConfiguration loggerConfiguration, 
-            Action<ILogEventEnricher> addEnricher,
-            Func<ILogEventPropertyFactory> createPropertyValueConverter)
+            Action<ILogEventEnricher> addEnricher)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (addEnricher == null) throw new ArgumentNullException("addEnricher");
-            if (createPropertyValueConverter == null) throw new ArgumentNullException("createPropertyValueConverter");
             _loggerConfiguration = loggerConfiguration;
             _addEnricher = addEnricher;
-            _createPropertyValueConverter = createPropertyValueConverter;
         }
 
         /// <summary>
@@ -75,14 +71,13 @@ namespace Serilog.Configuration
         /// <summary>
         /// Include the specified property value in all events logged to the logger.
         /// </summary>
-        /// <param name="propertyName">The name of the property to add.</param>
+        /// <param name="name">The name of the property to add.</param>
         /// <param name="value">The property value to add.</param>
         /// <param name="destructureObjects">If true, objects of unknown type will be logged as structures; otherwise they will be converted using <see cref="Object.ToString"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration WithProperty(string propertyName, object value, bool destructureObjects = false)
+        public LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false)
         {
-            var propertyValueConverter = _createPropertyValueConverter();
-            return With(new FixedPropertyEnricher(propertyValueConverter.CreateProperty(propertyName, value, destructureObjects)));
+            return With(new LazyFixedPropertyEnricher(name, value, destructureObjects));
         }
     }
 }

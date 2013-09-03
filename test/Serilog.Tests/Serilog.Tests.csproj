@@ -73,6 +73,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Context\LogContextTests.cs" />
     <Compile Include="Core\CopyingSinkTests.cs" />
     <Compile Include="Core\LoggerTests.cs" />
     <Compile Include="Core\SafeAggregateSinkTests.cs" />

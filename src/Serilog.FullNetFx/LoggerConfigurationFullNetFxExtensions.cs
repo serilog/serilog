@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using Serilog.Configuration;
+using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.DiagnosticTrace;
@@ -181,6 +183,32 @@ namespace Serilog
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
+        }
+
+        /// <summary>
+        /// Enrich log events with properties from <see cref="Context.LogContext"/>.
+        /// </summary>
+        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static LoggerConfiguration FromLogContext(
+            this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            return enrichmentConfiguration.With<LogContextEnricher>();
+        }
+
+        /// <summary>
+        /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.
+        /// </summary>
+        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static LoggerConfiguration WithThreadId(
+            this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            return enrichmentConfiguration.With<ThreadIdEnricher>();
         }
     }
 }

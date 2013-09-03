@@ -70,7 +70,7 @@ namespace Serilog
         {
             get
             {
-                return new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e), CreatePropertyValueConverter);
+                return new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
             }
         }
 
@@ -116,15 +116,10 @@ namespace Serilog
             if (_filters.Any())
                 sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
 
-            var converter = CreatePropertyValueConverter();
+            var converter = new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);
 
             return new Logger(processor, _minimumLevel, sink, _enrichers, dispose);
-        }
-
-        PropertyValueConverter CreatePropertyValueConverter()
-        {
-            return new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
         }
     }
 }
