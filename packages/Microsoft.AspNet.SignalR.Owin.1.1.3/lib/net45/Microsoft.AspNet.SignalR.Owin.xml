@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.AspNet.SignalR.Owin</name>
+  </assembly>
+  <members>
+    <member name="M:Microsoft.AspNet.SignalR.RequestExtensions.GetOwinVariable``1(Microsoft.AspNet.SignalR.IRequest,System.String)">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.CallHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.CallHandler.#ctor(Microsoft.AspNet.SignalR.ConnectionConfiguration,Microsoft.AspNet.SignalR.PersistentConnection)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.AspNet.SignalR.Owin.CallHandler" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.CallHandler.Invoke(System.Collections.Generic.IDictionary{System.String,System.Object})"></member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.ServerRequest"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerRequest.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.AspNet.SignalR.Owin.ServerRequest" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Cookies"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.DisableRequestCompression"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Form"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Headers"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Items"></member>
+    <member name="F:Microsoft.AspNet.SignalR.Owin.ServerRequest.OwinEnvironmentKey"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.QueryString"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.RequestHeaders"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Url"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.User"></member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.ServerResponse"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.AspNet.SignalR.Owin.ServerResponse" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.CancellationToken"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.ContentType"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.DisableResponseBuffering"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.End"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.Flush"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.ResponseBody"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.ResponseHeaders"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.Write(System.ArraySegment{System.Byte})"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerRequest.AcceptWebSocketRequest(System.Func{Microsoft.AspNet.SignalR.Hosting.IWebSocket,System.Threading.Tasks.Task})"></member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler.#ctor(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.String,Microsoft.AspNet.SignalR.HubConfiguration)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler.Invoke(System.Collections.Generic.IDictionary{System.String,System.Object})"></member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler.#ctor(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.String,System.Type,Microsoft.AspNet.SignalR.ConnectionConfiguration)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler.Invoke(System.Collections.Generic.IDictionary{System.String,System.Object})"></member>
+    <member name="T:Owin.OwinExtensions"></member>
+    <member name="M:Owin.OwinExtensions.MapConnection``1(Owin.IAppBuilder,System.String)">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapConnection``1(Owin.IAppBuilder,System.String,Microsoft.AspNet.SignalR.ConnectionConfiguration)">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapConnection(Owin.IAppBuilder,System.String,System.Type,Microsoft.AspNet.SignalR.ConnectionConfiguration)"></member>
+    <member name="M:Owin.OwinExtensions.MapHubs(Owin.IAppBuilder)"></member>
+    <member name="M:Owin.OwinExtensions.MapHubs(Owin.IAppBuilder,Microsoft.AspNet.SignalR.HubConfiguration)"></member>
+    <member name="M:Owin.OwinExtensions.MapHubs(Owin.IAppBuilder,System.String,Microsoft.AspNet.SignalR.HubConfiguration)"></member>
+    <member name="T:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.Close"></member>
+    <member name="P:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.Error"></member>
+    <member name="P:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.MaxIncomingMessageSize"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.OnClose(System.Boolean)"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.OnError"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.OnMessage(System.Byte[])"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.OnMessage(System.String)"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.OnOpen"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.ProcessWebSocketRequestAsync(System.Net.WebSockets.WebSocket,System.Threading.CancellationToken)"></member>
+    <member name="M:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.Send(System.String)"></member>
+    <member name="P:Microsoft.AspNet.SignalR.WebSockets.WebSocketHandler.WebSocket"></member>
+  </members>
+</doc>

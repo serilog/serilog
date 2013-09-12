@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Owin.Host.SystemWeb</id>
+    <version>1.0.1</version>
+    <title>Microsoft.Owin.Host.SystemWeb (85db6533ceca403f3d7e2d8e3ef0d41de209ec0c)</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnet_and_web_tools_2012_2_rtw_eula_enu.htm</licenseUrl>
+    <projectUrl>http://katanaproject.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Microsoft.Owin.Host.SystemWeb</description>
+    <tags>Microsoft OWIN</tags>
+    <dependencies>
+      <dependency id="Owin" version="1.0" />
+      <dependency id="Microsoft.Web.Infrastructure" version="1.0.0.0" />
+    </dependencies>
+  </metadata>
+</package>
