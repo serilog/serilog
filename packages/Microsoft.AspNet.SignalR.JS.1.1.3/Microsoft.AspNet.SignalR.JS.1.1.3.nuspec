@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.SignalR.JS</id>
+    <version>1.1.3</version>
+    <title>Microsoft ASP.NET SignalR JavaScript Client</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/signalr_rtw.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/signalr</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>JavaScript client for ASP.NET SignalR.</description>
+    <summary>JavaScript client for ASP.NET SignalR.</summary>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <language>en-US</language>
+    <tags>Microsoft AspNet SignalR AspNetSignalR JS</tags>
+    <dependencies>
+      <dependency id="jQuery" version="1.6.4" />
+    </dependencies>
+  </metadata>
+</package>

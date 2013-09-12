@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
 using Serilog;
 
 namespace WebHarness.Controllers
@@ -44,6 +45,14 @@ namespace WebHarness.Controllers
         public ActionResult About()
         {
             throw new NotImplementedException("Maybe another day...");
+        }
+
+        public void SendLogData() {
+      IHubContext context = GlobalHost.ConnectionManager.GetHubContext<LogHub>();
+      context.Clients.All.sendLogEvent(new {
+                                         message = "hello world"
+                                       });
+          
         }
     }
 }
