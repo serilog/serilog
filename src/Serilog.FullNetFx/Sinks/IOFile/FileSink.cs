@@ -60,7 +60,7 @@ namespace Serilog.Sinks.IOFile
                 var directory = Path.GetDirectoryName(path);
                 if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
                 {
-                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(directory);
                 }
             }
             catch (Exception ex)

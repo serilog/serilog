@@ -42,6 +42,34 @@ namespace Serilog.Tests.Sinks.RollingFile
                 });
         }
 
+        [Test]
+        public void IfTheLogFolderDoesNotExistItWillBeCreated()
+        {
+            var fileName = Some.String() + "-{Date}.txt";
+            var temp = Some.TempFolderPath();
+            var folder = Path.Combine(temp, Guid.NewGuid().ToString());
+            var pathFormat = Path.Combine(folder, fileName);
+
+            ILogger log = null;
+
+            try
+            {
+                log = new LoggerConfiguration()
+                    .WriteTo.RollingFile(pathFormat, retainedFileCountLimit: 3)
+                    .CreateLogger();
+
+                log.Write(Some.InformationEvent());
+
+                Assert.That(Directory.Exists(folder));
+            }
+            finally
+            {
+                var disposable = (IDisposable)log;
+                if (disposable != null) disposable.Dispose();
+                Directory.Delete(temp, true);
+            }
+        }
+
         static void TestRollingEventSequence(params LogEvent[] events)
         {
             TestRollingEventSequence(events, null, f => {});

@@ -87,12 +87,10 @@ namespace Serilog.Sinks.RollingFile
         {
             string path;
             DateTime nextCheckpoint;
-
             _roller.GetLogFilePath(now, out path, out nextCheckpoint);
-            ApplyRetentionPolicy(path);
-
-            _nextCheckpoint = nextCheckpoint;
+            _nextCheckpoint = nextCheckpoint;            
             _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
+            ApplyRetentionPolicy(path);
         }
 
         void ApplyRetentionPolicy(string currentFilePath)
