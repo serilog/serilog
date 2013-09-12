@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
 using Serilog;
 
 namespace WebHarness.Controllers

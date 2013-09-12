@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.SignalR.SystemWeb</id>
+    <version>1.1.3</version>
+    <title>Microsoft ASP.NET SignalR System.Web Components</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/signalr_rtw.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/signalr</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Components for using ASP.NET SignalR in applications hosted on System.Web.</description>
+    <summary>Components for using ASP.NET SignalR in applications hosted on System.Web.</summary>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <language>en-US</language>
+    <tags>Microsoft AspNet SignalR AspNetSignalR SystemWeb</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.SignalR.Owin" version="1.1.3" />
+      <dependency id="Microsoft.Owin.Host.SystemWeb" version="1.0.1" />
+    </dependencies>
+  </metadata>
+</package>

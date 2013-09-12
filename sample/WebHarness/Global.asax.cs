@@ -2,8 +2,10 @@
 using System.Data.Entity.Infrastructure;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Microsoft.AspNet.SignalR;
 using Serilog;
 using Serilog.Extras.Web.Enrichers;
+using WebHarness.Controllers;
 
 namespace WebHarness
 {
@@ -19,6 +21,8 @@ namespace WebHarness
 
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.MapHubs();
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
@@ -47,6 +51,7 @@ namespace WebHarness
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Trace(outputTemplate: "{Timestamp} [{Level}] ({HttpRequestId}) {Message:l}{NewLine:l}{Exception:l}")
                 .WriteTo.Glimpse()
+                .WriteTo.SignalR(GlobalHost.ConnectionManager.GetHubContext<LogHub>())
                 .Enrich.With<HttpRequestIdEnricher>()
                 .CreateLogger();
         }

@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.AspNet.SignalR.Owin</name>
+  </assembly>
+  <members>
+    <member name="M:Microsoft.AspNet.SignalR.RequestExtensions.GetOwinVariable``1(Microsoft.AspNet.SignalR.IRequest,System.String)">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.CallHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.CallHandler.#ctor(Microsoft.AspNet.SignalR.ConnectionConfiguration,Microsoft.AspNet.SignalR.PersistentConnection)"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.CallHandler.Invoke(System.Collections.Generic.IDictionary{System.String,System.Object})">
+      <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.</returns>
+    </member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.ServerRequest"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerRequest.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Cookies">
+      <returns>Returns <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.DisableRequestCompression"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Form">
+      <returns>Returns <see cref="T:System.Collections.Specialized.NameValueCollection" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Headers">
+      <returns>Returns <see cref="T:System.Collections.Specialized.NameValueCollection" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Items">
+      <returns>Returns <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
+    </member>
+    <member name="F:Microsoft.AspNet.SignalR.Owin.ServerRequest.OwinEnvironmentKey"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.QueryString">
+      <returns>Returns <see cref="T:System.Collections.Specialized.NameValueCollection" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.RequestHeaders">
+      <returns>Returns <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.Url">
+      <returns>Returns <see cref="T:System.Uri" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerRequest.User">
+      <returns>Returns <see cref="T:System.Security.Principal.IPrincipal" />.</returns>
+    </member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.ServerResponse"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})"></member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.CancellationToken">
+      <returns>Returns <see cref="T:System.Threading.CancellationToken" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.ContentType">
+      <returns>Returns <see cref="T:System.String" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.DisableResponseBuffering">
+      <returns>Returns <see cref="T:System.Action" />.</returns>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.End">
+      <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.</returns>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.Flush">
+      <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.ResponseBody">
+      <returns>Returns <see cref="T:System.IO.Stream" />.</returns>
+    </member>
+    <member name="P:Microsoft.AspNet.SignalR.Owin.ServerResponse.ResponseHeaders">
+      <returns>Returns <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.ServerResponse.Write(System.ArraySegment{System.Byte})"></member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler.#ctor(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.String,Microsoft.AspNet.SignalR.HubConfiguration)"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.HubDispatcherHandler.Invoke(System.Collections.Generic.IDictionary{System.String,System.Object})">
+      <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.</returns>
+    </member>
+    <member name="T:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler.#ctor(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.String,System.Type,Microsoft.AspNet.SignalR.ConnectionConfiguration)"></member>
+    <member name="M:Microsoft.AspNet.SignalR.Owin.Handlers.PersistentConnectionHandler.Invoke(System.Collections.Generic.IDictionary{System.String,System.Object})">
+      <returns>Returns <see cref="T:System.Threading.Tasks.Task" />.</returns>
+    </member>
+    <member name="T:Owin.OwinExtensions"></member>
+    <member name="M:Owin.OwinExtensions.MapConnection``1(Owin.IAppBuilder,System.String)">
+      <returns>Returns <see cref="T:Owin.IAppBuilder" />.</returns>
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapConnection``1(Owin.IAppBuilder,System.String,Microsoft.AspNet.SignalR.ConnectionConfiguration)">
+      <returns>Returns <see cref="T:Owin.IAppBuilder" />.</returns>
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapConnection(Owin.IAppBuilder,System.String,System.Type,Microsoft.AspNet.SignalR.ConnectionConfiguration)">
+      <returns>Returns <see cref="T:Owin.IAppBuilder" />.</returns>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapHubs(Owin.IAppBuilder)">
+      <returns>Returns <see cref="T:Owin.IAppBuilder" />.</returns>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapHubs(Owin.IAppBuilder,Microsoft.AspNet.SignalR.HubConfiguration)">
+      <returns>Returns <see cref="T:Owin.IAppBuilder" />.</returns>
+    </member>
+    <member name="M:Owin.OwinExtensions.MapHubs(Owin.IAppBuilder,System.String,Microsoft.AspNet.SignalR.HubConfiguration)">
+      <returns>Returns <see cref="T:Owin.IAppBuilder" />.</returns>
+    </member>
+  </members>
+</doc>

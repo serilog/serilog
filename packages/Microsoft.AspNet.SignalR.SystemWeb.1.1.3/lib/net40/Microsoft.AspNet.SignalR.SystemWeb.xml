@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.AspNet.SignalR.SystemWeb</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.AspNet.SignalR.RequestExtensions"></member>
+    <member name="M:Microsoft.AspNet.SignalR.RequestExtensions.GetHttpContext(Microsoft.AspNet.SignalR.IRequest)"></member>
+    <member name="T:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.BuildManagerAssemblyLocator"></member>
+    <member name="M:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.BuildManagerAssemblyLocator.#ctor"></member>
+    <member name="M:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.BuildManagerAssemblyLocator.GetAssemblies">
+      <returns>Returns <see cref="T:System.Collections.Generic.IList`1" />.</returns>
+    </member>
+    <member name="T:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.MachineKeyProtectedData"></member>
+    <member name="M:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.MachineKeyProtectedData.#ctor"></member>
+    <member name="M:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.MachineKeyProtectedData.Protect(System.String,System.String)">
+      <returns>Returns <see cref="T:System.String" />.</returns>
+    </member>
+    <member name="M:Microsoft.AspNet.SignalR.SystemWeb.Infrastructure.MachineKeyProtectedData.Unprotect(System.String,System.String)">
+      <returns>Returns <see cref="T:System.String" />.</returns>
+    </member>
+    <member name="T:System.Web.Routing.SignalRRouteExtensions"></member>
+    <member name="M:System.Web.Routing.SignalRRouteExtensions.MapConnection``1(System.Web.Routing.RouteCollection,System.String,System.String)">
+      <summary>Maps a <see cref="T:Microsoft.AspNet.SignalR.PersistentConnection" /> with the default dependency resolver to the specified path.</summary>
+      <returns>The registered route.</returns>
+      <param name="routes">The route table.</param>
+      <param name="name">The name of the route.</param>
+      <param name="url">The path of the route.</param>
+      <typeparam name="T">The type of <see cref="T:Microsoft.AspNet.SignalR.PersistentConnection" /></typeparam>
+    </member>
+    <member name="M:System.Web.Routing.SignalRRouteExtensions.MapConnection``1(System.Web.Routing.RouteCollection,System.String,System.String,Microsoft.AspNet.SignalR.ConnectionConfiguration)">
+      <summary>Maps a <see cref="T:Microsoft.AspNet.SignalR.PersistentConnection" /> with the default dependency resolver to the specified path.</summary>
+      <returns>The registered route.</returns>
+      <param name="routes">The route table.</param>
+      <param name="name">The name of the route.</param>
+      <param name="url">The path of the route.</param>
+      <param name="configuration">Configuration options.</param>
+      <typeparam name="T">The type of <see cref="T:Microsoft.AspNet.SignalR.PersistentConnection" /></typeparam>
+    </member>
+    <member name="M:System.Web.Routing.SignalRRouteExtensions.MapConnection(System.Web.Routing.RouteCollection,System.String,System.String,System.Type,Microsoft.AspNet.SignalR.ConnectionConfiguration)">
+      <summary>Maps a <see cref="T:Microsoft.AspNet.SignalR.PersistentConnection" /> with the default dependency resolver to the specified path.</summary>
+      <returns>The registered route.</returns>
+      <param name="routes">The route table.</param>
+      <param name="name">The name of the route.</param>
+      <param name="url">The path of the route.</param>
+      <param name="type">The type of <see cref="T:Microsoft.AspNet.SignalR.PersistentConnection" />.</param>
+      <param name="configuration">Configuration options.</param>
+    </member>
+    <member name="M:System.Web.Routing.SignalRRouteExtensions.MapHubs(System.Web.Routing.RouteCollection)">
+      <summary>Initializes the default hub route (/signalr).</summary>
+      <returns>The registered route.</returns>
+      <param name="routes">The route table.</param>
+    </member>
+    <member name="M:System.Web.Routing.SignalRRouteExtensions.MapHubs(System.Web.Routing.RouteCollection,Microsoft.AspNet.SignalR.HubConfiguration)">
+      <summary>Initializes the default hub route (/signalr).</summary>
+      <returns>The registered route.</returns>
+      <param name="routes">The route table.</param>
+      <param name="configuration">Configuration options.</param>
+    </member>
+    <member name="M:System.Web.Routing.SignalRRouteExtensions.MapHubs(System.Web.Routing.RouteCollection,System.String,Microsoft.AspNet.SignalR.HubConfiguration)">
+      <summary>Initializes the default hub route (/signalr).</summary>
+      <returns>The registered route.</returns>
+      <param name="routes">The route table.</param>
+      <param name="path">The path of the route.</param>
+      <param name="configuration">Configuration options.</param>
+    </member>
+  </members>
+</doc>
