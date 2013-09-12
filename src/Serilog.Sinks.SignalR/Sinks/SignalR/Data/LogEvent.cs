@@ -19,7 +19,7 @@ using Serilog.Events;
 namespace Serilog.Sinks.SignalR.Data
 {
     /// <summary>
-    /// A wrapper class for <see cref="Events.LogEvent"/> that is used to store as a document in RavenDB
+    /// A wrapper class for <see cref="Events.LogEvent"/> that is sent as a message to SignalR clients.
     /// </summary>
     public class LogEvent
     {

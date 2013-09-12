@@ -18,12 +18,13 @@ using Microsoft.AspNet.SignalR;
 using Serilog.Sinks.PeriodicBatching;
 using LogEvent = Serilog.Sinks.SignalR.Data.LogEvent;
 
-namespace Serilog.Sinks.SignalR {
+namespace Serilog.Sinks.SignalR
+{
     /// <summary>
-    /// Writes log events as documents to a RavenDB database.
+    /// Writes log events as messages to a SignalR hub.
     /// </summary>
     public class SignalRSink : PeriodicBatchingSink
-    {   
+    {
         readonly IFormatProvider _formatProvider;
         readonly IHubContext _context;
         /// <summary>
@@ -40,16 +41,17 @@ namespace Serilog.Sinks.SignalR {
         /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
-        /// <param name="hubType"></param>
+        /// <param name="context">The hub context.</param>
         /// <param name="batchPostingLimit">The maximium number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public SignalRSink(IHubContext context, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
-          : base(batchPostingLimit, period) {
+            : base(batchPostingLimit, period)
+        {
             if (context == null)
-              throw new ArgumentNullException("context");
-          _formatProvider = formatProvider;
-          _context = context;
+                throw new ArgumentNullException("context");
+            _formatProvider = formatProvider;
+            _context = context;
         }
 
         /// <summary>
@@ -58,12 +60,12 @@ namespace Serilog.Sinks.SignalR {
         /// <param name="events">The events to emit.</param>
         /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
         /// not both.</remarks>
-        protected override void EmitBatch(IEnumerable<Events.LogEvent> events) {
-            foreach (var logEvent in events) {
-              _context.Clients.All.sendLogEvent(new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
+        protected override void EmitBatch(IEnumerable<Events.LogEvent> events)
+        {
+            foreach (var logEvent in events)
+            {
+                _context.Clients.All.sendLogEvent(new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
             }
-          }
         }
-
-    
+    }
 }

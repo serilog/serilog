@@ -21,15 +21,15 @@ using Serilog.Sinks.SignalR;
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.RavenDB() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.SignalR() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
     public static class LoggerConfigurationSignalRExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events as documents to a RavenDB database.
+        /// Adds a sink that writes log events as documents to a SignalR hub. 
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="hubType"></param>
+        /// <param name="context">The hub context.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>

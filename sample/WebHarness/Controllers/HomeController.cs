@@ -46,13 +46,5 @@ namespace WebHarness.Controllers
         {
             throw new NotImplementedException("Maybe another day...");
         }
-
-        public void SendLogData() {
-      IHubContext context = GlobalHost.ConnectionManager.GetHubContext<LogHub>();
-      context.Clients.All.sendLogEvent(new {
-                                         message = "hello world"
-                                       });
-          
-        }
     }
 }
