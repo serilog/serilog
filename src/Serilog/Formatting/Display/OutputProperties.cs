@@ -59,13 +59,17 @@ namespace Serilog.Formatting.Display
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            result.Add(MessagePropertyName, new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties));
-            result.Add(TimestampPropertyName, new ScalarValue(logEvent.Timestamp));
-            result.Add(LevelPropertyName, new ScalarValue(logEvent.Level));
-            result.Add(NewLinePropertyName, new ScalarValue(Environment.NewLine));
+            // "Special" output properties like Message will override any properties with the same name
+            // when used in format strings; this doesn't affect the rendering of the message template,
+            // which uses only the log event properties.
+
+            result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
+            result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
+            result[LevelPropertyName] = new ScalarValue(logEvent.Level);
+            result[NewLinePropertyName] = new ScalarValue(Environment.NewLine);
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
-            result.Add(ExceptionPropertyName, new ScalarValue(exception));
+            result[ExceptionPropertyName] = new ScalarValue(exception);
 
             return result;
         }

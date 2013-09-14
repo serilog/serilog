@@ -19,5 +19,15 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.AreEqual("12,345", sw.ToString());
         }
+
+        [Test]
+        public void MessageTemplatesContainingFormatStringPropertiesRenderCorrectly()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Message:l}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Message}", "Hello, world!"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.AreEqual("\"Hello, world!\"", sw.ToString());
+        }
     }
 }

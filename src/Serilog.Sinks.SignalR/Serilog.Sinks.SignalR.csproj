@@ -68,7 +68,9 @@
       <Link>Serilog.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Serilog.Sinks.SignalR.nuspec" />
+    <None Include="Serilog.Sinks.SignalR.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
