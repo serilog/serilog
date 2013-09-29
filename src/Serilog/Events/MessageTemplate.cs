@@ -36,8 +36,26 @@ namespace Serilog.Events
         readonly PropertyToken[] _positionalProperties;
         readonly PropertyToken[] _namedProperties;
 
-        internal MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
+        /// <summary>
+        /// Construct a message template using manually-defined text and property tokens.
+        /// </summary>
+        /// <param name="tokens">The text and property tokens defining the template.</param>
+        public MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
+            : this(string.Join("", tokens), tokens)
         {
+        }
+
+        /// <summary>
+        /// Construct a message template using manually-defined text and property tokens.
+        /// </summary>
+        /// <param name="text">The full text of the template; used by Serilog internally to avoid unneeded
+        /// string concatenation.</param>
+        /// <param name="tokens">The text and property tokens defining the template.</param>
+        public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
+        {
+            if (text == null) throw new ArgumentNullException("text");
+            if (tokens == null) throw new ArgumentNullException("tokens");
+
             _text = text;
             _tokens = tokens.ToArray();
 
