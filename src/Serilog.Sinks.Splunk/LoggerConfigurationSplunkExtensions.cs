@@ -13,13 +13,32 @@
 // limitations under the License.
 
 
+using System;
+using Serilog.Configuration;
+using Serilog.Events;
+
 namespace Serilog.Sinks.Splunk
 {
     /// <summary>
     /// Adds the WriteTo.Splunk() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public class LoggerConfigurationSplunkExtensions
+    public static class LoggerConfigurationSplunkExtensions
     {
-         
+        /// <summary>
+        /// Adds a sink that writes log events as rolling files for consumption in a Splunk instance.
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration Log4Net(
+            this LoggerSinkConfiguration loggerConfiguration,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            IFormatProvider formatProvider = null)
+        {
+            return loggerConfiguration.Sink(null, restrictedToMinimumLevel);
+
+        }
     }
 }
