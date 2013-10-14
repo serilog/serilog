@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -95,6 +96,8 @@ namespace Serilog.Parameters
         IEnumerable<LogEventProperty> ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
         {
             var namedProperties = template.NamedProperties;
+            if (namedProperties == null)
+                return Enumerable.Empty<LogEventProperty>();
 
             var matchedRun = namedProperties.Length;
             if (namedProperties.Length != messageTemplateParameters.Length)
