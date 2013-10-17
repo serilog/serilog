@@ -59,7 +59,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.SignalR", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk", "src\Serilog.Sinks.Splunk\Serilog.Sinks.Splunk.csproj", "{4BB3FADF-972E-467C-A5E2-67A23C5F8CA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplunkSample", "SplunkSample\SplunkSample.csproj", "{68AE262D-E444-46B7-893C-186D03A37B85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplunkSample", "sample\SplunkSample\SplunkSample.csproj", "{68AE262D-E444-46B7-893C-186D03A37B85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
