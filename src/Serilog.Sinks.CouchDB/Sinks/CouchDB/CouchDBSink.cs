@@ -56,8 +56,12 @@ namespace Serilog.Sinks.CouchDB
             : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+            var baseAddress = databaseUrl;
+            if (!databaseUrl.EndsWith("/"))
+                baseAddress += "/";
+
             _formatProvider = formatProvider;
-            _httpClient = new HttpClient { BaseAddress = new Uri(databaseUrl) };
+            _httpClient = new HttpClient { BaseAddress = new Uri(baseAddress) };
         }
 
         /// <summary>
