@@ -16,6 +16,7 @@
 using System;
 using Serilog.Configuration;
 using Serilog.Events;
+using Serilog.Sinks.Splunk.Sinks;
 
 namespace Serilog.Sinks.Splunk
 {
@@ -28,17 +29,24 @@ namespace Serilog.Sinks.Splunk
         /// Adds a sink that writes log events as rolling files for consumption in a Splunk instance.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="splunkConnectionInfoInfo"></param>
+        /// <param name="batchSizeLimit"></param>
+        /// <param name="defaultPeriod"></param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration Log4Net(
-            this LoggerSinkConfiguration loggerConfiguration,
+        public static LoggerConfiguration Splunk(
+            this LoggerSinkConfiguration loggerConfiguration, 
+            ISplunkConnectionInfo splunkConnectionInfoInfo, 
+            int batchSizeLimit,
+            TimeSpan? defaultPeriod,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-            return loggerConfiguration.Sink(null, restrictedToMinimumLevel);
 
+            var defaultedPeriod = defaultPeriod ?? SplunkSink.DefaultPeriod;
+            return loggerConfiguration.Sink(new SplunkSink(batchSizeLimit, defaultedPeriod, splunkConnectionInfoInfo), restrictedToMinimumLevel);
         }
     }
 }
