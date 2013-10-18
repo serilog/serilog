@@ -16,9 +16,9 @@
 using System;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.Splunk.Sinks;
+using Serilog.Sinks.Splunk;
 
-namespace Serilog.Sinks.Splunk
+namespace Serilog
 {
     /// <summary>
     /// Adds the WriteTo.Splunk() extension method to <see cref="LoggerConfiguration"/>.

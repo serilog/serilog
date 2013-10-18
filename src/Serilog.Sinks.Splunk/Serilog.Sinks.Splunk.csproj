@@ -7,7 +7,7 @@
     <ProjectGuid>{4BB3FADF-972E-467C-A5E2-67A23C5F8CA8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Serilog.Sinks.Splunk</RootNamespace>
+    <RootNamespace>Serilog</RootNamespace>
     <AssemblyName>Serilog.Sinks.Splunk</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -52,7 +52,10 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationSplunkExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sinks\SplunkTextWriterSink.cs" />
+    <Compile Include="Sinks\Splunk\ISplunkConnectionInfo.cs" />
+    <Compile Include="Sinks\Splunk\SplunkConnectionInfoInfo.cs" />
+    <Compile Include="Sinks\Splunk\SplunkSink.cs" />
+    <Compile Include="Sinks\Splunk\SplunkTextWriterSink.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

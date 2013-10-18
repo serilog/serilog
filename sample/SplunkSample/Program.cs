@@ -2,7 +2,6 @@
 using Serilog;
 using Serilog.Enrichers;
 using Serilog.Sinks.Splunk;
-using Serilog.Sinks.Splunk.Sinks;
 using Splunk;
 
 namespace Serilig.SplunkSample
@@ -15,8 +14,8 @@ namespace Serilig.SplunkSample
         private static void Main(string[] args)
         {
             var host = "192.168.93.128";
-            var userName = "admin";
-            var password = "Oujms813!)";
+            var userName = "serilog";
+            var password = "serilog";
 
             var connectArgs = new ServiceArgs { Host = host, };
 
