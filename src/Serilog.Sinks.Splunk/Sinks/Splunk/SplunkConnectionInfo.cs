@@ -16,7 +16,7 @@ using Splunk;
 
 namespace Serilog.Sinks.Splunk
 {
-    public class SplunkConnectionInfoInfo : ISplunkConnectionInfo
+    public class SplunkConnectionInfo : ISplunkConnectionInfo
     {
         public ServiceArgs ServiceArgs { get; set; }
         public string UserName { get; set; }

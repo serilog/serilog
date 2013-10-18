@@ -20,7 +20,7 @@ namespace Serilig.SplunkSample
 
             var connectArgs = new ServiceArgs { Host = host, };
 
-            var splunkConnectionInfoInfo = new SplunkConnectionInfoInfo
+            var splunkConnectionInfoInfo = new SplunkConnectionInfo
             {
                 ServiceArgs = connectArgs,
                 UserName = userName,
@@ -42,10 +42,12 @@ namespace Serilig.SplunkSample
 
             var items = Enumerable.Range(1,100);
 
-            serilogLogger.
+            foreach (var item in items)
+            {
+                serilogLogger.Debug("Logging an int, what fun {i}", item);
+            }
 
-
-            Console.WriteLine("ok");
+            System.Console.WriteLine("ok");
             Console.ReadLine();
         }
     }
