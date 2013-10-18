@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Serilog;
 using Serilog.Enrichers;
 using Serilog.Sinks.Splunk;
@@ -38,6 +39,11 @@ namespace Serilig.SplunkSample
             var username = Environment.UserName;
 
             serilogLogger.Information("Hello from Serilog, running as {Username}!", username);
+
+            var items = Enumerable.Range(1,100);
+
+            serilogLogger.
+
 
             Console.WriteLine("ok");
             Console.ReadLine();

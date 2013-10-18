@@ -44,8 +44,8 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-
             var defaultedPeriod = defaultPeriod ?? SplunkSink.DefaultPeriod;
+
             return loggerConfiguration.Sink(new SplunkSink(batchSizeLimit, defaultedPeriod, splunkConnectionInfoInfo), restrictedToMinimumLevel);
         }
     }
