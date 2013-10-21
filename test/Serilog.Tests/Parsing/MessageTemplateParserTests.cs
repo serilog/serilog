@@ -43,6 +43,13 @@ namespace Serilog.Tests.Parsing
         }
 
         [Test]
+        public void AMessageWithOptionalPropertyIsParsedAsOptionalPropertyToken()
+        {
+            AssertParsedAs("{?Hello}",
+                new PropertyToken("Hello", "{?Hello}", optional:true));
+        }
+
+        [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("{{ Hi! }",
