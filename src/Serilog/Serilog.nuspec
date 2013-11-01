@@ -18,5 +18,9 @@
     <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\net45" />
     <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
     <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
+    <file src="src\Serilog\bin40\Release\Serilog.dll" target="lib\net40" />
+    <file src="src\Serilog\bin40\Release\Serilog.xml" target="lib\net40" />
+    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
+    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
   </files>
 </package>
