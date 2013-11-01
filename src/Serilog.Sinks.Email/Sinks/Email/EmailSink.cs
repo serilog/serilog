@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -27,7 +26,6 @@ namespace Serilog.Sinks.Email
         /// each batch.
         /// </summary>
         public const int DefaultBatchPostingLimit = 100;
-
 
         /// <summary>
         /// A reasonable default time to wait between checking for event batches.
@@ -76,8 +74,6 @@ namespace Serilog.Sinks.Email
             }
         }
 
-
-
         /// <summary>
         /// Free resources held by the sink.
         /// </summary>
@@ -91,7 +87,6 @@ namespace Serilog.Sinks.Email
             if (disposing)
                 _smtpClient.Dispose();
         }
-
 
         /// <summary>
         /// Emit a batch of log events, running asynchronously.
