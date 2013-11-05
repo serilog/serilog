@@ -50,6 +50,7 @@ namespace Serilog.Sinks.Splunk
         {
             _connectionInfo = connectionInfo;
             _service = new Service(connectionInfo.ServiceArgs);
+
             _receiveSubmitArgs = new ReceiverSubmitArgs
             {
                 Source = _connectionInfo.SplunkSource,
@@ -71,10 +72,11 @@ namespace Serilog.Sinks.Splunk
                 _service.Login(_connectionInfo.UserName, _connectionInfo.Password);
                 
                 var receiver = new Receiver(_service);
+                receiver.Attach(_receiveSubmitArgs);
 
                 foreach (var logEvent in events)
                 {
-                    receiver.Submit(_receiveSubmitArgs, logEvent.RenderMessage());
+                    receiver.Log(logEvent.RenderMessage());
                 }
             });
         }
