@@ -32,7 +32,7 @@ namespace Serilig.SplunkSample
             Log.Logger = new LoggerConfiguration()
                 .Enrich.With(new ThreadIdEnricher())
                 .WriteTo.ColoredConsole(outputTemplate: OutputTemplate)
-                .WriteTo.Splunk(splunkConnectionInfoInfo, 1, null)
+                .WriteTo.Splunk(splunkConnectionInfoInfo, 3, TimeSpan.FromSeconds(1))
                 .CreateLogger();
 
             var serilogLogger = Log.ForContext<Program>();
@@ -40,11 +40,11 @@ namespace Serilig.SplunkSample
 
             serilogLogger.Information("Hello from Serilog, running as {Username}!", username);
 
-            var items = Enumerable.Range(1,100);
+            var items = Enumerable.Range(1,10);
 
             foreach (var item in items)
             {
-                serilogLogger.Debug("Logging an int, what fun {i}", item);
+               serilogLogger.Information("Logging an int, what fun {item}", item);
             }
 
             System.Console.WriteLine("ok");

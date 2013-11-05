@@ -58,7 +58,7 @@ namespace Serilog.Sinks.Splunk
             };
         }
 
-        protected override Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             //TODO: Create formatter possibly format with following
             //{
@@ -67,18 +67,15 @@ namespace Serilog.Sinks.Splunk
             //  "Data": "{  }" - Serilog Data structures
             //}
 
-            return new Task(() =>
-            {
-                _service.Login(_connectionInfo.UserName, _connectionInfo.Password);
-                
-                var receiver = new Receiver(_service);
-                receiver.Attach(_receiveSubmitArgs);
+            _service.Login(_connectionInfo.UserName, _connectionInfo.Password);
 
-                foreach (var logEvent in events)
-                {
-                    receiver.Log(logEvent.RenderMessage());
-                }
-            });
+            var receiver = new Receiver(_service);
+            receiver.Attach(_receiveSubmitArgs);
+
+            foreach (var logEvent in events)
+            {
+                receiver.Log(logEvent.RenderMessage());
+            }
         }
     }
 }
