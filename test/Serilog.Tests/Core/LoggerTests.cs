@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using NUnit.Framework;
-using Serilog.Core;
 using Serilog.Core.Pipeline;
-using Serilog.Events;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
@@ -49,6 +46,13 @@ namespace Serilog.Tests.Core
 
             var pActual = evt.Properties[name];
             Assert.AreEqual(v2, pActual.LiteralValue());
+        }
+
+        [Test]
+        public void ParametersForAnEmptyTemplateAreIgnored()
+        {
+            var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
+            Assert.AreEqual("message", e.RenderMessage());
         }
     }
 }

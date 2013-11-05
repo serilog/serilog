@@ -13,42 +13,60 @@
 // limitations under the License.
 
 using System;
+using System.Net;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.CouchDB;
+using Serilog.Formatting.Display;
+using Serilog.Sinks.Email;
 
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.CouchDB() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.Email() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public static class LoggerConfigurationCouchDBExtensions
+    public static class LoggerConfigurationEmailExtensions
     {
+        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+
         /// <summary>
-        /// Adds a sink that writes log events as documents to a CouchDB database.
+        /// Adds a sink that sends log events via email.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="databaseUrl">The URL of a created CouchDB database that log events will be written to.</param>
+        /// <param name="fromEmail">The email address emails will be sent from</param>
+        /// <param name="toEmail">The email address emails will be sent to</param>
+        /// <param name="mailServer">The SMTP email server to use</param>
+        /// <param name="networkCredential">The network credentials to use to authenticate with mailServer</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration CouchDB(
+        public static LoggerConfiguration Email(
             this LoggerSinkConfiguration loggerConfiguration,
-            string databaseUrl,
+            string fromEmail, 
+            string toEmail, 
+            string mailServer,
+            ICredentialsByHost networkCredential,
+            string outputTemplate = DefaultOutputTemplate,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            int batchPostingLimit = CouchDBSink.DefaultBatchPostingLimit,
+            int batchPostingLimit = EmailSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+            if (fromEmail == null) throw new ArgumentNullException("fromEmail");
+            if (toEmail == null) throw new ArgumentNullException("toEmail");
+            if (mailServer == null) throw new ArgumentNullException("mailServer");
 
-            var defaultedPeriod = period ?? CouchDBSink.DefaultPeriod;
+            var defaultedPeriod = period ?? EmailSink.DefaultPeriod;
+
+            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
+
             return loggerConfiguration.Sink(
-                new CouchDBSink(databaseUrl, batchPostingLimit, defaultedPeriod, formatProvider),
+                new EmailSink(fromEmail, toEmail, mailServer, networkCredential, batchPostingLimit, defaultedPeriod, formatter),
                 restrictedToMinimumLevel);
         }
     }

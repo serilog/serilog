@@ -11,7 +11,7 @@
       <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Serilog event sink that writes to a Glimpse tab.</description>
-      <tags>serilog logging log4net</tags>
+      <tags>serilog logging glimpse</tags>
       <dependencies>
             <dependency id="Glimpse" />
             <dependency id="Serilog" />
