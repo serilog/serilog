@@ -52,7 +52,7 @@ _ReSharper*/
 ~$*
 
 #NuGet
-#packages/ not using package restore for now
+packages/
 
 #ncrunch
 *ncrunch*
