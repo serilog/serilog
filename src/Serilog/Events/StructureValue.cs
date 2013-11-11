@@ -28,6 +28,14 @@ namespace Serilog.Events
         private readonly LogEventProperty[] _properties;
 
         /// <summary>
+        /// Construct an empty <see cref="StructureValue"/>.
+        /// </summary>
+        public StructureValue()
+        {
+            
+        }
+
+        /// <summary>
         /// Construct a <see cref="StructureValue"/> with the provided properties.
         /// </summary>
         /// <param name="typeTag">Optionally, a piece of metadata describing the "type" of the

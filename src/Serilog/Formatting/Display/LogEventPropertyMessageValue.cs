@@ -25,6 +25,11 @@ namespace Serilog.Formatting.Display
         private readonly MessageTemplate _template;
         private readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
 
+        public LogEventPropertyMessageValue()
+        {
+            
+        }
+
         public LogEventPropertyMessageValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
         {
             _template = template;

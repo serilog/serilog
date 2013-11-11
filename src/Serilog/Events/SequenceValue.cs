@@ -27,6 +27,14 @@ namespace Serilog.Events
         private readonly LogEventPropertyValue[] _elements;
 
         /// <summary>
+        /// Construct an empty <see cref="SequenceValue"/>.
+        /// </summary>
+        public SequenceValue()
+        {
+            
+        }
+
+        /// <summary>
         /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
         /// </summary>
         /// <param name="elements">The elements of the sequence.</param>
