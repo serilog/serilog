@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using Splunk;
@@ -61,11 +62,7 @@ namespace Serilog.Sinks.Splunk
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             //TODO: Create formatter possibly format with following
-            //{
-            //  "DateTime": "Information" - Timestamp from level logevent
-            //  "Level": "Information" - Log level from logevent
-            //  "Data": "{  }" - Serilog Data structures
-            //}
+            //TODO: Investigate AsynEmit
 
             _service.Login(_connectionInfo.UserName, _connectionInfo.Password);
 
@@ -74,7 +71,9 @@ namespace Serilog.Sinks.Splunk
 
             foreach (var logEvent in events)
             {
-                receiver.Log(logEvent.RenderMessage());
+                dynamic data = new {Timestamp = logEvent.Timestamp, Level = logEvent.Level, Data = logEvent.RenderMessage()};
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(data, new Newtonsoft.Json.Converters.StringEnumConverter());
+                receiver.Log(json);
             }
         }
     }
