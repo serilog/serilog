@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Sinks.SignalR</id>
+    <version>0.1.0</version>
+    <authors>Steve Rasch</authors>
+    <description>Serilog event sink that writes to a SignalR-Hub.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog logging signalr</tags>
+    <dependencies>
+      <dependency id="Serilog" />
+      <dependency id="Newtonsoft.Json" />
+      <dependency id="SplunkSDK" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.dll" target="lib\net45" />
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.xml" target="lib\net45" />
+  </files>
+</package>
+
