@@ -45,9 +45,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Topshelf, Version=3.1.107.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+    <Reference Include="Topshelf, Version=3.1.118.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Topshelf.3.1.1\lib\net40-full\Topshelf.dll</HintPath>
+      <HintPath>..\..\packages\Topshelf.3.1.2\lib\net40-full\Topshelf.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

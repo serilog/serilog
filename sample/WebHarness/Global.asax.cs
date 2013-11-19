@@ -21,8 +21,6 @@ namespace WebHarness
 
         public static void RegisterRoutes(RouteCollection routes)
         {
-            routes.MapHubs();
-
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(

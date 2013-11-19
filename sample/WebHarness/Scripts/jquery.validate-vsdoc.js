@@ -4,7 +4,7 @@
 * intended to be used only for design-time IntelliSense.  Please use the
 * standard jQuery library for all production use.
 *
-* Comment version: 1.8
+* Comment version: 1.11.1
 */
 
 /*
@@ -15,12 +15,9 @@
 * for informational purposes only and are not the license terms under
 * which Microsoft distributed this file.
 *
-* jQuery validation plugin 1.8.0
-*
-* http://bassistance.de/jquery-plugins/jquery-plugin-validation/
-* http://docs.jquery.com/Plugins/Validation
-*
-* Copyright (c) 2006 - 2011 Jörn Zaefferer
+* jQuery Validation Plugin - v1.11.1 - 2/4/2013
+* https://github.com/jzaefferer/jquery-validation
+* Copyright (c) 2013 Jörn Zaefferer; Licensed MIT
 *
 */
 
