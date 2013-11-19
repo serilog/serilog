@@ -9,7 +9,7 @@
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
-    <tags>serilog logging nosql events</tags>
+    <tags>serilog logging nosql events semantic structured</tags>
   </metadata>
   <files>
     <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
