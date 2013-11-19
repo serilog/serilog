@@ -41,7 +41,10 @@ namespace Serilog.Debugging
         {
             var o = Out;
             if (o != null)
+            {
                 o.WriteLine(format, arg0, arg1, arg2);
+                o.Flush();
+            }
         }
     }
 }
