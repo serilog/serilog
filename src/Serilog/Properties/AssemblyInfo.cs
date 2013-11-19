@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("Serilog")]
 [assembly: AssemblyDescription("Serilog Logging Library")]
-[assembly: AssemblyCopyright("Copyright © Nicholas Blumhardt 2013")]
+[assembly: AssemblyCopyright("Copyright © Serilog Contributors 2013")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 

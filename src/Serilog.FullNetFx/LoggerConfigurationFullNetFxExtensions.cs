@@ -133,8 +133,8 @@ namespace Serilog
         /// currently supported.
         /// </summary>
         /// <param name="sinkConfiguration">Logger sink configuration.</param>
-        /// <param name="pathFormat">.NET format string describing the location of the log files,
-        /// with {0} in the place of the file date. E.g. "Logs\myapp-{0}.log" will result in log
+        /// <param name="pathFormat">String describing the location of the log files,
+        /// with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
         /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
