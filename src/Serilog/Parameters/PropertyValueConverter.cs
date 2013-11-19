@@ -37,24 +37,31 @@ namespace Serilog.Parameters
                 typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
-            typeof(Guid), typeof(Uri),
-            typeof(byte[])
+            typeof(Guid), typeof(Uri)
         };
 
-        static readonly List<IDestructuringPolicy> BuiltInDestructuringPolicies = new List<IDestructuringPolicy>
-        {
-            new NullableDestructuringPolicy()
-        }; 
-
-        readonly HashSet<Type> _scalarTypes;
-        readonly List<IDestructuringPolicy> _destructuringPolicies; 
+        readonly IDestructuringPolicy[] _destructuringPolicies; 
+        readonly IScalarConversionPolicy[] _scalarConversionPolicies; 
 
         public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
-            _scalarTypes = new HashSet<Type>(additionalScalarTypes);
-            _scalarTypes.UnionWith(BuiltInScalarTypes);
+            if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
+            if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
 
-            _destructuringPolicies = new List<IDestructuringPolicy>(BuiltInDestructuringPolicies.Concat(additionalDestructuringPolicies));
+            _scalarConversionPolicies = new IScalarConversionPolicy[]
+            {
+                new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
+                new NullableScalarConversionPolicy(),
+                new EnumScalarConversionPolicy(),
+                new ByteArrayScalarConversionPolicy()
+            };
+
+            _destructuringPolicies = additionalDestructuringPolicies
+                .Concat(new []
+                {
+                    new DelegateDestructuringPolicy() 
+                })
+                .ToArray();
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
@@ -90,12 +97,15 @@ namespace Serilog.Parameters
             if (destructuring == Destructuring.Stringify)
                 return new ScalarValue(value.ToString());
 
-            // Known literals
             var valueType = value.GetType();
-            if (IsScalarType(valueType) || valueType.GetTypeInfo().IsEnum)
-                return new ScalarValue(value);
-
             var limiter = new DepthLimiter(depth, this);
+
+            foreach (var scalarConversionPolicy in _scalarConversionPolicies)
+            {
+                ScalarValue converted;
+                if (scalarConversionPolicy.TryConvertToScalar(value, limiter, out converted))
+                    return converted;
+            }
 
             var enumerable = value as IEnumerable;
             if (enumerable != null)
@@ -110,7 +120,7 @@ namespace Serilog.Parameters
                 // multiple different interpretations.
                 if (valueType.IsConstructedGenericType &&
                     valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-                    IsScalarType(valueType.GenericTypeArguments[0]))
+                    IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
                 {
                     return new DictionaryValue(
                         enumerable.Cast<dynamic>().Select(kvp =>
@@ -144,9 +154,10 @@ namespace Serilog.Parameters
             return new ScalarValue(value.ToString());
         }
 
-        bool IsScalarType(Type valueType)
+        bool IsValidDictionaryKeyType(Type valueType)
         {
-            return _scalarTypes.Contains(valueType);
+            return BuiltInScalarTypes.Contains(valueType) ||
+                   valueType.GetTypeInfo().IsEnum;
         }
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)

@@ -6,6 +6,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parameters;
 using Serilog.Parsing;
+using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Parameters
 {
@@ -74,6 +75,8 @@ namespace Serilog.Tests.Parameters
 
         class D
         {
+            // ReSharper disable once MemberHidesStaticFromOuterClass
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public IList<C?> C { get; set; } 
         }
 
@@ -103,6 +106,34 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<SequenceValue>(pv);
             var sv = (SequenceValue)pv;
             Assert.AreEqual(1, sv.Elements.Count);
+        }
+
+        [Test]
+        public void DelegatesAreConvertedToScalarStringsWhenDestructuring()
+        {
+            Action del = DelegatesAreConvertedToScalarStringsWhenDestructuring;
+            var pv = _converter.CreatePropertyValue(del, Destructuring.Destructure);
+            Assert.IsInstanceOf<ScalarValue>(pv);
+            Assert.IsInstanceOf<string>(pv.LiteralValue());
+        }
+
+        [Test]
+        public void WhenByteArraysAreConvertedTheyAreCopiedToArrayScalars()
+        {
+            var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
+            var pv = _converter.CreatePropertyValue(bytes);
+            var lv = (byte[])pv.LiteralValue();
+            Assert.AreEqual(bytes.Length, lv.Length);
+            Assert.AreNotSame(bytes, lv);
+        }
+
+        [Test]
+        public void ByteArraysLargerThan1kAreConvertedToStrings()
+        {
+            var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
+            var pv = _converter.CreatePropertyValue(bytes);
+            var lv = (string)pv.LiteralValue();
+            Assert.That(lv.EndsWith("(1025 bytes)"));
         }
     }
 }

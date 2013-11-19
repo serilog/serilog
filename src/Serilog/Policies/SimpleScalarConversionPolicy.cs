@@ -13,26 +13,31 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Policies
 {
-    class NullableDestructuringPolicy : IDestructuringPolicy
+    class SimpleScalarConversionPolicy : IScalarConversionPolicy
     {
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        readonly HashSet<Type> _scalarTypes;
+
+        public SimpleScalarConversionPolicy(IEnumerable<Type> scalarTypes)
         {
-            var type = value.GetType();
-            if (!type.IsConstructedGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+            _scalarTypes = new HashSet<Type>(scalarTypes);
+        }
+
+        public bool TryConvertToScalar(object value, ILogEventPropertyValueFactory propertyValueFactory, out ScalarValue result)
+        {
+            if (_scalarTypes.Contains(value.GetType()))
             {
-                result = null;
-                return false;
+                result = new ScalarValue(value);
+                return true;
             }
 
-            var dynamicValue = (dynamic)value;
-            result = propertyValueFactory.CreatePropertyValue(dynamicValue.HasValue ? dynamicValue.Value : null, true);
-
-            return true;
+            result = null;
+            return false;
         }
     }
 }

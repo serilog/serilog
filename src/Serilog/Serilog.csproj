@@ -51,6 +51,7 @@
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
     <Compile Include="Core\Enrichers\LazyFixedPropertyEnricher.cs" />
+    <Compile Include="Core\IScalarConversionPolicy.cs" />
     <Compile Include="Core\Sinks\CopyingSink.cs" />
     <Compile Include="Core\Filters\DelegateFilter.cs" />
     <Compile Include="Core\Sinks\FilteringSink.cs" />
@@ -84,7 +85,11 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter.cs" />
-    <Compile Include="Policies\NullableDestructuringPolicy.cs" />
+    <Compile Include="Policies\SimpleScalarConversionPolicy.cs" />
+    <Compile Include="Policies\ByteArrayScalarConversionPolicy.cs" />
+    <Compile Include="Policies\DelegateDestructuringPolicy.cs" />
+    <Compile Include="Policies\EnumScalarConversionPolicy.cs" />
+    <Compile Include="Policies\NullableScalarConversionPolicy.cs" />
     <Compile Include="Policies\ProjectedDestructuringPolicy.cs" />
     <Compile Include="Formatting\Display\LogEventPropertyMessageValue.cs" />
     <Compile Include="Formatting\Display\OutputProperties.cs" />

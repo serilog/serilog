@@ -17,7 +17,8 @@ using Serilog.Events;
 namespace Serilog.Core
 {
     /// <summary>
-    /// Determine how, when destructuring, a supplied 
+    /// Determine how, when destructuring, a supplied value is represented
+    /// as a complex log event property.
     /// </summary>
     public interface IDestructuringPolicy
     {
