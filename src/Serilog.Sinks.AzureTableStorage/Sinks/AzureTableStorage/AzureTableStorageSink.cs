@@ -39,7 +39,7 @@ namespace Serilog.Sinks.AzureTableStorage
             _formatProvider = formatProvider;
             var tableClient = storageAccount.CreateCloudTableClient();
 
-          if (string.IsNullOrEmpty(storageTableName)) storageTableName = typeof(LogEventEntity).Name;
+            if (string.IsNullOrEmpty(storageTableName)) storageTableName = typeof(LogEventEntity).Name;
 
             _table = tableClient.GetTableReference(storageTableName);
             _table.CreateIfNotExists();
