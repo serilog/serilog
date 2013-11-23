@@ -28,19 +28,20 @@ namespace Serilog.Sinks.AzureTableStorage
         readonly IFormatProvider _formatProvider;
         private readonly CloudTable _table;
 
-        /// <summary>
+      /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
         /// <param name="storageAccount">The Cloud Storage Account to use to insert the log entries to.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public AzureTableStorageSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider)
+        /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
+        public AzureTableStorageSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, string storageTableName = null)
         {
             _formatProvider = formatProvider;
             var tableClient = storageAccount.CreateCloudTableClient();
-            // todo: Should we make the table name configurable? On one hand it's recommended to
-            //  use the same name as the entity for performance reasons, but on the other it means
-            //  you can only log to one table in a storage account...
-            _table = tableClient.GetTableReference(typeof(LogEventEntity).Name);
+
+            if (string.IsNullOrEmpty(storageTableName)) storageTableName = typeof(LogEventEntity).Name;
+
+            _table = tableClient.GetTableReference(storageTableName);
             _table.CreateIfNotExists();
         }
 
