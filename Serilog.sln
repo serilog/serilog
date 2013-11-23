@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -60,6 +59,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk", "src\Serilog.Sinks.Splunk\Serilog.Sinks.Splunk.csproj", "{4BB3FADF-972E-467C-A5E2-67A23C5F8CA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplunkSample", "sample\SplunkSample\SplunkSample.csproj", "{68AE262D-E444-46B7-893C-186D03A37B85}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Email", "src\Serilog.Sinks.Email\Serilog.Sinks.Email.csproj", "{F3B80F77-155C-434D-9865-2E522D072972}"
 EndProject
 Global
