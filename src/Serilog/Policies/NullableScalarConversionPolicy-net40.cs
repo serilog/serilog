@@ -18,9 +18,9 @@ using Serilog.Events;
 
 namespace Serilog.Policies
 {
-    class NullableDestructuringPolicy : IDestructuringPolicy
+    class NullableScalarConversionPolicy : IScalarConversionPolicy
     {
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        public bool TryConvertToScalar(object value, ILogEventPropertyValueFactory propertyValueFactory, out ScalarValue result)
         {
             var type = value.GetType();
             if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
@@ -30,9 +30,10 @@ namespace Serilog.Policies
             }
 
             var dynamicValue = (dynamic)value;
-            result = propertyValueFactory.CreatePropertyValue(dynamicValue.HasValue ? dynamicValue.Value : null, true);
+            var innerValue = dynamicValue.HasValue ? (object)dynamicValue.Value : null;
+            result = propertyValueFactory.CreatePropertyValue(innerValue) as ScalarValue;
 
-            return true;
+            return result != null;
         }
     }
 }

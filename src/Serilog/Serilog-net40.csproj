@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -46,6 +46,7 @@
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
     <Compile Include="Core\Enrichers\LazyFixedPropertyEnricher.cs" />
+    <Compile Include="Core\IScalarConversionPolicy.cs" />
     <Compile Include="Core\Sinks\CopyingSink.cs" />
     <Compile Include="Core\Filters\DelegateFilter.cs" />
     <Compile Include="Core\Sinks\FilteringSink.cs" />
@@ -79,7 +80,10 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter-net40.cs" />
-    <Compile Include="Policies\NullableDestructuringPolicy-net40.cs" />
+    <Compile Include="Policies\ByteArrayScalarConversionPolicy.cs" />
+    <Compile Include="Policies\EnumScalarConversionPolicy-net40.cs" />
+    <Compile Include="Policies\NullableScalarConversionPolicy-net40.cs" />
+    <Compile Include="Policies\DelegateDestructuringPolicy.cs" />
     <Compile Include="Policies\ProjectedDestructuringPolicy.cs" />
     <Compile Include="Formatting\Display\LogEventPropertyMessageValue-net40.cs" />
     <Compile Include="Formatting\Display\OutputProperties-net40.cs" />
@@ -93,6 +97,7 @@
     <Compile Include="Parsing\MessageTemplateToken-net40.cs" />
     <Compile Include="Parsing\MessageTemplateParser.cs" />
     <Compile Include="Parsing\TextToken-net40.cs" />
+    <Compile Include="Policies\SimpleScalarConversionPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink-net40.cs" />

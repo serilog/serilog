@@ -119,7 +119,9 @@
       <Link>Serilog.snk</Link>
     </None>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Formatting\Json\JsonFormatterTests.cs" />
