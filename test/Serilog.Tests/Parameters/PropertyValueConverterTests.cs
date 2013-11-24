@@ -135,5 +135,30 @@ namespace Serilog.Tests.Parameters
             var lv = (string)pv.LiteralValue();
             Assert.That(lv.EndsWith("(1025 bytes)"));
         }
+
+        public class Thrower
+        {
+            public string Throws { get { throw new NotSupportedException(); } }
+            public string Doesnt { get { return "Hello"; } }
+        }
+
+        [Test]
+        public void FailsGracefullyWhenGettersThrow()
+        {
+            var pv = _converter.CreatePropertyValue(new Thrower(), Destructuring.Destructure);
+            var sv = (StructureValue)pv;
+            Assert.AreEqual(2, sv.Properties.Count);
+            var t = sv.Properties.Single(m => m.Name == "Throws");
+            Assert.AreEqual("The property accessor threw an exception: NotSupportedException", t.Value.LiteralValue());
+            var d = sv.Properties.Single(m => m.Name == "Doesnt");
+            Assert.AreEqual("Hello", d.Value.LiteralValue());
+        }
+
+        [Test]
+        public void SurvivesDestructuringASystemType()
+        {
+            var pv = _converter.CreatePropertyValue(typeof(string), Destructuring.Destructure);
+            Assert.AreEqual(typeof(string), pv.LiteralValue()); 
+        }
     }
 }

@@ -85,6 +85,7 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter.cs" />
+    <Compile Include="Policies\ReflectionTypesScalarConversionPolicy.cs" />
     <Compile Include="Policies\SimpleScalarConversionPolicy.cs" />
     <Compile Include="Policies\ByteArrayScalarConversionPolicy.cs" />
     <Compile Include="Policies\DelegateDestructuringPolicy.cs" />

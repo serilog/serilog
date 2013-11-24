@@ -97,6 +97,7 @@
     <Compile Include="Parsing\MessageTemplateToken-net40.cs" />
     <Compile Include="Parsing\MessageTemplateParser.cs" />
     <Compile Include="Parsing\TextToken-net40.cs" />
+    <Compile Include="Policies\ReflectionTypesScalarConversionPolicy.cs" />
     <Compile Include="Policies\SimpleScalarConversionPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />

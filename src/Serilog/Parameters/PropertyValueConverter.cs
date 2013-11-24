@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
@@ -53,7 +54,8 @@ namespace Serilog.Parameters
                 new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
                 new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
-                new ByteArrayScalarConversionPolicy()
+                new ByteArrayScalarConversionPolicy(),
+                new ReflectionTypesScalarConversionPolicy()
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
@@ -171,7 +173,17 @@ namespace Serilog.Parameters
 
                 foreach (var prop in props)
                 {
-                    yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(prop.GetValue(value), true));
+                    object propValue;
+                    try
+                    {
+                        propValue = prop.GetValue(value);
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
+                        propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
+                    }
+                    yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
                 }
                 
                 valueType = valueType.BaseType.GetTypeInfo();
