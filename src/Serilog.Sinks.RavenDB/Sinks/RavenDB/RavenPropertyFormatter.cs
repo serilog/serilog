@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Sinks.RavenDB
@@ -47,9 +48,26 @@ namespace Serilog.Sinks.RavenDB
 
             var dict = value as DictionaryValue;
             if (dict != null)
-                return dict
-                    .Elements
-                    .ToDictionary(kv => SimplifyScalar(kv.Key), kv => Simplify(kv.Value));
+            {
+                var result = new Dictionary<object, object>();
+                foreach (var element in dict.Elements)
+                {
+                    var key = SimplifyScalar(element.Key);
+                    if (result.ContainsKey(key))
+                    {
+                        SelfLog.WriteLine("The key {0} is not unique in the provided dictionary after simplification to {1}.", element.Key, key);
+                        return dict.Elements.Select(e => new Dictionary<string, object>
+                        {
+                            { "Key", SimplifyScalar(element.Key) },
+                            { "Value", Simplify(element.Value) }
+                        })
+                        .ToArray();
+                    }
+                    
+                    result.Add(key, Simplify(element.Value));
+                }
+                return result;
+            }
 
             var seq = value as SequenceValue;
             if (seq != null)
