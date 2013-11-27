@@ -106,6 +106,12 @@ namespace Serilog.Parsing
             }
 
             var propertyName = propertyNameAndDestructuring;
+            bool optional;
+            if (TryGetOptionalHint(propertyName[0], out optional))
+            {
+                propertyName = propertyName.Substring(1);
+            }
+
             Destructuring destructuring;
             if (TryGetDestructuringHint(propertyName[0], out destructuring))
                 propertyName = propertyName.Substring(1);
@@ -128,7 +134,8 @@ namespace Serilog.Parsing
                 propertyName,
                 rawText,
                 format,
-                destructuring);
+                destructuring,
+                optional);
         }
 
         private static bool IsValidInPropertyTag(char c)
@@ -143,6 +150,21 @@ namespace Serilog.Parsing
         private static bool IsValidInPropertyName(char c)
         {
             return char.IsLetterOrDigit(c);
+        }
+
+        private static bool TryGetOptionalHint(char c, out bool optional)
+        {
+            switch (c)
+            {
+                case '?':
+                {
+                    optional = true;
+                    return true;
+                }
+                default:
+                    optional = false;
+                    return false;
+            }
         }
 
         private static bool TryGetDestructuringHint(char c, out Destructuring destructuring)

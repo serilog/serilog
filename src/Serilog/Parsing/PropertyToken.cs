@@ -30,6 +30,7 @@ namespace Serilog.Parsing
         private readonly Destructuring _destructuring;
         private readonly string _rawText;
         private readonly int? _position;
+        private readonly Boolean _isOptional;
 
         /// <summary>
         /// Construct a <see cref="PropertyToken"/>.
@@ -38,11 +39,13 @@ namespace Serilog.Parsing
         /// <param name="rawText">The token as it appears in the message template.</param>
         /// <param name="format">The format applied to the property, if any.</param>
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
+        /// <param name="optional">Whether the property can be null and should be omitted from the output</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public PropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default)
+        public PropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default, Boolean optional = false)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
             if (rawText == null) throw new ArgumentNullException("rawText");
+            _isOptional = optional;
             _propertyName = propertyName;
             _format = format;
             _destructuring = destructuring;
@@ -69,7 +72,7 @@ namespace Serilog.Parsing
             LogEventPropertyValue propertyValue;
             if (properties.TryGetValue(_propertyName, out propertyValue))
                 propertyValue.Render(output, _format, formatProvider);
-            else
+            else if (!_isOptional)
                 output.Write(_rawText);
         }
 
@@ -127,6 +130,7 @@ namespace Serilog.Parsing
                 pt._destructuring == _destructuring &&
                 pt._format == _format &&
                 pt._propertyName == _propertyName &&
+                pt._isOptional == _isOptional &&
                 pt._rawText == _rawText;
         }
 

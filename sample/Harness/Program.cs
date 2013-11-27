@@ -11,7 +11,7 @@ namespace Harness
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console(
-                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
+                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {?Id:[0] }{Message:l}{NewLine:l}{Exception:l}")
                 .WriteTo.DumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
                 .WriteTo.Trace()
                 .Enrich.WithProperty("App", "Test Harness")
@@ -22,6 +22,9 @@ namespace Harness
             Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);
             Log.ForContext<Program>().Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
             
+            Log.Information("{?Scope1}{?Scope2}", new { Scope1 = "Test Scope"});
+            Log.ForContext("Id", 1234).Information("This should have an id");
+
             // ReSharper disable CoVariantArrayConversion
             Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
             // ReSharper restore CoVariantArrayConversion
