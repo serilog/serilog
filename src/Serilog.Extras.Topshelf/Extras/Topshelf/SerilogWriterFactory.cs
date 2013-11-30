@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using Serilog.Core;
 using Topshelf.Logging;
 
 namespace Serilog.Extras.Topshelf
@@ -31,8 +32,8 @@ namespace Serilog.Extras.Topshelf
         public LogWriter Get(string name)
         {
             var contextual = _logger == null ?
-                Log.ForContext("SourceContext", name) :
-                _logger.ForContext("SourceContext", name);
+                Log.ForContext(Constants.SourceContextPropertyName, name) :
+                _logger.ForContext(Constants.SourceContextPropertyName, name);
 
             return new SerilogWriter(contextual);
         }

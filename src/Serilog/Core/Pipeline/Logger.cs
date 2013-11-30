@@ -24,8 +24,6 @@ namespace Serilog.Core.Pipeline
 {
     sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
-        public const string SourceContextPropertyName = "SourceContext";
-
         readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly LogEventLevel _minimumLevel;
         readonly ILogEventSink _sink;
@@ -67,7 +65,7 @@ namespace Serilog.Core.Pipeline
         public ILogger ForContext(Type source)
         {
             if (source == null) throw new ArgumentNullException("source");
-            return ForContext(SourceContextPropertyName, source.FullName);
+            return ForContext(Constants.SourceContextPropertyName, source.FullName);
         }
 
         public ILogger ForContext<TSource>()
