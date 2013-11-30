@@ -31,7 +31,7 @@ namespace Serilog.Filters
         /// <returns>A predicate for matching events.</returns>
         public static Func<LogEvent, bool> FromSource<TSource>()
         {
-            return WithProperty(Logger.SourceContextPropertyName, typeof(TSource).FullName);
+            return WithProperty(Constants.SourceContextPropertyName, typeof(TSource).FullName);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Serilog.Filters
         {
             if (source == null) throw new ArgumentNullException("source");
             var sourcePrefix = source + ".";
-            return WithProperty<string>(Logger.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix)));
+            return WithProperty<string>(Constants.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix)));
         }
 
         /// <summary>
