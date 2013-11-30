@@ -45,6 +45,7 @@
     <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
+    <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\Enrichers\LazyFixedPropertyEnricher.cs" />
     <Compile Include="Core\IScalarConversionPolicy.cs" />
     <Compile Include="Core\Sinks\CopyingSink.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Events\DictionaryValue-net40.cs" />
     <Compile Include="Events\LevelAlias.cs" />
     <Compile Include="Filters\Matching.cs" />
+    <Compile Include="Formatting\Raw\RawFormatter.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\Sinks\SafeAggregateSink.cs" />
