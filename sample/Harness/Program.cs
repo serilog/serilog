@@ -12,7 +12,6 @@ namespace Harness
                 .MinimumLevel.Debug()
                 .WriteTo.Console(
                     outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
-                .WriteTo.DumpFile("Dumps\\" + DateTime.Now.Ticks + ".slog")
                 .WriteTo.Trace()
                 .Enrich.WithProperty("App", "Test Harness")
                 .Enrich.With(new ThreadIdEnricher(),

@@ -24,9 +24,11 @@ using Serilog.Sinks.IOFile;
 namespace Serilog.Sinks.RollingFile
 {
     /// <summary>
-    /// Date-based rolling only is supported.
+    /// Write log events to a series of files. Each file will be named according to
+    /// the date of the first log entry written to it. Only simple date-based rolling is
+    /// currently supported.
     /// </summary>
-    sealed class RollingFileSink : ILogEventSink, IDisposable
+    public sealed class RollingFileSink : ILogEventSink, IDisposable
     {
         readonly TemplatedPathRoller _roller;
         readonly ITextFormatter _textFormatter;
@@ -38,25 +40,39 @@ namespace Serilog.Sinks.RollingFile
         DateTime? _nextCheckpoint;
         FileSink _currentFile;
 
-        public RollingFileSink(string pathTemplate, 
+        /// <summary>Construct a <see cref="FileSink"/>.</summary>
+        /// <param name="pathFormat">String describing the location of the log files,
+        /// with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
+        /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
+        /// <param name="textFormatter">Formatter used to convert log events to text.</param>
+        /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
+        /// For unrestricted growth, pass null. The default is 1 GB.</param>
+        /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
+        /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>The file will be written using the UTF-8 character set.</remarks>
+        public RollingFileSink(string pathFormat, 
                               ITextFormatter textFormatter,
                               long? fileSizeLimitBytes,
                               int? retainedFileCountLimit)
         {
-            if (pathTemplate == null) throw new ArgumentNullException("pathTemplate");
+            if (pathFormat == null) throw new ArgumentNullException("pathFormat");
             if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
             if (retainedFileCountLimit.HasValue && retainedFileCountLimit < 1) throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1");
-            
-            _roller = new TemplatedPathRoller(pathTemplate);
+
+            _roller = new TemplatedPathRoller(pathFormat);
             _textFormatter = textFormatter;
             _fileSizeLimitBytes = fileSizeLimitBytes;
             _retainedFileCountLimit = retainedFileCountLimit;
         }
 
-        // Simplifications:
-        // Events that come in out-of-order (e.g. around the rollovers)
-        // may end up written to a later file than their timestamp
-        // would indicate. 
+        /// <summary>
+        /// Emit the provided log event to the sink.
+        /// </summary>
+        /// <param name="logEvent">The log event to write.</param>
+        /// <remarks>Events that come in out-of-order (e.g. around the rollovers)
+        /// may end up written to a later file than their timestamp
+        /// would indicate.</remarks> 
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
@@ -125,6 +141,10 @@ namespace Serilog.Sinks.RollingFile
             }
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or 
+        /// resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             lock (_syncRoot)

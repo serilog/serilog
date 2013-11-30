@@ -39,6 +39,7 @@ namespace Serilog.Sinks.IOTextWriter
             lock (_syncRoot)
             {
                 _textFormatter.Format(logEvent, _textWriter);
+                _textWriter.Flush();
             }
         }
     }

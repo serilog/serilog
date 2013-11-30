@@ -22,13 +22,23 @@ using Serilog.Formatting;
 
 namespace Serilog.Sinks.IOFile
 {
-    sealed class FileSink : ILogEventSink, IDisposable
+    /// <summary>
+    /// Write log events to a disk file.
+    /// </summary>
+    public sealed class FileSink : ILogEventSink, IDisposable
     {
         const int BytesPerCharacterApproximate = 1;
         readonly TextWriter _output;
         readonly ITextFormatter _textFormatter;
         readonly object _syncRoot = new object();
 
+        /// <summary>Construct a <see cref="FileSink"/>.</summary>
+        /// <param name="path">Path to the file.</param>
+        /// <param name="textFormatter">Formatter used to convert log events to text.</param>
+        /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
+        /// For unrestricted growth, pass null. The default is 1 GB.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes)
         {
             if (path == null) throw new ArgumentNullException("path");
@@ -69,6 +79,10 @@ namespace Serilog.Sinks.IOFile
             }
         }
 
+        /// <summary>
+        /// Emit the provided log event to the sink.
+        /// </summary>
+        /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
@@ -79,6 +93,10 @@ namespace Serilog.Sinks.IOFile
             }
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or 
+        /// resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             _output.Dispose();

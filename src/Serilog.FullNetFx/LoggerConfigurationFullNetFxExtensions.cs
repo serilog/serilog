@@ -18,8 +18,8 @@ using Serilog.Configuration;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
+using Serilog.Formatting.Raw;
 using Serilog.Sinks.DiagnosticTrace;
-using Serilog.Sinks.DumpFile;
 using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
 using Serilog.Sinks.SystemConsole;
@@ -89,6 +89,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        [Obsolete("Please use WriteTo.Sink(new FileSink(path, new RawFormatter(), null)) instead", true)]
         public static LoggerConfiguration DumpFile(
             this LoggerSinkConfiguration sinkConfiguration,
             string path,
@@ -96,7 +97,7 @@ namespace Serilog
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (path == null) throw new ArgumentNullException("path");
-            return sinkConfiguration.Sink(new DumpFileSink(path), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new FileSink(path, new RawFormatter(), null), restrictedToMinimumLevel);
         }
 
         /// <summary>
