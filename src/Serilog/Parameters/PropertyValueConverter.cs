@@ -164,6 +164,8 @@ namespace Serilog.Parameters
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
+            var seenNames = new HashSet<string>();
+
             var valueType = value.GetType().GetTypeInfo();
             while (valueType.AsType() != typeof(object))
             {
@@ -173,6 +175,11 @@ namespace Serilog.Parameters
 
                 foreach (var prop in props)
                 {
+                    if (seenNames.Contains(prop.Name))
+                        continue;
+
+                    seenNames.Add(prop.Name);
+
                     object propValue;
                     try
                     {

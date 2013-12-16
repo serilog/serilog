@@ -160,5 +160,40 @@ namespace Serilog.Tests.Parameters
             var pv = _converter.CreatePropertyValue(typeof(string), Destructuring.Destructure);
             Assert.AreEqual(typeof(string), pv.LiteralValue()); 
         }
+
+        public class BaseWithProps
+        {
+            public string PropA { get; set; }
+            public virtual string PropB { get; set; }
+            public string PropC { get; set; }
+        }
+
+        public class DerivedWithOverrides : BaseWithProps
+        {
+            new public string PropA { get; set; }
+            public override string PropB { get; set; }
+            public string PropD { get; set; }
+        }
+
+        [Test]
+        public void NewAndInheritedPropertiesAppearOnlyOnce()
+        {
+            var valAsDerived = new DerivedWithOverrides
+            {
+                PropA = "A",
+                PropB = "B",
+                PropC = "C",
+                PropD = "D"
+            };
+
+            var valAsBase = (BaseWithProps)valAsDerived;
+            valAsBase.PropA = "BA";
+
+            var pv = (StructureValue) _converter.CreatePropertyValue(valAsDerived, true);
+
+            Assert.AreEqual(4, pv.Properties.Count);
+            Assert.AreEqual("A", pv.Properties.Single(pp => pp.Name == "PropA").Value.LiteralValue());
+            Assert.AreEqual("B", pv.Properties.Single(pp => pp.Name == "PropB").Value.LiteralValue());
+        }
     }
 }
