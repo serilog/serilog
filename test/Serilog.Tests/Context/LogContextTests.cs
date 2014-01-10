@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using NUnit.Framework;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -64,6 +67,49 @@ namespace Serilog.Tests.Context
                 if (pre == post)
                     Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
             }
+        }
+
+        // Must not actually try to pass context across domains,
+        // since user property types may not be serializable.
+        [Test]
+        public void DoesNotPreventCrossDomainCalls()
+        {
+            AppDomain domain = null;
+            try
+            {
+                var domaininfo = new AppDomainSetup { ApplicationBase = Path.GetDirectoryName(GetType().Assembly.CodeBase.Replace("file:///", "")) };
+                var evidence = AppDomain.CurrentDomain.Evidence;
+                domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);
+
+                var callable = (RemotelyCallable)domain.CreateInstanceAndUnwrap(typeof(RemotelyCallable).Assembly.FullName, typeof(RemotelyCallable).FullName);
+
+                using (LogContext.PushProperty("Anything", 1001))
+                    Assert.That(callable.IsCallable());
+            }
+            finally
+            {
+                if (domain != null)
+                    AppDomain.Unload(domain);
+            }
+        }
+    }
+
+    public class RemotelyCallable : MarshalByRefObject
+    {
+        public bool IsCallable()
+        {
+            var sw = new StringWriter();
+
+            var log = new LoggerConfiguration()
+                .WriteTo.TextWriter(sw, outputTemplate: "{Anything}{Number}")
+                .Enrich.FromLogContext()
+                .CreateLogger();
+
+            using (LogContext.PushProperty("Number", 42))
+                log.Information("Hello");
+
+            var s = sw.ToString();
+            return s == "{Anything}42";
         }
     }
 }

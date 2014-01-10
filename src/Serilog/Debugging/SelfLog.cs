@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.IO;
 
 namespace Serilog.Debugging
@@ -42,7 +43,7 @@ namespace Serilog.Debugging
             var o = Out;
             if (o != null)
             {
-                o.WriteLine(format, arg0, arg1, arg2);
+                o.WriteLine(DateTime.Now.ToString("s") + " " + format, arg0, arg1, arg2);
                 o.Flush();
             }
         }

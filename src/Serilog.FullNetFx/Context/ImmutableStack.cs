@@ -14,18 +14,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Serilog.Context
 {
     // Needed because of the shallow-copying behaviour of
     // LogicalCallContext.
-    class ImmutableStack<T> : IEnumerable<T>
+    [Serializable]
+    class ImmutableStack<T> : IEnumerable<T>, ISerializable
     {
         static readonly ImmutableStack<T> _empty = new ImmutableStack<T>();
 
         readonly int _count;
         readonly ImmutableStack<T> _under;
         readonly T _top;
+
+        public ImmutableStack(SerializationInfo info, StreamingContext context)
+        {
+        }
 
         ImmutableStack()
         {
@@ -42,7 +48,7 @@ namespace Serilog.Context
         public IEnumerator<T> GetEnumerator()
         {
             var next = this;
-            while (next != _empty)
+            while (!next.IsEmpty)
             {
                 yield return next.Top;
                 next = next._under;
@@ -58,11 +64,17 @@ namespace Serilog.Context
 
         public static ImmutableStack<T> Empty { get { return _empty; } }
 
+        public bool IsEmpty { get { return _under == null; } }
+
         public ImmutableStack<T> Push(T t)
         {
             return new ImmutableStack<T>(this, t);
         }
 
         public T Top { get { return _top; } }
+
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+        }
     }
 }
