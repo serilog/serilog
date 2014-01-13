@@ -128,7 +128,7 @@ namespace Serilog.Parameters
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                             (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
                             limiter.CreatePropertyValue(kvp.Value, destructuring)))
-                        .Where(kvp => kvp.Key != null)); // Limiting may kick in
+                        .Where(kvp => kvp.Key.Value != null)); // Limiting may kick in
                 }
 
                 return new SequenceValue(
