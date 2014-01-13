@@ -124,11 +124,11 @@ namespace Serilog.Parameters
                     valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
                     IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
                 {
-                    return new DictionaryValue(
-                        enumerable.Cast<dynamic>().Select(kvp =>
-                            new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                                (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
-                                limiter.CreatePropertyValue(kvp.Value, destructuring))));
+                    return new DictionaryValue(enumerable.Cast<dynamic>()
+                        .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                            (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
+                            limiter.CreatePropertyValue(kvp.Value, destructuring)))
+                        .Where(kvp => kvp.Key != null)); // Limiting may kick in
                 }
 
                 return new SequenceValue(
