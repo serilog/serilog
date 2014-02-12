@@ -82,7 +82,12 @@ namespace Serilog.Sinks.RollingFile
                 if (_isDisposed) throw new ObjectDisposedException("The rolling file has been disposed.");
 
                 AlignCurrentFileTo(Clock.DateTimeNow);
-                _currentFile.Emit(logEvent);
+
+                // If the file was unable to be opened on the last attempt, it will remain
+                // null until the next checkpoint passes, at which time another attempt will be made to
+                // open it.
+                if (_currentFile != null)
+                    _currentFile.Emit(logEvent);
             }
         }
 
