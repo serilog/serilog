@@ -1,28 +1,19 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0D135C0C-A60B-454A-A2F4-CD74A30E04B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{C4B270F5-E0E9-417A-B9C7-6ACBB9DB3912}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harness", "sample\Harness\Harness.csproj", "{73627364-CB90-4707-8F44-789883BD8D50}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog", "src\Serilog\Serilog.csproj", "{0915DBD9-0F7C-4439-8D9E-74C3D579B219}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.csproj", "{D5648551-D19D-41E3-9FC1-E74B111EEF41}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHarness", "sample\WebHarness\WebHarness.csproj", "{E2F35B54-630A-4236-A853-CB0F1B99C8F1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.CouchDB", "src\Serilog.Sinks.CouchDB\Serilog.Sinks.CouchDB.csproj", "{E728D183-07C4-49F7-8C4C-D76D70C8F3B4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "sample\Demo\Demo.csproj", "{C9CB910A-C143-4B58-A00C-A9E7F343B81E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{ECA6C3FE-609A-4BF2-A01E-54477FBB7839}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,6 +22,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{ECA6C3
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harness", "sample\Harness\Harness.csproj", "{73627364-CB90-4707-8F44-789883BD8D50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog", "src\Serilog\Serilog.csproj", "{0915DBD9-0F7C-4439-8D9E-74C3D579B219}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.csproj", "{D5648551-D19D-41E3-9FC1-E74B111EEF41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHarness", "sample\WebHarness\WebHarness.csproj", "{E2F35B54-630A-4236-A853-CB0F1B99C8F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.CouchDB", "src\Serilog.Sinks.CouchDB\Serilog.Sinks.CouchDB.csproj", "{E728D183-07C4-49F7-8C4C-D76D70C8F3B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "sample\Demo\Demo.csproj", "{C9CB910A-C143-4B58-A00C-A9E7F343B81E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MongoDB", "src\Serilog.Sinks.MongoDB\Serilog.Sinks.MongoDB.csproj", "{8164BDE4-48FE-4A81-B33E-FEE348904BB8}"
 EndProject
@@ -61,6 +64,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplunkSample", "sample\SplunkSample\SplunkSample.csproj", "{68AE262D-E444-46B7-893C-186D03A37B85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Email", "src\Serilog.Sinks.Email\Serilog.Sinks.Email.csproj", "{F3B80F77-155C-434D-9865-2E522D072972}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.EventLog", "src\Serilog.Sinks.EventLog\Serilog.Sinks.EventLog.csproj", "{EEA8B8EB-0FE6-44C2-9D10-02B7E3DEAD06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,6 +157,10 @@ Global
 		{F3B80F77-155C-434D-9865-2E522D072972}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3B80F77-155C-434D-9865-2E522D072972}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3B80F77-155C-434D-9865-2E522D072972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEA8B8EB-0FE6-44C2-9D10-02B7E3DEAD06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEA8B8EB-0FE6-44C2-9D10-02B7E3DEAD06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEA8B8EB-0FE6-44C2-9D10-02B7E3DEAD06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEA8B8EB-0FE6-44C2-9D10-02B7E3DEAD06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +179,7 @@ Global
 		{0D51B456-A1B0-4048-9E90-E98CEB95E976} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{4BB3FADF-972E-467C-A5E2-67A23C5F8CA8} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{F3B80F77-155C-434D-9865-2E522D072972} = {037440DE-440B-4129-9F7A-09B42D00397E}
+		{EEA8B8EB-0FE6-44C2-9D10-02B7E3DEAD06} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{CE37740B-0B12-4974-BE44-A64E85C9ED9D} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{6A6504BF-CD5B-4C9E-88EB-5BD71CE3106A} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}

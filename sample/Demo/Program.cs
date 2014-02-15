@@ -19,9 +19,14 @@ namespace Demo
             //   .WriteTo.CouchDB("http://localhost:5984/log/")
             //   .WriteTo.MongoDB("mongodb://localhost/logdb")
 
+			// To append to the Windows event log use-
+			//   .WriteTo.EventLog("Demo", "Serilog")
+			//     where 'Demo' is the name of the source, as it appears in the event log, and 'Serilog' is the name of the event log written to- Appliction, by default.
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.ColoredConsole()
+				.WriteTo.EventLog("Demo")
                 .CreateLogger();
 
             Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");
