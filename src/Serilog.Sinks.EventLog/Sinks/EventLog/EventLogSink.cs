@@ -28,8 +28,8 @@ namespace Serilog.Sinks.EventLog
 	/// <remarks>Be aware of changing the source/logname, see: http://stackoverflow.com/questions/804284/how-do-i-write-to-a-custom-windows-event-log?rq=1</remarks>
 	public class EventLogSink : ILogEventSink
 	{
-		private readonly ITextFormatter _textFormatter;
-		private readonly string _source;
+		readonly ITextFormatter _textFormatter;
+		readonly string _source;
 
 		/// <summary>
 		/// Construct a sink posting to the Windows event log, creating the specified <paramref name="source"/> if it does not exist.
@@ -41,13 +41,15 @@ namespace Serilog.Sinks.EventLog
 		public EventLogSink(string source, string logName, ITextFormatter textFormatter, string machineName)
 		{
 			if (source == null) throw new ArgumentNullException("source");
+		    if (textFormatter == null) throw new ArgumentNullException("textFormatter");
 
-			_textFormatter = textFormatter;
+		    _textFormatter = textFormatter;
 			_source = source;
 
 			var sourceData = new EventSourceCreationData(source, logName) { MachineName = machineName };
 
-			if (!System.Diagnostics.EventLog.SourceExists(source, machineName)) System.Diagnostics.EventLog.CreateEventSource(sourceData);
+			if (!System.Diagnostics.EventLog.SourceExists(source, machineName))
+                System.Diagnostics.EventLog.CreateEventSource(sourceData);
 		}
 
 		/// <summary>

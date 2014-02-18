@@ -26,7 +26,7 @@ namespace Demo
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.ColoredConsole()
-				.WriteTo.EventLog("Demo")
+				.WriteTo.EventLog("Serilog Demo")
                 .CreateLogger();
 
             Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");

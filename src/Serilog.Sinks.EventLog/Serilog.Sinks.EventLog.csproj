@@ -37,7 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Serilog.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="LoggerConfigurationEventLogExtensions.cs" />
@@ -45,8 +45,10 @@
     <Compile Include="Sinks\EventLog\EventLogSink.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\assets\Serilog.snk">
+      <Link>Serilog.snk</Link>
+    </None>
     <None Include="Serilog.Sinks.EventLog.nuspec" />
-    <None Include="Serilog.snk" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

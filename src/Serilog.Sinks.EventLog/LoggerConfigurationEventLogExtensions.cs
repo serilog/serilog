@@ -1,10 +1,4 @@
-﻿using System;
-using Serilog.Configuration;
-using Serilog.Events;
-using Serilog.Formatting.Display;
-using Serilog.Sinks.EventLog;
-
-// Copyright 2013 Serilog Contributors
+﻿// Copyright 2013 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +11,12 @@ using Serilog.Sinks.EventLog;
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using System;
+using Serilog.Configuration;
+using Serilog.Events;
+using Serilog.Formatting.Display;
+using Serilog.Sinks.EventLog;
 
 namespace Serilog
 {
@@ -53,8 +53,7 @@ namespace Serilog
 
 			var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
 
-			var configuration = loggerConfiguration.Sink(new EventLogSink(source, logName, formatter, machineName), restrictedToMinimumLevel);
-			return configuration;
+			return loggerConfiguration.Sink(new EventLogSink(source, logName, formatter, machineName), restrictedToMinimumLevel);
 		}
 	}
 }
