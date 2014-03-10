@@ -45,16 +45,11 @@ namespace Serilog.Sinks.ElmahIO
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            Error error;
-
-            if (logEvent.Exception != null)
-                error = new Error(logEvent.Exception);
-            else
-                error = new Error();
+            Error error = logEvent.Exception != null ? new Error(logEvent.Exception) : new Error();
 
             error.Message = logEvent.RenderMessage(_formatProvider);
             error.Time = logEvent.Timestamp.DateTime;
-             
+
             _errorLog.Log(error);
         }
     }
