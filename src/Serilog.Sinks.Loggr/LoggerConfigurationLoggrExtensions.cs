@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Serilog
     public static class LoggerConfigurationLoggrExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events to the loggr.com webservice. 
+        /// Adds a sink that writes log events to the loggr.com webservice. Properties are being send as data and the level is used as tag.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="logKey">The log key as found on the loggr website.</param>

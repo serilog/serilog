@@ -29,7 +29,7 @@ namespace Serilog.Sinks.Loggr
         private readonly LogClient _client;
 
         /// <summary>
-        /// Construct a sink that saves logs to the specified storage account.
+        /// Construct a sink that saves logs to the specified storage account. Properties are being send as data and the level is used as tag.
         /// </summary>
         ///  <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="logKey">The log key as found on the loggr website.</param>
