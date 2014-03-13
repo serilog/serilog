@@ -24,7 +24,7 @@ namespace LoggrSample
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("UserName", Environment.UserName)
                 .WriteTo.ColoredConsole()
-                .WriteTo.Loggr("test1", "aa24c3c1fa24422393313520ebd4f0e9")       // Enter the log key and the api key here
+                .WriteTo.Loggr("<name>", "<guid>")       // Enter the log key and the api key here
                 .CreateLogger();
 
             Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");

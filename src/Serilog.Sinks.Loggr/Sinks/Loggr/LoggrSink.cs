@@ -63,8 +63,6 @@ namespace Serilog.Sinks.Loggr
                 ev.User(logEvent.Properties[_userNameProperty].ToString());
             }
 
-            //  ev.Timestamp(logEvent.Timestamp.DateTime.ToLocalTime(), false);
-         
             ev.UseLogClient(_client);
             ev.Post(true);
 
