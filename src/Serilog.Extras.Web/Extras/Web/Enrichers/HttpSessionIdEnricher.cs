@@ -20,7 +20,7 @@ using Serilog.Events;
 namespace Serilog.Extras.Web.Enrichers
 {
     /// <summary>
-    /// Enrich log events with HttpRequestId and HttpSessionId properties.
+    /// Enrich log events with the HttpSessionId property.
     /// </summary>
     public class HttpSessionIdEnricher : ILogEventEnricher
     {

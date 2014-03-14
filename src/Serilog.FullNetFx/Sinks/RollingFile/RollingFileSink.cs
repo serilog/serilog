@@ -40,7 +40,7 @@ namespace Serilog.Sinks.RollingFile
         DateTime? _nextCheckpoint;
         FileSink _currentFile;
 
-        /// <summary>Construct a <see cref="FileSink"/>.</summary>
+        /// <summary>Construct a <see cref="RollingFileSink"/>.</summary>
         /// <param name="pathFormat">String describing the location of the log files,
         /// with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
         /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
