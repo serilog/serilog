@@ -28,8 +28,8 @@ namespace Serilog.Sinks.ElasticSearch
     public class ElasticSearchSink : PeriodicBatchingSink
     {
         private readonly string _indexFormat;
-        readonly IFormatProvider _formatProvider;
-        private ElasticClient _client;
+        private readonly IFormatProvider _formatProvider;
+        private readonly ElasticClient _client;
 
         /// <summary>
         /// A reasonable default for the number of events posted in
@@ -46,16 +46,17 @@ namespace Serilog.Sinks.ElasticSearch
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="server">The server where ElasticSearch is running.</param>
-        /// <param name="indexFormat">The index name formatter.</param>
+        /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public ElasticSearchSink(Uri server, string indexFormat, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
-            _indexFormat = indexFormat;
+            _indexFormat = indexFormat ?? "logstash-{0:yyyy.MM.dd}";
             _formatProvider = formatProvider;
-            _client = new ElasticClient(new ConnectionSettings(server));
+            _client = new ElasticClient(new ConnectionSettings(server)
+                          .SetMaximumAsyncConnections(20));
         }
 
 
@@ -68,7 +69,9 @@ namespace Serilog.Sinks.ElasticSearch
         protected override async Task EmitBatchAsync(IEnumerable<Events.LogEvent> events)
         {
             var indexName = string.Format(_indexFormat, DateTime.UtcNow);
-            var items = events.Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider))).ToList();
+            var items = events
+                .Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)))
+                .ToList();
 
             await _client.IndexManyAsync(items, indexName);
         }

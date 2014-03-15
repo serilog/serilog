@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using Serilog.Enrichers;
 
 namespace ElasticSearchSample
 {
@@ -24,6 +25,8 @@ namespace ElasticSearchSample
                 .MinimumLevel.Verbose()
                 .WriteTo.ColoredConsole()
                 .WriteTo.ElasticSearch()
+                .Enrich.With(new ThreadIdEnricher(),
+                             new MachineNameEnricher())
                 .CreateLogger();
 
             Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");
@@ -35,13 +38,34 @@ namespace ElasticSearchSample
             const int failureCount = 3;
             Log.Warning("Exception coming up because of {FailureCount} failures...", failureCount);
 
+            Log.ForContext<Program>().Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
+
+            // ReSharper disable CoVariantArrayConversion
+            Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
+            // ReSharper restore CoVariantArrayConversion
+
+            Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+            Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+
+            var context = Log.Logger.ForContext("MessageId", 567);
+            try
+            {
+                context.Information("Processing a message");
+                throw new NotImplementedException("Nothing doing.");
+            }
+            catch (Exception ex)
+            {
+                context.Error(ex, "Rolling back transaction!");
+            }
+
             try
             {
                 DoBad();
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "There's those {FailureCount} failures", failureCount);
+                var ex2 = new InvalidOperationException("Something went wrong", ex);
+                Log.Error(ex2, "There's those {FailureCount} failures", failureCount);
             }
 
             Log.Fatal("That's all folks - and all done using {WorkingSet} bytes of RAM", Environment.WorkingSet);

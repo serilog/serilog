@@ -45,7 +45,7 @@ namespace Serilog.Sinks.ElasticSearch.Data
             Properties = new Dictionary<string, object>();
             foreach (var pair in logEvent.Properties)
             {
-                Properties.Add(pair.Key, RavenPropertyFormatter.Simplify(pair.Value));
+                Properties.Add(pair.Key, ESPropertyFormatter.Simplify(pair.Value));
             }
         }
 
@@ -83,7 +83,7 @@ namespace Serilog.Sinks.ElasticSearch.Data
         /// <summary>
         /// Properties associated with the event, including those presented in <see cref="Events.LogEvent.MessageTemplate"/>.
         /// </summary>
-        [JsonProperty(PropertyName = "@fields")]
+        [JsonProperty(PropertyName = "fields")]
         public IDictionary<string, object> Properties { get; set; }
     }
 }

@@ -22,11 +22,11 @@ namespace Serilog.Sinks.ElasticSearch
 {
     /// <summary>
     /// Converts <see cref="LogEventProperty"/> values into simple scalars,
-    /// dictionaries and lists so that they can be persisted in RavenDB.
+    /// dictionaries and lists so that they can be persisted in ElasticSearch.
     /// </summary>
-    public static class RavenPropertyFormatter
+    public static class ESPropertyFormatter
     {
-        static readonly HashSet<Type> RavenSpecialScalars = new HashSet<Type>
+        static readonly HashSet<Type> ESSpecialScalars = new HashSet<Type>
         {
             typeof(bool),
             typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
@@ -90,7 +90,7 @@ namespace Serilog.Sinks.ElasticSearch
             if (value == null) return null;
 
             var valueType = value.GetType();
-            if (RavenSpecialScalars.Contains(valueType)) return value;
+            if (ESSpecialScalars.Contains(valueType)) return value;
 
             return value.ToString();
         }

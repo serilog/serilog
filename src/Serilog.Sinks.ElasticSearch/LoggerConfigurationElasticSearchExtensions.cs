@@ -24,11 +24,13 @@ namespace Serilog
     public static class LoggerConfigurationElasticSearchExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events as documents to an ElasticSearch index. Make sure to add a template to ElasticSearch
-        /// like the one found here: https://github.com/elasticsearch/logstash/blob/v1.3.1/lib/logstash/outputs/elasticsearch/elasticsearch-template.json
+        /// Adds a sink that writes log events as documents to an ElasticSearch index.
+        /// This works great with the Kibana web interface when using the default settings.
+        /// Make sure to add a template to ElasticSearch like the one found here: 
+        /// https://github.com/elasticsearch/logstash/blob/v1.3.1/lib/logstash/outputs/elasticsearch/elasticsearch-template.json
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format.</param>
+        /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
         /// <param name="server">The server where ElasticSearch is running. When null it falls back to http://localhost:9200</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
