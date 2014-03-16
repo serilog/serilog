@@ -24,6 +24,14 @@ namespace Serilog.Tests.Parameters
         }
 
         [Test]
+        public void UnderDestructuringABooleanIsAScalarValue()
+        {
+            var pv = _converter.CreatePropertyValue(true, Destructuring.Destructure);
+            Assert.IsInstanceOf<ScalarValue>(pv);
+            Assert.IsInstanceOf<bool>(((ScalarValue)pv).Value);
+        }
+
+        [Test]
         public void UnderDestructuringAnIntegerArrayIsASequenceValue()
         {
             var pv = _converter.CreatePropertyValue(new int[0], Destructuring.Destructure);

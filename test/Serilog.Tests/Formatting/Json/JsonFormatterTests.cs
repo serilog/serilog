@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -51,6 +52,32 @@ namespace Serilog.Tests.Formatting.Json
             var formatted = FormatJson(@event);
 
             Assert.AreEqual(value, (int)formatted.Properties[name]);
+        }
+
+        [Test]
+        public void AnBooleanPropertySerializesAsBooleanValue()
+        {
+            var name = Some.String();
+            const bool value = true;
+            var @event = Some.InformationEvent();
+            @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+
+            var formatted = FormatJson(@event);
+
+            Assert.AreEqual(value, (bool)formatted.Properties[name]);
+        }
+
+        [Test]
+        public void AnCharPropertySerializesAsStringValue()
+        {
+            var name = Some.String();
+            const char value = 'c';
+            var @event = Some.InformationEvent();
+            @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+
+            var formatted = FormatJson(@event);
+
+            Assert.AreEqual(value.ToString(CultureInfo.InvariantCulture), (string)formatted.Properties[name]);
         }
 
         [Test]

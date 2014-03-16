@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Serilog.Events;
@@ -41,6 +42,8 @@ namespace Serilog.Formatting.Json
 
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
+                { typeof(bool), (v, q, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -173,6 +176,11 @@ namespace Serilog.Formatting.Json
             if (quote) output.Write('"');
             output.Write(number.ToString());
             if (quote) output.Write('"');
+        }
+
+        static void WriteBoolean(bool value, TextWriter output)
+        {
+            output.Write(value ? "true" : "false");
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)
