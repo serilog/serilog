@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Serilog.Configuration;
 using Serilog.Enrichers;
@@ -210,6 +211,30 @@ namespace Serilog
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
             return enrichmentConfiguration.With<ThreadIdEnricher>();
+        }
+
+        /// <summary>
+        /// Enrich log events with a ProcessId property containing the current <see cref="Process.Id"/>.
+        /// </summary>
+        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration WithProcessId(
+           this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            return enrichmentConfiguration.With<ProcessIdEnricher>();
+        }
+
+        /// <summary>
+        /// Enrich log events with a MachineName property containing the current <see cref="Environment.MachineName"/>.
+        /// </summary>
+        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration WithMachineName(
+           this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            return enrichmentConfiguration.With<MachineNameEnricher>();
         }
     }
 }
