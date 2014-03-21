@@ -16,6 +16,8 @@ using Splunk;
 
 namespace Serilog.Sinks.Splunk
 {
+#pragma warning disable 1591
+
     public interface ISplunkConnectionInfo
     {
         ServiceArgs ServiceArgs { get; set; }
@@ -24,4 +26,6 @@ namespace Serilog.Sinks.Splunk
         string SplunkSource { get; set; }
         string SplunkEventType { get; set; }
     }
+
+#pragma warning restore 1591
 }
