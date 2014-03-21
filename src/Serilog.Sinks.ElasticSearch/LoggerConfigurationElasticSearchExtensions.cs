@@ -27,7 +27,7 @@ namespace Serilog
         /// Adds a sink that writes log events as documents to an ElasticSearch index.
         /// This works great with the Kibana web interface when using the default settings.
         /// Make sure to add a template to ElasticSearch like the one found here:
-        /// https://github.com/elasticsearch/logstash/blob/v1.3.1/lib/logstash/outputs/elasticsearch/elasticsearch-template.json
+        /// https://gist.github.com/mivano/9688328
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
