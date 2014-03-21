@@ -44,8 +44,8 @@ namespace Serilog.Extras.Web.Enrichers
                 return;
 
             var sessionId = HttpContext.Current.Session.SessionID;
-            var sesionIdProperty = new LogEventProperty(HttpSessionIdPropertyName, new ScalarValue(sessionId));
-            logEvent.AddPropertyIfAbsent(sesionIdProperty);
+            var sessionIdProperty = new LogEventProperty(HttpSessionIdPropertyName, new ScalarValue(sessionId));
+            logEvent.AddPropertyIfAbsent(sessionIdProperty);
         }
     }
 }
