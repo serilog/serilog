@@ -26,22 +26,27 @@ namespace Serilog
         /// <summary>
         /// Adds a sink that writes log events as documents to an ElasticSearch index.
         /// This works great with the Kibana web interface when using the default settings.
-        /// Make sure to add a template to ElasticSearch like the one found here: 
-        /// https://github.com/elasticsearch/logstash/blob/v1.3.1/lib/logstash/outputs/elasticsearch/elasticsearch-template.json
+        /// Make sure to add a template to ElasticSearch like the one found here:
+        /// https://gist.github.com/mivano/9688328
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
         /// <param name="server">The server where ElasticSearch is running. When null it falls back to http://localhost:9200</param>
+        /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds. Default value is 5000.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <returns>
+        /// Logger configuration, allowing configuration to continue.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration ElasticSearch(
             this LoggerSinkConfiguration loggerConfiguration,
             string indexFormat = "logstash-{0:yyyy.MM.dd}",
             Uri server = null,
+            int connectionTimeOutInMilliseconds = 5000,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
@@ -54,7 +59,7 @@ namespace Serilog
                 server = new Uri("http://localhost:9200");
 
             return loggerConfiguration.Sink(
-                new ElasticSearchSink(server, indexFormat, batchPostingLimit, defaultedPeriod, formatProvider),
+                new ElasticSearchSink(server, indexFormat, batchPostingLimit, connectionTimeOutInMilliseconds, defaultedPeriod, formatProvider),
                 restrictedToMinimumLevel);
         }
     }

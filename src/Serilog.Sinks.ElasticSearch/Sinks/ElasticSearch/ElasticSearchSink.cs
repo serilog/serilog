@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using Nest;
 using Serilog.Events;
@@ -30,7 +31,7 @@ namespace Serilog.Sinks.ElasticSearch
         private readonly string _indexFormat;
         private readonly IFormatProvider _formatProvider;
         private readonly ElasticClient _client;
-
+    
         /// <summary>
         /// A reasonable default for the number of events posted in
         /// each batch.
@@ -48,32 +49,42 @@ namespace Serilog.Sinks.ElasticSearch
         /// <param name="server">The server where ElasticSearch is running.</param>
         /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ElasticSearchSink(Uri server, string indexFormat, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
+        public ElasticSearchSink(Uri server, string indexFormat, int batchPostingLimit, int connectionTimeOutInMilliseconds, TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
+            if (connectionTimeOutInMilliseconds <= 0)
+                connectionTimeOutInMilliseconds = 5000;
+
             _indexFormat = indexFormat ?? "logstash-{0:yyyy.MM.dd}";
             _formatProvider = formatProvider;
             _client = new ElasticClient(new ConnectionSettings(server)
-                          .SetMaximumAsyncConnections(20));
+                          .SetMaximumAsyncConnections(20)
+                          .SetTimeout(connectionTimeOutInMilliseconds));
         }
 
-
+      
         /// <summary>
         /// Emit a batch of log events, running to completion synchronously.
         /// </summary>
         /// <param name="events">The events to emit.</param>
-        /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="EmitBatchAsync"/>,
-        /// not both.</remarks>
-        protected override async Task EmitBatchAsync(IEnumerable<Events.LogEvent> events)
+        /// <remarks>
+        /// Override either <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})" /> or <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})" />,
+        /// not both.
+        /// </remarks>
+        protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             var indexName = string.Format(_indexFormat, DateTime.UtcNow);
             var items = events
                 .Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)))
                 .ToList();
 
-            await _client.IndexManyAsync(items, indexName);
+            if (items.Any() && _client !=null)
+                _client.IndexMany(items, indexName);
+            
         }
+       
     }
 }
