@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extras\Web\Enrichers\UserNameEnricher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extras\Web\ApplicationLifecycleModule.cs" />
     <Compile Include="Extras\Web\Enrichers\HttpRequestTraceIdEnricher.cs" />

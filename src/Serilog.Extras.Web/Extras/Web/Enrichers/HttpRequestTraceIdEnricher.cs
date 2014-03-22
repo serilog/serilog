@@ -44,8 +44,8 @@ namespace Serilog.Extras.Web.Enrichers
                 return;
 
             var serviceProvider = (IServiceProvider)HttpContext.Current;
-            var workerReqest = (HttpWorkerRequest)serviceProvider.GetService(typeof(HttpWorkerRequest));
-            var requestId = workerReqest.RequestTraceIdentifier;
+            var workerRequest = (HttpWorkerRequest)serviceProvider.GetService(typeof(HttpWorkerRequest));
+            var requestId = workerRequest.RequestTraceIdentifier;
 
             var requestIdProperty = new LogEventProperty(HttpRequestTraceIdPropertyName, new ScalarValue(requestId));
             logEvent.AddPropertyIfAbsent(requestIdProperty);
