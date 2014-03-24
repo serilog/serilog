@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Extras.Timing</id>
+    <version>0.1.0</version>
+    <authors>Serilog Contributors</authors>
+    <description>Provides utilities to facilitate timing of operations.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog logging diagnostics timing measure</tags>
+    <dependencies>
+      <dependency id="Serilog" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog.Extras.Web\bin\Release\Serilog.Extras.Timing.dll" target="lib\net45" />
+    <file src="src\Serilog.Extras.Web\bin\Release\Serilog.Extras.Timing.xml" target="lib\net45" />
+  </files>
+</package>
