@@ -63,7 +63,9 @@ namespace Serilog.Extras.AppSettings
                         let match = splitWriteTo.Match(wt.Key)
                         let call = new {
                             Method = match.Groups["method"].Value,
-                            Argument = match.Groups["argument"].Value }
+                            Argument = match.Groups["argument"].Value,
+                            Value = wt.Value
+                        }
                         group call by call.Method).ToList();
 
             if (sinkDirectives.Any())
@@ -80,7 +82,7 @@ namespace Serilog.Extras.AppSettings
 
                     var target = sinkConfigurationMethods
                         .Where(m => m.Name == sinkDirective.Key &&
-                            m.GetParameters().Skip(1).All(p => p.DefaultValue != null || sinkDirective.Any(s => s.Argument == p.Name)))
+                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || sinkDirective.Any(s => s.Argument == p.Name)))
                         .OrderByDescending(m => m.GetParameters().Length)
                         .FirstOrDefault();
 
@@ -88,12 +90,9 @@ namespace Serilog.Extras.AppSettings
                     {
                         var config = loggerConfiguration.WriteTo;
 
-                        var call = target.GetParameters()
-                            .Skip(1)
-                            .Select(p => Convert.ChangeType(
-                                sinkDirective.FirstOrDefault(s => s.Argument == p.Name) ?? p.DefaultValue,
-                                p.ParameterType))
-                            .ToList();
+                        var call = (from p in target.GetParameters().Skip(1)
+                                   let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
+                                   select directive == null ? p.DefaultValue : Convert.ChangeType(directive.Value, p.ParameterType)).ToList();
 
                         call.Insert(0, config);
 
