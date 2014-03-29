@@ -1,19 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C9CB910A-C143-4B58-A00C-A9E7F343B81E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{21CAF132-BBAB-41FD-A018-EB9AE54822ED}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Demo</RootNamespace>
-    <AssemblyName>Demo</AssemblyName>
+    <RootNamespace>Serilog</RootNamespace>
+    <AssemblyName>Serilog.Extras.AppSettings</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,18 +20,28 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Debug\Serilog.Extras.AppSettings.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\Serilog.Extras.AppSettings.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,38 +50,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Extras\AppSettings\PrefixedAppSettingsReader.cs" />
+    <Compile Include="LoggerConfigurationAppSettingsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\assets\Serilog.snk">
+      <Link>Serilog.snk</Link>
+    </None>
+    <None Include="Serilog.Extras.AppSettings.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Serilog.Extras.AppSettings\Serilog.Extras.AppSettings.csproj">
-      <Project>{21caf132-bbab-41fd-a018-eb9ae54822ed}</Project>
-      <Name>Serilog.Extras.AppSettings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
-      <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
+    <ProjectReference Include="..\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
+      <Project>{7A9E1095-167D-402A-B43D-B36B97FF183D}</Project>
       <Name>Serilog.FullNetFx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.CouchDB\Serilog.Sinks.CouchDB.csproj">
-      <Project>{e728d183-07c4-49f7-8c4c-d76d70c8f3b4}</Project>
-      <Name>Serilog.Sinks.CouchDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.EventLog\Serilog.Sinks.EventLog.csproj">
-      <Project>{eea8b8eb-0fe6-44c2-9d10-02b7e3dead06}</Project>
-      <Name>Serilog.Sinks.EventLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.MongoDB\Serilog.Sinks.MongoDB.csproj">
-      <Project>{8164bde4-48fe-4a81-b33e-fee348904bb8}</Project>
-      <Name>Serilog.Sinks.MongoDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
+    <ProjectReference Include="..\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

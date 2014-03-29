@@ -23,8 +23,11 @@ namespace Demo
 			//   .WriteTo.EventLog("Demo", "Serilog")
 			//     where 'Demo' is the name of the source, as it appears in the event log, and 'Serilog' is the name of the event log written to- Appliction, by default.
 
+            // ReadAppSettings() is an extension defined in the
+            // Serilog.Extras.AppSettings package.
+
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
+                .ReadAppSettings()
                 .WriteTo.ColoredConsole()
 				.WriteTo.EventLog("Serilog Demo")
                 .CreateLogger();
