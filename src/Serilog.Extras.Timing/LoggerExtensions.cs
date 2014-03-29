@@ -13,13 +13,8 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics;
-using System.Threading;
-using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Extras.Timing;
-using Serilog.Formatting.Display;
-using Serilog.Formatting.Raw;
 
 namespace Serilog
 {
@@ -46,12 +41,11 @@ namespace Serilog
             LogEventLevel level = LogEventLevel.Information,
             TimeSpan? warnIfExceeds = null)
         {
+            object operationIdentifier = identifier;
             if (string.IsNullOrEmpty(identifier))
-                identifier = Guid.NewGuid().ToString();
+                operationIdentifier = Guid.NewGuid();
 
-            return new TimedOperation(logger, level, warnIfExceeds, identifier, description);
+            return new TimedOperation(logger, level, warnIfExceeds, operationIdentifier, description);
         }
-
-       
     }
 }

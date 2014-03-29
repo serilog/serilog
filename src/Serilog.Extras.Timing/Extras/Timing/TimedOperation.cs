@@ -6,12 +6,12 @@ namespace Serilog.Extras.Timing
 {
     sealed class TimedOperation : IDisposable
     {
-        private readonly ILogger _logger;
-        private readonly LogEventLevel _level;
-        private readonly TimeSpan? _warnIfExceeds;
-        private readonly string _identifier;
-        private readonly string _description;
-        private Stopwatch _sw;
+        readonly ILogger _logger;
+        readonly LogEventLevel _level;
+        readonly TimeSpan? _warnIfExceeds;
+        readonly object _identifier;
+        readonly string _description;
+        readonly Stopwatch _sw;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimedOperation" /> class.
@@ -21,7 +21,7 @@ namespace Serilog.Extras.Timing
         /// <param name="description">A description for the operation.</param>
         /// <param name="level">The level used to write the timing operation details to the logger. By default this is the information level.</param>
         /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
-        public TimedOperation(ILogger logger, LogEventLevel level, TimeSpan? warnIfExceeds, string identifier, string description)
+        public TimedOperation(ILogger logger, LogEventLevel level, TimeSpan? warnIfExceeds, object identifier, string description)
         {
             _logger = logger;
             _level = level;
