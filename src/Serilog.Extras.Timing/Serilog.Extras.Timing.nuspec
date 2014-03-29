@@ -15,7 +15,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Extras.Web\bin\Release\Serilog.Extras.Timing.dll" target="lib\net45" />
-    <file src="src\Serilog.Extras.Web\bin\Release\Serilog.Extras.Timing.xml" target="lib\net45" />
+    <file src="src\Serilog.Extras.Timing\bin\Release\Serilog.Extras.Timing.dll" target="lib\net45" />
+    <file src="src\Serilog.Extras.Timing\bin\Release\Serilog.Extras.Timing.xml" target="lib\net45" />
   </files>
 </package>
