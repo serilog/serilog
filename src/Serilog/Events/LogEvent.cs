@@ -28,6 +28,8 @@ namespace Serilog.Events
         private readonly Exception _exception;
         private readonly MessageTemplate _messageTemplate;
         private readonly Dictionary<string, LogEventPropertyValue> _properties;
+        private readonly string _sourceFile;
+        private readonly int _line;
 
         /// <summary>
         /// Construct a new <seealso cref="LogEvent"/>.
@@ -35,15 +37,19 @@ namespace Serilog.Events
         /// <param name="timestamp">The time at which the event occurred.</param>
         /// <param name="level">The level of the event.</param>
         /// <param name="exception">An exception associated with the event, or null.</param>
+        /// <param name="sourceFile">The source file where the event was logged</param>
+        /// <param name="line">The line in sourceFile where the event was logged</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
+        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, string sourceFile, int line, IEnumerable<LogEventProperty> properties)
         {
             if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
             if (properties == null) throw new ArgumentNullException("properties");
             _timestamp = timestamp;
             _level = level;
             _exception = exception;
+            _sourceFile = sourceFile;
+            _line = line;
             _messageTemplate = messageTemplate;
             _properties = new Dictionary<string, LogEventPropertyValue>();
             foreach (var p in properties)
@@ -109,6 +115,22 @@ namespace Serilog.Events
         public Exception Exception
         {
             get { return _exception; }
+        }
+
+        /// <summary>
+        /// The source file where the event was logged
+        /// </summary>
+        public string SourceFile
+        {
+            get { return _sourceFile; }
+        }
+
+        /// <summary>
+        /// The line in SourceFile where the event was logged
+        /// </summary>
+        public int Line
+        {
+            get { return _line; }
         }
 
         /// <summary>
