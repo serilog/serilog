@@ -14,7 +14,7 @@
 
 
 // LeClient reused from https://github.com/logentries/le_dotnet/blob/master/src/LogentriesCore/LeClient.cs
-// LeCLient originally created by LogEntries.com (https://logentries.com/terms/)
+// LeClient originally created by LogEntries.com (https://logentries.com/terms/)
 
 using System;
 using System.IO;
