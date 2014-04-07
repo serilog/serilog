@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Serilog.Sinks.RollingFile;
@@ -30,15 +31,22 @@ namespace Serilog.Tests.Sinks.RollingFile
             string path;
             DateTime nextCheckpoint;
             roller.GetLogFilePath(now, out path, out nextCheckpoint);
-            Assert.AreEqual("Logs\\log.20130714.txt", path);
+            AssertAreEqualAbsolute("Logs\\log.20130714.txt", path);
             Assert.AreEqual(new DateTime(2013, 7, 15), nextCheckpoint);
+        }
+
+        static void AssertAreEqualAbsolute(string path1, string path2)
+        {
+            var abs1 = Path.GetFullPath(path1);
+            var abs2 = Path.GetFullPath(path2);
+            Assert.AreEqual(abs1, abs2);
         }
 
         [Test]
         public void TheRollerReturnsTheLogFileDirectory()
         {
             var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
-            Assert.AreEqual("Logs", roller.LogFileDirectory);
+            AssertAreEqualAbsolute("Logs", roller.LogFileDirectory);
         }
 
         [Test]
@@ -49,7 +57,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             string path;
             DateTime nextCheckpoint;
             roller.GetLogFilePath(now, out path, out nextCheckpoint);
-            Assert.AreEqual("Logs\\log-20130714.txt", path);
+            AssertAreEqualAbsolute("Logs\\log-20130714.txt", path);
         }
 
         [Test]
@@ -60,7 +68,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             string path;
             DateTime nextCheckpoint;
             roller.GetLogFilePath(now, out path, out nextCheckpoint);
-            Assert.AreEqual("Logs\\log-20130714", path);
+            AssertAreEqualAbsolute("Logs\\log-20130714", path);
         }
 
         [Test]
@@ -71,7 +79,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             string path;
             DateTime nextCheckpoint;
             roller.GetLogFilePath(now, out path, out nextCheckpoint);
-            Assert.AreEqual("log-20130714", path);
+            AssertAreEqualAbsolute("log-20130714", path);
         }
 
         [Test]
