@@ -50,6 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extras\Timing\CounterMeasure.cs" />
+    <Compile Include="Extras\Timing\GaugedMeasure.cs" />
+    <Compile Include="Extras\Timing\ICounterMeasure.cs" />
+    <Compile Include="Extras\Timing\IGaugeMeasure.cs" />
+    <Compile Include="Extras\Timing\IMeterMeasure.cs" />
+    <Compile Include="Extras\Timing\MeterMeasure.cs" />
     <Compile Include="LoggerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extras\Timing\TimedOperation.cs" />

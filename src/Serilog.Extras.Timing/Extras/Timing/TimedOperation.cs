@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
+using Serilog.Core.Pipeline;
 using Serilog.Events;
 
 namespace Serilog.Extras.Timing

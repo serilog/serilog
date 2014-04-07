@@ -51,7 +51,31 @@ namespace TimingSample
                 Thread.Sleep(1100);
             }
 
-          
+             // Gauge
+            var queue = new Queue<int>();
+            var gauge = logger.GaugedOperation("queue", () => queue.Count());
+
+            gauge.Measure();
+
+            queue.Enqueue(2);
+
+            gauge.Measure();
+
+            queue.Dequeue();
+
+            gauge.Measure();
+
+            // Counter
+            var counter = logger.CountOperation("counter", LogEventLevel.Debug);
+            counter.Increment();
+            counter.Increment();
+            counter.Increment();
+            counter.Decrement();
+
+            // Meter
+            var meter = logger.MeterOperation("meter");
+            meter.Mark();
+
 
             Console.ReadKey(true);
         }
