@@ -37,7 +37,6 @@ namespace Serilog.Sinks.RollingFile
         const string OldStyleDateSpecifier = "{0}";
         const string DateSpecifier = "{Date}";
         const string DateFormat = "yyyyMMdd";
-        const string DefaultExtension = ".txt";
         const string DefaultSeparator = "-";
 
         readonly string _pathTemplate;
@@ -52,15 +51,20 @@ namespace Serilog.Sinks.RollingFile
                 throw new ArgumentException("The old-style date specifier " + OldStyleDateSpecifier +
                     " is no longer supported, instead please use " + DateSpecifier);
 
-            var directory = Path.GetDirectoryName(pathTemplate) ?? "";
+            var directory = Path.GetDirectoryName(pathTemplate);
+            if (string.IsNullOrEmpty(directory))
+                directory = Environment.CurrentDirectory;
+
+            directory = Path.GetFullPath(directory);
+
             if (directory.Contains(DateSpecifier))
                 throw new ArgumentException("The date cannot form part of the directory name");
 
-            var filenameTemplate = Path.GetFileName(pathTemplate) ?? DateSpecifier + DefaultExtension;
+            var filenameTemplate = Path.GetFileName(pathTemplate);
             if (!filenameTemplate.Contains(DateSpecifier))
             {
                 filenameTemplate = Path.GetFileNameWithoutExtension(filenameTemplate) + DefaultSeparator +
-                    DateSpecifier + (Path.GetExtension(filenameTemplate) ?? "");
+                    DateSpecifier + Path.GetExtension(filenameTemplate);
             }
 
             var indexOfSpecifier = filenameTemplate.IndexOf(DateSpecifier, StringComparison.Ordinal);
