@@ -77,6 +77,7 @@ namespace TimingSample
             meter.Mark();
 
 
+            (meter as IDisposable).Dispose();
             Console.ReadKey(true);
         }
     }

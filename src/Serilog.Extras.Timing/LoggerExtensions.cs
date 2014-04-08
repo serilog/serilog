@@ -27,7 +27,7 @@ namespace Serilog
 
         const string DefaultGaugeTemplate = "{GaugeName} is {GaugeValue}";
         const string DefaultCountTemplate = "{CounterName} is {CounterValue}";
-        const string DefaultMeterTemplate = "{MeterName} marked to {CounterValue}, mean rate {@MeanRate}";
+        const string DefaultMeterTemplate = "{MeterName} marked to {CounterValue}, mean rate {MeanRate:l}";
 
         /// <summary>
         /// Begins an operation by placing the code to be timed inside a using block. 

@@ -43,14 +43,7 @@ namespace Serilog.Extras.Timing
         {
             var value = Interlocked.Add(ref _counter, n);
 
-            var meanRate = new Rate
-            {
-                Value = value,
-                TimeUnit = _rateUnit.ToString(),
-                MeterType = _measuring
-            };
-
-            _logger.Write(_level, _template, _name, value, meanRate);
+           
         }
 
         private void Tick()
@@ -61,6 +54,40 @@ namespace Serilog.Extras.Timing
         public void Dispose()
         {
             _cancellationToken.Cancel();
+
+            var value = Interlocked.Read(ref _counter);
+
+            var meanRate = new Rate
+            {
+                Value = value,
+                TimeUnit = Abbreviate(_rateUnit),
+                MeterType = _measuring
+            };
+
+            _logger.Write(_level, _template, _name, value, meanRate);
+        }
+
+        static string Abbreviate(TimeUnit unit)
+        {
+            switch (unit)
+            {
+                case TimeUnit.Nanoseconds:
+                    return "ns";
+                case TimeUnit.Microseconds:
+                    return "us";
+                case TimeUnit.Milliseconds:
+                    return "ms";
+                case TimeUnit.Seconds:
+                    return "s";
+                case TimeUnit.Minutes:
+                    return "m";
+                case TimeUnit.Hours:
+                    return "h";
+                case TimeUnit.Days:
+                    return "d";
+                default:
+                    throw new ArgumentOutOfRangeException("unit");
+            }
         }
     }
 
@@ -83,6 +110,17 @@ namespace Serilog.Extras.Timing
         /// Unit of time
         /// </summary>
         public string TimeUnit { get; set; }
+
+        /// <summary>
+        /// Returns a formatted representation.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return String.Format("{0} {1}/{2}", Value, MeterType, TimeUnit);
+        }
+
+       
     }
 
     /// <summary>
