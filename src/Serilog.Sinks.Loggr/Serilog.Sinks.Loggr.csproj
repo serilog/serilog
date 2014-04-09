@@ -36,7 +36,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
@@ -55,9 +55,6 @@
     <Compile Include="Sinks\Loggr\LoggrSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\Serilog.snk">
-      <Link>Serilog.snk</Link>
-    </None>
     <None Include="packages.config" />
     <None Include="Serilog.Sinks.Loggr.nuspec">
       <SubType>Designer</SubType>
