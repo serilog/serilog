@@ -25,7 +25,9 @@ namespace Serilog
     public static class LoggerConfigurationMSSQLExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events as documents to a MSSQL database.
+        /// Adds a sink that writes log events to a table in a MSSQL database.
+        /// Create a database and execute the table creation script found here
+        /// https://gist.github.com/mivano/10429656
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="connectionString">The connection string to the database where to store the events.</param>

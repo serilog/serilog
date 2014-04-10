@@ -81,7 +81,7 @@
     <Compile Include="LoggerConfigurationMSSQLExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\MSSQL\MSSQLSink.cs" />
-    <Compile Include="Sinks\MSSQL\RavenPropertyFormatter.cs" />
+    <Compile Include="Sinks\MSSQL\XmlPropertyFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

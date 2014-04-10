@@ -19,19 +19,10 @@ namespace MSSQLSample
     {
         static void Main()
         {
-            // To append to Couch or Mongo use-
-            //   .WriteTo.CouchDB("http://localhost:5984/log/")
-            //   .WriteTo.MongoDB("mongodb://localhost/logdb")
-
-            // To append to the Windows event log use-
-            //   .WriteTo.EventLog("Demo", "Serilog")
-            //     where 'Demo' is the name of the source, as it appears in the event log, and 'Serilog' is the name of the event log written to- Appliction, by default.
-
-            // ReadAppSettings() is an extension defined in the
-            // Serilog.Extras.AppSettings package.
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
+                .MinimumLevel.Debug()
                 .WriteTo.MSSQL(@"Server=.\SQLEXPRESS;Database=LogEvents;Trusted_Connection=True;", "Logs")
                 .CreateLogger();
 
@@ -41,8 +32,22 @@ namespace MSSQLSample
             ProcessInput(new Position { Lat = 24.71, Long = 132.15 });
             ProcessInput(new Position { Lat = 24.72, Long = 132.2 });
 
+
+            Log.Information("Just biting {Fruit} number {Count}", "Apple", 12);
+            Log.ForContext<Program>().Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
+
+            // ReSharper disable CoVariantArrayConversion
+            Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
+            // ReSharper restore CoVariantArrayConversion
+
+            Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+            Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+
+
             const int failureCount = 3;
             Log.Warning("Exception coming up because of {FailureCount} failures...", failureCount);
+
+
 
             try
             {
@@ -51,6 +56,35 @@ namespace MSSQLSample
             catch (Exception ex)
             {
                 Log.Error(ex, "There's those {FailureCount} failures", failureCount);
+            }
+
+            Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");
+
+            try
+            {
+                DoBad();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "We did some bad work here.");
+            }
+
+            var result = 0;
+            var divideBy = 0;
+            try
+            {
+                result = 10 / divideBy;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to divide by {divideBy}", divideBy);
+            }
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                Thread.Sleep(500);
+                Log.Debug("Count: {Counter}", i);
             }
 
             Log.Fatal("That's all folks - and all done using {WorkingSet} bytes of RAM", Environment.WorkingSet);
