@@ -17,6 +17,12 @@ namespace Serilog.Sinks.Couchbase.Tests
             Log.Logger = new LoggerConfiguration()
                                 .WriteTo.Couchbase(localUriList, bucketName)
                                 .CreateLogger();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Log.Information("Test Log Entry {Number}", i);
+                System.Threading.Thread.Sleep(1000);
+            }
         }
     }
 }

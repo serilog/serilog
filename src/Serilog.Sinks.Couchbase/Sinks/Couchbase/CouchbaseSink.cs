@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
+using Serilog.Formatting.Json;
+using Couchbase.Extensions;
 
 namespace Serilog.Sinks.Couchbase
 {
@@ -92,28 +94,26 @@ namespace Serilog.Sinks.Couchbase
         /// not both.</remarks>
         protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
         {
-            //var payload = new StringWriter();
-            //payload.Write("{\"docs\":[");
+            var payload = new StringWriter();
 
-            //var formatter = new JsonFormatter(true);
-            //var delimStart = "{";
-            //foreach (var logEvent in events)
-            //{
-            //    payload.Write(delimStart);
-            //    formatter.Format(logEvent, payload);
-            //    var renderedMessage = logEvent.RenderMessage(_formatProvider);
-            //    payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-            //        logEvent.Timestamp.ToUniversalTime().DateTime,
-            //        JsonFormatter.Escape(renderedMessage));
-            //    delimStart = ",{";
-            //}
+            var formatter = new JsonFormatter(true);
+            foreach (var logEvent in events)
+            {
+                formatter.Format(logEvent, payload);
+                
+                var renderedMessage = logEvent.RenderMessage(_formatProvider);
+                
+                payload.Write(",\"RenderedMessage\":\"{0}\"",
+                    JsonFormatter.Escape(renderedMessage));
 
-            //payload.Write("]}");
+                string key = System.Guid.NewGuid().ToString();
 
-            //var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
-            //var result = await _httpClient.PostAsync(BulkUploadResource, content);
-            //if (!result.IsSuccessStatusCode)
-            //    SelfLog.WriteLine("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
+                var result = await Task.Run<bool>(() => { return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, payload); });
+                
+                if (!result)
+                    SelfLog.WriteLine("Failed to store value");
+            }
+
         }
     }
 }
