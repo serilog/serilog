@@ -95,8 +95,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogentriesSample", "sample\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Couchbase", "src\Serilog.Sinks.Couchbase\Serilog.Sinks.Couchbase.csproj", "{104D5B1E-47BE-4739-A183-08C35BF4D38D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Couchbase.Tests", "test\Serilog.Sinks.Couchbase.Tests\Serilog.Sinks.Couchbase.Tests.csproj", "{6ECDFBC2-4F83-4B1E-B436-74A42EAA957F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -246,10 +244,6 @@ Global
 		{104D5B1E-47BE-4739-A183-08C35BF4D38D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{104D5B1E-47BE-4739-A183-08C35BF4D38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{104D5B1E-47BE-4739-A183-08C35BF4D38D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6ECDFBC2-4F83-4B1E-B436-74A42EAA957F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6ECDFBC2-4F83-4B1E-B436-74A42EAA957F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6ECDFBC2-4F83-4B1E-B436-74A42EAA957F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6ECDFBC2-4F83-4B1E-B436-74A42EAA957F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -291,6 +285,5 @@ Global
 		{7C03FE5B-426F-494C-9B7E-B23F060AB5D3} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{BFC7DA08-C46F-4605-8EAA-615A884195AD} = {C4B270F5-E0E9-417A-B9C7-6ACBB9DB3912}
 		{104D5B1E-47BE-4739-A183-08C35BF4D38D} = {037440DE-440B-4129-9F7A-09B42D00397E}
-		{6ECDFBC2-4F83-4B1E-B436-74A42EAA957F} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 	EndGlobalSection
 EndGlobal

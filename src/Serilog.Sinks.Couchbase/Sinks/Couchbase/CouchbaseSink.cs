@@ -22,6 +22,8 @@ using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using Serilog.Formatting.Json;
 using Couchbase.Extensions;
+using Couchbase.Management;
+using Newtonsoft.Json;
 
 namespace Serilog.Sinks.Couchbase
 {
@@ -67,6 +69,10 @@ namespace Serilog.Sinks.Couchbase
                 config.Urls.Add(new Uri(uri));
             config.Bucket = bucketName;
 
+            var cluster = new CouchbaseCluster(config);
+            Bucket bucket = null;
+            if (!cluster.TryGetBucket(bucketName, out bucket)) throw new InvalidOperationException("bucket '"+ bucketName  +"' does not exist");
+
             _couchbaseClient = new global::Couchbase.CouchbaseClient(config);
 
             _formatProvider = formatProvider;
@@ -97,23 +103,25 @@ namespace Serilog.Sinks.Couchbase
             var payload = new StringWriter();
 
             var formatter = new JsonFormatter(true);
+            var delimStart = "{";
             foreach (var logEvent in events)
             {
+                payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                
                 var renderedMessage = logEvent.RenderMessage(_formatProvider);
-                
-                payload.Write(",\"RenderedMessage\":\"{0}\"",
-                    JsonFormatter.Escape(renderedMessage));
+                payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
+                              logEvent.Timestamp.ToUniversalTime().DateTime,
+                              JsonFormatter.Escape(renderedMessage));
+                delimStart = ",{";
 
-                string key = System.Guid.NewGuid().ToString();
+                string key = Guid.NewGuid().ToString();
+                bool result = await Task.Run<bool>(() => {
+                    return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, JsonConvert.DeserializeObject(payload.ToString()));
+                });
 
-                var result = await Task.Run<bool>(() => { return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, payload); });
-                
                 if (!result)
                     SelfLog.WriteLine("Failed to store value");
             }
-
         }
     }
 }
