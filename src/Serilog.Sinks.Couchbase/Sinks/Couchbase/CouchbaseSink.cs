@@ -100,12 +100,13 @@ namespace Serilog.Sinks.Couchbase
         /// not both.</remarks>
         protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
         {
-            var payload = new StringWriter();
 
             var formatter = new JsonFormatter(true);
             var delimStart = "{";
             foreach (var logEvent in events)
             {
+                var payload = new StringWriter();
+                
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
                 var renderedMessage = logEvent.RenderMessage(_formatProvider);
