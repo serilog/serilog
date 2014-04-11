@@ -60,9 +60,6 @@
     <Compile Include="Sinks\ElmahIO\ElmahIOSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\Serilog.snk">
-      <Link>Serilog.snk</Link>
-    </None>
     <None Include="packages.config" />
     <None Include="Serilog.Sinks.ElmahIO.nuspec" />
   </ItemGroup>

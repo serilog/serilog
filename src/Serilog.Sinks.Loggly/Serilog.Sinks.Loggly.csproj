@@ -59,9 +59,6 @@
     <Compile Include="Sinks\Loggly\LogglySink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\Serilog.snk">
-      <Link>Serilog.snk</Link>
-    </None>
     <None Include="packages.config" />
     <None Include="Serilog.Sinks.Loggly.nuspec">
       <SubType>Designer</SubType>
