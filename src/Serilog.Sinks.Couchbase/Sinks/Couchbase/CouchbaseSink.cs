@@ -14,16 +14,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
-using Serilog.Formatting.Json;
 using Couchbase.Extensions;
 using Couchbase.Management;
-using Newtonsoft.Json;
+using LogEvent = Serilog.Sinks.Couchbase.Data.LogEvent;
 
 namespace Serilog.Sinks.Couchbase
 {
@@ -98,31 +95,42 @@ namespace Serilog.Sinks.Couchbase
         /// <param name="events">The events to emit.</param>
         /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
         /// not both.</remarks>
-        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        protected override async Task EmitBatchAsync(IEnumerable<Events.LogEvent> events)
         {
-
-            var formatter = new JsonFormatter(true);
-            var delimStart = "{";
             foreach (var logEvent in events)
             {
-                var payload = new StringWriter();
-                
-                payload.Write(delimStart);
-                formatter.Format(logEvent, payload);
-                var renderedMessage = logEvent.RenderMessage(_formatProvider);
-                payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-                              logEvent.Timestamp.ToUniversalTime().DateTime,
-                              JsonFormatter.Escape(renderedMessage));
-                delimStart = ",{";
-
                 string key = Guid.NewGuid().ToString();
+                
                 bool result = await Task.Run<bool>(() => {
-                    return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, JsonConvert.DeserializeObject(payload.ToString()));
+                    return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
                 });
 
                 if (!result)
                     SelfLog.WriteLine("Failed to store value");
             }
+
+            //var formatter = new JsonFormatter(true);
+            //var delimStart = "{";
+            //foreach (var logEvent in events)
+            //{
+            //    var payload = new StringWriter();
+            //    
+            //    payload.Write(delimStart);
+            //    formatter.Format(logEvent, payload);
+            //    var renderedMessage = logEvent.RenderMessage(_formatProvider);
+            //    payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
+            //                  logEvent.Timestamp.ToUniversalTime().DateTime,
+            //                  JsonFormatter.Escape(renderedMessage));
+            //    delimStart = ",{";
+
+            //    string key = Guid.NewGuid().ToString();
+            //    bool result = await Task.Run<bool>(() => {
+            //        return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, JsonConvert.DeserializeObject(payload.ToString()));
+            //    });
+
+            //    if (!result)
+            //        SelfLog.WriteLine("Failed to store value");
+            //}
         }
     }
 }
