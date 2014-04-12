@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using Serilog;
+using Serilog.Sinks.Couchbase;
 
 namespace Demo
 {
@@ -18,6 +19,9 @@ namespace Demo
             // To append to Couch or Mongo use-
             //   .WriteTo.CouchDB("http://localhost:5984/log/")
             //   .WriteTo.MongoDB("mongodb://localhost/logdb")
+
+            // To append to Couchbase use-
+            //   .WriteTo.Couchbase(new string[] { "http://localhost:8091/pools/" }, "serilog")
 
 			// To append to the Windows event log use-
 			//   .WriteTo.EventLog("Demo", "Serilog")
