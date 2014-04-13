@@ -6,6 +6,9 @@ using Serilog.Events;
 
 namespace Serilog.Extras.MSOwin
 {
+    /// <summary>
+    /// Implementation of Microsoft.Owin.Logger.ILoggerFactory.
+    /// </summary>
     public class LoggerFactory : ILoggerFactory
     {
         readonly Func<ILogger> _getLogger;
@@ -17,6 +20,11 @@ namespace Serilog.Extras.MSOwin
             _getLogEventLevel = getLogEventLevel ?? ToLogEventLevel;
         }
 
+        /// <summary>
+        /// Creates a new ILogger instance of the given name.
+        /// </summary>
+        /// <param name="name">The logger context name.</param>
+        /// <returns>A logger instance.</returns>
         public Microsoft.Owin.Logging.ILogger Create(string name)
         {
             return new Logger(_getLogger().ForContext(Constants.SourceContextPropertyName, name), _getLogEventLevel);
