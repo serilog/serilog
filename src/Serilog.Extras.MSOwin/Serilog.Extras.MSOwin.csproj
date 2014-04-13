@@ -59,6 +59,7 @@
       <Link>Serilog.snk</Link>
     </None>
     <None Include="packages.config" />
+    <None Include="Serilog.Extras.MSOwin.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
