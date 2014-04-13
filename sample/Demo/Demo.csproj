@@ -56,6 +56,10 @@
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Serilog.Sinks.Couchbase\Serilog.Sinks.Couchbase.csproj">
+      <Project>{104d5b1e-47be-4739-a183-08c35bf4d38d}</Project>
+      <Name>Serilog.Sinks.Couchbase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog.Sinks.CouchDB\Serilog.Sinks.CouchDB.csproj">
       <Project>{e728d183-07c4-49f7-8c4c-d76d70c8f3b4}</Project>
       <Name>Serilog.Sinks.CouchDB</Name>
