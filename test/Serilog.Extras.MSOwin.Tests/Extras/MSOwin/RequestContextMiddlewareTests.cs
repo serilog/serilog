@@ -42,7 +42,7 @@ namespace Serilog.Extras.MSOwin
             {
                 await MakeRequest();
 
-                Assert.True(_eventSeen.Properties.ContainsKey(RequestContextMiddleware.RequestIdPropertyName));
+                Assert.True(_eventSeen.Properties.ContainsKey(RequestContextMiddleware.DefaultRequestIdPropertyName));
             }
 
             [Test]
@@ -51,7 +51,7 @@ namespace Serilog.Extras.MSOwin
                 await MakeRequest();
 
                 Guid _;
-                Assert.True(Guid.TryParse(_eventSeen.Properties[RequestContextMiddleware.RequestIdPropertyName].ToString(), out _));
+                Assert.True(Guid.TryParse(_eventSeen.Properties[RequestContextMiddleware.DefaultRequestIdPropertyName].ToString(), out _));
             }
 
             private async Task MakeRequest()
