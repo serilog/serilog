@@ -56,18 +56,6 @@
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.CouchDB\Serilog.Sinks.CouchDB.csproj">
-      <Project>{e728d183-07c4-49f7-8c4c-d76d70c8f3b4}</Project>
-      <Name>Serilog.Sinks.CouchDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.EventLog\Serilog.Sinks.EventLog.csproj">
-      <Project>{eea8b8eb-0fe6-44c2-9d10-02b7e3dead06}</Project>
-      <Name>Serilog.Sinks.EventLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.MongoDB\Serilog.Sinks.MongoDB.csproj">
-      <Project>{8164bde4-48fe-4a81-b33e-fee348904bb8}</Project>
-      <Name>Serilog.Sinks.MongoDB</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>
