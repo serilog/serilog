@@ -7,7 +7,7 @@
     <ProjectGuid>{104D5B1E-47BE-4739-A183-08C35BF4D38D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Serilog.Sinks.Couchbase</RootNamespace>
+    <RootNamespace>Serilog</RootNamespace>
     <AssemblyName>Serilog.Sinks.Couchbase</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
