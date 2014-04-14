@@ -54,9 +54,9 @@
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.MSSQL\Serilog.Sinks.MSSQL.csproj">
+    <ProjectReference Include="..\..\src\Serilog.Sinks.MSSqlServer\Serilog.Sinks.MSSqlServer.csproj">
       <Project>{31c64be9-4ef6-42d5-a811-d7d24613eef6}</Project>
-      <Name>Serilog.Sinks.MSSQL</Name>
+      <Name>Serilog.Sinks.MSSqlServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>

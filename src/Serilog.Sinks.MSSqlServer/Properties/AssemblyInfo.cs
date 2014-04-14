@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Serilog.Sinks.MSSQL")]
-[assembly: AssemblyDescription("Serilog sink for MSSQL")]
+[assembly: AssemblyTitle("Serilog.Sinks.MSSqlServer")]
+[assembly: AssemblyDescription("Serilog sink for MSSqlServer")]
 [assembly: AssemblyCopyright("Copyright © Serilog Contributors 2014")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

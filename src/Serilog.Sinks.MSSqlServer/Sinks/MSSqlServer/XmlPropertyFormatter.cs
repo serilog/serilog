@@ -17,11 +17,11 @@ using System.Linq;
 using System.Text;
 using Serilog.Events;
 
-namespace Serilog.Sinks.MSSQL
+namespace Serilog.Sinks.MSSqlServer
 {
     /// <summary>
     ///     Converts <see cref="LogEventProperty" /> values into simple scalars,
-    ///     dictionaries and lists so that they can be persisted in MSSQL.
+    ///     dictionaries and lists so that they can be persisted in MSSqlServer.
     /// </summary>
     public static class XmlPropertyFormatter
     {

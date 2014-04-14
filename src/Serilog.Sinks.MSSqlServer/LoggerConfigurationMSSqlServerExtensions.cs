@@ -1,9 +1,9 @@
 ﻿using System;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.MSSQL;
+using Serilog.Sinks.MSSqlServer;
 
-// Copyright 2013 Serilog Contributors
+// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ using Serilog.Sinks.MSSQL;
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.MSSQL() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.MSSqlServer() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public static class LoggerConfigurationMSSQLExtensions
+    public static class LoggerConfigurationMSSqlServerExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events to a table in a MSSQL database.
+        /// Adds a sink that writes log events to a table in a MSSqlServer database.
         /// Create a database and execute the table creation script found here
         /// https://gist.github.com/mivano/10429656
         /// </summary>
@@ -39,19 +39,20 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration MSSQL(
+        public static LoggerConfiguration MSSqlServer(
             this LoggerSinkConfiguration loggerConfiguration,
             string connectionString, string tableName, bool storeProperties = true,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            int batchPostingLimit = MSSQLSink.DefaultBatchPostingLimit,
+            int batchPostingLimit = MSSqlServerSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
      
-            var defaultedPeriod = period ?? MSSQLSink.DefaultPeriod;
+            var defaultedPeriod = period ?? MSSqlServerSink.DefaultPeriod;
+
             return loggerConfiguration.Sink(
-                new MSSQLSink( connectionString, tableName, storeProperties,batchPostingLimit, defaultedPeriod, formatProvider),
+                new MSSqlServerSink( connectionString, tableName, storeProperties,batchPostingLimit, defaultedPeriod, formatProvider),
                 restrictedToMinimumLevel);
         }
     }

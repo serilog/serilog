@@ -22,12 +22,12 @@ using System.Threading.Tasks;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
-namespace Serilog.Sinks.MSSQL
+namespace Serilog.Sinks.MSSqlServer
 {
     /// <summary>
-    ///     Writes log events as rows in a table of MSSQL database.
+    ///     Writes log events as rows in a table of MSSqlServer database.
     /// </summary>
-    public class MSSQLSink : PeriodicBatchingSink
+    public class MSSqlServerSink : PeriodicBatchingSink
     {
         /// <summary>
         ///     A reasonable default for the number of events posted in
@@ -57,7 +57,7 @@ namespace Serilog.Sinks.MSSQL
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public MSSQLSink(string connectionString, string tableName, bool includeProperties, int batchPostingLimit,
+        public MSSqlServerSink(string connectionString, string tableName, bool includeProperties, int batchPostingLimit,
             TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
@@ -170,7 +170,7 @@ namespace Serilog.Sinks.MSSQL
 
         private void FillDataTable(IEnumerable<LogEvent> events)
         {
-            // Add some new rows to the collection. 
+            // Add the new rows to the collection. 
             foreach (var logEvent in events)
             {
                 var row = _eventsTable.NewRow();

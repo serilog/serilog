@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Serilog</RootNamespace>
-    <AssemblyName>Serilog.Sinks.MSSQL</AssemblyName>
+    <AssemblyName>Serilog.Sinks.MSSqlServer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -39,7 +39,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Debug\Serilog.Sinks.MSSQL.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Serilog.Sinks.MSSqlServer.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,7 +50,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\Serilog.Sinks.MSSQL.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Serilog.Sinks.MSSqlServer.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -78,10 +78,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoggerConfigurationMSSQLExtensions.cs" />
+    <Compile Include="LoggerConfigurationMSSqlServerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sinks\MSSQL\MSSQLSink.cs" />
-    <Compile Include="Sinks\MSSQL\XmlPropertyFormatter.cs" />
+    <Compile Include="Sinks\MSSqlServer\MSSqlServerSink.cs" />
+    <Compile Include="Sinks\MSSqlServer\XmlPropertyFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
@@ -90,7 +90,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Serilog.Sinks.MSSQL.nuspec" />
+    <None Include="Serilog.Sinks.MSSqlServer.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

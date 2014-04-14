@@ -23,7 +23,7 @@ namespace MSSQLSample
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
                 .MinimumLevel.Debug()
-                .WriteTo.MSSQL(@"Server=.\SQLEXPRESS;Database=LogEvents;Trusted_Connection=True;", "Logs")
+                .WriteTo.MSSqlServer(@"Server=.\SQLEXPRESS;Database=LogEvents;Trusted_Connection=True;", "Logs")
                 .CreateLogger();
 
             Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");
