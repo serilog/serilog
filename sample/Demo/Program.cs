@@ -15,21 +15,12 @@ namespace Demo
     {
         static void Main()
         {
-            // To append to Couch or Mongo use-
-            //   .WriteTo.CouchDB("http://localhost:5984/log/")
-            //   .WriteTo.MongoDB("mongodb://localhost/logdb")
-
-			// To append to the Windows event log use-
-			//   .WriteTo.EventLog("Demo", "Serilog")
-			//     where 'Demo' is the name of the source, as it appears in the event log, and 'Serilog' is the name of the event log written to- Appliction, by default.
-
             // ReadAppSettings() is an extension defined in the
             // Serilog.Extras.AppSettings package.
 
             Log.Logger = new LoggerConfiguration()
                 .ReadAppSettings()
                 .WriteTo.ColoredConsole()
-				.WriteTo.EventLog("Serilog Demo")
                 .CreateLogger();
 
             Log.Verbose("This app, {ExeName}, demonstrates the basics of using Serilog", "Demo.exe");
