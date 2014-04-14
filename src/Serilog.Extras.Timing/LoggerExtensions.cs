@@ -25,9 +25,9 @@ namespace Serilog
     public static class LoggerExtensions
     {
 
-        const string DefaultGaugeTemplate = "{GaugeName} is {GaugeValue}";
-        const string DefaultCountTemplate = "{CounterName} is {CounterValue}";
-        const string DefaultMeterTemplate = "{MeterName} marked to {CounterValue}, mean rate {MeanRate:l}";
+        const string DefaultGaugeTemplate = "{GaugeName} value = {GaugeValue} {GaugeUnit:l}";
+        const string DefaultCountTemplate = "{CounterName} count = {CounterValue} {CounterUnit:l}";
+        const string DefaultMeterTemplate = "{MeterName} count = {CounterValue}, mean rate {MeanRate:l}";
 
         /// <summary>
         /// Begins an operation by placing the code to be timed inside a using block. 
@@ -54,18 +54,21 @@ namespace Serilog
         }
 
         /// <summary>
-        /// 
+        /// Retrieves a value as defined by the operation. For example the number of items inside a queue.
+        /// Call the Write() method to actually read the value and write to log.
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="name"></param>
-        /// <param name="operation"></param>
-        /// <param name="level"></param>
-        /// <param name="template"></param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="name">The name of the counter, for example 'Page visits'.</param>
+        /// <param name="uom">The unit of measure, for example 'hits'.</param>
+        /// <param name="operation">The actual function to retrieve the value from.</param>
+        /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
+        /// <param name="template">A message template describing the format used to write to the log.</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static IGaugeMeasure GaugedOperation<T>(
+        public static IGaugeMeasure GaugeOperation<T>(
             this ILogger logger,
             string name,
+             string uom ,
             Func<T> operation,
             LogEventLevel level = LogEventLevel.Information,
             string template = DefaultGaugeTemplate)
@@ -74,31 +77,38 @@ namespace Serilog
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
 
+            if (string.IsNullOrEmpty(uom))
+                uom = "operations(s)";
+
             if (operation == null)
                 throw new ArgumentNullException("operation");
 
-            return new GaugedMeasure<T>(logger, name, operation, level, template);
+            return new GaugedMeasure<T>(logger, name, uom, operation, level, template);
         }
 
 
         /// <summary>
-        /// 
+        /// Creates a new counter which can be used to increment or decrement a long value. 
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="name"></param>
-        /// <param name="level"></param>
-        /// <param name="template"></param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="name">The name of the counter, for example 'Page visits'.</param>
+        /// <param name="uom">The unit of measure, for example 'hits'.</param>
+        /// <param name="directWrite">Indicates if a change in the counter needs to be written to the log directly. By default enabled. When disabled, you need to explicitly call the Write() method to output the current value.</param>
+        /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
+        /// <param name="template">A message template describing the format used to write to the log.</param>
         /// <returns></returns>
         public static ICounterMeasure CountOperation(
            this ILogger logger,
            string name,
+            string uom = "operation(s)",
+            bool directWrite = true,
            LogEventLevel level = LogEventLevel.Information,
            string template = DefaultCountTemplate)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
 
-            return new CounterMeasure(logger, name, level, template);
+            return new CounterMeasure(logger, name,uom, level, template, directWrite);
         }
 
         /// <summary>
@@ -115,7 +125,7 @@ namespace Serilog
         public static IMeterMeasure MeterOperation(
           this ILogger logger,
           string name,
-            string measuring = "operations",
+            string measuring = "operation(s)",
             TimeUnit rateUnit = TimeUnit.Seconds,
           LogEventLevel level = LogEventLevel.Information,
            string template = DefaultMeterTemplate)

@@ -15,13 +15,13 @@
 namespace Serilog.Extras.Timing
 {
     /// <summary>
-    /// 
+    /// Common Measure interface
     /// </summary>
-    public interface IMeterMeasure : IMeasure
+    public interface IMeasure
     {
         /// <summary>
-        /// Marks the occurrence of an operation.
+        /// Write the data to the log system.
         /// </summary>
-        void Mark(long n =1);
+        void Write();
     }
 }

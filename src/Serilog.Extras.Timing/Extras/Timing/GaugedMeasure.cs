@@ -21,24 +21,26 @@ namespace Serilog.Extras.Timing
     {
         private readonly ILogger _logger;
         private readonly string _name;
+        private readonly string _gauges;
         private readonly Func<T> _operation;
         private readonly LogEventLevel _level;
         private readonly string _template;
 
 
-        public GaugedMeasure(ILogger logger, string name, Func<T> operation, LogEventLevel level, string template)
+        public GaugedMeasure(ILogger logger, string name, string gauges, Func<T> operation, LogEventLevel level, string template)
         {
             _logger = logger;
             _name = name;
+            _gauges = gauges;
             _operation = operation;
             _level = level;
             _template = template;
         }
 
-        public void Measure()
+        public void Write()
         {
             var value = _operation.Invoke();
-            _logger.Write(_level, _template, _name, value);
+            _logger.Write(_level, _template, _name, value, _gauges);
         }
 
     }

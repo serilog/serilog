@@ -17,7 +17,7 @@ namespace Serilog.Extras.Timing
     /// <summary>
     /// 
     /// </summary>
-    public interface ICounterMeasure
+    public interface ICounterMeasure  : IMeasure
     {
         /// <summary>
         /// Increments the counter

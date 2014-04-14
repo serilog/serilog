@@ -17,11 +17,8 @@ namespace Serilog.Extras.Timing
     /// <summary>
     /// Measures an operation.
     /// </summary>
-    public interface IGaugeMeasure
+    public interface IGaugeMeasure : IMeasure
     {
-        /// <summary>
-        /// Performs the measurement
-        /// </summary>
-        void Measure();
+        
     }
 }

@@ -16,16 +16,11 @@ namespace TimingSample
         {
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.ColoredConsole(
-                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
+                .WriteTo.ColoredConsole()
                 .WriteTo.Trace()
-                .Enrich.WithProperty("App", "Test Harness")
-                .Enrich.With(new ThreadIdEnricher(), new MachineNameEnricher())
                 .CreateLogger();
 
-            logger.Information("Just biting {Fruit} number {Count}", "Apple", 12);
-            logger.ForContext<Program>().Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
-
+   
             using (logger.BeginTimedOperation("Time a thread sleep for 2 seconds."))
             {
                 Thread.Sleep(1000);
@@ -53,20 +48,20 @@ namespace TimingSample
 
              // Gauge
             var queue = new Queue<int>();
-            var gauge = logger.GaugedOperation("queue", () => queue.Count());
+            var gauge = logger.GaugeOperation("queue", "item(s)", () => queue.Count());
 
-            gauge.Measure();
+            gauge.Write();
 
-            queue.Enqueue(2);
+            queue.Enqueue(20);
 
-            gauge.Measure();
+            gauge.Write();
 
             queue.Dequeue();
 
-            gauge.Measure();
+            gauge.Write();
 
             // Counter
-            var counter = logger.CountOperation("counter", LogEventLevel.Debug);
+            var counter = logger.CountOperation("counter", "operation(s)", true, LogEventLevel.Debug);
             counter.Increment();
             counter.Increment();
             counter.Increment();

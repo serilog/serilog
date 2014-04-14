@@ -21,38 +21,53 @@ namespace Serilog.Extras.Timing
     {
         private readonly ILogger _logger;
         private readonly string _name;
+        private readonly string _counts;
         private readonly LogEventLevel _level;
         private readonly string _template;
-        private static long _value = 0;
+        private readonly bool _directWrite;
+        private static AtomicLong _value;
 
-        public CounterMeasure(ILogger logger, string name, LogEventLevel level, string template)
+        public CounterMeasure(ILogger logger, string name, string counts, LogEventLevel level, string template, bool directWrite = false)
         {
             _logger = logger;
             _name = name;
+            _counts = counts;
             _level = level;
             _template = template;
+            _directWrite = directWrite;
+            _value = new AtomicLong();
         }
 
 
         public void Increment()
         {
-            var value = Interlocked.Increment(ref _value);
+            _value.Increment();
 
-            _logger.Write(_level, _template, _name, value);
+            if (_directWrite)
+                Write();
         }
 
         public void Decrement()
         {
-            var value = Interlocked.Decrement(ref _value);
+            _value.Decrement();
 
-            _logger.Write(_level, _template, _name, value);
+            if (_directWrite)
+                Write();
+
         }
 
         public void Reset()
         {
-            var value = Interlocked.Exchange(ref _value, 0);
+            _value.Set(0);
 
-            _logger.Write(_level, _template, _name, value);
+            if (_directWrite)
+                Write();
+        }
+
+        public void Write()
+        {
+            var value = _value.Get();
+            _logger.Write(_level, _template, _name, value, _counts);
         }
     }
 }

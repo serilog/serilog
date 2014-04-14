@@ -26,7 +26,7 @@ namespace Serilog.Extras.Timing
         private readonly string _measuring;
         private readonly LogEventLevel _level;
         private readonly string _template;
-        private static long _counter = 0;
+        private static AtomicLong _counter = new AtomicLong();
 
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
@@ -54,9 +54,9 @@ namespace Serilog.Extras.Timing
 
         public void Mark(long n = 1)
         {
-            var value = Interlocked.Add(ref _counter, n);
+            _counter.AddAndGet(n);
 
-           
+
         }
 
         private void Tick()
@@ -67,8 +67,12 @@ namespace Serilog.Extras.Timing
         public void Dispose()
         {
             _cancellationToken.Cancel();
+            Write();
+        }
 
-            var value = Interlocked.Read(ref _counter);
+        public void Write()
+        {
+            var value = _counter.Get();
 
             var meanRate = new Rate
             {
@@ -78,6 +82,7 @@ namespace Serilog.Extras.Timing
             };
 
             _logger.Write(_level, _template, _name, value, meanRate);
+            
         }
 
         static string Abbreviate(TimeUnit unit)
@@ -105,7 +110,7 @@ namespace Serilog.Extras.Timing
     }
 
     /// <summary>
-    /// 
+    ///   Describes the rate.
     /// </summary>
     public class Rate
     {
