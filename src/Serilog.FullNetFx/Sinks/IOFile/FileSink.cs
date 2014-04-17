@@ -49,7 +49,7 @@ namespace Serilog.Sinks.IOFile
 
             TryCreateDirectory(path);
 
-            var file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
+            var file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             var outputWriter = new StreamWriter(file, Encoding.UTF8);
             if (fileSizeLimitBytes != null)
             {
