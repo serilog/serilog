@@ -22,11 +22,10 @@ using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.RollingFile;
+using System.ComponentModel;
 
 namespace Serilog.Extras.AppSettings
 {
-    using System.ComponentModel;
-
     class PrefixedAppSettingsReader
     {
         const string UsingDirective = "serilog:using";
