@@ -17,7 +17,7 @@ using Serilog.Events;
 
 namespace Serilog.Extras.Timing
 {
-    sealed class GaugedMeasure<T> : IGaugeMeasure
+    sealed class GaugeMeasure<T> : IGaugeMeasure
     {
         private readonly ILogger _logger;
         private readonly string _name;
@@ -27,7 +27,7 @@ namespace Serilog.Extras.Timing
         private readonly string _template;
 
 
-        public GaugedMeasure(ILogger logger, string name, string gauges, Func<T> operation, LogEventLevel level, string template)
+        public GaugeMeasure(ILogger logger, string name, string gauges, Func<T> operation, LogEventLevel level, string template)
         {
             _logger = logger;
             _name = name;
@@ -40,6 +40,7 @@ namespace Serilog.Extras.Timing
         public void Write()
         {
             var value = _operation.Invoke();
+
             _logger.Write(_level, _template, _name, value, _gauges);
         }
 

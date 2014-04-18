@@ -19,34 +19,43 @@ namespace TimingSample
                 .WriteTo.ColoredConsole()
                 .WriteTo.Trace()
                 .CreateLogger();
+             
+            // Meter
+            var meter = logger.MeterOperation("meter");
+            meter.Mark();
 
-   
             using (logger.BeginTimedOperation("Time a thread sleep for 2 seconds."))
             {
                 Thread.Sleep(1000);
                 using (logger.BeginTimedOperation("And inside we try a Task.Delay for 2 seconds."))
                 {
+                    meter.Mark();
                     Task.Delay(2000).Wait();
                 }
+                meter.Mark();
                 Thread.Sleep(1000);
             }
+
+            meter.Mark();
 
             using (logger.BeginTimedOperation("Using a passed in identifier", "test-loop"))
             {
                 var a = "";
                 for (int i = 0; i < 1000; i++)
+
                 {
                     a += "b";
                 }
             }
 
             // Exceed a limit
-            using (logger.BeginTimedOperation("This should execute within 1 second.",null, LogEventLevel.Debug, TimeSpan.FromSeconds(1)))
+            using (logger.BeginTimedOperation("This should execute within 1 second.", null, LogEventLevel.Debug, TimeSpan.FromSeconds(1)))
             {
                 Thread.Sleep(1100);
+                meter.Mark();
             }
 
-             // Gauge
+            // Gauge
             var queue = new Queue<int>();
             var gauge = logger.GaugeOperation("queue", "item(s)", () => queue.Count());
 
@@ -58,6 +67,8 @@ namespace TimingSample
 
             queue.Dequeue();
 
+            meter.Mark();
+
             gauge.Write();
 
             // Counter
@@ -67,12 +78,27 @@ namespace TimingSample
             counter.Increment();
             counter.Decrement();
 
-            // Meter
-            var meter = logger.MeterOperation("meter");
-            meter.Mark();
+            meter.Write();
 
 
-            (meter as IDisposable).Dispose();
+            const int count = 100000;
+            var block = new ManualResetEvent(false);
+   
+            var j = 0;
+            ThreadPool.QueueUserWorkItem(s =>
+            {
+                while (j < count)
+                {
+                    meter.Mark();
+                    j++;
+                }
+                Thread.Sleep(5000); // Wait for at least one EWMA rate tick
+                block.Set();
+            });
+            block.WaitOne();
+
+            meter.Write();
+
             Console.ReadKey(true);
         }
     }

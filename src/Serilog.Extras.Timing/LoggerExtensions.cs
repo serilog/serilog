@@ -27,7 +27,7 @@ namespace Serilog
 
         const string DefaultGaugeTemplate = "{GaugeName} value = {GaugeValue} {GaugeUnit:l}";
         const string DefaultCountTemplate = "{CounterName} count = {CounterValue} {CounterUnit:l}";
-        const string DefaultMeterTemplate = "{MeterName} count = {CounterValue}, mean rate {MeanRate:l}";
+        const string DefaultMeterTemplate = "{MeterName} count = {CounterValue}, mean rate {MeanRate:l}, 1 minute rate {OneMinuteRate:l}, 5 minute rate {FiveMinuteRate:l}, 15 minute rate {FifteenMinuteRate:l}";
 
         /// <summary>
         /// Begins an operation by placing the code to be timed inside a using block. 
@@ -83,7 +83,7 @@ namespace Serilog
             if (operation == null)
                 throw new ArgumentNullException("operation");
 
-            return new GaugedMeasure<T>(logger, name, uom, operation, level, template);
+            return new GaugeMeasure<T>(logger, name, uom, operation, level, template);
         }
 
 

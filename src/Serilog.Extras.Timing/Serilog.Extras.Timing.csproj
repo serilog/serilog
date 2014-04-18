@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="Extras\Timing\AtomicLong.cs" />
     <Compile Include="Extras\Timing\CounterMeasure.cs" />
-    <Compile Include="Extras\Timing\GaugedMeasure.cs" />
+    <Compile Include="Extras\Timing\GaugeMeasure.cs" />
     <Compile Include="Extras\Timing\ICounterMeasure.cs" />
     <Compile Include="Extras\Timing\IGaugeMeasure.cs" />
     <Compile Include="Extras\Timing\IMeasure.cs" />
