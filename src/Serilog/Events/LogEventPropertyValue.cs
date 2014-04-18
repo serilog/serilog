@@ -28,9 +28,51 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="output">The output.</param>
         /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="alignment">A integer specifying the alignment applied to the value, or 0.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        public abstract void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null);
+        public void Render(TextWriter output, string format = null, Int32 alignment = 0, IFormatProvider formatProvider = null)
+        {
+            TextWriter valueOutput = new StringWriter();
+            RenderCore(valueOutput, format, formatProvider);
+            string value = valueOutput.ToString();
+
+            if (alignment != 0)
+            {
+                Boolean justifyLeft = alignment < 0;
+                alignment = Math.Abs(alignment);
+                int pad = alignment - value.Length;
+
+                if (pad > 0)
+                {
+                    if (!justifyLeft)
+                    {
+                        output.Write(new string(' ', pad));
+                    }
+
+                    output.Write(value);
+
+                    if (justifyLeft)
+                    {
+                        output.Write(new string(' ', pad));
+                    }
+                }
+                
+            }
+            else
+            {
+                output.Write(value);
+            }
+        }
+
+        /// <summary>
+        /// Render the value to the output.
+        /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        protected abstract void RenderCore(TextWriter output, string format, IFormatProvider formatProvider);
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -58,7 +100,7 @@ namespace Serilog.Events
         public string ToString(string format, IFormatProvider formatProvider)
         {
             var output = new StringWriter();
-            Render(output, format, formatProvider);
+            RenderCore(output, format, formatProvider);
             return output.ToString();
         }
     }

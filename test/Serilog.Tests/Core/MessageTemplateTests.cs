@@ -101,6 +101,13 @@ namespace Serilog.Tests.Core
         }
 
         [Test]
+        public void AlignmentStringsArePropagated()
+        {
+            var m = Render("Welcome, customer #{CustomerId,-10}, pleasure to see you", 12);
+            Assert.AreEqual("Welcome, customer #12        , pleasure to see you", m);
+        }
+
+        [Test]
         public void FormatProviderIsUsed()
         {
             var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Please pay {Sum}", 12.345);

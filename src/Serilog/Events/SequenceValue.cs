@@ -49,7 +49,7 @@ namespace Serilog.Events
         /// <param name="format">A format string applied to the value, or null.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        protected override void RenderCore(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException("output");
 
@@ -57,12 +57,12 @@ namespace Serilog.Events
             var allButLast = _elements.Length - 1;
             for (var i = 0; i < allButLast; ++i )
             {
-                _elements[i].Render(output, format, formatProvider);
+                _elements[i].Render(output, format, 0, formatProvider);
                 output.Write(", ");
             }
 
             if (_elements.Length > 0)
-                _elements[_elements.Length - 1].Render(output, format, formatProvider);
+                _elements[_elements.Length - 1].Render(output, format, 0, formatProvider);
 
             output.Write(']');
         }

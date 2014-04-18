@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -26,6 +27,11 @@ namespace Serilog.Parsing
     /// </summary>
     public class MessageTemplateParser : IMessageTemplateParser
     {
+        private static readonly Regex _parseRegex = new Regex(
+            @"^(?<PropertyName>[@$]?[a-zA-Z0-9]+)(\,(?<Alignment>-?[0-9]+))?(\:(?<Format>.+))?$",
+            RegexOptions.ExplicitCapture);
+
+
         /// <summary>
         /// Parse the supplied message template.
         /// </summary>
@@ -90,54 +96,55 @@ namespace Serilog.Parsing
                 !IsValidInPropertyTag(tagContent[0]))
                 return new TextToken(rawText);
 
-            string propertyNameAndDestructuring, format;
-            var formatDelim = tagContent.IndexOf(':');
-            if (formatDelim == -1)
+            var match = _parseRegex.Match(tagContent);
+            if (match.Success)
             {
-                propertyNameAndDestructuring = tagContent;
-                format = null;
+                var propertyNameMatch = match.Groups["PropertyName"];
+                var alignmentMatch = match.Groups["Alignment"];
+                var formatMatch = match.Groups["Format"];
+
+                string propertyNameAndDestructuring = propertyNameMatch.Value;
+
+                Int32 alignment = 0;
+                if (alignmentMatch.Success)
+                {
+                    alignment = Int32.Parse(alignmentMatch.Value);
+                }
+
+                string format = null;
+                if (formatMatch.Success)
+                {
+                    var formatValue = formatMatch.Value;
+                    foreach (char c in formatValue)
+                        if (!IsValidInFormat(c))
+                            return new TextToken(rawText);
+
+                    format = formatValue;
+                }
+
+                var propertyName = propertyNameAndDestructuring;
+                Destructuring destructuring;
+                if (TryGetDestructuringHint(propertyName[0], out destructuring))
+                    propertyName = propertyName.Substring(1);
+
+                return new PropertyToken(
+                    propertyName,
+                    rawText,
+                    format,
+                    alignment,
+                    destructuring);
             }
-            else
-            {
-                propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
-                format = formatDelim == tagContent.Length - 1 ?
-                    null :
-                    tagContent.Substring(formatDelim + 1);
-            }
 
-            var propertyName = propertyNameAndDestructuring;
-            Destructuring destructuring;
-            if (TryGetDestructuringHint(propertyName[0], out destructuring))
-                propertyName = propertyName.Substring(1);
-
-            if (propertyName == "" || !char.IsLetterOrDigit(propertyName[0]))
-                return new TextToken(rawText);
-
-            foreach (var c in propertyName)
-                if (!IsValidInPropertyName(c))
-                    return new TextToken(rawText);
-
-            if (format != null)
-            {
-                foreach (var c in format)
-                    if (!IsValidInFormat(c))
-                        return new TextToken(rawText);
-            }
-
-            return new PropertyToken(
-                propertyName,
-                rawText,
-                format,
-                destructuring);
+            return new TextToken(rawText);
         }
 
         private static bool IsValidInPropertyTag(char c)
         {
             return IsValidInDestructuringHint(c) ||
                 IsValidInPropertyName(c) ||
+                IsValidInAlignment(c) ||
                 IsValidInFormat(c) ||
                 c == ':';
-                
         }
 
         private static bool IsValidInPropertyName(char c)
@@ -171,6 +178,11 @@ namespace Serilog.Parsing
         {
             return c == '@' ||
                    c == '$';
+        }
+
+        private static bool IsValidInAlignment(char c)
+        {
+            return char.IsDigit(c) || c == '-';
         }
 
         private static bool IsValidInFormat(char c)
