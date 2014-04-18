@@ -53,6 +53,7 @@
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\Enrichers\LazyFixedPropertyEnricher.cs" />
     <Compile Include="Core\IScalarConversionPolicy.cs" />
+    <Compile Include="Core\Sinks\BufferedSink.cs" />
     <Compile Include="Core\Sinks\CopyingSink.cs" />
     <Compile Include="Core\Filters\DelegateFilter.cs" />
     <Compile Include="Core\Sinks\FilteringSink.cs" />

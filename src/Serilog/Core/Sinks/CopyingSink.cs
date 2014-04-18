@@ -47,4 +47,6 @@ namespace Serilog.Core.Sinks
             _copyToSink.Emit(copy);
         }
     }
+
+   
 }
