@@ -33,6 +33,8 @@ namespace Serilog
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
+        /// <param name="cappedCollectionMaxSizeBytes">When set to greater than zero, a capped collection with max size bytes is created (default is 100MB).</param> 
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration MongoDB(
@@ -41,14 +43,22 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = MongoDBSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            string collectionName = "log",
+            long cappedCollectionMaxSizeBytes = 100*(1024*1024))
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
 
             var defaultedPeriod = period ?? MongoDBSink.DefaultPeriod;
             return loggerConfiguration.Sink(
-                new MongoDBSink(databaseUrl, batchPostingLimit, defaultedPeriod, formatProvider),
+                new MongoDBSink(
+                    databaseUrl,
+                    batchPostingLimit,
+                    defaultedPeriod,
+                    formatProvider,
+                    collectionName,
+                    cappedCollectionMaxSizeBytes),
                 restrictedToMinimumLevel);
         }
     }

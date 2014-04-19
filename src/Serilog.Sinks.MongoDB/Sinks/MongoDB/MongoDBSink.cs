@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
@@ -28,6 +29,8 @@ namespace Serilog.Sinks.MongoDB
     /// </summary>
     public class MongoDBSink : PeriodicBatchingSink
     {
+        readonly string _collectionName;
+        readonly long _cappedCollectionMaxSizeBytes;
         readonly IFormatProvider _formatProvider;
         readonly MongoUrl _mongoUrl;
 
@@ -49,10 +52,15 @@ namespace Serilog.Sinks.MongoDB
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
+        /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
+        /// <param name="cappedCollectionMaxSizeBytes">When set to greater than zero, a capped collection with max size bytes is created.</param>
+        public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, long cappedCollectionMaxSizeBytes)
             : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+
+            _collectionName = collectionName;
+            _cappedCollectionMaxSizeBytes = cappedCollectionMaxSizeBytes;
             _formatProvider = formatProvider;
             _mongoUrl = new MongoUrl(databaseUrl);
         }
@@ -62,7 +70,26 @@ namespace Serilog.Sinks.MongoDB
             var mongoClient = new MongoClient(_mongoUrl);
             var server = mongoClient.GetServer();
             var logDb = server.GetDatabase(_mongoUrl.DatabaseName);
-            return logDb.GetCollection("log");
+
+            if (!logDb.CollectionExists(_collectionName))
+            {
+                CreateCollection(logDb);
+            }
+
+            return logDb.GetCollection(_collectionName);
+        }
+
+        /// <summary>
+        /// Creates the MongoDatabase Collection.
+        /// </summary>
+        /// <param name="logDb"></param>
+        protected void CreateCollection(MongoDatabase logDb)
+        {
+            var options = CollectionOptions
+                .SetCapped(_cappedCollectionMaxSizeBytes > 0)
+                .SetMaxSize(_cappedCollectionMaxSizeBytes);
+
+            logDb.CreateCollection(_collectionName, options);
         }
 
         /// <summary>
