@@ -30,7 +30,7 @@ namespace Serilog.Sinks.MongoDB
     public class MongoDBSink : PeriodicBatchingSink
     {
         readonly string _collectionName;
-        private readonly IMongoCollectionOptions _collectionCreationOptions;
+        readonly IMongoCollectionOptions _collectionCreationOptions;
         readonly IFormatProvider _formatProvider;
         readonly MongoUrl _mongoUrl;
 
