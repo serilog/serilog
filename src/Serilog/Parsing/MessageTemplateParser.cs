@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -27,11 +26,6 @@ namespace Serilog.Parsing
     /// </summary>
     public class MessageTemplateParser : IMessageTemplateParser
     {
-        private static readonly Regex _parseRegex = new Regex(
-            @"^(?<PropertyName>[@$]?[a-zA-Z0-9]+)(\,(?<Alignment>-?[0-9]+))?(\:(?<Format>.+))?$",
-            RegexOptions.ExplicitCapture);
-
-
         /// <summary>
         /// Parse the supplied message template.
         /// </summary>
@@ -42,7 +36,8 @@ namespace Serilog.Parsing
         /// presence of parsing issues.</returns>
         public MessageTemplate Parse(string messageTemplate)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
+            if (messageTemplate == null)
+                throw new ArgumentNullException("messageTemplate");
             return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
         }
 
@@ -66,7 +61,7 @@ namespace Serilog.Parsing
                     yield break;
 
                 var beforeProp = nextIndex;
-                var pt =  ParsePropertyToken(nextIndex, messageTemplate, out nextIndex);
+                var pt = ParsePropertyToken(nextIndex, messageTemplate, out nextIndex);
                 if (beforeProp < nextIndex)
                     yield return pt;
 
@@ -87,7 +82,7 @@ namespace Serilog.Parsing
                 next = startAt;
                 return new TextToken(messageTemplate.Substring(first, next - first));
             }
-            
+
             next = startAt + 1;
 
             var rawText = messageTemplate.Substring(first, next - first);
@@ -96,53 +91,106 @@ namespace Serilog.Parsing
                 !IsValidInPropertyTag(tagContent[0]))
                 return new TextToken(rawText);
 
-            var match = _parseRegex.Match(tagContent);
-            if (match.Success)
+            string propertyNameAndDestructuring, format, alignment;
+
+            var formatDelim = tagContent.IndexOf(':');
+            var alignmentDelim = tagContent.IndexOf(",");
+            if (formatDelim == -1 && alignmentDelim == -1)
             {
-                var propertyNameMatch = match.Groups["PropertyName"];
-                var alignmentMatch = match.Groups["Alignment"];
-                var formatMatch = match.Groups["Format"];
-
-                string propertyNameAndDestructuring = propertyNameMatch.Value;
-
-                Int32 alignment = 0;
-                if (alignmentMatch.Success)
+                propertyNameAndDestructuring = tagContent;
+                format = null;
+                alignment = null;
+            }
+            else
+            {
+                if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
                 {
-                    alignment = Int32.Parse(alignmentMatch.Value);
+                    propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
+                    format = formatDelim == tagContent.Length - 1 ?
+                        null :
+                        tagContent.Substring(formatDelim + 1);
+                    alignment = null;
                 }
-
-                string format = null;
-                if (formatMatch.Success)
+                else
                 {
-                    var formatValue = formatMatch.Value;
-                    foreach (char c in formatValue)
-                        if (!IsValidInFormat(c))
+                    propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
+                    if (formatDelim == -1)
+                    {   
+                        if (alignmentDelim == tagContent.Length - 1)
                             return new TextToken(rawText);
 
-                    format = formatValue;
+                        format = null;
+                        alignment = tagContent.Substring(alignmentDelim + 1);
+                    }
+                    else
+                    {
+                        if (alignmentDelim == formatDelim - 1)
+                            return new TextToken(rawText);
+
+                        alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
+                        format = formatDelim == tagContent.Length - 1 ?
+                            null :
+                            tagContent.Substring(formatDelim + 1);
+                    }
                 }
-
-                var propertyName = propertyNameAndDestructuring;
-                Destructuring destructuring;
-                if (TryGetDestructuringHint(propertyName[0], out destructuring))
-                    propertyName = propertyName.Substring(1);
-
-                return new PropertyToken(
-                    propertyName,
-                    rawText,
-                    format,
-                    alignment,
-                    destructuring);
             }
 
-            return new TextToken(rawText);
+            var propertyName = propertyNameAndDestructuring;
+            Destructuring destructuring;
+            if (TryGetDestructuringHint(propertyName[0], out destructuring))
+                propertyName = propertyName.Substring(1);
+
+            if (propertyName == "" || !char.IsLetterOrDigit(propertyName[0]))
+                return new TextToken(rawText);
+
+            foreach (var c in propertyName)
+                if (!IsValidInPropertyName(c))
+                    return new TextToken(rawText);
+
+            if (format != null)
+            {
+                foreach (var c in format)
+                    if (!IsValidInFormat(c))
+                        return new TextToken(rawText);
+            }
+
+            Alignment? alignmentValue = null;
+            if (alignment != null)
+            {
+                foreach (var c in alignment)
+                    if (!IsValidInAlignment(c))
+                        return new TextToken(rawText);
+
+                var lastDash = alignment.LastIndexOf('-');
+                if (lastDash > 0)
+                    return new TextToken(rawText);
+
+                var width = lastDash == -1 ?
+                    int.Parse(alignment) :
+                    int.Parse(alignment.Substring(1));
+
+                if (width == 0)
+                    return new TextToken(rawText);
+
+                var direction = lastDash == -1 ?
+                    AlignmentDirection.Right :
+                    AlignmentDirection.Left;
+
+                alignmentValue = new Alignment(direction, width);
+            }
+
+            return new PropertyToken(
+                propertyName,
+                rawText,
+                format,
+                alignmentValue,
+                destructuring);
         }
 
         private static bool IsValidInPropertyTag(char c)
         {
             return IsValidInDestructuringHint(c) ||
                 IsValidInPropertyName(c) ||
-                IsValidInAlignment(c) ||
                 IsValidInFormat(c) ||
                 c == ':';
         }
@@ -157,20 +205,20 @@ namespace Serilog.Parsing
             switch (c)
             {
                 case '@':
-                {
-                    destructuring = Destructuring.Destructure;
-                    return true;
-                }
+                    {
+                        destructuring = Destructuring.Destructure;
+                        return true;
+                    }
                 case '$':
-                {
-                    destructuring = Destructuring.Stringify;
-                    return true;
-                }
+                    {
+                        destructuring = Destructuring.Stringify;
+                        return true;
+                    }
                 default:
-                {
-                    destructuring = Destructuring.Default;
-                    return false;
-                }
+                    {
+                        destructuring = Destructuring.Default;
+                        return false;
+                    }
             }
         }
 
@@ -182,7 +230,8 @@ namespace Serilog.Parsing
 
         private static bool IsValidInAlignment(char c)
         {
-            return char.IsDigit(c) || c == '-';
+            return char.IsDigit(c) ||
+                   c == '-';
         }
 
         private static bool IsValidInFormat(char c)

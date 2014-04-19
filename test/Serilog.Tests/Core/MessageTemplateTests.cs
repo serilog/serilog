@@ -100,11 +100,13 @@ namespace Serilog.Tests.Core
             Assert.AreEqual("Welcome, customer 0012", m);
         }
 
-        [Test]
-        public void AlignmentStringsArePropagated()
+        [TestCase("Welcome, customer #{CustomerId,-10}, pleasure to see you", ExpectedResult = "Welcome, customer #12        , pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,-10:0000}, pleasure to see you", ExpectedResult = "Welcome, customer #0012      , pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,10}, pleasure to see you", ExpectedResult = "Welcome, customer #        12, pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,10:0000}, pleasure to see you", ExpectedResult = "Welcome, customer #      0012, pleasure to see you")]
+        public string AlignmentStringsArePropagated(string value)
         {
-            var m = Render("Welcome, customer #{CustomerId,-10}, pleasure to see you", 12);
-            Assert.AreEqual("Welcome, customer #12        , pleasure to see you", m);
+            return Render(value, 12);
         }
 
         [Test]
