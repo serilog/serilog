@@ -30,7 +30,7 @@ namespace Serilog.Sinks.MongoDB
     public class MongoDBSink : PeriodicBatchingSink
     {
         readonly string _collectionName;
-        readonly long _cappedCollectionMaxSizeBytes;
+        private readonly IMongoCollectionOptions _collectionCreationOptions;
         readonly IFormatProvider _formatProvider;
         readonly MongoUrl _mongoUrl;
 
@@ -46,6 +46,11 @@ namespace Serilog.Sinks.MongoDB
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
         /// <summary>
+        /// The default name for the log collection.
+        /// </summary>
+        public static readonly string DefaultCollectionName = "log";
+
+        /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
@@ -53,43 +58,39 @@ namespace Serilog.Sinks.MongoDB
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
-        /// <param name="cappedCollectionMaxSizeBytes">When set to greater than zero, a capped collection with max size bytes is created.</param>
-        public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, long cappedCollectionMaxSizeBytes)
+        /// <param name="collectionCreationOptions">Collection Creation Options for the log collection creation.</param>
+        public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, IMongoCollectionOptions collectionCreationOptions)
             : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
 
             _collectionName = collectionName;
-            _cappedCollectionMaxSizeBytes = cappedCollectionMaxSizeBytes;
+            _collectionCreationOptions = collectionCreationOptions;
             _formatProvider = formatProvider;
             _mongoUrl = new MongoUrl(databaseUrl);
         }
 
-        MongoCollection<BsonDocument> GetLogCollection()
+        private MongoCollection<BsonDocument> GetLogCollection()
         {
             var mongoClient = new MongoClient(_mongoUrl);
             var server = mongoClient.GetServer();
             var logDb = server.GetDatabase(_mongoUrl.DatabaseName);
 
-            if (!logDb.CollectionExists(_collectionName))
-            {
-                CreateCollection(logDb);
-            }
+            VerifyCollection(logDb);
 
             return logDb.GetCollection(_collectionName);
         }
 
         /// <summary>
-        /// Creates the MongoDatabase Collection.
+        /// Verifies the the MongoDatabase collection exists or creates it if it doesn't.
         /// </summary>
         /// <param name="logDb"></param>
-        protected void CreateCollection(MongoDatabase logDb)
+        protected void VerifyCollection(MongoDatabase logDb)
         {
-            var options = CollectionOptions
-                .SetCapped(_cappedCollectionMaxSizeBytes > 0)
-                .SetMaxSize(_cappedCollectionMaxSizeBytes);
-
-            logDb.CreateCollection(_collectionName, options);
+            if (!logDb.CollectionExists(_collectionName))
+            {
+                logDb.CreateCollection(_collectionName, _collectionCreationOptions);
+            }
         }
 
         /// <summary>
