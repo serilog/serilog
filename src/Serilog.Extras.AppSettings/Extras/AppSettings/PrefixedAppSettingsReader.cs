@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.RollingFile;
+using System.ComponentModel;
 
 namespace Serilog.Extras.AppSettings
 {
@@ -92,7 +93,7 @@ namespace Serilog.Extras.AppSettings
 
                         var call = (from p in target.GetParameters().Skip(1)
                                    let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
-                                   select directive == null ? p.DefaultValue : Convert.ChangeType(directive.Value, p.ParameterType)).ToList();
+                                   select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
 
                         call.Insert(0, config);
 
@@ -100,6 +101,28 @@ namespace Serilog.Extras.AppSettings
                     }
                 }
             }
+        }
+
+        static object ConvertToType(string value, Type toType)
+        {
+            if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                // unwrap Nullable<> type since we're not handling null situations
+                toType = (new NullableConverter(toType)).UnderlyingType;
+            }
+
+            var extendedTypeConversions = new Dictionary<Type, Func<string, object>>
+            {
+                { typeof(Uri), s => new Uri(s) },
+                { typeof(TimeSpan), s => TimeSpan.Parse(s) }
+            };
+
+            var convertor = extendedTypeConversions
+                .Where(t => t.Key.IsAssignableFrom(toType))
+                .Select(t => t.Value)
+                .FirstOrDefault();
+
+            return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
         }
 
         static IList<MethodInfo> FindExtensionMethods(Dictionary<string, string> directives)
