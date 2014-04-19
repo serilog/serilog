@@ -70,7 +70,7 @@ namespace Serilog.Sinks.MongoDB
             _mongoUrl = new MongoUrl(databaseUrl);
         }
 
-        private MongoCollection<BsonDocument> GetLogCollection()
+        MongoCollection<BsonDocument> GetLogCollection()
         {
             var mongoClient = new MongoClient(_mongoUrl);
             var server = mongoClient.GetServer();
