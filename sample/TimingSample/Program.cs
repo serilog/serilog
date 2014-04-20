@@ -14,6 +14,54 @@ namespace TimingSample
     {
         private static void Main()
         {
+            Console.WriteLine("Press A for threshold sample, B for timers sample");
+            var key = Console.ReadKey(true);
+            switch (key.Key)
+            {
+                case ConsoleKey.A:
+
+                    ThresholdSample();
+                    break;
+
+                case ConsoleKey.B:
+
+                    TimersSample();
+                    break;
+
+            }
+        }
+
+        private static void ThresholdSample()
+        {
+            var logger = new LoggerConfiguration()
+              .MinimumLevel.Debug()
+              .WriteTo.ThresholdLogger(
+                  bufferSize:3, 
+                  threshHoldLevel:LogEventLevel.Error,
+                  restrictedToMinimumLevel: LogEventLevel.Debug,
+                  configureLogger: lc => lc
+                      .WriteTo            
+                      .ColoredConsole(LogEventLevel.Information, outputTemplate:"ColoredConsole sink: {Message:l}{NewLine:l}"))
+              .WriteTo.Console()
+              .Enrich.With(new ThreadIdEnricher(), new MachineNameEnricher())
+              .CreateLogger();
+
+            logger.Information("Starting logging system");
+            logger.Information("Another message for the logs");
+            logger.Information("We keep logging information events");
+            logger.Information("The console logger will display them");
+            logger.Information("When we generate an error, the ColoredConsole will receive the last 3 events, but can filter those based on level and filters.");
+            logger.Debug("This is a debug message, the colored console will not show this one as it will only display Information and up.");
+           
+            logger.Error("This is the error, you should see this one in both the console and in the colored console and the colored console should also list the previous events.");
+
+            Console.ReadKey(true);
+
+        }
+
+   
+        private static void TimersSample()
+        {
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.ColoredConsole(

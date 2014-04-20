@@ -11,7 +11,6 @@ namespace Harness
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.ThresholdLogger(3, LogEventLevel.Error, lc=>lc.WriteTo.ColoredConsole(LogEventLevel.Information))
                 .WriteTo.Console(
                     outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
                 .WriteTo.Trace()

@@ -13,17 +13,18 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
+using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Core.Sinks
+namespace Serilog.Extras.Sinks
 {
-    class QueueMaxSize<T> : Queue<T>
+    class ConcurrentQueueMaxSize<T> : ConcurrentQueue<T>
     {
         public int Size { get; private set; }
 
-        public QueueMaxSize(int size)
+        public ConcurrentQueueMaxSize(int size)
         {
             Size = size;
         }
@@ -35,7 +36,8 @@ namespace Serilog.Core.Sinks
             {
                 while (base.Count > Size)
                 {
-                    T outObj = base.Dequeue();
+                    T outObj = default(T);
+                    base.TryDequeue(out outObj);
                 }
             }
         }
@@ -46,7 +48,7 @@ namespace Serilog.Core.Sinks
         private readonly LogEventLevel _threshHoldLevel;
         private readonly ILogEventSink _copyToSink;
 
-        readonly QueueMaxSize<LogEvent> _queue;
+        readonly ConcurrentQueueMaxSize<LogEvent> _queue;
 
         public BufferedSink(int bufferSize, LogEventLevel threshHoldLevel, ILogEventSink copyToSink)
         {
@@ -54,7 +56,7 @@ namespace Serilog.Core.Sinks
 
             _threshHoldLevel = threshHoldLevel;
             _copyToSink = copyToSink;
-            _queue = new QueueMaxSize<LogEvent>(bufferSize);
+            _queue = new ConcurrentQueueMaxSize<LogEvent>(bufferSize);
         }
 
         public void Emit(LogEvent logEvent)
@@ -66,7 +68,6 @@ namespace Serilog.Core.Sinks
                 var items = _queue.ToList();
                 foreach (var item in items)
                 {
-
                     var copy = new LogEvent(
                         item.Timestamp,
                         item.Level,
@@ -76,7 +77,6 @@ namespace Serilog.Core.Sinks
 
                     _copyToSink.Emit(copy);
                 }
-              
             }
         }
 
