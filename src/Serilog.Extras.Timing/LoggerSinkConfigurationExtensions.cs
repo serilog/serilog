@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
