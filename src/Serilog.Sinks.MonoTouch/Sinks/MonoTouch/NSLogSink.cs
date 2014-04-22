@@ -22,7 +22,7 @@ namespace Serilog.Sinks.MonoTouch
 			if (logEvent == null) throw new ArgumentNullException("logEvent");
 			var renderSpace = new StringWriter();
 			_textFormatter.Format(logEvent, renderSpace);
-			Console.Out.Write(renderSpace.ToString());
+			Console.WriteLine (renderSpace.ToString ());
 		}
 	}
 }

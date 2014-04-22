@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog-MonoTouch", "Serilog-MonoTouch.csproj", "{7E96D14B-2224-4EB9-B26B-6306D225024F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog-MonoTouch", "src\Serilog\Serilog-MonoTouch.csproj", "{7E96D14B-2224-4EB9-B26B-6306D225024F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MonoTouch", "src\Serilog.Sinks.MonoTouch\Serilog.Sinks.MonoTouch.csproj", "{7E96D14B-2224-4EB9-B26B-6306D225024F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,11 +12,15 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7E96D14B-2224-4EB9-B26B-6306D225024F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Serilog-MonoTouch.csproj
+		StartupItem = src\Serilog\Serilog-MonoTouch.csproj
 	EndGlobalSection
 EndGlobal

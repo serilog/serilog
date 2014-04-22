@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7E96D14B-2224-4EB9-B26B-6306D225024F}</ProjectGuid>
@@ -36,12 +36,7 @@
   <ItemGroup>
     <Compile Include="Sinks\MonoTouch\NSLogSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Serilog\Serilog.csproj">
-      <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
-      <Name>Serilog</Name>
-    </ProjectReference>
+    <Compile Include="LoggerConfigurationMonoTouchExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -50,4 +45,10 @@
     <Reference Include="monotouch" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Serilog\Serilog-MonoTouch.csproj">
+      <Project>{7E96D14B-2224-4EB9-B26B-6306D225024F}</Project>
+      <Name>Serilog-MonoTouch</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
