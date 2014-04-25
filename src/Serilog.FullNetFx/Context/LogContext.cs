@@ -48,7 +48,7 @@ namespace Serilog.Context
         static readonly string DataSlotName = typeof(LogContext).FullName;
 
         /// <summary>
-        /// Push a property onto the context, returning an <see cref="InitialContextStackDisposible"/>
+        /// Push a property onto the context, returning an <see cref="ContextStackBookmark"/>
         /// that can later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
@@ -60,7 +60,7 @@ namespace Serilog.Context
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
-        public static InitialContextStackDisposible PushProperty(string name, object value, bool destructureObjects = false)
+        public static ContextStackBookmark PushProperty(string name, object value, bool destructureObjects = false)
         {
             var enrichers = Enrichers;
             if (enrichers == null)
@@ -71,7 +71,7 @@ namespace Serilog.Context
 
             var bookmark = new ContextStackBookmark(enrichers);
             Enrichers = enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
-            return new InitialContextStackDisposible(bookmark);
+            return bookmark;
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Serilog.Context
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
-        public static InitialContextStackDisposible PushProperty(this InitialContextStackDisposible context, string name, object value, bool destructureObjects = false)
+        public static ContextStackBookmark PushProperty(this ContextStackBookmark context, string name, object value, bool destructureObjects = false)
         {
             // Enricher will never be null since the initial PushProperty call has already been made.
             Enrichers = Enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
@@ -114,40 +114,26 @@ namespace Serilog.Context
             }
         }
 
-        sealed class ContextStackBookmark : IDisposable
+        /// <summary>
+        /// Bookmarks the initial stack location so when dispose is called, the stack 
+        /// location is set back to that bookmark "unrolling" the stack.
+        /// </summary>
+        public class ContextStackBookmark : IDisposable
         {
             readonly ImmutableStack<ILogEventEnricher> _bookmark;
 
-            public ContextStackBookmark(ImmutableStack<ILogEventEnricher> bookmark)
+            internal ContextStackBookmark(ImmutableStack<ILogEventEnricher> bookmark)
             {
                 _bookmark = bookmark;
             }
 
+            /// <summary>
+            /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            /// </summary>
+            /// <filterpriority>2</filterpriority>
             public void Dispose()
             {
                 Enrichers = _bookmark;
-            }
-        }
-
-        /// <summary>
-        /// Bookmarks the initial property stack so additional push properties can be chained fluently 
-        /// in one statement.
-        /// </summary>
-        public class InitialContextStackDisposible : IDisposable
-        {
-            readonly IDisposable _initialBookmark;
-
-            internal InitialContextStackDisposible(IDisposable initialBookmark)
-            {
-                _initialBookmark = initialBookmark;
-            }
-
-            /// <summary>
-            /// Sets the stack back to the initial bookmark on dispose.
-            /// </summary>
-            public void Dispose()
-            {
-                _initialBookmark.Dispose();
             }
         }
     }
