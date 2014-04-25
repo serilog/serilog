@@ -48,7 +48,7 @@ namespace Serilog.Context
         static readonly string DataSlotName = typeof(LogContext).FullName;
 
         /// <summary>
-        /// Push a property onto the context, returning an <see cref="IDisposable"/>
+        /// Push a property onto the context, returning an <see cref="InitialContextStackDisposible"/>
         /// that can later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
@@ -60,7 +60,7 @@ namespace Serilog.Context
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
-        public static IDisposable PushProperty(string name, object value, bool destructureObjects = false)
+        public static InitialContextStackDisposible PushProperty(string name, object value, bool destructureObjects = false)
         {
             var enrichers = Enrichers;
             if (enrichers == null)
@@ -71,7 +71,29 @@ namespace Serilog.Context
 
             var bookmark = new ContextStackBookmark(enrichers);
             Enrichers = enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
-            return bookmark;
+            return new InitialContextStackDisposible(bookmark);
+        }
+
+        /// <summary>
+        /// Push a property onto the context, returning an <see cref="IDisposable"/>
+        /// that can later be used to remove the property, along with any others that
+        /// may have been pushed on top of it and not yet popped. The property must
+        /// be popped from the same thread/logical call context.
+        /// </summary>
+        /// <param name="context">LogContext Aware Disposable</param>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        /// <returns>A handle to later remove the property from the context.</returns>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be converted to a structure; otherwise, unknown types will
+        /// be converted to scalars, which are generally stored as strings.</param>
+        /// <returns></returns>
+        public static InitialContextStackDisposible PushProperty(this InitialContextStackDisposible context, string name, object value, bool destructureObjects = false)
+        {
+            // Enricher will never be null since the initial PushProperty call has already been made.
+            Enrichers = Enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
+
+            return context;
         }
 
         static ImmutableStack<ILogEventEnricher> Enrichers
@@ -104,6 +126,28 @@ namespace Serilog.Context
             public void Dispose()
             {
                 Enrichers = _bookmark;
+            }
+        }
+
+        /// <summary>
+        /// Bookmarks the initial property stack so additional push properties can be chained fluently 
+        /// in one statement.
+        /// </summary>
+        public class InitialContextStackDisposible : IDisposable
+        {
+            readonly IDisposable _initialBookmark;
+
+            internal InitialContextStackDisposible(IDisposable initialBookmark)
+            {
+                _initialBookmark = initialBookmark;
+            }
+
+            /// <summary>
+            /// Sets the stack back to the initial bookmark on dispose.
+            /// </summary>
+            public void Dispose()
+            {
+                _initialBookmark.Dispose();
             }
         }
     }

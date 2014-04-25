@@ -42,6 +42,39 @@ namespace Serilog.Tests.Context
         }
 
         [Test]
+        public void MultipleNestedPropertiesOverrideLessNestedOnes()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.PushProperty("A1", 1).PushProperty("A2", 2))
+            {
+                log.Write(Some.InformationEvent());
+                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+
+                using (LogContext.PushProperty("A1", 10).PushProperty("A2", 20))
+                {
+                    log.Write(Some.InformationEvent());
+                    Assert.AreEqual(10, lastEvent.Properties["A1"].LiteralValue());
+                    Assert.AreEqual(20, lastEvent.Properties["A2"].LiteralValue());
+                }
+
+                log.Write(Some.InformationEvent());
+                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+            }
+
+            log.Write(Some.InformationEvent());
+            Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
+            Assert.IsFalse(lastEvent.Properties.ContainsKey("A2"));
+        }
+
+        [Test]
         public async Task ContextPropertiesCrossAsyncCalls()
         {
             LogEvent lastEvent = null;
