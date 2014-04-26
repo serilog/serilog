@@ -104,16 +104,18 @@ namespace Serilog.Sinks.MongoDB
             var payload = new StringWriter();
             payload.Write("{\"d\":[");
 
-            var formatter = new JsonFormatter(true);
+            var formatter = new JsonFormatter(
+                omitEnclosingObject: true,
+                renderMessage: true,
+                formatProvider: _formatProvider);
+
             var delimStart = "{";
             foreach (var logEvent in events)
             {
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                var renderedMessage = logEvent.RenderMessage(_formatProvider);
-                payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-                              logEvent.Timestamp.ToUniversalTime().DateTime,
-                              JsonFormatter.Escape(renderedMessage));
+                payload.Write(",\"UtcTimestamp\":\"{0:u}\"}}",
+                              logEvent.Timestamp.ToUniversalTime().DateTime);
                 delimStart = ",{";
             }
 
