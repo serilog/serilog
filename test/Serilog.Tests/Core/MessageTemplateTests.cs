@@ -100,13 +100,15 @@ namespace Serilog.Tests.Core
             Assert.AreEqual("Welcome, customer 0012", m);
         }
 
-        [TestCase("Welcome, customer #{CustomerId,-10}, pleasure to see you", ExpectedResult = "Welcome, customer #12        , pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,-10:0000}, pleasure to see you", ExpectedResult = "Welcome, customer #0012      , pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,10}, pleasure to see you", ExpectedResult = "Welcome, customer #        12, pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,10:0000}, pleasure to see you", ExpectedResult = "Welcome, customer #      0012, pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,-10}, pleasure to see you", ExpectedResult = "Welcome, customer #1234      , pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,-10:000000}, pleasure to see you", ExpectedResult = "Welcome, customer #001234    , pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,10}, pleasure to see you", ExpectedResult = "Welcome, customer #      1234, pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,10:000000}, pleasure to see you", ExpectedResult = "Welcome, customer #    001234, pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId,10:0,0}, pleasure to see you", ExpectedResult = "Welcome, customer #     1,234, pleasure to see you")]
+        [TestCase("Welcome, customer #{CustomerId:0,0}, pleasure to see you", ExpectedResult = "Welcome, customer #1,234, pleasure to see you")]
         public string AlignmentStringsArePropagated(string value)
         {
-            return Render(value, 12);
+            return Render(value, 1234);
         }
 
         [Test]

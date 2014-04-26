@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace Serilog.Parsing
 {
     /// <summary>
@@ -44,20 +42,5 @@ namespace Serilog.Parsing
         /// The width of the text.
         /// </summary>
         public int Width { get { return _width; } }
-    }
-
-    /// <summary>
-    /// Defines the direction of the alignment.
-    /// </summary>
-    public enum AlignmentDirection
-    {
-        /// <summary>
-        /// Text will be left-aligned.
-        /// </summary>
-        Left,
-        /// <summary>
-        /// Text will be right-aligned.
-        /// </summary>
-        Right
     }
 }

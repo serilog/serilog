@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using Serilog.Events;
@@ -37,7 +38,7 @@ namespace Serilog.Formatting.Json
         /// Construct a <see cref="JsonFormatter"/>. Obsolete, please use named arguments
         /// when calling this constructor.
         /// </summary>
-        [Obsolete("Use named arguments with this method to guarantee forwards-compatibility.")]
+        [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
         public JsonFormatter(bool omitEnclosingObjectObsolete)
             : this(omitEnclosingObject: omitEnclosingObjectObsolete)
         {

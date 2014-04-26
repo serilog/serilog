@@ -92,48 +92,8 @@ namespace Serilog.Parsing
                 return new TextToken(rawText);
 
             string propertyNameAndDestructuring, format, alignment;
-
-            var formatDelim = tagContent.IndexOf(':');
-            var alignmentDelim = tagContent.IndexOf(",");
-            if (formatDelim == -1 && alignmentDelim == -1)
-            {
-                propertyNameAndDestructuring = tagContent;
-                format = null;
-                alignment = null;
-            }
-            else
-            {
-                if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
-                {
-                    propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
-                    format = formatDelim == tagContent.Length - 1 ?
-                        null :
-                        tagContent.Substring(formatDelim + 1);
-                    alignment = null;
-                }
-                else
-                {
-                    propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
-                    if (formatDelim == -1)
-                    {   
-                        if (alignmentDelim == tagContent.Length - 1)
-                            return new TextToken(rawText);
-
-                        format = null;
-                        alignment = tagContent.Substring(alignmentDelim + 1);
-                    }
-                    else
-                    {
-                        if (alignmentDelim == formatDelim - 1)
-                            return new TextToken(rawText);
-
-                        alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
-                        format = formatDelim == tagContent.Length - 1 ?
-                            null :
-                            tagContent.Substring(formatDelim + 1);
-                    }
-                }
-            }
+            if (!TrySplitTagContent(tagContent, out propertyNameAndDestructuring, out format, out alignment))
+                return new TextToken(rawText);
 
             var propertyName = propertyNameAndDestructuring;
             Destructuring destructuring;
@@ -185,6 +145,59 @@ namespace Serilog.Parsing
                 format,
                 alignmentValue,
                 destructuring);
+        }
+
+        static bool TrySplitTagContent(string tagContent, out string propertyNameAndDestructuring, out string format, out string alignment)
+        {
+            var formatDelim = tagContent.IndexOf(':');
+            var alignmentDelim = tagContent.IndexOf(',');
+            if (formatDelim == -1 && alignmentDelim == -1)
+            {
+                propertyNameAndDestructuring = tagContent;
+                format = null;
+                alignment = null;
+            }
+            else
+            {
+                if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
+                {
+                    propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
+                    format = formatDelim == tagContent.Length - 1 ?
+                        null :
+                        tagContent.Substring(formatDelim + 1);
+                    alignment = null;
+                }
+                else
+                {
+                    propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
+                    if (formatDelim == -1)
+                    {
+                        if (alignmentDelim == tagContent.Length - 1)
+                        {
+                            alignment = format = null;
+                            return false;
+                        }
+
+                        format = null;
+                        alignment = tagContent.Substring(alignmentDelim + 1);
+                    }
+                    else
+                    {
+                        if (alignmentDelim == formatDelim - 1)
+                        {
+                            alignment = format = null;
+                            return false;
+                        }
+
+                        alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
+                        format = formatDelim == tagContent.Length - 1 ?
+                            null :
+                            tagContent.Substring(formatDelim + 1);
+                    }
+                }
+            }
+
+            return true;
         }
 
         private static bool IsValidInPropertyTag(char c)
