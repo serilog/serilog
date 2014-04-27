@@ -32,6 +32,11 @@ namespace Serilog.Debugging
         public static TextWriter Out { get; set; }
 
         /// <summary>
+        /// If true the self log will try to write to the sink(s).
+        /// </summary>
+        public static bool SendSelfLogToSink { get; set; }
+
+        /// <summary>
         /// Write a message to the self-log.
         /// </summary>
         /// <param name="format">Standard .NET format string containing the message.</param>
@@ -45,6 +50,29 @@ namespace Serilog.Debugging
             {
                 o.WriteLine(DateTime.Now.ToString("s") + " " + format, arg0, arg1, arg2);
                 o.Flush();
+            }
+
+            if (SendSelfLogToSink)
+            {
+                Exception ex = null;
+                if (arg0 is Exception)
+                    ex = (Exception)arg0;
+                if (arg1 is Exception)
+                    ex = (Exception)arg1;
+                if (arg2 is Exception)
+                    ex = (Exception)arg2;
+
+                if (ex != null)
+                {
+                    if (!ex.StackTrace.Contains("WriteLine"))
+                    {
+                        Log.Error(ex, string.Format(format, arg0, arg1, arg2));
+                    }
+                }
+                else
+                {
+                    Log.Error(string.Format(format, arg0, arg1, arg2));
+                }
             }
         }
     }
