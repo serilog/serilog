@@ -47,5 +47,6 @@ namespace Serilog
 
             return new TimedOperation(logger, level, warnIfExceeds, operationIdentifier, description);
         }
+
     }
 }

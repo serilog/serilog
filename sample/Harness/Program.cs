@@ -1,6 +1,7 @@
 ﻿using System;
 using Serilog;
 using Serilog.Enrichers;
+using Serilog.Events;
 
 namespace Harness
 {
