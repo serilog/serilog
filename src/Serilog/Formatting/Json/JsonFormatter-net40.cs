@@ -171,7 +171,13 @@ namespace Serilog.Formatting.Json
         static void WriteToString(object number, bool quote, TextWriter output)
         {
             if (quote) output.Write('"');
-            output.Write(number.ToString());
+
+            var fmt = number as IFormattable;
+            if (fmt != null)
+                output.Write(fmt.ToString(null, CultureInfo.InvariantCulture));
+            else
+                output.Write(number.ToString());
+
             if (quote) output.Write('"');
         }
 
