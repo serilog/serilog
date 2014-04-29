@@ -60,7 +60,7 @@ namespace Serilog.Context
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
-        public static ContextStackBookmark PushProperty(string name, object value, bool destructureObjects = false)
+        public static IDisposablePropertyStack PushProperty(string name, object value, bool destructureObjects = false)
         {
             var enrichers = Enrichers;
             if (enrichers == null)
@@ -75,12 +75,12 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Push a property onto the context, returning an <see cref="IDisposable"/>
+        /// Push a property onto the context, returning an <see cref="IDisposablePropertyStack"/>
         /// that can later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
         /// </summary>
-        /// <param name="context">LogContext Aware Disposable</param>
+        /// <param name="disposablePropertyStack">Disposable for the current property stack.</param>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>A handle to later remove the property from the context.</returns>
@@ -88,12 +88,12 @@ namespace Serilog.Context
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
-        public static ContextStackBookmark PushProperty(this ContextStackBookmark context, string name, object value, bool destructureObjects = false)
+        public static IDisposablePropertyStack PushProperty(this IDisposablePropertyStack disposablePropertyStack, string name, object value, bool destructureObjects = false)
         {
             // Enricher will never be null since the initial PushProperty call has already been made.
             Enrichers = Enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
 
-            return context;
+            return disposablePropertyStack;
         }
 
         static ImmutableStack<ILogEventEnricher> Enrichers
@@ -115,14 +115,19 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Bookmarks the initial stack location so when dispose is called, the stack 
-        /// location is set back to that bookmark "unrolling" the stack.
+        /// Marker interface for bookmarking the initial stack location so when the dispose is called
+        /// the property stack is set back to that bookmark "unrolling" the stack.
         /// </summary>
-        public class ContextStackBookmark : IDisposable
+        public interface IDisposablePropertyStack : IDisposable
+        {
+            
+        }
+
+        sealed class ContextStackBookmark : IDisposablePropertyStack
         {
             readonly ImmutableStack<ILogEventEnricher> _bookmark;
 
-            internal ContextStackBookmark(ImmutableStack<ILogEventEnricher> bookmark)
+            public ContextStackBookmark(ImmutableStack<ILogEventEnricher> bookmark)
             {
                 _bookmark = bookmark;
             }
