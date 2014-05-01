@@ -51,13 +51,13 @@ namespace Serilog.Tests.Context
                 .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
                 .CreateLogger();
 
-            using (LogContext.PushProperty("A1", 1).PushProperty("A2", 2))
+            using (LogContext.PushProperties(new LogProperty("A1", 1), new LogProperty("A2", 2)))
             {
                 log.Write(Some.InformationEvent());
                 Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
                 Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
 
-                using (LogContext.PushProperty("A1", 10).PushProperty("A2", 20))
+                using (LogContext.PushProperties(new LogProperty("A1", 10), new LogProperty("A2", 20)))
                 {
                     log.Write(Some.InformationEvent());
                     Assert.AreEqual(10, lastEvent.Properties["A1"].LiteralValue());
