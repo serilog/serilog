@@ -60,7 +60,7 @@ namespace Serilog.Context
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
-        public static IDisposablePropertyStack PushProperty(string name, object value, bool destructureObjects = false)
+        public static IDisposable PushProperty(string name, object value, bool destructureObjects = false)
         {
             var enrichers = Enrichers;
             if (enrichers == null)
@@ -75,25 +75,27 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Push a property onto the context, returning an <see cref="IDisposablePropertyStack"/>
-        /// that can later be used to remove the property, along with any others that
-        /// may have been pushed on top of it and not yet popped. The property must
+        /// Push multiple properties onto the context, returning an <see cref="IDisposable"/>
+        /// that can later be used to remove the properties. The properties must
         /// be popped from the same thread/logical call context.
         /// </summary>
-        /// <param name="disposablePropertyStack">Disposable for the current property stack.</param>
-        /// <param name="name">The name of the property.</param>
-        /// <param name="value">The value of the property.</param>
-        /// <returns>A handle to later remove the property from the context.</returns>
-        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
-        /// then the value will be converted to a structure; otherwise, unknown types will
-        /// be converted to scalars, which are generally stored as strings.</param>
+        /// <param name="properties">Log Properties to push onto the log context</param>
         /// <returns></returns>
-        public static IDisposablePropertyStack PushProperty(this IDisposablePropertyStack disposablePropertyStack, string name, object value, bool destructureObjects = false)
+        public static IDisposable PushProperties(params LogProperty[] properties)
         {
-            // Enricher will never be null since the initial PushProperty call has already been made.
-            Enrichers = Enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
+            if (Enrichers == null)
+            {
+                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+            }
 
-            return disposablePropertyStack;
+            var bookmark = new ContextStackBookmark(Enrichers);
+
+            foreach (var prop in properties)
+            {
+                Enrichers = Enrichers.Push(new LazyFixedPropertyEnricher(prop.Name, prop.Value, prop.DestructureObjects));
+            }
+
+            return bookmark;
         }
 
         static ImmutableStack<ILogEventEnricher> Enrichers
@@ -115,15 +117,10 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Marker interface for bookmarking the initial stack location so when the dispose is called
+        /// Bookmark the initial stack location so when the dispose is called
         /// the property stack is set back to that bookmark "unrolling" the stack.
         /// </summary>
-        public interface IDisposablePropertyStack : IDisposable
-        {
-            
-        }
-
-        sealed class ContextStackBookmark : IDisposablePropertyStack
+        sealed class ContextStackBookmark : IDisposable
         {
             readonly ImmutableStack<ILogEventEnricher> _bookmark;
 
@@ -140,6 +137,40 @@ namespace Serilog.Context
             {
                 Enrichers = _bookmark;
             }
+        }
+    }
+
+    /// <summary>
+    /// Structure to add properties to the logger.
+    /// </summary>
+    public sealed class LogProperty
+    {
+        /// <summary>
+        /// Property Name
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Property Value
+        /// </summary>
+        public object Value { get; private set; }
+
+        /// <summary>
+        /// Destructure the property value?
+        /// </summary>
+        public bool DestructureObjects { get; private set; }
+
+        /// <summary>
+        /// Create a new log property.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="destructureObjects"></param>
+        public LogProperty(string name, object value, bool destructureObjects = false)
+        {
+            Name = name;
+            Value = value;
+            DestructureObjects = destructureObjects;
         }
     }
 }
