@@ -42,9 +42,9 @@ namespace Serilog.Extras.Timing
             _sw.Stop();
 
             if (_warnIfExceeds.HasValue && _sw.Elapsed > _warnIfExceeds.Value)
-                _logger.Write(LogEventLevel.Warning, "Operation {TimedOperationId}: {TimedOperationDescription} exceeded the limit of {WarningLimit} by completing in {TimedOperationElapsed}", _identifier, _description, _warnIfExceeds.Value, _sw.Elapsed);
+                _logger.Write(LogEventLevel.Warning, "Operation {TimedOperationId}: {TimedOperationDescription} exceeded the limit of {WarningLimit} by completing in {TimedOperationElapsed}  ({TimedOperationElapsedInMs} ms)", _identifier, _description, _warnIfExceeds.Value, _sw.Elapsed, _sw.ElapsedMilliseconds);
             else
-                _logger.Write(_level, "Completed operation {TimedOperationId}: {TimedOperationDescription} in {TimedOperationElapsed}", _identifier, _description, _sw.Elapsed);
+                _logger.Write(_level, "Completed operation {TimedOperationId}: {TimedOperationDescription} in {TimedOperationElapsed} ({TimedOperationElapsedInMs} ms)", _identifier, _description, _sw.Elapsed, _sw.ElapsedMilliseconds);
         }
     }
 }
