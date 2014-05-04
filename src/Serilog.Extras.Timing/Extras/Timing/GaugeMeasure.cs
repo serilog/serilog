@@ -27,6 +27,15 @@ namespace Serilog.Extras.Timing
         private readonly string _template;
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GaugeMeasure{T}"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="gauges">The gauges.</param>
+        /// <param name="operation">The operation.</param>
+        /// <param name="level">The level.</param>
+        /// <param name="template">The template.</param>
         public GaugeMeasure(ILogger logger, string name, string gauges, Func<T> operation, LogEventLevel level, string template)
         {
             _logger = logger;

@@ -15,12 +15,12 @@
 namespace Serilog.Extras.Timing
 {
     /// <summary>
-    /// Common Measure interface
+    /// Common measure interface.
     /// </summary>
     public interface IMeasure
     {
         /// <summary>
-        /// Write the data to the log system.
+        /// Write the measurement data to the log system.
         /// </summary>
         void Write();
     }

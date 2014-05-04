@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading;
 using Serilog.Events;
 
 namespace Serilog.Extras.Timing
@@ -27,6 +26,15 @@ namespace Serilog.Extras.Timing
         private readonly bool _directWrite;
         private static AtomicLong _value;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CounterMeasure"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="counts">The counts.</param>
+        /// <param name="level">The level.</param>
+        /// <param name="template">The template.</param>
+        /// <param name="directWrite">if set to <c>true</c> then directly write to the log.</param>
         public CounterMeasure(ILogger logger, string name, string counts, LogEventLevel level, string template, bool directWrite = false)
         {
             _logger = logger;

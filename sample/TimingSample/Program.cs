@@ -20,23 +20,17 @@ namespace TimingSample
                 .WriteTo.Trace()
                 .CreateLogger();
              
-            // Meter
-            var meter = logger.MeterOperation("meter");
-            meter.Mark();
+         
 
             using (logger.BeginTimedOperation("Time a thread sleep for 2 seconds."))
             {
                 Thread.Sleep(1000);
                 using (logger.BeginTimedOperation("And inside we try a Task.Delay for 2 seconds."))
                 {
-                    meter.Mark();
                     Task.Delay(2000).Wait();
                 }
-                meter.Mark();
                 Thread.Sleep(1000);
             }
-
-            meter.Mark();
 
             using (logger.BeginTimedOperation("Using a passed in identifier", "test-loop"))
             {
@@ -52,7 +46,6 @@ namespace TimingSample
             using (logger.BeginTimedOperation("This should execute within 1 second.", null, LogEventLevel.Debug, TimeSpan.FromSeconds(1)))
             {
                 Thread.Sleep(1100);
-                meter.Mark();
             }
 
             // Gauge
@@ -67,8 +60,6 @@ namespace TimingSample
 
             queue.Dequeue();
 
-            meter.Mark();
-
             gauge.Write();
 
             // Counter
@@ -77,27 +68,6 @@ namespace TimingSample
             counter.Increment();
             counter.Increment();
             counter.Decrement();
-
-            meter.Write();
-
-
-            const int count = 100000;
-            var block = new ManualResetEvent(false);
-   
-            var j = 0;
-            ThreadPool.QueueUserWorkItem(s =>
-            {
-                while (j < count)
-                {
-                    meter.Mark();
-                    j++;
-                }
-                Thread.Sleep(5000); // Wait for at least one EWMA rate tick
-                block.Set();
-            });
-            block.WaitOne();
-
-            meter.Write();
 
             Console.ReadKey(true);
         }
