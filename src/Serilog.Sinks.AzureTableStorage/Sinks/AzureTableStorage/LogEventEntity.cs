@@ -54,7 +54,7 @@ namespace Serilog.Sinks.AzureTableStorage
             Exception = log.Exception != null ? log.Exception.ToString() : null;
             RenderedMessage = log.RenderMessage(formatProvider);
             var s = new StringWriter();
-            new JsonFormatter().Format(log, s);
+            new JsonFormatter(closingDelimiter: "", formatProvider: formatProvider).Format(log, s);
             Data = s.ToString();
         }
 

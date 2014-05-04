@@ -82,6 +82,8 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter-net40.cs" />
+    <Compile Include="Parsing\Alignment.cs" />
+    <Compile Include="Parsing\AlignmentDirection.cs" />
     <Compile Include="Policies\ByteArrayScalarConversionPolicy.cs" />
     <Compile Include="Policies\EnumScalarConversionPolicy-net40.cs" />
     <Compile Include="Policies\NullableScalarConversionPolicy-net40.cs" />

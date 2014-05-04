@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
@@ -28,6 +29,8 @@ namespace Serilog.Sinks.MongoDB
     /// </summary>
     public class MongoDBSink : PeriodicBatchingSink
     {
+        readonly string _collectionName;
+        readonly IMongoCollectionOptions _collectionCreationOptions;
         readonly IFormatProvider _formatProvider;
         readonly MongoUrl _mongoUrl;
 
@@ -43,16 +46,26 @@ namespace Serilog.Sinks.MongoDB
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
         /// <summary>
+        /// The default name for the log collection.
+        /// </summary>
+        public static readonly string DefaultCollectionName = "log";
+
+        /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
+        /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
+        /// <param name="collectionCreationOptions">Collection Creation Options for the log collection creation.</param>
+        public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, IMongoCollectionOptions collectionCreationOptions)
             : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+
+            _collectionName = collectionName;
+            _collectionCreationOptions = collectionCreationOptions;
             _formatProvider = formatProvider;
             _mongoUrl = new MongoUrl(databaseUrl);
         }
@@ -62,7 +75,22 @@ namespace Serilog.Sinks.MongoDB
             var mongoClient = new MongoClient(_mongoUrl);
             var server = mongoClient.GetServer();
             var logDb = server.GetDatabase(_mongoUrl.DatabaseName);
-            return logDb.GetCollection("log");
+
+            VerifyCollection(logDb);
+
+            return logDb.GetCollection(_collectionName);
+        }
+
+        /// <summary>
+        /// Verifies the the MongoDatabase collection exists or creates it if it doesn't.
+        /// </summary>
+        /// <param name="logDb"></param>
+        protected void VerifyCollection(MongoDatabase logDb)
+        {
+            if (!logDb.CollectionExists(_collectionName))
+            {
+                logDb.CreateCollection(_collectionName, _collectionCreationOptions);
+            }
         }
 
         /// <summary>
@@ -76,16 +104,18 @@ namespace Serilog.Sinks.MongoDB
             var payload = new StringWriter();
             payload.Write("{\"d\":[");
 
-            var formatter = new JsonFormatter(true);
+            var formatter = new JsonFormatter(
+                omitEnclosingObject: true,
+                renderMessage: true,
+                formatProvider: _formatProvider);
+
             var delimStart = "{";
             foreach (var logEvent in events)
             {
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                var renderedMessage = logEvent.RenderMessage(_formatProvider);
-                payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-                              logEvent.Timestamp.ToUniversalTime().DateTime,
-                              JsonFormatter.Escape(renderedMessage));
+                payload.Write(",\"UtcTimestamp\":\"{0:u}\"}}",
+                              logEvent.Timestamp.ToUniversalTime().DateTime);
                 delimStart = ",{";
             }
 

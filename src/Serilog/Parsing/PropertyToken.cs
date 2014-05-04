@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
@@ -27,6 +28,7 @@ namespace Serilog.Parsing
     {
         private readonly string _propertyName;
         private readonly string _format;
+        private readonly Alignment? _alignment;
         private readonly Destructuring _destructuring;
         private readonly string _rawText;
         private readonly int? _position;
@@ -36,10 +38,25 @@ namespace Serilog.Parsing
         /// </summary>
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="rawText">The token as it appears in the message template.</param>
+        /// <param name="formatObsolete">The format applied to the property, if any.</param>
+        /// <param name="destructuringObsolete">The destructuring strategy applied to the property, if any.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
+        public PropertyToken(string propertyName, string rawText, string formatObsolete, Destructuring destructuringObsolete)
+            : this(propertyName, rawText, formatObsolete, null, destructuringObsolete)
+        {
+        }
+
+        /// <summary>
+        /// Construct a <see cref="PropertyToken"/>.
+        /// </summary>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="rawText">The token as it appears in the message template.</param>
         /// <param name="format">The format applied to the property, if any.</param>
+        /// <param name="alignment">The alignment applied to the property, if any.</param>
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public PropertyToken(string propertyName, string rawText, string format = null, Destructuring destructuring = Destructuring.Default)
+        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
             if (rawText == null) throw new ArgumentNullException("rawText");
@@ -47,6 +64,7 @@ namespace Serilog.Parsing
             _format = format;
             _destructuring = destructuring;
             _rawText = rawText;
+            _alignment = alignment;
 
             int position;
             if (int.TryParse(_propertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
@@ -68,7 +86,31 @@ namespace Serilog.Parsing
             if (output == null) throw new ArgumentNullException("output");
             LogEventPropertyValue propertyValue;
             if (properties.TryGetValue(_propertyName, out propertyValue))
-                propertyValue.Render(output, _format, formatProvider);
+            {
+                if (_alignment.HasValue)
+                {
+                    var valueOutput = new StringWriter();
+                    propertyValue.Render(valueOutput, _format, formatProvider);
+                    var value = valueOutput.ToString();
+
+                    if (value.Length < _alignment.Value.Width)
+                    {
+                        int pad = _alignment.Value.Width - value.Length;
+
+                        if (_alignment.Value.Direction == AlignmentDirection.Right)
+                            output.Write(new string(' ', pad));
+
+                        output.Write(value);
+
+                        if (_alignment.Value.Direction == AlignmentDirection.Left)
+                            output.Write(new string(' ', pad));
+                    }
+                    else
+                        output.Write(value);
+                }
+                else
+                    propertyValue.Render(output, _format, formatProvider);
+            }
             else
                 output.Write(_rawText);
         }
@@ -87,6 +129,11 @@ namespace Serilog.Parsing
         /// Format applied to the property.
         /// </summary>
         public string Format { get { return _format; } }
+
+        /// <summary>
+        /// Alignment applied to the property.
+        /// </summary>
+        public Alignment? Alignment { get { return _alignment; } }
         
         /// <summary>
         /// True if the property name is a positional index; otherwise, false.
