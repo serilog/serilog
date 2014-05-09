@@ -36,7 +36,7 @@ namespace Serilog.Sinks.DiagnosticTrace
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             var sr = new StringWriter();
             _textFormatter.Format(logEvent, sr);
-            Trace.Write(sr.ToString());
+            Trace.WriteLine(sr.ToString().Trim());
         }
     }
 }
