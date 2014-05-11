@@ -10,7 +10,7 @@ namespace Serilig.SplunkSample
     public class Program
     {
         private const string OutputTemplate =
-            "[SERILOG] {Timestamp:G} ({ThreadId}) {Level} {SourceContext:l} - {Message:l}{NewLine:l}{Exception:l}";
+            "[SERILOG] {Timestamp:G} ({ThreadId}) {Level} {SourceContext} - {Message}{NewLine}{Exception}";
 
         private static void Main(string[] args)
         {

@@ -48,7 +48,7 @@ namespace WebHarness
         void ConfigureLog()
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Trace(outputTemplate: "{Timestamp} [{Level}] ({HttpRequestId}|{UserName}) {Message:l}{NewLine:l}{Exception:l}")
+                .WriteTo.Trace(outputTemplate: "{Timestamp} [{Level}] ({HttpRequestId}|{UserName}) {Message}{NewLine}{Exception}")
                 .WriteTo.Glimpse()
                 .WriteTo.SignalR(GlobalHost.ConnectionManager.GetHubContext<LogHub>())
                 .Enrich.With<HttpRequestIdEnricher>()

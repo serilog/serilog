@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -21,7 +22,13 @@ namespace Serilog.Formatting.Display
 {
     /// <summary>
     /// A <see cref="ITextFormatter"/> that supports the Serilog
-    /// message template format.
+    /// message template format. Formatting log events for display
+    /// has a different set of requirements and expectations from
+    /// rendering the data within them. To meet this, the formatter
+    /// overrides some behavior: First, strings are always output
+    /// as literals (not quoted) unless some other format is applied
+    /// to them. Second, tokens without matching properties are skipped
+    /// rather than being written as raw text.
     /// </summary>
     public class MessageTemplateTextFormatter : ITextFormatter
     {
@@ -50,8 +57,44 @@ namespace Serilog.Formatting.Display
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             if (output == null) throw new ArgumentNullException("output");
+
+            // This could be lazier: the output properties include
+            // everything from the log event, but often we won't need any more than
+            // just the standard timestamp/message etc.
             var outputProperties = OutputProperties.GetOutputProperties(logEvent);
-            _outputTemplate.Render(outputProperties, output, _formatProvider);            
+            
+            foreach (var token in _outputTemplate.Tokens)
+            {
+                var pt = token as PropertyToken;
+                if (pt == null || pt.Format != null)
+                {
+                    token.Render(outputProperties, output, _formatProvider);
+                    continue;
+                }
+
+                // First variation from normal rendering - if a property is missing,
+                // don't render anything (message templates render the raw token here).
+                LogEventPropertyValue propertyValue;
+                if (!outputProperties.TryGetValue(pt.PropertyName, out propertyValue))
+                    continue;
+
+                // Second variation; if the value is a scalar string, and has no format
+                // specified, default to 'l' (literal).
+                var sv = propertyValue as ScalarValue;
+                if (sv != null && sv.Value is string)
+                {
+                    var overriden = new Dictionary<string, LogEventPropertyValue>
+                    {
+                        { pt.PropertyName, new LiteralStringValue((string) sv.Value) }
+                    };
+
+                    token.Render(overriden, output, _formatProvider);
+                }
+                else
+                {
+                    token.Render(outputProperties, output, _formatProvider);
+                }
+            }
         }
     }
 }

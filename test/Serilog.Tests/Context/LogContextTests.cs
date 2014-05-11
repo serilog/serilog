@@ -108,7 +108,7 @@ namespace Serilog.Tests.Context
                 log.Information("Hello");
 
             var s = sw.ToString();
-            return s == "{Anything}42";
+            return s == "42";
         }
     }
 }
