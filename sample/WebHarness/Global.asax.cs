@@ -39,7 +39,9 @@ namespace WebHarness
             AreaRegistration.RegisterAllAreas();
 
             // Use LocalDB for Entity Framework by default
+#pragma warning disable 618 // this is obsolete
             Database.DefaultConnectionFactory = new SqlConnectionFactory(@"Data Source=(localdb)\v11.0; Integrated Security=True; MultipleActiveResultSets=True");
+#pragma warning restore 618
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
