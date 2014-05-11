@@ -12,18 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Splunk;
 
 namespace Serilog.Sinks.Splunk
 {
-#pragma warning disable 1591
+    /// <summary>
+    /// Connection information for the connection to Splunk.
+    /// </summary>
+#pragma warning disable 618
     public class SplunkConnectionInfo : ISplunkConnectionInfo
+#pragma warning restore 618
     {
+        /// <summary>
+        /// The service args.
+        /// </summary>
         public ServiceArgs ServiceArgs { get; set; }
+
+        /// <summary>
+        /// The username.
+        /// </summary>
+        [Obsolete("Please use the Username (non-camel-case) property.")]
         public string UserName { get; set; }
+
+        /// <summary>
+        /// The username.
+        /// </summary>
+        public string Username { get; set; }
+
+        /// <summary>
+        /// The password.
+        /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// The source.
+        /// </summary>
         public string SplunkSource { get; set; }
+
+        /// <summary>
+        /// The event type.
+        /// </summary>
         public string SplunkEventType { get; set; }
     }
-#pragma warning restore 1591
 }
