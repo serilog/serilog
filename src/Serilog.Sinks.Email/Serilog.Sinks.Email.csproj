@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationEmailExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sinks\Email\EmailConnectionInfo.cs" />
     <Compile Include="Sinks\Email\EmailSink.cs" />
   </ItemGroup>
   <ItemGroup>
