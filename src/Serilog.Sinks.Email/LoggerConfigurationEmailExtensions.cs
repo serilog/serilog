@@ -67,7 +67,7 @@ namespace Serilog
                 FromEmail = fromEmail,
                 ToEmail = toEmail,
                 MailServer = mailServer,
-                NetworkCredentails = networkCredential
+                NetworkCredentials = networkCredential
             };
 
             return Email(loggerConfiguration, connectionInfo, outputTemplate, restrictedToMinimumLevel, batchPostingLimit, period, formatProvider);

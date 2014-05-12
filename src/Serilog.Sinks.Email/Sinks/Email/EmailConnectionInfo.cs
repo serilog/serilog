@@ -44,7 +44,7 @@ namespace Serilog.Sinks.Email
         /// <summary>
         /// Gets or sets the credentials used for authentication.
         /// </summary>
-        public ICredentialsByHost NetworkCredentails { get; set; }
+        public ICredentialsByHost NetworkCredentials { get; set; }
 
         /// <summary>
         /// Gets or sets the port used for the connection.

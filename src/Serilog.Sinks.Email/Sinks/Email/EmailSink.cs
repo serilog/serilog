@@ -62,7 +62,7 @@ namespace Serilog.Sinks.Email
 
             _smtpClient = new SmtpClient(connectionInfo.MailServer)
             {
-                Credentials = _connectionInfo.NetworkCredentails,
+                Credentials = _connectionInfo.NetworkCredentials,
                 Port = _connectionInfo.Port,
                 EnableSsl = _connectionInfo.EnableSsl
             };
