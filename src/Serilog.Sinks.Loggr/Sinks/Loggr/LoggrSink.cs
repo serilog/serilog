@@ -58,7 +58,7 @@ namespace Serilog.Sinks.Loggr
             ev.Text(logEvent.RenderMessage(_formatProvider));
             ev.AddTags(logEvent.Level.ToString());
 
-            if (!String.IsNullOrWhiteSpace(_userNameProperty) && logEvent.Properties[_userNameProperty] != null)
+            if (!String.IsNullOrWhiteSpace(_userNameProperty) && logEvent.Properties.ContainsKey(_userNameProperty) && logEvent.Properties[_userNameProperty] != null)
             {
                 ev.User(logEvent.Properties[_userNameProperty].ToString());
             }
