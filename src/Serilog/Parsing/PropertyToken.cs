@@ -84,35 +84,39 @@ namespace Serilog.Parsing
         {
             if (properties == null) throw new ArgumentNullException("properties");
             if (output == null) throw new ArgumentNullException("output");
+
             LogEventPropertyValue propertyValue;
-            if (properties.TryGetValue(_propertyName, out propertyValue))
+            if (!properties.TryGetValue(_propertyName, out propertyValue))
             {
-                if (_alignment.HasValue)
-                {
-                    var valueOutput = new StringWriter();
-                    propertyValue.Render(valueOutput, _format, formatProvider);
-                    var value = valueOutput.ToString();
-
-                    if (value.Length < _alignment.Value.Width)
-                    {
-                        int pad = _alignment.Value.Width - value.Length;
-
-                        if (_alignment.Value.Direction == AlignmentDirection.Right)
-                            output.Write(new string(' ', pad));
-
-                        output.Write(value);
-
-                        if (_alignment.Value.Direction == AlignmentDirection.Left)
-                            output.Write(new string(' ', pad));
-                    }
-                    else
-                        output.Write(value);
-                }
-                else
-                    propertyValue.Render(output, _format, formatProvider);
-            }
-            else
                 output.Write(_rawText);
+                return;
+            }
+
+            if (!_alignment.HasValue)
+            {
+                propertyValue.Render(output, _format, formatProvider);
+                return;
+            }
+
+            var valueOutput = new StringWriter();
+            propertyValue.Render(valueOutput, _format, formatProvider);
+            var value = valueOutput.ToString();
+
+            if (value.Length >= _alignment.Value.Width)
+            {
+                output.Write(value);
+                return;
+            }
+
+            var pad = _alignment.Value.Width - value.Length;
+
+            if (_alignment.Value.Direction == AlignmentDirection.Right)
+                output.Write(new string(' ', pad));
+
+            output.Write(value);
+
+            if (_alignment.Value.Direction == AlignmentDirection.Left)
+                output.Write(new string(' ', pad));
         }
 
         /// <summary>

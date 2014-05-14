@@ -16,11 +16,17 @@ namespace TimingSample
         {
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.ColoredConsole()
+                .WriteTo.ColoredConsole(
+                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message}{NewLine}{Exception}")
                 .WriteTo.Trace()
+                .Enrich.WithProperty("App", "Test Harness")
+                .Enrich.With(new ThreadIdEnricher(), new MachineNameEnricher())
                 .CreateLogger();
-             
-         
+
+
+
+            logger.Information("Just biting {Fruit} number {Count}", "Apple", 12);
+            logger.ForContext<Program>().Information("Just biting {Fruit} number {Count:0000}", "Apple", 12);
 
             using (logger.BeginTimedOperation("Time a thread sleep for 2 seconds."))
             {
@@ -36,7 +42,6 @@ namespace TimingSample
             {
                 var a = "";
                 for (int i = 0; i < 1000; i++)
-
                 {
                     a += "b";
                 }
@@ -69,6 +74,7 @@ namespace TimingSample
             counter.Increment();
             counter.Decrement();
 
+            Console.WriteLine("Press a key to exit.");
             Console.ReadKey(true);
         }
     }

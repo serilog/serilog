@@ -33,8 +33,8 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationFullNetFxExtensions
     {
-        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-        const string DefaultConsoleOutputTemplate = "{Timestamp:G} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
+        const string DefaultConsoleOutputTemplate = "{Timestamp:G} [{Level}] {Message}{NewLine}{Exception}";
         const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
         const int DefaultRetainedFileCountLimit = 31; // A long month of logs
 
@@ -45,7 +45,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Console(
@@ -68,7 +68,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration ColoredConsole(
@@ -110,7 +110,7 @@ namespace Serilog
         /// events passed through the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
@@ -141,7 +141,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which any single log file will be allowed to grow.
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
@@ -172,7 +172,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Trace(
