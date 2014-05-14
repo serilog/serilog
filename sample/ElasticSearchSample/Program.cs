@@ -44,8 +44,8 @@ namespace ElasticSearchSample
             Log.Information("I've eaten {Dinner}", new[] { "potatoes", "peas" });
             // ReSharper restore CoVariantArrayConversion
 
-            Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
-            Log.Information("I sat at {Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+          //  Log.Information("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
+            Log.Information("I sat at {Chair} in {TimeSpan}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } }, TimeSpan.FromHours(3));
 
             var context = Log.Logger.ForContext("MessageId", 567);
             try
