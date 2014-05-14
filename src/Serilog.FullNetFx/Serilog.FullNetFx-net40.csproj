@@ -59,6 +59,7 @@
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink-net40.cs" />
     <Compile Include="Sinks\RollingFile\Clock.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
+    <Compile Include="Sinks\RollingFile\RollingLogFile.cs" />
     <Compile Include="Sinks\RollingFile\TemplatedPathRoller.cs" />
     <Compile Include="Sinks\SystemConsole\ColoredConsoleSink-net40.cs" />
     <Compile Include="Sinks\SystemConsole\ConsoleSink.cs" />

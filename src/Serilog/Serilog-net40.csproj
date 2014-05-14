@@ -58,6 +58,8 @@
     <Compile Include="Events\DictionaryValue-net40.cs" />
     <Compile Include="Events\LevelAlias.cs" />
     <Compile Include="Filters\Matching.cs" />
+    <Compile Include="Formatting\Display\LiteralStringValue.cs" />
+    <Compile Include="Formatting\Display\MessageTemplateTextFormatter.cs" />
     <Compile Include="Formatting\Raw\RawFormatter.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
@@ -74,7 +76,6 @@
     <Compile Include="Core\ILogEventEnricher.cs" />
     <Compile Include="Parameters\PropertyBinder.cs" />
     <Compile Include="Formatting\ITextFormatter.cs" />
-    <Compile Include="Formatting\Display\MessageTemplateDisplayFormatter.cs" />
     <Compile Include="Formatting\Json\JsonFormatter-net40.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Log.cs" />
@@ -82,6 +83,8 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter-net40.cs" />
+    <Compile Include="Parsing\Alignment.cs" />
+    <Compile Include="Parsing\AlignmentDirection.cs" />
     <Compile Include="Policies\ByteArrayScalarConversionPolicy.cs" />
     <Compile Include="Policies\EnumScalarConversionPolicy-net40.cs" />
     <Compile Include="Policies\NullableScalarConversionPolicy-net40.cs" />

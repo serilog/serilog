@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // Based on Topshelf.Log4Net, copyright 2007-2012 Chris Patterson,
 // Dru Sellers, Travis Smith, et. al.
 // 

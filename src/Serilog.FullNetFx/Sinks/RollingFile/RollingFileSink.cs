@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -106,12 +107,54 @@ namespace Serilog.Sinks.RollingFile
 
         void OpenFile(DateTime now)
         {
-            string path;
-            DateTime nextCheckpoint;
-            _roller.GetLogFilePath(now, out path, out nextCheckpoint);
-            _nextCheckpoint = nextCheckpoint;            
-            _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
-            ApplyRetentionPolicy(path);
+            var date = now.Date;
+
+            // We only take one attempt at it because repeated failures
+            // to open log files REALLY slow an app down.
+            _nextCheckpoint = date.AddDays(1);            
+
+            var existingFiles = Enumerable.Empty<string>();
+            try
+            {
+                existingFiles = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
+                                         .Select(Path.GetFileName);
+            }
+            catch (DirectoryNotFoundException) { }
+
+            var latestForThisDate = _roller
+                .SelectMatches(existingFiles)
+                .Where(m => m.Date == date)
+                .OrderByDescending(m => m.SequenceNumber)
+                .FirstOrDefault();
+
+            var sequence = latestForThisDate != null ? latestForThisDate.SequenceNumber : 0;
+
+            const int maxAttempts = 3;
+            for (var attempt = 0; attempt < maxAttempts; attempt++)
+            {
+                string path;
+                _roller.GetLogFilePath(now, sequence, out path);
+
+                try
+                {
+                    _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
+                }
+                catch (IOException ex)
+                {
+                    var errorCode = Marshal.GetHRForException(ex) & ((1 << 16) - 1);
+                    if (errorCode == 32 || errorCode == 33)
+                    {
+                        SelfLog.WriteLine("Rolling file target {0} was locked, attempting to open next in sequence (attempt {1})", path, attempt + 1);
+                        sequence++;
+                        continue;
+                    }
+
+                    throw;
+                }
+
+                ApplyRetentionPolicy(path);
+                return;
+            }
         }
 
         void ApplyRetentionPolicy(string currentFilePath)
@@ -123,10 +166,15 @@ namespace Serilog.Sinks.RollingFile
             // We consider the current file to exist, even if nothing's been written yet,
             // because files are only opened on response to an event being processed.
             var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
-                .Union(new [] { currentFileName })
-                .Select(Path.GetFileName);
+                .Select(Path.GetFileName)
+                .Union(new [] { currentFileName });
 
-            var newestFirst = _roller.OrderMatchingByAge(potentialMatches);
+            var newestFirst = _roller
+                .SelectMatches(potentialMatches)
+                .OrderByDescending(m => m.Date)
+                .ThenByDescending(m => m.SequenceNumber)
+                .Select(m => m.Filename);
+
             var toRemove = newestFirst
                 .Where(n => StringComparer.OrdinalIgnoreCase.Compare(currentFileName, n) != 0)
                 .Skip(_retainedFileCountLimit.Value - 1)

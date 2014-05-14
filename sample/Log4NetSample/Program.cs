@@ -8,7 +8,7 @@ namespace Log4NetSample
 {
     class Program
     {
-        const string OutputTemplate = "[SERILOG] {Timestamp:G} ({ThreadId}) {Level} {SourceContext:l} - {Message:l}{NewLine:l}{Exception:l}";
+        const string OutputTemplate = "[SERILOG] {Timestamp:G} ({ThreadId}) {Level} {SourceContext} - {Message}{NewLine}{Exception}";
         
         static void Main()
         {

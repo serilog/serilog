@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -23,12 +24,26 @@ using Serilog.Events;
 namespace Serilog.Formatting.Json
 {
     /// <summary>
-    /// Formats log events in a simple JSON structure.
+    /// Formats log events in a simple JSON structure. Instances of this class
+    /// are safe for concurrent access by multiple threads.
     /// </summary>
     public class JsonFormatter : ITextFormatter
     {
         readonly bool _omitEnclosingObject;
+        readonly string _closingDelimiter;
+        readonly bool _renderMessage;
+        readonly IFormatProvider _formatProvider;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
+
+        /// <summary>
+        /// Construct a <see cref="JsonFormatter"/>. Obsolete, please use named arguments
+        /// when calling this constructor.
+        /// </summary>
+        [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
+        public JsonFormatter(bool omitEnclosingObjectObsolete)
+            : this(omitEnclosingObject: omitEnclosingObjectObsolete)
+        {
+        }
 
         /// <summary>
         /// Construct a <see cref="JsonFormatter"/>.
@@ -36,9 +51,22 @@ namespace Serilog.Formatting.Json
         /// <param name="omitEnclosingObject">If true, the properties of the event will be written to
         /// the output without enclosing braces. Otherwise, if false, each event will be written as a well-formed
         /// JSON object.</param>
-        public JsonFormatter(bool omitEnclosingObject = false)
+        /// <param name="closingDelimiter">A string that will be written after each log event is formatted.
+        /// If null, <see cref="Environment.NewLine"/> will be used. Ignored if <paramref name="omitEnclosingObject"/>
+        /// is true.</param>
+        /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
+        /// property named RenderedMessage.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public JsonFormatter(
+            bool omitEnclosingObject = false,
+            string closingDelimiter = null,
+            bool renderMessage = false,
+            IFormatProvider formatProvider = null)
         {
             _omitEnclosingObject = omitEnclosingObject;
+            _closingDelimiter = closingDelimiter ?? Environment.NewLine;
+            _renderMessage = renderMessage;
+            _formatProvider = formatProvider;
 
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
@@ -82,6 +110,8 @@ namespace Serilog.Formatting.Json
             WriteJsonProperty("Timestamp", logEvent.Timestamp, ref delim, output);
             WriteJsonProperty("Level", logEvent.Level, ref delim, output);
             WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
+            if (_renderMessage)
+                WriteJsonProperty("RenderedMessage", logEvent.RenderMessage(_formatProvider), ref delim, output);
 
             if (logEvent.Exception != null)
                 WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
@@ -98,7 +128,10 @@ namespace Serilog.Formatting.Json
             }
 
             if (!_omitEnclosingObject)
+            {
                 output.Write("}");
+                output.Write(_closingDelimiter);
+            }
         }
 
         void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
@@ -174,7 +207,13 @@ namespace Serilog.Formatting.Json
         static void WriteToString(object number, bool quote, TextWriter output)
         {
             if (quote) output.Write('"');
-            output.Write(number.ToString());
+            
+            var fmt = number as IFormattable;
+            if (fmt != null)
+                output.Write(fmt.ToString(null, CultureInfo.InvariantCulture));
+            else
+                output.Write(number.ToString());
+
             if (quote) output.Write('"');
         }
 

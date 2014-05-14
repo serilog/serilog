@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ namespace Serilog.Sinks.AzureTableStorage
             Exception = log.Exception != null ? log.Exception.ToString() : null;
             RenderedMessage = log.RenderMessage(formatProvider);
             var s = new StringWriter();
-            new JsonFormatter().Format(log, s);
+            new JsonFormatter(closingDelimiter: "", formatProvider: formatProvider).Format(log, s);
             Data = s.ToString();
         }
 

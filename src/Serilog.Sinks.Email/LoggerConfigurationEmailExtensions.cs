@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationEmailExtensions
     {
-        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
 
         /// <summary>
         /// Adds a sink that sends log events via email.
@@ -37,7 +37,7 @@ namespace Serilog
         /// <param name="mailServer">The SMTP email server to use</param>
         /// <param name="networkCredential">The network credentials to use to authenticate with mailServer</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Serilog.Sinks.Couchbase")]
 [assembly: AssemblyDescription("Serilog sink for Couchbase")]

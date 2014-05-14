@@ -65,7 +65,6 @@
     <Compile Include="Sinks\Splunk\ISplunkConnectionInfo.cs" />
     <Compile Include="Sinks\Splunk\SplunkConnectionInfo.cs" />
     <Compile Include="Sinks\Splunk\SplunkSink.cs" />
-    <Compile Include="Sinks\Splunk\SplunkTextWriterSink.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

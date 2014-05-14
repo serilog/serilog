@@ -55,7 +55,7 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Test]
-        public void AnBooleanPropertySerializesAsBooleanValue()
+        public void ABooleanPropertySerializesAsBooleanValue()
         {
             var name = Some.String();
             const bool value = true;
@@ -68,7 +68,7 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Test]
-        public void AnCharPropertySerializesAsStringValue()
+        public void ACharPropertySerializesAsStringValue()
         {
             var name = Some.String();
             const char value = 'c';
@@ -78,6 +78,19 @@ namespace Serilog.Tests.Formatting.Json
             var formatted = FormatJson(@event);
 
             Assert.AreEqual(value.ToString(CultureInfo.InvariantCulture), (string)formatted.Properties[name]);
+        }
+
+        [Test]
+        public void ADecimalSerializesAsNumericValue()
+        {
+            var name = Some.String();
+            const decimal value = 123.45m;
+            var @event = Some.InformationEvent();
+            @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+
+            var formatted = FormatJson(@event);
+
+            Assert.AreEqual(value, (decimal)formatted.Properties[name]);
         }
 
         [Test]

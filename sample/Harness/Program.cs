@@ -11,7 +11,7 @@ namespace Harness
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console(
-                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message:l}{NewLine:l}{Exception:l}")
+                    outputTemplate: "{Timestamp:HH:mm:ss} ({ThreadId}) [{Level}] {Message}{NewLine}{Exception}")
                 .WriteTo.Trace()
                 .Enrich.WithProperty("App", "Test Harness")
                 .Enrich.With(new ThreadIdEnricher(),

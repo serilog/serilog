@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Splunk;
 
 namespace Serilog.Sinks.Splunk
 {
-#pragma warning disable 1591
+    // No XML documentation
+    #pragma warning disable 1591
 
+    /// <summary>
+    /// An interface isn't required for this use case; by using the concrete type
+    /// only, we gain the ability to add parameters without breaking consumers.
+    /// </summary>
+    [Obsolete("Please use the concrete SplunkConnectionInfo class instead.")]
     public interface ISplunkConnectionInfo
     {
         ServiceArgs ServiceArgs { get; set; }
@@ -27,5 +34,5 @@ namespace Serilog.Sinks.Splunk
         string SplunkEventType { get; set; }
     }
 
-#pragma warning restore 1591
+    #pragma warning restore 1591
 }

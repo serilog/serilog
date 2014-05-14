@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Serilog.Configuration
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventSink> _addSink;
 
-        const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+        const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message}{NewLine}{Exception}";
 
         internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {

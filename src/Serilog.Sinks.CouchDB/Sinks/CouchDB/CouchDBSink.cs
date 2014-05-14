@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,16 +89,19 @@ namespace Serilog.Sinks.CouchDB
             var payload = new StringWriter();
             payload.Write("{\"docs\":[");
 
-            var formatter = new JsonFormatter(true);
+            var formatter = new JsonFormatter(
+                omitEnclosingObject: true, 
+                formatProvider: _formatProvider,
+                renderMessage: true);
+
             var delimStart = "{";
             foreach (var logEvent in events)
             {
                 payload.Write(delimStart);
                 formatter.Format(logEvent, payload);
-                var renderedMessage = logEvent.RenderMessage(_formatProvider);
-                payload.Write(",\"UtcTimestamp\":\"{0:u}\",\"RenderedMessage\":\"{1}\"}}",
-                    logEvent.Timestamp.ToUniversalTime().DateTime,
-                    JsonFormatter.Escape(renderedMessage));
+                payload.Write(
+                    ",\"UtcTimestamp\":\"{0:u}\"}}",
+                    logEvent.Timestamp.ToUniversalTime().DateTime);
                 delimStart = ",{";
             }
 

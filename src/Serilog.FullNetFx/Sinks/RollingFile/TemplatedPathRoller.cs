@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Serilog.Sinks.RollingFile
@@ -23,15 +23,7 @@ namespace Serilog.Sinks.RollingFile
     // Rolls files based on the current date, using a path
     // formatting pattern like:
     //    Logs/log-{Date}.txt
-    // In future, additional rolling strategies should be able
-    // to be implemented using patterns like:
-    //    Logs/log-{Hour}.txt
-    //    Logs/log-{Minute}.txt
-    //    Logs/log-{Now:yyyyMMdd-HH:mm.SS}
-    // I.e. tokens in the log format, while not strictly equivalent
-    // to the message template DSL, permit different rolling
-    // strategies to be communicated without broadening
-    // the API or breaking consumers.
+    //
     class TemplatedPathRoller
     {
         const string OldStyleDateSpecifier = "{0}";
@@ -73,30 +65,58 @@ namespace Serilog.Sinks.RollingFile
             _filenameMatcher = new Regex(
                 "^" +
                 Regex.Escape(prefix) +
-                "\\d{" + DateFormat.Length + "}" + 
+                "(?<date>\\d{" + DateFormat.Length + "})" + 
+                "(?<inc>_[0-9]{3,}){0,1}" +
                 Regex.Escape(suffix) +
                 "$");
 
             _directorySearchPattern = filenameTemplate.Replace(DateSpecifier, "*");
             _directory = directory;
-            _pathTemplate = Path.Combine(_directory, filenameTemplate);            
+            _pathTemplate = Path.Combine(_directory, filenameTemplate); 
         }
 
         public string LogFileDirectory { get { return _directory; } }
 
         public string DirectorySearchPattern { get { return _directorySearchPattern; } }
 
-        public void GetLogFilePath(DateTime now, out string path, out DateTime nextCheckpoint)
+        public void GetLogFilePath(DateTime date, int sequenceNumber, out string path)
         {
-            path = _pathTemplate.Replace(DateSpecifier, now.Date.ToString(DateFormat));
-            nextCheckpoint = now.Date.AddDays(1);
+            var tok = date.ToString(DateFormat, CultureInfo.InvariantCulture);
+
+            if (sequenceNumber != 0)
+                tok += "_" + sequenceNumber.ToString("000", CultureInfo.InvariantCulture);
+
+            path = _pathTemplate.Replace(DateSpecifier, tok);
         }
 
-        public IEnumerable<string> OrderMatchingByAge(IEnumerable<string> fileNames)
+        public IEnumerable<RollingLogFile> SelectMatches(IEnumerable<string> filenames)
         {
-            return fileNames
-                .Where(fn => _filenameMatcher.IsMatch(fn))
-                .OrderByDescending(fn => fn);
+            foreach (var filename in filenames)
+            {
+                var match = _filenameMatcher.Match(filename);
+                if (match.Success)
+                {
+                    var inc = 0;
+                    var incGroup = match.Groups["inc"];
+                    if (incGroup.Captures.Count != 0)
+                    {
+                        var incPart = incGroup.Captures[0].Value.Substring(1);
+                        inc = int.Parse(incPart, CultureInfo.InvariantCulture);
+                    }
+
+                    DateTime date;
+                    var datePart = match.Groups["date"].Captures[0].Value;
+                    if (!DateTime.TryParseExact(
+                        datePart, 
+                        DateFormat, 
+                        CultureInfo.InvariantCulture, 
+                        DateTimeStyles.None,
+                        out date))
+                        continue;
+
+                    yield return new RollingLogFile(filename, date, inc);
+                }
+            }
         }
     }
 }

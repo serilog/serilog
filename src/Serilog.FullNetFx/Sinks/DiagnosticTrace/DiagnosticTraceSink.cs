@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Serilog.Sinks.DiagnosticTrace
             if (logEvent == null) throw new ArgumentNullException("logEvent");
             var sr = new StringWriter();
             _textFormatter.Format(logEvent, sr);
-            Trace.Write(sr.ToString());
+            Trace.WriteLine(sr.ToString().Trim());
         }
     }
 }
