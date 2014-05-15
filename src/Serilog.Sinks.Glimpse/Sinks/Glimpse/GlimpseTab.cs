@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Linq;
-using System.Reflection;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Extensions;
 using Glimpse.Core.Tab.Assist;

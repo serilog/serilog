@@ -33,8 +33,6 @@
 
 namespace Serilog.Extras.Timing
 {
-
-    using System;
     using System.Threading;
 
     /// <summary>

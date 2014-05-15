@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Tests.Support;
-using Serilog.Core;
 
 namespace Serilog.Tests.Core
 {

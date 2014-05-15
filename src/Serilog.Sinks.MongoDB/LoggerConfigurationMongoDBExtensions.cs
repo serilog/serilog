@@ -19,7 +19,6 @@ using Serilog.Sinks.MongoDB;
 
 namespace Serilog
 {
-    using MongoDB.Driver;
     using MongoDB.Driver.Builders;
 
     /// <summary>

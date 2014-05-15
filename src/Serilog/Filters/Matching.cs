@@ -14,7 +14,6 @@
 
 using System;
 using Serilog.Core;
-using Serilog.Core.Pipeline;
 using Serilog.Events;
 
 namespace Serilog.Filters

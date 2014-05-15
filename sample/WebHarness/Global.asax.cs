@@ -2,7 +2,6 @@
 using System.Data.Entity.Infrastructure;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Glimpse.AspNet.Tab;
 using Microsoft.AspNet.SignalR;
 using Serilog;
 using Serilog.Extras.Web.Enrichers;
