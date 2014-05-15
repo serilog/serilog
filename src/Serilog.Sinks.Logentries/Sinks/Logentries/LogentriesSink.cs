@@ -16,13 +16,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Serilog.Core;
 using Serilog.Debugging;
 using System.Text;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
-using Serilog.Parsing;
 using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.Logentries

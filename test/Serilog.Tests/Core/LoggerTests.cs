@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using Serilog.Core;
-using Serilog.Core.Pipeline;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core

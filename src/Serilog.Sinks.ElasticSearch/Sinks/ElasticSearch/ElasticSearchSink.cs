@@ -15,8 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Threading.Tasks;
 using Nest;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;

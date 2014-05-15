@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog.Debugging;
-using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using Couchbase.Extensions;
 using Couchbase.Management;

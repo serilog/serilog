@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using global::Owin;
+using Owin;
 using Microsoft.Owin.Testing;
 using NUnit.Framework;
 using Serilog.Events;

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Serilog;
 
 namespace LogentriesSample
@@ -49,7 +45,7 @@ namespace LogentriesSample
             for (int i = 0; i < 100; i++)
             {
                 Log.Information("Counter {Counter} to {Max}", i, 100);
-                System.Threading.Thread.Sleep(500);
+                Thread.Sleep(500);
             }
 
             Console.ReadKey(true);
