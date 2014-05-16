@@ -34,6 +34,7 @@
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <DefineConstants>MONOTOUCH</DefineConstants>
+    <DocumentationFile>bin\iPhone\Release\Serilog.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Formatting\Display\LiteralStringValue.cs" />

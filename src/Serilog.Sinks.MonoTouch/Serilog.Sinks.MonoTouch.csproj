@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <DocumentationFile>bin\iPhone\Release\Serilog.Sinks.MonoTouch.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Sinks\MonoTouch\NSLogSink.cs" />
@@ -50,5 +51,10 @@
       <Project>{29350f57-a44d-4919-8fdf-e25d89d9b08b}</Project>
       <Name>Serilog-MonoTouch</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Serilog.Sinks.MonoTouch.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
 </Project>

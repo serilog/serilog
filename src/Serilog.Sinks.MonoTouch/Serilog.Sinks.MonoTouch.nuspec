@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Sinks.MonoTouch</id>
+    <version>0.1.0</version>
+    <authors>Serilog Contributors</authors>
+    <description>Serilog event sink that writes to Xamarin iOS.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog logging xamarin ios monotouch</tags>
+    <dependencies>
+      <dependency id="Serilog" />
+      <dependency id="Newtonsoft.Json" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog.Sinks.MonoTouch\bin\iPhone\Release\Serilog.Sinks.MonoTouch.dll" target="lib\MonoTouch" />
+    <file src="src\Serilog.Sinks.MonoTouch\bin\iPhone\Release\Serilog.Sinks.MonoTouch.xml" target="lib\MonoTouch" />
+  </files>
+</package>
+
