@@ -47,7 +47,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog-MonoTouch.csproj">
-      <Project>{7E96D14B-2224-4EB9-B26B-6306D225024F}</Project>
+      <Project>{29350f57-a44d-4919-8fdf-e25d89d9b08b}</Project>
       <Name>Serilog-MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>

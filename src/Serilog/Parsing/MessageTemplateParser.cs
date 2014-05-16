@@ -36,7 +36,8 @@ namespace Serilog.Parsing
         /// presence of parsing issues.</returns>
         public MessageTemplate Parse(string messageTemplate)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
+            if (messageTemplate == null)
+                throw new ArgumentNullException("messageTemplate");
             return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
         }
 
@@ -60,7 +61,7 @@ namespace Serilog.Parsing
                     yield break;
 
                 var beforeProp = nextIndex;
-                var pt =  ParsePropertyToken(nextIndex, messageTemplate, out nextIndex);
+                var pt = ParsePropertyToken(nextIndex, messageTemplate, out nextIndex);
                 if (beforeProp < nextIndex)
                     yield return pt;
 
@@ -81,7 +82,7 @@ namespace Serilog.Parsing
                 next = startAt;
                 return new TextToken(messageTemplate.Substring(first, next - first));
             }
-            
+
             next = startAt + 1;
 
             var rawText = messageTemplate.Substring(first, next - first);
@@ -90,20 +91,9 @@ namespace Serilog.Parsing
                 !IsValidInPropertyTag(tagContent[0]))
                 return new TextToken(rawText);
 
-            string propertyNameAndDestructuring, format;
-            var formatDelim = tagContent.IndexOf(':');
-            if (formatDelim == -1)
-            {
-                propertyNameAndDestructuring = tagContent;
-                format = null;
-            }
-            else
-            {
-                propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
-                format = formatDelim == tagContent.Length - 1 ?
-                    null :
-                    tagContent.Substring(formatDelim + 1);
-            }
+            string propertyNameAndDestructuring, format, alignment;
+            if (!TrySplitTagContent(tagContent, out propertyNameAndDestructuring, out format, out alignment))
+                return new TextToken(rawText);
 
             var propertyName = propertyNameAndDestructuring;
             Destructuring destructuring;
@@ -124,11 +114,90 @@ namespace Serilog.Parsing
                         return new TextToken(rawText);
             }
 
+            Alignment? alignmentValue = null;
+            if (alignment != null)
+            {
+                foreach (var c in alignment)
+                    if (!IsValidInAlignment(c))
+                        return new TextToken(rawText);
+
+                var lastDash = alignment.LastIndexOf('-');
+                if (lastDash > 0)
+                    return new TextToken(rawText);
+
+                var width = lastDash == -1 ?
+                    int.Parse(alignment) :
+                    int.Parse(alignment.Substring(1));
+
+                if (width == 0)
+                    return new TextToken(rawText);
+
+                var direction = lastDash == -1 ?
+                    AlignmentDirection.Right :
+                    AlignmentDirection.Left;
+
+                alignmentValue = new Alignment(direction, width);
+            }
+
             return new PropertyToken(
                 propertyName,
                 rawText,
                 format,
+                alignmentValue,
                 destructuring);
+        }
+
+        static bool TrySplitTagContent(string tagContent, out string propertyNameAndDestructuring, out string format, out string alignment)
+        {
+            var formatDelim = tagContent.IndexOf(':');
+            var alignmentDelim = tagContent.IndexOf(',');
+            if (formatDelim == -1 && alignmentDelim == -1)
+            {
+                propertyNameAndDestructuring = tagContent;
+                format = null;
+                alignment = null;
+            }
+            else
+            {
+                if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
+                {
+                    propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
+                    format = formatDelim == tagContent.Length - 1 ?
+                        null :
+                        tagContent.Substring(formatDelim + 1);
+                    alignment = null;
+                }
+                else
+                {
+                    propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
+                    if (formatDelim == -1)
+                    {
+                        if (alignmentDelim == tagContent.Length - 1)
+                        {
+                            alignment = format = null;
+                            return false;
+                        }
+
+                        format = null;
+                        alignment = tagContent.Substring(alignmentDelim + 1);
+                    }
+                    else
+                    {
+                        if (alignmentDelim == formatDelim - 1)
+                        {
+                            alignment = format = null;
+                            return false;
+                        }
+
+                        alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
+                        format = formatDelim == tagContent.Length - 1 ?
+                            null :
+                            tagContent.Substring(formatDelim + 1);
+                    }
+                }
+            }
+
+            return true;
         }
 
         private static bool IsValidInPropertyTag(char c)
@@ -137,7 +206,6 @@ namespace Serilog.Parsing
                 IsValidInPropertyName(c) ||
                 IsValidInFormat(c) ||
                 c == ':';
-                
         }
 
         private static bool IsValidInPropertyName(char c)
@@ -150,20 +218,20 @@ namespace Serilog.Parsing
             switch (c)
             {
                 case '@':
-                {
-                    destructuring = Destructuring.Destructure;
-                    return true;
-                }
+                    {
+                        destructuring = Destructuring.Destructure;
+                        return true;
+                    }
                 case '$':
-                {
-                    destructuring = Destructuring.Stringify;
-                    return true;
-                }
+                    {
+                        destructuring = Destructuring.Stringify;
+                        return true;
+                    }
                 default:
-                {
-                    destructuring = Destructuring.Default;
-                    return false;
-                }
+                    {
+                        destructuring = Destructuring.Default;
+                        return false;
+                    }
             }
         }
 
@@ -171,6 +239,12 @@ namespace Serilog.Parsing
         {
             return c == '@' ||
                    c == '$';
+        }
+
+        private static bool IsValidInAlignment(char c)
+        {
+            return char.IsDigit(c) ||
+                   c == '-';
         }
 
         private static bool IsValidInFormat(char c)

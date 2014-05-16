@@ -13,7 +13,7 @@ namespace Serilog.Tests.Formatting.Display
         public void UsesFormatProvider()
         {
             var french = CultureInfo.GetCultureInfo("fr-FR");
-            var formatter = new MessageTemplateTextFormatter("{Message:l}", french);
+            var formatter = new MessageTemplateTextFormatter("{Message}", french);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{0}", 12.345));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
@@ -23,7 +23,7 @@ namespace Serilog.Tests.Formatting.Display
         [Test]
         public void MessageTemplatesContainingFormatStringPropertiesRenderCorrectly()
         {
-            var formatter = new MessageTemplateTextFormatter("{Message:l}", CultureInfo.InvariantCulture);
+            var formatter = new MessageTemplateTextFormatter("{Message}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{Message}", "Hello, world!"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);

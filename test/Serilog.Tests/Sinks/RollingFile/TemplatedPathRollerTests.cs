@@ -24,15 +24,23 @@ namespace Serilog.Tests.Sinks.RollingFile
         }
         
         [Test]
-        public void TheLogFileIncludesDateTokenAndSetsCheckpointToNextDay()
+        public void TheLogFileIncludesDateToken()
         {
             var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
             var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
             string path;
-            DateTime nextCheckpoint;
-            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            roller.GetLogFilePath(now, 0, out path);
             AssertAreEqualAbsolute("Logs\\log.20130714.txt", path);
-            Assert.AreEqual(new DateTime(2013, 7, 15), nextCheckpoint);
+        }
+
+        [Test]
+        public void ANonZeroIncrementIsIncludedAndPadded()
+        {
+            var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
+            var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
+            string path;
+            roller.GetLogFilePath(now, 12, out path);
+            AssertAreEqualAbsolute("Logs\\log.20130714_012.txt", path);
         }
 
         static void AssertAreEqualAbsolute(string path1, string path2)
@@ -55,8 +63,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             var roller = new TemplatedPathRoller("Logs\\log.txt");
             var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
             string path;
-            DateTime nextCheckpoint;
-            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            roller.GetLogFilePath(now, 0, out path);
             AssertAreEqualAbsolute("Logs\\log-20130714.txt", path);
         }
 
@@ -66,8 +73,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             var roller = new TemplatedPathRoller("Logs\\log-{Date}");
             var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
             string path;
-            DateTime nextCheckpoint;
-            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            roller.GetLogFilePath(now, 0, out path);
             AssertAreEqualAbsolute("Logs\\log-20130714", path);
         }
 
@@ -77,8 +83,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             var roller = new TemplatedPathRoller("log-{Date}");
             var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
             string path;
-            DateTime nextCheckpoint;
-            roller.GetLogFilePath(now, out path, out nextCheckpoint);
+            roller.GetLogFilePath(now, 0, out path);
             AssertAreEqualAbsolute("log-20130714", path);
         }
 
@@ -90,31 +95,34 @@ namespace Serilog.Tests.Sinks.RollingFile
         }
 
         [Test]
-        public void OrderingMatchesFiles()
+        public void MatchingSelectsFiles()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");
-            const string example = "log-20131210.txt";
-            var matched = roller.OrderMatchingByAge(new[] { example });
-            Assert.AreEqual(1, matched.Count());
+            const string example1 = "log-20131210.txt";
+            const string example2 = "log-20131210_031.txt";
+            var matched = roller.SelectMatches(new[] { example1, example2 }).ToArray();
+            Assert.AreEqual(2, matched.Count());
+            Assert.AreEqual(0, matched[0].SequenceNumber);
+            Assert.AreEqual(31, matched[1].SequenceNumber);
         }
 
         [Test]
-        public void OrderingExcludesSimilarButNonmatchingFiles()
+        public void MatchingExcludesSimilarButNonmatchingFiles()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");
             const string similar1 = "log-0.txt";
             const string similar2 = "log-helloyou.txt";
-            var matched = roller.OrderMatchingByAge(new[] { similar1, similar2 });
+            var matched = roller.SelectMatches(new[] { similar1, similar2 });
             Assert.AreEqual(0, matched.Count());
         }
 
         [Test]
-        public void OrderingPresentsNewerFilesFirst()
+        public void MatchingParsesDates()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");
             const string newer = "log-20150101.txt";
             const string older = "log-20141231.txt";
-            var matched = roller.OrderMatchingByAge(new[] { older, newer });
+            var matched = roller.SelectMatches(new[] { older, newer }).OrderByDescending(m => m.Date).Select(m => m.Filename).ToArray();
             CollectionAssert.AreEqual(new[] { newer, older }, matched);
         }
     }

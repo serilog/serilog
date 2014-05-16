@@ -58,6 +58,7 @@
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink.cs" />
     <Compile Include="Sinks\RollingFile\Clock.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
+    <Compile Include="Sinks\RollingFile\RollingLogFile.cs" />
     <Compile Include="Sinks\RollingFile\TemplatedPathRoller.cs" />
     <Compile Include="Sinks\SystemConsole\ColoredConsoleSink.cs" />
     <Compile Include="Sinks\SystemConsole\ConsoleSink.cs" />
@@ -76,11 +77,4 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

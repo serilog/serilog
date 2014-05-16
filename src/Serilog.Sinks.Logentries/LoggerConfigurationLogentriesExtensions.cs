@@ -24,8 +24,8 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationLogentriesExtensions
     {
-        const string DefaultLogentriesOutputTemplate = "{Timestamp:G} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
-     
+        const string DefaultLogentriesOutputTemplate = "{Timestamp:G} [{Level}] {Message}{NewLine}{Exception}";
+
         /// <summary>
         /// Adds a sink that writes log events to the Logentries.com webservice. 
         /// Create a token TCP input for this on the logentries website. 
@@ -34,7 +34,7 @@ namespace Serilog
         /// <param name="token">The token as found on the Logentries.com website.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp:G} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+        /// the default is "{Timestamp:G} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="useSsl">Specify if the connection needs to be secured.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
@@ -58,7 +58,7 @@ namespace Serilog
             var defaultedPeriod = period ?? LogentriesSink.DefaultPeriod;
 
             return loggerConfiguration.Sink(
-                new LogentriesSink(outputTemplate,formatProvider, token, useSsl, batchPostingLimit, defaultedPeriod),
+                new LogentriesSink(outputTemplate, formatProvider, token, useSsl, batchPostingLimit, defaultedPeriod),
                 restrictedToMinimumLevel);
         }
 

@@ -63,6 +63,7 @@
     <Compile Include="Events\DictionaryValue.cs" />
     <Compile Include="Events\LevelAlias.cs" />
     <Compile Include="Filters\Matching.cs" />
+    <Compile Include="Formatting\Display\LiteralStringValue.cs" />
     <Compile Include="Formatting\Raw\RawFormatter.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Core\ILogEventEnricher.cs" />
     <Compile Include="Parameters\PropertyBinder.cs" />
     <Compile Include="Formatting\ITextFormatter.cs" />
-    <Compile Include="Formatting\Display\MessageTemplateDisplayFormatter.cs" />
+    <Compile Include="Formatting\Display\MessageTemplateTextFormatter.cs" />
     <Compile Include="Formatting\Json\JsonFormatter.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Log.cs" />
@@ -87,6 +88,8 @@
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
     <Compile Include="Parameters\PropertyValueConverter.cs" />
+    <Compile Include="Parsing\Alignment.cs" />
+    <Compile Include="Parsing\AlignmentDirection.cs" />
     <Compile Include="Policies\ReflectionTypesScalarConversionPolicy.cs" />
     <Compile Include="Policies\SimpleScalarConversionPolicy.cs" />
     <Compile Include="Policies\ByteArrayScalarConversionPolicy.cs" />
@@ -120,11 +123,4 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -84,5 +84,41 @@ namespace Serilog.Tests.Parsing
             var parsed = (PropertyToken) Parse("{Time:hh:mm}").Single();
             Assert.AreEqual("hh:mm", parsed.Format);
         }
+
+        [Test]
+        public void ZeroValuesAlignmentIsParsedAsText()
+        {
+            AssertParsedAs("{Hello,-0}",
+                new TextToken("{Hello,-0}"));
+
+            AssertParsedAs("{Hello,0}",
+                new TextToken("{Hello,0}"));
+        }
+
+        [Test]
+        public void NonNumberAlignmentIsParsedAsText()
+        {
+            AssertParsedAs("{Hello,-aa}",
+                new TextToken("{Hello,-aa}"));
+
+            AssertParsedAs("{Hello,aa}",
+                new TextToken("{Hello,aa}"));
+
+            AssertParsedAs("{Hello,-10-1}",
+                new TextToken("{Hello,-10-1}"));
+
+            AssertParsedAs("{Hello,10-1}",
+                new TextToken("{Hello,10-1}"));
+        }
+
+        [Test]
+        public void EmptyAlignmentIsParsedAsText()
+        {
+            AssertParsedAs("{Hello,}",
+                new TextToken("{Hello,}"));
+
+            AssertParsedAs("{Hello,:format}",
+                new TextToken("{Hello,:format}"));
+        }
     }
 }

@@ -82,7 +82,7 @@ namespace Serilog.Tests.Sinks.IOFile
             {
                 var disposable = (IDisposable) log;
                     if (disposable != null) disposable.Dispose();
-                System.IO.File.Delete(path);
+                File.Delete(path);
             }
         }
     }

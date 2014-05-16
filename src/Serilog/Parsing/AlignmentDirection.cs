@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Serilog.Core;
-using Serilog.Events;
-
-namespace Serilog.Sinks.Splunk
+namespace Serilog.Parsing
 {
-    public class SplunkTextWriterSink : ILogEventSink
+    /// <summary>
+    /// Defines the direction of the alignment.
+    /// </summary>
+    public enum AlignmentDirection
     {
-        public void Emit(LogEvent logEvent)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Text will be left-aligned.
+        /// </summary>
+        Left,
+        /// <summary>
+        /// Text will be right-aligned.
+        /// </summary>
+        Right
     }
 }

@@ -25,7 +25,7 @@ namespace Serilog
 	/// </summary>
 	public static class LoggerConfigurationEventLogExtensions
 	{
-		private const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}";
+		private const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message}{NewLine}{Exception}";
 
 		/// <summary>
 		/// Adds a sink that writes log events to the Windows event log.
@@ -34,7 +34,7 @@ namespace Serilog
 		/// <param name="source">The source name by which the application is registered on the local computer. </param>
 		/// <param name="logName">The name of the log the source's entries are written to. Possible values include Application, System, or a custom event log. </param>
 		/// <param name="machineName">The name of the machine hosting the event log written to.  The local machine by default.</param>
-		/// <param name="outputTemplate">A message template describing the format used to write to the sink.  The default is "{Timestamp} [{Level}] {Message:l}{NewLine:l}{Exception:l}".</param>
+		/// <param name="outputTemplate">A message template describing the format used to write to the sink.  The default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
 		/// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
 		/// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
 		/// <returns>Logger configuration, allowing configuration to continue.</returns>

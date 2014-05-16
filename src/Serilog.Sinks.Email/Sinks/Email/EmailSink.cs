@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +27,7 @@ namespace Serilog.Sinks.Email
 {
     class EmailSink : PeriodicBatchingSink
     {
-        private readonly string _fromEmail;
-        private readonly string _toEmail;
+        private readonly EmailConnectionInfo _connectionInfo;
 
         private readonly SmtpClient _smtpClient;
 
@@ -49,25 +47,24 @@ namespace Serilog.Sinks.Email
         /// <summary>
         /// Construct a sink emailing with the specified details.
         /// </summary>
-        /// <param name="fromEmail">The email address emails will be sent from</param>
-        /// <param name="toEmail">The email address emails will be sent to</param>
-        /// <param name="mailServer">The SMTP email server to use</param>
-        /// <param name="networkCredential">The network credentials to use to authenticate with mailServer</param>
+        /// <param name="connectionInfo">Connection information used to construct the SMTP client and mail messages.</param>
         /// <param name="batchSizeLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="textFormatter">Supplies culture-specific formatting information, or null.</param>
-        public EmailSink(string fromEmail, string toEmail, string mailServer, ICredentialsByHost networkCredential, int batchSizeLimit, TimeSpan period, ITextFormatter textFormatter) 
+        public EmailSink(EmailConnectionInfo connectionInfo, int batchSizeLimit, TimeSpan period, ITextFormatter textFormatter)
             : base(batchSizeLimit, period)
         {
-            if (fromEmail == null) throw new ArgumentNullException("fromEmail");
-            if (toEmail == null) throw new ArgumentNullException("toEmail");
-            if (mailServer == null) throw new ArgumentNullException("mailServer");
+            if (connectionInfo == null) throw new ArgumentNullException("connectionInfo");
 
-            _fromEmail = fromEmail;
-            _toEmail = toEmail;
+            _connectionInfo = connectionInfo;
             _textFormatter = textFormatter;
 
-            _smtpClient = new SmtpClient(mailServer) {Credentials = networkCredential};
+            _smtpClient = new SmtpClient(connectionInfo.MailServer)
+            {
+                Credentials = _connectionInfo.NetworkCredentials,
+                Port = _connectionInfo.Port,
+                EnableSsl = _connectionInfo.EnableSsl
+            };
             _smtpClient.SendCompleted += SendCompletedCallback;
         }
 
@@ -111,7 +108,8 @@ namespace Serilog.Sinks.Email
         protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
         {
 
-            if (events == null) throw new ArgumentNullException("events");
+            if (events == null)
+                throw new ArgumentNullException("events");
             var payload = new StringWriter();
 
             foreach (var logEvent in events)
@@ -119,9 +117,9 @@ namespace Serilog.Sinks.Email
                 _textFormatter.Format(logEvent, payload);
             }
 
-            var mailMessage = new MailMessage(_fromEmail, _toEmail)
+            var mailMessage = new MailMessage(_connectionInfo.FromEmail, _connectionInfo.ToEmail)
             {
-                Subject = "Log Email",
+                Subject = _connectionInfo.EmailSubject,
                 Body = payload.ToString(),
                 BodyEncoding = Encoding.UTF8,
                 SubjectEncoding = Encoding.UTF8

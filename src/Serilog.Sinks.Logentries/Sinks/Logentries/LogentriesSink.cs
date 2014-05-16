@@ -16,13 +16,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Serilog.Core;
 using Serilog.Debugging;
 using System.Text;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
-using Serilog.Parsing;
 using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.Logentries
@@ -33,10 +31,10 @@ namespace Serilog.Sinks.Logentries
     public class LogentriesSink : PeriodicBatchingSink
     {
         private readonly string _token;
-        private  bool _useSsl;
+        private bool _useSsl;
         private LeClient _client;
         readonly ITextFormatter _textFormatter;
-       
+
         /// <summary>
         /// UTF-8 output character set.
         /// </summary>
@@ -97,13 +95,20 @@ namespace Serilog.Sinks.Logentries
                 SelfLog.WriteLine("Unable to connect to Logentries API.", ex);
                 return;
             }
-            
+
             foreach (var logEvent in events)
             {
                 var renderSpace = new StringWriter();
                 _textFormatter.Format(logEvent, renderSpace);
-         
-                var finalLine = _token + renderSpace.ToString() + '\n';
+
+                string renderedString = renderSpace.ToString();
+
+                // LogEntries uses a NewLine character to determine the end of a log message
+                // this causes problems with stack traces.
+                if (!string.IsNullOrEmpty(renderedString))
+                    renderedString = renderedString.Replace("\n", "");
+
+                var finalLine = _token + renderedString + '\n';
 
                 byte[] data = UTF8.GetBytes(finalLine);
 
