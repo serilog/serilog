@@ -107,8 +107,8 @@ namespace Serilog
         {
             Action dispose = () =>
             {
-                foreach (var disp in _logEventSinks.OfType<IDisposable>())
-                    disp.Dispose();
+                foreach (var disposable in _logEventSinks.OfType<IDisposable>())
+                    disposable.Dispose();
             };
 
             var sink = new SafeAggregateSink(_logEventSinks);

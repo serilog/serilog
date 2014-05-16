@@ -83,12 +83,12 @@ namespace Serilog.Formatting.Display
                 var sv = propertyValue as ScalarValue;
                 if (sv != null && sv.Value is string)
                 {
-                    var overriden = new Dictionary<string, LogEventPropertyValue>
+                    var overridden = new Dictionary<string, LogEventPropertyValue>
                     {
                         { pt.PropertyName, new LiteralStringValue((string) sv.Value) }
                     };
 
-                    token.Render(overriden, output, _formatProvider);
+                    token.Render(overridden, output, _formatProvider);
                 }
                 else
                 {

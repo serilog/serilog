@@ -37,7 +37,7 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// Specificies one or more enrichers that may add properties dynamically to
+        /// Specifies one or more enrichers that may add properties dynamically to
         /// log events.
         /// </summary>
         /// <param name="enrichers">Enrichers to apply to all events passing through
@@ -56,7 +56,7 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// Specificies an enricher that may add properties dynamically to
+        /// Specifies an enricher that may add properties dynamically to
         /// log events.
         /// </summary>
         /// <typeparam name="TEnricher">Enricher type to apply to all events passing through

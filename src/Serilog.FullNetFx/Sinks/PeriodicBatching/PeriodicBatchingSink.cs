@@ -47,7 +47,7 @@ namespace Serilog.Sinks.PeriodicBatching
         /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
-        /// <param name="batchSizeLimit">The maximium number of events to include in a single batch.</param>
+        /// <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         protected PeriodicBatchingSink(int batchSizeLimit, TimeSpan period)
         {

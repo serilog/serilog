@@ -65,7 +65,7 @@ namespace Serilog.Sinks.Raygun
 
             var properties = logEvent.Properties
                          .Select(pv => new { Name = pv.Key, Value = RaygunPropertyFormatter.Simplify(pv.Value) })
-                         .ToDictionary((a) => a.Name, b => b.Value);
+                         .ToDictionary(a => a.Name, b => b.Value);
 
             // Add the message 
             properties.Add("Message", logEvent.RenderMessage(_formatProvider));

@@ -47,7 +47,7 @@ namespace Serilog.Sinks.Couchbase
         /// </summary>
         /// <param name="couchbaseUriList">A list of a Couchbase database servers.</param>
         /// <param name="bucketName">The bucket to store batches in.</param>
-        /// <param name="batchPostingLimit">The maximium number of events to post in a single batch.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public CouchbaseSink(string[] couchbaseUriList, string bucketName, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)

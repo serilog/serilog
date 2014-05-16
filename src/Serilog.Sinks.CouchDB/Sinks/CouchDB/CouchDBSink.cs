@@ -49,7 +49,7 @@ namespace Serilog.Sinks.CouchDB
         /// Construct a sink posting to the specified database.
         /// </summary>
         /// <param name="databaseUrl">The URL of a CouchDB database.</param>
-        /// <param name="batchPostingLimit">The maximium number of events to post in a single batch.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public CouchDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)

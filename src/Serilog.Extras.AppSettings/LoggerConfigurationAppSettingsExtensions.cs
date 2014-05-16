@@ -26,7 +26,7 @@ namespace Serilog
         /// that look like: <code>serilog:*</code>, which are used to configure
         /// the logger. To add a sink, use a key like <code>serilog:write-to:File.path</code> for
         /// each parameter to the sink's configuration method. To add an additional assembly
-        /// containing sinkds, use <code>serilog:using</code>. To set the level use 
+        /// containing sinks, use <code>serilog:using</code>. To set the level use 
         /// <code>serilog:minimum-level</code>.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration to apply configuration to.</param>

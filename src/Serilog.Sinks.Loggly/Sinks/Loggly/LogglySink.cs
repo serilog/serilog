@@ -72,7 +72,7 @@ namespace Serilog.Sinks.Loggly
 
             var properties = logEvent.Properties
                          .Select(pv => new { Name = pv.Key, Value = LogglyPropertyFormatter.Simplify(pv.Value) })
-                         .ToDictionary((a) => a.Name, b => b.Value);
+                         .ToDictionary(a => a.Name, b => b.Value);
 
             if (logEvent.Exception != null)
                 properties.Add("Exception", (object)logEvent.Exception);

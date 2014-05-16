@@ -51,15 +51,15 @@ namespace Serilog.Extras.MSOwin
         /// <summary>
         /// Process a request.
         /// </summary>
-        /// <param name="enviroment"></param>
+        /// <param name="environment"></param>
         /// <returns></returns>
-        public async Task Invoke(IDictionary<string, object> enviroment)
+        public async Task Invoke(IDictionary<string, object> environment)
         {
             // There is not yet a standard way to uniquely identify and correlate an owin request
             // ... hence 'RequestId' https://github.com/owin/owin/issues/21
             using (LogContext.PushProperty(_propertyName, Guid.NewGuid()))
             {
-                await _next(enviroment);
+                await _next(environment);
             }
         }
     }
