@@ -26,7 +26,7 @@ namespace Serilog.Sinks.MonoAndroid
 			var renderSpace = new StringWriter();
 			_textFormatter.Format(logEvent, renderSpace);
 
-			var tag = logEvent.Properties.Where(x => x.Key == AndroidLogTagEnricher.TagPropertyName).Select(x => x.Value.ToString()).FirstOrDefault() ?? "";
+			var tag = logEvent.Properties.Where(x => x.Key == AndroidLogTagEnricher.TagPropertyName).Select(x => x.Value.ToString("l", null)).FirstOrDefault() ?? "";
 
 			switch (logEvent.Level) {
 				case LogEventLevel.Debug:

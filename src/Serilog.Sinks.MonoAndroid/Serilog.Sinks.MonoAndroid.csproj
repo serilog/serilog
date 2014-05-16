@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enrichers\AndroidLogTagEnricher.cs" />
+    <Compile Include="LoggerConfigurationMonoAndroidExtensions.cs" />
     <Compile Include="Sinks\MonoAndroid\AndroidLogSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

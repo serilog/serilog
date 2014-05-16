@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog-MonoTouch", "src\Serilog\Serilog-MonoTouch.csproj", "{7E96D14B-2224-4EB9-B26B-6306D225024F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MonoTouch", "src\Serilog.Sinks.MonoTouch\Serilog.Sinks.MonoTouch.csproj", "{7E96D14B-2224-4EB9-B26B-6306D225024F}"
