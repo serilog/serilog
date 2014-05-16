@@ -29,9 +29,14 @@ namespace Serilog.Policies
                 return false;
             }
 
+			#if MONOTOUCH
+			var innerValue = value == null ? null : Convert.ChangeType (value, type);
+			#else
             var dynamicValue = (dynamic)value;
             var innerValue = dynamicValue.HasValue ? (object)dynamicValue.Value : null;
-            result = propertyValueFactory.CreatePropertyValue(innerValue) as ScalarValue;
+			#endif
+
+			result = propertyValueFactory.CreatePropertyValue(innerValue) as ScalarValue;
 
             return result != null;
         }

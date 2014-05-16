@@ -125,12 +125,16 @@ namespace Serilog.Parameters
                     valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
                     IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
                 {
+					#if MONOTOUCH
+					throw new NotSupportedException("Dictionaries are not supported on MonoTouch.");
+					#else
                     return new DictionaryValue(enumerable.Cast<dynamic>()
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                             (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
                             limiter.CreatePropertyValue(kvp.Value, destructuring)))
                         .Where(kvp => kvp.Key.Value != null)); // Limiting may kick in
-                }
+					#endif
+				}
 
                 return new SequenceValue(
                     enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
