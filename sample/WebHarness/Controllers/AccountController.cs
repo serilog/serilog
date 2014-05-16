@@ -146,7 +146,6 @@ namespace WebHarness.Controllers
             return View();
         }
 
-        #region Status Codes
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
         {
             // See http://go.microsoft.com/fwlink/?LinkID=177550 for
@@ -184,6 +183,5 @@ namespace WebHarness.Controllers
                     return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
         }
-        #endregion
     }
 }
