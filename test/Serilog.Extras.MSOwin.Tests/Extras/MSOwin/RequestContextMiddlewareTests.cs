@@ -18,7 +18,7 @@ namespace Serilog.Extras.MSOwin
 
             public WhenUsingARequestContext()
             {
-                ILogger logger = new LoggerConfiguration()
+                var logger = new LoggerConfiguration()
                     .WriteTo
                     .Observers(events => events
                         .Do(evt => { _eventSeen = evt; })

@@ -47,7 +47,7 @@ namespace Serilog.Extras.Web.Enrichers
             if (logEvent == null) 
                 throw new ArgumentNullException("logEvent");
 
-            string userName = _noneUsername;
+            var userName = _noneUsername;
 
             if (HttpContext.Current != null)
             {

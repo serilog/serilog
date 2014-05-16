@@ -91,7 +91,7 @@ namespace Serilog.Extras.MSOwin
 
             public bool WriteCore(TraceEventType eventType, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
             {
-                LogEventLevel level = _getLogEventLevel(eventType);
+                var level = _getLogEventLevel(eventType);
 
                 // According to docs http://katanaproject.codeplex.com/SourceControl/latest#src/Microsoft.Owin/Logging/ILogger.cs
                 // "To check IsEnabled call WriteCore with only TraceEventType and check the return value, no event will be written."

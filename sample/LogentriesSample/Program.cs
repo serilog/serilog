@@ -42,7 +42,7 @@ namespace LogentriesSample
             Log.Fatal("That's all folks - and all done using {WorkingSet} bytes of RAM", Environment.WorkingSet);
 
             // Loop
-            for (int i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 Log.Information("Counter {Counter} to {Max}", i, 100);
                 Thread.Sleep(500);

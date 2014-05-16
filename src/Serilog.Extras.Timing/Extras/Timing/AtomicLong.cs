@@ -150,8 +150,8 @@ namespace Serilog.Extras.Timing
         {
             for (; ; )
             {
-                long current = Get();
-                long next = current + delta;
+                var current = Get();
+                var next = current + delta;
                 if (CompareAndSet(current, next))
                 {
                     return current;

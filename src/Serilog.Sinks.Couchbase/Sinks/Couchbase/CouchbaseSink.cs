@@ -61,7 +61,7 @@ namespace Serilog.Sinks.Couchbase
 
             var config = new global::Couchbase.Configuration.CouchbaseClientConfiguration();
             
-            foreach (string uri in couchbaseUriList)
+            foreach (var uri in couchbaseUriList)
                 config.Urls.Add(new Uri(uri));
             config.Bucket = bucketName;
 
@@ -98,9 +98,9 @@ namespace Serilog.Sinks.Couchbase
         {
             foreach (var logEvent in events)
             {
-                string key = Guid.NewGuid().ToString();
+                var key = Guid.NewGuid().ToString();
                 
-                bool result = await Task.Run<bool>(() => {
+                var result = await Task.Run<bool>(() => {
                     return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
                 });
 

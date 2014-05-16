@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Serilog.Events;
@@ -62,7 +61,7 @@ namespace Serilog.Sinks.MSSqlServer
 
                 sb.Append("<sequence>");
 
-                foreach (LogEventPropertyValue element in seq.Elements)
+                foreach (var element in seq.Elements)
                 {
                     sb.AppendFormat("<item>{0}</item>", Simplify(element));
                 }
@@ -75,7 +74,7 @@ namespace Serilog.Sinks.MSSqlServer
             var str = value as StructureValue;
             if (str != null)
             {
-                Dictionary<string, string> props = str.Properties.ToDictionary(p => p.Name, p => Simplify(p.Value));
+                var props = str.Properties.ToDictionary(p => p.Name, p => Simplify(p.Value));
 
                 var sb = new StringBuilder();
 

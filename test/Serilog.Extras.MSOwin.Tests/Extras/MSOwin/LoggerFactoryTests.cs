@@ -14,7 +14,7 @@ namespace Serilog.Extras.MSOwin
         {
             var loggerFactory = new LoggerFactory();
 
-            Microsoft.Owin.Logging.ILogger logger = loggerFactory.Create("LoggerFactoryTests");
+            var logger = loggerFactory.Create("LoggerFactoryTests");
 
             Assert.NotNull(logger);
         }
@@ -23,7 +23,7 @@ namespace Serilog.Extras.MSOwin
         public void EventsAreWritten()
         {
             var eventSeen = false;
-            ILogger log = new LoggerConfiguration()
+            var log = new LoggerConfiguration()
                 .WriteTo
                 .Observers(events => events
                     .Do(evt => { eventSeen = true; })
@@ -42,7 +42,7 @@ namespace Serilog.Extras.MSOwin
         public void CanOverrideTraceEventToLogLevelConversion()
         {
             LogEvent eventSeen = null;
-            ILogger log = new LoggerConfiguration()
+            var log = new LoggerConfiguration()
                 .WriteTo
                 .Observers(events => events
                     .Do(evt => { eventSeen = evt; })

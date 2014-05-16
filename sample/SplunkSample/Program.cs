@@ -5,11 +5,11 @@ using Serilog.Enrichers;
 using Serilog.Sinks.Splunk;
 using Splunk;
 
-namespace Serilig.SplunkSample
+namespace SplunkSample
 {
     public class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             const string host = "192.168.93.128";
             const string username = "serilog";

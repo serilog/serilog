@@ -77,7 +77,7 @@ namespace MSSQLSample
             }
 
 
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Thread.Sleep(500);
                 Log.Debug("Count: {Counter}", i);

@@ -61,7 +61,7 @@ namespace Serilog.Tests.Sinks.IOFile
                         message,
                         Enumerable.Empty<LogEventProperty>()));
 
-                    var refile = System.IO.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    var refile = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     var content = new StreamReader(refile).ReadToEnd();
                     refile.Dispose();
 

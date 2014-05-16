@@ -101,7 +101,7 @@ namespace Serilog.Sinks.Logentries
                 var renderSpace = new StringWriter();
                 _textFormatter.Format(logEvent, renderSpace);
 
-                string renderedString = renderSpace.ToString();
+                var renderedString = renderSpace.ToString();
 
                 // LogEntries uses a NewLine character to determine the end of a log message
                 // this causes problems with stack traces.
@@ -110,7 +110,7 @@ namespace Serilog.Sinks.Logentries
 
                 var finalLine = _token + renderedString + '\n';
 
-                byte[] data = UTF8.GetBytes(finalLine);
+                var data = UTF8.GetBytes(finalLine);
 
                 _client.Write(data, 0, data.Length);
             }

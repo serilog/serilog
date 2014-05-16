@@ -40,7 +40,7 @@ namespace TimingSample
             using (logger.BeginTimedOperation("Using a passed in identifier", "test-loop"))
             {
                 var a = "";
-                for (int i = 0; i < 1000; i++)
+                for (var i = 0; i < 1000; i++)
                 {
                     a += "b";
                 }
