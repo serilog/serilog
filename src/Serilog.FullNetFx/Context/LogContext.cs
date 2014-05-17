@@ -48,7 +48,7 @@ namespace Serilog.Context
         static readonly string DataSlotName = typeof(LogContext).FullName;
 
         /// <summary>
-        /// Push a property onto the context, returning an <see cref="IDisposable"/>
+        /// Push a property onto the context, returning an <see cref="ContextStackBookmark"/>
         /// that can later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
@@ -74,6 +74,30 @@ namespace Serilog.Context
             return bookmark;
         }
 
+        /// <summary>
+        /// Push multiple properties onto the context, returning an <see cref="IDisposable"/>
+        /// that can later be used to remove the properties. The properties must
+        /// be popped from the same thread/logical call context.
+        /// </summary>
+        /// <param name="properties">Log Properties to push onto the log context</param>
+        /// <returns></returns>
+        public static IDisposable PushProperties(params LogProperty[] properties)
+        {
+            if (Enrichers == null)
+            {
+                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+            }
+
+            var bookmark = new ContextStackBookmark(Enrichers);
+
+            foreach (var prop in properties)
+            {
+                Enrichers = Enrichers.Push(new LazyFixedPropertyEnricher(prop.Name, prop.Value, prop.DestructureObjects));
+            }
+
+            return bookmark;
+        }
+
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
             get { return (ImmutableStack<ILogEventEnricher>)CallContext.LogicalGetData(DataSlotName); }
@@ -92,6 +116,10 @@ namespace Serilog.Context
             }
         }
 
+        /// <summary>
+        /// Bookmark the initial stack location so when the dispose is called
+        /// the property stack is set back to that bookmark "unrolling" the stack.
+        /// </summary>
         sealed class ContextStackBookmark : IDisposable
         {
             readonly ImmutableStack<ILogEventEnricher> _bookmark;
@@ -101,10 +129,48 @@ namespace Serilog.Context
                 _bookmark = bookmark;
             }
 
+            /// <summary>
+            /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            /// </summary>
+            /// <filterpriority>2</filterpriority>
             public void Dispose()
             {
                 Enrichers = _bookmark;
             }
+        }
+    }
+
+    /// <summary>
+    /// Structure to add properties to the logger.
+    /// </summary>
+    public sealed class LogProperty
+    {
+        /// <summary>
+        /// Property Name
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Property Value
+        /// </summary>
+        public object Value { get; private set; }
+
+        /// <summary>
+        /// Destructure the property value?
+        /// </summary>
+        public bool DestructureObjects { get; private set; }
+
+        /// <summary>
+        /// Create a new log property.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="destructureObjects"></param>
+        public LogProperty(string name, object value, bool destructureObjects = false)
+        {
+            Name = name;
+            Value = value;
+            DestructureObjects = destructureObjects;
         }
     }
 }
