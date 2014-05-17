@@ -48,7 +48,7 @@ namespace Serilog
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (couchbaseUriList == null) throw new ArgumentNullException("couchbaseUriList");
             if (couchbaseUriList.Length == 0) throw new ArgumentException("couchbaseUriList");
-            if (couchbaseUriList[0] == null) throw new ArgumentNullException("couchbaseUri");
+            if (couchbaseUriList[0] == null) throw new ArgumentNullException("couchbaseUriList");
             if (bucketName == null) throw new ArgumentNullException("bucketName");
 
             var defaultedPeriod = period ?? CouchbaseSink.DefaultPeriod;

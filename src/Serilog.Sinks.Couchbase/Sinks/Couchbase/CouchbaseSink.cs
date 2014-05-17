@@ -55,7 +55,7 @@ namespace Serilog.Sinks.Couchbase
         {
             if (couchbaseUriList == null) throw new ArgumentNullException("couchbaseUriList");
             if (couchbaseUriList.Length == 0) throw new ArgumentException("couchbaseUriList");
-            if (couchbaseUriList[0] == null) throw new ArgumentNullException("couchbaseUri");
+            if (couchbaseUriList[0] == null) throw new ArgumentNullException("couchbaseUriList");
 
             if (bucketName == null) throw new ArgumentNullException("bucketName");
 
