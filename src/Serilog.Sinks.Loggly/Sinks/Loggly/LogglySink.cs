@@ -75,7 +75,7 @@ namespace Serilog.Sinks.Loggly
                          .ToDictionary(a => a.Name, b => b.Value);
 
             if (logEvent.Exception != null)
-                properties.Add("Exception", (object)logEvent.Exception);
+                properties.Add("Exception", logEvent.Exception);
 
             _client.Log(logEvent.RenderMessage(_formatProvider), category, properties);
 
