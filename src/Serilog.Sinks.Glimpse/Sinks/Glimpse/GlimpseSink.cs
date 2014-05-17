@@ -21,8 +21,8 @@ namespace Serilog.Sinks.Glimpse
 {
     class GlimpseSink : ILogEventSink
     {
-        private readonly Func<IMessageBroker> _messageBrokerFactory;
-        private readonly IFormatProvider _formatProvider;
+        readonly Func<IMessageBroker> _messageBrokerFactory;
+        readonly IFormatProvider _formatProvider;
 
         public GlimpseSink(Func<IMessageBroker> messageBrokerFactory, IFormatProvider formatProvider = null)
         {

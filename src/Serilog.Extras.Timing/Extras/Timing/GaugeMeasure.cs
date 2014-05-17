@@ -19,12 +19,12 @@ namespace Serilog.Extras.Timing
 {
     sealed class GaugeMeasure<T> : IGaugeMeasure
     {
-        private readonly ILogger _logger;
-        private readonly string _name;
-        private readonly string _gauges;
-        private readonly Func<T> _operation;
-        private readonly LogEventLevel _level;
-        private readonly string _template;
+        readonly ILogger _logger;
+        readonly string _name;
+        readonly string _gauges;
+        readonly Func<T> _operation;
+        readonly LogEventLevel _level;
+        readonly string _template;
 
 
         /// <summary>

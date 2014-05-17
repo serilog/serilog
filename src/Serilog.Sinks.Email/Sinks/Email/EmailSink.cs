@@ -27,9 +27,9 @@ namespace Serilog.Sinks.Email
 {
     class EmailSink : PeriodicBatchingSink
     {
-        private readonly EmailConnectionInfo _connectionInfo;
+        readonly EmailConnectionInfo _connectionInfo;
 
-        private readonly SmtpClient _smtpClient;
+        readonly SmtpClient _smtpClient;
 
         readonly ITextFormatter _textFormatter;
 
@@ -73,7 +73,7 @@ namespace Serilog.Sinks.Email
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void SendCompletedCallback(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        static void SendCompletedCallback(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             if (e.Cancelled)
             {

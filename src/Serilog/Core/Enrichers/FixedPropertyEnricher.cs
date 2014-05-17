@@ -19,7 +19,7 @@ namespace Serilog.Core.Enrichers
 {
     class FixedPropertyEnricher : ILogEventEnricher
     {
-        private readonly LogEventProperty _logEventProperty;
+        readonly LogEventProperty _logEventProperty;
 
         public FixedPropertyEnricher(LogEventProperty logEventProperty)
         {

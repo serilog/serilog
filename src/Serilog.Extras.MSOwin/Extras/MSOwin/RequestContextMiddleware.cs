@@ -29,8 +29,8 @@ namespace Serilog.Extras.MSOwin
         /// </summary>
         public const string DefaultRequestIdPropertyName = "RequestId";
 
-        private readonly Func<IDictionary<string, object>, Task> _next;
-        private readonly string _propertyName;
+        readonly Func<IDictionary<string, object>, Task> _next;
+        readonly string _propertyName;
 
         /// <summary>
         /// Construct the middleware.

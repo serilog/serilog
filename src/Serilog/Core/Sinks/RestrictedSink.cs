@@ -19,8 +19,8 @@ namespace Serilog.Core.Sinks
 {
     class RestrictedSink : ILogEventSink
     {
-        private readonly ILogEventSink _sink;
-        private readonly LogEventLevel _restrictedMinimumLevel;
+        readonly ILogEventSink _sink;
+        readonly LogEventLevel _restrictedMinimumLevel;
 
         public RestrictedSink(ILogEventSink sink, LogEventLevel restrictedMinimumLevel)
         {

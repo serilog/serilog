@@ -10,8 +10,8 @@ namespace Serilog.Extras.Web.Enrichers
     /// </summary>
     public class UserNameEnricher : ILogEventEnricher
     {
-        private readonly string _anonymousUsername;
-        private readonly string _noneUsername;
+        readonly string _anonymousUsername;
+        readonly string _noneUsername;
 
         /// <summary>
         /// The property name added to enriched log events.

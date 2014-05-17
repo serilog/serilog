@@ -9,7 +9,7 @@ namespace SplunkSample
 {
     public class Program
     {
-        private static void Main()
+        static void Main()
         {
             const string host = "192.168.93.128";
             const string username = "serilog";

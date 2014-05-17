@@ -18,13 +18,13 @@ namespace Serilog.Extras.Timing
 {
     sealed class CounterMeasure : ICounterMeasure
     {
-        private readonly ILogger _logger;
-        private readonly string _name;
-        private readonly string _counts;
-        private readonly LogEventLevel _level;
-        private readonly string _template;
-        private readonly bool _directWrite;
-        private static AtomicLong _value;
+        readonly ILogger _logger;
+        readonly string _name;
+        readonly string _counts;
+        readonly LogEventLevel _level;
+        readonly string _template;
+        readonly bool _directWrite;
+        static AtomicLong _value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CounterMeasure"/> class.

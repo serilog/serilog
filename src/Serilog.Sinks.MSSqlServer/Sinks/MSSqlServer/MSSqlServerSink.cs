@@ -40,13 +40,13 @@ namespace Serilog.Sinks.MSSqlServer
         /// </summary>
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(5);
 
-        private readonly string _connectionString;
+        readonly string _connectionString;
 
-        private readonly DataTable _eventsTable;
-        private readonly IFormatProvider _formatProvider;
-        private readonly bool _includeProperties;
-        private readonly string _tableName;
-        private readonly CancellationTokenSource _token = new CancellationTokenSource();
+        readonly DataTable _eventsTable;
+        readonly IFormatProvider _formatProvider;
+        readonly bool _includeProperties;
+        readonly string _tableName;
+        readonly CancellationTokenSource _token = new CancellationTokenSource();
 
         /// <summary>
         ///     Construct a sink posting to the specified database.
@@ -105,7 +105,7 @@ namespace Serilog.Sinks.MSSqlServer
             }
         }
 
-        private DataTable CreateDataTable()
+        DataTable CreateDataTable()
         {
             var eventsTable = new DataTable(_tableName);
 
@@ -168,7 +168,7 @@ namespace Serilog.Sinks.MSSqlServer
             return eventsTable;
         }
 
-        private void FillDataTable(IEnumerable<LogEvent> events)
+        void FillDataTable(IEnumerable<LogEvent> events)
         {
             // Add the new rows to the collection. 
             foreach (var logEvent in events)
@@ -191,7 +191,7 @@ namespace Serilog.Sinks.MSSqlServer
             _eventsTable.AcceptChanges();
         }
 
-        private static string ConvertPropertiesToXmlStructure(
+        static string ConvertPropertiesToXmlStructure(
             IEnumerable<KeyValuePair<string, LogEventPropertyValue>> properties)
         {
             var sb = new StringBuilder();

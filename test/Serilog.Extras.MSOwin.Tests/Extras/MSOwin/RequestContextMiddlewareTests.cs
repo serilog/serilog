@@ -14,7 +14,7 @@ namespace Serilog.Extras.MSOwin
         public class WhenUsingARequestContext
         {
             LogEvent _eventSeen = null;
-            private readonly TestServer _server;
+            readonly TestServer _server;
 
             public WhenUsingARequestContext()
             {
@@ -54,7 +54,7 @@ namespace Serilog.Extras.MSOwin
                 Assert.True(Guid.TryParse(_eventSeen.Properties[RequestContextMiddleware.DefaultRequestIdPropertyName].ToString(), out _));
             }
 
-            private async Task MakeRequest()
+            async Task MakeRequest()
             {
                 await _server.CreateRequest("/").GetAsync();
             }

@@ -25,8 +25,8 @@ namespace Serilog.Sinks.Loggr
     public class LoggrSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        private readonly string _userNameProperty;
-        private readonly LogClient _client;
+        readonly string _userNameProperty;
+        readonly LogClient _client;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account. Properties are being send as data and the level is used as tag.

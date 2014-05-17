@@ -30,9 +30,9 @@ namespace Serilog.Sinks.Logentries
     /// </summary>
     public class LogentriesSink : PeriodicBatchingSink
     {
-        private readonly string _token;
-        private bool _useSsl;
-        private LeClient _client;
+        readonly string _token;
+        bool _useSsl;
+        LeClient _client;
         readonly ITextFormatter _textFormatter;
 
         /// <summary>

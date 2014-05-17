@@ -24,7 +24,7 @@ namespace Serilog.Events
     /// </summary>
     public class DictionaryValue : LogEventPropertyValue
     {
-        private readonly IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> _elements;
+        readonly IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> _elements;
 
         /// <summary>
         /// Create a <see cref="DictionaryValue"/> with the provided <paramref name="elements"/>.

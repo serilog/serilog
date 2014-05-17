@@ -21,8 +21,8 @@ namespace Serilog.Events
     /// </summary>
     public class LogEventProperty
     {
-        private readonly string _name;
-        private readonly LogEventPropertyValue _value;
+        readonly string _name;
+        readonly LogEventPropertyValue _value;
 
         /// <summary>
         /// Construct a <see cref="LogEventProperty"/> with the specified name and value.

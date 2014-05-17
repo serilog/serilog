@@ -24,7 +24,7 @@ namespace Serilog.Parsing
     /// </summary>
     public class TextToken : MessageTemplateToken
     {
-        private readonly string _text;
+        readonly string _text;
 
         /// <summary>
         /// Construct a <see cref="TextToken"/>.

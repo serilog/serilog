@@ -32,7 +32,7 @@ namespace Serilog.Sinks.AzureTableStorage
     /// </remarks>
     public class LogEventEntity : TableEntity
     {
-        private static readonly Regex RowKeyNotAllowedMatch = new Regex(@"(\\|/|#|\?)");
+        static readonly Regex RowKeyNotAllowedMatch = new Regex(@"(\\|/|#|\?)");
 
         /// <summary>
         /// Default constructor for the Storage Client library to re-hydrate entities when querying.
@@ -59,7 +59,7 @@ namespace Serilog.Sinks.AzureTableStorage
         }
 
         // http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx
-        private static string GetValidRowKey(string rowKey)
+        static string GetValidRowKey(string rowKey)
         {
             rowKey = RowKeyNotAllowedMatch.Replace(rowKey, "");
             return rowKey.Length > 1024 ? rowKey.Substring(0, 1024) : rowKey;

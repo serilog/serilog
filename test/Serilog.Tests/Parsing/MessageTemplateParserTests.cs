@@ -12,7 +12,7 @@ namespace Serilog.Tests.Parsing
             return new MessageTemplateParser().Parse(messsageTemplate).Tokens.ToArray();
         }
 
-        private static void AssertParsedAs(string message, params MessageTemplateToken[] messageTemplateTokens)
+        static void AssertParsedAs(string message, params MessageTemplateToken[] messageTemplateTokens)
         {
             var parsed = Parse(message);
             CollectionAssert.AreEqual(

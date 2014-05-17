@@ -37,8 +37,8 @@ namespace Serilog.Policies
             if (bytes.Length > MaximumByteArrayLength)
             {
                 var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
-                var descr = start + "... (" + bytes.Length + " bytes)";
-                result = new ScalarValue(descr);
+                var description = start + "... (" + bytes.Length + " bytes)";
+                result = new ScalarValue(description);
             }
             else
             {

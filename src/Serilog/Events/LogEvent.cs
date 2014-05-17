@@ -23,11 +23,11 @@ namespace Serilog.Events
     /// </summary>
     public class LogEvent
     {
-        private readonly DateTimeOffset _timestamp;
-        private readonly LogEventLevel _level;
-        private readonly Exception _exception;
-        private readonly MessageTemplate _messageTemplate;
-        private readonly Dictionary<string, LogEventPropertyValue> _properties;
+        readonly DateTimeOffset _timestamp;
+        readonly LogEventLevel _level;
+        readonly Exception _exception;
+        readonly MessageTemplate _messageTemplate;
+        readonly Dictionary<string, LogEventPropertyValue> _properties;
 
         /// <summary>
         /// Construct a new <seealso cref="LogEvent"/>.

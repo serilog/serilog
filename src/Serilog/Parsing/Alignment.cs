@@ -19,8 +19,8 @@ namespace Serilog.Parsing
     /// </summary>
     public struct Alignment
     {
-        private readonly AlignmentDirection _direction;
-        private readonly int _width;
+        readonly AlignmentDirection _direction;
+        readonly int _width;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Alignment"/>.

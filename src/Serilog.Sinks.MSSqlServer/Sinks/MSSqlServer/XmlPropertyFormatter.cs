@@ -93,7 +93,7 @@ namespace Serilog.Sinks.MSSqlServer
             return null;
         }
 
-        private static string SimplifyScalar(object value)
+        static string SimplifyScalar(object value)
         {
             if (value == null) return null;
 

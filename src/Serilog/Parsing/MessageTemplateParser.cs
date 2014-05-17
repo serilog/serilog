@@ -70,7 +70,7 @@ namespace Serilog.Parsing
             }
         }
 
-        private static MessageTemplateToken ParsePropertyToken(int startAt, string messageTemplate, out int next)
+        static MessageTemplateToken ParsePropertyToken(int startAt, string messageTemplate, out int next)
         {
             var first = startAt;
             startAt++;
@@ -200,7 +200,7 @@ namespace Serilog.Parsing
             return true;
         }
 
-        private static bool IsValidInPropertyTag(char c)
+        static bool IsValidInPropertyTag(char c)
         {
             return IsValidInDestructuringHint(c) ||
                 IsValidInPropertyName(c) ||
@@ -208,12 +208,12 @@ namespace Serilog.Parsing
                 c == ':';
         }
 
-        private static bool IsValidInPropertyName(char c)
+        static bool IsValidInPropertyName(char c)
         {
             return char.IsLetterOrDigit(c);
         }
 
-        private static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
+        static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
         {
             switch (c)
             {
@@ -235,19 +235,19 @@ namespace Serilog.Parsing
             }
         }
 
-        private static bool IsValidInDestructuringHint(char c)
+        static bool IsValidInDestructuringHint(char c)
         {
             return c == '@' ||
                    c == '$';
         }
 
-        private static bool IsValidInAlignment(char c)
+        static bool IsValidInAlignment(char c)
         {
             return char.IsDigit(c) ||
                    c == '-';
         }
 
-        private static bool IsValidInFormat(char c)
+        static bool IsValidInFormat(char c)
         {
             return c != '}' &&
                 (char.IsLetterOrDigit(c) ||
@@ -255,7 +255,7 @@ namespace Serilog.Parsing
                  c == ' ');
         }
 
-        private static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
+        static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
         {
             var accum = new StringBuilder();
             do

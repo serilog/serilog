@@ -29,9 +29,9 @@ namespace Serilog.Sinks.Raygun
     public class RaygunSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        private readonly string _userNameProperty;
-        private readonly string _applicationVersionProperty;
-        private readonly RaygunClient _client;
+        readonly string _userNameProperty;
+        readonly string _applicationVersionProperty;
+        readonly RaygunClient _client;
 
         /// <summary>
         /// Construct a sink that saves errors to the Raygun.io service. Properties are being send as userdata and the level is used as tag. The message is included inside the userdata.

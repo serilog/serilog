@@ -26,7 +26,7 @@ namespace Serilog.Sinks.AzureTableStorage
     public class AzureTableStorageSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        private readonly CloudTable _table;
+        readonly CloudTable _table;
 
       /// <summary>
         /// Construct a sink that saves logs to the specified storage account.

@@ -51,7 +51,7 @@ namespace Serilog.Extras.Timing
     public class AtomicLong
     {
 
-        private long _value;
+        long _value;
 
         /// <summary>
         /// Creates a new <c>AtomicLong</c> instance with an initial value of <c>0</c>.

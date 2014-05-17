@@ -26,9 +26,9 @@ namespace Serilog.Sinks.ElasticSearch
     /// </summary>
     public class ElasticSearchSink : PeriodicBatchingSink
     {
-        private readonly string _indexFormat;
-        private readonly IFormatProvider _formatProvider;
-        private readonly ElasticClient _client;
+        readonly string _indexFormat;
+        readonly IFormatProvider _formatProvider;
+        readonly ElasticClient _client;
     
         /// <summary>
         /// A reasonable default for the number of events posted in

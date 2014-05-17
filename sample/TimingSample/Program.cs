@@ -9,9 +9,9 @@ using Serilog.Events;
 
 namespace TimingSample
 {
-    internal class Program
+    class Program
     {
-        private static void Main()
+        static void Main()
         {
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()

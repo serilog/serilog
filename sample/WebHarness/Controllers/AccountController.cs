@@ -146,7 +146,7 @@ namespace WebHarness.Controllers
             return View();
         }
 
-        private static string ErrorCodeToString(MembershipCreateStatus createStatus)
+        static string ErrorCodeToString(MembershipCreateStatus createStatus)
         {
             // See http://go.microsoft.com/fwlink/?LinkID=177550 for
             // a full list of status codes.
