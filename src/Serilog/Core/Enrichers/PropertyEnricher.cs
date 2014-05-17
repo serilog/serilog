@@ -17,13 +17,23 @@ using Serilog.Events;
 
 namespace Serilog.Core.Enrichers
 {
-    class LazyFixedPropertyEnricher : ILogEventEnricher
+    /// <summary>
+    /// Adds a new property encricher to the log event.
+    /// </summary>
+    public class PropertyEnricher : ILogEventEnricher
     {
         readonly string _name;
         readonly object _value;
         readonly bool _destructureObjects;
 
-        public LazyFixedPropertyEnricher(string name, object value, bool destructureObjects)
+        /// <summary>
+        /// Create a new property encricher.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        /// <param name="destructureObjects">False (default) if the property is scalar. True if property should be destructured.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public PropertyEnricher(string name, object value, bool destructureObjects = false)
         {
             if (name == null) throw new ArgumentNullException("name");
             _name = name;
@@ -31,6 +41,11 @@ namespace Serilog.Core.Enrichers
             _destructureObjects = destructureObjects;
         }
 
+        /// <summary>
+        /// Enrich the log event.
+        /// </summary>
+        /// <param name="logEvent">The log event to enrich.</param>
+        /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
