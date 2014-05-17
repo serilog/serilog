@@ -66,7 +66,7 @@ namespace Serilog.Sinks.Couchbase
             config.Bucket = bucketName;
 
             var cluster = new CouchbaseCluster(config);
-            Bucket bucket = null;
+            Bucket bucket;
             if (!cluster.TryGetBucket(bucketName, out bucket)) throw new InvalidOperationException("bucket '"+ bucketName  +"' does not exist");
 
             _couchbaseClient = new global::Couchbase.CouchbaseClient(config);
