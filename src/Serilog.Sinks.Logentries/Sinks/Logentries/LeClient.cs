@@ -103,11 +103,11 @@ S5ol3bQmY1mv78XKkOk=
                 m_TcpPort = useHttpPut ? LeApiHttpsPort : LeApiTokenTlsPort;
         }
 
-        bool m_UseSsl = false;
+        bool m_UseSsl;
         int m_TcpPort;
-        TcpClient m_Client = null;
-        Stream m_Stream = null;
-        SslStream m_SslStream = null;
+        TcpClient m_Client;
+        Stream m_Stream;
+        SslStream m_SslStream;
 
         Stream ActiveStream
         {

@@ -13,7 +13,7 @@ namespace Serilog.Extras.MSOwin
         [TestFixture]
         public class WhenUsingARequestContext
         {
-            LogEvent _eventSeen = null;
+            LogEvent _eventSeen;
             readonly TestServer _server;
 
             public WhenUsingARequestContext()
