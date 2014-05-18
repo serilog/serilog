@@ -97,7 +97,7 @@ namespace Serilog.Parsing
 
                     if (value.Length < _alignment.Value.Width)
                     {
-                        int pad = _alignment.Value.Width - value.Length;
+                        var pad = _alignment.Value.Width - value.Length;
 
                         if (_alignment.Value.Direction == AlignmentDirection.Right)
                             output.Write(new string(' ', pad));

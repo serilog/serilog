@@ -87,10 +87,10 @@ namespace Serilog.Formatting.Json
             if (logEvent.Properties.Count != 0)
             {
                 output.Write(",\"Properties\":{");
-                var pdelim = "";
+                var precedingDelimiter = "";
                 foreach (var property in logEvent.Properties)
                 {
-                    WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
+                    WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
                 }
                 output.Write("}");
             }
