@@ -70,7 +70,34 @@ namespace Serilog.Context
             }
 
             var bookmark = new ContextStackBookmark(enrichers);
-            Enrichers = enrichers.Push(new LazyFixedPropertyEnricher(name, value, destructureObjects));
+            Enrichers = enrichers.Push(new PropertyEnricher(name, value, destructureObjects));
+            return bookmark;
+        }
+
+        /// <summary>
+        /// Push multiple properties onto the context, returning an <see cref="IDisposable"/>
+        /// that can later be used to remove the properties. The properties must
+        /// be popped from the same thread/logical call context.
+        /// </summary>
+        /// <param name="properties">Log Properties to push onto the log context</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IDisposable PushProperties(params PropertyEnricher[] properties)
+        {
+            if (properties == null) throw new ArgumentNullException("properties");
+
+            if (Enrichers == null)
+            {
+                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+            }
+            
+            var bookmark = new ContextStackBookmark(Enrichers);
+
+            foreach (var prop in properties)
+            {
+                Enrichers = Enrichers.Push(prop);
+            }
+
             return bookmark;
         }
 

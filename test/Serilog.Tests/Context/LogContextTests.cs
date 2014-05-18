@@ -3,6 +3,7 @@ using System.IO;
 using NUnit.Framework;
 using Serilog.Context;
 using Serilog.Events;
+using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,6 +40,39 @@ namespace Serilog.Tests.Context
 
             log.Write(Some.InformationEvent());
             Assert.IsFalse(lastEvent.Properties.ContainsKey("A"));
+        }
+
+        [Test]
+        public void MultipleNestedPropertiesOverrideLessNestedOnes()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.PushProperties(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
+            {
+                log.Write(Some.InformationEvent());
+                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+
+                using (LogContext.PushProperties(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
+                {
+                    log.Write(Some.InformationEvent());
+                    Assert.AreEqual(10, lastEvent.Properties["A1"].LiteralValue());
+                    Assert.AreEqual(20, lastEvent.Properties["A2"].LiteralValue());
+                }
+
+                log.Write(Some.InformationEvent());
+                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+            }
+
+            log.Write(Some.InformationEvent());
+            Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
+            Assert.IsFalse(lastEvent.Properties.ContainsKey("A2"));
         }
 
         [Test]

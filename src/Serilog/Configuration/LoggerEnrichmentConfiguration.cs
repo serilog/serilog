@@ -77,7 +77,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false)
         {
-            return With(new LazyFixedPropertyEnricher(name, value, destructureObjects));
+            return With(new PropertyEnricher(name, value, destructureObjects));
         }
     }
 }
