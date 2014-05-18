@@ -26,12 +26,12 @@ namespace Serilog.Parsing
     /// </summary>
     public class PropertyToken : MessageTemplateToken
     {
-        private readonly string _propertyName;
-        private readonly string _format;
-        private readonly Alignment? _alignment;
-        private readonly Destructuring _destructuring;
-        private readonly string _rawText;
-        private readonly int? _position;
+        readonly string _propertyName;
+        readonly string _format;
+        readonly Alignment? _alignment;
+        readonly Destructuring _destructuring;
+        readonly string _rawText;
+        readonly int? _position;
 
         /// <summary>
         /// Construct a <see cref="PropertyToken"/>.

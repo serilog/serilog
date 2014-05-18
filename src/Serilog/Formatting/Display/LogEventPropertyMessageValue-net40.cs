@@ -15,15 +15,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Display
 {
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {
-        private readonly MessageTemplate _template;
-        private readonly IDictionary<string, LogEventPropertyValue> _properties;
+        readonly MessageTemplate _template;
+        readonly IDictionary<string, LogEventPropertyValue> _properties;
 
         public LogEventPropertyMessageValue(MessageTemplate template, IDictionary<string, LogEventPropertyValue> properties)
         {

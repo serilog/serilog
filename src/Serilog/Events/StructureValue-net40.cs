@@ -24,8 +24,8 @@ namespace Serilog.Events
     /// </summary>
     public class StructureValue : LogEventPropertyValue
     {
-        private readonly string _typeTag;
-        private readonly LogEventProperty[] _properties;
+        readonly string _typeTag;
+        readonly LogEventProperty[] _properties;
 
         /// <summary>
         /// Construct a <see cref="StructureValue"/> with the provided properties.
@@ -89,7 +89,7 @@ namespace Serilog.Events
             output.Write(" }");
         }
 
-        private static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null)
+        static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null)
         {
             output.Write(property.Name);
             output.Write(": ");
