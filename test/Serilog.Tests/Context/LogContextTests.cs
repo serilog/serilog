@@ -3,14 +3,13 @@ using System.IO;
 using NUnit.Framework;
 using Serilog.Context;
 using Serilog.Events;
+using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Serilog.Tests.Context
 {
-    using Serilog.Core.Enrichers;
-
     [TestFixture]
     public class LogContextTests
     {

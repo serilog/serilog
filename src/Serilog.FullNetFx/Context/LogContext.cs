@@ -81,13 +81,16 @@ namespace Serilog.Context
         /// </summary>
         /// <param name="properties">Log Properties to push onto the log context</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static IDisposable PushProperties(params PropertyEnricher[] properties)
         {
+            if (properties == null) throw new ArgumentNullException("properties");
+
             if (Enrichers == null)
             {
                 Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
             }
-
+            
             var bookmark = new ContextStackBookmark(Enrichers);
 
             foreach (var prop in properties)

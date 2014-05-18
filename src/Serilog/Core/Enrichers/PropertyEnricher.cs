@@ -27,15 +27,19 @@ namespace Serilog.Core.Enrichers
         readonly bool _destructureObjects;
 
         /// <summary>
-        /// Create a new property encricher.
+        /// Create a new property enricher.
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        /// <param name="destructureObjects">False (default) if the property is scalar. True if property should be destructured.</param>
+        /// <returns>A handle to later remove the property from the context.</returns>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be converted to a structure; otherwise, unknown types will
+        /// be converted to scalars, which are generally stored as strings.</param>
+        /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public PropertyEnricher(string name, object value, bool destructureObjects = false)
         {
-            if (name == null) throw new ArgumentNullException("name");
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Property name must not be null or empty.", "name");
             _name = name;
             _value = value;
             _destructureObjects = destructureObjects;
