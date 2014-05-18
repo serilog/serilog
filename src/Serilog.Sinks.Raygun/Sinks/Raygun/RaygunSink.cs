@@ -72,10 +72,10 @@ namespace Serilog.Sinks.Raygun
             properties.Add("MessageTemplate", logEvent.MessageTemplate.Text);
 
             // Create new message
-            var raygunMessage = new RaygunMessage();
-
-            // Set the UTC time
-            raygunMessage.OccurredOn = logEvent.Timestamp.UtcDateTime;
+            var raygunMessage = new RaygunMessage
+                                {
+                                    OccurredOn = logEvent.Timestamp.UtcDateTime
+                                };
 
             // Add exception when available
             if (logEvent.Exception != null)

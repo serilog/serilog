@@ -39,28 +39,29 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Serilog.Debugging;
 
 namespace Serilog.Sinks.Logentries
 {
     class LeClient
     {
         // Logentries API server address. 
-        protected const String LeApiUrl = "api.logentries.com";
+        const String LeApiUrl = "api.logentries.com";
 
         // Port number for token logging on Logentries API server. 
-        protected const int LeApiTokenPort = 10000;
+        const int LeApiTokenPort = 10000;
 
         // Port number for TLS encrypted token logging on Logentries API server 
-        protected const int LeApiTokenTlsPort = 20000;
+        const int LeApiTokenTlsPort = 20000;
 
         // Port number for HTTP PUT logging on Logentries API server. 
-        protected const int LeApiHttpPort = 80;
+        const int LeApiHttpPort = 80;
 
         // Port number for SSL HTTP PUT logging on Logentries API server. 
-        protected const int LeApiHttpsPort = 443;
+        const int LeApiHttpsPort = 443;
 
         // Logentries API server certificate. 
-        protected static readonly X509Certificate2 LeApiServerCertificate =
+        static readonly X509Certificate2 LeApiServerCertificate =
             new X509Certificate2(Encoding.UTF8.GetBytes(
                 @"-----BEGIN CERTIFICATE-----
 MIIFSjCCBDKgAwIBAgIDCQpNMA0GCSqGSIb3DQEBBQUAMGExCzAJBgNVBAYTAlVT
@@ -119,8 +120,10 @@ S5ol3bQmY1mv78XKkOk=
 
         public void Connect()
         {
-            m_Client = new TcpClient(LeApiUrl, m_TcpPort);
-            m_Client.NoDelay = true;
+            m_Client = new TcpClient(LeApiUrl, m_TcpPort)
+                       {
+                           NoDelay = true
+                       };
 
             m_Stream = m_Client.GetStream();
 
@@ -149,8 +152,9 @@ S5ol3bQmY1mv78XKkOk=
                 {
                     m_Client.Close();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    SelfLog.WriteLine("Exception while closing client: {0}", ex);
                 }
             }
         }
