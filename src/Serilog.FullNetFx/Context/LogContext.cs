@@ -59,18 +59,14 @@ namespace Serilog.Context
         /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
-        /// <returns></returns>
+        /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         public static IDisposable PushProperty(string name, object value, bool destructureObjects = false)
         {
-            var enrichers = Enrichers;
-            if (enrichers == null)
-            {
-                enrichers = ImmutableStack<ILogEventEnricher>.Empty;
-                Enrichers = enrichers;
-            }
+            var stack = GetOrCreateEnricherStack();
+            var bookmark = new ContextStackBookmark(stack);
 
-            var bookmark = new ContextStackBookmark(enrichers);
-            Enrichers = enrichers.Push(new PropertyEnricher(name, value, destructureObjects));
+            Enrichers = stack.Push(new PropertyEnricher(name, value, destructureObjects));
+
             return bookmark;
         }
 
@@ -80,25 +76,32 @@ namespace Serilog.Context
         /// be popped from the same thread/logical call context.
         /// </summary>
         /// <param name="properties">Log Properties to push onto the log context</param>
-        /// <returns></returns>
+        /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static IDisposable PushProperties(params PropertyEnricher[] properties)
         {
             if (properties == null) throw new ArgumentNullException("properties");
 
-            if (Enrichers == null)
-            {
-                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
-            }
-            
-            var bookmark = new ContextStackBookmark(Enrichers);
+            var stack = GetOrCreateEnricherStack();
+            var bookmark = new ContextStackBookmark(stack);
 
             foreach (var prop in properties)
-            {
-                Enrichers = Enrichers.Push(prop);
-            }
+                stack = stack.Push(prop);
+
+            Enrichers = stack;
 
             return bookmark;
+        }
+
+        static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
+        {
+            var enrichers = Enrichers;
+            if (enrichers == null)
+            {
+                enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+                Enrichers = enrichers;
+            }
+            return enrichers;
         }
 
         static ImmutableStack<ILogEventEnricher> Enrichers
