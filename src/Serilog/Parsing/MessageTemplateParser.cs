@@ -103,23 +103,32 @@ namespace Serilog.Parsing
             if (propertyName == "" || !char.IsLetterOrDigit(propertyName[0]))
                 return new TextToken(rawText);
 
-            foreach (var c in propertyName)
+            for (var i = 0; i < propertyName.Length; ++i)
+            {
+                var c = propertyName[i];
                 if (!IsValidInPropertyName(c))
                     return new TextToken(rawText);
+            }
 
             if (format != null)
             {
-                foreach (var c in format)
+                for (var i = 0; i < format.Length; ++i)
+                {
+                    var c = format[i];
                     if (!IsValidInFormat(c))
                         return new TextToken(rawText);
+                }
             }
 
             Alignment? alignmentValue = null;
             if (alignment != null)
             {
-                foreach (var c in alignment)
+                for (var i = 0; i < alignment.Length; ++i)
+                {
+                    var c = alignment[i];
                     if (!IsValidInAlignment(c))
                         return new TextToken(rawText);
+                }
 
                 var lastDash = alignment.LastIndexOf('-');
                 if (lastDash > 0)
