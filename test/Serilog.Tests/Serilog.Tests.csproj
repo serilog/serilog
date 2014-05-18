@@ -91,7 +91,6 @@
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
     <Compile Include="Sinks\Observable\ObservableSinkTests.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSinkTests.cs" />
@@ -125,7 +124,6 @@
   <ItemGroup>
     <Compile Include="Formatting\Json\JsonFormatterTests.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
