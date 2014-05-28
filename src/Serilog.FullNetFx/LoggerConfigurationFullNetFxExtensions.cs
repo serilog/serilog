@@ -14,6 +14,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using Serilog.Configuration;
 using Serilog.Enrichers;
@@ -56,6 +57,7 @@ namespace Serilog
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            formatProvider = formatProvider ?? CultureInfo.CurrentCulture;
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
@@ -79,6 +81,7 @@ namespace Serilog
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            formatProvider = formatProvider ?? CultureInfo.CurrentCulture;
             return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel);
         }
 
