@@ -34,7 +34,7 @@ namespace Serilog
     public static class LoggerConfigurationFullNetFxExtensions
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
-        const string DefaultConsoleOutputTemplate = "{Timestamp:G} [{Level}] {Message}{NewLine}{Exception}";
+        const string DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
         const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
         const int DefaultRetainedFileCountLimit = 31; // A long month of logs
 
