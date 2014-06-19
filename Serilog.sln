@@ -74,6 +74,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ApplicationInsights", "src\Serilog.Sinks.ApplicationInsights\Serilog.Sinks.ApplicationInsights.csproj", "{3F08FA19-8D51-427D-8CDA-965CF79B9ECF}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.SmokeTest", "test\Serilog.SmokeTest\Serilog.SmokeTest.csproj", "{58563C46-B781-4799-ABD5-9745F94478FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.AppSettings.Tests", "test\Serilog.Extras.AppSettings.Tests\Serilog.Extras.AppSettings.Tests.csproj", "{67398D2A-0829-4373-ABC5-2161FEB28A05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -204,6 +206,10 @@ Global
 		{58563C46-B781-4799-ABD5-9745F94478FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58563C46-B781-4799-ABD5-9745F94478FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58563C46-B781-4799-ABD5-9745F94478FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67398D2A-0829-4373-ABC5-2161FEB28A05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67398D2A-0829-4373-ABC5-2161FEB28A05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67398D2A-0829-4373-ABC5-2161FEB28A05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67398D2A-0829-4373-ABC5-2161FEB28A05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,5 +246,6 @@ Global
 		{6A6504BF-CD5B-4C9E-88EB-5BD71CE3106A} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{4F81EDAE-2E06-4024-925A-E495C852BDCF} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{58563C46-B781-4799-ABD5-9745F94478FD} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
+		{67398D2A-0829-4373-ABC5-2161FEB28A05} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 	EndGlobalSection
 EndGlobal
