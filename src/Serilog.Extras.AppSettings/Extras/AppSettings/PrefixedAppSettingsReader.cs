@@ -65,7 +65,7 @@ namespace Serilog.Extras.AppSettings
                         let call = new {
                             Method = match.Groups["method"].Value,
                             Argument = match.Groups["argument"].Value,
-                            Value = wt.Value
+                            wt.Value
                         }
                         group call by call.Method).ToList();
 
@@ -103,10 +103,13 @@ namespace Serilog.Extras.AppSettings
             }
         }
 
-        static object ConvertToType(string value, Type toType)
+        internal static object ConvertToType(string value, Type toType)
         {
             if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
+                if (string.IsNullOrEmpty(value))
+                    return null;
+
                 // unwrap Nullable<> type since we're not handling null situations
                 toType = (new NullableConverter(toType)).UnderlyingType;
             }
