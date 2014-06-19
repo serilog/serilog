@@ -66,7 +66,7 @@ namespace Serilog.Formatting.Display
             foreach (var token in _outputTemplate.Tokens)
             {
                 var pt = token as PropertyToken;
-                if (pt == null || pt.Format != null)
+                if (pt == null)
                 {
                     token.Render(outputProperties, output, _formatProvider);
                     continue;
@@ -78,8 +78,9 @@ namespace Serilog.Formatting.Display
                 if (!outputProperties.TryGetValue(pt.PropertyName, out propertyValue))
                     continue;
 
-                // Second variation; if the value is a scalar string, and has no format
-                // specified, default to 'l' (literal).
+                // Second variation; if the value is a scalar string, use literal
+                // rendering and support some additional formats: 'u' for uppercase
+                // and 'w' for lowercase.
                 var sv = propertyValue as ScalarValue;
                 if (sv != null && sv.Value is string)
                 {

@@ -29,5 +29,25 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.AreEqual("\"Hello, world!\"", sw.ToString());
         }
+
+        [Test]
+        public void UppercaseFormatSpecifierIsSupportedForStrings()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Name:u}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.AreEqual("NICK", sw.ToString());
+        }
+
+        [Test]
+        public void LowercaseFormatSpecifierIsSupportedForStrings()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Name:w}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.AreEqual("nick", sw.ToString());
+        }
     }
 }

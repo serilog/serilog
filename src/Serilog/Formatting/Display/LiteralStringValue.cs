@@ -32,7 +32,19 @@ namespace Serilog.Formatting.Display
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            output.Write(_value);
+            var toRender = _value;
+
+            switch (format)
+            {
+                case "u":
+                    toRender = _value.ToUpperInvariant();
+                    break;
+                case "w":
+                    toRender = _value.ToLowerInvariant();
+                    break;
+            }
+
+            output.Write(toRender);
         }
 
         public override bool Equals(object obj)
