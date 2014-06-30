@@ -1,9 +1,4 @@
-﻿using System;
-using Serilog.Configuration;
-using Serilog.Events;
-using Serilog.Sinks.MongoDB;
-
-// Copyright 2014 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +12,14 @@ using Serilog.Sinks.MongoDB;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Serilog.Configuration;
+using Serilog.Events;
+using Serilog.Sinks.MongoDB;
+using MongoDB.Driver.Builders;
+
 namespace Serilog
 {
-    using MongoDB.Driver.Builders;
-
     /// <summary>
     /// Adds the WriteTo.MongoDB() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>

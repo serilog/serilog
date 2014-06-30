@@ -17,7 +17,7 @@ namespace Serilog.Sinks.NLog
 
         public void Emit(LogEvent logEvent)
         {
-            string loggerName = "Default";
+            var loggerName = "Default";
 
             LogEventPropertyValue sourceContext;
             if (logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out sourceContext))
