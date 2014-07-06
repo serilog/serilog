@@ -56,7 +56,7 @@ namespace Serilog.Sinks.ApplicationInsights
         public void Emit(LogEvent logEvent)
         {
             // this logs the message & its metadata to application insights
-            this._loggingController.LogMessageWithData(logEvent.RenderMessage(this._formatProvider), logEvent, new JsonConverter[] { ApplicationInsightsDictionaryJsonConverter.Instance });
+            _loggingController.LogMessageWithData(logEvent.RenderMessage(_formatProvider), logEvent, new JsonConverter[] { ApplicationInsightsDictionaryJsonConverter.Instance });
         }
 
         #endregion
@@ -68,10 +68,10 @@ namespace Serilog.Sinks.ApplicationInsights
         /// </summary>
         public void Dispose()
         {
-            if (this._loggingController != null)
+            if (_loggingController != null)
             {
-                this._loggingController.Dispose();
-                this._loggingController = null;
+                _loggingController.Dispose();
+                _loggingController = null;
             }
         }
 
