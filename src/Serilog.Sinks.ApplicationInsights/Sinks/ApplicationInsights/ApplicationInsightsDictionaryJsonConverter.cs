@@ -80,7 +80,7 @@ namespace Serilog.Sinks.ApplicationInsights
         {
             if (serializer == null) throw new ArgumentNullException("serializer");
 
-            bool flag = serializer.Converters.Remove(this);
+            var flag = serializer.Converters.Remove(this);
 
             try
             {
