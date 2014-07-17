@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using Serilog.Configuration;
@@ -90,7 +91,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        [Obsolete("Please use WriteTo.Sink(new FileSink(path, new RawFormatter(), null)) instead", true)]
+        [Obsolete("Please use WriteTo.Sink(new FileSink(path, new RawFormatter(), null)) instead", true), EditorBrowsable(EditorBrowsableState.Never)]
         public static LoggerConfiguration DumpFile(
             this LoggerSinkConfiguration sinkConfiguration,
             string path,

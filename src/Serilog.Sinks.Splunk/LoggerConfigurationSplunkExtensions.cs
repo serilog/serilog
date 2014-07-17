@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.Splunk;
@@ -35,7 +36,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Please use the concrete SplunkConnectionInfo class instead of ISplunkConnectionInfo.")]
+        [Obsolete("Please use the concrete SplunkConnectionInfo class instead of ISplunkConnectionInfo."), EditorBrowsable(EditorBrowsableState.Never)]
         public static LoggerConfiguration Splunk(
             this LoggerSinkConfiguration loggerConfiguration,
 #pragma warning disable 618

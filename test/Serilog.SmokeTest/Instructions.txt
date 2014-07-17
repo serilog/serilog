@@ -1,0 +1,6 @@
+﻿This project is in the solution so that you can readily test sink changes. To do so,
+just add a reference to the sink you're working on, set up its configuration in
+Program.cs, and go for it!
+
+**But** - please don't check in your changes; keeping this little test harness tidy
+will keep it useful and pleasant to work with.

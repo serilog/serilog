@@ -22,16 +22,19 @@ namespace Serilog.Sinks.Log4Net
 {
     class Log4NetSink : ILogEventSink
     {
+        readonly string _defaultLoggerName;
         readonly IFormatProvider _formatProvider;
 
-        public Log4NetSink(IFormatProvider formatProvider = null)
+        public Log4NetSink(string defaultLoggerName, IFormatProvider formatProvider = null)
         {
+            if (defaultLoggerName == null) throw new ArgumentNullException("defaultLoggerName");
+            _defaultLoggerName = defaultLoggerName;
             _formatProvider = formatProvider;
         }
 
         public void Emit(LogEvent logEvent)
         {
-            string loggerName = null;
+            var loggerName = _defaultLoggerName;
 
             LogEventPropertyValue sourceContext;
             if (logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out sourceContext))
