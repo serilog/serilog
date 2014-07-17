@@ -29,14 +29,14 @@ namespace Serilog.Events
         /// Construct a <see cref="ScalarValue"/> with the specified
         /// value.
         /// </summary>
-        /// <param name="value">The value.</param>
+        /// <param name="value">The value, which may be <code>null</code>.</param>
         public ScalarValue(object value)
         {
             _value = value;
         }
 
         /// <summary>
-        /// The value.
+        /// The value, which may be <code>null</code>.
         /// </summary>
         public object Value { get { return _value; } }
 

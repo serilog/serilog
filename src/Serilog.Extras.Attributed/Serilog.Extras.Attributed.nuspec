@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Extras.Attributed</id>
+    <version>0.1.0</version>
+    <authors>Serilog Contributors</authors>
+    <description>Adds support for specifying how complex types are destructured for logging using attributes.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog xml</tags>
+    <dependencies>
+      <dependency id="Serilog" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog.Extras.Attributed\bin\Release\Serilog.Extras.Attributed.dll" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog.Extras.Attributed\bin\Release\Serilog.Extras.Attributed.xml" target="lib\portable-net45+win8+wp8" />
+  </files>
+</package>
