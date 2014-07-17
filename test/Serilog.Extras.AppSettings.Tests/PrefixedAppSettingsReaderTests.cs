@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Serilog.Events;
 
 namespace Serilog.Extras.AppSettings.Tests
 {
@@ -24,6 +25,13 @@ namespace Serilog.Extras.AppSettings.Tests
         {
             var result = (int?)PrefixedAppSettingsReader.ConvertToType("", typeof(int?));
             Assert.That(result == null);
+        }
+
+        [Test]
+        public void ValuesConvertToEnumMembers()
+        {
+            var result = (LogEventLevel)PrefixedAppSettingsReader.ConvertToType("Information", typeof(LogEventLevel));
+            Assert.AreEqual(LogEventLevel.Information, result);
         }
     }
 }

@@ -114,6 +114,9 @@ namespace Serilog.Extras.AppSettings
                 toType = (new NullableConverter(toType)).UnderlyingType;
             }
 
+            if (toType.IsEnum)
+                return Enum.Parse(toType, value);
+
             var extendedTypeConversions = new Dictionary<Type, Func<string, object>>
             {
                 { typeof(Uri), s => new Uri(s) },
