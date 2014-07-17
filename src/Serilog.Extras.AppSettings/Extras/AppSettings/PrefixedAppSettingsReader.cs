@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
@@ -31,23 +32,31 @@ namespace Serilog.Extras.AppSettings
         const string UsingDirective = "serilog:using";
         const string WriteToDirective = "serilog:write-to";
         const string MinimumLevelDirective = "serilog:minimum-level";
+        const string EnrichWithPropertyDirective = "serilog:enrich:with-property";
 
         const string UsingDirectiveFullFormPrefix = "serilog:using:";
+        const string EnrichWithPropertyDirectivePrefix = "serilog:enrich:with-property:";
 
         const string WriteToDirectiveRegex = @"^serilog:write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
 
         public static void ConfigureLogger(LoggerConfiguration loggerConfiguration)
         {
+            ConfigureLogger(loggerConfiguration, ConfigurationManager.AppSettings);
+        }
+
+        internal static void ConfigureLogger(LoggerConfiguration loggerConfiguration, NameValueCollection settings)
+        {
             var supportedDirectives = new[]
             {
                 UsingDirective,
                 WriteToDirective,
-                MinimumLevelDirective
+                MinimumLevelDirective,
+                EnrichWithPropertyDirective
             };
 
-            var directives = ConfigurationManager.AppSettings.AllKeys
+            var directives = settings.AllKeys
                 .Where(k => supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => ConfigurationManager.AppSettings[k]);
+                .ToDictionary(k => k, k => settings[k]);
 
             string minimumLevelDirective;
             LogEventLevel minimumLevel;
@@ -55,6 +64,13 @@ namespace Serilog.Extras.AppSettings
                 Enum.TryParse(minimumLevelDirective, out minimumLevel))
             {
                 loggerConfiguration.MinimumLevel.Is(minimumLevel);
+            }
+
+            foreach (var enrichDirective in directives.Where(dir => 
+                dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
+            {
+                var name = enrichDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
+                loggerConfiguration.Enrich.WithProperty(name, enrichDirective.Value);
             }
 
             var splitWriteTo = new Regex(WriteToDirectiveRegex);
@@ -79,8 +95,6 @@ namespace Serilog.Extras.AppSettings
 
                 foreach (var sinkDirective in sinkDirectives)
                 {
-                    // Let's not recreate the binder; simple as possible here.
-
                     var target = sinkConfigurationMethods
                         .Where(m => m.Name == sinkDirective.Key &&
                             m.GetParameters().Skip(1).All(p => p.HasDefaultValue || sinkDirective.Any(s => s.Argument == p.Name)))

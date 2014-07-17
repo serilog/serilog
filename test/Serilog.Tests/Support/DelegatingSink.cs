@@ -4,7 +4,7 @@ using Serilog.Events;
 
 namespace Serilog.Tests.Support
 {
-    class DelegatingSink : ILogEventSink
+    public class DelegatingSink : ILogEventSink
     {
         readonly Action<LogEvent> _write;
 
