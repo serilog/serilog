@@ -82,6 +82,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Attributed",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Attributed.Tests", "test\Serilog.Extras.Attributed.Tests\Serilog.Extras.Attributed.Tests.csproj", "{182ECDA3-A97D-4BB6-BC6F-60A137478B92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk", "Serilog.Sinks.Splunk\Serilog.Sinks.Splunk.csproj", "{13771374-CF5A-4955-BCDB-EBEFE70944B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -228,6 +230,10 @@ Global
 		{182ECDA3-A97D-4BB6-BC6F-60A137478B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{182ECDA3-A97D-4BB6-BC6F-60A137478B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{182ECDA3-A97D-4BB6-BC6F-60A137478B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13771374-CF5A-4955-BCDB-EBEFE70944B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13771374-CF5A-4955-BCDB-EBEFE70944B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13771374-CF5A-4955-BCDB-EBEFE70944B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13771374-CF5A-4955-BCDB-EBEFE70944B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -267,5 +273,6 @@ Global
 		{67398D2A-0829-4373-ABC5-2161FEB28A05} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{A79F906E-0298-49DC-93EC-CE4F1F5D13E2} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{182ECDA3-A97D-4BB6-BC6F-60A137478B92} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
+		{13771374-CF5A-4955-BCDB-EBEFE70944B8} = {037440DE-440B-4129-9F7A-09B42D00397E}
 	EndGlobalSection
 EndGlobal

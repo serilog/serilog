@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Sinks.Splunk</id>
+    <version>0.1.0</version>
+    <authors>Serilog Contributors</authors>
+    <description>Serilog event sink that writes to Splunk.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog logging splunk</tags>
+    <dependencies>
+      <dependency id="Serilog" />
+      <dependency id="Newtonsoft.Json" />
+      <dependency id ="Splunk.Client" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog\bin40\Release\Serilog.dll" target="lib\net40" />
+    <file src="src\Serilog\bin40\Release\Serilog.xml" target="lib\net40" />
+    <file src="src\Serilog\bin40\Release\Serilog.pdb" target="lib\net40" />
+
+    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog\bin\Release\Serilog.pdb" target="lib\portable-net45+win8+wp8" />
+
+    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\net45" />
+    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\net45" />
+    <file src="src\Serilog\bin\Release\Serilog.pdb" target="lib\net45" />
+
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.dll" target="lib\net45" />
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.xml" target="lib\net45" />
+  </files>
+</package>
+
