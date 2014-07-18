@@ -1,5 +1,7 @@
 using System;
+using System.Dynamic;
 using System.Net.Http;
+using Splunk.Client;
 
 namespace Serilog.Sinks.Splunk
 {
@@ -27,6 +29,14 @@ namespace Serilog.Sinks.Splunk
         /// <param name="timeout">The timeout for the calls to SplunkViaHttp</param>
         public SplunkContext(global::Splunk.Client.Scheme scheme, string host, int port, TimeSpan timeout)
             : base(scheme, host, port, timeout)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of the SplunkViaHttp context
+        /// </summary>
+        public SplunkContext(Context context, string username, string password) 
+            :base(context.Scheme, context.Host, context.Port)
         {
         }
 

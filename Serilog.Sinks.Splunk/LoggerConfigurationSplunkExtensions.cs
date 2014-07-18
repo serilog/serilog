@@ -16,6 +16,7 @@ using System;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.Splunk;
+using Splunk.Client;
 
 namespace Serilog
 {
@@ -29,8 +30,6 @@ namespace Serilog
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="context">The Splunk context to log to</param>
-        /// <param name="batchSizeLimit">The size of the batch to log</param>
-        /// <param name="defaultPeriod">The default time for batching</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
@@ -38,17 +37,37 @@ namespace Serilog
         public static LoggerConfiguration SplunkViaHttp(
             this LoggerSinkConfiguration loggerConfiguration,
             SplunkContext context,
-            int batchSizeLimit,
-            TimeSpan? defaultPeriod,
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)
         {
-  //          var defaultedPeriod = defaultPeriod ?? SplunkViaHttpSink.DefaultPeriod;
 
-//            var sink = new SplunkViaHttpSink(batchSizeLimit, defaultedPeriod, context, formatProvider);
+            var sink = new SplunkViaHttpSink(context, formatProvider);
 
-  //          return loggerConfiguration.Sink(sink);
-            return null;
+            return loggerConfiguration.Sink(sink);
+            
+        }
+
+        /// <summary>
+        /// Adds a sink that writes log events as to a Splunk instance via http.
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="context">The Splunk context to log to</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration SplunkViaHttp(
+            this LoggerSinkConfiguration loggerConfiguration,
+            Context context,
+            string userName, 
+            string password,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            IFormatProvider formatProvider = null)
+        {
+
+            var sink = new SplunkViaHttpSink(new SplunkContext(context, userName,password), formatProvider);
+
+            return loggerConfiguration.Sink(sink);
 
         }
 

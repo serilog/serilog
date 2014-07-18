@@ -24,9 +24,8 @@ namespace Serilog.Sinks.Splunk
 {
     //TODO: Change to new services
     //TODO: Change to async
-    //TODO: Change to underlying sink??
-    //TODO: Strong Naming Issues
-    //TODO: Add formatter
+    
+
     //TODO: Enricher for index?
 
     /// <summary>
@@ -39,7 +38,6 @@ namespace Serilog.Sinks.Splunk
         readonly string _password;
         readonly IFormatProvider _formatProvider;
         readonly SplunkClient.Service _service;
-
 
         /// <summary>
         /// Creates a new instance of the splunk sink
@@ -75,11 +73,8 @@ namespace Serilog.Sinks.Splunk
             _service = new SplunkClient.Service(_context);
         }
 
-
-
         public void Emit(LogEvent logEvent)
         {
-
             //TODO: Change to continuation
             Task.Factory.StartNew(async () =>
             {
@@ -93,10 +88,7 @@ namespace Serilog.Sinks.Splunk
                     : logEvent.RenderMessage();
 
                 await transmitter.SendAsync(message);
-
             });
-
-            
         }
     }
 }
