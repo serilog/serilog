@@ -36,6 +36,7 @@ namespace Serilog
         /// <param name="applicationVersionProperty">Specifies the property to use to retrieve the application version from. You can use an enricher to add the application version to all the log events. When you specify null, Raygun will use the assembly version.</param> 
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink. By default set to Error as Raygun is mostly used for error reporting.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="tags">Specifies the tags to include with every log message. The log level will always be included as a tag.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Raygun(
@@ -43,7 +44,8 @@ namespace Serilog
              string applicationKey,  
             IEnumerable<Type> wrapperExceptions = null, string userNameProperty = "UserName", string applicationVersionProperty = "ApplicationVersion",
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Error,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            IEnumerable<string> tags = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
@@ -51,7 +53,7 @@ namespace Serilog
                 throw new ArgumentNullException("applicationKey");
 
             return loggerConfiguration.Sink(
-                new RaygunSink(formatProvider, applicationKey, wrapperExceptions, userNameProperty, applicationVersionProperty),
+                new RaygunSink(formatProvider, applicationKey, wrapperExceptions, userNameProperty, applicationVersionProperty, tags),
                 restrictedToMinimumLevel);
         }
 
