@@ -4,7 +4,7 @@
     <id>Serilog.Sinks.ElasticSearch</id>
     <version>0.1.0</version>
     <authors>Michiel van Oudheusden</authors>
-    <description>Serilog event sink that writes to an ElasticSearch index.</description>
+    <description>The perfect way for .NET apps to write structured log events to ElasticSearch.</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
@@ -12,8 +12,7 @@
     <tags>serilog logging elasticsearch nest</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="NEST.Signed" />
-      <dependency id="Newtonsoft.Json" />
+      <dependency id="NEST" />
     </dependencies>
   </metadata>
   <files>

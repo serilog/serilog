@@ -24,7 +24,7 @@ namespace Serilog.Sinks.ElasticSearch
     /// <summary>
     /// Writes log events as documents to ElasticSearch.
     /// </summary>
-    public class ElasticSearchSink : PeriodicBatchingSink
+    class ElasticSearchSink : PeriodicBatchingSink
     {
         readonly string _indexFormat;
         readonly IFormatProvider _formatProvider;
@@ -82,7 +82,6 @@ namespace Serilog.Sinks.ElasticSearch
             if (items.Any() && _client !=null)
                 _client.IndexMany(items, indexName);
             
-        }
-       
+        }     
     }
 }
