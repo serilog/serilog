@@ -82,7 +82,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Attributed",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Attributed.Tests", "test\Serilog.Extras.Attributed.Tests\Serilog.Extras.Attributed.Tests.csproj", "{182ECDA3-A97D-4BB6-BC6F-60A137478B92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk", "Serilog.Sinks.Splunk\Serilog.Sinks.Splunk.csproj", "{13771374-CF5A-4955-BCDB-EBEFE70944B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk", "src\Serilog.Sinks.Splunk\Serilog.Sinks.Splunk.csproj", "{13771374-CF5A-4955-BCDB-EBEFE70944B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
