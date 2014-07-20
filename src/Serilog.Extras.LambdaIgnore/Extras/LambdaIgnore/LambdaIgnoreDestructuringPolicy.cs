@@ -53,26 +53,26 @@ namespace Serilog.Extras.LambdaIgnore.Extras.LambdaIgnore
             var structureProperties = new List<LogEventProperty>();
             foreach (var propertyInfo in _propertiesToInclude)
             {
-                object value;
+                object propValue;
                 try
                 {
-                    value = propertyInfo.GetValue(value);
+                    propValue = propertyInfo.GetValue(value);
                 }
                 catch (TargetInvocationException ex)
                 {
                     SelfLog.WriteLine("The property accessor {0} threw exception {1}", propertyInfo, ex);
-                    value = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
+                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
                 }
 
                 LogEventPropertyValue propertyValue;
 
-                if (value == null)
+                if (propValue == null)
                 {
                     propertyValue = new ScalarValue(null);
                 }
                 else
                 {
-                    propertyValue = propertyValueFactory.CreatePropertyValue(value, true);
+                    propertyValue = propertyValueFactory.CreatePropertyValue(propValue, true);
                 }
 
                 structureProperties.Add(new LogEventProperty(propertyInfo.Name, propertyValue));
