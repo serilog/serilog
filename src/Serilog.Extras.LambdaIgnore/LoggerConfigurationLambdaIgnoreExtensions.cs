@@ -12,9 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Linq.Expressions;
+using Serilog.Configuration;
+using Serilog.Extras.LambdaIgnore.Extras.LambdaIgnore;
+
 namespace Serilog.Extras.LambdaIgnore
-{
-    public class LoggerConfigurationLambdaIgnoreExtensions
+{    
+    /// <summary>
+    /// Adds the Destructure.UsingLambdaIgnores() extension to <see cref="LoggerConfiguration"/>.
+    /// </summary>
+    public static class LoggerConfigurationLambdaIgnoreExtensions
     {
+        /// <summary>
+        /// </summary>
+        /// <param name="configuration">The logger configuration to apply configuration to.</param>
+        /// <param name="ignored">The function expressions that expose the properties to ignore.</param>
+        /// <returns>An object allowing configuration to continue.</returns>
+        public static LoggerConfiguration UsingLambdaIgnores<TDestructureType>(this LoggerDestructuringConfiguration configuration, params Expression<Func<TDestructureType, object>>[] ignored)
+        {
+            return configuration.With(new LambdaIgnoreDestructuringPolicy<TDestructureType>(ignored));
+        }
     }
 }
