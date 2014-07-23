@@ -40,7 +40,6 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)
         {
-
             var sink = new SplunkViaHttpSink(context, formatProvider);
 
             return loggerConfiguration.Sink(sink);
@@ -71,11 +70,9 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)
         {
-
             var sink = new SplunkViaHttpSink(new SplunkContext(context, index, userName, password, resourceNameSpace, transmitterArgs), formatProvider);
 
             return loggerConfiguration.Sink(sink);
-
         }
     }
 }

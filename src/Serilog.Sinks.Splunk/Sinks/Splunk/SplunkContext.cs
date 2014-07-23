@@ -39,10 +39,13 @@ namespace Serilog.Sinks.Splunk
         public string Index { get;  set ; }
 
         /// <summary>
-        /// The namespace to log to
+        /// The namespace of apps to log to within Splunk
         /// </summary>
         public Namespace ResourceNamespace { get;  set; }
 
+        /// <summary>
+        /// The transmitter args that represent the source and source type for logging
+        /// </summary>
         public TransmitterArgs TransmitterArgs { get; set; }
 
         /// <summary>
