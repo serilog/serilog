@@ -48,7 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\Splunk\SplunkContext.cs" />
     <Compile Include="Sinks\Splunk\SplunkViaHttpSink.cs" />
-    <Compile Include="Sinks\Splunk\SplunkViaUdpSink.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Splunk.Client">

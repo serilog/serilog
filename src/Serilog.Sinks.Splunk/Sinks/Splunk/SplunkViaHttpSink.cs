@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-
 using System.Threading.Tasks;
 using Serilog.Core;
 using Serilog.Events;
@@ -22,11 +21,7 @@ using SplunkClient = Splunk.Client;
 
 namespace Serilog.Sinks.Splunk
 {
-
-
-
-    //TODO: Enricher for index?
-
+    //TODO: Possibly look at enricher for index
     /// <summary>
     /// A log event sink that writes to SplunkViaHttp.
     /// </summary>
@@ -35,6 +30,7 @@ namespace Serilog.Sinks.Splunk
         readonly SplunkClient.Context _context;
         readonly string _userName;
         readonly string _password;
+        readonly SplunkClient.TransmitterArgs _transmitterArgs;
         readonly IFormatProvider _formatProvider;
         readonly SplunkClient.Service _service;
         string _index;
@@ -47,22 +43,27 @@ namespace Serilog.Sinks.Splunk
         public SplunkViaHttpSink(
             SplunkContext context,
             IFormatProvider formatProvider = null)
-            : this(context, context.Index, context.Username, context.Password, formatProvider)
+            : this(context, context.Index, context.Username, context.Password, context.ResourceNamespace, context.TransmitterArgs, formatProvider)
         {
         }
 
         /// <summary>
         /// Create an instance of the SplunkViaHttp sink.
         /// </summary>
-       /// <param name="context">Connection info.</param>
+        /// <param name="context">Connection info.</param>
+        /// <param name="index"></param>
         /// <param name="userName">The username to authenticate with</param>
         /// <param name="password">The password to authenticate with</param>
+        /// <param name="resourceNamespace"></param>
+        /// <param name="transmitterArgs"></param>
         /// <param name="formatProvider"></param>
         public SplunkViaHttpSink(
             SplunkClient.Context context,
             string index,
             string userName,
             string password,
+            SplunkClient.Namespace resourceNamespace = null,
+            SplunkClient.TransmitterArgs transmitterArgs = null,
             IFormatProvider formatProvider = null
             )
         {
@@ -70,9 +71,12 @@ namespace Serilog.Sinks.Splunk
             _index = index;
             _userName = userName;
             _password = password;
+            _transmitterArgs = transmitterArgs;
             _formatProvider = formatProvider;
 
-            _service = new SplunkClient.Service(_context,new SplunkClient.Namespace(user: "nobody", app: "search"));
+            _service = resourceNamespace == null
+                ? new SplunkClient.Service(_context, new SplunkClient.Namespace("nobody", "search"))
+                : new SplunkClient.Service(_context, resourceNamespace);
         }
 
         public void Emit(LogEvent logEvent)
@@ -84,12 +88,8 @@ namespace Serilog.Sinks.Splunk
                 await _service.LogOnAsync(_userName, _password);
 
                 //Ensure that the index has been created
-                var index = await _service.Indexes.GetOrNullAsync(_index);
-
-                if (index == null)
-                {
-                   index = await _service.Indexes.CreateAsync(_index);
-                }
+                var index = await _service.Indexes.GetOrNullAsync(_index)
+                            ?? await _service.Indexes.CreateAsync(_index);
 
                 var transmitter = _service.Transmitter;
 
@@ -97,7 +97,14 @@ namespace Serilog.Sinks.Splunk
                     ? logEvent.RenderMessage(_formatProvider)
                     : logEvent.RenderMessage();
 
-                await transmitter.SendAsync(message, index.Name);
+                if (_transmitterArgs == null)
+                {
+                    await transmitter.SendAsync(message, index.Name);
+                }
+                else
+                {
+                    await transmitter.SendAsync(message, index.Name, _transmitterArgs);
+                }
             });
         }
     }
