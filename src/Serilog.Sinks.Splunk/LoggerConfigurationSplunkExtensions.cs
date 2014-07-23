@@ -44,7 +44,6 @@ namespace Serilog
             var sink = new SplunkViaHttpSink(context, formatProvider);
 
             return loggerConfiguration.Sink(sink);
-            
         }
 
         /// <summary>
@@ -59,13 +58,14 @@ namespace Serilog
         public static LoggerConfiguration SplunkViaHttp(
             this LoggerSinkConfiguration loggerConfiguration,
             Context context,
+            string index,
             string userName, 
             string password,
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)
         {
 
-            var sink = new SplunkViaHttpSink(new SplunkContext(context, userName,password), formatProvider);
+            var sink = new SplunkViaHttpSink(new SplunkContext(context, index, userName, password), formatProvider);
 
             return loggerConfiguration.Sink(sink);
 
@@ -93,6 +93,8 @@ namespace Serilog
          //   var sink = new SplunkViaUdpSink(host, port, batchSizeLimit, defaultedPeriod, formatProvider);
 
            // return loggerConfiguration.Sink(sink);
+
+            throw new NotImplementedException("KABOOOM!");
 
             return null;
         }

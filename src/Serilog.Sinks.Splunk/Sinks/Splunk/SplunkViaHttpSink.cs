@@ -22,9 +22,8 @@ using SplunkClient = Splunk.Client;
 
 namespace Serilog.Sinks.Splunk
 {
-    //TODO: Change to new services
-    //TODO: Change to async
-    
+
+
 
     //TODO: Enricher for index?
 
@@ -38,6 +37,7 @@ namespace Serilog.Sinks.Splunk
         readonly string _password;
         readonly IFormatProvider _formatProvider;
         readonly SplunkClient.Service _service;
+        string _index;
 
         /// <summary>
         /// Creates a new instance of the splunk sink
@@ -47,7 +47,7 @@ namespace Serilog.Sinks.Splunk
         public SplunkViaHttpSink(
             SplunkContext context,
             IFormatProvider formatProvider = null)
-            : this(context, context.Username, context.Password, formatProvider)
+            : this(context, context.Index, context.Username, context.Password, formatProvider)
         {
         }
 
@@ -60,17 +60,19 @@ namespace Serilog.Sinks.Splunk
         /// <param name="formatProvider"></param>
         public SplunkViaHttpSink(
             SplunkClient.Context context,
+            string index,
             string userName,
             string password,
             IFormatProvider formatProvider = null
             )
         {
             _context = context;
+            _index = index;
             _userName = userName;
             _password = password;
             _formatProvider = formatProvider;
 
-            _service = new SplunkClient.Service(_context);
+            _service = new SplunkClient.Service(_context,new SplunkClient.Namespace(user: "nobody", app: "search"));
         }
 
         public void Emit(LogEvent logEvent)
@@ -81,13 +83,21 @@ namespace Serilog.Sinks.Splunk
                 //Login
                 await _service.LogOnAsync(_userName, _password);
 
+                //Ensure that the index has been created
+                var index = await _service.Indexes.GetOrNullAsync(_index);
+
+                if (index == null)
+                {
+                   index = await _service.Indexes.CreateAsync(_index);
+                }
+
                 var transmitter = _service.Transmitter;
 
                 var message = _formatProvider != null
                     ? logEvent.RenderMessage(_formatProvider)
                     : logEvent.RenderMessage();
 
-                await transmitter.SendAsync(message);
+                await transmitter.SendAsync(message, index.Name);
             });
         }
     }

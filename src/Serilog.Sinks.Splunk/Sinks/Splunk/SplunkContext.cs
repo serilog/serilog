@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.Net.Http;
 using Splunk.Client;
 
@@ -8,47 +7,31 @@ namespace Serilog.Sinks.Splunk
     /// <summary>
     /// A specialised context relating to splunk that includes the authentication info
     /// </summary>
-    public class SplunkContext : global::Splunk.Client.Context
+    public class SplunkContext : Context
     {
         /// <summary>
         /// 
         /// </summary>
-        public string Username { get; set; }
+        public string Username { get; private set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Password { get; set; }
+        public string Password { get; private set; }
+
+        public string Index { get;  private set ; }
+
+        
 
         /// <summary>
         /// Creates an instance of the SplunkViaHttp context
         /// </summary>
-        /// <param name="scheme">The scheme to use (http or https)</param>
-        /// <param name="host">The host of the splunk intance</param>
-        /// <param name="port">The management port of the splunk instance</param>
-        /// <param name="timeout">The timeout for the calls to SplunkViaHttp</param>
-        public SplunkContext(global::Splunk.Client.Scheme scheme, string host, int port, TimeSpan timeout)
-            : base(scheme, host, port, timeout)
-        {
-        }
-
-        /// <summary>
-        /// Creates an instance of the SplunkViaHttp context
-        /// </summary>
-        public SplunkContext(Context context, string username, string password) 
+        public SplunkContext(Context context, string index, string username, string password) 
             :base(context.Scheme, context.Host, context.Port)
         {
-        }
-
-        /// <summary>
-        /// Creates an instance of the SplunkViaHttp context
-        /// </summary>
-        /// <param name="scheme">The scheme to use (http or https)</param>
-        /// <param name="host">The host of the splunk intance</param>
-        /// <param name="port">The management port of the splunk instance</param> 
-        public SplunkContext(global::Splunk.Client.Scheme scheme, string host, int port)
-            : base(scheme, host, port)
-        {
+            Index = index;
+            Username = username;
+            Password = password;
         }
 
         /// <summary>
@@ -60,8 +43,11 @@ namespace Serilog.Sinks.Splunk
         /// <param name="timeout"></param>
         /// <param name="handler"></param>
         /// <param name="disposeHandler"></param>
-        public SplunkContext(global::Splunk.Client.Scheme scheme, string host, int port, TimeSpan timeout, HttpMessageHandler handler, bool disposeHandler = true) : base(scheme, host, port, timeout, handler, disposeHandler)
+        public SplunkContext(Scheme scheme, string host, int port, string index, string username, string password, TimeSpan timeout, HttpMessageHandler handler, bool disposeHandler = true) : base(scheme, host, port, timeout, handler, disposeHandler)
         {
+            Index = index;
+            Username = username;
+            Password = password;
         }
     }
 }
