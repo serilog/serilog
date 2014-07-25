@@ -203,5 +203,35 @@ namespace Serilog.Tests.Parameters
             Assert.AreEqual("A", pv.Properties.Single(pp => pp.Name == "PropA").Value.LiteralValue());
             Assert.AreEqual("B", pv.Properties.Single(pp => pp.Name == "PropB").Value.LiteralValue());
         }
+
+        class HasIndexer
+        {
+            public string this[int index] { get { return "Indexer"; } }
+        }
+
+        [Test]
+        public void IndexerPropertiesAreIgnoredWhenDestructuring()
+        {
+            var indexed = new HasIndexer();
+            var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
+            Assert.AreEqual(0, pv.Properties.Count);
+        }
+
+        // Important because we use "Item" to short cut indexer checking
+        // (reducing garbage).
+        class HasItem
+        {
+            public string Item { get { return "Item"; } }
+        }
+
+        [Test]
+        public void ItemPropertiesNotAreIgnoredWhenDestructuring()
+        {
+            var indexed = new HasItem();
+            var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
+            Assert.AreEqual(1, pv.Properties.Count);
+            var item = pv.Properties.Single();
+            Assert.AreEqual("Item", item.Name);
+        }
     }
 }

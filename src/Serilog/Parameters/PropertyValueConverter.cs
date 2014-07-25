@@ -172,7 +172,8 @@ namespace Serilog.Parameters
             {
                 var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
                                                                     p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic);
+                                                                    !p.GetMethod.IsStatic &&
+                                                                    (p.Name != "Item" || p.GetIndexParameters().Length == 0));
 
                 foreach (var prop in props)
                 {
