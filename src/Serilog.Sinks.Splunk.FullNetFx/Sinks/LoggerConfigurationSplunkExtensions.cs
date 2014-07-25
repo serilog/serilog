@@ -74,5 +74,20 @@ namespace Serilog
 
             return loggerConfiguration.Sink(sink);
         }
+
+
+        public static LoggerConfiguration SplunkViaUdp(
+     this LoggerSinkConfiguration loggerConfiguration,
+            string host, 
+            int port,
+
+     LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+     IFormatProvider formatProvider = null)
+        {
+            var sink = new SplunkViaUdpSink(host, port, formatProvider);
+
+            return loggerConfiguration.Sink(sink);
+        }
+
     }
 }
