@@ -13,18 +13,43 @@
 // limitations under the License.
 
 using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Sinks.Splunk
 {
+    /// <summary>
+    /// A sink that logs to Splunk over Udp
+    /// </summary>
     public class SplunkViaUdpSink : ILogEventSink, IDisposable
     {
         IFormatProvider _formatProvider;
         Socket _socket;
 
+        /// <summary>
+        /// Creates an instance of the Splunk UDP Sink
+        /// </summary>
+        /// <param name="hostAddress">The Splunk Host</param>
+        /// <param name="port">The UDP port configured in Splunk</param>
+        /// <param name="formatProvider">Optional format provider</param>
+        public SplunkViaUdpSink(IPAddress hostAddress, int port, IFormatProvider formatProvider = null)
+        {
+            _formatProvider = formatProvider;
+
+            _socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
+            _socket.Connect(hostAddress, port);
+        }
+
+        /// <summary>
+        /// Creates an instance of the Splunk UDP Sink
+        /// </summary>
+        /// <param name="host">The Splunk Host</param>
+        /// <param name="port">The UDP port configured in Splunk</param>
+        /// <param name="formatProvider">Optional format provider</param>
         public SplunkViaUdpSink(string host, int port, IFormatProvider formatProvider = null)
         {
             _formatProvider = formatProvider;
@@ -39,7 +64,7 @@ namespace Serilog.Sinks.Splunk
                 ? logEvent.RenderMessage(_formatProvider)
                 : logEvent.RenderMessage();
 
-            //TODO: Enricher to add index, source and sourcetype
+            //TODO: Enricher to add index, source and sourcetype?
 
             _socket.Send(Encoding.UTF8.GetBytes(message));
         }

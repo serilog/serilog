@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Net;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.Splunk;
@@ -75,19 +76,47 @@ namespace Serilog
             return loggerConfiguration.Sink(sink);
         }
 
-
+        /// <summary>
+        /// Adds a sink that writes log events as to a Splunk instance via http.
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger config</param>
+        /// <param name="host">The Splunk host that is configured for UDP logging</param>
+        /// <param name="port">The udp port</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns></returns>
         public static LoggerConfiguration SplunkViaUdp(
-     this LoggerSinkConfiguration loggerConfiguration,
-            string host, 
+            this LoggerSinkConfiguration loggerConfiguration,
+            string host,
             int port,
-
-     LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
-     IFormatProvider formatProvider = null)
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            IFormatProvider formatProvider = null)
         {
             var sink = new SplunkViaUdpSink(host, port, formatProvider);
 
             return loggerConfiguration.Sink(sink);
         }
 
+
+        /// <summary>
+        /// Adds a sink that writes log events as to a Splunk instance via http.
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger config</param>
+        /// <param name="host">The Splunk host that is configured for UDP logging</param>
+        /// <param name="port">The udp port</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns></returns>
+        public static LoggerConfiguration SplunkViaUdp(
+            this LoggerSinkConfiguration loggerConfiguration,
+            IPAddress host,
+            int port,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            IFormatProvider formatProvider = null)
+        {
+            var sink = new SplunkViaUdpSink(host, port, formatProvider);
+
+            return loggerConfiguration.Sink(sink);
+        }
     }
 }
