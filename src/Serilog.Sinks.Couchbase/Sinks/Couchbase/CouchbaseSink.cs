@@ -100,9 +100,7 @@ namespace Serilog.Sinks.Couchbase
             {
                 var key = Guid.NewGuid().ToString();
                 
-                var result = await Task.Run<bool>(() => {
-                    return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
-                });
+                var result = await Task.Run(() => _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider))));
 
                 if (!result)
                     SelfLog.WriteLine("Failed to store value");
