@@ -87,6 +87,7 @@
     <Compile Include="Events\LogEvent.cs" />
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
+    <Compile Include="Parameters\ScalarDetector.cs" />
     <Compile Include="Parameters\PropertyValueConverter.cs" />
     <Compile Include="Parsing\Alignment.cs" />
     <Compile Include="Parsing\AlignmentDirection.cs" />

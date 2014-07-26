@@ -31,16 +31,6 @@ namespace Serilog.Parameters
     // writing a log event (roughly) in control of the cost of recording that event.
     partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
-        static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
-        {
-            typeof(bool),
-            typeof(char),
-            typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-                typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
-            typeof(string),
-            typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
-            typeof(Guid), typeof(Uri)
-        };
 
         readonly IDestructuringPolicy[] _destructuringPolicies; 
         readonly IScalarConversionPolicy[] _scalarConversionPolicies; 
@@ -52,7 +42,7 @@ namespace Serilog.Parameters
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
-                new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
+                new SimpleScalarConversionPolicy(ScalarDetector.BuiltInScalarTypes.Concat(additionalScalarTypes)),
                 new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
                 new ByteArrayScalarConversionPolicy(),
@@ -123,7 +113,7 @@ namespace Serilog.Parameters
                 // multiple different interpretations.
                 if (valueType.IsConstructedGenericType &&
                     valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-                    IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+                    valueType.GenericTypeArguments[0].IsScalarType())
                 {
                     return new DictionaryValue(enumerable.Cast<dynamic>()
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
@@ -157,11 +147,6 @@ namespace Serilog.Parameters
             return new ScalarValue(value.ToString());
         }
 
-        bool IsValidDictionaryKeyType(Type valueType)
-        {
-            return BuiltInScalarTypes.Contains(valueType) ||
-                   valueType.GetTypeInfo().IsEnum;
-        }
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
