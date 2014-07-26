@@ -187,6 +187,11 @@ namespace Serilog.Parameters
                     {
                         propValue = prop.GetValue(value);
                     }
+                    catch (TargetParameterCountException)
+                    {
+                        SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
+                        continue;
+                    }
                     catch (TargetInvocationException ex)
                     {
                         SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
