@@ -79,6 +79,7 @@ namespace Serilog.Sinks.Splunk
                 : new SplunkClient.Service(_context, resourceNamespace);
         }
 
+        /// <inheritdoc/>
         public void Emit(LogEvent logEvent)
         {
             //TODO: Change to continuation

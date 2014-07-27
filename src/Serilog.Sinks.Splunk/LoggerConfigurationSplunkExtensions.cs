@@ -34,6 +34,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
         public static LoggerConfiguration SplunkViaHttp(
             this LoggerSinkConfiguration loggerConfiguration,
             SplunkContext context,
@@ -59,6 +60,7 @@ namespace Serilog
         /// <param name="userName"></param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
         public static LoggerConfiguration SplunkViaHttp(
             this LoggerSinkConfiguration loggerConfiguration,
             Context context,

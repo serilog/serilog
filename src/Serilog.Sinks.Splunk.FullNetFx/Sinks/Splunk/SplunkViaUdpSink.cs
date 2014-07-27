@@ -57,6 +57,7 @@ namespace Serilog.Sinks.Splunk
             _socket.Connect(host, port);
         }
 
+        /// <inheritdoc/>
         public void Emit(LogEvent logEvent)
         {
             var message = _formatProvider != null
