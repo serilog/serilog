@@ -50,6 +50,7 @@
     <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
+    <Compile Include="Core\ImmutableDictionary.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\Enrichers\PropertyEnricher.cs" />
     <Compile Include="Core\IScalarConversionPolicy.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Core\Pipeline\SilentLogger.cs" />
     <Compile Include="Debugging\SelfLog.cs" />
     <Compile Include="Core\ILogEventEnricher.cs" />
+    <Compile Include="Parameters\PropertyAccessor.cs" />
     <Compile Include="Parameters\PropertyBinder.cs" />
     <Compile Include="Formatting\ITextFormatter.cs" />
     <Compile Include="Formatting\Display\MessageTemplateTextFormatter.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Events\LogEvent.cs" />
     <Compile Include="Events\LogEventLevel.cs" />
     <Compile Include="Events\LogEventProperty.cs" />
+    <Compile Include="Parameters\TypePropertyCache.cs" />
     <Compile Include="Parameters\ScalarDetector.cs" />
     <Compile Include="Parameters\PropertyValueConverter.cs" />
     <Compile Include="Parsing\Alignment.cs" />

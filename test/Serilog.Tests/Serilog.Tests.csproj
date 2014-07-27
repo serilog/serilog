@@ -79,6 +79,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Context\LogContextTests.cs" />
+    <Compile Include="Core\TypePropertyCacheTests.cs" />
     <Compile Include="Core\CopyingSinkTests.cs" />
     <Compile Include="Core\LoggerTests.cs" />
     <Compile Include="Core\SafeAggregateSinkTests.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
+    <Compile Include="Performance\PerformanceTests.cs" />
     <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
     <Compile Include="Sinks\Observable\ObservableSinkTests.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSinkTests.cs" />

@@ -16,7 +16,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -150,37 +149,19 @@ namespace Serilog.Parameters
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
-            var seenNames = new HashSet<string>();
-
-            var valueType = value.GetType().GetTypeInfo();
-            while (valueType.AsType() != typeof(object))
+            foreach (var property in value.GetType().GetCachedProperties())
             {
-                var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
-                                                                    p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic &&
-                                                                    (p.Name != "Item" || p.GetIndexParameters().Length == 0));
-
-                foreach (var prop in props)
+                object propertyValue;
+                try
                 {
-                    if (seenNames.Contains(prop.Name))
-                        continue;
-
-                    seenNames.Add(prop.Name);
-
-                    object propValue;
-                    try
-                    {
-                        propValue = prop.GetValue(value);
-                    }
-                    catch (TargetInvocationException ex)
-                    {
-                        SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
-                        propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
-                    }
-                    yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
+                    propertyValue = property.GetDelegate(value);
                 }
-                
-                valueType = valueType.BaseType.GetTypeInfo();
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", property, ex);
+                    propertyValue = "The property accessor threw an exception: " + ex.GetType().Name;
+                }
+                yield return new LogEventProperty(property.Name, recursive.CreatePropertyValue(propertyValue, true));
             }
         }
     }
