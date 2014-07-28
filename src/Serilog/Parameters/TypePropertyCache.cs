@@ -24,7 +24,7 @@ namespace Serilog.Parameters
 
     static class TypePropertyCache
     {
-        static ImmutableDictionary<RuntimeTypeHandle, List<PropertyAccessor>> _cache = new ImmutableDictionary<RuntimeTypeHandle, List<PropertyAccessor>>();
+        static ThreadSafeDictionary<RuntimeTypeHandle, List<PropertyAccessor>> _cache = new ThreadSafeDictionary<RuntimeTypeHandle, List<PropertyAccessor>>();
 
         public static List<PropertyAccessor> GetCachedProperties(this Type type)
         {

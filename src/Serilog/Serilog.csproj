@@ -50,7 +50,7 @@
     <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
-    <Compile Include="Core\ImmutableDictionary.cs" />
+    <Compile Include="Core\ThreadSafeDictionary.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\Enrichers\PropertyEnricher.cs" />
     <Compile Include="Core\IScalarConversionPolicy.cs" />
