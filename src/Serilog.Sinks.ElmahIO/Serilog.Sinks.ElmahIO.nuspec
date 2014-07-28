@@ -12,8 +12,8 @@
     <tags>serilog logging elmah elmah.io error</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="elmah.corelibrary" version="1.2.2"/>
-      <dependency id="elmah.io" version="1.0.0.30"  />
+      <dependency id="elmah.corelibrary" version="1.2.2" />
+      <dependency id="elmah.io.core" version="1.0.0.38" />
     </dependencies>
   </metadata>
   <files>
