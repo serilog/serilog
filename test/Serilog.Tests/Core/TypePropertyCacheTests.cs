@@ -14,7 +14,7 @@
             {
                 ClassProperty = "10"
             };
-            var expression = TypePropertyCache.GetGetMethodByExpression(instance.GetType().GetProperty("ClassProperty"));
+            var expression = instance.GetType().GetProperty("ClassProperty").GetGetMethodByExpression();
             Assert.AreEqual("10", expression(instance));
         }
         public class ClassWithClassProperty
@@ -28,7 +28,7 @@
             {
                 StructProperty = 10
             };
-            var expression = TypePropertyCache.GetGetMethodByExpression(instance.GetType().GetProperty("StructProperty"));
+            var expression = instance.GetType().GetProperty("StructProperty").GetGetMethodByExpression();
             Assert.AreEqual(10, expression(instance));
         }
         public class ClassWithStructProperty
@@ -42,7 +42,7 @@
             {
                 ClassProperty = "10"
             };
-            var expression = TypePropertyCache.GetGetMethodByExpression(instance.GetType().GetProperty("ClassProperty"));
+            var expression = instance.GetType().GetProperty("ClassProperty").GetGetMethodByExpression();
             Assert.AreEqual("10", expression(instance));
         }
         public class StructWithClassProperty
@@ -56,7 +56,7 @@
             {
                 StructProperty = 10
             };
-            var expression = TypePropertyCache.GetGetMethodByExpression(instance.GetType().GetProperty("StructProperty"));
+            var expression = instance.GetType().GetProperty("StructProperty").GetGetMethodByExpression();
             Assert.AreEqual(10, expression(instance));
         }
         public class StructWithStructProperty

@@ -38,7 +38,9 @@ namespace Serilog.Parameters
                     return value;
                 }
 
-                value = GetPropertiesRecursive(type).ToList();
+                value = type.GetPropertiesRecursive()
+                    .Select(GetPropertyAccessor)
+                    .ToList();
                 _locker.EnterWriteLock();
                 try
                 {
@@ -56,36 +58,17 @@ namespace Serilog.Parameters
             }
         }
 
-        static IEnumerable<PropertyAccessor> GetPropertiesRecursive(Type type)
+
+        internal static PropertyAccessor GetPropertyAccessor(this PropertyInfo propertyInfo)
         {
-            var seenNames = new HashSet<string>();
-
-            var currentTypeInfo = type.GetTypeInfo();
-
-            while (currentTypeInfo.AsType() != typeof(object))
+            return new PropertyAccessor
             {
-                var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
-                                                                    p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic &&
-                                                                    (p.Name != "Item" || p.GetIndexParameters().Length == 0) &&
-                                                                    !seenNames.Contains(p.Name));
-
-                foreach (var propertyInfo in unseenProperties)
-                {
-                    seenNames.Add(propertyInfo.Name);
-                    var accessor = new PropertyAccessor
-                    {
-                        Name = propertyInfo.Name,
-                        GetDelegate = GetGetMethodByExpression(propertyInfo)
-                    };
-                    yield return accessor;
-                }
-
-                currentTypeInfo = currentTypeInfo.BaseType.GetTypeInfo();
-            }
+                Name = propertyInfo.Name,
+                GetDelegate = propertyInfo.GetGetMethodByExpression()
+            };
         }
 
-        public static Func<object, object> GetGetMethodByExpression(PropertyInfo propertyInfo)
+        public static Func<object, object> GetGetMethodByExpression(this PropertyInfo propertyInfo)
         {
             var getMethodInfo = propertyInfo.GetMethod;
             var instance = Expression.Parameter(typeof(object), "instance");

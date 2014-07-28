@@ -14,12 +14,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using System.Threading;
+using System.Linq;
+using Serilog.Parameters;
 using CachedFunc = System.Func<object, Serilog.Core.ILogEventPropertyValueFactory, Serilog.Events.LogEventPropertyValue>;
 
 namespace Serilog.Extras.Attributed
@@ -27,9 +28,8 @@ namespace Serilog.Extras.Attributed
 
     class AttributedDestructuringPolicy : IDestructuringPolicy
     {
-
         ReaderWriterLockSlim _locker =new ReaderWriterLockSlim();
-        readonly Dictionary<Type, CachedFunc> _cache = new Dictionary<Type, CachedFunc>();
+        readonly Dictionary<RuntimeTypeHandle, CachedFunc> _cache = new Dictionary<RuntimeTypeHandle, CachedFunc>();
 
         CachedFunc GetOrAddFunc(object value)
         {
@@ -38,7 +38,7 @@ namespace Serilog.Extras.Attributed
             {
                 _locker.EnterUpgradeableReadLock();
                 CachedFunc func;
-                if (_cache.TryGetValue(t, out func))
+                if (_cache.TryGetValue(t.TypeHandle, out func))
                 {
                     return func;
                 }
@@ -46,7 +46,7 @@ namespace Serilog.Extras.Attributed
                 _locker.EnterWriteLock();
                 try
                 {
-                    _cache[t] = func;
+                    _cache[t.TypeHandle] = func;
                 }
                 finally
                 {
@@ -73,7 +73,6 @@ namespace Serilog.Extras.Attributed
             return true;
         }
 
-
         static CachedFunc GetValueToCache(object value)
         {
             var type = value.GetType();
@@ -84,7 +83,7 @@ namespace Serilog.Extras.Attributed
             {
                 return (o, f) => MakeScalar(o, logAsScalar.IsMutable);
             }
-            var properties = GetProperties(ti)
+            var properties = type.GetPropertiesRecursive()
                 .ToList();
             if (properties.Any(pi =>
                 pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
@@ -96,26 +95,26 @@ namespace Serilog.Extras.Attributed
 
                 var scalars = loggedProperties
                     .Where(pi => pi.GetCustomAttribute<LogAsScalarAttribute>() != null)
-                    .ToDictionary(pi => pi, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
+                    .ToDictionary(pi => pi.Name, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
 
-                return (o, f) => MakeStructure(value, loggedProperties, scalars, f, type);
+                return (o, f) => MakeStructure(value, loggedProperties.Select(x => x.GetPropertyAccessor()), scalars, f, type);
             }
             return null;
         }
 
-        static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyInfo> loggedProperties, Dictionary<PropertyInfo, bool> scalars, ILogEventPropertyValueFactory propertyValueFactory, Type type)
+        static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyAccessor> loggedProperties, Dictionary<string, bool> scalars, ILogEventPropertyValueFactory propertyValueFactory, Type type)
         {
             var structureProperties = new List<LogEventProperty>();
-            foreach (var pi in loggedProperties)
+            foreach (var propertyAccessor in loggedProperties)
             {
                 object propValue;
                 try
                 {
-                    propValue = pi.GetValue(value);
+                    propValue = propertyAccessor.GetDelegate(value);
                 }
-                catch (TargetInvocationException ex)
+                catch (Exception ex)
                 {
-                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", pi, ex);
+                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", propertyAccessor.Name, ex);
                     propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
                 }
 
@@ -126,7 +125,7 @@ namespace Serilog.Extras.Attributed
                 {
                     pv = new ScalarValue(null);
                 }
-                else if (scalars.TryGetValue(pi, out stringify))
+                else if (scalars.TryGetValue(propertyAccessor.Name, out stringify))
                 {
                     pv = MakeScalar(propValue, stringify);
                 }
@@ -135,7 +134,7 @@ namespace Serilog.Extras.Attributed
                     pv = propertyValueFactory.CreatePropertyValue(propValue, true);
                 }
 
-                structureProperties.Add(new LogEventProperty(pi.Name, pv));
+                structureProperties.Add(new LogEventProperty(propertyAccessor.Name, pv));
             }
             return new StructureValue(structureProperties, type.Name);
         }
@@ -145,28 +144,5 @@ namespace Serilog.Extras.Attributed
             return new ScalarValue(stringify ? value.ToString() : value);
         }
 
-        static IEnumerable<PropertyInfo> GetProperties(TypeInfo ti)
-        {
-            var seenNames = new HashSet<string>();
-
-            var valueType = ti;
-            while (valueType.AsType() != typeof(object))
-            {
-                var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
-                                                                    p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic);
-
-                foreach (var prop in props)
-                {
-                    if (seenNames.Contains(prop.Name))
-                        continue;
-
-                    seenNames.Add(prop.Name);
-                    yield return prop;
-                }
-                
-                valueType = valueType.BaseType.GetTypeInfo();
-            }
-        }
     }
 }
