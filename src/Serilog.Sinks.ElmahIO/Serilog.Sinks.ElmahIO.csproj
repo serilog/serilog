@@ -44,8 +44,9 @@
     <Reference Include="Elmah">
       <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
     </Reference>
-    <Reference Include="Elmah.Io">
-      <HintPath>..\..\packages\elmah.io.1.0.0.30\lib\net40\Elmah.Io.dll</HintPath>
+    <Reference Include="Elmah.Io, Version=1.0.0.30, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\elmah.io.core.1.0.0.38\lib\net40\Elmah.Io.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
