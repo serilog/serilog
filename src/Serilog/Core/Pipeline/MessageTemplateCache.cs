@@ -18,11 +18,13 @@ using Serilog.Events;
 
 namespace Serilog.Core.Pipeline
 {
+    using System.Threading;
+
     class MessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
+        static ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string,MessageTemplate>();
-        readonly object _templatesLock = new object();
 
         const int MaxCacheItems = 1000;
 
@@ -34,26 +36,46 @@ namespace Serilog.Core.Pipeline
 
         public MessageTemplate Parse(string messageTemplate)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
-
-            MessageTemplate result;
-            lock(_templatesLock)
-                if (_templates.TryGetValue(messageTemplate, out result))
-                    return result;
-
-            result = _innerParser.Parse(messageTemplate);
-
-            lock (_templatesLock)
+            if (messageTemplate == null)
             {
+                throw new ArgumentNullException("messageTemplate");
+            }
+
+            try
+            {
+                _locker.EnterUpgradeableReadLock();
+                MessageTemplate value;
+                if (_templates.TryGetValue(messageTemplate, out value))
+                {
+                    return value;
+                }
+
+                value = _innerParser.Parse(messageTemplate);
+
                 // Exceeding MaxCacheItems is *not* the sunny day scenario; all we're doing here is preventing out-of-memory
                 // conditions when the library is used incorrectly. Correct use (templates, rather than
                 // direct message strings) should barely, if ever, overflow this cache.
+                if (_templates.Count > MaxCacheItems)
+                {
+                    return value;
+                }
 
-                if (_templates.Count <= MaxCacheItems)
-                    _templates[messageTemplate] = result;
+                _locker.EnterWriteLock();
+                try
+                {
+                    _templates[messageTemplate] = value;
+                }
+                finally
+                {
+                    _locker.ExitWriteLock();
+                }
+                return value;
+            }
+            finally
+            {
+                _locker.ExitUpgradeableReadLock();
             }
 
-            return result;
         }
     }
 }

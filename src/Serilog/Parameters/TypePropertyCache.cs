@@ -16,19 +16,44 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Linq.Expressions;
+using System.Threading;
 
 namespace Serilog.Parameters
 {
-    using System.Linq.Expressions;
-    using Serilog.Core;
-
+    
     static class TypePropertyCache
     {
-        static ThreadSafeDictionary<RuntimeTypeHandle, List<PropertyAccessor>> _cache = new ThreadSafeDictionary<RuntimeTypeHandle, List<PropertyAccessor>>();
+        static ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
+        static Dictionary<RuntimeTypeHandle, List<PropertyAccessor>> _dictionary = new Dictionary<RuntimeTypeHandle, List<PropertyAccessor>>();
 
         public static List<PropertyAccessor> GetCachedProperties(this Type type)
         {
-            return _cache.GetOrAdd(type.TypeHandle, () => GetPropertiesRecursive(type).ToList());
+            try
+            {
+                _locker.EnterUpgradeableReadLock();
+                List<PropertyAccessor> value;
+                if (_dictionary.TryGetValue(type.TypeHandle, out value))
+                {
+                    return value;
+                }
+
+                value = GetPropertiesRecursive(type).ToList();
+                _locker.EnterWriteLock();
+                try
+                {
+                    _dictionary.Add(type.TypeHandle, value);
+                }
+                finally
+                {
+                    _locker.ExitWriteLock();
+                }
+                return value;
+            }
+            finally
+            {
+                _locker.ExitUpgradeableReadLock();
+            }
         }
 
         static IEnumerable<PropertyAccessor> GetPropertiesRecursive(Type type)
@@ -60,7 +85,6 @@ namespace Serilog.Parameters
             }
         }
 
-
         public static Func<object, object> GetGetMethodByExpression(PropertyInfo propertyInfo)
         {
             var getMethodInfo = propertyInfo.GetMethod;
@@ -72,6 +96,5 @@ namespace Serilog.Parameters
             return Expression.Lambda<Func<object, object>>(callExpression, instance)
                 .Compile();
         }
-
     }
 }
