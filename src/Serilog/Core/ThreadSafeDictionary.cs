@@ -18,7 +18,7 @@ namespace Serilog.Core
     using System.Collections.Generic;
     using System.Threading;
 
-    class ImmutableDictionary<TKey,TValue>
+    class ThreadSafeDictionary<TKey,TValue>
     {
         ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         Dictionary<TKey,TValue> _dictionary = new Dictionary<TKey, TValue>();
@@ -34,17 +34,17 @@ namespace Serilog.Core
                     return value;
                 }
 
+                value = createValue();
                 _locker.EnterWriteLock();
                 try
                 {
-                    value = createValue();
                     _dictionary.Add(key, value);
-                    return value;
                 }
                 finally
                 {
                     _locker.ExitWriteLock();
                 }
+                return value;
             }
             finally
             {
