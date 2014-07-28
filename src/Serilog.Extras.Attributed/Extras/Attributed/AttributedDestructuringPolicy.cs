@@ -19,69 +19,88 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using System.Threading;
+using CachedFunc = System.Func<object, Serilog.Core.ILogEventPropertyValueFactory, Serilog.Events.LogEventPropertyValue>;
 
 namespace Serilog.Extras.Attributed
 {
+
     class AttributedDestructuringPolicy : IDestructuringPolicy
     {
-        readonly object _cacheLock = new object();
-        readonly HashSet<Type> _ignored = new HashSet<Type>();
-        readonly Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>> _cache = new Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>>(); 
+
+        ReaderWriterLockSlim _locker =new ReaderWriterLockSlim();
+        readonly Dictionary<Type, CachedFunc> _cache = new Dictionary<Type, CachedFunc>();
+
+        CachedFunc GetOrAddFunc(object value)
+        {
+            var t = value.GetType();
+            try
+            {
+                _locker.EnterUpgradeableReadLock();
+                CachedFunc func;
+                if (_cache.TryGetValue(t, out func))
+                {
+                    return func;
+                }
+                func = GetValueToCache(value);
+                _locker.EnterWriteLock();
+                try
+                {
+                    _cache[t] = func;
+                }
+                finally
+                {
+                    _locker.ExitWriteLock();   
+                }
+                return func;
+            }
+            finally
+            {
+                _locker.ExitUpgradeableReadLock();
+            }
+        }
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
-            var t = value.GetType();
-            lock (_cacheLock)
+            var func = GetOrAddFunc(value);
+
+            if (func == null)
             {
-                if (_ignored.Contains(t))
-                {
-                    result = null;
-                    return false;
-                }
-
-                Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue> cached;
-                if (_cache.TryGetValue(t, out cached))
-                {
-                    result = cached(value, propertyValueFactory);
-                    return true;
-                }
+                result = null;
+                return false;
             }
+            result = func(value, propertyValueFactory);
+            return true;
+        }
 
-            var ti = t.GetTypeInfo();
+
+        static CachedFunc GetValueToCache(object value)
+        {
+            var type = value.GetType();
+            var ti = type.GetTypeInfo();
 
             var logAsScalar = ti.GetCustomAttribute<LogAsScalarAttribute>();
             if (logAsScalar != null)
             {
-                lock (_cacheLock)
-                    _cache[t] = (o, f) => MakeScalar(o, logAsScalar.IsMutable);
-
+                return (o, f) => MakeScalar(o, logAsScalar.IsMutable);
             }
-            else
+            var properties = GetProperties(ti)
+                .ToList();
+            if (properties.Any(pi =>
+                pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
+                pi.GetCustomAttribute<NotLoggedAttribute>() != null))
             {
-                var properties = GetProperties(ti);
-                if (properties.Any(pi =>
-                    pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
-                    pi.GetCustomAttribute<NotLoggedAttribute>() != null))
-                {
-                    var loggedProperties = properties
-                        .Where(pi => pi.GetCustomAttribute<NotLoggedAttribute>() == null)
-                        .ToList();
+                var loggedProperties = properties
+                    .Where(pi => pi.GetCustomAttribute<NotLoggedAttribute>() == null)
+                    .ToList();
 
-                    var scalars = loggedProperties
-                        .Where(pi => pi.GetCustomAttribute<LogAsScalarAttribute>() != null)
-                        .ToDictionary(pi => pi, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
+                var scalars = loggedProperties
+                    .Where(pi => pi.GetCustomAttribute<LogAsScalarAttribute>() != null)
+                    .ToDictionary(pi => pi, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
 
-                    lock (_cacheLock)
-                        _cache[t] = (o, f) => MakeStructure(value, loggedProperties, scalars, f, t);
-                }
-                else
-                {
-                    lock(_cacheLock)
-                        _ignored.Add(t);
-                }
+                return (o, f) => MakeStructure(value, loggedProperties, scalars, f, type);
             }
-
-            return TryDestructure(value, propertyValueFactory, out result);
+            return null;
         }
 
         static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyInfo> loggedProperties, Dictionary<PropertyInfo, bool> scalars, ILogEventPropertyValueFactory propertyValueFactory, Type type)
