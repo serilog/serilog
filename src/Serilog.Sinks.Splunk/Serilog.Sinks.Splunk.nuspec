@@ -22,15 +22,6 @@
     <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net45" />
     <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net45" />
     <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin40\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin40\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin40\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin40\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin40\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin40\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net40" />
   </files>
 </package>
 

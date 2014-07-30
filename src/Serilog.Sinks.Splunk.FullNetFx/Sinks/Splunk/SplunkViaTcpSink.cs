@@ -28,7 +28,7 @@ namespace Serilog.Sinks.Splunk
     {
         readonly IPAddress _hostAddress;
         readonly int _port;
-        IFormatProvider _formatProvider;
+        readonly IFormatProvider _formatProvider;
         TcpClient _client;
 
         /// <summary>
