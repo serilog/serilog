@@ -83,7 +83,7 @@ namespace Serilog
         /// </summary>
         /// <param name="loggerConfiguration">The logger config</param>
         /// <param name="host">The Splunk host that is configured for UDP logging</param>
-        /// <param name="port">The udp port</param>
+        /// <param name="port">The UDP port</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns></returns>
@@ -102,11 +102,11 @@ namespace Serilog
 
 
         /// <summary>
-        /// Adds a sink that writes log events as to a Splunk instance via http.
+        /// Adds a sink that writes log events as to a Splunk instance via UDP.
         /// </summary>
         /// <param name="loggerConfiguration">The logger config</param>
         /// <param name="host">The Splunk host that is configured for UDP logging</param>
-        /// <param name="port">The udp port</param>
+        /// <param name="port">The UDP port</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns></returns>
@@ -124,11 +124,11 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Adds a sink that writes log events as to a Splunk instance via http.
+        /// Adds a sink that writes log events as to a Splunk instance via TCP.
         /// </summary>
         /// <param name="loggerConfiguration">The logger config</param>
         /// <param name="host">The Splunk host that is configured for UDP logging</param>
-        /// <param name="port">The udp port</param>
+        /// <param name="port">The TCP port</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns></returns>
@@ -146,11 +146,11 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Adds a sink that writes log events as to a Splunk instance via http.
+        /// Adds a sink that writes log events as to a Splunk instance via TCP.
         /// </summary>
         /// <param name="loggerConfiguration">The logger config</param>
         /// <param name="host">The Splunk host that is configured for UDP logging</param>
-        /// <param name="port">The udp port</param>
+        /// <param name="port">The TCP port</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns></returns>

@@ -30,10 +30,9 @@ namespace Serilog.Sinks.Splunk
         readonly int _port;
         IFormatProvider _formatProvider;
         TcpClient _client;
-        Socket _socket;
 
         /// <summary>
-        /// Creates an instance of the Splunk UDP Sink
+        /// Creates an instance of the Splunk TCP Sink
         /// </summary>
         /// <param name="hostAddress">The Splunk Host</param>
         /// <param name="port">The UDP port configured in Splunk</param>
@@ -49,7 +48,7 @@ namespace Serilog.Sinks.Splunk
         }
 
         /// <summary>
-        /// Creates an instance of the Splunk UDP Sink
+        /// Creates an instance of the Splunk TCP Sink
         /// </summary>
         /// <param name="host">The Splunk Host</param>
         /// <param name="port">The UDP port configured in Splunk</param>
@@ -61,9 +60,6 @@ namespace Serilog.Sinks.Splunk
             _hostAddress = IPAddress.Parse(host);
             _client = new TcpClient();
             _client.Connect(host, port);
-
-
-
         }
 
         /// <inheritdoc/>
@@ -79,7 +75,7 @@ namespace Serilog.Sinks.Splunk
                 _client.Connect(_hostAddress, _port);
             }
 
-            //TODO: Quick hack to get TCP working
+            //TODO: Quick hack to get TCP working.  Needs a rethink
             using (var networkStream = _client.GetStream())
             {
                 var data = Encoding.UTF8.GetBytes(message);
@@ -92,7 +88,6 @@ namespace Serilog.Sinks.Splunk
         public void Dispose()
         {
             _client.Close();
-
         }
     }
 }
