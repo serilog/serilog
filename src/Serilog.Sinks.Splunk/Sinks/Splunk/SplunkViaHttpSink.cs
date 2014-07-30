@@ -25,7 +25,7 @@ namespace Serilog.Sinks.Splunk
     /// <summary>
     /// A log event sink that writes to SplunkViaHttp.
     /// </summary>
-    public class SplunkViaHttpSink : ILogEventSink
+    public class SplunkViaHttpSink : ILogEventSink, IDisposable
     {
         readonly SplunkClient.Context _context;
         readonly string _userName;
@@ -107,6 +107,12 @@ namespace Serilog.Sinks.Splunk
                     await transmitter.SendAsync(message, index.Name, _transmitterArgs);
                 }
             });
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            _service.Dispose();
         }
     }
 }

@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\LoggerConfigurationSplunkExtensions.cs" />
+    <Compile Include="Sinks\Splunk\SplunkViaTcpSink.cs" />
     <Compile Include="Sinks\Splunk\SplunkViaUdpSink.cs" />
   </ItemGroup>
   <ItemGroup>
