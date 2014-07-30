@@ -31,17 +31,19 @@ namespace Serilog.Sinks.Raygun
         readonly IFormatProvider _formatProvider;
         readonly string _userNameProperty;
         readonly string _applicationVersionProperty;
+        readonly IEnumerable<string> _tags;
         readonly RaygunClient _client;
 
         /// <summary>
-        /// Construct a sink that saves errors to the Raygun.io service. Properties are being send as userdata and the level is used as tag. The message is included inside the userdata.
+        /// Construct a sink that saves errors to the Raygun.io service. Properties are being send as userdata and the level is included as tag. The message is included inside the userdata.
         /// </summary>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="applicationKey">The application key as found on the Raygun website.</param>
         /// <param name="wrapperExceptions">If you have common outer exceptions that wrap a valuable inner exception which you'd prefer to group by, you can specify these by providing a list.</param>
         /// <param name="userNameProperty">Specifies the property name to read the username from. By default it is UserName. Set to null if you do not want to use this feature.</param>
         /// <param name="applicationVersionProperty">Specifies the property to use to retrieve the application version from. You can use an enricher to add the application version to all the log events. When you specify null, Raygun will use the assembly version.</param>
-        public RaygunSink(IFormatProvider formatProvider, string applicationKey, IEnumerable<Type> wrapperExceptions = null, string userNameProperty = "UserName", string applicationVersionProperty = "ApplicationVersion")
+        /// <param name="tags">Specifies the tags to include with every log message. The log level will always be included as a tag.</param>
+        public RaygunSink(IFormatProvider formatProvider, string applicationKey, IEnumerable<Type> wrapperExceptions = null, string userNameProperty = "UserName", string applicationVersionProperty = "ApplicationVersion", IEnumerable<string> tags = null)
         {
             if (string.IsNullOrEmpty(applicationKey))
                 throw new ArgumentNullException("applicationKey");
@@ -49,6 +51,7 @@ namespace Serilog.Sinks.Raygun
             _formatProvider = formatProvider;
             _userNameProperty = userNameProperty;
             _applicationVersionProperty = applicationVersionProperty;
+            _tags = tags ?? new string[0];
 
             _client = new RaygunClient(applicationKey);
             if (wrapperExceptions != null)
@@ -61,7 +64,8 @@ namespace Serilog.Sinks.Raygun
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var tags = new List<String> { logEvent.Level.ToString() };
+            //Include the log level as a tag.
+            var tags = _tags.Concat(new []{logEvent.Level.ToString()}).ToList();
 
             var properties = logEvent.Properties
                          .Select(pv => new { Name = pv.Key, Value = RaygunPropertyFormatter.Simplify(pv.Value) })
