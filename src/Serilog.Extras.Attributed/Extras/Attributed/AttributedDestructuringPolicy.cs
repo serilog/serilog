@@ -19,6 +19,7 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Parameters;
 
 namespace Serilog.Extras.Attributed
 {
@@ -58,7 +59,8 @@ namespace Serilog.Extras.Attributed
             }
             else
             {
-                var properties = GetProperties(ti);
+                var properties = t.GetPropertiesRecursive()
+                    .ToList();
                 if (properties.Any(pi =>
                     pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
                     pi.GetCustomAttribute<NotLoggedAttribute>() != null))
@@ -126,28 +128,5 @@ namespace Serilog.Extras.Attributed
             return new ScalarValue(stringify ? value.ToString() : value);
         }
 
-        static IEnumerable<PropertyInfo> GetProperties(TypeInfo ti)
-        {
-            var seenNames = new HashSet<string>();
-
-            var valueType = ti;
-            while (valueType.AsType() != typeof(object))
-            {
-                var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
-                                                                    p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic);
-
-                foreach (var prop in props)
-                {
-                    if (seenNames.Contains(prop.Name))
-                        continue;
-
-                    seenNames.Add(prop.Name);
-                    yield return prop;
-                }
-                
-                valueType = valueType.BaseType.GetTypeInfo();
-            }
-        }
     }
 }
