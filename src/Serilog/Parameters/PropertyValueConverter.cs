@@ -165,36 +165,24 @@ namespace Serilog.Parameters
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
-            var seenNames = new HashSet<string>();
-
-            var valueType = value.GetType().GetTypeInfo();
-            while (valueType.AsType() != typeof(object))
+            foreach (var prop in value.GetType().GetPropertiesRecursive())
             {
-                var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
-                                                                    p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic);
-
-                foreach (var prop in props)
+                object propValue;
+                try
                 {
-                    if (seenNames.Contains(prop.Name))
-                        continue;
-
-                    seenNames.Add(prop.Name);
-
-                    object propValue;
-                    try
-                    {
-                        propValue = prop.GetValue(value);
-                    }
-                    catch (TargetInvocationException ex)
-                    {
-                        SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
-                        propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
-                    }
-                    yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
+                    propValue = prop.GetValue(value);
                 }
-                
-                valueType = valueType.BaseType.GetTypeInfo();
+                catch (TargetParameterCountException)
+                {
+                    SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
+                    continue;
+                }
+                catch (TargetInvocationException ex)
+                {
+                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
+                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
+                }
+                yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }
         }
     }

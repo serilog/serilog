@@ -24,7 +24,7 @@ namespace Serilog.Sinks.ElasticSearch
     /// Converts <see cref="LogEventProperty"/> values into simple scalars,
     /// dictionaries and lists so that they can be persisted in ElasticSearch.
     /// </summary>
-    public static class ESPropertyFormatter
+    static class ESPropertyFormatter
     {
         static readonly HashSet<Type> ESSpecialScalars = new HashSet<Type>
         {

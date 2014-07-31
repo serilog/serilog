@@ -167,7 +167,8 @@ namespace Serilog.Parameters
             var valueType = value.GetType();
             var props = valueType.GetProperties().Where(p => p.CanRead &&
                                                             p.GetGetMethod().IsPublic &&
-                                                            !p.GetGetMethod().IsStatic);
+                                                            !p.GetGetMethod().IsStatic &&
+                                                            (p.Name != "Item" || p.GetIndexParameters().Length == 0));
 
             foreach (var prop in props)
             {
@@ -175,6 +176,11 @@ namespace Serilog.Parameters
                 try
                 {
                     propValue = prop.GetValue(value, null);
+                }
+                catch (TargetParameterCountException)
+                {
+                    SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
+                    continue;
                 }
                 catch (TargetInvocationException ex)
                 {

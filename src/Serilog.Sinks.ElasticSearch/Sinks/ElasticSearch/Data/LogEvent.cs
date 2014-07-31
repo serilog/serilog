@@ -23,15 +23,8 @@ namespace Serilog.Sinks.ElasticSearch.Data
     /// <summary>
     /// A wrapper class for <see cref="Events.LogEvent"/> that is used to store as a document in ElasticSearch.
     /// </summary>
-    public class LogEvent
+    class LogEvent
     {
-        /// <summary>
-        /// Construct a new <see cref="LogEvent"/>.
-        /// </summary>
-        public LogEvent()
-        {
-        }
-
         /// <summary>
         /// Construct a new <see cref="LogEvent"/>.
         /// </summary>

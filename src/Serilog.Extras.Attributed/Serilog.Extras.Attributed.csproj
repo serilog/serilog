@@ -53,6 +53,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Serilog\Parameters\GetablePropertyFinder.cs">
+      <Link>Extras\Attributed\GetablePropertyFinder.cs</Link>
+    </Compile>
     <Compile Include="Extras\Attributed\AttributedDestructuringPolicy.cs" />
     <Compile Include="Extras\Attributed\NotLoggedAttribute.cs" />
     <Compile Include="Extras\Attributed\LogAsScalarAttribute.cs" />
