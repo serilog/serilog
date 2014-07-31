@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.ComponentModel;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.Splunk;
@@ -35,13 +34,8 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-<<<<<<< HEAD
         /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
         public static LoggerConfiguration SplunkViaHttp(
-=======
-        [Obsolete("Please use the concrete SplunkConnectionInfo class instead of ISplunkConnectionInfo."), EditorBrowsable(EditorBrowsableState.Never)]
-        public static LoggerConfiguration Splunk(
->>>>>>> upstream/master
             this LoggerSinkConfiguration loggerConfiguration,
             SplunkContext context,
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
@@ -73,7 +67,7 @@ namespace Serilog
             string index,
             string userName,
             string password,
-            Namespace resourceNameSpace, 
+            Namespace resourceNameSpace,
             TransmitterArgs transmitterArgs,
             LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)

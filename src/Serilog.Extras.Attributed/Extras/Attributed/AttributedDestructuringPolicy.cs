@@ -19,10 +19,7 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
-<<<<<<< HEAD
-=======
 using Serilog.Parameters;
->>>>>>> upstream/master
 
 namespace Serilog.Extras.Attributed
 {
@@ -30,7 +27,7 @@ namespace Serilog.Extras.Attributed
     {
         readonly object _cacheLock = new object();
         readonly HashSet<Type> _ignored = new HashSet<Type>();
-        readonly Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>> _cache = new Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>>(); 
+        readonly Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>> _cache = new Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>>();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
@@ -62,12 +59,8 @@ namespace Serilog.Extras.Attributed
             }
             else
             {
-<<<<<<< HEAD
-                var properties = GetProperties(ti);
-=======
                 var properties = t.GetPropertiesRecursive()
                     .ToList();
->>>>>>> upstream/master
                 if (properties.Any(pi =>
                     pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
                     pi.GetCustomAttribute<NotLoggedAttribute>() != null))
@@ -85,7 +78,7 @@ namespace Serilog.Extras.Attributed
                 }
                 else
                 {
-                    lock(_cacheLock)
+                    lock (_cacheLock)
                         _ignored.Add(t);
                 }
             }
@@ -135,31 +128,5 @@ namespace Serilog.Extras.Attributed
             return new ScalarValue(stringify ? value.ToString() : value);
         }
 
-<<<<<<< HEAD
-        static IEnumerable<PropertyInfo> GetProperties(TypeInfo ti)
-        {
-            var seenNames = new HashSet<string>();
-
-            var valueType = ti;
-            while (valueType.AsType() != typeof(object))
-            {
-                var props = valueType.DeclaredProperties.Where(p => p.CanRead &&
-                                                                    p.GetMethod.IsPublic &&
-                                                                    !p.GetMethod.IsStatic);
-
-                foreach (var prop in props)
-                {
-                    if (seenNames.Contains(prop.Name))
-                        continue;
-
-                    seenNames.Add(prop.Name);
-                    yield return prop;
-                }
-                
-                valueType = valueType.BaseType.GetTypeInfo();
-            }
-        }
-=======
->>>>>>> upstream/master
     }
 }
