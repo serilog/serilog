@@ -22,6 +22,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
+using Serilog.Reflection;
 
 namespace Serilog.Parameters
 {

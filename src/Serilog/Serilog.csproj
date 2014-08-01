@@ -66,7 +66,7 @@
     <Compile Include="Formatting\Display\LiteralStringValue.cs" />
     <Compile Include="Formatting\Raw\RawFormatter.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
-    <Compile Include="Parameters\GetablePropertyFinder.cs" />
+    <Compile Include="Reflection\GetablePropertyFinder.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\Sinks\SafeAggregateSink.cs" />
     <Compile Include="Core\Sinks\RestrictedSink.cs" />
@@ -111,6 +111,8 @@
     <Compile Include="Parsing\MessageTemplateParser.cs" />
     <Compile Include="Parsing\TextToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\PropertyAccessor.cs" />
+    <Compile Include="Reflection\TypePropertyCache.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink.cs" />
   </ItemGroup>
