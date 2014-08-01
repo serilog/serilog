@@ -32,8 +32,9 @@
     <DocumentationFile>bin\Release\Serilog.Sinks.Splunk.FullNetFx.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Splunk.Client">
-      <HintPath>..\..\packages\Splunk.Client.2.0.0-CI00003\lib\portable-net45+win+wpa81\Splunk.Client.dll</HintPath>
+    <Reference Include="Splunk.Client, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Splunk.Client.2.0.0-beta\lib\portable-net45+win+wpa81\Splunk.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

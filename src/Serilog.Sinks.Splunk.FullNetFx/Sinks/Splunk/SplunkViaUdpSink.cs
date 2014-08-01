@@ -64,8 +64,6 @@ namespace Serilog.Sinks.Splunk
                 ? logEvent.RenderMessage(_formatProvider)
                 : logEvent.RenderMessage();
 
-            //TODO: Enricher to add index, source and sourcetype?
-
             _socket.Send(Encoding.UTF8.GetBytes(message));
         }
 

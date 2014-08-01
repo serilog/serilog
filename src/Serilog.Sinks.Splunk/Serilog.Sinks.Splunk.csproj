@@ -40,9 +40,7 @@
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="Serilog.Sinks.Splunk.nuspec" />
   </ItemGroup>
   <ItemGroup>
@@ -52,15 +50,15 @@
     <Compile Include="Sinks\Splunk\SplunkViaHttpSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Splunk.Client">
-      <HintPath>..\..\packages\Splunk.Client.2.0.0-CI00003\lib\portable-net45+win+wpa81\Splunk.Client.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Splunk.Client">
+      <HintPath>..\..\packages\Splunk.Client.2.0.0-beta\lib\portable-net45+win+wpa81\Splunk.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
