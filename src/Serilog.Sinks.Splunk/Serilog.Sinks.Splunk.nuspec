@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Sinks.Splunk</id>
+    <version>0.1.0</version>
+    <authors>Serilog Contributors</authors>
+    <description>Serilog event sink that writes to Splunk.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog logging splunk</tags>
+    <dependencies>
+      <dependency id="Serilog" />
+      <dependency id="Splunk.Client" version="2.0.0-beta" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.dll" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.xml" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog.Sinks.Splunk\bin\Release\Serilog.Sinks.Splunk.pdb" target="lib\portable-net45+win8+wp8" />
+    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net45" />
+    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net45" />
+    <file src="src\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net45" />
+  </files>
+</package>
+
