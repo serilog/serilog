@@ -13,67 +13,68 @@
 // limitations under the License.
 
 using System;
-using System.ComponentModel;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.Splunk;
+using Splunk.Client;
 
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.Splunk() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.SplunkViaHttp() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
     public static class LoggerConfigurationSplunkExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events as rolling files for consumption in a Splunk instance.
+        /// Adds a sink that writes log events as to a Splunk instance via http.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="splunkConnectionInfoInfo"></param>
-        /// <param name="batchSizeLimit"></param>
-        /// <param name="defaultPeriod"></param>
+        /// <param name="context">The Splunk context to log to</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Please use the concrete SplunkConnectionInfo class instead of ISplunkConnectionInfo."), EditorBrowsable(EditorBrowsableState.Never)]
-        public static LoggerConfiguration Splunk(
+        /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
+        public static LoggerConfiguration SplunkViaHttp(
             this LoggerSinkConfiguration loggerConfiguration,
-#pragma warning disable 618
-            ISplunkConnectionInfo splunkConnectionInfoInfo,
-#pragma warning restore 618
-            int batchSizeLimit,
-            TimeSpan? defaultPeriod,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            SplunkContext context,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)
         {
-            var defaultedPeriod = defaultPeriod ?? SplunkSink.DefaultPeriod;
+            var sink = new SplunkViaHttpSink(context, formatProvider);
 
-            return loggerConfiguration.Sink(new SplunkSink(batchSizeLimit, defaultedPeriod, splunkConnectionInfoInfo), restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(sink);
         }
-        
+
         /// <summary>
-        /// Adds a sink that writes log events as rolling files for consumption in a Splunk instance.
+        /// Adds a sink that writes log events as to a Splunk instance via http.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="splunkConnectionInfoInfo"></param>
-        /// <param name="batchSizeLimit"></param>
-        /// <param name="defaultPeriod"></param>
+        /// <param name="context">The Splunk context to log to</param>
+        /// <param name="password"></param>
+        /// <param name="resourceNameSpace"></param>
+        /// <param name="transmitterArgs"></param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="index"></param>
+        /// <param name="userName"></param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration Splunk(
+        /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
+        public static LoggerConfiguration SplunkViaHttp(
             this LoggerSinkConfiguration loggerConfiguration,
-            SplunkConnectionInfo splunkConnectionInfoInfo,
-            int batchSizeLimit,
-            TimeSpan? defaultPeriod,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            Context context,
+            string index,
+            string userName,
+            string password,
+            Namespace resourceNameSpace,
+            TransmitterArgs transmitterArgs,
+            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
             IFormatProvider formatProvider = null)
         {
-            var defaultedPeriod = defaultPeriod ?? SplunkSink.DefaultPeriod;
+            var sink = new SplunkViaHttpSink(new SplunkContext(context, index, userName, password, resourceNameSpace, transmitterArgs), formatProvider);
 
-            return loggerConfiguration.Sink(new SplunkSink(batchSizeLimit, defaultedPeriod, splunkConnectionInfoInfo), restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(sink);
         }
     }
 }

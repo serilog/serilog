@@ -27,7 +27,7 @@ namespace Serilog.Extras.Attributed
     {
         readonly object _cacheLock = new object();
         readonly HashSet<Type> _ignored = new HashSet<Type>();
-        readonly Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>> _cache = new Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>>(); 
+        readonly Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>> _cache = new Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>>();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
@@ -78,7 +78,7 @@ namespace Serilog.Extras.Attributed
                 }
                 else
                 {
-                    lock(_cacheLock)
+                    lock (_cacheLock)
                         _ignored.Add(t);
                 }
             }
