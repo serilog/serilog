@@ -33,30 +33,30 @@ namespace Serilog.Extras.Attributed
         CachedFunc GetOrAddFunc(object value)
         {
             var t = value.GetType();
+            CachedFunc func;
             try
             {
-                _locker.EnterUpgradeableReadLock();
-                CachedFunc func;
+                _locker.EnterReadLock();
                 if (_cache.TryGetValue(t.TypeHandle, out func))
                 {
                     return func;
                 }
-                func = GetValueToCache(value);
-                _locker.EnterWriteLock();
-                try
-                {
-                    _cache[t.TypeHandle] = func;
-                }
-                finally
-                {
-                    _locker.ExitWriteLock();
-                }
-                return func;
             }
             finally
             {
-                _locker.ExitUpgradeableReadLock();
+                _locker.ExitReadLock();
             }
+            func = GetValueToCache(value);
+            _locker.EnterWriteLock();
+            try
+            {
+                _cache[t.TypeHandle] = func;
+            }
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
+            return func;
         }
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)

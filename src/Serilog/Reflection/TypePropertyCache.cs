@@ -15,33 +15,32 @@ namespace Serilog.Reflection
 
         public static List<PropertyAccessor> GetCachedProperties(this Type type)
         {
+            List<PropertyAccessor> value;
             try
             {
-                _locker.EnterUpgradeableReadLock();
-                List<PropertyAccessor> value;
+                _locker.EnterReadLock();
                 if (_dictionary.TryGetValue(type.TypeHandle, out value))
                 {
                     return value;
                 }
-
-                value = type.GetPropertiesRecursive()
-                    .Select(GetPropertyAccessor)
-                    .ToList();
-                _locker.EnterWriteLock();
-                try
-                {
-                    _dictionary.Add(type.TypeHandle, value);
-                }
-                finally
-                {
-                    _locker.ExitWriteLock();
-                }
-                return value;
             }
             finally
             {
-                _locker.ExitUpgradeableReadLock();
+                _locker.ExitReadLock();
             }
+            value = type.GetPropertiesRecursive()
+                .Select(GetPropertyAccessor)
+                .ToList();
+            _locker.EnterWriteLock();
+            try
+            {
+                _dictionary.Add(type.TypeHandle, value);
+            }
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
+            return value;
         }
 
 
