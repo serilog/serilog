@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
+using Serilog.Debugging;
 
 namespace Serilog.Reflection
 {
@@ -46,11 +47,23 @@ namespace Serilog.Reflection
 
         internal static PropertyAccessor GetPropertyAccessor(this PropertyInfo propertyInfo)
         {
+            var getMethodByExpression = propertyInfo.GetGetMethodByExpression();
             return new PropertyAccessor
             {
                 Name = propertyInfo.Name,
-                GetDelegate = propertyInfo.GetGetMethodByExpression()
-            };
+                GetDelegate = o =>
+                {
+                    try
+                    {
+                        return getMethodByExpression(o);
+                    }
+                    catch (Exception ex)
+                    {
+                        SelfLog.WriteLine("The property accessor {0} threw exception {1}", propertyInfo.Name, ex);
+                        return "The property accessor threw an exception: " + ex.GetType().Name;
+                    }
+                }
+            };  
         }
 
         public static Func<object, object> GetGetMethodByExpression(this PropertyInfo propertyInfo)

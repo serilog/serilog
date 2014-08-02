@@ -4,7 +4,10 @@ namespace Serilog.Reflection
 {
     class PropertyAccessor
     {
+
         public string Name;
-        public Func<object, object> GetDelegate;
+        public Func<object, object> GetDelegate { get; set; }
+
+
     }
 }

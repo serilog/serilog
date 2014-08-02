@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Serilog.Core;
-using Serilog.Debugging;
 using Serilog.Events;
 using System.Threading;
 using System.Linq;
@@ -107,16 +106,7 @@ namespace Serilog.Extras.Attributed
             var structureProperties = new List<LogEventProperty>();
             foreach (var propertyAccessor in loggedProperties)
             {
-                object propValue;
-                try
-                {
-                    propValue = propertyAccessor.GetDelegate(value);
-                }
-                catch (Exception ex)
-                {
-                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", propertyAccessor.Name, ex);
-                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
-                }
+                var propValue = propertyAccessor.GetDelegate(value);
 
                 LogEventPropertyValue pv;
                 bool stringify;
