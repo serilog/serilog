@@ -23,7 +23,7 @@ namespace Serilog.Core.Pipeline
     class MessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
-        static readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
+        readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string, MessageTemplate>();
 
         const int MaxCacheItems = 1000;
