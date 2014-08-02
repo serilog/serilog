@@ -197,6 +197,10 @@ namespace Serilog.Core.Pipeline
         {
             if (_dispose != null)
                 _dispose();
+            if (_messageTemplateProcessor != null)
+            {
+                _messageTemplateProcessor.Dispose();
+            }
         }
     }
 }

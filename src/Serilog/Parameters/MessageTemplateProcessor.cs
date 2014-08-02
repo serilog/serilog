@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
@@ -20,7 +21,7 @@ using Serilog.Parsing;
 
 namespace Serilog.Parameters
 {
-    class MessageTemplateProcessor : ILogEventPropertyFactory
+    class MessageTemplateProcessor : ILogEventPropertyFactory, IDisposable
     {
         readonly IMessageTemplateParser _parser = new MessageTemplateCache(new MessageTemplateParser());
         readonly PropertyBinder _propertyBinder;
@@ -41,6 +42,14 @@ namespace Serilog.Parameters
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
         {
             return _propertyValueConverter.CreateProperty(name, value, destructureObjects);
+        }
+
+        public void Dispose()
+        {
+            if (_parser != null)
+            {
+                _parser.Dispose();
+            }
         }
     }
 }

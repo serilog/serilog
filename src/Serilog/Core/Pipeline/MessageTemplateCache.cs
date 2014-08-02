@@ -76,5 +76,16 @@ namespace Serilog.Core.Pipeline
             return value;
         }
 
+        public void Dispose()
+        {
+            if (_locker != null)
+            {
+                _locker.Dispose();
+            }
+            if (_innerParser != null)
+            {
+                _innerParser.Dispose();
+            }
+        }
     }
 }
