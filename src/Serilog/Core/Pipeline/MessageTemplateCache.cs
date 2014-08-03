@@ -20,7 +20,7 @@ namespace Serilog.Core.Pipeline
 {
     using System.Threading;
 
-    class MessageTemplateCache : IMessageTemplateParser
+    class MessageTemplateCache : IMessageTemplateParser, IDisposable
     {
         readonly IMessageTemplateParser _innerParser;
         readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
@@ -40,7 +40,7 @@ namespace Serilog.Core.Pipeline
             {
                 throw new ArgumentNullException("messageTemplate");
             }
-            
+
             MessageTemplate value;
             try
             {
@@ -82,9 +82,10 @@ namespace Serilog.Core.Pipeline
             {
                 _locker.Dispose();
             }
-            if (_innerParser != null)
+            var disposableParser = _innerParser as IDisposable;
+            if (disposableParser != null)
             {
-                _innerParser.Dispose();
+                disposableParser.Dispose();
             }
         }
     }

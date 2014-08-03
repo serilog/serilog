@@ -303,9 +303,5 @@ namespace Serilog.Parsing
             return new TextToken(accum.ToString());
         }
 
-        public void Dispose()
-        {
-            
-        }
     }
 }

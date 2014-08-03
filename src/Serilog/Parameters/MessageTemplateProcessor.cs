@@ -46,9 +46,10 @@ namespace Serilog.Parameters
 
         public void Dispose()
         {
-            if (_parser != null)
+            var disposableParser = _parser as IDisposable;
+            if (disposableParser != null)
             {
-                _parser.Dispose();
+                disposableParser.Dispose();
             }
         }
     }
