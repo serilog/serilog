@@ -72,8 +72,8 @@ namespace Serilog.Sinks.Raygun
                          .ToDictionary(a => a.Name, b => b.Value);
 
             // Add the message 
-            properties.Add("Message", logEvent.RenderMessage(_formatProvider));
-            properties.Add("MessageTemplate", logEvent.MessageTemplate.Text);
+            properties.Add("RenderedLogMessage", logEvent.RenderMessage(_formatProvider));
+            properties.Add("LogMessageTemplate", logEvent.MessageTemplate.Text);
 
             // Create new message
             var raygunMessage = new RaygunMessage
