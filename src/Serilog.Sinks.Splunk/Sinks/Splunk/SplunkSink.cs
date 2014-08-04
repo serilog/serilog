@@ -71,7 +71,8 @@ namespace Serilog.Sinks.Splunk
 #pragma warning disable 618
         [Obsolete("Please use the concrete SplunkConnectionInfo class instead of ISplunkConnectionInfo.")]
         public SplunkSink(int batchSizeLimit, TimeSpan period, ISplunkConnectionInfo connectionInfo)
-            : this(batchSizeLimit, period, new SplunkConnectionInfo {
+            : this(batchSizeLimit, period, new SplunkConnectionInfo
+            {
                 ServiceArgs = connectionInfo.ServiceArgs,
                 Username = connectionInfo.UserName,
                 Password = connectionInfo.Password,
@@ -91,13 +92,12 @@ namespace Serilog.Sinks.Splunk
             _service.Login(_connectionInfo.Username, _connectionInfo.Password);
 
             var receiver = new Receiver(_service);
-            receiver.Attach(_receiveSubmitArgs);
 
             foreach (var logEvent in events)
             {
-                var data = new { logEvent.Timestamp, logEvent.Level, Data = logEvent.RenderMessage()};
+                var data = new { logEvent.Timestamp, logEvent.Level, Data = logEvent.RenderMessage() };
                 var json = JsonConvert.SerializeObject(data, new StringEnumConverter());
-                receiver.Log(json);
+                receiver.Log(_receiveSubmitArgs, json);
             }
         }
     }
