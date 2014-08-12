@@ -49,7 +49,7 @@
       <Link>Sinks\Splunk\SplunkViaHttpSink.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sinks\LoggerConfigurationSplunkExtensions.cs" />
+    <Compile Include="LoggerConfigurationSplunkExtensions.cs" />
     <Compile Include="Sinks\Splunk\SplunkViaTcpSink.cs" />
     <Compile Include="Sinks\Splunk\SplunkViaUdpSink.cs" />
   </ItemGroup>
