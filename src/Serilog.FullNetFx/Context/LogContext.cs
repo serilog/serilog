@@ -78,7 +78,7 @@ namespace Serilog.Context
         /// <param name="properties">Log Properties to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IDisposable PushProperties(params PropertyEnricher[] properties)
+        public static IDisposable PushProperties(params ILogEventEnricher[] properties)
         {
             if (properties == null) throw new ArgumentNullException("properties");
 
