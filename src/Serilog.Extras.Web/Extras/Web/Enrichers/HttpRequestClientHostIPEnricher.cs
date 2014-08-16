@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using System.Web;
 using Serilog.Core;
 using Serilog.Events;
@@ -49,7 +50,20 @@ namespace Serilog.Extras.Web.Enrichers
             if (string.IsNullOrWhiteSpace(HttpContext.Current.Request.UserHostAddress))
                 return;
 
-            var userHostAddress = HttpContext.Current.Request.UserHostAddress;
+            // Taking Proxy/-es into consideration, too
+            var userHostAddress = !string.IsNullOrWhiteSpace(HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"])
+                ? HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]
+                : HttpContext.Current.Request.UserHostAddress;
+
+            if (string.IsNullOrWhiteSpace(userHostAddress))
+                return;
+
+            // As multiple proxies can be in place according to header spec (see http://en.wikipedia.org/wiki/X-Forwarded-For), we check for it and only extract the first address (which 'should' be the actual client one)
+            if (userHostAddress.Contains(","))
+            {
+                userHostAddress = userHostAddress.Split(',').First().Trim();
+            }
+
             var httpRequestClientHostIPProperty = new LogEventProperty(HttpRequestClientHostIPPropertyName, new ScalarValue(userHostAddress));
             logEvent.AddPropertyIfAbsent(httpRequestClientHostIPProperty);
         }
