@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,31 @@ namespace Serilog.Extras.Web.Enrichers
     public class HttpRequestClientHostIPEnricher : ILogEventEnricher
     {
         /// <summary>
+        /// Gets or sets a value indicating whether this enricher will check for possible HTTP proxies via X-FORWARDED-FOR headers.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [check for HTTP proxies]; otherwise, <c>false</c>.
+        /// </value>
+        public bool CheckForHttpProxies { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpRequestClientHostIPEnricher"/> class with <see cref="CheckForHttpProxies"/> set to [true].
+        /// </summary>
+        public HttpRequestClientHostIPEnricher()
+        {
+            CheckForHttpProxies = true;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpRequestClientHostIPEnricher" /> class.
+        /// </summary>
+        /// <param name="checkForHttpProxies">if set to <c>true</c> this Enricher also checks for HTTP proxies and their X-FORWARDED-FOR header.</param>
+        public HttpRequestClientHostIPEnricher(bool checkForHttpProxies)
+        {
+            CheckForHttpProxies = checkForHttpProxies;
+        }
+
+        /// <summary>
         /// The property name added to enriched log events.
         /// </summary>
         public const string HttpRequestClientHostIPPropertyName = "HttpRequestClientHostIP";
@@ -50,10 +75,19 @@ namespace Serilog.Extras.Web.Enrichers
             if (string.IsNullOrWhiteSpace(HttpContext.Current.Request.UserHostAddress))
                 return;
 
-            // Taking Proxy/-ies into consideration, too (if available)
-            var userHostAddress = !string.IsNullOrWhiteSpace(HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"])
+            string userHostAddress;
+
+            // Taking Proxy/-ies into consideration, too (if wanted and available)
+            if (CheckForHttpProxies)
+            {
+                userHostAddress = !string.IsNullOrWhiteSpace(HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"])
                 ? HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]
                 : HttpContext.Current.Request.UserHostAddress;
+            }
+            else
+            {
+                userHostAddress = HttpContext.Current.Request.UserHostAddress;
+            }
 
             if (string.IsNullOrWhiteSpace(userHostAddress))
                 return;
