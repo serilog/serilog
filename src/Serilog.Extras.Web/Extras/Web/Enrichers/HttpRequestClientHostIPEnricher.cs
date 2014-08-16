@@ -50,7 +50,7 @@ namespace Serilog.Extras.Web.Enrichers
             if (string.IsNullOrWhiteSpace(HttpContext.Current.Request.UserHostAddress))
                 return;
 
-            // Taking Proxy/-es into consideration, too
+            // Taking Proxy/-ies into consideration, too (if available)
             var userHostAddress = !string.IsNullOrWhiteSpace(HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"])
                 ? HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]
                 : HttpContext.Current.Request.UserHostAddress;
