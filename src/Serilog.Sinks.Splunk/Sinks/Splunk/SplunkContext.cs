@@ -51,7 +51,10 @@ namespace Serilog.Sinks.Splunk
         /// <summary>
         /// Creates an instance of the SplunkViaHttp context
         /// </summary>
-        public SplunkContext(Context context, string index, string username, string password, 
+        public SplunkContext(Context context, 
+            string index, 
+            string username, 
+            string password, 
             Namespace resourceNamespace = null, 
             TransmitterArgs transmitterArgs = null) 
             :base(context.Scheme, context.Host, context.Port)

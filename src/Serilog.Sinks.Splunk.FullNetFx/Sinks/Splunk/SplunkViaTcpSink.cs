@@ -75,6 +75,11 @@ namespace Serilog.Sinks.Splunk
                 _client.Connect(_hostAddress, _port);
             }
 
+            //TODO: Add properties option from enrichers
+            //var properties = logEvent.Properties
+            //    .Select(pv => new { Name = pv.Key, Value = RaygunPropertyFormatter.Simplify(pv.Value) })
+            //    .ToDictionary(a => a.Name, b => b.Value);
+
             //TODO: Quick hack to get TCP working.  Needs a rethink
             using (var networkStream = _client.GetStream())
             {
