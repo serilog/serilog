@@ -38,7 +38,8 @@ namespace Serilog.Sinks.EventLog
 		/// <param name="logName">The name of the log the source's entries are written to. Possible values include Application, System, or a custom event log.</param>
 		/// <param name="textFormatter">Supplies culture-specific formatting information, or null.</param>
 		/// <param name="machineName">The name of the machine hosting the event log written to.</param>
-		public EventLogSink(string source, string logName, ITextFormatter textFormatter, string machineName)
+        /// <param name="manageEventSource">If false does not check/create event source.  Defaults to true i.e. allow sink to manage event source creation</param>
+		public EventLogSink(string source, string logName, ITextFormatter textFormatter, string machineName, bool manageEventSource)
 		{
 			if (source == null) throw new ArgumentNullException("source");
 		    if (textFormatter == null) throw new ArgumentNullException("textFormatter");
@@ -48,8 +49,13 @@ namespace Serilog.Sinks.EventLog
 
 			var sourceData = new EventSourceCreationData(source, logName) { MachineName = machineName };
 
-			if (!System.Diagnostics.EventLog.SourceExists(source, machineName))
-                System.Diagnostics.EventLog.CreateEventSource(sourceData);
+            if (manageEventSource)
+            {
+                if (!System.Diagnostics.EventLog.SourceExists(source, machineName))
+                {
+                    System.Diagnostics.EventLog.CreateEventSource(sourceData);
+                }
+            }
 		}
 
 		/// <summary>
