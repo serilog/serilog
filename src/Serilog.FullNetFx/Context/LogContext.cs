@@ -93,6 +93,25 @@ namespace Serilog.Context
             return bookmark;
         }
 
+        /// <summary>
+        /// Remove all data from the context so that
+        /// cross-<see cref="AppDomain"/> calls can be made without requiring
+        /// Serilog assemblies to be present in the remote domain.
+        /// </summary>
+        /// <returns>A token that will restore the suspended log context data, if any.</returns>
+        /// <remarks>The <see cref="LogContext"/> should not be manipulated further
+        /// until the return value from this method has been disposed.</remarks>
+        /// <returns></returns>
+        public static IDisposable Suspend()
+        {
+            var stack = GetOrCreateEnricherStack();
+            var bookmark = new ContextStackBookmark(stack);
+
+            Enrichers = null;
+
+            return bookmark;
+        }
+
         static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
         {
             var enrichers = Enrichers;

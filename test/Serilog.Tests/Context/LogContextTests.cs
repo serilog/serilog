@@ -104,6 +104,8 @@ namespace Serilog.Tests.Context
 
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
+        // Fails if the Serilog assemblies cannot be loaded in the
+        // remote domain. See also LogContext.Suspend()
         [Test]
         public void DoesNotPreventCrossDomainCalls()
         {
@@ -123,6 +125,29 @@ namespace Serilog.Tests.Context
             {
                 if (domain != null)
                     AppDomain.Unload(domain);
+            }
+        }
+
+        [Test]
+        public void WhenSuspendedAllPropertiesAreRemovedFromTheContext()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.PushProperty("A1", 1))
+            {
+                using (LogContext.Suspend())
+                {
+                    log.Write(Some.InformationEvent());
+                    Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
+                }
+
+                log.Write(Some.InformationEvent());
+                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
             }
         }
     }
