@@ -15,9 +15,9 @@
 using System;
 using System.Linq.Expressions;
 using Serilog.Configuration;
-using Serilog.Extras.DestructureByIgnoring.Extras.DestructureByIgnoring;
+using Serilog.Extras.DestructureByIgnoring;
 
-namespace Serilog.Extras.DestructureByIgnoring
+namespace Serilog
 {    
     /// <summary>
     /// Adds the Destructure.ByIgnoringProperties() extension to <see cref="LoggerDestructuringConfiguration"/>.

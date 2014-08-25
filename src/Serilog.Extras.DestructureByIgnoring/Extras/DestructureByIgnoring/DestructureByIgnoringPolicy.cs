@@ -21,7 +21,7 @@ using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 
-namespace Serilog.Extras.DestructureByIgnoring.Extras.DestructureByIgnoring
+namespace Serilog.Extras.DestructureByIgnoring
 {
     class DestructureByIgnoringPolicy<TDestructure> : IDestructuringPolicy
     {
