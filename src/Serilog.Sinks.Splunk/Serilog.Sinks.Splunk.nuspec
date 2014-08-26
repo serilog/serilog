@@ -13,6 +13,7 @@
     <dependencies>
       <dependency id="Serilog" />
       <dependency id="Splunk.Client" version="2.0.0-beta" />
+      <dependency id="Newtonsoft.Json" version="6.0.4" />
     </dependencies>
   </metadata>
   <files>

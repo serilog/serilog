@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Dynamic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -65,20 +67,14 @@ namespace Serilog.Sinks.Splunk
         /// <inheritdoc/>
         public void Emit(LogEvent logEvent)
         {
-            var message = _formatProvider != null
-                ? logEvent.RenderMessage(_formatProvider)
-                : logEvent.RenderMessage();
+            var message = logEvent.SimplifyAndFormat();
 
             if (!_client.Connected)
             {
                 _client = new TcpClient();
                 _client.Connect(_hostAddress, _port);
             }
-
-            //TODO: Add properties option from enrichers
-            //var properties = logEvent.Properties
-            //    .Select(pv => new { Name = pv.Key, Value = RaygunPropertyFormatter.Simplify(pv.Value) })
-            //    .ToDictionary(a => a.Name, b => b.Value);
+ 
 
             //TODO: Quick hack to get TCP working.  Needs a rethink
             using (var networkStream = _client.GetStream())

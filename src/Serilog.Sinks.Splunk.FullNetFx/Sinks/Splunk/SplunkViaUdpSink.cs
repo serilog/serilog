@@ -60,9 +60,7 @@ namespace Serilog.Sinks.Splunk
         /// <inheritdoc/>
         public void Emit(LogEvent logEvent)
         {
-            var message = _formatProvider != null
-                ? logEvent.RenderMessage(_formatProvider)
-                : logEvent.RenderMessage();
+            var message = logEvent.SimplifyAndFormat();
 
             _socket.Send(Encoding.UTF8.GetBytes(message));
         }

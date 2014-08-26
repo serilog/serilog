@@ -32,6 +32,10 @@
     <DocumentationFile>bin\Release\Serilog.Sinks.Splunk.FullNetFx.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Splunk.Client, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Splunk.Client.2.0.0-beta\lib\portable-net45+win+wpa81\Splunk.Client.dll</HintPath>
@@ -44,6 +48,9 @@
   <ItemGroup>
     <Compile Include="..\Serilog.Sinks.Splunk\Sinks\Splunk\SplunkContext.cs">
       <Link>Sinks\Splunk\SplunkContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Serilog.Sinks.Splunk\Sinks\Splunk\SplunkPropertyFormatter.cs">
+      <Link>Sinks\Splunk\SplunkPropertyFormatter.cs</Link>
     </Compile>
     <Compile Include="..\Serilog.Sinks.Splunk\Sinks\Splunk\SplunkViaHttpSink.cs">
       <Link>Sinks\Splunk\SplunkViaHttpSink.cs</Link>

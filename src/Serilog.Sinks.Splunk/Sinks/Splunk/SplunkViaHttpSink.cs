@@ -25,7 +25,6 @@ using SplunkClient = Splunk.Client;
 
 namespace Serilog.Sinks.Splunk
 {
-    //TODO: Possibly look at enricher for index
     /// <summary>
     /// A log event sink that writes to SplunkViaHttp.
     /// </summary>
@@ -131,10 +130,8 @@ namespace Serilog.Sinks.Splunk
 
                     foreach (var logEvent in events)
                     {
-                     
-                        var message = _formatProvider != null
-                            ? logEvent.RenderMessage(_formatProvider)
-                            : logEvent.RenderMessage();
+
+                        var message = logEvent.SimplifyAndFormat();
 
                         if (_transmitterArgs == null)
                         {
@@ -144,7 +141,6 @@ namespace Serilog.Sinks.Splunk
                         {
                             await transmitter.SendAsync(message, index.Name, _transmitterArgs);
                         }
-
                     }
                 }
                 while (true);
