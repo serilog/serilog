@@ -6,9 +6,9 @@
     <authors>Continuous IT Pty Ltd</authors>
     <description>Serilog event sink that writes to the Seq event server over HTTP/S.</description>
     <language>en-US</language>
-    <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
-    <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <iconUrl>http://getseq.net/images/nuget/seq-client-serilog.png</iconUrl>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <dependencies>
       <group targetFramework="net40">
         <dependency id="Serilog" />
