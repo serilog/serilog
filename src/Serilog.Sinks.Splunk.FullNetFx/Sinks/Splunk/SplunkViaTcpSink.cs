@@ -14,12 +14,14 @@
 
 using System;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 
 namespace Serilog.Sinks.Splunk
 {
@@ -32,6 +34,7 @@ namespace Serilog.Sinks.Splunk
         readonly int _port;
         readonly IFormatProvider _formatProvider;
         TcpClient _client;
+        JsonFormatter _jsonFormatter;
 
         /// <summary>
         /// Creates an instance of the Splunk TCP Sink
@@ -62,21 +65,24 @@ namespace Serilog.Sinks.Splunk
             _hostAddress = IPAddress.Parse(host);
             _client = new TcpClient();
             _client.Connect(host, port);
+            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
         }
 
         /// <inheritdoc/>
         public void Emit(LogEvent logEvent)
         {
-            var message = logEvent.SimplifyAndFormat();
+            var sw = new StringWriter();
+            
+            _jsonFormatter.Format(logEvent, sw);
 
+            var message = sw.ToString();
+      
             if (!_client.Connected)
             {
                 _client = new TcpClient();
                 _client.Connect(_hostAddress, _port);
             }
  
-
-            //TODO: Quick hack to get TCP working.  Needs a rethink
             using (var networkStream = _client.GetStream())
             {
                 var data = Encoding.UTF8.GetBytes(message);

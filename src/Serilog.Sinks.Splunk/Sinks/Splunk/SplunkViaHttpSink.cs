@@ -15,11 +15,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 using SplunkClient = Splunk.Client;
 
 
@@ -40,6 +42,9 @@ namespace Serilog.Sinks.Splunk
         readonly SplunkClient.Service _service;
         string _index;
         ConcurrentQueue<LogEvent> _queue;
+        JsonFormatter _jsonFormatter;
+        
+
 
         /// <summary>
         /// Creates a new instance of the splunk sink
@@ -79,7 +84,6 @@ namespace Serilog.Sinks.Splunk
             SplunkClient.Namespace resourceNamespace = null,
             SplunkClient.TransmitterArgs transmitterArgs = null,
             IFormatProvider formatProvider = null
-           
             )
         {
             _context = context;
@@ -93,9 +97,12 @@ namespace Serilog.Sinks.Splunk
 
             _queue = new ConcurrentQueue<LogEvent>();
 
+            _jsonFormatter = new JsonFormatter(renderMessage:true, formatProvider:_formatProvider);
+
             _service = resourceNamespace == null
                 ? new SplunkClient.Service(_context, new SplunkClient.Namespace("nobody", "search"))
                 : new SplunkClient.Service(_context, resourceNamespace);
+      
 
             RepeatAction.OnInterval(_batchInterval, () => ProcessQueue(), new CancellationToken());
         }
@@ -128,10 +135,13 @@ namespace Serilog.Sinks.Splunk
 
                     var transmitter = _service.Transmitter;
 
+                    var sw = new StringWriter();
+
                     foreach (var logEvent in events)
                     {
+                        _jsonFormatter.Format(logEvent, sw);
 
-                        var message = logEvent.SimplifyAndFormat();
+                        var message = sw.ToString();
 
                         if (_transmitterArgs == null)
                         {

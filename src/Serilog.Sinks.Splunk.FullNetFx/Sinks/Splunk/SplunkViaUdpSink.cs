@@ -13,11 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 
 namespace Serilog.Sinks.Splunk
 {
@@ -28,6 +30,7 @@ namespace Serilog.Sinks.Splunk
     {
         IFormatProvider _formatProvider;
         Socket _socket;
+        JsonFormatter _jsonFormatter;
 
         /// <summary>
         /// Creates an instance of the Splunk UDP Sink
@@ -41,6 +44,8 @@ namespace Serilog.Sinks.Splunk
 
             _socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
             _socket.Connect(hostAddress, port);
+
+            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);            
         }
 
         /// <summary>
@@ -55,12 +60,17 @@ namespace Serilog.Sinks.Splunk
 
             _socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
             _socket.Connect(host, port);
+            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);         
         }
 
         /// <inheritdoc/>
         public void Emit(LogEvent logEvent)
         {
-            var message = logEvent.SimplifyAndFormat();
+            var sw = new StringWriter();
+
+            _jsonFormatter.Format(logEvent, sw);
+
+            var message = sw.ToString();
 
             _socket.Send(Encoding.UTF8.GetBytes(message));
         }

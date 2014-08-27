@@ -49,7 +49,6 @@
     <Compile Include="LoggerConfigurationSplunkExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\Splunk\SplunkContext.cs" />
-    <Compile Include="Sinks\Splunk\SplunkPropertyFormatter.cs" />
     <Compile Include="Sinks\Splunk\SplunkViaHttpSink.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -59,9 +58,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Splunk.Client">
       <HintPath>..\..\packages\Splunk.Client.2.0.0-beta\lib\portable-net45+win+wpa81\Splunk.Client.dll</HintPath>
     </Reference>
