@@ -104,7 +104,7 @@ namespace Serilog.Sinks.Splunk
                 : new SplunkClient.Service(_context, resourceNamespace);
       
 
-            RepeatAction.OnInterval(_batchInterval, () => ProcessQueue(), new CancellationToken());
+            RepeatAction.OnInterval(_batchInterval, () => ProcessQueue().Wait(), new CancellationToken());
         }
 
         private async Task ProcessQueue()
@@ -176,7 +176,7 @@ namespace Serilog.Sinks.Splunk
         }
     }
 
-    public static class RepeatAction
+    internal static class RepeatAction
     {
         public static Task OnInterval(TimeSpan pollInterval, Action action, CancellationToken token,
             TaskCreationOptions taskCreationOptions, TaskScheduler taskScheduler)
