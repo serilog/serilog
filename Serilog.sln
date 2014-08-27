@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -86,6 +86,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.DestructureByIgnoring", "src\Serilog.Extras.DestructureByIgnoring\Serilog.Extras.DestructureByIgnoring.csproj", "{C5CC62F4-310F-495C-96EA-B8E5D26F8D57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.DestructureByIgnoring.Tests", "test\Serilog.Extras.DestructureByIgnoring.Tests\Serilog.Extras.DestructureByIgnoring.Tests.csproj", "{977E42C3-D501-4730-98FF-525B753B1E3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Seq", "src\Serilog.Sinks.Seq\Serilog.Sinks.Seq.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -241,6 +243,10 @@ Global
 		{977E42C3-D501-4730-98FF-525B753B1E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{977E42C3-D501-4730-98FF-525B753B1E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{977E42C3-D501-4730-98FF-525B753B1E3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -283,5 +289,6 @@ Global
 		{182ECDA3-A97D-4BB6-BC6F-60A137478B92} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{C5CC62F4-310F-495C-96EA-B8E5D26F8D57} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{977E42C3-D501-4730-98FF-525B753B1E3A} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
+		{B6A720E1-732B-4B8B-868B-5914AF85983C} = {037440DE-440B-4129-9F7A-09B42D00397E}
 	EndGlobalSection
 EndGlobal

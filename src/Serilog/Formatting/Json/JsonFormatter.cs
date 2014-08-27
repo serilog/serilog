@@ -18,8 +18,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Serilog.Events;
+using Serilog.Parsing;
 
 namespace Serilog.Formatting.Json
 {
@@ -123,6 +125,47 @@ namespace Serilog.Formatting.Json
                 foreach (var property in logEvent.Properties)
                 {
                     WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
+                }
+                output.Write("}");
+            }
+
+            var tokensWithFormat = logEvent.MessageTemplate.Tokens
+                .OfType<PropertyToken>()
+                .Where(pt => pt.Format != null)
+                .GroupBy(pt => pt.PropertyName)
+                .ToArray();
+
+            if (tokensWithFormat.Length != 0)
+            {
+                output.Write(",\"Renderings\":{");
+                var rdelim = "";
+                foreach (var ptoken in tokensWithFormat)
+                {
+                    output.Write(rdelim);
+                    rdelim = ",";
+                    output.Write("\"");
+                    output.Write(ptoken.Key);
+                    output.Write("\":[");
+
+                    var fdelim = "";
+                    foreach (var format in ptoken)
+                    {
+                        output.Write(fdelim);
+                        fdelim = ",";
+
+                        output.Write("{");
+                        var eldelim = "";
+
+                        WriteJsonProperty("Format", format.Format, ref eldelim, output);
+
+                        var sw = new StringWriter();
+                        format.Render(logEvent.Properties, sw);
+                        WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+
+                        output.Write("}");
+                    }
+
+                    output.Write("]");
                 }
                 output.Write("}");
             }

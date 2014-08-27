@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog-net40", "src\Serilog\Serilog-net40.csproj", "{0915DBD9-0F7C-4439-8D9E-74C3D579B219}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.FullNetFx-net40", "src\Serilog.FullNetFx\Serilog.FullNetFx-net40.csproj", "{7A9E1095-167D-402A-B43D-B36B97FF183D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests-net40", "test\Serilog.Tests\Serilog.Tests-net40.csproj", "{D5648551-D19D-41E3-9FC1-E74B111EEF41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Seq-net40", "src\Serilog.Sinks.Seq\Serilog.Sinks.Seq-net40.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,10 @@ Global
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

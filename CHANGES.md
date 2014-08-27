@@ -1,3 +1,6 @@
+1.4.4
+  * Includes the _Serilog.Sinks.Seq_ sink, to write to the http://getseq.net event server
+
 1.4.3
   * Merged PR #169 - added the _Serilog.Extras.DestructureByIgnoring_ package
 

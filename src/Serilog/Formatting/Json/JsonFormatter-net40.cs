@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,20 +15,37 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Serilog.Events;
+using Serilog.Parsing;
 
 namespace Serilog.Formatting.Json
 {
     /// <summary>
-    /// Formats log events in a simple JSON structure.
+    /// Formats log events in a simple JSON structure. Instances of this class
+    /// are safe for concurrent access by multiple threads.
     /// </summary>
     public class JsonFormatter : ITextFormatter
     {
         readonly bool _omitEnclosingObject;
+        readonly string _closingDelimiter;
+        readonly bool _renderMessage;
+        readonly IFormatProvider _formatProvider;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
+
+        /// <summary>
+        /// Construct a <see cref="JsonFormatter"/>. Obsolete, please use named arguments
+        /// when calling this constructor.
+        /// </summary>
+        [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
+        public JsonFormatter(bool omitEnclosingObjectObsolete)
+            : this(omitEnclosingObject: omitEnclosingObjectObsolete)
+        {
+        }
 
         /// <summary>
         /// Construct a <see cref="JsonFormatter"/>.
@@ -36,12 +53,27 @@ namespace Serilog.Formatting.Json
         /// <param name="omitEnclosingObject">If true, the properties of the event will be written to
         /// the output without enclosing braces. Otherwise, if false, each event will be written as a well-formed
         /// JSON object.</param>
-        public JsonFormatter(bool omitEnclosingObject = false)
+        /// <param name="closingDelimiter">A string that will be written after each log event is formatted.
+        /// If null, <see cref="Environment.NewLine"/> will be used. Ignored if <paramref name="omitEnclosingObject"/>
+        /// is true.</param>
+        /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
+        /// property named RenderedMessage.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        public JsonFormatter(
+            bool omitEnclosingObject = false,
+            string closingDelimiter = null,
+            bool renderMessage = false,
+            IFormatProvider formatProvider = null)
         {
             _omitEnclosingObject = omitEnclosingObject;
+            _closingDelimiter = closingDelimiter ?? Environment.NewLine;
+            _renderMessage = renderMessage;
+            _formatProvider = formatProvider;
 
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
+                { typeof(bool), (v, q, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(_formatProvider), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -80,6 +112,8 @@ namespace Serilog.Formatting.Json
             WriteJsonProperty("Timestamp", logEvent.Timestamp, ref delim, output);
             WriteJsonProperty("Level", logEvent.Level, ref delim, output);
             WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
+            if (_renderMessage)
+                WriteJsonProperty("RenderedMessage", logEvent.RenderMessage(_formatProvider), ref delim, output);
 
             if (logEvent.Exception != null)
                 WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
@@ -95,8 +129,52 @@ namespace Serilog.Formatting.Json
                 output.Write("}");
             }
 
-            if (!_omitEnclosingObject)
+            var tokensWithFormat = logEvent.MessageTemplate.Tokens
+                .OfType<PropertyToken>()
+                .Where(pt => pt.Format != null)
+                .GroupBy(pt => pt.PropertyName)
+                .ToArray();
+
+            if (tokensWithFormat.Length != 0)
+            {
+                output.Write(",\"Renderings\":{");
+                var rdelim = "";
+                foreach (var ptoken in tokensWithFormat)
+                {
+                    output.Write(rdelim);
+                    rdelim = ",";
+                    output.Write("\"");
+                    output.Write(ptoken.Key);
+                    output.Write("\":[");
+
+                    var fdelim = "";
+                    foreach (var format in ptoken)
+                    {
+                        output.Write(fdelim);
+                        fdelim = ",";
+
+                        output.Write("{");
+                        var eldelim = "";
+
+                        WriteJsonProperty("Format", format.Format, ref eldelim, output);
+
+                        var sw = new StringWriter();
+                        format.Render(logEvent.Properties, sw);
+                        WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+
+                        output.Write("}");
+                    }
+
+                    output.Write("]");
+                }
                 output.Write("}");
+            }
+
+            if (!_omitEnclosingObject)
+            {
+                output.Write("}");
+                output.Write(_closingDelimiter);
+            }
         }
 
         void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
@@ -106,7 +184,7 @@ namespace Serilog.Formatting.Json
             var delim = "";
             if (typeTag != null)
                 WriteJsonProperty("_typeTag", typeTag, ref delim, output);
-            
+
             foreach (var property in properties)
                 WriteJsonProperty(property.Name, property.Value, ref delim, output);
 
@@ -182,6 +260,11 @@ namespace Serilog.Formatting.Json
             if (quote) output.Write('"');
         }
 
+        static void WriteBoolean(bool value, TextWriter output)
+        {
+            output.Write(value ? "true" : "false");
+        }
+
         static void WriteOffset(DateTimeOffset value, TextWriter output)
         {
             output.Write("\"");
@@ -230,41 +313,41 @@ namespace Serilog.Formatting.Json
                     switch (c)
                     {
                         case '"':
-                        {
-                            escapedResult.Append("\\\"");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\\"");
+                                break;
+                            }
                         case '\\':
-                        {
-                            escapedResult.Append("\\\\");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\\\");
+                                break;
+                            }
                         case '\n':
-                        {
-                            escapedResult.Append("\\n");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\n");
+                                break;
+                            }
                         case '\r':
-                        {
-                            escapedResult.Append("\\r");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\r");
+                                break;
+                            }
                         case '\f':
-                        {
-                            escapedResult.Append("\\f");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\f");
+                                break;
+                            }
                         case '\t':
-                        {
-                            escapedResult.Append("\\t");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\t");
+                                break;
+                            }
                         default:
-                        {
-                            escapedResult.Append("\\u");
-                            escapedResult.Append(((int)c).ToString("X4"));
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\u");
+                                escapedResult.Append(((int)c).ToString("X4"));
+                                break;
+                            }
                     }
                 }
             }
