@@ -1,3 +1,6 @@
+1.4.5
+ * Merged PR #179 - _Serilog.Sinks.Splunk_ updated for the Splunk SDK 2.0
+
 1.4.4
   * Includes the _Serilog.Sinks.Seq_ sink, to write to the http://getseq.net event server
 
