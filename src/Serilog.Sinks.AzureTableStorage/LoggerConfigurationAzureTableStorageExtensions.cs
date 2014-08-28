@@ -20,6 +20,14 @@ using Serilog.Sinks.AzureTableStorage;
 
 namespace Serilog
 {
+    public class BatchOptions
+    {
+        public int BatchSizeLimit { get; set; }
+        public TimeSpan FlushPeriod { get; set; }
+        public static BatchOptions NotBatchedOptions { get { return null; } }
+        public static BatchOptions Default { get { return new BatchOptions(); } }
+
+    }
     /// <summary>
     /// Adds the WriteTo.AzureTableStorage() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
@@ -33,6 +41,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
+        /// <param name="batchOptions"></param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration AzureTableStorage(
@@ -40,13 +49,21 @@ namespace Serilog
             CloudStorageAccount storageAccount,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null,
-            string storageTableName = null)
+            string storageTableName = null,
+            BatchOptions batchOptions = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
-            return loggerConfiguration.Sink(
-                new AzureTableStorageSink(storageAccount, formatProvider, storageTableName),
-                restrictedToMinimumLevel);
+
+            if (batchOptions == null)
+            {
+                return loggerConfiguration.Sink(new AzureTableStorageSink(storageAccount, formatProvider, storageTableName), restrictedToMinimumLevel);
+            }
+            else
+            {
+                var azureBatchingTableStorageSink = new AzureBatchingTableStorageSink(storageAccount, formatProvider, storageTableName, batchOptions.BatchSizeLimit, batchOptions.FlushPeriod);
+                return loggerConfiguration.Sink(azureBatchingTableStorageSink, restrictedToMinimumLevel);
+            }
         }
 
         /// <summary>
