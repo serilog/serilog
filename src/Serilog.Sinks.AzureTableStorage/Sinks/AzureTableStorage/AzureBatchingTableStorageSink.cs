@@ -56,7 +56,8 @@ namespace Serilog.Sinks.AzureTableStorage
             _table.CreateIfNotExists();
         }
 
-      
+        long partitionKey;
+        int batchRowId;
         /// <summary>
         /// Emit a batch of log events, running to completion synchronously.
         /// </summary>
@@ -67,13 +68,22 @@ namespace Serilog.Sinks.AzureTableStorage
         {
             var operation = new TableBatchOperation();
             
-            var batchRowId = 0;
-            var minTicks = default(long);
+            var first = true;
+            
             foreach (var logEvent in events)
             {
-                if(batchRowId == 0) minTicks = logEvent.Timestamp.Ticks;
+                if (first)
+                {
+                    //check to make sure the partition key is not the same as the previous batch
+                    if (partitionKey != logEvent.Timestamp.Ticks)
+                    {
+                        batchRowId = 0; //the partitionkey has been reset
+                        partitionKey = logEvent.Timestamp.Ticks; //store the new partition key
+                    }
+                    first = false;
+                }
 
-                var logEventEntity = new LogEventEntity(logEvent, _formatProvider, minTicks);
+                var logEventEntity = new LogEventEntity(logEvent, _formatProvider, partitionKey);
                 logEventEntity.RowKey += "|" + batchRowId;
                 operation.Add(TableOperation.Insert(logEventEntity));
 
