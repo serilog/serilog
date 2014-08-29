@@ -32,16 +32,7 @@ namespace Serilog.Sinks.AzureTableStorage
         readonly IFormatProvider _formatProvider;
         readonly CloudTable _table;
         
-        /// <summary>
-        /// A reasonable default for the number of events posted in
-        /// each batch.
-        /// </summary>
-        public const int DefaultBatchPostingLimit = 50;
 
-        /// <summary>
-        /// A reasonable default time to wait between checking for event batches.
-        /// </summary>
-        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
@@ -51,9 +42,11 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="batchSizeLimit"></param>
         /// <param name="period"></param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
-        public AzureBatchingTableStorageSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, string storageTableName = null, int? batchSizeLimit = null, TimeSpan? period = null)
-            :base(batchSizeLimit ?? DefaultBatchPostingLimit, period ?? DefaultPeriod)
+        public AzureBatchingTableStorageSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, int batchSizeLimit, TimeSpan period, string storageTableName = null)
+            :base(batchSizeLimit, period)
         {
+            if (batchSizeLimit < 1 || batchSizeLimit > 100)
+                throw new ArgumentException("batchSizeLimit must be between 1 and 100 for Azure Table Storage");
             _formatProvider = formatProvider;
             var tableClient = storageAccount.CreateCloudTableClient();
 
@@ -73,9 +66,11 @@ namespace Serilog.Sinks.AzureTableStorage
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             var operation = new TableBatchOperation();
+            long? minTicks = null;
             foreach (var logEvent in events)
             {
-                operation.Add(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider)));
+                minTicks = minTicks ?? logEvent.Timestamp.Ticks;
+                operation.Add(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider, minTicks.Value)));
             }
             _table.ExecuteBatch(operation);
         }

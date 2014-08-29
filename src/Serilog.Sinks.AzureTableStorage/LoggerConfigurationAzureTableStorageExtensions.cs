@@ -20,19 +20,21 @@ using Serilog.Sinks.AzureTableStorage;
 
 namespace Serilog
 {
-    public class BatchOptions
-    {
-        public int BatchSizeLimit { get; set; }
-        public TimeSpan FlushPeriod { get; set; }
-        public static BatchOptions NotBatchedOptions { get { return null; } }
-        public static BatchOptions Default { get { return new BatchOptions(); } }
-
-    }
     /// <summary>
     /// Adds the WriteTo.AzureTableStorage() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
     public static class LoggerConfigurationAzureTableStorageExtensions
     {
+        /// <summary>
+        /// A reasonable default for the number of events posted in
+        /// each batch.
+        /// </summary>
+        public const int DefaultBatchPostingLimit = 50;
+
+        /// <summary>
+        /// A reasonable default time to wait between checking for event batches.
+        /// </summary>
+        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
         /// <summary>
         /// Adds a sink that writes log events as records in the 'LogEventEntity' Azure Table Storage table in the given storage account.
         /// </summary>
@@ -41,8 +43,10 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
-        /// <param name="batchOptions"></param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <param name="useBatchingSink">Use a periodic batching sink, as opposed to a syncronous one-at-a-time sink</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration AzureTableStorage(
             this LoggerSinkConfiguration loggerConfiguration,
@@ -50,19 +54,21 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null,
             string storageTableName = null,
-            BatchOptions batchOptions = null)
+            bool useBatchingSink = false,
+            TimeSpan? period = null,
+            int? batchPostingLimit = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
 
-            if (batchOptions == null)
+            if (useBatchingSink)
             {
-                return loggerConfiguration.Sink(new AzureTableStorageSink(storageAccount, formatProvider, storageTableName), restrictedToMinimumLevel);
+                var azureBatchingTableStorageSink = new AzureBatchingTableStorageSink(storageAccount, formatProvider,  batchPostingLimit ?? DefaultBatchPostingLimit, period ?? DefaultPeriod, storageTableName);
+                return loggerConfiguration.Sink(azureBatchingTableStorageSink, restrictedToMinimumLevel);
             }
             else
             {
-                var azureBatchingTableStorageSink = new AzureBatchingTableStorageSink(storageAccount, formatProvider, storageTableName, batchOptions.BatchSizeLimit, batchOptions.FlushPeriod);
-                return loggerConfiguration.Sink(azureBatchingTableStorageSink, restrictedToMinimumLevel);
+                return loggerConfiguration.Sink(new AzureTableStorageSink(storageAccount, formatProvider, storageTableName), restrictedToMinimumLevel);
             }
         }
 
