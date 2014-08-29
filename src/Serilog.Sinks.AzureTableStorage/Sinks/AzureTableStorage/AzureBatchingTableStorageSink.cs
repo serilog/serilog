@@ -66,11 +66,18 @@ namespace Serilog.Sinks.AzureTableStorage
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             var operation = new TableBatchOperation();
-            long? minTicks = null;
+            
+            var batchRowId = 0;
+            var minTicks = default(long);
             foreach (var logEvent in events)
             {
-                minTicks = minTicks ?? logEvent.Timestamp.Ticks;
-                operation.Add(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider, minTicks.Value)));
+                if(batchRowId == 0) minTicks = logEvent.Timestamp.Ticks;
+
+                var logEventEntity = new LogEventEntity(logEvent, _formatProvider, minTicks);
+                logEventEntity.RowKey += "|" + batchRowId;
+                operation.Add(TableOperation.Insert(logEventEntity));
+
+                batchRowId++;
             }
             _table.ExecuteBatch(operation);
         }
