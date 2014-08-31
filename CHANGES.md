@@ -1,3 +1,6 @@
+1.4.6
+ * Reintroduced fix from https://github.com/continuousit/seq-client/pull/19 dropped in project move
+
 1.4.5
  * Merged PR #179 - _Serilog.Sinks.Splunk_ updated for the Splunk SDK 2.0
 

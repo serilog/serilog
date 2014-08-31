@@ -251,10 +251,9 @@ namespace Serilog.Sinks.Seq
 
             current.Position = nextStart;
 
-            using (var reader = new StreamReader(current, Encoding.UTF8, false, 128))
-            {
-                nextLine = reader.ReadLine();
-            }
+            // Important not to dispose this StreamReader as the stream must remain open.
+            var reader = new StreamReader(current, Encoding.UTF8, false, 128);
+            nextLine = reader.ReadLine();
 
             if (nextLine == null)
                 return false;
