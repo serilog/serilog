@@ -30,6 +30,8 @@ namespace Serilog
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="endpointUri">The endpoint URI of the document db.</param>
         /// <param name="authorizationKey">The authorization key of the db.</param>
+        /// <param name="databaseName">The name of the database to use; will create if it doesn't exist.</param>
+        /// <param name="collectionName">The name of the collection to use inside the database; will created if it doesn't exist.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
@@ -37,6 +39,8 @@ namespace Serilog
             this LoggerSinkConfiguration loggerConfiguration,
             Uri endpointUri,
             string authorizationKey,
+            string databaseName = "Diagnostics",
+            string collectionName = "Logs",
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
@@ -44,7 +48,7 @@ namespace Serilog
             if (endpointUri == null) throw new ArgumentNullException("endpointUri");
             if (authorizationKey == null) throw new ArgumentNullException("authorizationKey");
             return loggerConfiguration.Sink(
-                new AzureDocumentDbSink(endpointUri, authorizationKey, formatProvider),
+                new AzureDocumentDbSink(endpointUri, authorizationKey, databaseName, collectionName, formatProvider),
                 restrictedToMinimumLevel);
         }
     }

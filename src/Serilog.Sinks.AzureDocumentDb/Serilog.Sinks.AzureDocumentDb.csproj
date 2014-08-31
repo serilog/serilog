@@ -54,6 +54,8 @@
     <Compile Include="LoggerConfigurationAzureDocumentDbExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\AzureDocumentDb\AzureDocumentDbSink.cs" />
+    <Compile Include="Sinks\AzureDocumentDb\Data\LogEvent.cs" />
+    <Compile Include="Sinks\AzureDocumentDb\DocumentDbPropertyFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
