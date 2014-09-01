@@ -50,6 +50,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extras\Web\Enrichers\HttpRequestClientHostIPEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestClientHostNameEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestRawUrlEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestTypeEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestUrlEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestUrlReferrerEnricher.cs" />
+    <Compile Include="Extras\Web\Enrichers\HttpRequestUserAgentEnricher.cs" />
     <Compile Include="Extras\Web\Enrichers\UserNameEnricher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extras\Web\ApplicationLifecycleModule.cs" />
