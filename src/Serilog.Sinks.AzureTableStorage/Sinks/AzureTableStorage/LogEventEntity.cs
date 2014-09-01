@@ -44,10 +44,11 @@ namespace Serilog.Sinks.AzureTableStorage
         /// </summary>
         /// <param name="log">The event to log</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public LogEventEntity(LogEvent log, IFormatProvider formatProvider)
+        /// <param name="partitionKey"></param>
+        public LogEventEntity(LogEvent log, IFormatProvider formatProvider, long partitionKey)
         {
             Timestamp = log.Timestamp.ToUniversalTime().DateTime;
-            PartitionKey = string.Format("0{0}", Timestamp.Ticks);
+            PartitionKey = string.Format("0{0}", partitionKey);
             RowKey = GetValidRowKey(string.Format("{0}|{1}", log.Level, log.MessageTemplate.Text));
             MessageTemplate = log.MessageTemplate.Text;
             Level = log.Level.ToString();
