@@ -14,12 +14,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.AzureTableStorage
@@ -31,8 +28,6 @@ namespace Serilog.Sinks.AzureTableStorage
     {
         readonly IFormatProvider _formatProvider;
         readonly CloudTable _table;
-        
-
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
