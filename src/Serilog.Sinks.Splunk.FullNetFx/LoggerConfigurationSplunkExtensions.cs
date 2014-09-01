@@ -43,12 +43,12 @@ namespace Serilog
             SplunkContext context,
             int batchSizeLimit,
             TimeSpan batchInterval,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             var sink = new SplunkViaHttpSink(context, batchSizeLimit, batchInterval, formatProvider);
 
-            return loggerConfiguration.Sink(sink);
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -78,12 +78,12 @@ namespace Serilog
             TimeSpan batchInterval,
             Namespace resourceNameSpace,
             TransmitterArgs transmitterArgs,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             var sink = new SplunkViaHttpSink(new SplunkContext(context, index, userName, password, resourceNameSpace, transmitterArgs), batchSizeLimit,batchInterval, formatProvider);
 
-            return loggerConfiguration.Sink(sink);
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -100,12 +100,12 @@ namespace Serilog
             this LoggerSinkConfiguration loggerConfiguration,
             string host,
             int port,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             var sink = new SplunkViaUdpSink(host, port, formatProvider);
 
-            return loggerConfiguration.Sink(sink);
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
 
@@ -113,7 +113,7 @@ namespace Serilog
         /// Adds a sink that writes log events as to a Splunk instance via UDP.
         /// </summary>
         /// <param name="loggerConfiguration">The logger config</param>
-        /// <param name="host">The Splunk host that is configured for UDP logging</param>
+        /// <param name="hostAddresss">The Splunk host that is configured for UDP logging</param>
         /// <param name="port">The UDP port</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -121,21 +121,21 @@ namespace Serilog
         /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
         public static LoggerConfiguration SplunkViaUdp(
             this LoggerSinkConfiguration loggerConfiguration,
-            IPAddress host,
+            IPAddress hostAddresss,
             int port,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-            var sink = new SplunkViaUdpSink(host, port, formatProvider);
+            var sink = new SplunkViaUdpSink(hostAddresss, port, formatProvider);
 
-            return loggerConfiguration.Sink(sink);
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
         /// Adds a sink that writes log events as to a Splunk instance via TCP.
         /// </summary>
         /// <param name="loggerConfiguration">The logger config</param>
-        /// <param name="host">The Splunk host that is configured for UDP logging</param>
+        /// <param name="hostAddresss">The Splunk host that is configured for UDP logging</param>
         /// <param name="port">The TCP port</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -143,14 +143,14 @@ namespace Serilog
         /// <remarks>TODO: Add link to splunk configuration and wiki</remarks>
         public static LoggerConfiguration SplunkViaTcp(
             this LoggerSinkConfiguration loggerConfiguration,
-            IPAddress host,
+            IPAddress hostAddresss,
             int port,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-            var sink = new SplunkViaTcpSink(host, port, formatProvider);
+            var sink = new SplunkViaTcpSink(hostAddresss, port, formatProvider);
 
-            return loggerConfiguration.Sink(sink);
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -167,12 +167,12 @@ namespace Serilog
             this LoggerSinkConfiguration loggerConfiguration,
             string host,
             int port,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Debug,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             var sink = new SplunkViaTcpSink(host, port, formatProvider);
 
-            return loggerConfiguration.Sink(sink);
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
     }

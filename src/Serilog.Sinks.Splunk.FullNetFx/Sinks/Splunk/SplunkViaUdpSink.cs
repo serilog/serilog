@@ -28,7 +28,6 @@ namespace Serilog.Sinks.Splunk
     /// </summary>
     public class SplunkViaUdpSink : ILogEventSink, IDisposable
     {
-        IFormatProvider _formatProvider;
         Socket _socket;
         JsonFormatter _jsonFormatter;
 
@@ -40,8 +39,6 @@ namespace Serilog.Sinks.Splunk
         /// <param name="formatProvider">Optional format provider</param>
         public SplunkViaUdpSink(IPAddress hostAddress, int port, IFormatProvider formatProvider = null)
         {
-            _formatProvider = formatProvider;
-
             _socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
             _socket.Connect(hostAddress, port);
 
@@ -56,11 +53,10 @@ namespace Serilog.Sinks.Splunk
         /// <param name="formatProvider">Optional format provider</param>
         public SplunkViaUdpSink(string host, int port, IFormatProvider formatProvider = null)
         {
-            _formatProvider = formatProvider;
-
             _socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
             _socket.Connect(host, port);
-            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);         
+
+            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
         }
 
         /// <inheritdoc/>

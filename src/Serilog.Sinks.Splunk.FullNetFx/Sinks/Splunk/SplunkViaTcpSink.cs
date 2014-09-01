@@ -13,9 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Dynamic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -30,11 +28,12 @@ namespace Serilog.Sinks.Splunk
     /// </summary>
     public class SplunkViaTcpSink : ILogEventSink, IDisposable
     {
+        readonly string _host;
         readonly IPAddress _hostAddress;
         readonly int _port;
-        readonly IFormatProvider _formatProvider;
+        readonly JsonFormatter _jsonFormatter;
+
         TcpClient _client;
-        JsonFormatter _jsonFormatter;
 
         /// <summary>
         /// Creates an instance of the Splunk TCP Sink
@@ -44,12 +43,11 @@ namespace Serilog.Sinks.Splunk
         /// <param name="formatProvider">Optional format provider</param>
         public SplunkViaTcpSink(IPAddress hostAddress, int port, IFormatProvider formatProvider = null)
         {
-            _hostAddress = hostAddress;
             _port = port;
-            _formatProvider = formatProvider;
-
+            _hostAddress = hostAddress;
             _client = new TcpClient();
             _client.Connect(hostAddress, port);
+            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
         }
 
         /// <summary>
@@ -60,9 +58,8 @@ namespace Serilog.Sinks.Splunk
         /// <param name="formatProvider">Optional format provider</param>
         public SplunkViaTcpSink(string host, int port, IFormatProvider formatProvider = null)
         {
+            _host = host;
             _port = port;
-            _formatProvider = formatProvider;
-            _hostAddress = IPAddress.Parse(host);
             _client = new TcpClient();
             _client.Connect(host, port);
             _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
@@ -80,7 +77,10 @@ namespace Serilog.Sinks.Splunk
             if (!_client.Connected)
             {
                 _client = new TcpClient();
-                _client.Connect(_hostAddress, _port);
+                if (_host != null)
+                    _client.Connect(_host, _port);
+                else
+                    _client.Connect(_hostAddress, _port);
             }
  
             using (var networkStream = _client.GetStream())

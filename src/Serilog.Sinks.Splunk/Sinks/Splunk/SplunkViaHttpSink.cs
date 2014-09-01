@@ -32,20 +32,15 @@ namespace Serilog.Sinks.Splunk
     /// </summary>
     public class SplunkViaHttpSink : ILogEventSink, IDisposable
     {
-        readonly SplunkClient.Context _context;
         readonly string _userName;
         readonly string _password;
         readonly int _batchSizeLimit;
-        readonly TimeSpan _batchInterval;
         readonly SplunkClient.TransmitterArgs _transmitterArgs;
-        readonly IFormatProvider _formatProvider;
         readonly SplunkClient.Service _service;
         string _index;
         ConcurrentQueue<LogEvent> _queue;
         JsonFormatter _jsonFormatter;
         
-
-
         /// <summary>
         /// Creates a new instance of the splunk sink
         /// </summary>
@@ -86,25 +81,22 @@ namespace Serilog.Sinks.Splunk
             IFormatProvider formatProvider = null
             )
         {
-            _context = context;
             _index = index;
             _userName = userName;
             _password = password;
             _batchSizeLimit = batchSizeLimit;
-            _batchInterval = batchInterval;
             _transmitterArgs = transmitterArgs;
-            _formatProvider = formatProvider;
 
             _queue = new ConcurrentQueue<LogEvent>();
 
-            _jsonFormatter = new JsonFormatter(renderMessage:true, formatProvider:_formatProvider);
+            _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
 
             _service = resourceNamespace == null
-                ? new SplunkClient.Service(_context, new SplunkClient.Namespace("nobody", "search"))
-                : new SplunkClient.Service(_context, resourceNamespace);
+                ? new SplunkClient.Service(context, new SplunkClient.Namespace("nobody", "search"))
+                : new SplunkClient.Service(context, resourceNamespace);
       
 
-            RepeatAction.OnInterval(_batchInterval, () => ProcessQueue().Wait(), new CancellationToken());
+            RepeatAction.OnInterval(batchInterval, () => ProcessQueue().Wait(), new CancellationToken());
         }
 
         private async Task ProcessQueue()
