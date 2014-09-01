@@ -15,6 +15,7 @@
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.AzureTableStorage;
 
@@ -26,6 +27,16 @@ namespace Serilog
     public static class LoggerConfigurationAzureTableStorageExtensions
     {
         /// <summary>
+        /// A reasonable default for the number of events posted in
+        /// each batch.
+        /// </summary>
+        public const int DefaultBatchPostingLimit = 50;
+
+        /// <summary>
+        /// A reasonable default time to wait between checking for event batches.
+        /// </summary>
+        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
+        /// <summary>
         /// Adds a sink that writes log events as records in the 'LogEventEntity' Azure Table Storage table in the given storage account.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
@@ -33,20 +44,30 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <param name="writeInBatches">Use a periodic batching sink, as opposed to a synchronous one-at-a-time sink; this alters the partition
+        /// key used for the events so is not enabled by default.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration AzureTableStorage(
             this LoggerSinkConfiguration loggerConfiguration,
             CloudStorageAccount storageAccount,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null,
-            string storageTableName = null)
+            string storageTableName = null,
+            bool writeInBatches = false,
+            TimeSpan? period = null,
+            int? batchPostingLimit = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (storageAccount == null) throw new ArgumentNullException("storageAccount");
-            return loggerConfiguration.Sink(
-                new AzureTableStorageSink(storageAccount, formatProvider, storageTableName),
-                restrictedToMinimumLevel);
+
+            var sink = writeInBatches ?
+                (ILogEventSink)new AzureBatchingTableStorageSink(storageAccount, formatProvider,  batchPostingLimit ?? DefaultBatchPostingLimit, period ?? DefaultPeriod, storageTableName) :
+                new AzureTableStorageSink(storageAccount, formatProvider, storageTableName);
+            
+            return loggerConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -57,6 +78,10 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
+        /// <param name="writeInBatches">Use a periodic batching sink, as opposed to a synchronous one-at-a-time sink; this alters the partition
+        /// key used for the events so is not enabled by default.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration AzureTableStorage(
@@ -64,12 +89,15 @@ namespace Serilog
             string connectionString,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null,
-            string storageTableName = null)
+            string storageTableName = null,
+            bool writeInBatches = false,
+            TimeSpan? period = null,
+            int? batchPostingLimit = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (String.IsNullOrEmpty(connectionString)) throw new ArgumentNullException("connectionString");
             var storageAccount = CloudStorageAccount.Parse(connectionString);
-            return AzureTableStorage(loggerConfiguration, storageAccount, restrictedToMinimumLevel, formatProvider, storageTableName);
+            return AzureTableStorage(loggerConfiguration, storageAccount, restrictedToMinimumLevel, formatProvider, storageTableName, writeInBatches, period, batchPostingLimit);
         }
     }
 }

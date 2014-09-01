@@ -1,3 +1,7 @@
+1.4.7
+ * Merged PR #192 - additional enrichers for _Serilog.Extras.Web_
+ * Merged PR #202 - batching mode for _Serilog.Sinks.AzureTableStorage_
+
 1.4.6
  * Reintroduced fix from https://github.com/continuousit/seq-client/pull/19 dropped in project move
 

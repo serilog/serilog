@@ -51,8 +51,7 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            // todo: Use batch insert operation via timer like the Mongo and Couch sinks?
-            _table.Execute(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider)));
+            _table.Execute(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider, logEvent.Timestamp.Ticks)));
         }
     }
 }
