@@ -66,9 +66,12 @@ namespace Serilog.Sinks.CouchDB
             _formatProvider = formatProvider;
             _httpClient = new HttpClient { BaseAddress = new Uri(baseAddress) };
 
-            var authByteArray = ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", databaseUsername, databasePassword));
+          if (databaseUsername != null & databasePassword != null)
+          {
+            var authByteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", databaseUsername, databasePassword));
             var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authByteArray));
             _httpClient.DefaultRequestHeaders.Authorization = authHeader;
+          }
         }
 
         /// <summary>

@@ -24,31 +24,37 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationCouchDBExtensions
     {
-        /// <summary>
-        /// Adds a sink that writes log events as documents to a CouchDB database.
-        /// </summary>
-        /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="databaseUrl">The URL of a created CouchDB database that log events will be written to.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
-        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-        /// <param name="period">The time to wait between checking for event batches.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
-        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration CouchDB(
+      /// <summary>
+      /// Adds a sink that writes log events as documents to a CouchDB database.
+      /// </summary>
+      /// <param name="loggerConfiguration">The logger configuration.</param>
+      /// <param name="databaseUrl">The URL of a created CouchDB database that log events will be written to.</param>
+      /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+      /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+      /// <param name="period">The time to wait between checking for event batches.</param>
+      /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+      /// <param name="databaseUsername">The username to authenticate with the database (if needed).</param>
+      /// <param name="databasePassword">The password to use to authenticate (if needed)</param>
+      /// <returns>Logger configuration, allowing configuration to continue.</returns>
+      /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+      public static LoggerConfiguration CouchDB(
             this LoggerSinkConfiguration loggerConfiguration,
             string databaseUrl,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = CouchDBSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            string databaseUsername = null,
+            string databasePassword = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+            if (databaseUsername != null && databasePassword == null) throw new ArgumentNullException("databasePassword");
+            if (databaseUsername == null && databasePassword != null) throw new ArgumentNullException("databaseUsername");
 
             var defaultedPeriod = period ?? CouchDBSink.DefaultPeriod;
             return loggerConfiguration.Sink(
-                new CouchDBSink(databaseUrl, batchPostingLimit, defaultedPeriod, formatProvider),
+                new CouchDBSink(databaseUrl, batchPostingLimit, defaultedPeriod, formatProvider, databaseUsername, databasePassword),
                 restrictedToMinimumLevel);
         }
     }
