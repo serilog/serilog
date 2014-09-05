@@ -43,9 +43,12 @@ namespace Serilog.Parameters
         };
 
         readonly IDestructuringPolicy[] _destructuringPolicies; 
-        readonly IScalarConversionPolicy[] _scalarConversionPolicies; 
+        readonly IScalarConversionPolicy[] _scalarConversionPolicies;
+        readonly ILogPropertyFilter[] _propertyFilters;
 
-        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
+        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes, 
+            IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
+            IEnumerable<ILogPropertyFilter> propertyFilters)
         {
             if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
@@ -65,6 +68,8 @@ namespace Serilog.Parameters
                     new DelegateDestructuringPolicy() 
                 })
                 .ToArray();
+
+            _propertyFilters = propertyFilters.ToArray();
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
@@ -163,7 +168,7 @@ namespace Serilog.Parameters
                    valueType.GetTypeInfo().IsEnum;
         }
 
-        static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
+        private IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
             foreach (var prop in value.GetType().GetPropertiesRecursive())
             {
@@ -171,6 +176,11 @@ namespace Serilog.Parameters
                 try
                 {
                     propValue = prop.GetValue(value);
+
+                    if (_propertyFilters.Any(p => !p.IsAllowed(prop.Name, propValue)))
+                    {
+                        continue;
+                    }
                 }
                 catch (TargetParameterCountException)
                 {
