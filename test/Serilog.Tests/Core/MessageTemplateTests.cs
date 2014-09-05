@@ -126,7 +126,7 @@ namespace Serilog.Tests.Core
         static string Render(IFormatProvider formatProvider, string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
-            var binder = new PropertyBinder(new PropertyValueConverter(Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>()));
+            var binder = new PropertyBinder(new PropertyValueConverter(Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), Enumerable.Empty<ILogPropertyFilter>()));
             var props = binder.ConstructProperties(mt, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
