@@ -48,7 +48,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Serilog.Sinks.Splunk.nuspec" />
+    <None Include="pre-Serilog.Sinks.Splunk.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LoggerConfigurationSplunkExtensions.cs" />
