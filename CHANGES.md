@@ -1,3 +1,9 @@
+1.4.8
+ * #204 - Basic HTTP authentication support for the CouchDB sink
+ * #207 - Fixed typo in `DepthLimiter` error message
+ * #209 - Update _Serilog.Sinks.Splunk_ to Splunk SDK 2.0 GA
+ * #210 - Fixed string formatting in `PropertyBinder` error message
+
 1.4.7
  * Merged PR #192 - additional enrichers for _Serilog.Extras.Web_
  * Merged PR #202 - batching mode for _Serilog.Sinks.AzureTableStorage_
