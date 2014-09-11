@@ -22,6 +22,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
+using System.Net.Http.Headers;
 
 namespace Serilog.Sinks.CouchDB
 {
@@ -52,7 +53,9 @@ namespace Serilog.Sinks.CouchDB
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public CouchDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
+        /// <param name="databaseUsername">The username to use in the HTTP Authentication header.</param>
+        /// <param name="databasePassword">Password to use in the HTTP Authentication header</param>
+        public CouchDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string databaseUsername, string databasePassword)
             : base(batchPostingLimit, period)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
@@ -62,6 +65,13 @@ namespace Serilog.Sinks.CouchDB
 
             _formatProvider = formatProvider;
             _httpClient = new HttpClient { BaseAddress = new Uri(baseAddress) };
+
+          if (databaseUsername != null & databasePassword != null)
+          {
+            var authByteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", databaseUsername, databasePassword));
+            var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authByteArray));
+            _httpClient.DefaultRequestHeaders.Authorization = authHeader;
+          }
         }
 
         /// <summary>
