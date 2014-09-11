@@ -50,7 +50,7 @@ namespace Serilog.Parameters
             {
                 if (_currentDepth == MaximumDestructuringDepth)
                 {
-                    SelfLog.WriteLine("Maximium destructuring depth reached.");
+                    SelfLog.WriteLine("Maximum destructuring depth reached.");
                     return new ScalarValue(null);
                 }
 
