@@ -103,7 +103,7 @@ namespace Serilog.Parameters
             if (namedProperties.Length != messageTemplateParameters.Length)
             {
                 matchedRun = Math.Min(namedProperties.Length, messageTemplateParameters.Length);
-                SelfLog.WriteLine("Named property count does not match parameter count: ", template);
+                SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
             }
 
             var result = new LogEventProperty[matchedRun];
