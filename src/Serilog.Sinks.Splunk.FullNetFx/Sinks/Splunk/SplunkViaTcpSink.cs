@@ -20,6 +20,7 @@ using System.Text;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Json;
+using Splunk.Logging;
 
 namespace Serilog.Sinks.Splunk
 {
@@ -28,12 +29,8 @@ namespace Serilog.Sinks.Splunk
     /// </summary>
     public class SplunkViaTcpSink : ILogEventSink, IDisposable
     {
-        readonly string _host;
-        readonly IPAddress _hostAddress;
-        readonly int _port;
         readonly JsonFormatter _jsonFormatter;
-
-        TcpClient _client;
+        private TcpSocketWriter _writer;
 
         /// <summary>
         /// Creates an instance of the Splunk TCP Sink
@@ -41,12 +38,15 @@ namespace Serilog.Sinks.Splunk
         /// <param name="hostAddress">The Splunk Host</param>
         /// <param name="port">The UDP port configured in Splunk</param>
         /// <param name="formatProvider">Optional format provider</param>
-        public SplunkViaTcpSink(IPAddress hostAddress, int port, IFormatProvider formatProvider = null)
+        public SplunkViaTcpSink(
+            IPAddress hostAddress,
+            int port,
+            IFormatProvider formatProvider = null)
         {
-            _port = port;
-            _hostAddress = hostAddress;
-            _client = new TcpClient();
-            _client.Connect(hostAddress, port);
+            var reconnectionPolicy = new ExponentialBackoffTcpReconnectionPolicy();
+
+            _writer = new TcpSocketWriter(hostAddress, port, reconnectionPolicy, 10000);
+
             _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
         }
 
@@ -56,12 +56,16 @@ namespace Serilog.Sinks.Splunk
         /// <param name="host">The Splunk Host</param>
         /// <param name="port">The UDP port configured in Splunk</param>
         /// <param name="formatProvider">Optional format provider</param>
-        public SplunkViaTcpSink(string host, int port, IFormatProvider formatProvider = null)
+        public SplunkViaTcpSink(
+            string host,
+            int port,
+            IFormatProvider formatProvider = null)
         {
-            _host = host;
-            _port = port;
-            _client = new TcpClient();
-            _client.Connect(host, port);
+            var reconnectionPolicy = new ExponentialBackoffTcpReconnectionPolicy();
+            var ipAddress = IPAddress.Parse(host);
+
+            _writer = new TcpSocketWriter(ipAddress, port, reconnectionPolicy, 10000);
+
             _jsonFormatter = new JsonFormatter(renderMessage: true, formatProvider: formatProvider);
         }
 
@@ -69,34 +73,19 @@ namespace Serilog.Sinks.Splunk
         public void Emit(LogEvent logEvent)
         {
             var sw = new StringWriter();
-            
+
             _jsonFormatter.Format(logEvent, sw);
 
             var message = sw.ToString();
-      
-            if (!_client.Connected)
-            {
-                _client = new TcpClient();
-                if (_host != null)
-                    _client.Connect(_host, _port);
-                else
-                    _client.Connect(_hostAddress, _port);
-            }
- 
-            using (var networkStream = _client.GetStream())
-            {
-                var data = Encoding.UTF8.GetBytes(message);
-                networkStream.Write(data, 0, data.Length);
-                networkStream.Flush();
-            }
+
+            _writer.Enqueue(message);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _client.Close();
+            _writer.Dispose();
         }
     }
 }
-
 
