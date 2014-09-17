@@ -11,8 +11,10 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging splunk</tags>
     <dependencies>
-      <dependency id="Serilog" />
-      <dependency id="Splunk.Client" version="2.0.0" />
+      <group>
+        <dependency id="Serilog" />
+        <dependency id="Splunk.Client" version="2.0.0" />
+      </group>
       <group targetFramework="net45">
         <dependency id="Splunk.Logging.Common" version="1.0.0" />
       </group>
