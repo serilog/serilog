@@ -55,7 +55,7 @@ namespace Serilog.Extras.Web.Enrichers
 
                 if (context.User != null)
                 {
-                    if (context.User.Identity.IsAuthenticated == false)
+                    if (context.User.Identity == null || context.User.Identity.IsAuthenticated == false)
                     {
                         if (_anonymousUsername != null)
                             userName = _anonymousUsername;
