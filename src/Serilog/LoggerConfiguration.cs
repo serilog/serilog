@@ -30,6 +30,7 @@ namespace Serilog
     public class LoggerConfiguration
     {
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
+        readonly List<ILogEventSink> _auditSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
@@ -45,6 +46,23 @@ namespace Serilog
             get
             {
                 return new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s));
+            }
+        }
+
+        /// <summary>
+        /// Configures sinks for auditing, instead of regular (safe) logging. When auditing is used,
+        /// exceptions from sinks and any intermediate filters propagate back to the caller. Most callers
+        /// should use <see cref="WriteTo"/> instead.
+        /// </summary>
+        /// <remarks>
+        /// Not all sinks are compatible with transactional auditing requirements (many will use asynchronous
+        /// batching to improve write throughput and latency).
+        /// </remarks>
+        public LoggerSinkConfiguration AuditTo
+        {
+            get
+            {
+                return new LoggerSinkConfiguration(this, s => _auditSinks.Add(s));
             }
         }
 
@@ -111,10 +129,20 @@ namespace Serilog
                     disposable.Dispose();
             };
 
-            var sink = new SafeAggregateSink(_logEventSinks);
-            
+            ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
+
+            if (_auditSinks.Any())
+                sink = new AggregateSink(new[] { sink }.Concat(_auditSinks));
+
             if (_filters.Any())
-                sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
+            {
+                sink = new FilteringSink(sink, _filters);
+
+                // A throwing filter could drop an auditable event, so exceptions in filters must be propagated
+                // if auditing is used.
+                if (!_auditSinks.Any())
+                    sink = new SafeAggregateSink(new[] { sink });
+            }
 
             var converter = new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);

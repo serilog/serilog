@@ -156,5 +156,50 @@ namespace Serilog.Tests
 
             Assert.That(enrichedPropertySeen);
         }
+
+        [Test]
+        public void ExceptionsThrownBySinksAreNotPropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Pass("No exception reached the caller");
+        }
+
+        [Test]
+        public void ExceptionsThrownByFiltersAreNotPropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Pass("No exception reached the caller");
+        }
+
+        [Test]
+        public void ExceptionsThrownByAuditSinksArePropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .CreateLogger();
+
+            Assert.Throws<AggregateException>(() => logger.Write(Some.InformationEvent()));
+        }
+
+        [Test]
+        public void ExceptionsThrownByFiltersArePropagatedIfAuditingEnabled()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new DelegatingSink(e => { }))
+                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
+                .CreateLogger();
+
+            Assert.Throws<Exception>(() => logger.Write(Some.InformationEvent()));
+        }
     }
 }
