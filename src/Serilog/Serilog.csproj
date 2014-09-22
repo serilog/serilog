@@ -60,6 +60,7 @@
     <Compile Include="Core\ILogEventFilter.cs" />
     <Compile Include="Core\ILogEventPropertyFactory.cs" />
     <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
+    <Compile Include="Debugging\LoggingFailedException.cs" />
     <Compile Include="Events\DictionaryValue.cs" />
     <Compile Include="Events\LevelAlias.cs" />
     <Compile Include="Filters\Matching.cs" />

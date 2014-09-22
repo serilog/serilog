@@ -62,6 +62,9 @@ namespace Serilog.Sinks.SignalR
         /// not both.</remarks>
         protected override void EmitBatch(IEnumerable<Events.LogEvent> events)
         {
+            // This sink doesn't use batching to send events, instead only using
+            // PeriodicBatchingSink to manage the worker thread; requires some consideration.
+
             foreach (var logEvent in events)
             {
                 _context.Clients.All.sendLogEvent(new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));

@@ -63,7 +63,6 @@ namespace Serilog.Sinks.ElasticSearch
                           .SetTimeout(connectionTimeOutInMilliseconds));
         }
 
-      
         /// <summary>
         /// Emit a batch of log events, running to completion synchronously.
         /// </summary>
@@ -80,8 +79,7 @@ namespace Serilog.Sinks.ElasticSearch
                 .ToList();
 
             if (items.Any() && _client !=null)
-                _client.IndexMany(items, indexName);
-            
+                _client.IndexMany(items, indexName);            
         }     
     }
 }

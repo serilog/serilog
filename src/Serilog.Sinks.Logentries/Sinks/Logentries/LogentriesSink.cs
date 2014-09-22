@@ -83,18 +83,10 @@ namespace Serilog.Sinks.Logentries
             if (events.Any() == false)
                 return;
 
-            try
-            {
-                if (_client == null)
-                    _client = new LeClient(false, _useSsl);
+            if (_client == null)
+                _client = new LeClient(false, _useSsl);
 
-                _client.Connect();
-            }
-            catch (Exception ex)
-            {
-                SelfLog.WriteLine("Unable to connect to Logentries API.", ex);
-                return;
-            }
+            _client.Connect();
 
             foreach (var logEvent in events)
             {
