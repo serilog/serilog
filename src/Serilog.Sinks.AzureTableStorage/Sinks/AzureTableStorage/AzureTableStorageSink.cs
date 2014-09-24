@@ -28,7 +28,7 @@ namespace Serilog.Sinks.AzureTableStorage
         readonly IFormatProvider _formatProvider;
         readonly CloudTable _table;
 
-      /// <summary>
+        /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
         /// <param name="storageAccount">The Cloud Storage Account to use to insert the log entries to.</param>
@@ -39,7 +39,10 @@ namespace Serilog.Sinks.AzureTableStorage
             _formatProvider = formatProvider;
             var tableClient = storageAccount.CreateCloudTableClient();
 
-            if (string.IsNullOrEmpty(storageTableName)) storageTableName = typeof(LogEventEntity).Name;
+            if (string.IsNullOrEmpty(storageTableName))
+            {
+                storageTableName = typeof(LogEventEntity).Name;
+            }
 
             _table = tableClient.GetTableReference(storageTableName);
             _table.CreateIfNotExists();
