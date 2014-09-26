@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,10 +36,11 @@ namespace Serilog.Sinks.PeriodicBatching
     {
         readonly int _batchSizeLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
-        readonly Timer _timer;
-        readonly TimeSpan _period;
+        readonly BatchedConnectionStatus _status;
+        readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>();
 
-        readonly object _stateLock = new object(); 
+        readonly object _stateLock = new object();
+        readonly Timer _timer;
         bool _unloading;
         bool _started;
 
@@ -53,7 +54,7 @@ namespace Serilog.Sinks.PeriodicBatching
             _batchSizeLimit = batchSizeLimit;
             _queue = new ConcurrentQueue<LogEvent>();
             _timer = new Timer(s => OnTick());
-            _period = period;
+            _status = new BatchedConnectionStatus(period);
 
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
@@ -110,45 +111,47 @@ namespace Serilog.Sinks.PeriodicBatching
         /// <param name="events">The events to emit.</param>
         protected abstract void EmitBatch(IEnumerable<LogEvent> events);
 
-        void SetTimer()
-        {
-            // Note, called under _stateLock
-            
-            _timer.Change(_period, TimeSpan.FromMilliseconds(-1));
-        }
-
         void OnTick()
         {
             try
             {
                 do
                 {
-                    var count = 0;
-                    var events = new Queue<LogEvent>();
                     LogEvent next;
-                    while (count < _batchSizeLimit && _queue.TryDequeue(out next))
+                    while (_waitingBatch.Count < _batchSizeLimit && _queue.TryDequeue(out next))
                     {
-                        count++;
-                        events.Enqueue(next);
+                        _waitingBatch.Enqueue(next);
                     }
 
-                    if (events.Count == 0)
+                    if (_waitingBatch.Count == 0)
                         return;
 
-                    EmitBatch(events);
+                    EmitBatch(_waitingBatch);
+                    _waitingBatch.Clear();
+                    _status.MarkSuccess();
                 }
                 while (true);
             }
             catch (Exception ex)
             {
                 SelfLog.WriteLine("Exception while emitting periodic batch from {0}: {1}", this, ex);
+                _status.MarkFailure();
             }
             finally
             {
+                if (_status.ShouldDropBatch)
+                    _waitingBatch.Clear();
+
+                if (_status.ShouldDropQueue)
+                {
+                    LogEvent evt;
+                    while (_queue.TryDequeue(out evt)) { }
+                }
+
                 lock (_stateLock)
                 {
                     if (!_unloading)
-                        SetTimer();
+                        _timer.Change(_status.NextInterval, TimeSpan.FromMilliseconds(-1));
                 }
             }
         }
@@ -173,8 +176,10 @@ namespace Serilog.Sinks.PeriodicBatching
                 if (_unloading) return;
                 if (!_started)
                 {
+                    // Special handling to try to get the first event across as quickly
+                    // as possible to show we're alive!
                     _started = true;
-                    SetTimer();
+                    _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(-1));
                 }
             }
 

@@ -38,7 +38,7 @@ namespace Serilog.Sinks.PeriodicBatching
         readonly int _batchSizeLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly BatchedConnectionStatus _status;
-        Queue<LogEvent> _waitingBatch = new Queue<LogEvent>(); 
+        readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>(); 
 
         readonly object _stateLock = new object();
         readonly Timer _timer;
