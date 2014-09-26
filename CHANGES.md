@@ -1,3 +1,9 @@
+1.4.10
+ * #225 - Ensure Azure Tablestorage rowkey is unique
+ * #224 - Use UTC to generate partitionkey
+ * #219 - .NET 4.0 support for Elastic Search
+ * #221 - Exponential back-off for PeriodicBatchingSink
+
 1.4.9
  * #213 - Check for null User.Identity when enriching events with usernames in ASP.NET
  * #216 - Updated to use Splunk TCP Writer
