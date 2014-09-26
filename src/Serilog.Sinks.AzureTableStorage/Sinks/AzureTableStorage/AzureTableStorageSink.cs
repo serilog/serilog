@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Serilog.Core;
@@ -27,8 +28,9 @@ namespace Serilog.Sinks.AzureTableStorage
     {
         readonly IFormatProvider _formatProvider;
         readonly CloudTable _table;
+        long _rowKeyIndex;
 
-      /// <summary>
+        /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
         /// <param name="storageAccount">The Cloud Storage Account to use to insert the log entries to.</param>
@@ -39,7 +41,10 @@ namespace Serilog.Sinks.AzureTableStorage
             _formatProvider = formatProvider;
             var tableClient = storageAccount.CreateCloudTableClient();
 
-            if (string.IsNullOrEmpty(storageTableName)) storageTableName = typeof(LogEventEntity).Name;
+            if (string.IsNullOrEmpty(storageTableName))
+            {
+                storageTableName = typeof(LogEventEntity).Name;
+            }
 
             _table = tableClient.GetTableReference(storageTableName);
             _table.CreateIfNotExists();
@@ -51,7 +56,23 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            _table.Execute(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider, logEvent.Timestamp.ToUniversalTime().Ticks)));
+            var logEventEntity = new LogEventEntity(
+                logEvent,
+                _formatProvider,
+                logEvent.Timestamp.ToUniversalTime().Ticks);
+            EnsureUniqueRowKey(logEventEntity);
+            _table.Execute(TableOperation.Insert(logEventEntity));
+        }
+
+        /// <summary>
+        /// Appends an incrementing index to the row key to ensure that it will
+        /// not conflict with existing rows created at the same time / with the
+        /// same partition key.
+        /// </summary>
+        /// <param name="logEventEntity"></param>
+        void EnsureUniqueRowKey(ITableEntity logEventEntity)
+        {
+            logEventEntity.RowKey += "|" + Interlocked.Increment(ref _rowKeyIndex);
         }
     }
 }
