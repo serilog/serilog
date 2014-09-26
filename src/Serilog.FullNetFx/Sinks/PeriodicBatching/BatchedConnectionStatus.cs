@@ -35,7 +35,7 @@ namespace Serilog.Sinks.PeriodicBatching
     class BatchedConnectionStatus
     {
         static readonly TimeSpan MinimumBackoffPeriod = TimeSpan.FromSeconds(5);
-        static readonly TimeSpan MaximumBackoffInterval = TimeSpan.FromMinutes(15);
+        static readonly TimeSpan MaximumBackoffInterval = TimeSpan.FromMinutes(10);
 
         const int FailuresBeforeDroppingBatch = 4;
         const int FailuresBeforeDroppingQueue = 6;
