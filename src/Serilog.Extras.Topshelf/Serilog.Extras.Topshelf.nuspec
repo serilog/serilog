@@ -18,5 +18,7 @@
   <files>
     <file src="src\Serilog.Extras.Topshelf\bin\Release\Serilog.Extras.Topshelf.dll" target="lib\net45" />
     <file src="src\Serilog.Extras.Topshelf\bin\Release\Serilog.Extras.Topshelf.xml" target="lib\net45" />
+    <file src="src\Serilog.Extras.Topshelf\bin40\Release\Serilog.Extras.Topshelf.dll" target="lib\net40" />
+    <file src="src\Serilog.Extras.Topshelf\bin40\Release\Serilog.Extras.Topshelf.xml" target="lib\net40" />
   </files>
 </package>
