@@ -71,10 +71,11 @@ namespace Serilog.Sinks.AzureTableStorage
                 if (first)
                 {
                     //check to make sure the partition key is not the same as the previous batch
-                    if (_partitionKey != logEvent.Timestamp.Ticks)
+                    var ticks = logEvent.Timestamp.ToUniversalTime().Ticks;
+                    if (_partitionKey != ticks)
                     {
                         _batchRowId = 0; //the partitionkey has been reset
-                        _partitionKey = logEvent.Timestamp.Ticks; //store the new partition key
+                        _partitionKey = ticks; //store the new partition key
                     }
                     first = false;
                 }

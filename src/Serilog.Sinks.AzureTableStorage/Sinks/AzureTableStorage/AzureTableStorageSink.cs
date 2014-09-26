@@ -51,7 +51,7 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            _table.Execute(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider, logEvent.Timestamp.Ticks)));
+            _table.Execute(TableOperation.Insert(new LogEventEntity(logEvent, _formatProvider, logEvent.Timestamp.ToUniversalTime().Ticks)));
         }
     }
 }
