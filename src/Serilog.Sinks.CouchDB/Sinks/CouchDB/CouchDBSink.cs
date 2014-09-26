@@ -120,7 +120,7 @@ namespace Serilog.Sinks.CouchDB
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
             var result = await _httpClient.PostAsync(BulkUploadResource, content);
             if (!result.IsSuccessStatusCode)
-                SelfLog.WriteLine("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
+                throw new LoggingFailedException(string.Format("Received failed result {0} when posting events to CouchDB", result.StatusCode));
         }
     }
 }

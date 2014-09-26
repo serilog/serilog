@@ -29,6 +29,9 @@ namespace Serilog.Sinks.AzureTableStorage
         readonly IFormatProvider _formatProvider;
         readonly CloudTable _table;
 
+        long _partitionKey;
+        int _batchRowId;
+
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
@@ -51,8 +54,6 @@ namespace Serilog.Sinks.AzureTableStorage
             _table.CreateIfNotExists();
         }
 
-        long partitionKey;
-        int batchRowId;
         /// <summary>
         /// Emit a batch of log events, running to completion synchronously.
         /// </summary>
@@ -71,19 +72,19 @@ namespace Serilog.Sinks.AzureTableStorage
                 {
                     //check to make sure the partition key is not the same as the previous batch
                     var ticks = logEvent.Timestamp.ToUniversalTime().Ticks;
-                    if (partitionKey != ticks)
+                    if (_partitionKey != ticks)
                     {
-                        batchRowId = 0; //the partitionkey has been reset
-                        partitionKey = ticks; //store the new partition key
+                        _batchRowId = 0; //the partitionkey has been reset
+                        _partitionKey = ticks; //store the new partition key
                     }
                     first = false;
                 }
 
-                var logEventEntity = new LogEventEntity(logEvent, _formatProvider, partitionKey);
-                logEventEntity.RowKey += "|" + batchRowId;
+                var logEventEntity = new LogEventEntity(logEvent, _formatProvider, _partitionKey);
+                logEventEntity.RowKey += "|" + _batchRowId;
                 operation.Add(TableOperation.Insert(logEventEntity));
 
-                batchRowId++;
+                _batchRowId++;
             }
             _table.ExecuteBatch(operation);
         }

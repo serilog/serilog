@@ -93,6 +93,7 @@
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
     <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
     <Compile Include="Sinks\Observable\ObservableSinkTests.cs" />
+    <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatusTests.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSinkTests.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSinkTests.cs" />
     <Compile Include="Sinks\RollingFile\TemplatedPathRollerTests.cs" />

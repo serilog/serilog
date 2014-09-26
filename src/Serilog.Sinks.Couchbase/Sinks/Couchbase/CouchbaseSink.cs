@@ -89,20 +89,22 @@ namespace Serilog.Sinks.Couchbase
         }
 
         /// <summary>
-        /// Emit a batch of log events, running asynchronously.
+        /// Emit a batch of log events.
         /// </summary>
         /// <param name="events">The events to emit.</param>
         /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
         /// not both.</remarks>
-        protected override async Task EmitBatchAsync(IEnumerable<Events.LogEvent> events)
+        protected override void EmitBatch(IEnumerable<Events.LogEvent> events)
         {
+            // This sink doesn't actually write batches, instead only using
+            // the PeriodicBatching infrastructure to manage background work.
+            // Probably needs modification.
+
             foreach (var logEvent in events)
             {
                 var key = Guid.NewGuid().ToString();
                 
-                var result = await Task.Run<bool>(() => {
-                    return _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
-                });
+                var result = _couchbaseClient.StoreJson(Enyim.Caching.Memcached.StoreMode.Add, key, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
 
                 if (!result)
                     SelfLog.WriteLine("Failed to store value");
