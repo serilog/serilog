@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Serilog.Core;
@@ -71,7 +72,7 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="logEventEntity"></param>
         void EnsureUniqueRowKey(ITableEntity logEventEntity)
         {
-            logEventEntity.RowKey += "|" + _rowKeyIndex++;
+            logEventEntity.RowKey += "|" + Interlocked.Increment(ref _rowKeyIndex);
         }
     }
 }
