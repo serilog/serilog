@@ -21,4 +21,5 @@ namespace Serilog.Extras.Timing
     {
         
     }
+
 }

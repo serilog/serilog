@@ -15,6 +15,7 @@
 using System;
 using Serilog.Events;
 using Serilog.Extras.Timing;
+using System.Collections.Concurrent;
 
 namespace Serilog
 {
@@ -27,6 +28,8 @@ namespace Serilog
 
         const string DefaultGaugeTemplate = "{GaugeName} value = {GaugeValue} {GaugeUnit:l}";
         const string DefaultCountTemplate = "{CounterName} count = {CounterValue} {CounterUnit:l}";
+		const string DefaultMeterTemplate = "{MeterName} count = {CounterValue}, mean rate {MeanRate:l}, 1 minute rate {OneMinuteRate:l}, 5 minute rate {FiveMinuteRate:l}, 15 minute rate {FifteenMinuteRate:l}";
+		const string DefaultHealthTemplate = "Health check {HealthCheckName} result is {HealthCheckMessage}.";
 
         /// <summary>
         /// Begins an operation by placing the code to be timed inside a using block. 
@@ -129,6 +132,56 @@ namespace Serilog
             return new CounterMeasure(logger, name, uom, level, template, directWrite);
         }
 
+		/// <summary>
+		/// Creates a new meter operations that measures the rate at which the operation occurs.
+		/// </summary>
+		/// <param name="logger"></param>
+		/// <param name="name"></param>
+		/// <param name="measuring"></param>
+		/// <param name="rateUnit"></param>
+		/// <param name="level"></param>
+		/// <param name="template"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static IMeterMeasure MeterOperation(
+			this ILogger logger,
+			string name,
+			string measuring = "operation(s)",
+			TimeUnit rateUnit = TimeUnit.Seconds,
+			LogEventLevel level = LogEventLevel.Information,
+			string template = DefaultMeterTemplate)
+		{
+			if (string.IsNullOrWhiteSpace(name))
+				throw new ArgumentNullException("name");
+
+			return new MeterMeasure(logger, name, measuring, rateUnit, level, template);
+		}
+
+		/// <summary>
+		/// Creates a new health check. When the Write method is executed, the health function is run and the response is written to the logger. 
+		/// </summary>
+		/// <returns>The check.</returns>
+		/// <param name="logger">Logger.</param>
+		/// <param name="name">Name.</param>
+		/// <param name="healthFunction">Health function.</param>
+		/// <param name="healthyLevel">Healthy level.</param>
+		/// <param name="unHealthyLevel">Un healthy level.</param>
+		/// <param name="template">Template.</param>
+		public static IHealthMeasure HealthCheck(
+			this ILogger logger,
+			string name,
+			Func<HealthCheckResult> healthFunction,
+			LogEventLevel healthyLevel = LogEventLevel.Information,
+			LogEventLevel unHealthyLevel = LogEventLevel.Warning,
+			string template = DefaultHealthTemplate)
+		{
+			if (string.IsNullOrWhiteSpace(name))
+				throw new ArgumentNullException("name");
+
+			return new HealthMeasure (logger, name, healthFunction, healthyLevel, unHealthyLevel, template);
+		}
 
     }
+
+
 }
