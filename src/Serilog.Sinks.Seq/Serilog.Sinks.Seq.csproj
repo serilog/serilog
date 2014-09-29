@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Sinks\Seq\DurableSeqSink.cs" />
     <Compile Include="Sinks\Seq\HttpLogShipper.cs" />
+    <Compile Include="Sinks\Seq\SeqApi.cs" />
     <Compile Include="Sinks\Seq\SeqSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeqLoggerConfigurationExtensions.cs" />
