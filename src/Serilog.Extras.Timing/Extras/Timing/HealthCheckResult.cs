@@ -28,7 +28,7 @@ namespace Serilog.Extras.Timing
 		public HealthCheckResult ()
 		{
 			IsHealthty = true;
-			Message = "successfull";
+			Message = "successful";
 		}
 
 		/// <summary>

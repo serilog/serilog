@@ -135,12 +135,12 @@ namespace Serilog
 		/// <summary>
 		/// Creates a new meter operations that measures the rate at which the operation occurs.
 		/// </summary>
-		/// <param name="logger"></param>
-		/// <param name="name"></param>
-		/// <param name="measuring"></param>
-		/// <param name="rateUnit"></param>
-		/// <param name="level"></param>
-		/// <param name="template"></param>
+		/// <param name="logger">The logger</param>
+		/// <param name="name">Name of the meter.</param>
+		/// <param name="measuring">Specifies what it is measuring, like the number of requests</param>
+		/// <param name="rateUnit">The rate unit</param>
+		/// <param name="level">The loglevel to use when writing to the log.</param>
+		/// <param name="template">The template to use.</param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		public static IMeterMeasure MeterOperation(
@@ -162,11 +162,11 @@ namespace Serilog
 		/// </summary>
 		/// <returns>The check.</returns>
 		/// <param name="logger">Logger.</param>
-		/// <param name="name">Name.</param>
-		/// <param name="healthFunction">Health function.</param>
-		/// <param name="healthyLevel">Healthy level.</param>
-		/// <param name="unHealthyLevel">Un healthy level.</param>
-		/// <param name="template">Template.</param>
+		/// <param name="name">Name of the health check.</param>
+		/// <param name="healthFunction">Health function to execute.</param>
+		/// <param name="healthyLevel">Healthy level used when the check was succesful.</param>
+		/// <param name="unHealthyLevel">Unhealthy level used when the check was unsuccessful.</param>
+		/// <param name="template">Template to use to render the message to the log.</param>
 		public static IHealthMeasure HealthCheck(
 			this ILogger logger,
 			string name,

@@ -55,7 +55,7 @@ namespace Serilog.Extras.Timing
 				result = new HealthCheckResult ("Unable to execute health check", ex);
 			}
 
-			_logger.Write (result.IsHealthty ? _levelHealthy : _levelUnhealthy, result.Exception, _template, _name, result.Message);
+			_logger.Write (result.IsHealthty ? _levelHealthy : _levelUnhealthy, result.Exception, _template, _name, result.Message, result.IsHealthty);
 		}
 
 		#endregion
