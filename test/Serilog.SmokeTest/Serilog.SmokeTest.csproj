@@ -51,10 +51,6 @@
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog.Sinks.Seq\Serilog.Sinks.Seq.csproj">
-      <Project>{b6a720e1-732b-4b8b-868b-5914af85983c}</Project>
-      <Name>Serilog.Sinks.Seq</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>

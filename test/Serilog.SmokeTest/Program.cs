@@ -8,7 +8,6 @@ namespace Serilog.SmokeTest
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
-                .WriteTo.Seq("http://my-seq/", batchPostingLimit: 2000, period: TimeSpan.FromSeconds(2), apiKey: "tqAXx8MEtnnqURHTHzP")
                 .CreateLogger();
 
             var library = typeof(Log).Assembly.GetName();
