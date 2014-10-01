@@ -7,8 +7,8 @@
     <ProjectGuid>{52B596D5-5B55-4E8B-86F7-037CCA22AEC5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Serilog.Extras.Topshelf_net40</RootNamespace>
-    <AssemblyName>Serilog.Extras.Topshelf-net40</AssemblyName>
+    <RootNamespace>Serilog.Extras.Topshelf</RootNamespace>
+    <AssemblyName>Serilog.Extras.Topshelf</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
