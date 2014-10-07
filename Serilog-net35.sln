@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.FullNetFx-net35", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Log4Net-net35", "src\Serilog.Sinks.Log4Net\Serilog.Sinks.Log4Net-net35.csproj", "{83EA2B05-FF47-40C8-92C3-1F58AEEC7CE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MSSqlServer-net35", "src\Serilog.Sinks.MSSqlServer\Serilog.Sinks.MSSqlServer-net35.csproj", "{31C64BE9-4EF6-42D5-A811-D7D24613EEF6}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests-net35", "test\Serilog.Tests\Serilog.Tests-net35.csproj", "{D5648551-D19D-41E3-9FC1-E74B111EEF41}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{36FF4D20-F647-4BE3-BC25-DABE7C031B5D}"
@@ -40,6 +42,10 @@ Global
 		{83EA2B05-FF47-40C8-92C3-1F58AEEC7CE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83EA2B05-FF47-40C8-92C3-1F58AEEC7CE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83EA2B05-FF47-40C8-92C3-1F58AEEC7CE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31C64BE9-4EF6-42D5-A811-D7D24613EEF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31C64BE9-4EF6-42D5-A811-D7D24613EEF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31C64BE9-4EF6-42D5-A811-D7D24613EEF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31C64BE9-4EF6-42D5-A811-D7D24613EEF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

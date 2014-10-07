@@ -24,6 +24,8 @@ using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.MSSqlServer
 {
+    using Serilog.Extensions;
+
     /// <summary>
     ///     Writes log events as rows in a table of MSSqlServer database.
     /// </summary>
@@ -61,10 +63,10 @@ namespace Serilog.Sinks.MSSqlServer
             TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
+            if (connectionString.IsNullOrWhiteSpace())
                 throw new ArgumentNullException("connectionString");
 
-            if (string.IsNullOrWhiteSpace(tableName))
+            if (tableName.IsNullOrWhiteSpace())
                 throw new ArgumentNullException("tableName");
 
 
@@ -82,23 +84,37 @@ namespace Serilog.Sinks.MSSqlServer
         /// </summary>
         /// <param name="events">The events to emit.</param>
         /// <remarks>
-        ///     Override either <see cref="PeriodicBatchingSink.EmitBatch" /> or <see cref="PeriodicBatchingSink.EmitBatchAsync" />
+        ///     Override either <see cref="PeriodicBatchingSink.EmitBatch" /> or <see>
+        ///         <cref>PeriodicBatchingSink.EmitBatchAsync</cref>
+        ///     </see>
         ///     ,
         ///     not both.
         /// </remarks>
+#if !NET35 
         protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+#else
+        protected override void EmitBatch(IEnumerable<LogEvent> events)
+#endif
         {
             // Copy the events to the data table
             FillDataTable(events);
 
             using (var cn = new SqlConnection(_connectionString))
             {
+#if !NET35 
                 await cn.OpenAsync(_token.Token);
+#else
+                cn.Open();
+#endif
                 using (var copy = new SqlBulkCopy(cn))
                 {
                     copy.DestinationTableName = _tableName;
-                    await copy.WriteToServerAsync(_eventsTable, _token.Token);
 
+#if !NET35
+                    await copy.WriteToServerAsync(_eventsTable, _token.Token);
+#else
+                    copy.WriteToServer(_eventsTable);
+#endif
                     // Processed the items, clear for the next run
                     _eventsTable.Clear();
                 }
