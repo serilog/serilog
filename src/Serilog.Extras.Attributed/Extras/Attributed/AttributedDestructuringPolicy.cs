@@ -14,93 +14,99 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Serilog.Core;
-using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Parameters;
+using System.Threading;
+using System.Linq;
+using Serilog.Reflection;
+using CachedFunc = System.Func<object, Serilog.Core.ILogEventPropertyValueFactory, Serilog.Events.LogEventPropertyValue>;
 
 namespace Serilog.Extras.Attributed
 {
+
     class AttributedDestructuringPolicy : IDestructuringPolicy
     {
-        readonly object _cacheLock = new object();
-        readonly HashSet<Type> _ignored = new HashSet<Type>();
-        readonly Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>> _cache = new Dictionary<Type, Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue>>(); 
+        ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
+        readonly Dictionary<RuntimeTypeHandle, CachedFunc> _cache = new Dictionary<RuntimeTypeHandle, CachedFunc>();
+
+        CachedFunc GetOrAddFunc(object value)
+        {
+            var t = value.GetType();
+            CachedFunc func;
+            try
+            {
+                _locker.EnterReadLock();
+                if (_cache.TryGetValue(t.TypeHandle, out func))
+                {
+                    return func;
+                }
+            }
+            finally
+            {
+                _locker.ExitReadLock();
+            }
+            func = GetValueToCache(value);
+            _locker.EnterWriteLock();
+            try
+            {
+                _cache[t.TypeHandle] = func;
+            }
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
+            return func;
+        }
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
-            var t = value.GetType();
-            lock (_cacheLock)
+            var func = GetOrAddFunc(value);
+
+            if (func == null)
             {
-                if (_ignored.Contains(t))
-                {
-                    result = null;
-                    return false;
-                }
-
-                Func<object, ILogEventPropertyValueFactory, LogEventPropertyValue> cached;
-                if (_cache.TryGetValue(t, out cached))
-                {
-                    result = cached(value, propertyValueFactory);
-                    return true;
-                }
+                result = null;
+                return false;
             }
+            result = func(value, propertyValueFactory);
+            return true;
+        }
 
-            var ti = t.GetTypeInfo();
+        static CachedFunc GetValueToCache(object value)
+        {
+            var type = value.GetType();
+            var ti = type.GetTypeInfo();
 
             var logAsScalar = ti.GetCustomAttribute<LogAsScalarAttribute>();
             if (logAsScalar != null)
             {
-                lock (_cacheLock)
-                    _cache[t] = (o, f) => MakeScalar(o, logAsScalar.IsMutable);
-
+                return (o, f) => MakeScalar(o, logAsScalar.IsMutable);
             }
-            else
+            var properties = type.GetPropertiesRecursive()
+                .ToList();
+            if (properties.Any(pi =>
+                pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
+                pi.GetCustomAttribute<NotLoggedAttribute>() != null))
             {
-                var properties = t.GetPropertiesRecursive()
+                var loggedProperties = properties
+                    .Where(pi => pi.GetCustomAttribute<NotLoggedAttribute>() == null)
                     .ToList();
-                if (properties.Any(pi =>
-                    pi.GetCustomAttribute<LogAsScalarAttribute>() != null ||
-                    pi.GetCustomAttribute<NotLoggedAttribute>() != null))
-                {
-                    var loggedProperties = properties
-                        .Where(pi => pi.GetCustomAttribute<NotLoggedAttribute>() == null)
-                        .ToList();
 
-                    var scalars = loggedProperties
-                        .Where(pi => pi.GetCustomAttribute<LogAsScalarAttribute>() != null)
-                        .ToDictionary(pi => pi, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
+                var scalars = loggedProperties
+                    .Where(pi => pi.GetCustomAttribute<LogAsScalarAttribute>() != null)
+                    .ToDictionary(pi => pi.Name, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
 
-                    lock (_cacheLock)
-                        _cache[t] = (o, f) => MakeStructure(value, loggedProperties, scalars, f, t);
-                }
-                else
-                {
-                    lock(_cacheLock)
-                        _ignored.Add(t);
-                }
+                return (o, f) => MakeStructure(value, loggedProperties.Select(x => x.GetPropertyAccessor()), scalars, f, type);
             }
-
-            return TryDestructure(value, propertyValueFactory, out result);
+            return null;
         }
 
-        static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyInfo> loggedProperties, Dictionary<PropertyInfo, bool> scalars, ILogEventPropertyValueFactory propertyValueFactory, Type type)
+        static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyAccessor> loggedProperties, Dictionary<string, bool> scalars, ILogEventPropertyValueFactory propertyValueFactory, Type type)
         {
             var structureProperties = new List<LogEventProperty>();
-            foreach (var pi in loggedProperties)
+            foreach (var propertyAccessor in loggedProperties)
             {
-                object propValue;
-                try
-                {
-                    propValue = pi.GetValue(value);
-                }
-                catch (TargetInvocationException ex)
-                {
-                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", pi, ex);
-                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
-                }
+                var propValue = propertyAccessor.GetDelegate(value);
 
                 LogEventPropertyValue pv;
                 bool stringify;
@@ -109,7 +115,7 @@ namespace Serilog.Extras.Attributed
                 {
                     pv = new ScalarValue(null);
                 }
-                else if (scalars.TryGetValue(pi, out stringify))
+                else if (scalars.TryGetValue(propertyAccessor.Name, out stringify))
                 {
                     pv = MakeScalar(propValue, stringify);
                 }
@@ -118,7 +124,7 @@ namespace Serilog.Extras.Attributed
                     pv = propertyValueFactory.CreatePropertyValue(propValue, true);
                 }
 
-                structureProperties.Add(new LogEventProperty(pi.Name, pv));
+                structureProperties.Add(new LogEventProperty(propertyAccessor.Name, pv));
             }
             return new StructureValue(structureProperties, type.Name);
         }

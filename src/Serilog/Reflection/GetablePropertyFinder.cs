@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Serilog.Parameters
+namespace Serilog.Reflection
 {
     static class GetablePropertyFinder
     {

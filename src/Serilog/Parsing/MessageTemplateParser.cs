@@ -302,5 +302,6 @@ namespace Serilog.Parsing
             next = startAt;
             return new TextToken(accum.ToString());
         }
+
     }
 }

@@ -18,10 +18,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Serilog.Core;
-using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
+using Serilog.Reflection;
 
 namespace Serilog.Parameters
 {
@@ -165,23 +165,9 @@ namespace Serilog.Parameters
 
         static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
-            foreach (var prop in value.GetType().GetPropertiesRecursive())
+            foreach (var prop in value.GetType().GetCachedProperties())
             {
-                object propValue;
-                try
-                {
-                    propValue = prop.GetValue(value);
-                }
-                catch (TargetParameterCountException)
-                {
-                    SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
-                    continue;
-                }
-                catch (TargetInvocationException ex)
-                {
-                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
-                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
-                }
+                var propValue = prop.GetDelegate(value);
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }
         }
