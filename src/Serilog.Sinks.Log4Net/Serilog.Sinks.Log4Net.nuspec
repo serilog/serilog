@@ -20,5 +20,7 @@
     <files>
       <file src="src\Serilog.Sinks.Log4Net\bin\Release\Serilog.Sinks.Log4Net.dll" target="lib\net45" />
       <file src="src\Serilog.Sinks.Log4Net\bin\Release\Serilog.Sinks.Log4Net.xml" target="lib\net45" />
+      <file src="src\Serilog.Sinks.Log4Net\bin35\Release\Serilog.Sinks.Log4Net.dll" target="lib\net35" />
+      <file src="src\Serilog.Sinks.Log4Net\bin35\Release\Serilog.Sinks.Log4Net.xml" target="lib\net35" />
     </files>
 </package>
