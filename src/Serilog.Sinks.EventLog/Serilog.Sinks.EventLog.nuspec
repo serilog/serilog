@@ -17,5 +17,7 @@
   <files>
     <file src="src\Serilog.Sinks.EventLog\bin\Release\Serilog.Sinks.EventLog.dll" target="lib\net45" />
     <file src="src\Serilog.Sinks.EventLog\bin\Release\Serilog.Sinks.EventLog.xml" target="lib\net45" />
+    <file src="src\Serilog.Sinks.EventLog\bin35\Release\Serilog.Sinks.EventLog.dll" target="lib\net35" />
+    <file src="src\Serilog.Sinks.EventLog\bin35\Release\Serilog.Sinks.EventLog.xml" target="lib\net35" />
   </files>
 </package>
