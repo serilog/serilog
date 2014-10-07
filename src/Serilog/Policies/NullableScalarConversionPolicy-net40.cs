@@ -28,9 +28,12 @@ namespace Serilog.Policies
                 result = null;
                 return false;
             }
-
+#if !NET35
             var dynamicValue = (dynamic)value;
             var innerValue = dynamicValue.HasValue ? (object)dynamicValue.Value : null;
+#else
+            var innerValue = Convert.ChangeType(value, type);
+#endif
             result = propertyValueFactory.CreatePropertyValue(innerValue) as ScalarValue;
 
             return result != null;

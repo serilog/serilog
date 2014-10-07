@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog-net35", "src\Serilog\Serilog-net35.csproj", "{0915DBD9-0F7C-4439-8D9E-74C3D579B219}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.FullNetFx-net35", "src\Serilog.FullNetFx\Serilog.FullNetFx-net35.csproj", "{7A9E1095-167D-402A-B43D-B36B97FF183D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests-net35", "test\Serilog.Tests\Serilog.Tests-net35.csproj", "{D5648551-D19D-41E3-9FC1-E74B111EEF41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{36FF4D20-F647-4BE3-BC25-DABE7C031B5D}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0915DBD9-0F7C-4439-8D9E-74C3D579B219}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0915DBD9-0F7C-4439-8D9E-74C3D579B219}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0915DBD9-0F7C-4439-8D9E-74C3D579B219}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0915DBD9-0F7C-4439-8D9E-74C3D579B219}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A9E1095-167D-402A-B43D-B36B97FF183D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A9E1095-167D-402A-B43D-B36B97FF183D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A9E1095-167D-402A-B43D-B36B97FF183D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A9E1095-167D-402A-B43D-B36B97FF183D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

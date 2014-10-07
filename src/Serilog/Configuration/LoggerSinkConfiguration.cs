@@ -19,7 +19,10 @@ using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.IOTextWriter;
-using Serilog.Sinks.Observable;
+#if !NET35
+    using Serilog.Sinks.Observable;
+#endif
+
 
 namespace Serilog.Configuration
 {
@@ -117,6 +120,7 @@ namespace Serilog.Configuration
             return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()), restrictedToMinimumLevel);
         }
 
+#if !NET35
         /// <summary>
         /// Write events to Rx observers.
         /// </summary>
@@ -134,5 +138,6 @@ namespace Serilog.Configuration
             configureObservers(observable);
             return Sink(observable, restrictedToMinimumLevel);
         }
+#endif
     }
 }

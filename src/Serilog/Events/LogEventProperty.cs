@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Serilog.Extensions;
 
 namespace Serilog.Events
 {
@@ -64,7 +65,7 @@ namespace Serilog.Events
         /// <returns>True if the name is valid; otherwise, false.</returns>
         public static bool IsValidName(string name)
         {
-            return !string.IsNullOrWhiteSpace(name);
+            return !name.IsNullOrWhiteSpace();
         }
     }
 }

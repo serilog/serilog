@@ -17,6 +17,8 @@ using Serilog.Events;
 
 namespace Serilog.Core.Enrichers
 {
+    using Serilog.Extensions;
+
     /// <summary>
     /// Adds a new property encricher to the log event.
     /// </summary>
@@ -39,7 +41,7 @@ namespace Serilog.Core.Enrichers
         /// <exception cref="ArgumentNullException"></exception>
         public PropertyEnricher(string name, object value, bool destructureObjects = false)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Property name must not be null or empty.", "name");
+            if (name.IsNullOrWhiteSpace()) throw new ArgumentException("Property name must not be null or empty.", "name");
             _name = name;
             _value = value;
             _destructureObjects = destructureObjects;

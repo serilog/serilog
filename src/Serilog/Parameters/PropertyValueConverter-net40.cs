@@ -124,11 +124,18 @@ namespace Serilog.Parameters
                     valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
                     IsValidDictionaryKeyType(valueType.GetGenericArguments()[0]))
                 {
-                    return new DictionaryValue(enumerable.Cast<dynamic>()
-                        .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                            (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
-                            limiter.CreatePropertyValue(kvp.Value, destructuring)))
-                        .Where(kvp => kvp.Key.Value != null));
+                    var dictionary = enumerable as IDictionary;
+
+                    if (dictionary != null)
+                    {
+                        var list = (from object key in dictionary.Keys
+                            select new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                                (ScalarValue)limiter.CreatePropertyValue(key, destructuring),
+                                limiter.CreatePropertyValue(dictionary[key], destructuring))).ToList();
+
+                        return new DictionaryValue(list
+                            .Where(kvp => kvp.Key.Value != null));
+                    }
                 }
 
                 return new SequenceValue(

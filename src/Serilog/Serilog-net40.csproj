@@ -57,6 +57,7 @@
     <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
     <Compile Include="Events\DictionaryValue-net40.cs" />
     <Compile Include="Events\LevelAlias.cs" />
+    <Compile Include="Extensions\StringExtensionMethods.cs" />
     <Compile Include="Filters\Matching.cs" />
     <Compile Include="Formatting\Display\LiteralStringValue.cs" />
     <Compile Include="Formatting\Display\MessageTemplateTextFormatter.cs" />

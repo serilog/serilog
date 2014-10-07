@@ -28,6 +28,7 @@ ipch/
 obj/
 [Bb]in
 bin40/
+bin35/
 Ankh.NoLoad
 *.vspx
 *.psess
