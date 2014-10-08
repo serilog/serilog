@@ -1,3 +1,6 @@
+1.4.11
+ * #238 - Dynamic level switching
+
 1.4.10
  * #225 - Ensure Azure Tablestorage rowkey is unique
  * #224 - Use UTC to generate partitionkey
