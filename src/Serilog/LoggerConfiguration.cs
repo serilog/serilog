@@ -36,6 +36,7 @@ namespace Serilog
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
         
         LogEventLevel _minimumLevel = LogEventLevel.Information;
+        LoggingLevelSwitch _levelSwitch;
 
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
@@ -58,7 +59,9 @@ namespace Serilog
         {
             get
             {
-                return new LoggerMinimumLevelConfiguration(this, l => _minimumLevel = l);
+                return new LoggerMinimumLevelConfiguration(this,
+                    l => _minimumLevel = l,
+                    sw => _levelSwitch = sw);
             }
         }
 
@@ -119,7 +122,9 @@ namespace Serilog
             var converter = new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);
 
-            return new Logger(processor, _minimumLevel, sink, _enrichers, dispose);
+            return _levelSwitch == null ? 
+                new Logger(processor, _minimumLevel, sink, _enrichers, dispose) :
+                new Logger(processor, _levelSwitch, sink, _enrichers, dispose);
         }
     }
 }
