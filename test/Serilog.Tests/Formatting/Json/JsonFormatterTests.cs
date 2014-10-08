@@ -33,14 +33,19 @@ namespace Serilog.Tests.Formatting.Json
                 (string)formatted.Timestamp);
         }
 
-        static dynamic FormatJson(LogEvent @event)
+        static string FormatToJson(LogEvent @event)
         {
             var formatter = new JsonFormatter();
-            var output = new StringWriter();            
+            var output = new StringWriter();
             formatter.Format(@event, output);
+            return output.ToString();
+        }
 
+        static dynamic FormatJson(LogEvent @event)
+        {
+            var output = FormatToJson(@event);
             var serializer = new JsonSerializer { DateParseHandling = DateParseHandling.None };
-            return serializer.Deserialize(new JsonTextReader(new StringReader(output.ToString())));
+            return serializer.Deserialize(new JsonTextReader(new StringReader(output)));
         }
 
         [Test]
@@ -125,6 +130,23 @@ namespace Serilog.Tests.Formatting.Json
             var formatted = FormatJson(@event);
             var result = (int)formatted.Properties[structureProp.Name][memberProp.Name];
             Assert.AreEqual(value, result);
+        }
+
+        [Test]
+        public void ADictionaryWithScalarKeySerializesAsAnObject()
+        {
+            var dictKey = Some.Int();
+            var dictValue = Some.Int();
+            var dict = new DictionaryValue(new Dictionary<ScalarValue, LogEventPropertyValue> {
+                { new ScalarValue(dictKey), new ScalarValue(dictValue) }
+            });
+            var dictProp = new LogEventProperty(Some.String(), dict);
+            var @event = Some.InformationEvent();
+            @event.AddOrUpdateProperty(dictProp);
+
+            var formatted = FormatToJson(@event);
+            var expected = string.Format("{{\"{0}\":{1}}}", dictKey, dictValue);
+            Assert.IsTrue(formatted.Contains(expected));
         }
 
         [Test]
