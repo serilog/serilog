@@ -25,10 +25,17 @@ namespace Serilog.Core.Pipeline
     sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         readonly MessageTemplateProcessor _messageTemplateProcessor;
-        readonly LogEventLevel _minimumLevel;
         readonly ILogEventSink _sink;
         readonly Action _dispose;
         readonly ILogEventEnricher[] _enrichers;
+
+        // It's important that checking minimum level is a very 
+        // quick (CPU-cacheable) read in the simple case, hence
+        // we keep a separate field from the switch, which may
+        // not be specified. If it is, we'll set _minimumLevel
+        // to its lower limit and fall through to the secondary check.
+        readonly LogEventLevel _minimumLevel;
+        readonly LoggingLevelSwitch _levelSwitch;
 
         public Logger(
             MessageTemplateProcessor messageTemplateProcessor,
@@ -36,13 +43,36 @@ namespace Serilog.Core.Pipeline
             ILogEventSink sink,
             IEnumerable<ILogEventEnricher> enrichers,
             Action dispose = null)
+            : this(messageTemplateProcessor, minimumLevel, sink, enrichers, dispose, null)
+        {
+        }
+
+        public Logger(
+            MessageTemplateProcessor messageTemplateProcessor,
+            LoggingLevelSwitch levelSwitch,
+            ILogEventSink sink,
+            IEnumerable<ILogEventEnricher> enrichers,
+            Action dispose = null)
+            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enrichers, dispose, levelSwitch)
+        {
+        }
+
+        Logger(
+            MessageTemplateProcessor messageTemplateProcessor,
+            LogEventLevel minimumLevel,
+            ILogEventSink sink,
+            IEnumerable<ILogEventEnricher> enrichers,
+            Action dispose = null,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (sink == null) throw new ArgumentNullException("sink");
             if (enrichers == null) throw new ArgumentNullException("enrichers");
+
             _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
             _sink = sink;
             _dispose = dispose;
+            _levelSwitch = levelSwitch;
             _enrichers = enrichers.ToArray();
         }
 
@@ -52,7 +82,9 @@ namespace Serilog.Core.Pipeline
                 _messageTemplateProcessor,
                 _minimumLevel, 
                 this,
-                (enrichers ?? new ILogEventEnricher[0]).ToArray());
+                (enrichers ?? new ILogEventEnricher[0]).ToArray(),
+                null,
+                _levelSwitch);
         }
 
         public ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
@@ -80,7 +112,11 @@ namespace Serilog.Core.Pipeline
 
         public bool IsEnabled(LogEventLevel level)
         {
-            return (int)level >= (int)_minimumLevel;
+            if ((int)level < (int)_minimumLevel)
+                return false;
+
+            return _levelSwitch == null ||
+                (int)level >= (int)_levelSwitch.MinimumLevel;
         }
 
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)

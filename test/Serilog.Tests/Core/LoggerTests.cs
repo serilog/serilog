@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
@@ -53,6 +56,35 @@ namespace Serilog.Tests.Core
         {
             var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
             Assert.AreEqual("message", e.RenderMessage());
+        }
+
+        [Test]
+        public void LoggingLevelSwitchDynamicallyChangesLevel()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
+
+            var log = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(levelSwitch)
+                .WriteTo.Sink(sink)
+                .CreateLogger()
+                .ForContext<LoggerTests>();
+
+            log.Debug("Suppressed");
+            log.Information("Emitted");
+            log.Warning("Emitted");
+
+            // Change the level
+            levelSwitch.MinimumLevel = LogEventLevel.Error;
+
+            log.Warning("Suppressed");
+            log.Error("Emitted");
+            log.Fatal("Emitted");
+
+            Assert.AreEqual(4, events.Count);
+            Assert.That(events.All(evt => evt.RenderMessage() == "Emitted"));
         }
     }
 }

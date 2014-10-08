@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Configuration
@@ -24,13 +25,15 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<LogEventLevel> _setMinimum;
+        readonly Action<LoggingLevelSwitch> _setLevelSwitch;
 
-        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum)
+        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, Action<LoggingLevelSwitch> setLevelSwitch)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (setMinimum == null) throw new ArgumentNullException("setMinimum");
             _loggerConfiguration = loggerConfiguration;
             _setMinimum = setMinimum;
+            _setLevelSwitch = setLevelSwitch;
         }
 
         /// <summary>
@@ -41,6 +44,18 @@ namespace Serilog.Configuration
         public LoggerConfiguration Is(LogEventLevel minimumLevel)
         {
             _setMinimum(minimumLevel);
+            return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// Sets the minimum level to be dynamically controlled by the provided switch.
+        /// </summary>
+        /// <param name="levelSwitch">The switch.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
+        {
+            if (levelSwitch == null) throw new ArgumentNullException("levelSwitch");
+            _setLevelSwitch(levelSwitch);
             return _loggerConfiguration;
         }
 
