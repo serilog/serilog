@@ -36,6 +36,8 @@ namespace Serilog.Sinks.NLog
             switch (logEvent.Level)
             {
                 case LogEventLevel.Verbose:
+                    logger.Trace(message, exception);
+                    break;
                 case LogEventLevel.Debug:
                     logger.Debug(message, exception);
                     break;
@@ -52,7 +54,7 @@ namespace Serilog.Sinks.NLog
                     logger.Fatal(message, exception);
                     break;
                 default:
-                    SelfLog.WriteLine("Unexpected logging level, writing to log4net as Info");
+                    SelfLog.WriteLine("Unexpected logging level, writing to NLog as Info");
                     logger.Info(message, exception);
                     break;
             }
