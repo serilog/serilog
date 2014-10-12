@@ -139,10 +139,10 @@ namespace Serilog.Sinks.PeriodicBatching
                 {
                     LogEvent next;
                     while (_waitingBatch.Count < _batchSizeLimit &&
-                        _queue.TryDequeue(out next) &&
-                        CanInclude(next))
+                        _queue.TryDequeue(out next))
                     {
-                        _waitingBatch.Enqueue(next);
+                        if (CanInclude(next))
+                            _waitingBatch.Enqueue(next);
                     }
 
                     if (_waitingBatch.Count == 0)
