@@ -15,9 +15,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nest;
+using Elasticsearch.Net;
+using Elasticsearch.Net.Connection;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
+using System.Text;
 
 namespace Serilog.Sinks.ElasticSearch
 {
@@ -28,7 +30,7 @@ namespace Serilog.Sinks.ElasticSearch
     {
         readonly string _indexFormat;
         readonly IFormatProvider _formatProvider;
-        readonly ElasticClient _client;
+        readonly ElasticsearchClient _client;
     
         /// <summary>
         /// A reasonable default for the number of events posted in
@@ -58,7 +60,7 @@ namespace Serilog.Sinks.ElasticSearch
 
             _indexFormat = indexFormat ?? "logstash-{0:yyyy.MM.dd}";
             _formatProvider = formatProvider;
-            _client = new ElasticClient(new ConnectionSettings(server)
+            _client = new ElasticsearchClient(new ConnectionConfiguration(server)
                           .SetMaximumAsyncConnections(20)
                           .SetTimeout(connectionTimeOutInMilliseconds));
         }
@@ -78,8 +80,37 @@ namespace Serilog.Sinks.ElasticSearch
                 .Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)))
                 .ToList();
 
-            if (items.Any() && _client !=null)
-                _client.IndexMany(items, indexName);            
+			if (items.Any() && _client != null)
+			{
+				var bulk = new List<string>();
+				var builder = new StringBuilder();
+
+				foreach (var item in items)
+				{
+					builder.Append("{\"index\":{\"_index\":\"").Append(indexName).Append("\",\"_type\":\"logevent\"}}");
+					bulk.Add(builder.ToString());
+					builder.Clear();
+					builder.Append("{\"@timestamp\":").Append("\"").Append(item.Timestamp).Append("\",");
+					builder.Append("\"messageTemplate\":").Append("\"").Append(item.MessageTemplate).Append("\",");
+					builder.Append("\"level\":").Append("\"").Append(item.Level).Append("\",");
+					if (item.Exception != null)
+						builder.Append("\"exception\":").Append("\"").Append(item.Exception).Append("\",");
+					builder.Append("\"message\":").Append("\"").Append(item.RenderedMessage.Replace("\"", "\\\"")).Append("\",");
+					builder.Append("\"fields\":{");
+					for (int i = 0; i < item.Properties.Count; i++)
+					{
+						var property = item.Properties.ElementAt(i);
+						builder.Append("\"").Append(property.Key).Append("\":\"").Append(property.Value).Append("\"");
+						if (i + 1 != item.Properties.Count)
+							builder.Append(",");
+					}
+					builder.Append("}}");
+					bulk.Add(builder.ToString());
+					builder.Clear();
+				}
+
+				_client.Bulk(bulk);
+			} 
         }     
     }
 }
