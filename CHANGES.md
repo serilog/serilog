@@ -1,3 +1,12 @@
+1.4.12
+ * #240 - Update TopShelf dependency
+ * #243 - Caching in `AttributedDestructuringPolicy` closes over first seen object of a type rather than using the passed parameter
+ * #242 - Update NLogSink to map `Verbose` level to `Trace` level in NLog
+ * #229 - Created net40 version of Extras Topshelf
+ * #236 - Ensure dictionary keys are quoted in JSON even when they're numeric
+ * #237 - When `JsonFormatter` formats a dictionary of `<int, object>`, the key should be double quoted
+ * #235 - Fixed serialization of dicationary keys in ES and similar sinks
+
 1.4.11
  * #238 - Dynamic level switching
 
