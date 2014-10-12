@@ -74,7 +74,7 @@ namespace Serilog.Extras.Attributed
                         .ToDictionary(pi => pi, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
 
                     lock (_cacheLock)
-                        _cache[t] = (o, f) => MakeStructure(value, loggedProperties, scalars, f, t);
+                        _cache[t] = (o, f) => MakeStructure(o, loggedProperties, scalars, f, t);
                 }
                 else
                 {
