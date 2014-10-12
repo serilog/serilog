@@ -33,8 +33,7 @@ namespace Serilog.Sinks.ElasticSearch
         readonly ElasticsearchClient _client;
     
         /// <summary>
-        /// A reasonable default for the number of events posted in
-        /// each batch.
+        /// A reasonable default for the number of events posted in each batch.
         /// </summary>
         public const int DefaultBatchPostingLimit = 50;
 
@@ -43,26 +42,30 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
+		/// <summary>
+		/// Default to the Logstash index name format
+		/// </summary>
+		public const string DefaultIndexFormat = "logstash-{0:yyyy.MM.dd}";
+
+		/// <summary>
+		/// Default connection timeout in milliseconds
+		/// </summary>
+		public const int DefaultConnectionTimeout = 5000;
+
         /// <summary>
-        /// Construct a sink posting to the specified database.
+        /// Construct a sink posting to the specified Elasticsearch cluster.
         /// </summary>
-        /// <param name="server">The server where ElasticSearch is running.</param>
+        /// <param name="connectionConfiguration">Connection configuration to use for connecting to the cluster.</param>
         /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-        /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ElasticSearchSink(Uri server, string indexFormat, int batchPostingLimit, int connectionTimeOutInMilliseconds, TimeSpan period, IFormatProvider formatProvider)
+        public ElasticSearchSink(ConnectionConfiguration connectionConfiguration, string indexFormat, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
-            if (connectionTimeOutInMilliseconds <= 0)
-                connectionTimeOutInMilliseconds = 5000;
-
-            _indexFormat = indexFormat ?? "logstash-{0:yyyy.MM.dd}";
+			_indexFormat = indexFormat;
             _formatProvider = formatProvider;
-            _client = new ElasticsearchClient(new ConnectionConfiguration(server)
-                          .SetMaximumAsyncConnections(20)
-                          .SetTimeout(connectionTimeOutInMilliseconds));
+			_client = new ElasticsearchClient(connectionConfiguration);
         }
 
         /// <summary>
