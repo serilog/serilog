@@ -138,9 +138,11 @@ namespace Serilog.Sinks.PeriodicBatching
                 do
                 {
                     LogEvent next;
-                    while (_waitingBatch.Count < _batchSizeLimit && _queue.TryDequeue(out next))
+                    while (_waitingBatch.Count < _batchSizeLimit &&
+                        _queue.TryDequeue(out next))
                     {
-                        _waitingBatch.Enqueue(next);
+                        if (CanInclude(next))
+                            _waitingBatch.Enqueue(next);
                     }
 
                     if (_waitingBatch.Count == 0)
@@ -204,6 +206,17 @@ namespace Serilog.Sinks.PeriodicBatching
             }
 
             _queue.Enqueue(logEvent);
+        }
+
+        /// <summary>
+        /// Determine whether a queued log event should be included in the batch. If
+        /// an override returns false, the event will be dropped.
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <returns></returns>
+        protected virtual bool CanInclude(LogEvent evt)
+        {
+            return true;
         }
     }
 }

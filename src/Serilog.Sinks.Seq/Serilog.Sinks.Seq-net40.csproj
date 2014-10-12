@@ -82,6 +82,7 @@
     <Compile Include="SeqLoggerConfigurationExtensions.cs" />
     <Compile Include="Sinks\Seq\DurableSeqSink.cs" />
     <Compile Include="Sinks\Seq\HttpLogShipper-net40.cs" />
+    <Compile Include="Sinks\Seq\SeqApi.cs" />
     <Compile Include="Sinks\Seq\SeqSink-net40.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -30,6 +30,7 @@ namespace Serilog.Sinks.Seq
         readonly HttpClient _httpClient;
         const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
+        LogEventLevel? _minimumAcceptedLevel;
 
         public const int DefaultBatchPostingLimit = 1000;
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
@@ -78,6 +79,15 @@ namespace Serilog.Sinks.Seq
             var result = _httpClient.PostAsync(BulkUploadResource, content).Result;
             if (!result.IsSuccessStatusCode)
                 SelfLog.WriteLine("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
+
+            var returned = result.Content.ReadAsStringAsync().Result;
+            _minimumAcceptedLevel = SeqApi.ReadEventInputResult(returned);
+        }
+
+        protected override bool CanInclude(LogEvent evt)
+        {
+            return _minimumAcceptedLevel == null ||
+                (int)_minimumAcceptedLevel <= (int)evt.Level;
         }
     }
 }
