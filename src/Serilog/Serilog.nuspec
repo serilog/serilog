@@ -10,6 +10,11 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging nosql events semantic structured</tags>
+    <dependencies>
+      <group targetFramework="net35">
+        <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
     <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
@@ -24,8 +29,14 @@
     <file src="src\Serilog\bin40\Release\Serilog.dll" target="lib\net40" />
     <file src="src\Serilog\bin40\Release\Serilog.xml" target="lib\net40" />
     <file src="src\Serilog\bin40\Release\Serilog.pdb" target="lib\net40" />
+    <file src="src\Serilog\bin35\Release\Serilog.dll" target="lib\net35" />
+    <file src="src\Serilog\bin35\Release\Serilog.xml" target="lib\net35" />
+    <file src="src\Serilog\bin35\Release\Serilog.pdb" target="lib\net35" />
     <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
     <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
     <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
+    <file src="src\Serilog.FullNetFx\bin35\Release\Serilog.FullNetFx.dll" target="lib\net35" />
+    <file src="src\Serilog.FullNetFx\bin35\Release\Serilog.FullNetFx.xml" target="lib\net35" />
+    <file src="src\Serilog.FullNetFx\bin35\Release\Serilog.FullNetFx.pdb" target="lib\net35" />
   </files>
 </package>

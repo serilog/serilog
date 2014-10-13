@@ -40,11 +40,17 @@ namespace Serilog.Events
         /// Construct a message template using manually-defined text and property tokens.
         /// </summary>
         /// <param name="tokens">The text and property tokens defining the template.</param>
+#if !NET35   
         public MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
             : this(string.Join("", tokens), tokens)
         {
         }
-
+#else
+        public MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
+            : this(string.Join("", tokens.Select(x => x.ToString()).ToArray()), tokens)
+        {
+        }
+#endif
         /// <summary>
         /// Construct a message template using manually-defined text and property tokens.
         /// </summary>

@@ -22,6 +22,8 @@ using Serilog.Formatting;
 
 namespace Serilog.Sinks.IOFile
 {
+    using Serilog.Extensions;
+
     /// <summary>
     /// Write log events to a disk file.
     /// </summary>
@@ -68,7 +70,7 @@ namespace Serilog.Sinks.IOFile
             try
             {
                 var directory = Path.GetDirectoryName(path);
-                if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+                if (!directory.IsNullOrWhiteSpace() && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }

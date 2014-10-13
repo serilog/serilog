@@ -12,10 +12,15 @@
     <tags>serilog logging MS SQL Server DB</tags>
     <dependencies>
       <dependency id="Serilog" />
+      <group targetFramework="net35">
+        <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
+      </group>
     </dependencies>
   </metadata>
   <files>
     <file src="src\Serilog.Sinks.MSSqlServer\bin\Release\Serilog.Sinks.MSSqlServer.dll" target="lib\net45" />
     <file src="src\Serilog.Sinks.MSSqlServer\bin\Release\Serilog.Sinks.MSSqlServer.xml" target="lib\net45" />
+    <file src="src\Serilog.Sinks.MSSqlServer\bin35\Release\Serilog.Sinks.MSSqlServer.dll" target="lib\net35" />
+    <file src="src\Serilog.Sinks.MSSqlServer\bin35\Release\Serilog.Sinks.MSSqlServer.xml" target="lib\net35" />
   </files>
 </package>

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D5648551-D19D-41E3-9FC1-E74B111EEF41}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Serilog.Tests</RootNamespace>
+    <AssemblyName>Serilog.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin35\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NET35</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin35\Release\</OutputPath>
+    <DefineConstants>TRACE;NET35</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Context\LogContextTests-net40.cs" />
+    <Compile Include="Core\CopyingSinkTests.cs" />
+    <Compile Include="Core\LoggerTests.cs" />
+    <Compile Include="Core\SafeAggregateSinkTests.cs" />
+    <Compile Include="Core\MessageTemplateTests.cs" />
+    <Compile Include="Events\DictionaryValueTests.cs" />
+    <Compile Include="Events\LogEventPropertyValueTests.cs" />
+    <Compile Include="Filters\MatchingTests.cs" />
+    <Compile Include="Formatting\Display\MessageTemplateTextFormatterTests.cs" />
+    <Compile Include="LoggerConfigurationTests.cs" />
+    <Compile Include="LogTests.cs" />
+    <Compile Include="Parameters\PropertyValueConverterTests.cs" />
+    <Compile Include="Parsing\MessageTemplateParserTests.cs" />
+    <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
+    <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSinkTests.cs" />
+    <Compile Include="Sinks\RollingFile\RollingFileSinkTests.cs" />
+    <Compile Include="Sinks\RollingFile\TemplatedPathRollerTests.cs" />
+    <Compile Include="Sinks\TextWriter\TextWriterSinkTests.cs" />
+    <Compile Include="Support\DelegatingEnricher.cs" />
+    <Compile Include="Support\DelegatingSink.cs" />
+    <Compile Include="Support\Extensions.cs" />
+    <Compile Include="Support\Some.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\assets\Serilog.snk">
+      <Link>Serilog.snk</Link>
+    </None>
+    <None Include="packages.Serilog.Tests-net35.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Serilog.FullNetFx\Serilog.FullNetFx-net35.csproj">
+      <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
+      <Name>Serilog.FullNetFx-net35</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Serilog\Serilog-net35.csproj">
+      <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
+      <Name>Serilog-net35</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+</Project>
