@@ -78,42 +78,30 @@ namespace Serilog.Sinks.ElasticSearch
         /// </remarks>
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
-            var indexName = string.Format(_indexFormat, DateTime.UtcNow);
-            var items = events
-                .Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)))
-                .ToList();
+			var logEvents = events.Select(e => new Data.LogEvent(e, e.RenderMessage(_formatProvider)));
+			
+			if (!logEvents.Any())
+				return;
 
-			if (items.Any() && _client != null)
+			var indexName = string.Format(_indexFormat, DateTime.UtcNow);
+			var payload = new List<object>();
+
+			foreach (var logEvent in logEvents)
 			{
-				var bulk = new List<string>();
-				var builder = new StringBuilder();
+				var document = new Dictionary<string, object>();
+				document.Add("@timestamp", logEvent.Timestamp);
+				document.Add("messageTemplate", logEvent.MessageTemplate);
+				document.Add("level", Enum.GetName(typeof(LogEventLevel), logEvent.Level));
+				if (logEvent.Exception != null)
+					document.Add("exception", logEvent.Exception);
+				document.Add("message", logEvent.RenderedMessage);
+				document.Add("fields", logEvent.Properties);
 
-				foreach (var item in items)
-				{
-					builder.Append("{\"index\":{\"_index\":\"").Append(indexName).Append("\",\"_type\":\"logevent\"}}");
-					bulk.Add(builder.ToString());
-					builder.Clear();
-					builder.Append("{\"@timestamp\":").Append("\"").Append(item.Timestamp).Append("\",");
-					builder.Append("\"messageTemplate\":").Append("\"").Append(item.MessageTemplate).Append("\",");
-					builder.Append("\"level\":").Append("\"").Append(item.Level).Append("\",");
-					if (item.Exception != null)
-						builder.Append("\"exception\":").Append("\"").Append(item.Exception).Append("\",");
-					builder.Append("\"message\":").Append("\"").Append(item.RenderedMessage.Replace("\"", "\\\"")).Append("\",");
-					builder.Append("\"fields\":{");
-					for (int i = 0; i < item.Properties.Count; i++)
-					{
-						var property = item.Properties.ElementAt(i);
-						builder.Append("\"").Append(property.Key).Append("\":\"").Append(property.Value).Append("\"");
-						if (i + 1 != item.Properties.Count)
-							builder.Append(",");
-					}
-					builder.Append("}}");
-					bulk.Add(builder.ToString());
-					builder.Clear();
-				}
+				payload.Add(new { index = new { _index = indexName, _type = "logevent" } });
+				payload.Add(document);
+			}
 
-				_client.Bulk(bulk);
-			} 
-        }     
+			_client.Bulk(payload);
+		}
     }
 }
