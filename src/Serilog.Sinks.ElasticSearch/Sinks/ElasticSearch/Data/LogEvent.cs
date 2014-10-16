@@ -36,7 +36,7 @@ namespace Serilog.Sinks.ElasticSearch.Data
             Properties = new Dictionary<string, object>();
             foreach (var pair in logEvent.Properties)
             {
-                Properties.Add(pair.Key, ESPropertyFormatter.Simplify(pair.Value));
+                Properties.Add(pair.Key, ElasticSearchPropertyFormatter.Simplify(pair.Value));
             }
         }
 
