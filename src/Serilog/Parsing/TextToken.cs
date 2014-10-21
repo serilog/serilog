@@ -33,7 +33,7 @@ namespace Serilog.Parsing
         /// <param name="text">The text of the token.</param>
         /// <exception cref="ArgumentNullException"></exception>
         [Obsolete("Use constructor with start and end indexes."), EditorBrowsable(EditorBrowsableState.Never)]
-        public TextToken(string text) : this(text, -1, -1)
+        public TextToken(string text) : this(text, 0)
         {
         }
 
@@ -42,12 +42,19 @@ namespace Serilog.Parsing
         /// </summary>
         /// <param name="text">The text of the token.</param>
         /// <param name="startIndex">The token's start index in the template.</param>
-        /// <param name="endIndex">The token's end index in the template.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public TextToken(string text, int startIndex, int endIndex) : base(startIndex, endIndex)
+        public TextToken(string text, int startIndex) : base(startIndex)
         {
             if (text == null) throw new ArgumentNullException("text");
             _text = text;
+        }
+
+        /// <summary>
+        /// The token's length.
+        /// </summary>
+        public override int Length
+        {
+            get { return _text.Length; }
         }
 
         /// <summary>

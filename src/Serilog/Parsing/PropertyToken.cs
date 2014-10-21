@@ -58,7 +58,7 @@ namespace Serilog.Parsing
         /// <exception cref="ArgumentNullException"></exception>
         [Obsolete("Use constructor with start and end indexes."), EditorBrowsable(EditorBrowsableState.Never)]
         public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
-            : this(propertyName, rawText, -1, -1, format, alignment, destructuring)
+            : this(propertyName, rawText, 0, format, alignment, destructuring)
         {
         }
 
@@ -68,13 +68,12 @@ namespace Serilog.Parsing
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="rawText">The token as it appears in the message template.</param>
         /// <param name="startIndex">The token's start index in the template.</param>
-        /// <param name="endIndex">The token's end index in the template.</param>
         /// <param name="format">The format applied to the property, if any.</param>
         /// <param name="alignment">The alignment applied to the property, if any.</param>
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public PropertyToken(string propertyName, string rawText, int startIndex, int endIndex, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
-            : base(startIndex, endIndex)
+        public PropertyToken(string propertyName, string rawText, int startIndex, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
+            : base(startIndex)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
             if (rawText == null) throw new ArgumentNullException("rawText");
@@ -90,6 +89,14 @@ namespace Serilog.Parsing
             {
                 _position = position;
             }
+        }
+
+        /// <summary>
+        /// The token's length.
+        /// </summary>
+        public override int Length
+        {
+            get { return _rawText.Length; }
         }
 
         /// <summary>

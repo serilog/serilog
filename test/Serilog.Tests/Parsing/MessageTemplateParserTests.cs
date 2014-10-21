@@ -32,42 +32,42 @@ namespace Serilog.Tests.Parsing
         public void AMessageWithoutPropertiesIsASingleTextToken()
         {
             AssertParsedAs("Hello, world!",
-                new TextToken("Hello, world!", 0, 13));
+                new TextToken("Hello, world!", 0));
         }
 
         [Test]
         public void AMessageWithPropertyOnlyIsASinglePropertyToken()
         {
             AssertParsedAs("{Hello}",
-                new PropertyToken("Hello", "{Hello}", 0, 7));
+                new PropertyToken("Hello", "{Hello}", 0));
         }
 
         [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("{{ Hi! }",
-                new TextToken("{ Hi! }", 0, 8));
+                new TextToken("{ Hi! }", 0));
         }
 
         [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracketInsideText()
         {
             AssertParsedAs("Well, {{ Hi!",
-                new TextToken("Well, { Hi!", 0, 12));
+                new TextToken("Well, { Hi!", 0));
         }
 
         [Test]
         public void DoubledRightBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("Nice }}-: mo",
-                new TextToken("Nice }-: mo", 0, 12));
+                new TextToken("Nice }-: mo", 0));
         }
 
         [Test]
         public void AMalformedPropertyTagIsParsedAsText()
         {
             AssertParsedAs("{0 space}",
-                new TextToken("{0 space}", 0, 9));
+                new TextToken("{0 space}", 0));
         }
 
         [Test]
@@ -89,53 +89,53 @@ namespace Serilog.Tests.Parsing
         public void ZeroValuesAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,-0}",
-                new TextToken("{Hello,-0}", 0, 10));
+                new TextToken("{Hello,-0}", 0));
 
             AssertParsedAs("{Hello,0}",
-                new TextToken("{Hello,0}", 0, 9));
+                new TextToken("{Hello,0}", 0));
         }
 
         [Test]
         public void NonNumberAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,-aa}",
-                new TextToken("{Hello,-aa}", 0, 11));
+                new TextToken("{Hello,-aa}", 0));
 
             AssertParsedAs("{Hello,aa}",
-                new TextToken("{Hello,aa}", 0, 10));
+                new TextToken("{Hello,aa}", 0));
 
             AssertParsedAs("{Hello,-10-1}",
-                new TextToken("{Hello,-10-1}", 0, 13));
+                new TextToken("{Hello,-10-1}", 0));
 
             AssertParsedAs("{Hello,10-1}",
-                new TextToken("{Hello,10-1}", 0, 12));
+                new TextToken("{Hello,10-1}", 0));
         }
 
         [Test]
         public void EmptyAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,}",
-                new TextToken("{Hello,}", 0, 8));
+                new TextToken("{Hello,}", 0));
 
             AssertParsedAs("{Hello,:format}",
-                new TextToken("{Hello,:format}", 0, 15));
+                new TextToken("{Hello,:format}", 0));
         }
 
         [Test]
         public void MultipleTokensHasCorrectIndexes()
         {
             AssertParsedAs("{Greeting}, {Name}!",
-                new PropertyToken("Greeting", "{Greeting}", 0, 10),
-                new TextToken(", ", 10, 12),
-                new PropertyToken("Name", "{Name}", 12, 18),
-                new TextToken("!", 18, 19));
+                new PropertyToken("Greeting", "{Greeting}", 0),
+                new TextToken(", ", 10),
+                new PropertyToken("Name", "{Name}", 12),
+                new TextToken("!", 18));
         }
 
         [Test]
         public void MissingRightBracketIsParsedAsText()
         {
             AssertParsedAs("{Hello",
-                new TextToken("{Hello", 0, 6));
+                new TextToken("{Hello", 0));
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace Serilog.Tests.Parsing
         public void DestructuringWithEmptyPropertyNameIsParsedAsText()
         {
             AssertParsedAs("{@}",
-                new TextToken("{@}", 0, 3));
+                new TextToken("{@}", 0));
         }
     }
 }
