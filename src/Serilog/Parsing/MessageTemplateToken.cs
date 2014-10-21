@@ -28,10 +28,11 @@ namespace Serilog.Parsing
         readonly int _endIndex;
 
         /// <summary>
-        /// TODO: Document
+        /// Construct a <see cref="MessageTemplateToken"/>.
         /// </summary>
-        /// <param name="startIndex"></param>
-        /// <param name="endIndex"></param>
+        /// <param name="startIndex">The token's start index in the template.</param>
+        /// <param name="endIndex">The token's end index in the template.</param>
+        /// <exception cref="ArgumentException"></exception>
         protected MessageTemplateToken(int startIndex, int endIndex)
         {
             if (startIndex > endIndex) throw new ArgumentException("Start index must be higher than end index.");
@@ -40,7 +41,7 @@ namespace Serilog.Parsing
         }
 
         /// <summary>
-        /// TODO: Document
+        /// The token's start index in the template.
         /// </summary>
         public int StartIndex
         {
@@ -48,7 +49,7 @@ namespace Serilog.Parsing
         }
 
         /// <summary>
-        /// TODO: Document
+        /// The token's end index in the template.
         /// </summary>
         public int EndIndex
         {
