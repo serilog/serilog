@@ -32,42 +32,42 @@ namespace Serilog.Tests.Parsing
         public void AMessageWithoutPropertiesIsASingleTextToken()
         {
             AssertParsedAs("Hello, world!",
-                new TextToken("Hello, world!"));
+                new TextToken("Hello, world!", 0, 13));
         }
 
         [Test]
         public void AMessageWithPropertyOnlyIsASinglePropertyToken()
         {
             AssertParsedAs("{Hello}",
-                new PropertyToken("Hello", "{Hello}"));
+                new PropertyToken("Hello", "{Hello}", 0, 7));
         }
 
         [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("{{ Hi! }",
-                new TextToken("{ Hi! }"));
+                new TextToken("{ Hi! }", 0, 8));
         }
 
         [Test]
         public void DoubledLeftBracketsAreParsedAsASingleBracketInsideText()
         {
             AssertParsedAs("Well, {{ Hi!",
-                new TextToken("Well, { Hi!"));
+                new TextToken("Well, { Hi!", 0, 12));
         }
 
         [Test]
         public void DoubledRightBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("Nice }}-: mo",
-                new TextToken("Nice }-: mo"));
+                new TextToken("Nice }-: mo", 0, 12));
         }
 
         [Test]
         public void AMalformedPropertyTagIsParsedAsText()
         {
             AssertParsedAs("{0 space}",
-                new TextToken("{0 space}"));
+                new TextToken("{0 space}", 0, 9));
         }
 
         [Test]
@@ -89,36 +89,36 @@ namespace Serilog.Tests.Parsing
         public void ZeroValuesAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,-0}",
-                new TextToken("{Hello,-0}"));
+                new TextToken("{Hello,-0}", 0, 10));
 
             AssertParsedAs("{Hello,0}",
-                new TextToken("{Hello,0}"));
+                new TextToken("{Hello,0}", 0, 9));
         }
 
         [Test]
         public void NonNumberAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,-aa}",
-                new TextToken("{Hello,-aa}"));
+                new TextToken("{Hello,-aa}", 0, 11));
 
             AssertParsedAs("{Hello,aa}",
-                new TextToken("{Hello,aa}"));
+                new TextToken("{Hello,aa}", 0, 10));
 
             AssertParsedAs("{Hello,-10-1}",
-                new TextToken("{Hello,-10-1}"));
+                new TextToken("{Hello,-10-1}", 0, 13));
 
             AssertParsedAs("{Hello,10-1}",
-                new TextToken("{Hello,10-1}"));
+                new TextToken("{Hello,10-1}", 0, 12));
         }
 
         [Test]
         public void EmptyAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,}",
-                new TextToken("{Hello,}"));
+                new TextToken("{Hello,}", 0, 8));
 
             AssertParsedAs("{Hello,:format}",
-                new TextToken("{Hello,:format}"));
+                new TextToken("{Hello,:format}", 0, 15));
         }
     }
 }
