@@ -45,7 +45,7 @@ namespace Serilog.Parsing
         {
             if (messageTemplate == "")
             {
-                yield return new TextToken("");
+                yield return new TextToken("", 0, 0);
                 yield break;
             }
 
@@ -80,7 +80,7 @@ namespace Serilog.Parsing
             if (startAt == messageTemplate.Length || messageTemplate[startAt] != '}')
             {
                 next = startAt;
-                return new TextToken(messageTemplate.Substring(first, next - first));
+                return new TextToken(messageTemplate.Substring(first, next - first), first, next);
             }
 
             next = startAt + 1;
@@ -89,11 +89,11 @@ namespace Serilog.Parsing
             var tagContent = messageTemplate.Substring(first + 1, next - (first + 2));
             if (tagContent.Length == 0 ||
                 !IsValidInPropertyTag(tagContent[0]))
-                return new TextToken(rawText);
+                return new TextToken(rawText, first, next);
 
             string propertyNameAndDestructuring, format, alignment;
             if (!TrySplitTagContent(tagContent, out propertyNameAndDestructuring, out format, out alignment))
-                return new TextToken(rawText);
+                return new TextToken(rawText, first, next);
 
             var propertyName = propertyNameAndDestructuring;
             Destructuring destructuring;
@@ -101,13 +101,13 @@ namespace Serilog.Parsing
                 propertyName = propertyName.Substring(1);
 
             if (propertyName == "" || !char.IsLetterOrDigit(propertyName[0]))
-                return new TextToken(rawText);
+                return new TextToken(rawText, first, next);
 
             for (var i = 0; i < propertyName.Length; ++i)
             {
                 var c = propertyName[i];
                 if (!IsValidInPropertyName(c))
-                    return new TextToken(rawText);
+                    return new TextToken(rawText, first, next);
             }
 
             if (format != null)
@@ -116,7 +116,7 @@ namespace Serilog.Parsing
                 {
                     var c = format[i];
                     if (!IsValidInFormat(c))
-                        return new TextToken(rawText);
+                        return new TextToken(rawText, first, next);
                 }
             }
 
@@ -127,19 +127,19 @@ namespace Serilog.Parsing
                 {
                     var c = alignment[i];
                     if (!IsValidInAlignment(c))
-                        return new TextToken(rawText);
+                        return new TextToken(rawText, first, next);
                 }
 
                 var lastDash = alignment.LastIndexOf('-');
                 if (lastDash > 0)
-                    return new TextToken(rawText);
+                    return new TextToken(rawText, first, next);
 
                 var width = lastDash == -1 ?
                     int.Parse(alignment) :
                     int.Parse(alignment.Substring(1));
 
                 if (width == 0)
-                    return new TextToken(rawText);
+                    return new TextToken(rawText, first, next);
 
                 var direction = lastDash == -1 ?
                     AlignmentDirection.Right :
@@ -151,6 +151,8 @@ namespace Serilog.Parsing
             return new PropertyToken(
                 propertyName,
                 rawText,
+                first,
+                next,
                 format,
                 alignmentValue,
                 destructuring);
@@ -266,6 +268,8 @@ namespace Serilog.Parsing
 
         static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
         {
+            var first = startAt;
+
             var accum = new StringBuilder();
             do
             {
@@ -300,7 +304,7 @@ namespace Serilog.Parsing
             } while (startAt < messageTemplate.Length);
 
             next = startAt;
-            return new TextToken(accum.ToString());
+            return new TextToken(accum.ToString(), first, next);
         }
     }
 }
