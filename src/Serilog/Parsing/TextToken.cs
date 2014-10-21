@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using Serilog.Events;
 
@@ -31,7 +32,19 @@ namespace Serilog.Parsing
         /// </summary>
         /// <param name="text">The text of the token.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public TextToken(string text)
+        [Obsolete("Use constructor with start and end indexes."), EditorBrowsable(EditorBrowsableState.Never)]
+        public TextToken(string text) : this(text, -1, -1)
+        {
+        }
+
+        /// <summary>
+        /// Construct a <see cref="TextToken"/>.
+        /// </summary>
+        /// <param name="text">The text of the token.</param>
+        /// <param name="startIndex">The token's start index in the template.</param>
+        /// <param name="endIndex">The token's end index in the template.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public TextToken(string text, int startIndex, int endIndex) : base(startIndex, endIndex)
         {
             if (text == null) throw new ArgumentNullException("text");
             _text = text;
