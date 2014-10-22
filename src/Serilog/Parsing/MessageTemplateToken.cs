@@ -30,7 +30,6 @@ namespace Serilog.Parsing
         /// Construct a <see cref="MessageTemplateToken"/>.
         /// </summary>
         /// <param name="startIndex">The token's start index in the template.</param>
-        /// <exception cref="ArgumentException"></exception>
         protected MessageTemplateToken(int startIndex)
         {
             _startIndex = startIndex;

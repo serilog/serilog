@@ -151,10 +151,10 @@ namespace Serilog.Parsing
             return new PropertyToken(
                 propertyName,
                 rawText,
-                first,
                 format,
                 alignmentValue,
-                destructuring);
+                destructuring,
+                first);
         }
 
         static bool TrySplitTagContent(string tagContent, out string propertyNameAndDestructuring, out string format, out string alignment)
