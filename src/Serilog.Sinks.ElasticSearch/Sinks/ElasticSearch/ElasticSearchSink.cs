@@ -15,9 +15,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nest;
+using Elasticsearch.Net;
+using Elasticsearch.Net.Connection;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
+using System.Text;
 
 namespace Serilog.Sinks.ElasticSearch
 {
@@ -28,11 +30,10 @@ namespace Serilog.Sinks.ElasticSearch
     {
         readonly string _indexFormat;
         readonly IFormatProvider _formatProvider;
-        readonly ElasticClient _client;
+        readonly ElasticsearchClient _client;
     
         /// <summary>
-        /// A reasonable default for the number of events posted in
-        /// each batch.
+        /// A reasonable default for the number of events posted in each batch.
         /// </summary>
         public const int DefaultBatchPostingLimit = 50;
 
@@ -41,26 +42,30 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
+		/// <summary>
+		/// Default to the Logstash index name format
+		/// </summary>
+		public const string DefaultIndexFormat = "logstash-{0:yyyy.MM.dd}";
+
+		/// <summary>
+		/// Default connection timeout in milliseconds
+		/// </summary>
+		public const int DefaultConnectionTimeout = 5000;
+
         /// <summary>
-        /// Construct a sink posting to the specified database.
+        /// Construct a sink posting to the specified Elasticsearch cluster.
         /// </summary>
-        /// <param name="server">The server where ElasticSearch is running.</param>
+        /// <param name="connectionConfiguration">Connection configuration to use for connecting to the cluster.</param>
         /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-        /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ElasticSearchSink(Uri server, string indexFormat, int batchPostingLimit, int connectionTimeOutInMilliseconds, TimeSpan period, IFormatProvider formatProvider)
+        public ElasticSearchSink(ConnectionConfiguration connectionConfiguration, string indexFormat, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
-            if (connectionTimeOutInMilliseconds <= 0)
-                connectionTimeOutInMilliseconds = 5000;
-
-            _indexFormat = indexFormat ?? "logstash-{0:yyyy.MM.dd}";
+			_indexFormat = indexFormat;
             _formatProvider = formatProvider;
-            _client = new ElasticClient(new ConnectionSettings(server)
-                          .SetMaximumAsyncConnections(20)
-                          .SetTimeout(connectionTimeOutInMilliseconds));
+			_client = new ElasticsearchClient(connectionConfiguration);
         }
 
         /// <summary>
@@ -73,13 +78,30 @@ namespace Serilog.Sinks.ElasticSearch
         /// </remarks>
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
-            var indexName = string.Format(_indexFormat, DateTime.UtcNow);
-            var items = events
-                .Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)))
-                .ToList();
+			var logEvents = events.Select(e => new Data.LogEvent(e, e.RenderMessage(_formatProvider)));
+			
+			if (!logEvents.Any())
+				return;
 
-            if (items.Any() && _client !=null)
-                _client.IndexMany(items, indexName);            
-        }     
+			var indexName = string.Format(_indexFormat, DateTime.UtcNow);
+			var payload = new List<object>();
+
+			foreach (var logEvent in logEvents)
+			{
+				var document = new Dictionary<string, object>();
+				document.Add("@timestamp", logEvent.Timestamp);
+				document.Add("messageTemplate", logEvent.MessageTemplate);
+				document.Add("level", Enum.GetName(typeof(LogEventLevel), logEvent.Level));
+				if (logEvent.Exception != null)
+					document.Add("exception", logEvent.Exception);
+				document.Add("message", logEvent.RenderedMessage);
+				document.Add("fields", logEvent.Properties);
+
+				payload.Add(new { index = new { _index = indexName, _type = "logevent" } });
+				payload.Add(document);
+			}
+
+			_client.Bulk(payload);
+		}
     }
 }
