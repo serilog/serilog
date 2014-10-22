@@ -42,6 +42,7 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.sass-cache
 *.orig
+*.GhostDoc.xml
 
 #Project files
 [Bb]uild/
