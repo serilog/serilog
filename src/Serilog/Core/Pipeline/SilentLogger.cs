@@ -43,11 +43,13 @@ namespace Serilog.Core.Pipeline
         public void Write(LogEvent logEvent)
         {
         }
-
+        
+        [LoggerMethod("messageTemplate")]
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
@@ -57,42 +59,52 @@ namespace Serilog.Core.Pipeline
             return false;
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Verbose(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Debug(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Information(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Warning(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Error(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
@@ -101,6 +113,7 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }

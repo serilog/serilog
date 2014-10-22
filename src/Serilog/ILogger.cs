@@ -77,6 +77,7 @@ namespace Serilog
         /// <param name="level">The level of the event.</param>
         /// <param name="messageTemplate"></param>
         /// <param name="propertyValues"></param>
+        [LoggerMethod("messageTemplate")]
         void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -86,6 +87,7 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        [LoggerMethod("messageTemplate")]
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -104,6 +106,7 @@ namespace Serilog
         /// <example>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Verbose(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -115,6 +118,7 @@ namespace Serilog
         /// <example>
         /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Verbose(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -125,6 +129,7 @@ namespace Serilog
         /// <example>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Debug(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -136,6 +141,7 @@ namespace Serilog
         /// <example>
         /// Log.Debug(ex, "Swallowing a mundane exception.");
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Debug(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -146,6 +152,7 @@ namespace Serilog
         /// <example>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Information(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -157,6 +164,7 @@ namespace Serilog
         /// <example>
         /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Information(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -167,6 +175,7 @@ namespace Serilog
         /// <example>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Warning(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -178,6 +187,7 @@ namespace Serilog
         /// <example>
         /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Warning(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -188,6 +198,7 @@ namespace Serilog
         /// <example>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Error(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -199,6 +210,7 @@ namespace Serilog
         /// <example>
         /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Error(Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -209,6 +221,7 @@ namespace Serilog
         /// <example>
         /// Log.Fatal("Process terminating.");
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Fatal(string messageTemplate, params object[] propertyValues);
 
         /// <summary>
@@ -220,6 +233,7 @@ namespace Serilog
         /// <example>
         /// Log.Fatal(ex, "Process terminating.");
         /// </example>
+        [LoggerMethod("messageTemplate")]
         void Fatal(Exception exception, string messageTemplate, params object[] propertyValues);
     }
 }

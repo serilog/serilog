@@ -105,6 +105,7 @@ namespace Serilog.Core.Pipeline
             return ForContext(typeof(TSource));
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
             Write(level, null, messageTemplate, propertyValues);
@@ -119,6 +120,7 @@ namespace Serilog.Core.Pipeline
                 (int)level >= (int)_levelSwitch.MinimumLevel;
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
             if (messageTemplate == null) return;
@@ -169,61 +171,73 @@ namespace Serilog.Core.Pipeline
             _sink.Emit(logEvent);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Verbose(string messageTemplate, params object[] propertyValues)
         {
             Verbose(null, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Debug(string messageTemplate, params object[] propertyValues)
         {
             Debug(null, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Debug, exception, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Information(string messageTemplate, params object[] propertyValues)
         {
             Information(null, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Information, exception, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Warning(string messageTemplate, params object[] propertyValues)
         {
             Warning(null, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Warning, exception, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Error(string messageTemplate, params object[] propertyValues)
         {
             Error(null, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Error, exception, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Fatal(string messageTemplate, params object[] propertyValues)
         {
             Fatal(null, messageTemplate, propertyValues);
         }
 
+        [LoggerMethod("messageTemplate")]
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValues);
