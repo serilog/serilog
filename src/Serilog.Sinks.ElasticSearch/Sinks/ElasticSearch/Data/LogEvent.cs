@@ -14,8 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Serilog.Events;
 
 namespace Serilog.Sinks.ElasticSearch.Data
@@ -38,45 +36,38 @@ namespace Serilog.Sinks.ElasticSearch.Data
             Properties = new Dictionary<string, object>();
             foreach (var pair in logEvent.Properties)
             {
-                Properties.Add(pair.Key, ESPropertyFormatter.Simplify(pair.Value));
+                Properties.Add(pair.Key, ElasticSearchPropertyFormatter.Simplify(pair.Value));
             }
         }
 
         /// <summary>
         /// The time at which the event occurred.
         /// </summary>
-        [JsonProperty(PropertyName = "@timestamp")]
         public DateTimeOffset Timestamp { get; set; }
 
         /// <summary>
         /// The template that was used for the log message.
         /// </summary>
-        [JsonProperty(PropertyName = "messageTemplate")]
         public string MessageTemplate { get; set; }
 
         /// <summary>
         /// The level of the log.
         /// </summary>
-        [JsonProperty(PropertyName = "level")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public LogEventLevel Level { get; set; }
 
         /// <summary>
         /// A string representation of the exception that was attached to the log (if any).
         /// </summary>
-        [JsonProperty(PropertyName = "exception")]
         public Exception Exception { get; set; }
 
         /// <summary>
         /// The rendered log message.
         /// </summary>
-        [JsonProperty(PropertyName = "message")]
         public string RenderedMessage { get; set; }
 
         /// <summary>
         /// Properties associated with the event, including those presented in <see cref="Events.LogEvent.MessageTemplate"/>.
         /// </summary>
-        [JsonProperty(PropertyName = "fields")]
         public IDictionary<string, object> Properties { get; set; }
     }
 }
