@@ -1,3 +1,6 @@
+1.4.13
+ * #244 - Improvements to ElasticSearch sink, switch to just ElasticSearch.NET
+
 1.4.12
  * #240 - Update TopShelf dependency
  * #243 - Caching in `AttributedDestructuringPolicy` closes over first seen object of a type rather than using the passed parameter
