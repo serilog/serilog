@@ -62,6 +62,7 @@
     <Compile Include="Formatting\Display\LiteralStringValue.cs" />
     <Compile Include="Formatting\Display\MessageTemplateTextFormatter.cs" />
     <Compile Include="Formatting\Raw\RawFormatter.cs" />
+    <Compile Include="LoggerMethodAttribute.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
     <Compile Include="Core\Sinks\SafeAggregateSink.cs" />
