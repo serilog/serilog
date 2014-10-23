@@ -1,5 +1,6 @@
 1.4.13
  * #244 - Improvements to ElasticSearch sink, switch to just ElasticSearch.NET
+ * #254 - Fix ElasticSearch dependency version
 
 1.4.12
  * #240 - Update TopShelf dependency
