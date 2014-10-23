@@ -50,13 +50,13 @@
       <HintPath>..\..\packages\Elasticsearch.Net.1.0.0\lib\Elasticsearch.Net.dll</HintPath>
     </Reference>
     <Reference Include="Nest">
-	  <SpecificVersion>False</SpecificVersion>
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NEST.1.0.0\lib\Nest.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-	  <SpecificVersion>False</SpecificVersion>
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-	  <Private>True</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -67,8 +67,8 @@
     <Compile Include="LoggerConfigurationElasticSearchExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sinks\ElasticSearch\Data\LogEvent.cs" />
+    <Compile Include="Sinks\ElasticSearch\ElasticSearchPropertyFormatter.cs" />
     <Compile Include="Sinks\ElasticSearch\ElasticSearchSink.cs" />
-    <Compile Include="Sinks\ElasticSearch\ESPropertyFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
