@@ -1,3 +1,6 @@
+1.4.14
+ * #253 - Added `MessageTemplateFormatMethodAttribute`
+
 1.4.13
  * #244 - Improvements to ElasticSearch sink, switch to just ElasticSearch.NET
  * #254 - Fix ElasticSearch dependency version
