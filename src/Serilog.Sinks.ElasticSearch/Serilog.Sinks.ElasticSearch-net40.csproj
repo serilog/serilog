@@ -47,16 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Elasticsearch.Net">
-      <HintPath>..\..\packages\Elasticsearch.Net.1.0.0\lib\Elasticsearch.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Nest">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NEST.1.0.0\lib\Nest.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Elasticsearch.Net.1.1.2\lib\Elasticsearch.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
