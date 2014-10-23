@@ -1,6 +1,7 @@
 1.4.13
  * #244 - Improvements to ElasticSearch sink, switch to just ElasticSearch.NET
  * #254 - Fix ElasticSearch dependency version
+ * #249 - Track message template token indexes in parser to support tooling (binary-breaking)
 
 1.4.12
  * #240 - Update TopShelf dependency
