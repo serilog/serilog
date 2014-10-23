@@ -120,5 +120,43 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("{Hello,:format}",
                 new TextToken("{Hello,:format}"));
         }
+
+        [Test]
+        public void MultipleTokensHasCorrectIndexes()
+        {
+            AssertParsedAs("{Greeting}, {Name}!",
+                new PropertyToken("Greeting", "{Greeting}"),
+                new TextToken(", ", 10),
+                new PropertyToken("Name", "{Name}", startIndex: 12),
+                new TextToken("!", 18));
+        }
+
+        [Test]
+        public void MissingRightBracketIsParsedAsText()
+        {
+            AssertParsedAs("{Hello",
+                new TextToken("{Hello"));
+        }
+
+        [Test]
+        public void DestructureHintIsParsedCorrectly()
+        {
+            var parsed = (PropertyToken)Parse("{@Hello}").Single();
+            Assert.AreEqual(Destructuring.Destructure, parsed.Destructuring);
+        }
+
+        [Test]
+        public void StringifyHintIsParsedCorrectly()
+        {
+            var parsed = (PropertyToken)Parse("{$Hello}").Single();
+            Assert.AreEqual(Destructuring.Stringify, parsed.Destructuring);
+        }
+
+        [Test]
+        public void DestructuringWithEmptyPropertyNameIsParsedAsText()
+        {
+            AssertParsedAs("{@}",
+                new TextToken("{@}"));
+        }
     }
 }
