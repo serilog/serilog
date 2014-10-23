@@ -1,3 +1,6 @@
+1.4.15
+ * #250 - Allow an existing `MongoDatabase` instance to be used when configuring Mongo sink
+
 1.4.14
  * #253 - Added `MessageTemplateFormatMethodAttribute`
 
