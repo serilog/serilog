@@ -49,6 +49,7 @@
     <Compile Include="Core\Enrichers\PropertyEnricher.cs" />
     <Compile Include="Core\IScalarConversionPolicy.cs" />
     <Compile Include="Core\LoggingLevelSwitch.cs" />
+    <Compile Include="Core\MessageTemplateFormatMethodAttribute.cs" />
     <Compile Include="Core\Sinks\CopyingSink.cs" />
     <Compile Include="Core\Filters\DelegateFilter.cs" />
     <Compile Include="Core\Sinks\FilteringSink.cs" />
