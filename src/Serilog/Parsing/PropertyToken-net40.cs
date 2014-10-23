@@ -57,7 +57,7 @@ namespace Serilog.Parsing
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
         /// <param name="startIndex">The token's start index in the template.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = 0)
+        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
             if (propertyName == null)
