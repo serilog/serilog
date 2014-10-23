@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Serilog
+namespace Serilog.Core
 {
     /// <summary>
     /// Indicates that the marked method logs data using a message template and (optional) arguments.
@@ -21,13 +21,13 @@ namespace Serilog
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public sealed class LoggerMethodAttribute : Attribute
+    public sealed class MessageTemplateFormatMethodAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggerMethodAttribute"/> class.
+        /// Initializes a new instance of the <see cref="MessageTemplateFormatMethodAttribute"/> class.
         /// </summary>
         /// <param name="messageTemplateParameterName">Name of the message template parameter.</param>
-        public LoggerMethodAttribute(string messageTemplateParameterName)
+        public MessageTemplateFormatMethodAttribute(string messageTemplateParameterName)
         {
             MessageTemplateParameterName = messageTemplateParameterName;
         }
