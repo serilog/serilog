@@ -12,7 +12,7 @@
     <tags>serilog logging elasticsearch nest</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="NEST" />
+      <dependency id="Elasticsearch.Net" version="1.1.2" />
     </dependencies>
   </metadata>
   <files>
