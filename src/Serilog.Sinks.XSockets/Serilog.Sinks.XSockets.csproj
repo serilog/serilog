@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Serilog.Sinks.XSockets.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,37 +42,37 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="XSockets.Controllers">
-      <HintPath>..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Controllers.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Controllers.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Core">
-      <HintPath>..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Core.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Core.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Core.Common">
-      <HintPath>..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Core.Common.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Core.Common.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Core.Communication">
-      <HintPath>..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Core.Communication.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Core.Communication.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.CustomProtocol">
-      <HintPath>..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.CustomProtocol.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.CustomProtocol.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Enterprise">
-      <HintPath>..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Enterprise.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Enterprise.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Logger">
-      <HintPath>..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Logger.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Logger.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Plugin.Framework">
-      <HintPath>..\packages\XSockets.Plugin.Framework.4.0.0\lib\net40\XSockets.Plugin.Framework.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Plugin.Framework.4.0.0\lib\net40\XSockets.Plugin.Framework.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Protocol">
-      <HintPath>..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Protocol.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Protocol.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Serialization">
-      <HintPath>..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Serialization.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Core.4.0.0\lib\net40\XSockets.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="XSockets.Server">
-      <HintPath>..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Server.dll</HintPath>
+      <HintPath>..\..\packages\XSockets.Server.4.0.0\lib\net40\XSockets.Server.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -83,17 +84,22 @@
     <Compile Include="Sinks\XSockets\XSocketsSink.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Serilog.Sinks.XSockets.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
+    <Content Include="XSocketsNET\ServerExample\ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
       <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
       <Name>Serilog.FullNetFx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Serilog\Serilog.csproj">
+    <ProjectReference Include="..\Serilog\Serilog.csproj">
       <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
       <Name>Serilog</Name>
     </ProjectReference>

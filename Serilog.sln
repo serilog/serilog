@@ -91,7 +91,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk.FullNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Seq", "src\Serilog.Sinks.Seq\Serilog.Sinks.Seq.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.XSockets", "Serilog.Sinks.XSockets\Serilog.Sinks.XSockets.csproj", "{1585D6FE-7033-4687-8122-C5115C4F3BAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.XSockets", "src\Serilog.Sinks.XSockets\Serilog.Sinks.XSockets.csproj", "{1585D6FE-7033-4687-8122-C5115C4F3BAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
