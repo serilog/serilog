@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Serilog.Sinks.XSockets</id>
+    <version>0.1.0</version>
+    <authors>Team XSockets.NET</authors>
+    <description>Serilog event sink that dispatches logs to clients based on LogEventLevel.</description>
+    <language>en-US</language>
+    <projectUrl>http://serilog.net</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <tags>serilog logging xsockets realtime</tags>
+    <dependencies>      
+      <dependency id="XSockets" />
+      <dependency id="Serilog" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Serilog.Sinks.SignalR\bin\Release\Serilog.Sinks.XSockets.dll" target="lib\net45" />
+    <file src="src\Serilog.Sinks.SignalR\bin\Release\Serilog.Sinks.XSockets.xml" target="lib\net45" />
+  </files>
+</package>
