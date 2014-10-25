@@ -16,7 +16,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.SignalR\bin\Release\Serilog.Sinks.XSockets.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.SignalR\bin\Release\Serilog.Sinks.XSockets.xml" target="lib\net45" />
+    <file src="src\Serilog.Sinks.XSockets\bin\Release\Serilog.Sinks.XSockets.dll" target="lib\net45" />
+    <file src="src\Serilog.Sinks.XSockets\bin\Release\Serilog.Sinks.XSockets.xml" target="lib\net45" />
   </files>
 </package>
