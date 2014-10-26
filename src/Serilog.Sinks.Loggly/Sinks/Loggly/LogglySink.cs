@@ -15,9 +15,11 @@
 using System;
 using System.Linq;
 using Loggly;
+using Loggly.Config;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using SyslogLevel=Loggly.Transports.Syslog.Level;
 
 namespace Serilog.Sinks.Loggly
 {
@@ -46,48 +48,60 @@ namespace Serilog.Sinks.Loggly
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var options = new MessageOptions();
+            var logglyEvent = new LogglyEvent();
 
+            var isHttpTransport = LogglyConfig.Instance.Transport.LogTransport == LogTransport.Https;
+            logglyEvent.Syslog.Level = ToSyslogLevel(logEvent);
+
+            foreach (var key in logEvent.Properties.Keys)
+            {
+                var propertyValue = logEvent.Properties[key];
+                var simpleValue = LogglyPropertyFormatter.Simplify(propertyValue);
+                logglyEvent.Data.AddIfAbsent(key, simpleValue);
+            }
+
+            logglyEvent.Data.AddIfAbsent("Message", logEvent.RenderMessage(_formatProvider));
+            
+            if (isHttpTransport)
+            {
+                // syslog will capture these via the header
+                logglyEvent.Data.AddIfAbsent("Level", logEvent.Level.ToString());
+            }
+
+            if (logEvent.Exception != null)
+            {
+                logglyEvent.Data.AddIfAbsent("Exception", logEvent.Exception);
+            }
+
+            _client.Log(logglyEvent);
+        }
+
+        static SyslogLevel ToSyslogLevel(LogEvent logEvent)
+        {
+            SyslogLevel syslogLevel;
             // map the level to a syslog level in case that transport is used.
             switch (logEvent.Level)
             {
                 case LogEventLevel.Verbose:
                 case LogEventLevel.Debug:
-                    options.Level = global::Loggly.Transports.Syslog.Level.Notice;
+                    syslogLevel = SyslogLevel.Notice;
                     break;
                 case LogEventLevel.Information:
-                    options.Level = global::Loggly.Transports.Syslog.Level.Information;
+                    syslogLevel = SyslogLevel.Information;
                     break;
                 case LogEventLevel.Warning:
-                    options.Level = global::Loggly.Transports.Syslog.Level.Warning;
+                    syslogLevel = SyslogLevel.Warning;
                     break;
                 case LogEventLevel.Error:
                 case LogEventLevel.Fatal:
-                    options.Level = global::Loggly.Transports.Syslog.Level.Error;
+                    syslogLevel = SyslogLevel.Error;
                     break;
                 default:
                     SelfLog.WriteLine("Unexpected logging level, writing to loggly as Information");
-                    options.Level = global::Loggly.Transports.Syslog.Level.Information;
+                    syslogLevel = SyslogLevel.Information;
                     break;
             }
-
-
-            var propertyDictionary = logEvent.Properties
-                         .Select(pv => new { Name = pv.Key, Value = LogglyPropertyFormatter.Simplify(pv.Value) })
-                         .ToDictionary(a => a.Name, b => b.Value);
-
-
-            propertyDictionary.Add("Message", logEvent.RenderMessage(_formatProvider));
-
-            // Http transport ignores syslog level so write it to property bag too
-            propertyDictionary.Add("Level", logEvent.Level.ToString());
-
-            if (logEvent.Exception != null)
-            {
-                propertyDictionary.Add("Exception", logEvent.Exception);
-            }
-
-            _client.Log(options, propertyDictionary);
+            return syslogLevel;
         }
     }
 }
