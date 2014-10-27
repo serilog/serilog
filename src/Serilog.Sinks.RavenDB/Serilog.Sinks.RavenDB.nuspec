@@ -12,7 +12,7 @@
     <tags>serilog logging ravendb</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="RavenDB.Client" />
+      <dependency id="RavenDB.Client" version="2.5.2750" />
     </dependencies>
   </metadata>
   <files>

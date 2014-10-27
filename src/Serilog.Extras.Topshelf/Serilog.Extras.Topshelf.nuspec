@@ -12,7 +12,7 @@
     <tags>serilog logging topshelf</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="Topshelf" />
+      <dependency id="Topshelf" version="3.1.4" />
     </dependencies>
   </metadata>
   <files>

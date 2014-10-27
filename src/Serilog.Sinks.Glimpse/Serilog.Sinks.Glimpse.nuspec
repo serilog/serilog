@@ -3,9 +3,7 @@
   <metadata>
       <id>Serilog.Sinks.Glimpse</id>
       <version>0.1.0</version>
-      <title />
       <authors>Robert Wagner, Serilog Contributors</authors>
-      <owners />
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
       <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
@@ -13,9 +11,9 @@
       <description>Serilog event sink that writes to a Glimpse tab.</description>
       <tags>serilog logging glimpse</tags>
       <dependencies>
-            <dependency id="Glimpse" />
-            <dependency id="Serilog" />
-        </dependencies>
+        <dependency id="Serilog" />
+        <dependency id="Glimpse" version="1.8.0" />
+      </dependencies>
     </metadata>
     <files>
       <file src="bin\Release\Serilog.Sinks.Glimpse.dll" target="lib\net45" />

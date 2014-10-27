@@ -12,7 +12,7 @@
     <tags>serilog logging couchbase</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="CouchbaseNetClient" />
+      <dependency id="CouchbaseNetClient" version="1.3.4" />
     </dependencies>
   </metadata>
   <files>

@@ -12,7 +12,7 @@
     <tags>serilog logging azure</tags>
     <dependencies>
       <dependency id="Serilog" />
-      <dependency id="Microsoft.ApplicationInsights.Tracing" />
+      <dependency id="Microsoft.ApplicationInsights.Tracing" version="0.7.1" />
     </dependencies>
   </metadata>
   <files>

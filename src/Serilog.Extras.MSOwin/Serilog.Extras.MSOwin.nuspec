@@ -11,8 +11,9 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging owin</tags>
     <dependencies>
-      <dependency id="Owin" />
-      <dependency id="Microsoft.Owin" />
+      <dependency id="Serilog" />
+      <dependency id="Owin" version="1.0" />
+      <dependency id="Microsoft.Owin" version="2.1.0" />
     </dependencies>
   </metadata>
   <files>
