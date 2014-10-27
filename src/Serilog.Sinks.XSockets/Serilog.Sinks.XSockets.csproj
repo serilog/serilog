@@ -7,7 +7,7 @@
     <ProjectGuid>{1585D6FE-7033-4687-8122-C5115C4F3BAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Serilog.Sinks.XSockets</RootNamespace>
+    <RootNamespace>Serilog</RootNamespace>
     <AssemblyName>Serilog.Sinks.XSockets</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

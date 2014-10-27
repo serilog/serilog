@@ -15,7 +15,6 @@
 // limitations under the License.
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.XSockets.Sinks.XSockets;
 
 namespace Serilog.Sinks.XSockets
 {

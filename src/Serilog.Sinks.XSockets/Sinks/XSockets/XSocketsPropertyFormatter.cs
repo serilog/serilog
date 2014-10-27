@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
 
-namespace Serilog.Sinks.XSockets.Sinks.XSockets
+namespace Serilog.Sinks.XSockets
 {
     public static class XSocketsPropertyFormatter
     {

@@ -2,7 +2,7 @@
 using XSockets.Core.XSocket;
 using XSockets.Plugin.Framework.Attributes;
 
-namespace Serilog.Sinks.XSockets.Sinks.XSockets
+namespace Serilog.Sinks.XSockets
 {
     /// <summary>
     /// The XSockets controller used for dispatching loginformation

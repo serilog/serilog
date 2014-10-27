@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using Serilog.Events;
 
-namespace Serilog.Sinks.XSockets.Sinks.XSockets.Data
+namespace Serilog.Sinks.XSockets.Data
 {
     /// <summary>
     /// A wrapper class for <see cref="Events.LogEvent"/> that is sent as a message to XSockets clients.

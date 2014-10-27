@@ -15,10 +15,10 @@
 using System;
 using System.Collections.Generic;
 using Serilog.Sinks.PeriodicBatching;
-using Serilog.Sinks.XSockets.Sinks.XSockets.Data;
+using Serilog.Sinks.XSockets.Data;
 using XSockets.Core.XSocket.Helpers;
 
-namespace Serilog.Sinks.XSockets.Sinks.XSockets
+namespace Serilog.Sinks.XSockets
 {
     /// <summary>
     /// Sends log events as messages to filtered clients.
