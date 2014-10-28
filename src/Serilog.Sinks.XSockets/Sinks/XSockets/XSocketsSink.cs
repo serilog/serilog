@@ -28,15 +28,14 @@ namespace Serilog.Sinks.XSockets
         readonly IFormatProvider _formatProvider;
         readonly LogController _controller;
         /// <summary>
-        /// A reasonable default for the number of events posted in
-        /// each batch.
+        /// Set to a high number after recomendation from N Blumhardt
         /// </summary>
-        public const int DefaultBatchPostingLimit = 5;
+        public const int DefaultBatchPostingLimit = 100000;
 
         /// <summary>
-        /// A reasonable default time to wait between checking for event batches.
+        /// Set to a low number after recomendation from N Blumhardt
         /// </summary>
-        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
+        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromMilliseconds(100);
 
         /// <summary>
         /// Construct a sink posting to the specified database.

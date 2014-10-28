@@ -35,15 +35,14 @@ namespace Serilog.Sinks.XSockets
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration XSockets(
             this LoggerSinkConfiguration loggerConfiguration,           
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            int batchPostingLimit = XSocketsSink.DefaultBatchPostingLimit,
-            TimeSpan? period = null,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,                        
             IFormatProvider formatProvider = null)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");            
+            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
-            var defaultedPeriod = period ?? XSocketsSink.DefaultPeriod;
-            return loggerConfiguration.Sink(new XSocketsSink(batchPostingLimit, defaultedPeriod, formatProvider),restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(new XSocketsSink(XSocketsSink.DefaultBatchPostingLimit, XSocketsSink.DefaultPeriod, formatProvider), restrictedToMinimumLevel);
         }
+
+        //TimeSpan? period = null,
     }
 }
