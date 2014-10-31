@@ -214,9 +214,9 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual("012", (string)fs.Single().Rendering);
         }
 
-        static dynamic FormatEvent(LogEvent e)
+        static dynamic FormatEvent(LogEvent e, bool renderMessage = false, bool renderTemplate = true, bool renderProperties = true)
         {
-            var j = new JsonFormatter();
+            var j = new JsonFormatter(renderTemplate: renderTemplate, renderProperties: renderProperties, renderMessage: renderMessage);
 
             var f = new StringWriter();
             j.Format(e, f);
@@ -249,6 +249,56 @@ namespace Serilog.Tests.Formatting.Json
 
             var h = (string)d.Properties.AProperty[0][0];
             Assert.AreEqual("Hello", h);
+        }
+
+        [Test]
+        public void TemplateNotIncluded()
+        {
+            var p = new MessageTemplateParser();
+            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+                p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
+
+            var d = FormatEvent(e, renderTemplate:false, renderMessage:true);
+
+            Assert.IsTrue(d.Template == null);
+        }
+
+
+        [Test]
+        public void TemplateIncluded()
+        {
+            var p = new MessageTemplateParser();
+            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+                p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
+
+            var d = FormatEvent(e, renderTemplate: true, renderMessage:true);
+
+            Assert.IsTrue(d.RenderedMessage != null);
+        }
+        
+        [Test]
+        public void PropertiesNotIncluded()
+        {
+            var p = new MessageTemplateParser();
+            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+                p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
+
+            var d = FormatEvent(e, renderProperties: false, renderMessage: true);
+
+            Assert.IsTrue(d.Properties == null);
+        }
+
+
+        [Test]
+        public void PropertiesIncluded()
+        {
+            var p = new MessageTemplateParser();
+            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+                p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
+
+            var d = FormatEvent(e, renderProperties: true, renderMessage: true);
+
+            Assert.IsTrue(d.Properties != null);
         }
     }
 }

@@ -35,6 +35,8 @@ namespace Serilog.Formatting.Json
         readonly string _closingDelimiter;
         readonly bool _renderMessage;
         readonly IFormatProvider _formatProvider;
+        readonly bool _renderProperties;
+        readonly bool _renderTemplate;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
 
         /// <summary>
@@ -59,16 +61,24 @@ namespace Serilog.Formatting.Json
         /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
         /// property named RenderedMessage.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="renderProperties">If true,  all properties will be rendered and written to the output as a
+        /// property named RenderedMessage.</param>
+        /// <param name="renderTemplate">If true, the message template will be rendered and written to the output as a
+        /// property named RenderedMessage. </param>
         public JsonFormatter(
             bool omitEnclosingObject = false,
             string closingDelimiter = null,
             bool renderMessage = false,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null, 
+            bool renderProperties = true ,
+            bool renderTemplate = true)
         {
             _omitEnclosingObject = omitEnclosingObject;
             _closingDelimiter = closingDelimiter ?? Environment.NewLine;
             _renderMessage = renderMessage;
             _formatProvider = formatProvider;
+            _renderProperties = renderProperties;
+            _renderTemplate = renderTemplate;
 
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
@@ -111,14 +121,17 @@ namespace Serilog.Formatting.Json
             var delim = "";
             WriteJsonProperty("Timestamp", logEvent.Timestamp, ref delim, output);
             WriteJsonProperty("Level", logEvent.Level, ref delim, output);
-            WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
+            
+            if(_renderTemplate)
+                WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
+
             if (_renderMessage)
                 WriteJsonProperty("RenderedMessage", logEvent.RenderMessage(_formatProvider), ref delim, output);
 
             if (logEvent.Exception != null)
                 WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
 
-            if (logEvent.Properties.Count != 0)
+            if (logEvent.Properties.Count != 0 && _renderProperties)
             {
                 output.Write(",\"Properties\":{");
                 var precedingDelimiter = "";
