@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyExtensionsTests.cs" />
     <Compile Include="EventStoreRunner.cs" />
     <Compile Include="EventStoreSinkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

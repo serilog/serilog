@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Reflection;
+using System.Linq;
 
 namespace Serilog.Sinks.EventStore.Tests
 {
@@ -29,6 +28,14 @@ namespace Serilog.Sinks.EventStore.Tests
 
         private void StartEventStore()
         {
+            var eventStoreFolder = Assembly.GetExecutingAssembly().GetExecutingFolder();
+            int testStart = eventStoreFolder.IndexOf("test", StringComparison.OrdinalIgnoreCase);
+            if (testStart == -1)
+            {
+                throw new InvalidOperationException("The executing folder does not conform to the expected format.");
+            }
+            eventStoreFolder =eventStoreFolder.Remove(testStart);
+            eventStoreFolder = Path.Combine(eventStoreFolder, "EventStore Binaries", "EventStore.ClusterNode.exe");
             var startInfo = new ProcessStartInfo
                                 {
                                     WindowStyle = ProcessWindowStyle.Normal,
@@ -36,12 +43,14 @@ namespace Serilog.Sinks.EventStore.Tests
                                     LoadUserProfile = true,
                                     CreateNoWindow = false,
                                     UseShellExecute = false,
+                                FileName =eventStoreFolder 
                                 };
 
             _eventstoreprocess = new Process
                                      {
                                          StartInfo = startInfo
                                      };
+            
             _eventstoreprocess.Start();
             _eventstoreprocess.WaitForExit();
         }
@@ -52,7 +61,7 @@ namespace Serilog.Sinks.EventStore.Tests
             {
                 if (disposing)
                 {
-                    _eventstoreprocess.CloseMainWindow();
+                    _eventstoreprocess.Kill();
                     _eventstoreprocess.Dispose();
                     _disposed = true;
                 }
