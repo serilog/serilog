@@ -1,4 +1,6 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿using System;
+
+// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,38 +13,35 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-using System;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.Loggly;
+using Serilog.Sinks.XSockets;
 
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.Loggly() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.XSockets() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public static class LoggerConfigurationLogglyExtensions
+    public static class LoggerConfigurationXSocketsExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events to the Loggly.com webservice. Properties are being send as data and the level is used as category.
+        /// Adds a sink that writes log events as messages to filtered XSockets clients
         /// </summary>
-        /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="loggerConfiguration">The logger configuration.</param>        
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>        
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration Loggly(
-            this LoggerSinkConfiguration loggerConfiguration,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        public static LoggerConfiguration XSockets(
+            this LoggerSinkConfiguration loggerConfiguration,           
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,                        
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
-            return loggerConfiguration.Sink(
-                new LogglySink(formatProvider),
-                restrictedToMinimumLevel);
+            return loggerConfiguration.Sink(new XSocketsSink(XSocketsSink.DefaultBatchPostingLimit, XSocketsSink.DefaultPeriod, formatProvider), restrictedToMinimumLevel);
         }
 
+        //TimeSpan? period = null,
     }
 }
