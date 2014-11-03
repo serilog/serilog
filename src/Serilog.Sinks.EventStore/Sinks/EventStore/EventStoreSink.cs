@@ -1,17 +1,32 @@
-﻿using EventStore.ClientAPI;
+﻿// Copyright 2014 Serilog Contributors
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using EventStore.ClientAPI;
+using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Serilog.Sinks.EventStore
 {
-    using System.Runtime.InteropServices;
-    using Newtonsoft.Json;
-
+    /// <summary>
+    /// a Serilog sink for the EventStore.
+    /// </summary>
     public class EventStoreSink: PeriodicBatchingSink
     {
         readonly IEventStoreConnection _eventStoreConnection;
@@ -73,17 +88,9 @@ namespace Serilog.Sinks.EventStore
                 {CommitIdHeader, Guid.NewGuid()},
                 {AggregateClrTypeHeader, this.GetType().AssemblyQualifiedName}
             };
-            int version = default(int);
-            //Read the last event.
-            EventReadResult result = await _eventStoreConnection.ReadEventAsync(_streamName, int.MaxValue-1, false);
-            if (result.Status == EventReadStatus.NoStream)
-            {
-                version = ExpectedVersion.NoStream;
-            }
-            version = result.EventNumber;
             var leq = from e in events select new LogEntryEmittedEvent(e, e.RenderMessage(_formatProvider));
             var eventsToSave = leq.Select(e => ToEventData(Guid.NewGuid(), e, commitHeaders));
-            await _eventStoreConnection.AppendToStreamAsync(_streamName, version, eventsToSave);
+            await _eventStoreConnection.AppendToStreamAsync(_streamName, ExpectedVersion.Any, eventsToSave);
         }
 
         private static EventData ToEventData(Guid eventId, LogEntryEmittedEvent evnt, Dictionary<string, object> commitHeaders)
