@@ -32,9 +32,10 @@ namespace Serilog
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
+        readonly List<ILogPropertyFilter> _propertyFilters = new List<ILogPropertyFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-        
+
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
 
@@ -100,6 +101,17 @@ namespace Serilog
         }
         
         /// <summary>
+        /// Configures global filtering of properties within destructured objects.
+        /// </summary>
+        public LoggerPropertyFilterConfiguration PropertyFilter
+        {
+            get
+            {
+                return new LoggerPropertyFilterConfiguration(this, f => _propertyFilters.Add(f));
+            }
+        }
+
+        /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
         /// </summary>
         /// <returns>The logger.</returns>
@@ -119,7 +131,8 @@ namespace Serilog
             if (_filters.Any())
                 sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
 
-            var converter = new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
+            var converter = new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies,
+                _propertyFilters);
             var processor = new MessageTemplateProcessor(converter);
 
             return _levelSwitch == null ? 
