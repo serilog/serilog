@@ -12,20 +12,20 @@
     <tags>serilog logging nosql events semantic structured</tags>
   </metadata>
   <files>
-    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog\bin\Release\Serilog.pdb" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\net45" />
-    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\net45" />
-    <file src="src\Serilog\bin\Release\Serilog.pdb" target="lib\net45" />
-    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
-    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
-    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.pdb" target="lib\net45" />
-    <file src="src\Serilog\bin40\Release\Serilog.dll" target="lib\net40" />
-    <file src="src\Serilog\bin40\Release\Serilog.xml" target="lib\net40" />
-    <file src="src\Serilog\bin40\Release\Serilog.pdb" target="lib\net40" />
-    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
-    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
-    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
+    <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
+    <file src="bin\Release\Serilog.xml" target="lib\portable-net45+win8+wp8" />
+    <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+win8+wp8" />
+    <file src="bin\Release\Serilog.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.pdb" target="lib\net45" />
+    <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
+    <file src="..\Serilog.FullNetFxbin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
+    <file src="..\Serilog.FullNetFxbin\Release\Serilog.FullNetFx.pdb" target="lib\net45" />
+    <file src="bin40\Release\Serilog.dll" target="lib\net40" />
+    <file src="bin40\Release\Serilog.xml" target="lib\net40" />
+    <file src="bin40\Release\Serilog.pdb" target="lib\net40" />
+    <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
+    <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
+    <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
   </files>
 </package>

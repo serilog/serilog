@@ -17,7 +17,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.Loggly\bin\Release\Serilog.Sinks.Loggly.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Loggly\bin\Release\Serilog.Sinks.Loggly.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Loggly.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Loggly.xml" target="lib\net45" />
   </files>
 </package>

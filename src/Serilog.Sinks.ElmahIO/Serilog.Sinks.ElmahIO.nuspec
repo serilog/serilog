@@ -17,7 +17,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.ElmahIO\bin\Release\Serilog.Sinks.ElmahIO.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.ElmahIO\bin\Release\Serilog.Sinks.ElmahIO.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.ElmahIO.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.ElmahIO.xml" target="lib\net45" />
   </files>
 </package>

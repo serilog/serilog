@@ -16,7 +16,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.RavenDB\bin\Release\Serilog.Sinks.RavenDB.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.RavenDB\bin\Release\Serilog.Sinks.RavenDB.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.RavenDB.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.RavenDB.xml" target="lib\net45" />
   </files>
 </package>

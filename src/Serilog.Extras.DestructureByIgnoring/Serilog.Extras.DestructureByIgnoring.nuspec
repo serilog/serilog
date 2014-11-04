@@ -15,7 +15,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Extras.DestructureByIgnoring\bin\Release\Serilog.Extras.DestructureByIgnoring.dll" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog.Extras.DestructureByIgnoring\bin\Release\Serilog.Extras.DestructureByIgnoring.xml" target="lib\portable-net45+win8+wp8" />
+    <file src="bin\Release\Serilog.Extras.DestructureByIgnoring.dll" target="lib\portable-net45+win8+wp8" />
+    <file src="bin\Release\Serilog.Extras.DestructureByIgnoring.xml" target="lib\portable-net45+win8+wp8" />
   </files>
 </package>

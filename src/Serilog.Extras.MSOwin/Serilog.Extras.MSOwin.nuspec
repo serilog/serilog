@@ -16,7 +16,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Extras.MSOwin\bin\Release\Serilog.Extras.MSOwin.dll" target="lib\net45" />
-    <file src="src\Serilog.Extras.MSOwin\bin\Release\Serilog.Extras.MSOwin.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Extras.MSOwin.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Extras.MSOwin.xml" target="lib\net45" />
   </files>
 </package>

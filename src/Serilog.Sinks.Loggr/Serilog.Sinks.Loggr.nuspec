@@ -16,7 +16,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.Loggr\bin\Release\Serilog.Sinks.Loggr.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Loggr\bin\Release\Serilog.Sinks.Loggr.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Loggr.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Loggr.xml" target="lib\net45" />
   </files>
 </package>
