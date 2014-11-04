@@ -57,6 +57,7 @@
       <Link>Extras\Attributed\GetablePropertyFinder.cs</Link>
     </Compile>
     <Compile Include="Extras\Attributed\AttributedDestructuringPolicy.cs" />
+    <Compile Include="Extras\Attributed\IncludeFieldsWhenDestructuringAttribute.cs" />
     <Compile Include="Extras\Attributed\NotLoggedAttribute.cs" />
     <Compile Include="Extras\Attributed\LogAsScalarAttribute.cs" />
     <Compile Include="LoggerConfigurationAttributedExtensions.cs" />

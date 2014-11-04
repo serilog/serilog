@@ -59,6 +59,11 @@ namespace Serilog.Extras.Attributed
             }
             else
             {
+                var fields = Enumerable.Empty<FieldInfo>();
+                var includeFields = ti.GetCustomAttribute<IncludeFieldsWhenDestructuringAttribute>();
+                if (includeFields != null)
+                    fields = t.GetRuntimeFields().Where(f => f.IsPublic && !f.IsStatic);
+
                 var properties = t.GetPropertiesRecursive()
                     .ToList();
                 if (properties.Any(pi =>
@@ -74,7 +79,12 @@ namespace Serilog.Extras.Attributed
                         .ToDictionary(pi => pi, pi => pi.GetCustomAttribute<LogAsScalarAttribute>().IsMutable);
 
                     lock (_cacheLock)
-                        _cache[t] = (o, f) => MakeStructure(o, loggedProperties, scalars, f, t);
+                        _cache[t] = (o, f) => MakeStructure(o, loggedProperties, scalars, fields, f, t);
+                }
+                else if (includeFields != null)
+                {
+                    lock (_cacheLock)
+                        _cache[t] = (o, f) => MakeStructure(o, Enumerable.Empty<PropertyInfo>(), new Dictionary<PropertyInfo, bool>(), fields, f, t);
                 }
                 else
                 {
@@ -86,7 +96,7 @@ namespace Serilog.Extras.Attributed
             return TryDestructure(value, propertyValueFactory, out result);
         }
 
-        static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyInfo> loggedProperties, Dictionary<PropertyInfo, bool> scalars, ILogEventPropertyValueFactory propertyValueFactory, Type type)
+        static LogEventPropertyValue MakeStructure(object value, IEnumerable<PropertyInfo> loggedProperties, Dictionary<PropertyInfo, bool> scalars, IEnumerable<FieldInfo> loggedFields, ILogEventPropertyValueFactory propertyValueFactory, Type type)
         {
             var structureProperties = new List<LogEventProperty>();
             foreach (var pi in loggedProperties)
@@ -120,6 +130,25 @@ namespace Serilog.Extras.Attributed
 
                 structureProperties.Add(new LogEventProperty(pi.Name, pv));
             }
+
+            foreach (var fi in loggedFields)
+            {
+                object fieldValue;
+                try
+                {
+                    fieldValue = fi.GetValue(value);
+                }
+                catch (TargetInvocationException ex)
+                {
+                    SelfLog.WriteLine("The field accessor {0} threw exception {1}", fi, ex);
+                    fieldValue = "The field accessor threw an exception: " + ex.InnerException.GetType().Name;
+                }
+
+                var pv = fieldValue == null ? new ScalarValue(null) : propertyValueFactory.CreatePropertyValue(fieldValue, true);
+
+                structureProperties.Add(new LogEventProperty(fi.Name, pv));
+            }
+
             return new StructureValue(structureProperties, type.Name);
         }
 
