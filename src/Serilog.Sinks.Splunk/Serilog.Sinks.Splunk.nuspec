@@ -24,9 +24,9 @@
     <file src="bin\Release\Serilog.Sinks.Splunk.dll" target="lib\portable-net45+win8+wp8" />
     <file src="bin\Release\Serilog.Sinks.Splunk.xml" target="lib\portable-net45+win8+wp8" />
     <file src="bin\Release\Serilog.Sinks.Splunk.pdb" target="lib\portable-net45+win8+wp8" />
-    <file src="bin\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net45" />
+    <file src="..\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.dll" target="lib\net45" />
+    <file src="..\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.xml" target="lib\net45" />
+    <file src="..\Serilog.Sinks.Splunk.FullNetFx\bin\Release\Serilog.Sinks.Splunk.FullNetFx.pdb" target="lib\net45" />
   </files>
 </package>
 
