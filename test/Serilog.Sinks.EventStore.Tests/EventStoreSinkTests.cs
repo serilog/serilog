@@ -60,10 +60,10 @@ namespace Serilog.Sinks.EventStore.Tests
         }
 
         /// <summary>
-        /// Test that a <see cref="LogEntryEmittedEvent"/> is readable after is has been written.
+        /// Test that a single <see cref="LogEntryEmittedEvent"/> is readable after it has been written.
         /// </summary>
         [Test]
-        public void WhenAnEventIsWrittenToTheSinkItIsRetrievableFromTheEventStore()
+        public void WhenASingleEventIsWrittenToTheSinkItIsRetrievableFromTheEventStore()
         {
             var timestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 666, TimeSpan.FromHours(10));
             var exception = new ArgumentException("Mládek");
@@ -81,11 +81,13 @@ namespace Serilog.Sinks.EventStore.Tests
             using (EventStoreRunner runner = new EventStoreRunner())
             {
                 using (connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113)))
-                using (EventStoreSink sink = new EventStoreSink(connection, "Logs", EventStoreSink.DefaultBatchPostingLimit, EventStoreSink.DefaultPeriod))
                 {
-                    sink.Emit(logEvent);
+                    connection.ConnectAsync();
+                    using (EventStoreSink sink = new EventStoreSink(connection, "Logs", EventStoreSink.DefaultBatchPostingLimit, EventStoreSink.DefaultPeriod))
+                    {
+                        sink.Emit(logEvent);
+                    }
                 }
-
                 using (connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113)))
                 {
                     connection.ConnectAsync();
@@ -94,7 +96,6 @@ namespace Serilog.Sinks.EventStore.Tests
             }
             Assert.AreEqual(EventReadStatus.Success, result.Status);
                     string data = Encoding.UTF8.GetString(result.Event.Value.OriginalEvent.Data);
-                    //LogEntryEmittedEvent ev = JsonConvert.DeserializeObject(data) as LogEntryEmittedEvent;
             LogEntryEmittedEvent ev = JsonConvert.DeserializeObject<LogEntryEmittedEvent>(data);
                     Assert.AreEqual(messageTemplate, ev.MessageTemplate);
                     Assert.AreEqual("\"New Macabre\"++", ev.RenderedMessage);
@@ -104,5 +105,73 @@ namespace Serilog.Sinks.EventStore.Tests
                     Assert.AreEqual("New Macabre", ev.Properties["Song"]);
                     Assert.AreEqual(exception.Message, ev.Exception.Message);
                 }
+        
+        /// <summary>
+        /// Test that multiple <see cref="LogEntryEmittedEvent"/> is readable after it has been written.
+        /// </summary>
+        [Test]
+        public void WhenMultipleEventsAreWrittenToTheSinkTheyAreRetrievableFromTheEventStore()
+        {
+            var earlierTimestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 400, TimeSpan.FromHours(10));
+            var exception = new ArgumentException("Mládek");
+            const LogEventLevel level = LogEventLevel.Information;
+            const string messageTemplate = "{Song}++";
+            var properties = new List<LogEventProperty>
+                                 {
+                                     new LogEventProperty("Song", new ScalarValue("New Macabre"))
+                                 };
+            var template = new MessageTemplateParser().Parse(messageTemplate);
+            var earlierLogEvent = new Events.LogEvent(earlierTimestamp, level, exception, template, properties);
+                    //second event.
+            var laterTimestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 600, TimeSpan.FromHours(10));
+            var laterLogEvent = new Events.LogEvent(laterTimestamp, level, exception, template, properties);
+            
+            var readEvents =new List<LogEntryEmittedEvent>(2);
+            var actualLogEvents = new List<LogEntryEmittedEvent>()                         
+            {
+                                      new LogEntryEmittedEvent(earlierLogEvent, earlierLogEvent.RenderMessage(null)),
+                                      new LogEntryEmittedEvent(laterLogEvent, laterLogEvent.RenderMessage(null))
+                                      };
+            IEventStoreConnection connection = null;
+            using (EventStoreRunner runner = new EventStoreRunner())
+            {
+                using (connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113)))
+                using (EventStoreSink sink = new EventStoreSink(connection, "Logs", EventStoreSink.DefaultBatchPostingLimit, EventStoreSink.DefaultPeriod))
+                {
+                    sink.Emit(earlierLogEvent);
+                }
+
+                //write a second event, in a different connection. This tests whether the reading/writing of the last event number in the stream metadata works.
+                using (connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113)))
+                using (EventStoreSink sink = new EventStoreSink(connection, "Logs", EventStoreSink.DefaultBatchPostingLimit, EventStoreSink.DefaultPeriod))
+                {
+                    sink.Emit(laterLogEvent);
+                }
+            }
+            //Now, try and read both events using a catchup subscription.
+            using (EventStoreRunner runner = new EventStoreRunner())    
+            using (connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113)))
+                {
+                    connection.ConnectAsync();
+                    EventStoreCatchUpSubscription sub =connection.SubscribeToStreamFrom("Logs", StreamCheckpoint.StreamStart, true, EventArrived, GoingLive, ConnectionDropped);
+                    
+            }
+            Assert.That(readEvents, Is.EqualTo(actualLogEvents));
+        }
+
+        private void ConnectionDropped(EventStoreCatchUpSubscription arg1, SubscriptionDropReason arg2, Exception arg3)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GoingLive(EventStoreCatchUpSubscription obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void EventArrived(EventStoreCatchUpSubscription arg1, ResolvedEvent arg2)
+        {
+            throw new NotImplementedException();
+        }
             }
         }

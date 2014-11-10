@@ -78,7 +78,6 @@ namespace Serilog.Sinks.EventStore
             }
             _streamName = streamName;
             _formatProvider = formatProvider;
-            _eventStoreConnection.ConnectAsync();
         }
 
         protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
@@ -90,7 +89,13 @@ namespace Serilog.Sinks.EventStore
             };
             var leq = from e in events select new LogEntryEmittedEvent(e, e.RenderMessage(_formatProvider));
             var eventsToSave = leq.Select(e => ToEventData(Guid.NewGuid(), e, commitHeaders));
-            await _eventStoreConnection.AppendToStreamAsync(_streamName, ExpectedVersion.Any, eventsToSave);
+            int version =ExpectedVersion.Any;
+            StreamMetadataResult metadata = await _eventStoreConnection.GetStreamMetadataAsync("Logs");
+            if (metadata.MetastreamVersion != ExpectedVersion.NoStream)
+            {
+                version = metadata.StreamMetadata.GetValue<int>("LastEventWritten");
+            }
+                await _eventStoreConnection.AppendToStreamAsync(_streamName, version, eventsToSave);
         }
 
         private static EventData ToEventData(Guid eventId, LogEntryEmittedEvent evnt, Dictionary<string, object> commitHeaders)

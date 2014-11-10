@@ -26,10 +26,14 @@ namespace Serilog.Sinks.EventStore.Tests
     internal class EventStoreRunner: IDisposable
     {
         bool _disposed;
-
+bool _purgedata;
+private string _additionalcommandlinearguments;
         Process _eventstoreprocess;
-        public EventStoreRunner()
+        public EventStoreRunner(bool PurgeData =false, string additionalCommandlineArguments=null)
         {
+_purgedata =PurgeData;
+            _additionalcommandlinearguments = additionalCommandlineArguments;
+            string test = FindEventStorePath();
             var thread = new Thread(StartEventStore)
                              {
                                  IsBackground = true
@@ -39,31 +43,38 @@ namespace Serilog.Sinks.EventStore.Tests
 
         private void StartEventStore()
         {
-            var eventStoreFolder = Assembly.GetExecutingAssembly().GetExecutingFolder();
-            int testStart = eventStoreFolder.IndexOf("test", StringComparison.OrdinalIgnoreCase);
-            if (testStart == -1)
+            var eventStorePath = FindEventStorePath();
+            if (eventStorePath == null)
             {
-                throw new InvalidOperationException("The executing folder does not conform to the expected format.");
+                throw new FileNotFoundException("The EventStore binaries are not in the project directory structure.");
             }
-            eventStoreFolder =eventStoreFolder.Remove(testStart);
-            eventStoreFolder = Path.Combine(eventStoreFolder, "EventStore Binaries", "EventStore.ClusterNode.exe");
-            var startInfo = new ProcessStartInfo
-                                {
-                                    WindowStyle = ProcessWindowStyle.Normal,
-                                    ErrorDialog = true,
-                                    LoadUserProfile = true,
-                                    CreateNoWindow = false,
-                                    UseShellExecute = false,
-                                FileName =eventStoreFolder 
-                                };
-
-            _eventstoreprocess = new Process
-                                     {
-                                         StartInfo = startInfo
-                                     };
-            
-            _eventstoreprocess.Start();
+            var cmdline = "--db=data";
+            _eventstoreprocess = Process.Start(eventStorePath, cmdline);
             _eventstoreprocess.WaitForExit();
+        }
+
+        private static string FindEventStorePath()
+        {
+            string eventStoreBinariesFolderAndExe = Path.Combine("EventStore Binaries", "EventStore.ClusterNode.exe");
+            string assemblyPath = Assembly.GetExecutingAssembly().GetExecutingFolder();
+            string finalEventStorePath =Path.Combine(assemblyPath, eventStoreBinariesFolderAndExe);
+            bool eventStoreExeFound = default(bool);
+            int backslashIndex = -1;
+            do
+            {
+                if (!File.Exists(finalEventStorePath))
+                {
+                    backslashIndex =assemblyPath.LastIndexOf('\\');
+                    assemblyPath = assemblyPath.Remove(backslashIndex);
+                    finalEventStorePath = Path.Combine(assemblyPath, eventStoreBinariesFolderAndExe);
+                }
+                else
+                {
+                    eventStoreExeFound = true;
+                }
+            }
+            while (!eventStoreExeFound);
+            return finalEventStorePath;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -74,6 +85,11 @@ namespace Serilog.Sinks.EventStore.Tests
                 {
                     _eventstoreprocess.Kill();
                     _eventstoreprocess.Dispose();
+if (_purgedata)
+{
+    Directory.Delete(Assembly.GetExecutingAssembly().GetExecutingFolder() + "data", true);
+    Directory.Delete(Assembly.GetExecutingAssembly().GetExecutingFolder() + "data-logs", true);
+}
                     _disposed = true;
                 }
             }
