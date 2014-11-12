@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.SignalR</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Steve Rasch</authors>
     <description>Serilog event sink that writes to a SignalR-Hub.</description>
     <language>en-US</language>
@@ -11,7 +11,7 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging signalr</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
       <dependency id="Microsoft.AspNet.SignalR.Core" version="2.0.0" />
     </dependencies>
   </metadata>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
       <id>Serilog.Sinks.Glimpse</id>
-      <version>0.1.0</version>
+      <version>$version$</version>
       <authors>Robert Wagner, Serilog Contributors</authors>
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
@@ -11,7 +11,7 @@
       <description>Serilog event sink that writes to a Glimpse tab.</description>
       <tags>serilog logging glimpse</tags>
       <dependencies>
-        <dependency id="Serilog" />
+        <dependency id="Serilog" version="$version$" />
         <dependency id="Glimpse" version="1.8.0" />
       </dependencies>
     </metadata>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.XSockets</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Team XSockets.NET</authors>
     <description>Serilog event sink that dispatches logs to clients based on LogEventLevel.</description>
     <language>en-US</language>
@@ -11,8 +11,8 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging xsockets realtime</tags>
     <dependencies>      
-      <dependency id="XSockets" />
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
+      <dependency id="XSockets" version="4.0.0" />
     </dependencies>
   </metadata>
   <files>
