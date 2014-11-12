@@ -53,6 +53,9 @@
     <Compile Include="Extras\AppSettings\PrefixedAppSettingsReader.cs" />
     <Compile Include="LoggerConfigurationAppSettingsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

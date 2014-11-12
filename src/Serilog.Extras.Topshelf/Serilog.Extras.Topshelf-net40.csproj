@@ -56,6 +56,9 @@
     <Compile Include="Extras\Topshelf\SerilogWriter.cs" />
     <Compile Include="Extras\Topshelf\SerilogWriterFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
