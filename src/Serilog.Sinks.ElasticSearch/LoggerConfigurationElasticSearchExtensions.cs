@@ -36,6 +36,7 @@ namespace Serilog
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
+        /// <param name="type">The type the log event will be indexed as in elasticsearch</param>
         /// <param name="node">The URI to the node where ElasticSearch is running. When null, will fall back to http://localhost:9200</param>
         /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds. Default value is 5000.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
@@ -50,6 +51,7 @@ namespace Serilog
         public static LoggerConfiguration ElasticSearch(
             this LoggerSinkConfiguration loggerConfiguration,
             string indexFormat = ElasticSearchSink.DefaultIndexFormat,
+            string type = ElasticSearchSink.DefaultType,
             Uri node = null,
             int connectionTimeOutInMilliseconds = ElasticSearchSink.DefaultConnectionTimeout,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
@@ -66,6 +68,7 @@ namespace Serilog
 				loggerConfiguration,
 				connectionConfiguration, 
 				indexFormat,
+                type,
 				restrictedToMinimumLevel, 
 				batchPostingLimit, 
 				period, 
@@ -73,29 +76,31 @@ namespace Serilog
 			);
         }
 
-		/// <summary>
-		/// Adds a sink that writes log events as documents to an ElasticSearch index.
-		/// This works great with the Kibana web interface when using the default settings.
-		/// Make sure to add a template to ElasticSearch like the one found here:
-		/// https://gist.github.com/mivano/9688328
-		/// </summary>
-		/// <param name="loggerConfiguration">The logger configuration.</param>
-		/// <param name="nodes">The node URIs of the Elasticsearch cluster.</param>
-		/// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
-		/// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds. Default value is 5000.</param>
-		/// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
-		/// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-		/// <param name="period">The time to wait between checking for event batches.</param>
-		/// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-		/// <returns>
-		/// Logger configuration, allowing configuration to continue.
-		/// </returns>
-		/// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
-		/// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-		public static LoggerConfiguration ElasticSearch(
+        /// <summary>
+        /// Adds a sink that writes log events as documents to an ElasticSearch index.
+        /// This works great with the Kibana web interface when using the default settings.
+        /// Make sure to add a template to ElasticSearch like the one found here:
+        /// https://gist.github.com/mivano/9688328
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="nodes">The node URIs of the Elasticsearch cluster.</param>
+        /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
+        /// <param name="type">The type the log event will be indexed as in elasticsearch</param>
+        /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds. Default value is 5000.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns>
+        /// Logger configuration, allowing configuration to continue.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration ElasticSearch(
 			this LoggerSinkConfiguration loggerConfiguration,
 			IEnumerable<Uri> nodes,
 			string indexFormat = ElasticSearchSink.DefaultIndexFormat,
+            string type = ElasticSearchSink.DefaultType,
 			int connectionTimeOutInMilliseconds = ElasticSearchSink.DefaultConnectionTimeout,
 			LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
 			int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
@@ -111,6 +116,7 @@ namespace Serilog
 				loggerConfiguration,
 				connectionConfiguration,
 				indexFormat,
+                type,
 				restrictedToMinimumLevel,
 				batchPostingLimit,
 				period,
@@ -118,28 +124,30 @@ namespace Serilog
 			);
 		}
 
-		/// <summary>
-		/// Adds a sink that writes log events as documents to an ElasticSearch index.
-		/// This works great with the Kibana web interface when using the default settings.
-		/// Make sure to add a template to ElasticSearch like the one found here:
-		/// https://gist.github.com/mivano/9688328
-		/// </summary>
-		/// <param name="loggerConfiguration">The logger configuration.</param>
-		/// <param name="connectionConfiguration">The configuration to use for connecting to the Elasticsearch cluster.</param>
-		/// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
-		/// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
-		/// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-		/// <param name="period">The time to wait between checking for event batches.</param>
-		/// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-		/// <returns>
-		/// Logger configuration, allowing configuration to continue.
-		/// </returns>
-		/// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
-		/// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-		public static LoggerConfiguration ElasticSearch(
+        /// <summary>
+        /// Adds a sink that writes log events as documents to an ElasticSearch index.
+        /// This works great with the Kibana web interface when using the default settings.
+        /// Make sure to add a template to ElasticSearch like the one found here:
+        /// https://gist.github.com/mivano/9688328
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="connectionConfiguration">The configuration to use for connecting to the Elasticsearch cluster.</param>
+        /// <param name="indexFormat">The index format where the events are send to. It defaults to the logstash index per day format. It uses a String.Format using the DateTime.UtcNow parameter.</param>
+        /// <param name="type">The type the log event will be indexed as in elasticsearch</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns>
+        /// Logger configuration, allowing configuration to continue.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration ElasticSearch(
 			this LoggerSinkConfiguration loggerConfiguration,
 			ConnectionConfiguration connectionConfiguration,
 			string indexFormat = ElasticSearchSink.DefaultIndexFormat,
+			string type = ElasticSearchSink.DefaultIndexFormat,
 			LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
 			int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
 			TimeSpan? period = null,
@@ -150,8 +158,9 @@ namespace Serilog
 
 			var defaultedPeriod = period ?? ElasticSearchSink.DefaultPeriod;
 			var defaultedIndexFormat = indexFormat ?? ElasticSearchSink.DefaultIndexFormat;
+            var defaultType = type ?? ElasticSearchSink.DefaultType;
 			var elasticsearchSink = new ElasticSearchSink(
-				connectionConfiguration, defaultedIndexFormat, batchPostingLimit, defaultedPeriod, formatProvider);
+				connectionConfiguration, defaultedIndexFormat, defaultType, batchPostingLimit, defaultedPeriod, formatProvider);
 
 			return loggerConfiguration.Sink(elasticsearchSink, restrictedToMinimumLevel);
 		}
