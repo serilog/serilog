@@ -51,6 +51,7 @@
     <Compile Include="AssemblyExtensionsTests.cs" />
     <Compile Include="EventStoreRunner.cs" />
     <Compile Include="EventStoreSinkTests.cs" />
+    <Compile Include="LogEntryEmittedEventTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

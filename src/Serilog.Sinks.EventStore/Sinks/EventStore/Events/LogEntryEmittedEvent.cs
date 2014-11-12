@@ -15,6 +15,7 @@
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Serilog.Sinks.EventStore
 {
@@ -35,6 +36,19 @@ namespace Serilog.Sinks.EventStore
         /// </summary>
         public LogEntryEmittedEvent(LogEvent logEvent, string renderedMessage)
         {
+            if (logEvent == null)
+            {
+                throw new ArgumentNullException("The logEvent must not be null.");
+            }
+            if (renderedMessage == null)
+            {
+                throw new ArgumentNullException("The renderedMessage cannot be null.");
+            }
+            else if (!renderedMessage.Any())
+            {
+                throw new ArgumentException("The renderedMessage cannot be an empty string.");
+            }
+                
             Timestamp = logEvent.Timestamp;
             Exception = logEvent.Exception;
             MessageTemplate = logEvent.MessageTemplate.Text;

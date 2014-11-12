@@ -48,9 +48,36 @@ _purgedata =PurgeData;
             {
                 throw new FileNotFoundException("The EventStore binaries are not in the project directory structure.");
             }
+ var startInfo = new ProcessStartInfo
+        {
+            FileName = eventStorePath,
+            WindowStyle = ProcessWindowStyle.Normal,
+            ErrorDialog = true,
+            LoadUserProfile = true,
+            CreateNoWindow = false,
+            UseShellExecute = false
+        };
+
             var cmdline = "--db=data";
-            _eventstoreprocess = Process.Start(eventStorePath, cmdline);
-            _eventstoreprocess.WaitForExit();
+if (String.IsNullOrEmpty(_additionalcommandlinearguments))
+{
+    cmdline = cmdline + ' ' + _additionalcommandlinearguments;
+}
+
+            startInfo.Arguments = cmdline;
+
+                try
+    {
+        _eventstoreprocess= new Process { StartInfo = startInfo };
+ 
+        _eventstoreprocess.Start();
+        _eventstoreprocess.WaitForExit();
+    }
+    catch
+    {
+_eventstoreprocess.CloseMainWindow();
+        _eventstoreprocess.Dispose();
+    }
         }
 
         private static string FindEventStorePath()
