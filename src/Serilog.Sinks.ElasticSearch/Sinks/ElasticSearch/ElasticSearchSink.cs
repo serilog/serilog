@@ -19,7 +19,7 @@ using Elasticsearch.Net;
 using Elasticsearch.Net.Connection;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
-using System.Text;
+using Elasticsearch.Net.JsonNet;
 
 namespace Serilog.Sinks.ElasticSearch
 {
@@ -65,7 +65,7 @@ namespace Serilog.Sinks.ElasticSearch
         {
 			_indexFormat = indexFormat;
             _formatProvider = formatProvider;
-			_client = new ElasticsearchClient(connectionConfiguration);
+			_client = new ElasticsearchClient(connectionConfiguration, serializer: new ElasticsearchJsonNetSerializer());
         }
 
         /// <summary>
