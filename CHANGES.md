@@ -1,4 +1,7 @@
 1.4.15
+ * #259 - Update _loggly-sharp_ dependency (breaking change for _Serilog.Sinks.Loggly_, see PR for instructions)
+ * #257 - Added _Serilog.Sinks.XSockets_
+ * #246 - Changed target from _Profile78_ to (compatible but broader) _Profile259_
  * #250 - Allow an existing `MongoDatabase` instance to be used when configuring Mongo sink
 
 1.4.14

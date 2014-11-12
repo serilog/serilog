@@ -15,7 +15,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.CouchDB\bin\Release\Serilog.Sinks.CouchDB.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.CouchDB\bin\Release\Serilog.Sinks.CouchDB.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.CouchDB.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.CouchDB.xml" target="lib\net45" />
   </files>
 </package>

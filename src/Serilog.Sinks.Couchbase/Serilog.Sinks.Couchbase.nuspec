@@ -16,7 +16,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.Couchbase\bin\Release\Serilog.Sinks.Couchbase.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Couchbase\bin\Release\Serilog.Sinks.Couchbase.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Couchbase.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Couchbase.xml" target="lib\net45" />
   </files>
 </package>

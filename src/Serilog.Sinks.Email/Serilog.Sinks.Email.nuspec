@@ -15,7 +15,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.Email\bin\Release\Serilog.Sinks.Email.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Email\bin\Release\Serilog.Sinks.Email.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Email.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Email.xml" target="lib\net45" />
   </files>
 </package>

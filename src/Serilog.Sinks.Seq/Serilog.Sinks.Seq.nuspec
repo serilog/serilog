@@ -10,22 +10,16 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <dependencies>
-      <group targetFramework="net40">
-        <dependency id="Serilog" />
-        <dependency id="Microsoft.Net.Http" />
-      </group>
-      <group targetFramework="net45">
-        <dependency id="Serilog" />
-      </group>
+      <dependency id="Serilog" />
     </dependencies>
     <tags>serilog seq structured logging</tags>
   </metadata>
   <files>
-    <file src="src\Serilog.Sinks.Seq\bin\Release\Serilog.Sinks.Seq.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Seq\bin\Release\Serilog.Sinks.Seq.xml" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Seq\bin\Release\Serilog.Sinks.Seq.pdb" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Seq\bin40\Release\Serilog.Sinks.Seq.dll" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Seq\bin40\Release\Serilog.Sinks.Seq.xml" target="lib\net40" />
-    <file src="src\Serilog.Sinks.Seq\bin40\Release\Serilog.Sinks.Seq.pdb" target="lib\net40" />
+    <file src="bin\Release\Serilog.Sinks.Seq.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Seq.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Sinks.Seq.pdb" target="lib\net45" />
+    <file src="bin40\Release\Serilog.Sinks.Seq.dll" target="lib\net40" />
+    <file src="bin40\Release\Serilog.Sinks.Seq.xml" target="lib\net40" />
+    <file src="bin40\Release\Serilog.Sinks.Seq.pdb" target="lib\net40" />
   </files>
 </package>

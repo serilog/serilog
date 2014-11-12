@@ -15,7 +15,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Extras.AppSettings\bin\Release\Serilog.Extras.AppSettings.dll" target="lib\net45" />
-    <file src="src\Serilog.Extras.AppSettings\bin\Release\Serilog.Extras.AppSettings.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.Extras.AppSettings.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.Extras.AppSettings.xml" target="lib\net45" />
   </files>
 </package>
