@@ -114,8 +114,9 @@ _eventstoreprocess.CloseMainWindow();
                     _eventstoreprocess.Dispose();
 if (_purgedata)
 {
-    Directory.Delete(Assembly.GetExecutingAssembly().GetExecutingFolder() + "data", true);
-    Directory.Delete(Assembly.GetExecutingAssembly().GetExecutingFolder() + "data-logs", true);
+    Thread.Sleep(TimeSpan.FromSeconds(30));
+    Directory.Delete(Path.Combine(Assembly.GetExecutingAssembly().GetExecutingFolder(), "data"), true);
+    Directory.Delete(Path.Combine(Assembly.GetExecutingAssembly().GetExecutingFolder(), "data-logs"), true);
 }
                     _disposed = true;
                 }

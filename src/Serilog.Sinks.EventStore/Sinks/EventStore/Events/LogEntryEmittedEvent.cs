@@ -24,11 +24,11 @@ namespace Serilog.Sinks.EventStore
     /// </summary>
     public class LogEntryEmittedEvent
     {
-            /// <summary>
+        /// <summary>
         /// Construct a new <see cref="LogEvent"/>.
         /// </summary>
         public LogEntryEmittedEvent()
-        {    
+        {
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Serilog.Sinks.EventStore
             {
                 throw new ArgumentException("The renderedMessage cannot be an empty string.");
             }
-                
+
             Timestamp = logEvent.Timestamp;
             Exception = logEvent.Exception;
             MessageTemplate = logEvent.MessageTemplate.Text;

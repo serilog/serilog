@@ -78,7 +78,8 @@ namespace Serilog.Sinks.EventStore.Tests
                                  };
             var template = new MessageTemplateParser().Parse(messageTemplate);
             var logEvent = new Events.LogEvent(timestamp, level, exception, template, properties);
-
+            var originalEvent =new LogEntryEmittedEvent(logEvent, logEvent.RenderMessage(null));
+            
             EventReadResult result = null;
             IEventStoreConnection connection = null;
             using (EventStoreRunner runner = new EventStoreRunner(true))
@@ -100,13 +101,14 @@ namespace Serilog.Sinks.EventStore.Tests
             Assert.AreEqual(EventReadStatus.Success, result.Status);
             string data = Encoding.UTF8.GetString(result.Event.Value.OriginalEvent.Data);
             LogEntryEmittedEvent ev = JsonConvert.DeserializeObject<LogEntryEmittedEvent>(data);
-            Assert.AreEqual(messageTemplate, ev.MessageTemplate);
-            Assert.AreEqual("\"New Macabre\"++", ev.RenderedMessage);
-            Assert.AreEqual(timestamp, ev.Timestamp);
-            Assert.AreEqual(level, ev.Level);
-            Assert.AreEqual(1, ev.Properties.Count);
-            Assert.AreEqual("New Macabre", ev.Properties["Song"]);
-            Assert.AreEqual(exception.Message, ev.Exception.Message);
+            Assert.That(originalEvent, Is.EqualTo(ev).Using(new LogEntryEmittedEventEqualityComparer()));
+            //Assert.AreEqual(messageTemplate, ev.MessageTemplate);
+            //Assert.AreEqual("\"New Macabre\"++", ev.RenderedMessage);
+            //Assert.AreEqual(timestamp, ev.Timestamp);
+            //Assert.AreEqual(level, ev.Level);
+            //Assert.AreEqual(1, ev.Properties.Count);
+            //Assert.AreEqual("New Macabre", ev.Properties["Song"]);
+            //Assert.AreEqual(exception.Message, ev.Exception.Message);
         }
 
         /// <summary>
@@ -172,7 +174,7 @@ namespace Serilog.Sinks.EventStore.Tests
                 Thread.Sleep(TimeSpan.FromSeconds(30));
             }
             Assert.That(readEvents.Count, Is.EqualTo(2));
-            //Assert.That(readEvents, Has.All(actualLogEvents));
+            Assert.That(readEvents, Is.EquivalentTo(actualLogEvents).Using(new LogEntryEmittedEventEqualityComparer()));
         }
     }
 }
