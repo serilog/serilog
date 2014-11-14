@@ -1,10 +1,4 @@
-﻿using System;
-using Raven.Client;
-using Serilog.Configuration;
-using Serilog.Events;
-using Serilog.Sinks.RavenDB;
-
-// Copyright 2014 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,38 +12,34 @@ using Serilog.Sinks.RavenDB;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using EventStore.ClientAPI;
+using Serilog.Configuration;
+using Serilog.Events;
+using Serilog.Sinks.EventStore;
+using System;
+
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.RavenDB() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.EventStore() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
     public static class LoggerConfigurationEventStoreExtensions
     {
-        /// <summary>
-        /// Adds a sink that writes log events as documents to an EventStore.
-        /// </summary>
-        /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="documentStore">A documentstore for a RavenDB database.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
-        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-        /// <param name="period">The time to wait between checking for event batches.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
-        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration EventStore(
             this LoggerSinkConfiguration loggerConfiguration,
-            IDocumentStore documentStore,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            int batchPostingLimit = RavenDBSink.DefaultBatchPostingLimit,
+            IEventStoreConnection connection,
+string streamName,
+LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            int batchPostingLimit = EventStoreSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (documentStore == null) throw new ArgumentNullException("documentStore");
+            if (connection== null) throw new ArgumentNullException("connection");
 
-            var defaultedPeriod = period ?? RavenDBSink.DefaultPeriod;
+            var defaultedPeriod = period ?? EventStoreSink.DefaultPeriod;
             return loggerConfiguration.Sink(
-                new RavenDBSink(documentStore, batchPostingLimit, defaultedPeriod, formatProvider),
+                new EventStoreSink(connection, streamName, batchPostingLimit, defaultedPeriod, formatProvider),
                 restrictedToMinimumLevel);
         }
     }

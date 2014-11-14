@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-using System.Reflection;
-
-namespace Serilog
+namespace Serilog.Sinks.EventStore.Tests
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
+
     /// <summary>
     /// Class containing methids extending the <see cref="Assembly"/> class.
     /// </summary>

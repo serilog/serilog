@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="LoggerConfigurationEventStoreExtensions.cs" />
     <Compile Include="Sinks\EventStore\Events\LogEntryEmittedEvent.cs" />
     <Compile Include="Sinks\EventStore\EventStoreSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Serilog.Sinks.EventStore.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog.FullNetFx\Serilog.FullNetFx.csproj">

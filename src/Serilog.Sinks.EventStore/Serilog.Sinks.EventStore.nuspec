@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-      <id>Serilog.Sinks.Glimpse</id>
+      <id>Serilog.Sinks.EventStore</id>
       <version>0.1.0</version>
       <title />
-      <authors>Robert Wagner, Serilog Contributors</authors>
+      <authors>Sean Farrow, Serilog Contributors</authors>
       <owners />
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
       <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
-      <description>Serilog event sink that writes to a Glimpse tab.</description>
-      <tags>serilog logging glimpse</tags>
+      <description>Serilog event sink that writes to an EventStore.</description>
+      <tags>serilog logging EventStore</tags>
       <dependencies>
-            <dependency id="Glimpse" />
+            <dependency id="EventStore.Client" />
             <dependency id="Serilog" />
         </dependencies>
     </metadata>
     <files>
-      <file src="src\Serilog.Sinks.Glimpse\bin\Release\Serilog.Sinks.Glimpse.dll" target="lib\net45" />
-      <file src="src\Serilog.Sinks.Glimpse\bin\Release\Serilog.Sinks.Glimpse.xml" target="lib\net45" />
+      <file src="src\Serilog.Sinks.EventStore\bin\Release\Serilog.Sinks.EventStore.dll" target="lib\net45" />
+      <file src="src\Serilog.Sinks.EventStore\bin\Release\Serilog.Sinks.EventStore.xml" target="lib\net45" />
     </files>
 </package>

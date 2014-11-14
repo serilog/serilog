@@ -52,6 +52,7 @@ namespace Serilog.Sinks.EventStore
         {
             SerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
         }
+
         /// <summary>
         /// Construct a sink posting to the specified stream.
         /// </summary>
