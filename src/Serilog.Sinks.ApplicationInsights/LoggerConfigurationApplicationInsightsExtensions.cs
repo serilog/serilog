@@ -28,7 +28,7 @@ namespace Serilog
         /// Adds a sink that writes log events against Microsoft Application Insights for the provided component id.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="applicationInsightsComponentId">The ID that determines the application component under which your data appears in Application Insights.</param>
+        /// <param name="applicationInsightsInstrumentationKey">The Instrumentation Key provided by Application Insights.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>
@@ -38,17 +38,17 @@ namespace Serilog
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration ApplicationInsights(
             this LoggerSinkConfiguration loggerConfiguration,
-            string applicationInsightsComponentId,
+            string applicationInsightsInstrumentationKey,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
-            if (applicationInsightsComponentId == null) throw new ArgumentNullException("applicationInsightsComponentId");
-            if (string.IsNullOrWhiteSpace(applicationInsightsComponentId)) throw new ArgumentOutOfRangeException("applicationInsightsComponentId", "Cannot be empty.");
+            if (applicationInsightsInstrumentationKey == null) throw new ArgumentNullException("applicationInsightsInstrumentationKey");
+            if (string.IsNullOrWhiteSpace(applicationInsightsInstrumentationKey)) throw new ArgumentOutOfRangeException("applicationInsightsInstrumentationKey", "Cannot be empty.");
 
             return loggerConfiguration.Sink(
-                new ApplicationInsightsSink(applicationInsightsComponentId, formatProvider),
+                new ApplicationInsightsSink(applicationInsightsInstrumentationKey, formatProvider),
                 restrictedToMinimumLevel);
         }
     }
