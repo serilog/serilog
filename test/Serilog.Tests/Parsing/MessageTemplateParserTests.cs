@@ -158,5 +158,12 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("{@}",
                 new TextToken("{@}"));
         }
+
+        [Test]
+        public void UnderscoresAreValidInPropertyNames()
+        {
+            AssertParsedAs("{_123_Hello}", new PropertyToken("_123_Hello", "{_123_Hello}")); 
+        }
+
     }
 }

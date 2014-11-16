@@ -100,7 +100,7 @@ namespace Serilog.Parsing
             if (TryGetDestructuringHint(propertyName[0], out destructuring))
                 propertyName = propertyName.Substring(1);
 
-            if (propertyName == "" || !char.IsLetterOrDigit(propertyName[0]))
+            if (propertyName == "" || !IsValidInPropertyName(propertyName[0]))
                 return new TextToken(rawText, first);
 
             for (var i = 0; i < propertyName.Length; ++i)
@@ -220,7 +220,7 @@ namespace Serilog.Parsing
 
         static bool IsValidInPropertyName(char c)
         {
-            return char.IsLetterOrDigit(c);
+            return char.IsLetterOrDigit(c) || c == '_';
         }
 
         static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
