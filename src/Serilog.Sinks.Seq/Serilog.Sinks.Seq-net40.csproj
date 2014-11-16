@@ -79,6 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="SeqLoggerConfigurationExtensions.cs" />
     <Compile Include="Sinks\Seq\DurableSeqSink.cs" />
     <Compile Include="Sinks\Seq\HttpLogShipper-net40.cs" />

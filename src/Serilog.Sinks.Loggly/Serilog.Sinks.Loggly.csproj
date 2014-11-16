@@ -60,6 +60,9 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationLogglyExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\Loggly\LogglyPropertyFormatter.cs" />
     <Compile Include="Sinks\Loggly\LogglySink.cs" />
   </ItemGroup>

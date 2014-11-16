@@ -107,6 +107,9 @@
     <Compile Include="Policies\ReflectionTypesScalarConversionPolicy.cs" />
     <Compile Include="Policies\SimpleScalarConversionPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink-net40.cs" />
   </ItemGroup>

@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="Extras\Topshelf\MessageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Extras\Topshelf\SerilogConfigurationExtensions.cs" />
     <Compile Include="Extras\Topshelf\SerilogHostLoggerConfigurator.cs" />
     <Compile Include="Extras\Topshelf\SerilogWriter.cs" />

@@ -59,6 +59,9 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationGlimpseExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\Glimpse\GlimpsePropertyFormatter.cs" />
     <Compile Include="Sinks\Glimpse\GlimpseTab.cs" />
     <Compile Include="Sinks\Glimpse\GlimpseSink.cs" />

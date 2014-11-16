@@ -115,6 +115,9 @@
     <Compile Include="Parsing\MessageTemplateParser.cs" />
     <Compile Include="Parsing\TextToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink.cs" />
   </ItemGroup>

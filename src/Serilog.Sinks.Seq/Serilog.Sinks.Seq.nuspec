@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.Seq</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Continuous IT Pty Ltd</authors>
     <description>Serilog event sink that writes to the Seq event server over HTTP/S.</description>
     <language>en-US</language>
@@ -10,7 +10,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
     </dependencies>
     <tags>serilog seq structured logging</tags>
   </metadata>

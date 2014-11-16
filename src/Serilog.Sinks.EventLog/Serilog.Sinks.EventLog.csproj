@@ -42,6 +42,9 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationEventLogExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\EventLog\EventLogSink.cs" />
   </ItemGroup>
   <ItemGroup>
