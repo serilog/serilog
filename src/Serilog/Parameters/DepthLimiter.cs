@@ -23,13 +23,13 @@ namespace Serilog.Parameters
     {
         class DepthLimiter : ILogEventPropertyValueFactory
         {
-            const int MaximumDestructuringDepth = 10;
-
+            readonly int _maximumDestructuringDepth;
             readonly int _currentDepth;
             readonly PropertyValueConverter _propertyValueConverter;
 
-            public DepthLimiter(int currentDepth, PropertyValueConverter propertyValueConverter)
+            public DepthLimiter(int currentDepth, int maximumDepth, PropertyValueConverter propertyValueConverter)
             {
+                _maximumDestructuringDepth = maximumDepth;
                 _currentDepth = currentDepth;
                 _propertyValueConverter = propertyValueConverter;
             }
@@ -48,7 +48,7 @@ namespace Serilog.Parameters
 
             LogEventPropertyValue DefaultIfMaximumDepth()
             {
-                if (_currentDepth == MaximumDestructuringDepth)
+                if (_currentDepth == _maximumDestructuringDepth)
                 {
                     SelfLog.WriteLine("Maximum destructuring depth reached.");
                     return new ScalarValue(null);

@@ -13,7 +13,7 @@ namespace Serilog.Tests.Parameters
     [TestFixture]
     public class PropertyValueConverterTests
     {
-        readonly PropertyValueConverter _converter = new PropertyValueConverter(Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
+        readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
 
         [Test]
         public void UnderDestructuringAByteArrayIsAScalarValue()

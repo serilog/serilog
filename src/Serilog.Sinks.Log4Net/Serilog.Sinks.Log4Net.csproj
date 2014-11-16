@@ -56,6 +56,9 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationLog4NetExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\Log4Net\Log4NetSink.cs" />
   </ItemGroup>
   <ItemGroup>

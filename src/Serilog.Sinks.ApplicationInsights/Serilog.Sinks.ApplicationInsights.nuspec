@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.ApplicationInsights</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Joerg Battermann</authors>
     <description>Serilog event sink that writes to Microsoft Application Insights for Visual Studio Online.</description>
     <language>en-US</language>
@@ -11,8 +11,8 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging azure</tags>
     <dependencies>
-      <dependency id="Serilog" />
-      <dependency id="Microsoft.ApplicationInsights.Tracing" />
+      <dependency id="Serilog" version="$version$" />
+      <dependency id="Microsoft.ApplicationInsights.Tracing" version="0.7.1" />
     </dependencies>
   </metadata>
   <files>

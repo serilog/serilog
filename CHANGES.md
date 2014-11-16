@@ -1,3 +1,9 @@
+1.4.16
+ * New CI server used
+ * #227 - Reduced default maximum destructuring depth and added configuration option
+ * #245 - XML content escaping fixed in MSSQL sink
+ * #272 - Allow underscores in property names
+
 1.4.15
  * #259 - Update _loggly-sharp_ dependency (breaking change for _Serilog.Sinks.Loggly_, see PR for instructions)
  * #257 - Added _Serilog.Sinks.XSockets_
