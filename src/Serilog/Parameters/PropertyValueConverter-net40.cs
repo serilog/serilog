@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors
+﻿// Copyright 2014 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,11 +43,15 @@ namespace Serilog.Parameters
 
         readonly IDestructuringPolicy[] _destructuringPolicies; 
         readonly IScalarConversionPolicy[] _scalarConversionPolicies; 
+        readonly int _maximumDestructuringDepth;
 
-        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
+        public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
             if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException("maximumDestructuringDepth");
+
+            _maximumDestructuringDepth = maximumDestructuringDepth;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -100,7 +104,7 @@ namespace Serilog.Parameters
                 return new ScalarValue(value.ToString());
 
             var valueType = value.GetType();
-            var limiter = new DepthLimiter(depth, this);
+            var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
