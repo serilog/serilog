@@ -14,6 +14,8 @@
 
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using Serilog.Events;
 
 namespace Serilog.Sinks.MSSqlServer
@@ -97,7 +99,10 @@ namespace Serilog.Sinks.MSSqlServer
         {
             if (value == null) return null;
 
-            return value.ToString();
+            const string dummyTag = "toEscape";
+            var toEscape = new XElement(dummyTag, value.ToString());
+            var asElement = toEscape.ToString();
+            return asElement.Substring(dummyTag.Length + 2, asElement.Length - (dummyTag.Length*2 + 5));
         }
     }
 }
