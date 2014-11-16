@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Elasticsearch.Net.Connection;
 using Elasticsearch.Net.ConnectionPool;
+using Elasticsearch.Net.Serialization;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.ElasticSearch;
@@ -42,6 +43,7 @@ namespace Serilog
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+		/// <param name="serializer">When passing a serializer unknown object will be serialized to object instead of relying on their ToString representation</param>
         /// <returns>
         /// Logger configuration, allowing configuration to continue.
         /// </returns>
@@ -55,7 +57,9 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+			IElasticsearchSerializer serializer = null
+			)
         {
 			if (node == null)
 				node = new Uri("http://localhost:9200");
@@ -69,7 +73,8 @@ namespace Serilog
 				restrictedToMinimumLevel, 
 				batchPostingLimit, 
 				period, 
-				formatProvider
+				formatProvider,
+				serializer
 			);
         }
 
@@ -87,6 +92,7 @@ namespace Serilog
 		/// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
 		/// <param name="period">The time to wait between checking for event batches.</param>
 		/// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+		/// <param name="serializer">When passing a serializer unknown object will be serialized to object instead of relying on their ToString representation</param>
 		/// <returns>
 		/// Logger configuration, allowing configuration to continue.
 		/// </returns>
@@ -100,7 +106,9 @@ namespace Serilog
 			LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
 			int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
 			TimeSpan? period = null,
-			IFormatProvider formatProvider = null)
+			IFormatProvider formatProvider = null,
+			IElasticsearchSerializer serializer = null
+			)
 		{
 			if (nodes == null)
 				nodes = new Uri[] { new Uri("http://localhost:9200") };
@@ -114,7 +122,8 @@ namespace Serilog
 				restrictedToMinimumLevel,
 				batchPostingLimit,
 				period,
-				formatProvider
+				formatProvider,
+				serializer
 			);
 		}
 
@@ -131,6 +140,7 @@ namespace Serilog
 		/// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
 		/// <param name="period">The time to wait between checking for event batches.</param>
 		/// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+		/// <param name="serializer">When passing a serializer unknown object will be serialized to object instead of relying on their ToString representation</param>
 		/// <returns>
 		/// Logger configuration, allowing configuration to continue.
 		/// </returns>
@@ -143,7 +153,9 @@ namespace Serilog
 			LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
 			int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
 			TimeSpan? period = null,
-			IFormatProvider formatProvider = null)
+			IFormatProvider formatProvider = null,
+			IElasticsearchSerializer serializer = null
+			)
 		{
 			if (loggerConfiguration == null)
 				throw new ArgumentNullException("loggerConfiguration");
@@ -151,7 +163,7 @@ namespace Serilog
 			var defaultedPeriod = period ?? ElasticSearchSink.DefaultPeriod;
 			var defaultedIndexFormat = indexFormat ?? ElasticSearchSink.DefaultIndexFormat;
 			var elasticsearchSink = new ElasticSearchSink(
-				connectionConfiguration, defaultedIndexFormat, batchPostingLimit, defaultedPeriod, formatProvider);
+				connectionConfiguration, defaultedIndexFormat, batchPostingLimit, defaultedPeriod, formatProvider, serializer: serializer);
 
 			return loggerConfiguration.Sink(elasticsearchSink, restrictedToMinimumLevel);
 		}

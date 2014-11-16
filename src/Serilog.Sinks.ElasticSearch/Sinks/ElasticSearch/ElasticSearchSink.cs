@@ -14,10 +14,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using Elasticsearch.Net;
 using Elasticsearch.Net.Connection;
+using Elasticsearch.Net.Serialization;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
 using System.Text;
 
@@ -26,12 +30,13 @@ namespace Serilog.Sinks.ElasticSearch
     /// <summary>
     /// Writes log events as documents to ElasticSearch.
     /// </summary>
-    class ElasticSearchSink : PeriodicBatchingSink
+    public class ElasticSearchSink : PeriodicBatchingSink
     {
         readonly string _indexFormat;
         readonly IFormatProvider _formatProvider;
+        readonly IElasticsearchSerializer _serializer;
         readonly ElasticsearchClient _client;
-    
+
         /// <summary>
         /// A reasonable default for the number of events posted in each batch.
         /// </summary>
@@ -42,30 +47,41 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
-		/// <summary>
-		/// Default to the Logstash index name format
-		/// </summary>
-		public const string DefaultIndexFormat = "logstash-{0:yyyy.MM.dd}";
+        /// <summary>
+        /// Default to the Logstash index name format
+        /// </summary>
+        public const string DefaultIndexFormat = "logstash-{0:yyyy.MM.dd}";
 
-		/// <summary>
-		/// Default connection timeout in milliseconds
-		/// </summary>
-		public const int DefaultConnectionTimeout = 5000;
+        /// <summary>
+        /// Default connection timeout in milliseconds
+        /// </summary>
+        public const int DefaultConnectionTimeout = 5000;
 
         /// <summary>
         /// Construct a sink posting to the specified Elasticsearch cluster.
         /// </summary>
         /// <param name="connectionConfiguration">Connection configuration to use for connecting to the cluster.</param>
-        /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
+        /// <param name="indexFormat">The index name formatter. A string.Format using the DateTimeOffset of the event is run over this string.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ElasticSearchSink(ConnectionConfiguration connectionConfiguration, string indexFormat, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
+        /// <param name="connection">Allows you to override the connection used to communicate with elasticsearch</param>
+        /// <param name="serializer">When passing a serializer unknown object will be serialized to object instead of relying on their ToString representation</param>
+        public ElasticSearchSink(
+            ConnectionConfiguration connectionConfiguration,
+            string indexFormat,
+            int batchPostingLimit,
+            TimeSpan period,
+            IFormatProvider formatProvider,
+            IConnection connection = null,
+            IElasticsearchSerializer serializer = null
+            )
             : base(batchPostingLimit, period)
         {
-			_indexFormat = indexFormat;
+            _indexFormat = indexFormat;
             _formatProvider = formatProvider;
-			_client = new ElasticsearchClient(connectionConfiguration);
+            _serializer = serializer;
+            _client = new ElasticsearchClient(connectionConfiguration, connection: connection);
         }
 
         /// <summary>
@@ -78,30 +94,30 @@ namespace Serilog.Sinks.ElasticSearch
         /// </remarks>
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
-			var logEvents = events.Select(e => new Data.LogEvent(e, e.RenderMessage(_formatProvider)));
-			
-			if (!logEvents.Any())
-				return;
+            if (!events.Any())
+                return;
 
-			var indexName = string.Format(_indexFormat, DateTime.UtcNow);
-			var payload = new List<object>();
+            var formatter = new ElasticsearchJsonFormatter(
+                omitEnclosingObject: false,
+                formatProvider: _formatProvider,
+                renderMessage: true,
+                closingDelimiter: string.Empty,
+                serializer: _serializer
+            );
+            var payload = new List<string>();
 
-			foreach (var logEvent in logEvents)
-			{
-				var document = new Dictionary<string, object>();
-				document.Add("@timestamp", logEvent.Timestamp);
-				document.Add("messageTemplate", logEvent.MessageTemplate);
-				document.Add("level", Enum.GetName(typeof(LogEventLevel), logEvent.Level));
-				if (logEvent.Exception != null)
-					document.Add("exception", logEvent.Exception);
-				document.Add("message", logEvent.RenderedMessage);
-				document.Add("fields", logEvent.Properties);
+            foreach (var e in events)
+            {
+                var indexName = string.Format(_indexFormat, e.Timestamp);
+                var action = new { index = new { _index = indexName, _type = "logevent" } };
+                var actionJson = _client.Serializer.Serialize(action);
+                payload.Add(Encoding.UTF8.GetString(actionJson));
+                var sw = new StringWriter();
+                formatter.Format(e, sw);
+                payload.Add(sw.ToString());
+            }
 
-				payload.Add(new { index = new { _index = indexName, _type = "logevent" } });
-				payload.Add(document);
-			}
-
-			_client.Bulk(payload);
-		}
+            _client.Bulk(payload);
+        }
     }
 }

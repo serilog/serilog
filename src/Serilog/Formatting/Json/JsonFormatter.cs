@@ -36,6 +36,36 @@ namespace Serilog.Formatting.Json
         readonly bool _renderMessage;
         readonly IFormatProvider _formatProvider;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
+		
+		/// <summary>
+		/// Signals to subclasses at what stage the formatter is operating
+		/// </summary>
+	    protected enum JsonFormattingStage
+	    {
+			/// <summary>
+			/// Writing out top level meta data
+			/// </summary>
+		    MetaData,
+			/// <summary>
+			/// Writing out custom properties
+			/// </summary>
+			Properties,
+			/// <summary>
+			/// Writing out custom renderings
+			/// </summary>
+			Renderings
+	    }
+
+	    private JsonFormattingStage _stage = JsonFormattingStage.MetaData;
+
+		/// <summary>
+		/// Signals to subclasses at what stage the formatter is operating
+		/// </summary>
+	    protected JsonFormattingStage Stage
+	    {
+		    get { return _stage; }
+		    private set { _stage = value; }
+	    }
 
         /// <summary>
         /// Construct a <see cref="JsonFormatter"/>. Obsolete, please use named arguments
@@ -120,13 +150,15 @@ namespace Serilog.Formatting.Json
 
             if (logEvent.Properties.Count != 0)
             {
-                output.Write(",\"Properties\":{");
+                output.Write(",\"{0}\":{{", FormatPropertyName("Properties"));
+				Stage = JsonFormattingStage.Properties;
                 var precedingDelimiter = "";
                 foreach (var property in logEvent.Properties)
                 {
                     WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
                 }
                 output.Write("}");
+				Stage = JsonFormattingStage.MetaData;
             }
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
@@ -137,7 +169,8 @@ namespace Serilog.Formatting.Json
 
             if (tokensWithFormat.Length != 0)
             {
-                output.Write(",\"Renderings\":{");
+                output.Write(",\"{0}\":{{", FormatPropertyName("Renderings"));
+				Stage = JsonFormattingStage.Renderings;
                 var rdelim = "";
                 foreach (var ptoken in tokensWithFormat)
                 {
@@ -168,6 +201,7 @@ namespace Serilog.Formatting.Json
                     output.Write("]");
                 }
                 output.Write("}");
+				Stage = JsonFormattingStage.MetaData;
             }
 
             if (!_omitEnclosingObject)
@@ -223,11 +257,31 @@ namespace Serilog.Formatting.Json
         {
             output.Write(precedingDelimiter);
             output.Write("\"");
-            output.Write(name);
+            output.Write(FormatPropertyName(name));
             output.Write("\":");
             WriteLiteral(value, output);
             precedingDelimiter = ",";
         }
+
+		/// <summary>
+		/// Allows you subclass JsonFormatter and implement your own property name handling
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+	    protected virtual string FormatPropertyName(string name)
+	    {
+		    return name;
+	    }
+		
+		/// <summary>
+		/// Allows a subclass to write out objects that have no configured literal writer.
+		/// </summary>
+		/// <param name="value">The value to be written as a json construct</param>
+		/// <param name="output">The writer to write on</param>
+	    protected virtual void WriteObjectValue(object value, TextWriter output)
+	    {
+            WriteString(value.ToString(), output);
+	    }
 
         void WriteLiteral(object value, TextWriter output, bool forceQuotation = false)
         {
@@ -243,8 +297,8 @@ namespace Serilog.Formatting.Json
                 writer(value, forceQuotation, output);
                 return;
             }
+			WriteObjectValue(value, output);
 
-            WriteString(value.ToString(), output);
         }
 
         static void WriteToString(object number, bool quote, TextWriter output)
