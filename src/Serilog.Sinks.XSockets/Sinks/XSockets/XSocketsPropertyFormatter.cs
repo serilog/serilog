@@ -19,7 +19,7 @@ using Serilog.Events;
 
 namespace Serilog.Sinks.XSockets
 {
-    public static class XSocketsPropertyFormatter
+    static class XSocketsPropertyFormatter
     {
         static readonly HashSet<Type> XSocketsSpecialScalars = new HashSet<Type>
         {
