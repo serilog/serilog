@@ -20,7 +20,26 @@ function Install-NuGetPackages()
 
 function Invoke-MSBuild($solution, $customLogger)
 {
-    msbuild "$solution" /verbosity:minimal /p:Configuration=Release /logger:"$customLogger"
+    if ($customLogger)
+    {
+        msbuild "$solution" /verbosity:minimal /p:Configuration=Release /logger:"$customLogger"
+    }
+    else
+    {
+        msbuild "$solution" /verbosity:minimal /p:Configuration=Release
+    }
+}
+
+function Invoke-NuGetPack($csproj)
+{
+    nuget pack -Symbols -Prop Configuration=Release $csproj
+}
+
+function Invoke-Packaging()
+{
+    ls src/**/*.csproj |
+        Where-Object { -not ($_.Name -like "net40") } |
+        ForEach-Object { Invoke-NuGetPack $_ }
 }
 
 function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
@@ -41,8 +60,9 @@ function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
     
     Invoke-MSBuild "Serilog-net40.sln" $customLogger
     Invoke-MSBuild "Serilog.sln" $customLogger
-}
 
+    Invoke-Packaging
+}
 
 $ErrorActionPreference = "Stop"
 Invoke-Build $majorMinor $patch $customLogger $notouch
