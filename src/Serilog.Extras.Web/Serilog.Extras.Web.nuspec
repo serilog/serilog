@@ -14,8 +14,4 @@
       <dependency id="Serilog" version="$version$" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Extras.Web.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Extras.Web.xml" target="lib\net45" />
-  </files>
 </package>

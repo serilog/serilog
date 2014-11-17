@@ -15,8 +15,4 @@
       <dependency id="WindowsAzure.Storage" version="2.0" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.AzureTableStorage.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.AzureTableStorage.xml" target="lib\net45" />
-  </files>
 </package>

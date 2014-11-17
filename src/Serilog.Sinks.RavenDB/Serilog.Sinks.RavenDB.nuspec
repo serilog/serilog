@@ -15,8 +15,4 @@
       <dependency id="RavenDB.Client" version="2.5.2750" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.RavenDB.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.RavenDB.xml" target="lib\net45" />
-  </files>
 </package>

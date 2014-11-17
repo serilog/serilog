@@ -14,8 +14,4 @@
       <dependency id="Serilog" version="$version$" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Extras.DestructureByIgnoring.dll" target="lib\portable-net45+win8+wp8" />
-    <file src="bin\Release\Serilog.Extras.DestructureByIgnoring.xml" target="lib\portable-net45+win8+wp8" />
-  </files>
 </package>

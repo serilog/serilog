@@ -15,8 +15,4 @@
       <dependency id="NLog" version="3.0.0.0" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.NLog.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.NLog.xml" target="lib\net45" />
-  </files>
 </package>

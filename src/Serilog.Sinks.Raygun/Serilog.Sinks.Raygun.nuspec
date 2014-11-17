@@ -15,8 +15,4 @@
       <dependency id="Mindscape.Raygun4Net.Signed" version="2.0.4" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.Raygun.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Raygun.xml" target="lib\net45" />
-  </files>
 </package>

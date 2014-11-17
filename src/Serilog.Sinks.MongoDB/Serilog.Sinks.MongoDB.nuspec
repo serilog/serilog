@@ -15,8 +15,4 @@
         <dependency id="mongocsharpdriver" version="1.8.3" />
       </dependencies>
     </metadata>
-    <files>
-      <file src="bin\Release\Serilog.Sinks.MongoDB.dll" target="lib\net45" />
-      <file src="bin\Release\Serilog.Sinks.MongoDB.xml" target="lib\net45" />
-    </files>
 </package>

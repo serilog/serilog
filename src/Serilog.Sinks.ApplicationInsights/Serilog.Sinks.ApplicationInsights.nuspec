@@ -15,8 +15,4 @@
       <dependency id="Microsoft.ApplicationInsights.Tracing" version="0.7.1" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.ApplicationInsights.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.ApplicationInsights.xml" target="lib\net45" />
-  </files>
 </package>

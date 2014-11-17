@@ -15,9 +15,6 @@
     <tags>serilog seq structured logging</tags>
   </metadata>
   <files>
-    <file src="bin\Release\Serilog.Sinks.Seq.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Seq.xml" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Seq.pdb" target="lib\net45" />
     <file src="bin40\Release\Serilog.Sinks.Seq.dll" target="lib\net40" />
     <file src="bin40\Release\Serilog.Sinks.Seq.xml" target="lib\net40" />
     <file src="bin40\Release\Serilog.Sinks.Seq.pdb" target="lib\net40" />

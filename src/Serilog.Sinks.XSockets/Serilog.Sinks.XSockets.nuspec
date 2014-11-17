@@ -15,8 +15,4 @@
       <dependency id="XSockets" version="4.0.0" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.XSockets.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.XSockets.xml" target="lib\net45" />
-  </files>
 </package>

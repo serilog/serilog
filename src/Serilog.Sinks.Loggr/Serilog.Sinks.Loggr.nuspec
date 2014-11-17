@@ -15,8 +15,4 @@
       <dependency id="loggr-dotnet" version="1.0.8"/>
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.Loggr.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Loggr.xml" target="lib\net45" />
-  </files>
 </package>

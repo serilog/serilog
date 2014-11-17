@@ -1,22 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-      <id>Serilog.Sinks.Glimpse</id>
-      <version>$version$</version>
-      <authors>Robert Wagner, Serilog Contributors</authors>
-      <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-      <projectUrl>http://serilog.net</projectUrl>
-      <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
-      <requireLicenseAcceptance>false</requireLicenseAcceptance>
-      <description>Serilog event sink that writes to a Glimpse tab.</description>
-      <tags>serilog logging glimpse</tags>
-      <dependencies>
-        <dependency id="Serilog" version="$version$" />
-        <dependency id="Glimpse" version="1.8.0" />
-      </dependencies>
-    </metadata>
-    <files>
-      <file src="bin\Release\Serilog.Sinks.Glimpse.dll" target="lib\net45" />
-      <file src="bin\Release\Serilog.Sinks.Glimpse.xml" target="lib\net45" />
-    </files>
+    <id>Serilog.Sinks.Glimpse</id>
+    <version>$version$</version>
+    <authors>Robert Wagner, Serilog Contributors</authors>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://serilog.net</projectUrl>
+    <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Serilog event sink that writes to a Glimpse tab.</description>
+    <tags>serilog logging glimpse</tags>
+    <dependencies>
+      <dependency id="Serilog" version="$version$" />
+      <dependency id="Glimpse" version="1.8.0" />
+    </dependencies>
+  </metadata>
 </package>

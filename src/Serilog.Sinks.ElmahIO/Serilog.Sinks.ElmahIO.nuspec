@@ -16,8 +16,4 @@
       <dependency id="elmah.io.core" version="1.0.0.38" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.ElmahIO.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.ElmahIO.xml" target="lib\net45" />
-  </files>
 </package>

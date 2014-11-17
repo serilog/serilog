@@ -16,9 +16,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Serilog.Sinks.ElasticSearch.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.ElasticSearch.xml" target="lib\net45" />
-	<file src="bin40\Release\Serilog.Sinks.ElasticSearch.dll" target="lib\net40" />
+    <file src="bin40\Release\Serilog.Sinks.ElasticSearch.dll" target="lib\net40" />
     <file src="bin40\Release\Serilog.Sinks.ElasticSearch.xml" target="lib\net40" />
   </files>
 </package>

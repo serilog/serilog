@@ -38,7 +38,8 @@ function Invoke-NuGetPack($csproj)
 function Invoke-Packaging()
 {
     ls src/**/*.csproj |
-        Where-Object { -not ($_.Name -like "net40") } |
+        Where-Object { -not ($_.Name -like "*net40*") } |
+        Where-Object { -not ($_.Name -like "*FullNetFx*") } |
         ForEach-Object { Invoke-NuGetPack $_ }
 }
 

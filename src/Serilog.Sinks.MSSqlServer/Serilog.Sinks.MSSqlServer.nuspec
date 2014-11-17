@@ -14,8 +14,4 @@
       <dependency id="Serilog" version="$version$" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.MSSqlServer.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.MSSqlServer.xml" target="lib\net45" />
-  </files>
 </package>
