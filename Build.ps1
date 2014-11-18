@@ -32,7 +32,8 @@ function Invoke-MSBuild($solution, $customLogger)
 
 function Invoke-NuGetPack($csproj)
 {
-    nuget pack -Symbols -Prop Configuration=Release $csproj
+    # Omitting -Symbols because of problems publishing
+    nuget pack -Prop Configuration=Release $csproj
 }
 
 function Invoke-Packaging()
