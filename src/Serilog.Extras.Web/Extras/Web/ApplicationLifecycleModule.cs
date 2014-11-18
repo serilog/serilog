@@ -26,6 +26,9 @@ namespace Serilog.Extras.Web
     {
         static volatile bool _logPostedFormData;
         static volatile bool _isEnabled = true;
+        public static EventHandler OnBeginRequest { get; set; }
+        public static EventHandler OnEndRequest { get; set; }
+        public static EventHandler OnError { get; set; }
 
         /// <summary>
         /// Register the module with the application (called automatically;
@@ -65,29 +68,45 @@ namespace Serilog.Extras.Web
         {
             context.BeginRequest += BeginRequest;
             context.Error += Error;
+            context.EndRequest += EndRequest;
+        }
+
+        static void EndRequest(object sender, EventArgs e)
+        {
+            if (OnEndRequest != null)
+                OnEndRequest(sender, e);
         }
 
         static void Error(object sender, EventArgs e)
         {
             if (!_isEnabled) return;
-
-            var ex = ((HttpApplication)sender).Server.GetLastError();
-            Log.Error(ex, "Error caught in global handler");
+            if (OnError != null)
+                OnError(sender, e);
+            else
+            {
+                var ex = ((HttpApplication)sender).Server.GetLastError();
+                Log.Error(ex, "Error caught in global handler");
+            }
         }
 
         static void BeginRequest(object sender, EventArgs e)
         {
             if (!_isEnabled) return;
 
-            var request = HttpContext.Current.Request;
-            Log.Information("Beginning HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
-            if (_logPostedFormData && Log.IsEnabled(LogEventLevel.Debug))
+            if (OnBeginRequest != null)
+                OnBeginRequest(sender, e);
+            else
             {
-                var form = request.Form;
-                if (form.HasKeys())
+                var request = HttpContext.Current.Request;
+                Log.Information("Beginning HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
+                if (_logPostedFormData && Log.IsEnabled(LogEventLevel.Debug))
                 {
-                    var formData = form.AllKeys.SelectMany(k => (form.GetValues(k) ?? new string[0]).Select(v => new { Name = k, Value = v }));
-                    Log.Debug("Client provided {@FormData}", formData);
+                    var form = request.Form;
+                    if (form.HasKeys())
+                    {
+                        var formData = form.AllKeys.SelectMany(k => (form.GetValues(k) ?? new string[0]).Select(v => new { Name = k, Value = v }));
+                        Log.Debug("Client provided {@FormData}", formData);
+                    }
                 }
             }
         }
