@@ -26,11 +26,13 @@ namespace Serilog.Configuration
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<Type> _addScalar;
         readonly Action<IDestructuringPolicy> _addPolicy;
+        readonly Action<int> _setMaximumDepth;
 
         internal LoggerDestructuringConfiguration(
             LoggerConfiguration loggerConfiguration,
             Action<Type> addScalar,
-            Action<IDestructuringPolicy> addPolicy)
+            Action<IDestructuringPolicy> addPolicy,
+            Action<int> setMaximumDepth)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
             if (addScalar == null) throw new ArgumentNullException("addScalar");
@@ -38,6 +40,7 @@ namespace Serilog.Configuration
             _loggerConfiguration = loggerConfiguration;
             _addScalar = addScalar;
             _addPolicy = addPolicy;
+            _setMaximumDepth = setMaximumDepth;
         }
 
         /// <summary>
@@ -69,6 +72,7 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="destructuringPolicies">Policies to apply when destructuring.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
         {
             if (destructuringPolicies == null) throw new ArgumentNullException("destructuringPolicies");
@@ -109,6 +113,20 @@ namespace Serilog.Configuration
             return With(policy);
         }
 
+        /// <summary>
+        /// When destructuring objects, depth will be limited to 5 property traversals deep to
+        /// guard against ballooning space when recursive/cyclic structures are accidentally passed. To
+        /// increase this limit pass a higher value.
+        /// </summary>
+        /// <param name="maximumDestructuringDepth">The maximum depth to use.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth)
+        {
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException("maximumDestructuringDepth");
+            _setMaximumDepth(maximumDestructuringDepth);
+            return _loggerConfiguration;
+        }
     }
 }
 

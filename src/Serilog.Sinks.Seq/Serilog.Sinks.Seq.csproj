@@ -54,6 +54,9 @@
     <Compile Include="Sinks\Seq\SeqApi.cs" />
     <Compile Include="Sinks\Seq\SeqSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="SeqLoggerConfigurationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

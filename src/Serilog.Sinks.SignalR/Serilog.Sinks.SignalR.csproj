@@ -68,6 +68,9 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationSignalRExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\SignalR\Data\LogEvent.cs" />
     <Compile Include="Sinks\SignalR\SignalRSink.cs" />
     <Compile Include="Sinks\SignalR\SignalRPropertyFormatter.cs" />

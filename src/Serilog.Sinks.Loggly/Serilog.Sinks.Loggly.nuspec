@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.Loggly</id>
-    <version>0.2.0</version>
+    <version>$version$</version>
     <authors>Michiel van Oudheusden</authors>
     <description>Serilog event sink that writes to the Loggly.com service.</description>
     <language>en-US</language>
@@ -11,13 +11,9 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging Loggly error</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
       <dependency id="loggly-csharp" version="3.5" />
       <dependency id="Newtonsoft.Json" version="6.0.6"  />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Sinks.Loggly.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Sinks.Loggly.xml" target="lib\net45" />
-  </files>
 </package>

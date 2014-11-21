@@ -59,6 +59,9 @@
     <Compile Include="Extras\Web\Enrichers\HttpRequestUserAgentEnricher.cs" />
     <Compile Include="Extras\Web\Enrichers\UserNameEnricher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Extras\Web\ApplicationLifecycleModule.cs" />
     <Compile Include="Extras\Web\Enrichers\HttpRequestTraceIdEnricher.cs" />
     <Compile Include="Extras\Web\Enrichers\HttpRequestNumberEnricher.cs" />

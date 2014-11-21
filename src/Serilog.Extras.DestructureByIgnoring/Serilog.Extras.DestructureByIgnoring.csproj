@@ -57,6 +57,9 @@
     <Compile Include="Extras\DestructureByIgnoring\IgnoredPropertyExpressionExtensions.cs" />
     <Compile Include="LoggerConfigurationIgnoreExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog.csproj">

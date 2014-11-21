@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Extras.AppSettings</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Serilog Contributors</authors>
     <description>Adds support for configuring Serilog from App.config and Web.config files</description>
     <language>en-US</language>
@@ -11,11 +11,7 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog xml</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\Serilog.Extras.AppSettings.dll" target="lib\net45" />
-    <file src="bin\Release\Serilog.Extras.AppSettings.xml" target="lib\net45" />
-  </files>
 </package>
