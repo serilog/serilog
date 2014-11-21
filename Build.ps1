@@ -47,6 +47,7 @@ function Invoke-NuGetPack($version)
         Where-Object { -not ($_.Name -like "*FullNetFx*") } |
         Where-Object { -not ($_.Name -eq "Serilog.csproj") } |
         Where-Object { -not ($_.Name -eq "Serilog.Sinks.Seq.csproj") } |
+        Where-Object { -not ($_.Name -eq "Serilog.Sinks.Splunk.csproj") } |
         ForEach-Object { Invoke-NuGetPackProj $_ }
 
     pushd .\src\Serilog
@@ -55,6 +56,10 @@ function Invoke-NuGetPack($version)
 
     pushd .\src\Serilog.Sinks.Seq
     Invoke-NuGetPackSpec "Serilog.Sinks.Seq.nuspec" $version
+    popd
+
+    pushd .\src\Serilog.Sinks.Splunk
+    Invoke-NuGetPackSpec "Serilog.Sinks.Splunk.nuspec" $version
     popd
 }
 

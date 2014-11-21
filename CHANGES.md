@@ -1,3 +1,6 @@
+1.4.23
+ * Fixed some more NuGet packaging issues (_Serilog.Sinks.Splunk_ this time)
+
 1.4.22
  * #297 - Update _loggly-csharp_ package dependency
 
