@@ -63,19 +63,11 @@ namespace Serilog.Extras.Web
         /// <param name="context">An <see cref="T:System.Web.HttpApplication"/> that provides access to the methods, properties, and events common to all application objects within an ASP.NET application </param>
         public void Init(HttpApplication context)
         {
-            context.BeginRequest += BeginRequest;
+            context.LogRequest +=LogRequest;
             context.Error += Error;
         }
 
-        static void Error(object sender, EventArgs e)
-        {
-            if (!_isEnabled) return;
-
-            var ex = ((HttpApplication)sender).Server.GetLastError();
-            Log.Error(ex, "Error caught in global handler");
-        }
-
-        static void BeginRequest(object sender, EventArgs e)
+        static void LogRequest(object sender, EventArgs e)
         {
             if (!_isEnabled) return;
 
@@ -90,6 +82,14 @@ namespace Serilog.Extras.Web
                     Log.Debug("Client provided {@FormData}", formData);
                 }
             }
+        }
+
+        static void Error(object sender, EventArgs e)
+        {
+            if (!_isEnabled) return;
+
+            var ex = ((HttpApplication)sender).Server.GetLastError();
+            Log.Error(ex, "Error caught in global handler: {ExceptionMessage}", ex.Message);
         }
 
         /// <summary>
