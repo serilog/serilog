@@ -9,12 +9,12 @@
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
-    <tags>serilog logging nosql events semantic structured</tags>
+    <tags>serilog logging events semantic structured</tags>
   </metadata>
   <files>
-    <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
-    <file src="bin\Release\Serilog.xml" target="lib\portable-net45+win8+wp8" />
-    <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+win8+wp8" />
+    <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.xml" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
     <file src="bin\Release\Serilog.dll" target="lib\net45" />
     <file src="bin\Release\Serilog.xml" target="lib\net45" />
     <file src="bin\Release\Serilog.pdb" target="lib\net45" />
