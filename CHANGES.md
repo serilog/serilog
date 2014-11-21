@@ -1,3 +1,6 @@
+1.4.22
+ * #297 - Update _loggly-csharp_ package dependency
+
 1.4.21
  * Fixed some NuGet packaging issues (including a return to dependency groups for _Serilog.Sinks.Seq_)
 
