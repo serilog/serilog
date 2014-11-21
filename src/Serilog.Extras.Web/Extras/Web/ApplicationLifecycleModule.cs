@@ -72,7 +72,7 @@ namespace Serilog.Extras.Web
             if (!_isEnabled) return;
 
             var request = HttpContext.Current.Request;
-            Log.Information("Beginning HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
+            Log.Information("HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
             if (_logPostedFormData && Log.IsEnabled(LogEventLevel.Debug))
             {
                 var form = request.Form;
