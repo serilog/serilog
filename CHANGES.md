@@ -1,3 +1,8 @@
+1.4.21
+ * Fixed some NuGet packaging issues (including a return to dependency groups for _Serilog.Sinks.Seq_)
+
+1.4.18
+1.4.17
 1.4.16
  * New CI server used
  * #227 - Reduced default maximum destructuring depth and added configuration option
