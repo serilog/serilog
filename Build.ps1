@@ -30,18 +30,32 @@ function Invoke-MSBuild($solution, $customLogger)
     }
 }
 
-function Invoke-NuGetPack($csproj)
+function Invoke-NuGetPackProj($csproj)
 {
-    # Omitting -Symbols because of problems publishing
-    nuget pack -Prop Configuration=Release $csproj
+    nuget pack -Prop Configuration=Release -Symbols $csproj
 }
 
-function Invoke-Packaging()
+function Invoke-NuGetPackSpec($nuspec, $version)
+{
+    nuget pack $nuspec -Version $version -OutputDirectory ..\..\
+}
+
+function Invoke-NuGetPack($version)
 {
     ls src/**/*.csproj |
         Where-Object { -not ($_.Name -like "*net40*") } |
         Where-Object { -not ($_.Name -like "*FullNetFx*") } |
-        ForEach-Object { Invoke-NuGetPack $_ }
+        Where-Object { -not ($_.Name -eq "Serilog.csproj") } |
+        Where-Object { -not ($_.Name -eq "Serilog.Sinks.Seq.csproj") } |
+        ForEach-Object { Invoke-NuGetPackProj $_ }
+
+    pushd .\src\Serilog
+    Invoke-NuGetPackSpec "Serilog.nuspec" $version
+    popd
+
+    pushd .\src\Serilog.Sinks.Seq
+    Invoke-NuGetPackSpec "Serilog.Sinks.Seq.nuspec" $version
+    popd
 }
 
 function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
@@ -63,7 +77,7 @@ function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
     Invoke-MSBuild "Serilog-net40.sln" $customLogger
     Invoke-MSBuild "Serilog.sln" $customLogger
 
-    Invoke-Packaging
+    Invoke-NuGetPack $package
 }
 
 $ErrorActionPreference = "Stop"
