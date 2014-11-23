@@ -1,3 +1,7 @@
+1.4.27
+ * #283 - New solution targeting ASP.NET v.NEXT (when final, we'll refactor to give this first-class support)
+ * #301 - _Serilog.Extras.Web_ improvements
+
 1.4.23
  * Fixed some more NuGet packaging issues (_Serilog.Sinks.Splunk_ this time)
 
