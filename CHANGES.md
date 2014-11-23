@@ -1,3 +1,5 @@
+ * #283 - New solution targeting ASP.NET v.NEXT (when final, we'll refactor to give this first-class support)
+
 1.4.16
  * New CI server used
  * #227 - Reduced default maximum destructuring depth and added configuration option
