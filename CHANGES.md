@@ -1,3 +1,5 @@
+ * #301 - _Serilog.Extras.Web_ improvements
+
 1.4.23
  * Fixed some more NuGet packaging issues (_Serilog.Sinks.Splunk_ this time)
 
