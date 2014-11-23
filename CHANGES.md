@@ -1,5 +1,17 @@
  * #283 - New solution targeting ASP.NET v.NEXT (when final, we'll refactor to give this first-class support)
+* #301 - _Serilog.Extras.Web_ improvements
 
+1.4.23
+ * Fixed some more NuGet packaging issues (_Serilog.Sinks.Splunk_ this time)
+
+1.4.22
+ * #297 - Update _loggly-csharp_ package dependency
+
+1.4.21
+ * Fixed some NuGet packaging issues (including a return to dependency groups for _Serilog.Sinks.Seq_)
+
+1.4.18
+1.4.17
 1.4.16
  * New CI server used
  * #227 - Reduced default maximum destructuring depth and added configuration option
