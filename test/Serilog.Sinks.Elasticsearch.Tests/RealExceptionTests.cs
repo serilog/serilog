@@ -11,6 +11,7 @@ using Elasticsearch.Net.Connection.Configuration;
 using Elasticsearch.Net.JsonNet;
 using FakeItEasy;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.ElasticSearch;
@@ -19,26 +20,8 @@ using NUnit.Framework;
 namespace Serilog.Sinks.Elasticsearch.Tests
 {
     [TestFixture]
-    public class RealExceptionTests
+    public class RealExceptionTests : ElasticsearchSinkTestsBase
     {
-        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);
-        private readonly IConnection _connection;
-        private readonly ConnectionConfiguration _connectionSettings;
-        private readonly List<string> _seenHttpPosts = new List<string>();
-
-        public RealExceptionTests()
-        {
-            _connection = A.Fake<IConnection>();
-            _connectionSettings = new ConnectionConfiguration(new Uri("http://localhost:9200"));
-            var fixedRespone = new MemoryStream(Encoding.UTF8.GetBytes(@"{ ""ok"": true }"));
-            A.CallTo(() => _connection.PostSync(A<Uri>._, A<byte[]>._, A<IRequestConfiguration>._))
-                .ReturnsLazily((Uri uri, byte[] postData, IRequestConfiguration requestConfiguration) =>
-                {
-                    _seenHttpPosts.Add(Encoding.UTF8.GetString(postData));
-                    return ElasticsearchResponse<Stream>.Create(_connectionSettings, 200, "POST", "/", postData, fixedRespone);
-                });
-        }
-
         [Test]
         public async Task WhenPassingASerializer_ShouldExpandToJson()
         {
@@ -51,9 +34,8 @@ namespace Serilog.Sinks.Elasticsearch.Tests
                 var timestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 666, TimeSpan.FromHours(10));
                 var messageTemplate = "{Song}++";
                 var template = new MessageTemplateParser().Parse(messageTemplate);
-                var serializer = new ElasticsearchJsonNetSerializer();
-                using (var sink = new ElasticSearchSink(_connectionSettings, ElasticSearchSink.DefaultIndexFormat, 2, TinyWait, null, _connection, serializer)
-                    )
+                _options.Serializer = new ElasticsearchJsonNetSerializer();
+                using (var sink = new ElasticsearchSink(_options))
                 {
                     var properties = new List<LogEventProperty>
 					{
@@ -76,6 +58,7 @@ namespace Serilog.Sinks.Elasticsearch.Tests
 
                 //since we pass a serializer objects should serialize as json object and not using their
                 //tostring implemenation
+                //DO NOTE that you cant send objects as scalar values through Logger.*("{Scalar}", {});
                 bulkJsonPieces[3].Should().Contain("Complex\":{");
                 //Since we are passing a ISerializer the exception should be be logged as object and not string
                 bulkJsonPieces[3].Should().Contain("exception\":{");

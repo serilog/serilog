@@ -49,13 +49,14 @@ namespace Serilog
         /// </returns>
         /// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next serilog major release")]
         public static LoggerConfiguration ElasticSearch(
             this LoggerSinkConfiguration loggerConfiguration,
-            string indexFormat = ElasticSearchSink.DefaultIndexFormat,
+            string indexFormat = ElasticsearchSink.DefaultIndexFormat,
             Uri node = null,
-            int connectionTimeOutInMilliseconds = ElasticSearchSink.DefaultConnectionTimeout,
+            int connectionTimeOutInMilliseconds = ElasticsearchSink.DefaultConnectionTimeout,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
+            int batchPostingLimit = ElasticsearchSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
             IFormatProvider formatProvider = null,
 			IElasticsearchSerializer serializer = null
@@ -63,19 +64,17 @@ namespace Serilog
         {
 			if (node == null)
 				node = new Uri("http://localhost:9200");
-
-			var connectionConfiguration = GetConnectionConfiguration(new Uri[] { node }, connectionTimeOutInMilliseconds);
-			
-			return ElasticSearch(
-				loggerConfiguration,
-				connectionConfiguration, 
-				indexFormat,
-				restrictedToMinimumLevel, 
-				batchPostingLimit, 
-				period, 
-				formatProvider,
-				serializer
-			);
+            
+            return Elasticsearch(loggerConfiguration, new ElasticsearchSinkOptions(new [] { node })
+		    {
+		        Serializer = serializer,
+                FormatProvider = formatProvider,
+                IndexFormat = indexFormat,
+                ModifyConnectionSetttings = s => s.SetTimeout(connectionTimeOutInMilliseconds),
+                BatchPostingLimit = batchPostingLimit,
+                Period = period,
+                MinimumLogEventLevel = restrictedToMinimumLevel
+		    });
         }
 
 		/// <summary>
@@ -98,33 +97,29 @@ namespace Serilog
 		/// </returns>
 		/// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
 		/// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next serilog major release")]
 		public static LoggerConfiguration ElasticSearch(
 			this LoggerSinkConfiguration loggerConfiguration,
 			IEnumerable<Uri> nodes,
-			string indexFormat = ElasticSearchSink.DefaultIndexFormat,
-			int connectionTimeOutInMilliseconds = ElasticSearchSink.DefaultConnectionTimeout,
+			string indexFormat = ElasticsearchSink.DefaultIndexFormat,
+			int connectionTimeOutInMilliseconds = ElasticsearchSink.DefaultConnectionTimeout,
 			LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-			int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
+			int batchPostingLimit = ElasticsearchSink.DefaultBatchPostingLimit,
 			TimeSpan? period = null,
 			IFormatProvider formatProvider = null,
 			IElasticsearchSerializer serializer = null
 			)
 		{
-			if (nodes == null)
-				nodes = new Uri[] { new Uri("http://localhost:9200") };
-
-			var connectionConfiguration = GetConnectionConfiguration(nodes, connectionTimeOutInMilliseconds);
-
-			return ElasticSearch(
-				loggerConfiguration,
-				connectionConfiguration,
-				indexFormat,
-				restrictedToMinimumLevel,
-				batchPostingLimit,
-				period,
-				formatProvider,
-				serializer
-			);
+		    return Elasticsearch(loggerConfiguration, new ElasticsearchSinkOptions(nodes)
+		    {
+		        Serializer = serializer,
+                FormatProvider = formatProvider,
+                IndexFormat = indexFormat,
+                ModifyConnectionSetttings = s => s.SetTimeout(connectionTimeOutInMilliseconds),
+                BatchPostingLimit = batchPostingLimit,
+                Period = period,
+                MinimumLogEventLevel = restrictedToMinimumLevel
+		    });
 		}
 
 		/// <summary>
@@ -146,45 +141,47 @@ namespace Serilog
 		/// </returns>
 		/// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
 		/// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next serilog major release")]
 		public static LoggerConfiguration ElasticSearch(
 			this LoggerSinkConfiguration loggerConfiguration,
 			ConnectionConfiguration connectionConfiguration,
-			string indexFormat = ElasticSearchSink.DefaultIndexFormat,
+			string indexFormat = ElasticsearchSink.DefaultIndexFormat,
 			LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-			int batchPostingLimit = ElasticSearchSink.DefaultBatchPostingLimit,
+			int batchPostingLimit = ElasticsearchSink.DefaultBatchPostingLimit,
 			TimeSpan? period = null,
 			IFormatProvider formatProvider = null,
 			IElasticsearchSerializer serializer = null
 			)
 		{
-			if (loggerConfiguration == null)
-				throw new ArgumentNullException("loggerConfiguration");
-
-			var defaultedPeriod = period ?? ElasticSearchSink.DefaultPeriod;
-			var defaultedIndexFormat = indexFormat ?? ElasticSearchSink.DefaultIndexFormat;
-			var elasticsearchSink = new ElasticSearchSink(
-				connectionConfiguration, defaultedIndexFormat, batchPostingLimit, defaultedPeriod, formatProvider, serializer: serializer);
-
-			return loggerConfiguration.Sink(elasticsearchSink, restrictedToMinimumLevel);
+            if (connectionConfiguration == null)
+                throw new ArgumentNullException("connectionConfiguration");
+		    IConnectionConfigurationValues values = connectionConfiguration;
+            return Elasticsearch(loggerConfiguration, new ElasticsearchSinkOptions(values.ConnectionPool)
+		    {
+		        Serializer = serializer,
+                FormatProvider = formatProvider,
+                IndexFormat = indexFormat,
+                ModifyConnectionSetttings = s => connectionConfiguration,
+                BatchPostingLimit = batchPostingLimit,
+                Period = period,
+                MinimumLogEventLevel = restrictedToMinimumLevel
+		    });
 		}
 
-		private static ConnectionConfiguration GetConnectionConfiguration(IEnumerable<Uri> nodes, int connectionTimeout)
-		{
-			ConnectionConfiguration configuration = null;
-
-			if (nodes.Count() == 1)
-				configuration = new ConnectionConfiguration(nodes.First());
-			else
-				configuration = new ConnectionConfiguration(new StaticConnectionPool(nodes));
-
-			if (connectionTimeout <= 0)
-				connectionTimeout = ElasticSearchSink.DefaultConnectionTimeout;
-
-			configuration
-				.SetTimeout(connectionTimeout)
-				.SetMaximumAsyncConnections(20);
-
-			return configuration;
-		}
+        /// <summary>
+        /// Adds a sink that writes log events as documents to an ElasticSearch index.
+		/// This works great with the Kibana web interface when using the default settings.
+		/// Make sure to add a template to ElasticSearch like the one found here:
+		/// https://gist.github.com/mivano/9688328
+        /// </summary>
+        /// <param name="loggerSinkConfiguration"></param>
+	    /// <param name="options">Provides options specific to the Elasticsearch sink</param>
+        /// <returns></returns>
+        public static LoggerConfiguration Elasticsearch(this LoggerSinkConfiguration loggerSinkConfiguration, ElasticsearchSinkOptions options)
+        {
+            options = options ?? new ElasticsearchSinkOptions(new [] { new Uri("http://locahost:9200") });
+            var sink = new ElasticsearchSink(options);
+            return loggerSinkConfiguration.Sink(sink, options.MinimumLogEventLevel ?? LevelAlias.Minimum);
+        }
     }
 }

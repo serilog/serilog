@@ -19,28 +19,11 @@ using NUnit.Framework;
 namespace Serilog.Sinks.Elasticsearch.Tests
 {
     [TestFixture]
-    public class PropertyNameTests
+    public class PropertyNameTests : ElasticsearchSinkTestsBase
     {
-        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);
-        private readonly IConnection _connection;
-        private readonly ConnectionConfiguration _connectionSettings;
-        private readonly List<string> _seenHttpPosts = new List<string>();
-
-        public PropertyNameTests()
-        {
-            _connection = A.Fake<IConnection>();
-            _connectionSettings = new ConnectionConfiguration(new Uri("http://localhost:9200"));
-            var fixedRespone = new MemoryStream(Encoding.UTF8.GetBytes(@"{ ""ok"": true }"));
-            A.CallTo(() => _connection.PostSync(A<Uri>._, A<byte[]>._, A<IRequestConfiguration>._))
-                .ReturnsLazily((Uri uri, byte[] postData, IRequestConfiguration requestConfiguration) =>
-                {
-                    _seenHttpPosts.Add(Encoding.UTF8.GetString(postData));
-                    return ElasticsearchResponse<Stream>.Create(_connectionSettings, 200, "POST", "/", postData, fixedRespone);
-                });
-        }
 
         [Test]
-        public async Task ComplexExceptionShouldStillBeLogged()
+        public async Task UsesCustomPropertyNames()
         {
             try
             {
@@ -51,7 +34,7 @@ namespace Serilog.Sinks.Elasticsearch.Tests
                 var timestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 666, TimeSpan.FromHours(10));
                 var messageTemplate = "{Song}++";
                 var template = new MessageTemplateParser().Parse(messageTemplate);
-                using (var sink = new ElasticSearchSink(_connectionSettings, ElasticSearchSink.DefaultIndexFormat, 2, TinyWait, null, _connection))
+                using (var sink = new ElasticsearchSink(_options))
                 {
                     var properties = new List<LogEventProperty>
 					{
@@ -70,6 +53,8 @@ namespace Serilog.Sinks.Elasticsearch.Tests
                 bulkJsonPieces[0].Should().Contain(@"""_index"":""logstash-2013.05.28");
                 bulkJsonPieces[1].Should().Contain("New Macabre");
                 bulkJsonPieces[1].Should().NotContain("Properties\"");
+                bulkJsonPieces[1].Should().Contain("fields\":{");
+                bulkJsonPieces[1].Should().Contain("@timestamp");
                 bulkJsonPieces[2].Should().Contain(@"""_index"":""logstash-2013.05.30");
             }
         }

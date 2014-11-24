@@ -18,26 +18,8 @@ using NUnit.Framework;
 namespace Serilog.Sinks.Elasticsearch.Tests
 {
     [TestFixture]
-    public class RealExceptionNoSerializerTests
+    public class RealExceptionNoSerializerTests : ElasticsearchSinkTestsBase
     {
-        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);
-        private readonly IConnection _connection;
-        private readonly ConnectionConfiguration _connectionSettings;
-        private readonly List<string> _seenHttpPosts = new List<string>();
-
-        public RealExceptionNoSerializerTests()
-        {
-            _connection = A.Fake<IConnection>();
-            _connectionSettings = new ConnectionConfiguration(new Uri("http://localhost:9200"));
-            var fixedRespone = new MemoryStream(Encoding.UTF8.GetBytes(@"{ ""ok"": true }"));
-            A.CallTo(() => _connection.PostSync(A<Uri>._, A<byte[]>._, A<IRequestConfiguration>._))
-                .ReturnsLazily((Uri uri, byte[] postData, IRequestConfiguration requestConfiguration) =>
-                {
-                    _seenHttpPosts.Add(Encoding.UTF8.GetString(postData));
-                    return ElasticsearchResponse<Stream>.Create(_connectionSettings, 200, "POST", "/", postData, fixedRespone);
-                });
-        }
-
         [Test]
         public async Task WhenPassingASerializer_ShouldExpandToJson()
         {
@@ -50,7 +32,7 @@ namespace Serilog.Sinks.Elasticsearch.Tests
                 var timestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 666, TimeSpan.FromHours(10));
                 var messageTemplate = "{Song}++";
                 var template = new MessageTemplateParser().Parse(messageTemplate);
-                using (var sink = new ElasticSearchSink(_connectionSettings, ElasticSearchSink.DefaultIndexFormat, 2, TinyWait, null, _connection)
+                using (var sink = new ElasticsearchSink(_options)
                     )
                 {
                     var properties = new List<LogEventProperty>
@@ -72,10 +54,8 @@ namespace Serilog.Sinks.Elasticsearch.Tests
                 bulkJsonPieces[1].Should().NotContain("Properties\"");
                 bulkJsonPieces[2].Should().Contain(@"""_index"":""logstash-2013.05.30");
 
-                //since we pass a serializer objects should serialize as json object and not using their
-                //tostring implemenation
+                //We have no serializer associated with the sink so we expect the forced ToString() of scalar values
                 bulkJsonPieces[3].Should().Contain("Complex\":\"{");
-                //Since we are passing a ISerializer the exception should be be logged as object and not string
                 bulkJsonPieces[3].Should().Contain("exception\":\"System.Net.Http.HttpRequestException: An error");
             }
         }
