@@ -1,3 +1,6 @@
+ * #303 - `AssemblyInformationalVersion` needs to track the package, not assembly, version, in order to play nicely with MSI
+ * #304 - Make sure IO exceptions are suppressed by the `WriteTo.File()` configuration method
+
 1.4.27
  * #283 - New solution targeting ASP.NET v.NEXT (when final, we'll refactor to give this first-class support)
  * #301 - _Serilog.Extras.Web_ improvements

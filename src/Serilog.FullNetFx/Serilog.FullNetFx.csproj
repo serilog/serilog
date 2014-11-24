@@ -58,6 +58,7 @@
     </Compile>
     <Compile Include="Sinks\IOFile\CharacterCountLimitedTextWriter.cs" />
     <Compile Include="Sinks\IOFile\FileSink.cs" />
+    <Compile Include="Sinks\IOFile\NullSink.cs" />
     <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatus.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink.cs" />
     <Compile Include="Sinks\RollingFile\Clock.cs" />

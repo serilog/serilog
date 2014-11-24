@@ -39,6 +39,7 @@ namespace Serilog.Sinks.IOFile
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
+        /// <exception cref="IOException"></exception>
         public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes)
         {
             if (path == null) throw new ArgumentNullException("path");
