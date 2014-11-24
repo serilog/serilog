@@ -29,6 +29,7 @@ namespace Serilog.Sinks.ElasticSearch
     class ElasticSearchSink : PeriodicBatchingSink
     {
         readonly string _indexFormat;
+        readonly string _type;
         readonly IFormatProvider _formatProvider;
         readonly ElasticsearchClient _client;
     
@@ -47,6 +48,11 @@ namespace Serilog.Sinks.ElasticSearch
 		/// </summary>
 		public const string DefaultIndexFormat = "logstash-{0:yyyy.MM.dd}";
 
+        /// <summary>
+        /// Defaults to the type of logevent
+        /// </summary>
+        public const string DefaultType = "logevent";
+
 		/// <summary>
 		/// Default connection timeout in milliseconds
 		/// </summary>
@@ -57,15 +63,17 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         /// <param name="connectionConfiguration">Connection configuration to use for connecting to the cluster.</param>
         /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
+        /// <param name="type">The type the log event will be indexed as in elasticsearch</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ElasticSearchSink(ConnectionConfiguration connectionConfiguration, string indexFormat, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
+        public ElasticSearchSink(ConnectionConfiguration connectionConfiguration, string indexFormat, string type, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider)
             : base(batchPostingLimit, period)
         {
 			_indexFormat = indexFormat;
             _formatProvider = formatProvider;
-			_client = new ElasticsearchClient(connectionConfiguration);
+            _type = type;
+            _client = new ElasticsearchClient(connectionConfiguration);
         }
 
         /// <summary>
@@ -97,7 +105,7 @@ namespace Serilog.Sinks.ElasticSearch
 				document.Add("message", logEvent.RenderedMessage);
 				document.Add("fields", logEvent.Properties);
 
-				payload.Add(new { index = new { _index = indexName, _type = "logevent" } });
+				payload.Add(new { index = new { _index = indexName, _type = _type } });
 				payload.Add(document);
 			}
 
