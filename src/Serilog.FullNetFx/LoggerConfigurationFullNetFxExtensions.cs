@@ -15,8 +15,10 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using Serilog.Configuration;
+using Serilog.Debugging;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
@@ -127,7 +129,23 @@ namespace Serilog
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new FileSink(path, formatter, fileSizeLimitBytes), restrictedToMinimumLevel);
+            
+            FileSink sink;
+            try
+            {
+                sink = new FileSink(path, formatter, fileSizeLimitBytes);
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Unable to open file sink for {0}: {1}", path, ex);
+                return sinkConfiguration.Sink(new NullSink());
+            }
+
+            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
