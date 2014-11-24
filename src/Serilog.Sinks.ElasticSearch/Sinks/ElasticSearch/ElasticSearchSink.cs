@@ -79,7 +79,8 @@ namespace Serilog.Sinks.ElasticSearch
                 formatProvider: options.FormatProvider,
                 renderMessage: true,
                 closingDelimiter: string.Empty,
-                serializer: options.Serializer
+                serializer: options.Serializer,
+                inlineFields: options.InlineFields
             );
         }
 

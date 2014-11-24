@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Configuration;
 using Elasticsearch.Net.Connection;
 using Elasticsearch.Net.ConnectionPool;
 using Elasticsearch.Net.Serialization;
@@ -48,6 +49,11 @@ namespace Serilog.Sinks.ElasticSearch
         /// Allows you to override the connection used to communicate with elasticsearch
         /// </summary>
         public IConnection Connection { get; set; }
+        
+        /// <summary>
+        /// When true fields will be written at the root of the json document
+        /// </summary>
+        public bool InlineFields { get; set; }
 
         /// <summary>
         /// The minimum log event level required in order to write an event to the sink.

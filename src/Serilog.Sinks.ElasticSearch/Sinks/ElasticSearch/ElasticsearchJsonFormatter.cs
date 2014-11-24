@@ -19,6 +19,7 @@ namespace Serilog.Sinks.ElasticSearch
     public class ElasticsearchJsonFormatter : JsonFormatter
     {
         readonly IElasticsearchSerializer _serializer;
+        readonly bool _inlineFields;
 
         /// <summary>
         /// Construct a <see cref="ElasticsearchJsonFormatter"/>.
@@ -33,16 +34,19 @@ namespace Serilog.Sinks.ElasticSearch
         /// property named RenderedMessage.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="serializer">Inject a serializer to force objects to be serialized over being ToString()</param>
+        /// <param name="inlineFields">When set to true values will be written at the root of the json document</param>
         public ElasticsearchJsonFormatter(bool omitEnclosingObject = false,
             string closingDelimiter = null,
             bool renderMessage = false,
             IFormatProvider formatProvider = null,
-            IElasticsearchSerializer serializer = null)
+            IElasticsearchSerializer serializer = null,
+            bool inlineFields = false)
             : base(omitEnclosingObject, closingDelimiter, renderMessage, formatProvider)
         {
-            this._serializer = serializer;
+            _serializer = serializer;
+            _inlineFields = inlineFields;
         }
- 
+
         /// <summary>
         /// Writes out individual renderings of attached properties
         /// </summary>
@@ -58,9 +62,15 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         protected override void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
-            output.Write(",\"{0}\":{{", "fields");
+            if (!_inlineFields)
+                output.Write(",\"{0}\":{{", "fields");
+            else 
+                output.Write(",");
+            
             WritePropertiesValues(properties, output);
-            output.Write("}");
+
+            if (!_inlineFields)
+                output.Write("}");
         }
 
         /// <summary>
