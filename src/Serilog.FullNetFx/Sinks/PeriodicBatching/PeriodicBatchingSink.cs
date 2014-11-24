@@ -136,6 +136,7 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             try
             {
+                bool batchWasFull;
                 do
                 {
                     LogEvent next;
@@ -150,10 +151,12 @@ namespace Serilog.Sinks.PeriodicBatching
                         return;
 
                     EmitBatch(_waitingBatch);
+
+                    batchWasFull = _waitingBatch.Count >= _batchSizeLimit;
                     _waitingBatch.Clear();
                     _status.MarkSuccess();
                 }
-                while (true);
+                while (batchWasFull); // Otherwise, allow the period to elapse
             }
             catch (Exception ex)
             {
