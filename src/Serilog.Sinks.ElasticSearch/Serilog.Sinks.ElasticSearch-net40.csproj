@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="Sinks\ElasticSearch\ElasticsearchJsonFormatter.cs" />
     <Compile Include="Sinks\ElasticSearch\ElasticSearchSink.cs" />
+    <Compile Include="Sinks\ElasticSearch\ElasticsearchSinkOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

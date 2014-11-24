@@ -70,8 +70,8 @@ namespace Serilog.Sinks.ElasticSearch
             _indexFormat = !string.IsNullOrWhiteSpace(options.IndexFormat) ? options.IndexFormat : DefaultIndexFormat;
             _typeName = !string.IsNullOrWhiteSpace(options.TypeName) ? options.TypeName : DefaultTypeName;
             var configuration = new ConnectionConfiguration(options.ConnectionPool)
-				.SetTimeout(DefaultConnectionTimeout)
-				.SetMaximumAsyncConnections(20);
+                .SetTimeout(DefaultConnectionTimeout)
+                .SetMaximumAsyncConnections(20);
             if (options.ModifyConnectionSetttings != null)
                 configuration = options.ModifyConnectionSetttings(configuration);
             _client = new ElasticsearchClient(configuration, connection: options.Connection, serializer: options.Serializer);

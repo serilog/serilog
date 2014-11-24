@@ -37,16 +37,6 @@ namespace Serilog.Formatting.Json
         readonly IFormatProvider _formatProvider;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
 
-        private JsonFormattingStage _stage = JsonFormattingStage.MetaData;
-
-        /// <summary>
-        /// Signals to subclasses at what stage the formatter is operating
-        /// </summary>
-        protected JsonFormattingStage Stage
-        {
-            get { return _stage; }
-            private set { _stage = value; }
-        }
         /// <summary>
         /// Construct a <see cref="JsonFormatter"/>. Obsolete, please use named arguments
         /// when calling this constructor.
@@ -83,7 +73,7 @@ namespace Serilog.Formatting.Json
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
                 { typeof(bool), (v, q, w) => WriteBoolean((bool)v, w) },
-                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(_formatProvider), w) },
+                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -119,27 +109,20 @@ namespace Serilog.Formatting.Json
                 output.Write("{");
 
             var delim = "";
-            WriteJsonProperty("Timestamp", logEvent.Timestamp, ref delim, output);
-            WriteJsonProperty("Level", logEvent.Level, ref delim, output);
-            WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
+            WriteTimestamp(logEvent.Timestamp, ref delim, output);
+            WriteLevel(logEvent.Level, ref delim, output);
+            WriteMessageTemplate(logEvent.MessageTemplate.Text, ref delim, output);
             if (_renderMessage)
-                WriteJsonProperty("RenderedMessage", logEvent.RenderMessage(_formatProvider), ref delim, output);
+            {
+                var message = logEvent.RenderMessage(_formatProvider);
+                WriteRenderedMessage(message, ref delim, output);
+            }
 
             if (logEvent.Exception != null)
-                WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
+                WriteException(logEvent.Exception, ref delim, output);
 
             if (logEvent.Properties.Count != 0)
-            {
-                output.Write(",\"{0}\":{{", FormatPropertyName("Properties"));
-                Stage = JsonFormattingStage.Properties;
-                var precedingDelimiter = "";
-                foreach (var property in logEvent.Properties)
-                {
-                    WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
-                }
-                output.Write("}");
-                Stage = JsonFormattingStage.MetaData;
-            }
+                WriteProperties(logEvent.Properties, output);
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
                 .OfType<PropertyToken>()
@@ -149,39 +132,9 @@ namespace Serilog.Formatting.Json
 
             if (tokensWithFormat.Length != 0)
             {
-                output.Write(",\"{0}\":{{", FormatPropertyName("Renderings"));
-                Stage = JsonFormattingStage.Renderings;
-                var rdelim = "";
-                foreach (var ptoken in tokensWithFormat)
-                {
-                    output.Write(rdelim);
-                    rdelim = ",";
-                    output.Write("\"");
-                    output.Write(ptoken.Key);
-                    output.Write("\":[");
+                WriteRenderings(tokensWithFormat, logEvent.Properties, output);
 
-                    var fdelim = "";
-                    foreach (var format in ptoken)
-                    {
-                        output.Write(fdelim);
-                        fdelim = ",";
 
-                        output.Write("{");
-                        var eldelim = "";
-
-                        WriteJsonProperty("Format", format.Format, ref eldelim, output);
-
-                        var sw = new StringWriter();
-                        format.Render(logEvent.Properties, sw);
-                        WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
-
-                        output.Write("}");
-                    }
-
-                    output.Write("]");
-                }
-                output.Write("}");
-                Stage = JsonFormattingStage.MetaData;
             }
 
             if (!_omitEnclosingObject)
@@ -190,8 +143,119 @@ namespace Serilog.Formatting.Json
                 output.Write(_closingDelimiter);
             }
         }
+        
+        /// <summary>
+        /// Writes out individual renderings of attached properties
+        /// </summary>
+        protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            output.Write(",\"{0}\":{{", "Renderings");
+            WriteRenderingsValues(tokensWithFormat, properties, output);
+            output.Write("}");
+        }
+        
+        /// <summary>
+        /// Writes out the values of individual renderings of attached properties
+        /// </summary>
+        protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            var rdelim = "";
+            foreach (var ptoken in tokensWithFormat)
+            {
+                output.Write(rdelim);
+                rdelim = ",";
+                output.Write("\"");
+                output.Write(ptoken.Key);
+                output.Write("\":[");
 
-        void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
+                var fdelim = "";
+                foreach (var format in ptoken)
+                {
+                    output.Write(fdelim);
+                    fdelim = ",";
+
+                    output.Write("{");
+                    var eldelim = "";
+
+                    WriteJsonProperty("Format", format.Format, ref eldelim, output);
+
+                    var sw = new StringWriter();
+                    format.Render(properties, sw);
+                    WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+
+                    output.Write("}");
+                }
+
+                output.Write("]");
+            }
+        }
+        
+        /// <summary>
+        /// Writes out the attached properties
+        /// </summary>
+        protected virtual void WriteProperties(IDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            output.Write(",\"{0}\":{{", "Properties");
+            WritePropertiesValues(properties, output);
+            output.Write("}");
+        }
+
+        /// <summary>
+        /// Writes out the attached properties values
+        /// </summary>
+        protected virtual void WritePropertiesValues(IDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            var precedingDelimiter = "";
+            foreach (var property in properties)
+            {
+                WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
+            }
+        }
+        
+        /// <summary>
+        /// Writes out the attached exception
+        /// </summary>
+        protected virtual void WriteException(Exception exception, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("Exception", exception, ref delim, output);
+        }
+           
+        /// <summary>
+        /// (Optionally) writes out the rendered message
+        /// </summary>
+        protected virtual void WriteRenderedMessage(string message, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("RenderedMessage", message, ref delim, output);
+        }
+        
+        /// <summary>
+        /// Writes out the message template for the logevent.
+        /// </summary>
+        protected virtual void WriteMessageTemplate(string template, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("MessageTemplate", template, ref delim, output);
+        }
+        
+        /// <summary>
+        /// Writes out the log level
+        /// </summary>
+        protected virtual void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("Level", level, ref delim, output);
+        }
+        
+        /// <summary>
+        /// Writes out the log timestamp
+        /// </summary>
+        protected virtual void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("Timestamp", timestamp, ref delim, output);
+        }
+
+        /// <summary>
+        /// Writes out a structure property
+        /// </summary>
+        protected virtual void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
         {
             output.Write("{");
 
@@ -204,8 +268,11 @@ namespace Serilog.Formatting.Json
 
             output.Write("}");
         }
-
-        void WriteSequence(IEnumerable elements, TextWriter output)
+        
+        /// <summary>
+        /// Writes out a sequence property
+        /// </summary>
+        protected virtual void WriteSequence(IEnumerable elements, TextWriter output)
         {
             output.Write("[");
             var delim = "";
@@ -217,8 +284,11 @@ namespace Serilog.Formatting.Json
             }
             output.Write("]");
         }
-
-        void WriteDictionary(IDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
+           
+        /// <summary>
+        /// Writes out a dictionary 
+        /// </summary>
+        protected virtual void WriteDictionary(IDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
         {
             output.Write("{");
             var delim = "";
@@ -232,25 +302,18 @@ namespace Serilog.Formatting.Json
             }
             output.Write("}");
         }
-
-        void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
+        
+        /// <summary>
+        /// Writes out a json property with the specified value on output writer
+        /// </summary>
+        protected virtual void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
         {
             output.Write(precedingDelimiter);
             output.Write("\"");
-            output.Write(FormatPropertyName(name));
+            output.Write(name);
             output.Write("\":");
             WriteLiteral(value, output);
             precedingDelimiter = ",";
-        }
-
-        /// <summary>
-        /// Allows you subclass JsonFormatter and implement your own property name handling
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        protected virtual string FormatPropertyName(string name)
-        {
-            return name;
         }
 
         /// <summary>
@@ -277,8 +340,8 @@ namespace Serilog.Formatting.Json
                 writer(value, forceQuotation, output);
                 return;
             }
-
             WriteObjectValue(value, output);
+
         }
 
         static void WriteToString(object number, bool quote, TextWriter output)

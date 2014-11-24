@@ -50,7 +50,7 @@ namespace Serilog.Sinks.ElasticSearch
         /// <summary>
         /// Writes out individual renderings of attached properties
         /// </summary>
-        protected override void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        protected override void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
             output.Write(",\"{0}\":{{", "renderings");
             WriteRenderingsValues(tokensWithFormat, properties, output);
@@ -60,7 +60,7 @@ namespace Serilog.Sinks.ElasticSearch
         /// <summary>
         /// Writes out the attached properties
         /// </summary>
-        protected override void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        protected override void WriteProperties(IDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
             if (!_inlineFields)
                 output.Write(",\"{0}\":{{", "fields");
