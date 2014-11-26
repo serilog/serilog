@@ -94,7 +94,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Seq", "src\Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.XSockets", "src\Serilog.Sinks.XSockets\Serilog.Sinks.XSockets.csproj", "{1585D6FE-7033-4687-8122-C5115C4F3BAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.MsTests", "test\Serilog.MsTests\Serilog.MsTests.csproj", "{7FC9FC46-5014-4461-A448-815E6CCE21E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.MsTests", "Serilog.MsTests\Serilog.MsTests.csproj", "{7FC9FC46-5014-4461-A448-815E6CCE21E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
