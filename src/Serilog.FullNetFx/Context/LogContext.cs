@@ -48,6 +48,11 @@ namespace Serilog.Context
     {
         static readonly string DataSlotName = typeof(LogContext).FullName;
 
+        private sealed class Wrapper : MarshalByRefObject
+        {
+            public ImmutableStack<ILogEventEnricher> Value { get; set; }
+        }
+
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
         /// that can later be used to remove the property, along with any others that
@@ -126,8 +131,15 @@ namespace Serilog.Context
 
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
-            get { return (ImmutableStack<ILogEventEnricher>)CallContext.LogicalGetData(DataSlotName); }
-            set { CallContext.LogicalSetData(DataSlotName, value); }
+            get
+            {
+                var ret = (Wrapper)CallContext.LogicalGetData(DataSlotName);
+                return ret != null ? ret.Value : null;
+            }
+            set
+            {
+                CallContext.LogicalSetData(DataSlotName, new Wrapper { Value = value });
+            }
         }
 
         internal static void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
