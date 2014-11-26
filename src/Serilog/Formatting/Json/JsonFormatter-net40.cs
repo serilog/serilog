@@ -321,7 +321,7 @@ namespace Serilog.Formatting.Json
         /// </summary>
         /// <param name="value">The value to be written as a json construct</param>
         /// <param name="output">The writer to write on</param>
-        protected virtual void WriteObjectValue(object value, TextWriter output)
+        protected virtual void WriteLiteralValue(object value, TextWriter output)
         {
             WriteString(value.ToString(), output);
         }
@@ -340,7 +340,7 @@ namespace Serilog.Formatting.Json
                 writer(value, forceQuotation, output);
                 return;
             }
-            WriteObjectValue(value, output);
+            WriteLiteralValue(value, output);
 
         }
 

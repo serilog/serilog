@@ -116,7 +116,7 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         /// <param name="value">The value to be written as a json construct</param>
         /// <param name="output">The writer to write on</param>
-        protected override void WriteObjectValue(object value, TextWriter output)
+        protected override void WriteLiteralValue(object value, TextWriter output)
         {
             if (_serializer != null)
             {
@@ -126,7 +126,7 @@ namespace Serilog.Sinks.ElasticSearch
                 return;
             }
 
-            base.WriteObjectValue(value, output);
+            base.WriteLiteralValue(value, output);
         }
 
     }

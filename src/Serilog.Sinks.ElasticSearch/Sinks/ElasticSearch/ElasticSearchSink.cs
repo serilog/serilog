@@ -95,6 +95,7 @@ namespace Serilog.Sinks.ElasticSearch
         /// </remarks>
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
+            // ReSharper disable PossibleMultipleEnumeration
             if (!events.Any())
                 return;
 

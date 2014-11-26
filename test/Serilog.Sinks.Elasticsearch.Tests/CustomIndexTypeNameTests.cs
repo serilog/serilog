@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Elasticsearch.Net.JsonNet;
 using FluentAssertions;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -20,7 +17,7 @@ namespace Serilog.Sinks.Elasticsearch.Tests
         {
             //DO NOTE that you cant send objects as scalar values through Logger.*("{Scalar}", {});
             var timestamp = new DateTimeOffset(2013, 05, 28, 22, 10, 20, 666, TimeSpan.FromHours(10));
-            var messageTemplate = "{Song}++ @{Complex}";
+            const string messageTemplate = "{Song}++ @{Complex}";
             var template = new MessageTemplateParser().Parse(messageTemplate);
             _options.TypeName = "custom-event-type";
             _options.IndexFormat = "event-index-{0:yyyy.MM.dd}";
