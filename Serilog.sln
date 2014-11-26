@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
 		assets\CommonAssemblyInfo.cs = assets\CommonAssemblyInfo.cs
+		.editorconfig = .editorconfig
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
@@ -93,6 +94,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Seq", "src\Serilog.Sinks.Seq\Serilog.Sinks.Seq.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.XSockets", "src\Serilog.Sinks.XSockets\Serilog.Sinks.XSockets.csproj", "{1585D6FE-7033-4687-8122-C5115C4F3BAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Elasticsearch.Tests", "test\Serilog.Sinks.Elasticsearch.Tests\Serilog.Sinks.Elasticsearch.Tests.csproj", "{66B10686-4C73-4D5E-8638-98475879E989}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -260,6 +263,10 @@ Global
 		{1585D6FE-7033-4687-8122-C5115C4F3BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1585D6FE-7033-4687-8122-C5115C4F3BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1585D6FE-7033-4687-8122-C5115C4F3BAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B10686-4C73-4D5E-8638-98475879E989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B10686-4C73-4D5E-8638-98475879E989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B10686-4C73-4D5E-8638-98475879E989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B10686-4C73-4D5E-8638-98475879E989}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -305,5 +312,6 @@ Global
 		{17DEED0F-F9CB-48FB-B4DC-53FB6AEE64D7} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{B6A720E1-732B-4B8B-868B-5914AF85983C} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{1585D6FE-7033-4687-8122-C5115C4F3BAF} = {037440DE-440B-4129-9F7A-09B42D00397E}
+		{66B10686-4C73-4D5E-8638-98475879E989} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 	EndGlobalSection
 EndGlobal
