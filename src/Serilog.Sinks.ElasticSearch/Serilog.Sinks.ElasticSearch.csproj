@@ -58,12 +58,12 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationElasticSearchExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sinks\ElasticSearch\ElasticsearchJsonFormatter.cs" />
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Sinks\ElasticSearch\Data\LogEvent.cs" />
     <Compile Include="Sinks\ElasticSearch\ElasticSearchSink.cs" />
-    <Compile Include="Sinks\ElasticSearch\ElasticSearchPropertyFormatter.cs" />
+    <Compile Include="Sinks\ElasticSearch\ElasticsearchSinkOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
