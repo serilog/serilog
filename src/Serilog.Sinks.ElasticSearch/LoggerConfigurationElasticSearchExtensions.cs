@@ -14,9 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Elasticsearch.Net.Connection;
-using Elasticsearch.Net.ConnectionPool;
 using Elasticsearch.Net.Serialization;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -49,7 +47,7 @@ namespace Serilog
         /// </returns>
         /// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next serilog major release")]
+        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next Serilog major release")]
         public static LoggerConfiguration ElasticSearch(
             this LoggerSinkConfiguration loggerConfiguration,
             string indexFormat = ElasticsearchSink.DefaultIndexFormat,
@@ -97,7 +95,7 @@ namespace Serilog
 		/// </returns>
 		/// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
 		/// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next serilog major release")]
+        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next Serilog major release")]
 		public static LoggerConfiguration ElasticSearch(
 			this LoggerSinkConfiguration loggerConfiguration,
 			IEnumerable<Uri> nodes,
@@ -141,7 +139,7 @@ namespace Serilog
 		/// </returns>
 		/// <exception cref="System.ArgumentNullException">loggerConfiguration</exception>
 		/// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next serilog major release")]
+        [Obsolete("Please use Elasticsearch(ElasticsearchSinkOptions options), this method might not expose all options and should be removed in the next Serilog major release")]
 		public static LoggerConfiguration ElasticSearch(
 			this LoggerSinkConfiguration loggerConfiguration,
 			ConnectionConfiguration connectionConfiguration,
