@@ -6,6 +6,12 @@ namespace Serilog.Tests.Context
     [TestClass]
     public class SerilogTest
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            LogContext.PermitCrossAppDomainCalls = true;
+        }
+
         [TestMethod]
         public void TestLog()
         {

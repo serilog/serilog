@@ -47,11 +47,11 @@ namespace Serilog.Context
     public static class LogContext
     {
         static readonly string DataSlotName = typeof(LogContext).FullName;
-
-        private sealed class Wrapper : MarshalByRefObject
-        {
-            public ImmutableStack<ILogEventEnricher> Value { get; set; }
-        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool PermitCrossAppDomainCalls;
 
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
@@ -133,12 +133,27 @@ namespace Serilog.Context
         {
             get
             {
-                var ret = (Wrapper)CallContext.LogicalGetData(DataSlotName);
-                return ret != null ? ret.Value : null;
+                
+                var data = CallContext.LogicalGetData(DataSlotName);
+
+                ImmutableStack<ILogEventEnricher> context;
+                if (PermitCrossAppDomainCalls)
+                {
+                    context = data != null ? ((Wrapper)data).Value : null;
+                }
+                else
+                {
+                    context = (ImmutableStack<ILogEventEnricher>)data;
+                }
+
+                return context;
             }
             set
             {
-                CallContext.LogicalSetData(DataSlotName, new Wrapper { Value = value });
+                
+                var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper { Value = value };
+
+                CallContext.LogicalSetData(DataSlotName, context);
             }
         }
 
@@ -168,6 +183,12 @@ namespace Serilog.Context
                 Enrichers = _bookmark;
             }
         }
+
+        sealed class Wrapper : MarshalByRefObject
+        {
+            public ImmutableStack<ILogEventEnricher> Value { get; set; }
+        }
     }
 }
+
 #endif
