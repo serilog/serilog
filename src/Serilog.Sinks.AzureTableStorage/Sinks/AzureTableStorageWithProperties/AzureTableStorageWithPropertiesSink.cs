@@ -48,7 +48,7 @@ namespace Serilog.Sinks.AzureTableStorage
 
 			if (string.IsNullOrEmpty(storageTableName))
 			{
-				storageTableName = "SerilogEvents";
+				storageTableName = "LogEventEntity";
 			}
 
 			_table = tableClient.GetTableReference(storageTableName);
