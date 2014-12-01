@@ -11,6 +11,7 @@
     <AssemblyName>Serilog.Sinks.EventStore.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>fc1767e4</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +33,12 @@
   <ItemGroup>
     <Reference Include="EventStore.ClientAPI">
       <HintPath>..\..\packages\EventStore.Client.3.0.1\lib\net40\EventStore.ClientAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="EventStore.ClientAPI.Embedded">
+      <HintPath>..\..\packages\EventStore.Client.Embedded.3.0.1\lib\net40\EventStore.ClientAPI.Embedded.dll</HintPath>
+    </Reference>
+    <Reference Include="EventStoreRunner">
+      <HintPath>..\..\packages\EventStoreRunner.1.0.0.0\lib\net40\EventStoreRunner.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -73,7 +80,38 @@
       <Name>Serilog</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="EventStore Binaries\clusternode-web\apple-touch-icon.png" />
+    <Content Include="EventStore Binaries\clusternode-web\css\main.min.css" />
+    <Content Include="EventStore Binaries\clusternode-web\es-tile.png" />
+    <Content Include="EventStore Binaries\clusternode-web\favicon.png" />
+    <Content Include="EventStore Binaries\clusternode-web\images\logo.svg" />
+    <Content Include="EventStore Binaries\clusternode-web\index.html" />
+    <Content Include="EventStore Binaries\clusternode-web\js\ace\ace.js" />
+    <Content Include="EventStore Binaries\clusternode-web\js\ace\mode-javascript.js" />
+    <Content Include="EventStore Binaries\clusternode-web\js\ace\mode-json.js" />
+    <Content Include="EventStore Binaries\clusternode-web\js\ace\theme-monokai.js" />
+    <Content Include="EventStore Binaries\clusternode-web\js\ace\worker-javascript.js" />
+    <Content Include="EventStore Binaries\clusternode-web\js\app.min.js" />
+    <Content Include="EventStore Binaries\clusternode-web\js\requirejs.min.js" />
+    <Content Include="EventStore Binaries\EventStore.ClusterNode.exe" />
+    <Content Include="EventStore Binaries\EventStore.PAdmin.exe" />
+    <Content Include="EventStore Binaries\EventStore.Query.exe" />
+    <Content Include="EventStore Binaries\js1.dll" />
+    <Content Include="EventStore Binaries\Prelude\1Prelude.js" />
+    <Content Include="EventStore Binaries\Prelude\Modules.js" />
+    <Content Include="EventStore Binaries\Prelude\ModulesExecuted.js" />
+    <Content Include="EventStore Binaries\Prelude\Projections.js" />
+    <Content Include="EventStore Binaries\projections\es.projections.environment.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\EventStore.Client.Embedded.3.0.1\build\EventStore.Client.Embedded.targets" Condition="Exists('..\..\packages\EventStore.Client.Embedded.3.0.1\build\EventStore.Client.Embedded.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\EventStore.Client.Embedded.3.0.1\build\EventStore.Client.Embedded.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EventStore.Client.Embedded.3.0.1\build\EventStore.Client.Embedded.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

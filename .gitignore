@@ -67,3 +67,6 @@ packages/*
 
 #Test files
 *.testsettings
+
+#EventStore binary files.
+test/Serilog.Sinks.EventStore.Tests/EventStore Binaries/
