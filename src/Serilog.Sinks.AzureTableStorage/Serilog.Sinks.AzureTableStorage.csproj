@@ -80,16 +80,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LoggerConfigurationAzureTableStorageExtensions.cs" />
+    <Compile Include="LoggerConfigurationAzureTableStorageWithPropertiesExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Sinks\AzureTableStorage\AzureBatchingTableStorageSink.cs" />
-    <Compile Include="Sinks\AzureTableStorage\AzureBatchingTableStorageWithPropertiesSink.cs" />
+    <Compile Include="Sinks\AzureTableStorageWithProperties\AzureBatchingTableStorageWithPropertiesSink.cs" />
     <Compile Include="Sinks\AzureTableStorage\AzureTableStorageSink.cs" />
-    <Compile Include="Sinks\AzureTableStorage\AzureTableStorageWithPropertiesSink.cs" />
+    <Compile Include="Sinks\AzureTableStorageWithProperties\AzureTableStorageWithPropertiesSink.cs" />
     <Compile Include="Sinks\AzureTableStorage\LogEventEntity.cs" />
-    <Compile Include="Sinks\AzureTableStorage\AzureTableStorageEntityFactory.cs" />
+    <Compile Include="Sinks\AzureTableStorageWithProperties\AzureTableStorageEntityFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
