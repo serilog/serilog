@@ -91,5 +91,51 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual(Guid.Parse(rowKeyGuid).ToString(), rowKeyGuid);
 			Assert.False(entity.RowKey.Contains('Z'));
 		}
+
+		[Test]
+		public void CreateEntityWithPropertiesShouldSupportAzureTableTypesForScalar()
+		{
+			var messageTemplate = "{ByteArray} {Boolean} {DateTime} {DateTimeOffset} {Double} {Guid} {Int} {Long} {String}";
+			var bytearrayValue = new byte[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 250, 251, 252, 253, 254, 255 };
+			var booleanValue = true;
+			var datetimeValue = DateTime.UtcNow;
+			var datetimeoffsetValue = new DateTimeOffset(datetimeValue, TimeSpan.FromHours(0));
+			var doubleValue = Math.PI;
+			var guidValue = Guid.NewGuid();
+			var intValue = int.MaxValue;
+			var longValue = long.MaxValue;
+			var stringValue = "Some string value";
+
+			var properties = new List<LogEventProperty> {
+				new LogEventProperty("ByteArray", new ScalarValue(bytearrayValue)),
+				new LogEventProperty("Boolean", new ScalarValue(booleanValue)),
+				new LogEventProperty("DateTime", new ScalarValue(datetimeValue)),
+				new LogEventProperty("DateTimeOffset", new ScalarValue(datetimeoffsetValue)),
+				new LogEventProperty("Double", new ScalarValue(doubleValue)),
+				new LogEventProperty("Guid", new ScalarValue(guidValue)),
+				new LogEventProperty("Int", new ScalarValue(intValue)),
+				new LogEventProperty("Long", new ScalarValue(longValue)),
+				new LogEventProperty("String", new ScalarValue(stringValue))
+			};
+
+			var template = new MessageTemplateParser().Parse(messageTemplate);
+
+			var logEvent = new Events.LogEvent(DateTime.Now, LogEventLevel.Information, null, template, properties);
+
+			var entity = AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, null, null);
+
+			Assert.AreEqual(3 + properties.Count, entity.Properties.Count);
+
+			Assert.IsInstanceOf(typeof(byte[]), entity.Properties["ByteArray"].BinaryValue);
+			Assert.AreEqual(bytearrayValue, entity.Properties["ByteArray"].BinaryValue);
+			Assert.AreEqual(booleanValue, entity.Properties["Boolean"].BooleanValue);
+			Assert.AreEqual(datetimeValue, entity.Properties["DateTime"].DateTime);
+			Assert.AreEqual(datetimeoffsetValue, entity.Properties["DateTimeOffset"].DateTimeOffsetValue);
+			Assert.AreEqual(doubleValue, entity.Properties["Double"].DoubleValue);
+			Assert.AreEqual(guidValue, entity.Properties["Guid"].GuidValue);
+			Assert.AreEqual(intValue, entity.Properties["Int"].Int32Value);
+			Assert.AreEqual(longValue, entity.Properties["Long"].Int64Value);
+			Assert.AreEqual(stringValue, entity.Properties["String"].StringValue);
+		}
 	}
 }
