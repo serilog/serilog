@@ -19,7 +19,7 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 		{
 			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
 			var tableClient = storageAccount.CreateCloudTableClient();
-			var table = tableClient.GetTableReference("SerilogEvents");
+			var table = tableClient.GetTableReference("LogEventEntity");
 
 			var logger = new LoggerConfiguration()
 				.WriteTo.AzureTableStorageWithProperties(storageAccount)
@@ -40,9 +40,9 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual("\"Properties\" should go in their 1234  ", result.Properties["RenderedMessage"].StringValue);
 
 			// Check the presence of the new properties.
-			Assert.AreEqual("\"Properties\"", result.Properties["Properties"].PropertyAsObject);
-			Assert.AreEqual("1234", result.Properties["Numbered"].StringValue);
-			Assert.AreEqual(" ", result.Properties["Space"].StringValue);
+			Assert.AreEqual("Properties", result.Properties["Properties"].PropertyAsObject);
+			Assert.AreEqual(1234, result.Properties["Numbered"].PropertyAsObject);
+			Assert.AreEqual(" ", result.Properties["Space"].PropertyAsObject);
 		}
 	}
 }

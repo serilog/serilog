@@ -55,8 +55,8 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual(new EntityProperty("Information"), entity.Properties["Level"]);
 			Assert.AreEqual(new EntityProperty("Template \"Temporary\" \"Property\""), entity.Properties["RenderedMessage"]);
 			Assert.AreEqual(new EntityProperty(exception.ToString()), entity.Properties["Exception"]);
-			Assert.AreEqual(new EntityProperty("\"Temporary\""), entity.Properties["Temp"]);
-			Assert.AreEqual(new EntityProperty("\"Property\""), entity.Properties["Prop"]);
+			Assert.AreEqual(new EntityProperty("Temporary"), entity.Properties["Temp"]);
+			Assert.AreEqual(new EntityProperty("Property"), entity.Properties["Prop"]);
 		}
 
 		[Test]

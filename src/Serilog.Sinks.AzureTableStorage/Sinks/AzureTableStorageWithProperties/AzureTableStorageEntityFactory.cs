@@ -56,8 +56,7 @@ namespace Serilog.Sinks.AzureTableStorage
 
 			foreach (var logProperty in logEvent.Properties)
 			{
-				// TODO: Convert values to JSON. Can properties in LogEvent preserve their original types?
-				dynamicProperties.Add(logProperty.Key, new EntityProperty(logProperty.Value.ToString()));
+				dynamicProperties.Add(logProperty.Key, AzurePropertyFormatter.ToEntityProperty(logProperty.Value));
 			}
 
 			return tableEntity;

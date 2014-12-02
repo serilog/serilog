@@ -85,6 +85,7 @@
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Sinks\AzureTableStorageWithProperties\AzurePropertyFormatter.cs" />
     <Compile Include="Sinks\AzureTableStorage\AzureBatchingTableStorageSink.cs" />
     <Compile Include="Sinks\AzureTableStorageWithProperties\AzureBatchingTableStorageWithPropertiesSink.cs" />
     <Compile Include="Sinks\AzureTableStorage\AzureTableStorageSink.cs" />

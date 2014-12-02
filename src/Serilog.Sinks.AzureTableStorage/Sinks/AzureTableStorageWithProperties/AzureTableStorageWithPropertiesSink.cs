@@ -43,9 +43,6 @@ namespace Serilog.Sinks.AzureTableStorage
 		/// <param name="additionalRowKeyPostfix">Additional postfix string that will be appended to row keys</param>
 		public AzureTableStorageWithPropertiesSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, string storageTableName = null, string additionalRowKeyPostfix = null)
         {
-			_formatProvider = formatProvider;
-			_additionalRowKeyPostfix = AzureTableStorageEntityFactory.GetValidStringForTableKey(additionalRowKeyPostfix);
-
 			var tableClient = storageAccount.CreateCloudTableClient();
 
 			if (string.IsNullOrEmpty(storageTableName))
@@ -55,6 +52,13 @@ namespace Serilog.Sinks.AzureTableStorage
 
 			_table = tableClient.GetTableReference(storageTableName);
 			_table.CreateIfNotExists();
+
+			_formatProvider = formatProvider;
+
+			if (additionalRowKeyPostfix != null)
+			{
+				_additionalRowKeyPostfix = AzureTableStorageEntityFactory.GetValidStringForTableKey(additionalRowKeyPostfix);
+			}
 		}
 
 		/// <summary>
