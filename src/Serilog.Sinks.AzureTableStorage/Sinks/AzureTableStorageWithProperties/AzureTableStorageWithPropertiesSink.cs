@@ -32,8 +32,7 @@ namespace Serilog.Sinks.AzureTableStorage
 	{
 		private readonly IFormatProvider _formatProvider;
 		private readonly CloudTable _table;
-
-		private long _rowKeyIndex;
+		private readonly string _additionalRowKeyPostfix;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
@@ -41,9 +40,12 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="storageAccount">The Cloud Storage Account to use to insert the log entries to.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
-		public AzureTableStorageWithPropertiesSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, string storageTableName = null)
+		/// <param name="additionalRowKeyPostfix">Additional postfix string that will be appended to row keys</param>
+		public AzureTableStorageWithPropertiesSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, string storageTableName = null, string additionalRowKeyPostfix = null)
         {
 			_formatProvider = formatProvider;
+			_additionalRowKeyPostfix = AzureTableStorageEntityFactory.GetValidStringForTableKey(additionalRowKeyPostfix);
+
 			var tableClient = storageAccount.CreateCloudTableClient();
 
 			if (string.IsNullOrEmpty(storageTableName))
@@ -61,18 +63,7 @@ namespace Serilog.Sinks.AzureTableStorage
 		/// <param name="logEvent">The log event to write.</param>
 		public void Emit(LogEvent logEvent)
 		{
-			_table.Execute(TableOperation.Insert(AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, _formatProvider, logEvent.Timestamp.Ticks)));
-		}
-
-		/// <summary>
-		/// Appends an incrementing index to the row key to ensure that it will
-		/// not conflict with existing rows created at the same time / with the
-		/// same partition key.
-		/// </summary>
-		/// <param name="logEventEntity"></param>
-		private void EnsureUniqueRowKey(ITableEntity logEventEntity)
-		{
-			logEventEntity.RowKey += "|" + Interlocked.Increment(ref _rowKeyIndex);
+			_table.Execute(TableOperation.Insert(AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, _formatProvider, _additionalRowKeyPostfix)));
 		}
 	}
 }

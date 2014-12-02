@@ -15,6 +15,7 @@
 using Microsoft.WindowsAzure.Storage.Table;
 using Serilog.Events;
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Serilog.Sinks.AzureTableStorage
@@ -32,20 +33,14 @@ namespace Serilog.Sinks.AzureTableStorage
 		/// </summary>
 		/// <param name="logEvent">The event to log</param>
 		/// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-		/// <param name="partitionKey"></param>
+		/// <param name="additionalRowKeyPostfix">Additional postfix string that will be appended to row keys</param>
 		/// <returns></returns>
-		public static DynamicTableEntity CreateEntityWithProperties(LogEvent logEvent, IFormatProvider formatProvider, long partitionKey)
+		public static DynamicTableEntity CreateEntityWithProperties(LogEvent logEvent, IFormatProvider formatProvider, string additionalRowKeyPostfix)
 		{
 			var tableEntity = new DynamicTableEntity();
 
-			// It is not a good idea to use ticks directly as this may fragment the partition
-			// too much. WAD rounds the DateTime to the nearest minute.
-			// TODO: Copy what's done in WAD
-			tableEntity.PartitionKey = string.Format("0{0}", partitionKey);
-
-			// TODO: Find a good way to create unique Id even if running on multiple servers.
-			tableEntity.RowKey = GetValidRowKey(string.Format("{0}|{1}", logEvent.Level, logEvent.MessageTemplate.Text));
-
+			tableEntity.PartitionKey = GenerateValidPartitionKey(logEvent);
+			tableEntity.RowKey = GenerateValidRowKey(logEvent, additionalRowKeyPostfix);
 			tableEntity.Timestamp = logEvent.Timestamp;
 
 			var dynamicProperties = tableEntity.Properties;
@@ -62,19 +57,68 @@ namespace Serilog.Sinks.AzureTableStorage
 			foreach (var logProperty in logEvent.Properties)
 			{
 				// TODO: Convert values to JSON. Can properties in LogEvent preserve their original types?
-
 				dynamicProperties.Add(logProperty.Key, new EntityProperty(logProperty.Value.ToString()));
 			}
 
 			return tableEntity;
 		}
 
-		// http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx
-		// TODO: Leave some space for additional postfixes at the end...
-		private static string GetValidRowKey(string rowKey)
+		/// <summary>
+		/// Generate a valid string for a table property key by removing invalid characters
+		/// </summary>
+		/// <param name="s">
+		/// The input string
+		/// </param>
+		/// <returns>
+		/// The string that can be used as a property
+		/// </returns>
+		public static string GetValidStringForTableKey(string s)
 		{
-			rowKey = _rowKeyNotAllowedMatch.Replace(rowKey, "");
-			return rowKey.Length > 1024 ? rowKey.Substring(0, 1024) : rowKey;
+			return _rowKeyNotAllowedMatch.Replace(s, "");
+		}
+
+		// Generate a valid partition key from event timestamp.
+		private static string GenerateValidPartitionKey(LogEvent logEvent)
+		{
+			// Like WAD, round the timestamp the minute.
+			return "0" + new DateTime(
+				logEvent.Timestamp.Year,
+				logEvent.Timestamp.Month,
+				logEvent.Timestamp.Day,
+				logEvent.Timestamp.Hour,
+				logEvent.Timestamp.Minute,
+				0).Ticks;
+		}
+
+		// Generate a valid Row Key by joining postfix and prefix. If longer
+		// than 1K, prefix is truncated.
+		// See http://msdn.microsoft.com/en-us/library/windowsazure/dd179338.aspx
+		private static string GenerateValidRowKey(LogEvent logEvent, string additionalRowKeyPostfix)
+		{
+			var prefixBuilder = new StringBuilder(512);
+
+			// Join level and message template
+			prefixBuilder.Append(logEvent.Level).Append('|').Append(GetValidStringForTableKey(logEvent.MessageTemplate.Text));
+
+			var postfixBuilder = new StringBuilder(512);
+
+			if (additionalRowKeyPostfix != null)
+			{
+				// additionalRowKeyPostfix is already stripped of invalid characters
+				postfixBuilder.Append('|').Append(additionalRowKeyPostfix);
+			}
+
+			// Append GUID to postfix	
+			postfixBuilder.Append('|').Append(Guid.NewGuid());
+
+			// Truncate prefix if too long
+			var maxPrefixLength = 1024 - postfixBuilder.Length;
+			if (prefixBuilder.Length > maxPrefixLength)
+			{
+				prefixBuilder.Length = maxPrefixLength;
+			}
+
+			return prefixBuilder.Append(postfixBuilder).ToString();
 		}
 	}
 }

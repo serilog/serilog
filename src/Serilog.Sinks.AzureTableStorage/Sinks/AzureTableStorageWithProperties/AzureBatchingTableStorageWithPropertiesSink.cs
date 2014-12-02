@@ -34,7 +34,8 @@ namespace Serilog.Sinks.AzureTableStorage
         /// <param name="batchSizeLimit"></param>
         /// <param name="period"></param>
         /// <param name="storageTableName">Table name that log entries will be written to. Note: Optional, setting this may impact performance</param>
-		public AzureBatchingTableStorageWithPropertiesSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, int batchSizeLimit, TimeSpan period, string storageTableName = null)
+		/// <param name="additionalRowKeyPostfix">Additional postfix string that will be appended to row keys</param>
+		public AzureBatchingTableStorageWithPropertiesSink(CloudStorageAccount storageAccount, IFormatProvider formatProvider, int batchSizeLimit, TimeSpan period, string storageTableName = null, string additionalRowKeyPostfix = null)
             :base(batchSizeLimit, period)
         {
 			throw new NotImplementedException("AzureBatchingTableStorageWithPropertiesSink constructor");

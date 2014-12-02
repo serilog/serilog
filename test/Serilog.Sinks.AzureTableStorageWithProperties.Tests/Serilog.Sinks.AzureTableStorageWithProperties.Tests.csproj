@@ -81,6 +81,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AzureTableStorageEntityFactoryTests.cs" />
     <Compile Include="AzureTableStorageWithPropertiesSinkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
