@@ -137,5 +137,88 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual(longValue, entity.Properties["Long"].Int64Value);
 			Assert.AreEqual(stringValue, entity.Properties["String"].StringValue);
 		}
+
+		[Test]
+		public void CreateEntityWithPropertiesShouldSupportAzureTableTypesForDictionary()
+		{
+			var messageTemplate = "{Dictionary}";
+
+			var dict1 = new DictionaryValue(new List<KeyValuePair<ScalarValue, LogEventPropertyValue>>{
+				new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d1k1"), new ScalarValue("d1k1v1")),
+				new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d1k2"), new ScalarValue("d1k2v2")),
+				new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d1k3"), new ScalarValue("d1k3v3")),
+			});
+
+			var dict2 = new DictionaryValue(new List<KeyValuePair<ScalarValue, LogEventPropertyValue>>{
+				new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d2k1"), new ScalarValue("d2k1v1")),
+				new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d2k2"), new ScalarValue("d2k2v2")),
+				new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d2k3"), new ScalarValue("d2k3v3")),
+			});
+
+			var dict0 = new DictionaryValue(new List<KeyValuePair<ScalarValue, LogEventPropertyValue>>{
+				 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d1"), dict1),
+				 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d2"), dict2),
+				 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("d0"), new ScalarValue(0))
+			});
+
+
+
+			var properties = new List<LogEventProperty> {
+				new LogEventProperty("Dictionary", dict0)
+			};
+
+			var template = new MessageTemplateParser().Parse(messageTemplate);
+
+			var logEvent = new Events.LogEvent(DateTime.Now, LogEventLevel.Information, null, template, properties);
+
+			var entity = AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, null, null);
+
+			Assert.AreEqual(3 + properties.Count, entity.Properties.Count);
+			Assert.AreEqual("[(\"d1\": [(\"d1k1\": \"d1k1v1\"), (\"d1k2\": \"d1k2v2\"), (\"d1k3\": \"d1k3v3\")]), (\"d2\": [(\"d2k1\": \"d2k1v1\"), (\"d2k2\": \"d2k2v2\"), (\"d2k3\": \"d2k3v3\")]), (\"d0\": 0)]", entity.Properties["Dictionary"].StringValue);
+		}
+
+		[Test]
+		public void CreateEntityWithPropertiesShouldSupportAzureTableTypesForSequence()
+		{
+			var messageTemplate = "{Sequence}";
+
+			var sequence1 = new SequenceValue(new List<LogEventPropertyValue>
+			{
+				new ScalarValue(1),
+				new ScalarValue(2),
+				new ScalarValue(3),
+				new ScalarValue(4),
+				new ScalarValue(5)
+			});
+
+			var sequence2 = new SequenceValue(new List<LogEventPropertyValue>
+			{
+				new ScalarValue("a"),
+				new ScalarValue("b"),
+				new ScalarValue("c"),
+				new ScalarValue("d"),
+				new ScalarValue("e")
+			});
+
+			var sequence0 = new SequenceValue(new List<LogEventPropertyValue>
+			{
+				sequence1,
+				sequence2
+			});
+
+			var properties = new List<LogEventProperty> {
+				new LogEventProperty("Sequence", sequence0)
+			};
+
+			var template = new MessageTemplateParser().Parse(messageTemplate);
+
+			var logEvent = new Events.LogEvent(DateTime.Now, LogEventLevel.Information, null, template, properties);
+
+			var entity = AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, null, null);
+
+			Assert.AreEqual(3 + properties.Count, entity.Properties.Count);
+			Assert.AreEqual("[[1, 2, 3, 4, 5], [\"a\", \"b\", \"c\", \"d\", \"e\"]]", entity.Properties["Sequence"].StringValue);
+		}
+
 	}
 }

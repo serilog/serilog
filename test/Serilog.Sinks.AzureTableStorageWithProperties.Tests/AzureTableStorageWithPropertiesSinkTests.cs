@@ -70,18 +70,6 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			var longValue = long.MaxValue;
 			var stringValue = "Some string value";
 
-			var properties = new List<LogEventProperty> {
-				new LogEventProperty("ByteArray", new ScalarValue(bytearrayValue)),
-				new LogEventProperty("Boolean", new ScalarValue(booleanValue)),
-				new LogEventProperty("DateTime", new ScalarValue(datetimeValue)),
-				new LogEventProperty("DateTimeOffset", new ScalarValue(datetimeoffsetValue)),
-				new LogEventProperty("Double", new ScalarValue(doubleValue)),
-				new LogEventProperty("Guid", new ScalarValue(guidValue)),
-				new LogEventProperty("Int", new ScalarValue(intValue)),
-				new LogEventProperty("Long", new ScalarValue(longValue)),
-				new LogEventProperty("String", new ScalarValue(stringValue))
-			};
-
 			logger.Information("{ByteArray} {Boolean} {DateTime} {DateTimeOffset} {Double} {Guid} {Int} {Long} {String}",
 				bytearrayValue,
 				booleanValue,
@@ -104,6 +92,65 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual(intValue, result.Properties["Int"].Int32Value);
 			Assert.AreEqual(longValue, result.Properties["Long"].Int64Value);
 			Assert.AreEqual(stringValue, result.Properties["String"].StringValue);
+		}
+
+		[Test]
+		public void WhenALoggerWritesToTheSinkItStoresTheCorrectTypesForDictionary()
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+			var tableClient = storageAccount.CreateCloudTableClient();
+			var table = tableClient.GetTableReference("LogEventEntity");
+
+			table.DeleteIfExists();
+
+			var logger = new LoggerConfiguration()
+				.WriteTo.AzureTableStorageWithProperties(storageAccount)
+				.CreateLogger();
+
+			var dict1 = new Dictionary<string, string>{
+				{"d1k1", "d1k1v1"},
+				{"d1k2", "d1k2v2"},
+				{"d1k3", "d1k3v3"}
+			};
+
+			var dict2 = new Dictionary<string, string>{
+				{"d2k1", "d2k1v1"},
+				{"d2k2", "d2k2v2"},
+				{"d2k3", "d2k3v3"}
+			};
+
+			var dict0 = new Dictionary<string, Dictionary<string, string>>{
+				 {"d1", dict1},
+				 {"d2", dict2}
+			};
+
+			logger.Information("{Dictionary}", dict0);
+			var result = table.ExecuteQuery(new TableQuery().Take(1)).First();
+
+			Assert.AreEqual("[(\"d1\": [(\"d1k1\": \"d1k1v1\"), (\"d1k2\": \"d1k2v2\"), (\"d1k3\": \"d1k3v3\")]), (\"d2\": [(\"d2k1\": \"d2k1v1\"), (\"d2k2\": \"d2k2v2\"), (\"d2k3\": \"d2k3v3\")])]", result.Properties["Dictionary"].StringValue);
+		}
+
+		[Test]
+		public void WhenALoggerWritesToTheSinkItStoresTheCorrectTypesForSequence()
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+			var tableClient = storageAccount.CreateCloudTableClient();
+			var table = tableClient.GetTableReference("LogEventEntity");
+
+			table.DeleteIfExists();
+
+			var logger = new LoggerConfiguration()
+				.WriteTo.AzureTableStorageWithProperties(storageAccount)
+				.CreateLogger();
+
+			var seq1 = new int[] { 1, 2, 3, 4, 5 };
+			var seq2 = new string[] { "a", "b", "c", "d", "e" };
+
+			logger.Information("{Seq1} {Seq2}", seq1, seq2);
+			var result = table.ExecuteQuery(new TableQuery().Take(1)).First();
+
+			Assert.AreEqual("[1, 2, 3, 4, 5]", result.Properties["Seq1"].StringValue);
+			Assert.AreEqual("[\"a\", \"b\", \"c\", \"d\", \"e\"]", result.Properties["Seq2"].StringValue);
 		}
 	}
 }
