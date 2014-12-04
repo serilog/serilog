@@ -152,5 +152,139 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual("[1, 2, 3, 4, 5]", result.Properties["Seq1"].StringValue);
 			Assert.AreEqual("[\"a\", \"b\", \"c\", \"d\", \"e\"]", result.Properties["Seq2"].StringValue);
 		}
+
+		private class Struct1
+		{
+			public int IntVal { get; set; }
+			public string StringVal { get; set; }
+		}
+
+		private class Struct2
+		{
+			public DateTime DateTimeVal { get; set; }
+			public double DoubleVal { get; set; }
+		}
+
+		private class Struct0
+		{
+			public Struct1 Struct1Val { get; set; }
+			public Struct2 Struct2Val { get; set; }
+		}
+
+		[Test]
+		public void WhenALoggerWritesToTheSinkItStoresTheCorrectTypesForStructure()
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+			var tableClient = storageAccount.CreateCloudTableClient();
+			var table = tableClient.GetTableReference("LogEventEntity");
+
+			table.DeleteIfExists();
+
+			var logger = new LoggerConfiguration()
+				.WriteTo.AzureTableStorageWithProperties(storageAccount)
+				.CreateLogger();
+
+			var struct1 = new Struct1
+			{
+				IntVal = 10,
+				StringVal = "ABCDE"
+			};
+
+			var struct2 = new Struct2
+			{
+				DateTimeVal = new DateTime(2014, 12, 3, 17, 37, 12),
+				DoubleVal = Math.PI
+			};
+
+			var struct0 = new Struct0
+			{
+				Struct1Val = struct1,
+				Struct2Val = struct2
+			};
+
+			logger.Information("{@Struct0}", struct0);
+			var result = table.ExecuteQuery(new TableQuery().Take(1)).First();
+
+			Assert.AreEqual("Struct0 { Struct1Val: Struct1 { IntVal: 10, StringVal: \"ABCDE\" }, Struct2Val: Struct2 { DateTimeVal: 12/03/2014 17:37:12, DoubleVal: 3.14159265358979 } }", result.Properties["Struct0"].StringValue);
+		}
+
+		[Test]
+		public void WhenABatchLoggerWritesToTheSinkItStoresAllTheEntries()
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+			var tableClient = storageAccount.CreateCloudTableClient();
+			var table = tableClient.GetTableReference("LogEventEntity");
+
+			table.DeleteIfExists();
+
+			using(var sink = new AzureBatchingTableStorageWithPropertiesSink(storageAccount, null, 1000, TimeSpan.FromMinutes(1)))
+			{
+				var timestamp = new DateTimeOffset(2014, 12, 01, 18, 42, 20, 666, TimeSpan.FromHours(2));
+				var messageTemplate = "Some text";
+				var template = new MessageTemplateParser().Parse(messageTemplate);
+				var properties = new List<LogEventProperty>();
+				for (int i = 0; i < 10; ++i)
+				{
+					sink.Emit(new Events.LogEvent(timestamp, LogEventLevel.Information, null, template, properties));
+				}
+			}
+
+			var result = table.ExecuteQuery(new TableQuery());
+			Assert.AreEqual(10, result.Count());
+		}
+
+		[Test]
+		public void WhenABatchLoggerWritesToTheSinkItStoresAllTheEntriesInDifferentPartitions()
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+			var tableClient = storageAccount.CreateCloudTableClient();
+			var table = tableClient.GetTableReference("LogEventEntity");
+
+			table.DeleteIfExists();
+
+			using (var sink = new AzureBatchingTableStorageWithPropertiesSink(storageAccount, null, 1000, TimeSpan.FromMinutes(1)))
+			{
+				var messageTemplate = "Some text";
+				var template = new MessageTemplateParser().Parse(messageTemplate);
+				var properties = new List<LogEventProperty>();
+
+				for(int k = 0; k < 4; ++k)
+				{
+					var timestamp = new DateTimeOffset(2014, 12, 01, 1+k, 42, 20, 666, TimeSpan.FromHours(2));
+					for (int i = 0; i < 2; ++i)
+					{
+						sink.Emit(new Events.LogEvent(timestamp, LogEventLevel.Information, null, template, properties));
+					}
+				}
+			}
+
+			var result = table.ExecuteQuery(new TableQuery());
+			Assert.AreEqual(8, result.Count());
+		}
+
+		[Test]
+		public void WhenABatchLoggerWritesToTheSinkItStoresAllTheEntriesInLargeNumber()
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+			var tableClient = storageAccount.CreateCloudTableClient();
+			var table = tableClient.GetTableReference("LogEventEntity");
+
+			table.DeleteIfExists();
+
+			using (var sink = new AzureBatchingTableStorageWithPropertiesSink(storageAccount, null, 1000, TimeSpan.FromMinutes(1)))
+			{
+				var timestamp = new DateTimeOffset(2014, 12, 01, 18, 42, 20, 666, TimeSpan.FromHours(2));
+				var messageTemplate = "Some text";
+				var template = new MessageTemplateParser().Parse(messageTemplate);
+				var properties = new List<LogEventProperty>();
+				for (int i = 0; i < 300; ++i)
+				{
+					sink.Emit(new Events.LogEvent(timestamp, LogEventLevel.Information, null, template, properties));
+				}
+			}
+
+			var result = table.ExecuteQuery(new TableQuery());
+			Assert.AreEqual(300, result.Count());
+		}
 	}
 }
