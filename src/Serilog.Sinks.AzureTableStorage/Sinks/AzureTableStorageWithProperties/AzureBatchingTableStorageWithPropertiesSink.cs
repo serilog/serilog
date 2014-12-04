@@ -33,6 +33,7 @@ namespace Serilog.Sinks.AzureTableStorage
 		private readonly IFormatProvider _formatProvider;
 		private readonly CloudTable _table;
 		private readonly string _additionalRowKeyPostfix;
+		private const int _maxAzureOperationsPerBatch = 100;
 
 		/// <summary>
 		/// Construct a sink that saves logs to the specified storage account.
@@ -80,30 +81,36 @@ namespace Serilog.Sinks.AzureTableStorage
 			{
 				var tableEntity = AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, _formatProvider, _additionalRowKeyPostfix);
 
+				// If partition changed, store the new and force an execution
 				if (lastPartitionKey != tableEntity.PartitionKey)
 				{
 					lastPartitionKey = tableEntity.PartitionKey;
 
-					// Force a new operation
-					insertsPerOperation = 100;
+					// Force a new execution
+					insertsPerOperation = _maxAzureOperationsPerBatch;
 				}
 
-				if (insertsPerOperation == 100)
+				// If reached max operations per batch, we need a new batch operation
+				if (insertsPerOperation == _maxAzureOperationsPerBatch)
 				{
+					// If there is an operation currently in use, execute it
 					if (operation != null)
 					{
 						_table.ExecuteBatch(operation);
 					}
 
+					// Create a new batch operation and zero count
 					operation = new TableBatchOperation();
 					insertsPerOperation = 0;
 				}
 
+				// Add current entry to the batch
 				operation.Add(TableOperation.Insert(tableEntity));
 
 				insertsPerOperation++;
 			}
 
+			// Execute last batch
 			_table.ExecuteBatch(operation);
 		}
 	}
