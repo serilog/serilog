@@ -36,7 +36,8 @@ namespace Serilog
         /// A reasonable default time to wait between checking for event batches.
         /// </summary>
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
-        /// <summary>
+
+		/// <summary>
         /// Adds a sink that writes log events as records in the 'LogEventEntity' Azure Table Storage table in the given storage account.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
@@ -48,7 +49,7 @@ namespace Serilog
         /// key used for the events so is not enabled by default.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
-        /// /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration AzureTableStorage(
             this LoggerSinkConfiguration loggerConfiguration,
