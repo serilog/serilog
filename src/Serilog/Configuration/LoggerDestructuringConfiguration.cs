@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Reflection;
 using Serilog.Core;
 using Serilog.Policies;
 
@@ -109,6 +110,23 @@ namespace Serilog.Configuration
         {
             if (transformation == null) throw new ArgumentNullException("transformation");
             var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
+                                                          o => transformation((TValue)o));
+            return With(policy);
+        }
+
+        /// <summary>
+        /// When destructuring objects, transform instances of the specified type (or derived from the
+        /// specified type) with the provided function.
+        /// </summary>
+        /// <param name="transformation">Function mapping instances of <typeparamref name="TValue"/>
+        /// to an alternative representation.</param>
+        /// <typeparam name="TValue">Type of values to transform.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public LoggerConfiguration ByTransformingFrom<TValue>(Func<TValue, object> transformation)
+        {
+            if (transformation == null) throw new ArgumentNullException("transformation");
+            var policy = new ProjectedDestructuringPolicy(t => typeof(TValue).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
                                                           o => transformation((TValue)o));
             return With(policy);
         }
