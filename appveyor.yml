@@ -1,5 +1,5 @@
 build_script:
-  - ./Build.ps1 -majorMinor "1.4" -patch "$env:APPVEYOR_BUILD_VERSION" -customLogger "C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - ps: ./Build.ps1 -majorMinor "1.4" -patch "$env:APPVEYOR_BUILD_VERSION" -customLogger "C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 before_test:
   - C:/Program Files (x86)/Microsoft SDKs/Azure/Storage Emulator/WAStorageEmulator.exe start
