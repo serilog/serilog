@@ -11,6 +11,39 @@ using System.IO;
 
 namespace Serilog.Sinks.AzureTableStorage.Tests
 {
+	[SetUpFixture]
+	public class StartStopAzureEmulator
+	{
+		private bool _wasUp;
+		[SetUp]
+		public void StartAzureBeforeAllTestsIfNotUp()
+		{
+			if (!AzureStorageEmulatorManager.IsProcessStarted())
+			{
+				AzureStorageEmulatorManager.StartStorageEmulator();
+				_wasUp = false;
+			}
+			else
+			{
+				_wasUp = true;
+			}
+			
+		}
+
+		[TearDown]
+		public void StopAzureAfterAllTestsIfWasDown()
+		{
+			if (!_wasUp)
+			{
+				AzureStorageEmulatorManager.StopStorageEmulator();
+			}
+			else
+			{
+				// Leave as it was before testing...
+			}
+		}
+	}
+
 	[TestFixture]
 	public class AzureTableStorageWithPropertiesSinkTests
 	{
