@@ -52,7 +52,8 @@ namespace Serilog.Sinks.Logentries
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
         /// <summary>
-        /// Construct a sink that saves logs to the specified storage account. Properties are being send as data and the level is used as tag.
+        /// Construct a sink that sends logs to the specified Logentries log using a <see cref="MessageTemplateTextFormatter"/> to format
+        /// the logs as simple display messages.
         /// </summary>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
@@ -61,10 +62,23 @@ namespace Serilog.Sinks.Logentries
         /// <param name="token">The input key as found on the Logentries website.</param>
         /// <param name="useSsl">Indicates if you want to use SSL or not.</param>
         public LogentriesSink(string outputTemplate, IFormatProvider formatProvider, string token, bool useSsl, int batchPostingLimit, TimeSpan period)
+            : this(new MessageTemplateTextFormatter(outputTemplate, formatProvider), token, useSsl, batchPostingLimit, period)
+        {
+        }
+
+        /// <summary>
+        /// Construct a sink that sends logs to the specified Logentries log using a provided <see cref="ITextFormatter"/>.
+        /// </summary>
+        /// <param name="textFormatter">Used to format the logs sent to Logentries.</param>
+        /// <param name="token">The input key as found on the Logentries website.</param>
+        /// <param name="useSsl">Indicates if you want to use SSL or not.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        public LogentriesSink(ITextFormatter textFormatter, string token, bool useSsl, int batchPostingLimit, TimeSpan period)
             : base(batchPostingLimit, period)
         {
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
-            _textFormatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
+            if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            _textFormatter = textFormatter;
 
             _token = token;
             _useSsl = useSsl;
