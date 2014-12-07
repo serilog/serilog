@@ -1,3 +1,6 @@
+1.4.39
+ * #289 - Elasticsearch sink improvements and new virtual methods on `JsonFormatter`
+
 1.4.33
  * #302 - If a the last batch of log events sent by `PeriodicBatchingSink` was not full, wait the `period`
  * #304 - Make sure IO exceptions are suppressed by the `WriteTo.File()` configuration method
