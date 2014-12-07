@@ -117,13 +117,19 @@ namespace Serilog.Sinks.Email
                 _textFormatter.Format(logEvent, payload);
             }
 
-            var mailMessage = new MailMessage(_connectionInfo.FromEmail, _connectionInfo.ToEmail)
+            var mailMessage = new MailMessage
             {
+                From = new MailAddress(_connectionInfo.FromEmail),
                 Subject = _connectionInfo.EmailSubject,
                 Body = payload.ToString(),
                 BodyEncoding = Encoding.UTF8,
                 SubjectEncoding = Encoding.UTF8
             };
+
+            foreach (var recipient in _connectionInfo.ToEmail.Split(",;".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            {
+                mailMessage.To.Add(recipient);
+            }
 
             await _smtpClient.SendMailAsync(mailMessage);
         }

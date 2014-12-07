@@ -83,7 +83,7 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         protected override void WriteRenderedMessage(string message, ref string delim, TextWriter output)
         {
-            WriteJsonProperty("renderedMessage", message, ref delim, output);
+            WriteJsonProperty("message", message, ref delim, output);
         }
         
         /// <summary>

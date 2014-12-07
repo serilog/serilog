@@ -103,7 +103,7 @@ namespace Serilog.Sinks.ElasticSearch
 
             foreach (var e in events)
             {
-                var indexName = string.Format(_indexFormat, e.Timestamp);
+                var indexName = string.Format(_indexFormat, e.Timestamp.ToUniversalTime());
                 var action = new { index = new { _index = indexName, _type = _typeName } };
                 var actionJson = _client.Serializer.Serialize(action, SerializationFormatting.None);
                 payload.Add(Encoding.UTF8.GetString(actionJson));
