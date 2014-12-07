@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -66,6 +67,50 @@ namespace Serilog
             {
                 FromEmail = fromEmail,
                 ToEmail = toEmail,
+                MailServer = mailServer,
+                NetworkCredentials = networkCredential
+            };
+
+            return Email(loggerConfiguration, connectionInfo, outputTemplate, restrictedToMinimumLevel, batchPostingLimit, period, formatProvider);
+        }
+
+        /// <summary>
+        /// Adds a sink that sends log events via email.
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="fromEmail">The email address emails will be sent from</param>
+        /// <param name="toEmails">The email addresses emails will be sent to</param>
+        /// <param name="mailServer">The SMTP email server to use</param>
+        /// <param name="networkCredential">The network credentials to use to authenticate with mailServer</param>
+        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
+        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration Email(
+            this LoggerSinkConfiguration loggerConfiguration,
+            string fromEmail,
+            IEnumerable<string> toEmails,
+            string mailServer,
+            ICredentialsByHost networkCredential,
+            string outputTemplate = DefaultOutputTemplate,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            int batchPostingLimit = EmailSink.DefaultBatchPostingLimit,
+            TimeSpan? period = null,
+            IFormatProvider formatProvider = null)
+        {
+            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (fromEmail == null) throw new ArgumentNullException("fromEmail");
+            if (toEmails == null) throw new ArgumentNullException("toEmails");
+            if (mailServer == null) throw new ArgumentNullException("mailServer");
+            
+            var connectionInfo = new EmailConnectionInfo
+            {
+                FromEmail = fromEmail,
+                ToEmail = string.Join(";", toEmails),
                 MailServer = mailServer,
                 NetworkCredentials = networkCredential
             };
