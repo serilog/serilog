@@ -1,6 +1,5 @@
 1.4.65
  * #321 - Revert ES sink message property name to original value
- * #323 - Include PDBs in the ES .NET 4.0 NUPKG
  * #324 - Calculate ES index name from UTC timestamp
  * #315 - Remove Logentries SSL cert pinning (the cert changed)
  * #327 - Hide obsolete ES configuration methods
