@@ -130,5 +130,121 @@ namespace Serilog
         }
 
 
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, string messageTemplate, params object[] propertyValues)
+        {
+            return logger.BeginTimedScope(null, null, LogEventLevel.Information, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        {
+            return logger.BeginTimedScope(null, null, level, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="scopeId">The identifier used for the timing. If non specified, a random guid will be used.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, string scopeId, string messageTemplate, params object[] propertyValues)
+        {
+            return logger.BeginTimedScope(scopeId, null, LogEventLevel.Information, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="scopeId">The identifier used for the timing. If non specified, a random guid will be used.</param>
+        /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, string scopeId, LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        {
+            return logger.BeginTimedScope(scopeId, null, level, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, TimeSpan? warnIfExceeds, string messageTemplate, params object[] propertyValues)
+        {
+            return logger.BeginTimedScope(null, warnIfExceeds, LogEventLevel.Information, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
+        /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, TimeSpan? warnIfExceeds, LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        {
+            return logger.BeginTimedScope(null, warnIfExceeds, level, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="scopeId">The identifier used for the timing. If non specified, a random guid will be used.</param>
+        /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, string scopeId, TimeSpan? warnIfExceeds, string messageTemplate, params object[] propertyValues)
+        {
+            return new TimedScope(logger, string.IsNullOrEmpty(scopeId) ? null : scopeId, warnIfExceeds, LogEventLevel.Information, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Begins a logging scope by placing the code to be timed inside a using block. 
+        /// When the block is being exited, the time it took is logged.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="scopeId">The identifier used for the timing. If non specified, a random guid will be used.</param>
+        /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
+        /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+        public static ITimedScope BeginTimedScope(this ILogger logger, string scopeId, TimeSpan? warnIfExceeds, LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        {
+            return new TimedScope(logger, string.IsNullOrEmpty(scopeId) ? null : scopeId, warnIfExceeds, level, messageTemplate, propertyValues);
+        }
     }
+
 }
