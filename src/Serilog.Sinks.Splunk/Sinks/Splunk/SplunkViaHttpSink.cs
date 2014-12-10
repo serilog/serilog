@@ -16,6 +16,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
@@ -40,7 +41,7 @@ namespace Serilog.Sinks.Splunk
         string _index;
         ConcurrentQueue<LogEvent> _queue;
         JsonFormatter _jsonFormatter;
-        
+
         /// <summary>
         /// Creates a new instance of the splunk sink
         /// </summary>
@@ -132,16 +133,20 @@ namespace Serilog.Sinks.Splunk
                     foreach (var logEvent in events)
                     {
                         _jsonFormatter.Format(logEvent, sw);
+                    }
 
-                        var message = sw.ToString();
+                    //All log message data
+                    var message = Encoding.UTF8.GetBytes(sw.ToString());
 
+                    using (var stream = new MemoryStream(message))
+                    {
                         if (_transmitterArgs == null)
                         {
-                            await transmitter.SendAsync(message, index.Name);
+                            await transmitter.SendAsync(stream, index.Name);
                         }
                         else
                         {
-                            await transmitter.SendAsync(message, index.Name, _transmitterArgs);
+                            await transmitter.SendAsync(stream, index.Name, _transmitterArgs);
                         }
                     }
                 }
