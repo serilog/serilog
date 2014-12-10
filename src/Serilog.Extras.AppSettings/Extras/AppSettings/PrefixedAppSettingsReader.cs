@@ -37,7 +37,7 @@ namespace Serilog.Extras.AppSettings
         const string UsingDirectiveFullFormPrefix = "serilog:using:";
         const string EnrichWithPropertyDirectivePrefix = "serilog:enrich:with-property:";
 
-        const string WriteToDirectiveRegex = @"^serilog:write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string WriteToDirectiveRegex = @"^serilog:write-to:(?<name>([A-Za-z0-9]*:)?)(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
 
         public static void ConfigureLogger(LoggerConfiguration loggerConfiguration)
         {
@@ -79,11 +79,12 @@ namespace Serilog.Extras.AppSettings
                         where splitWriteTo.IsMatch(wt.Key)
                         let match = splitWriteTo.Match(wt.Key)
                         let call = new {
+                            GroupKey = match.Groups["name"].Value + match.Groups["method"].Value,
                             Method = match.Groups["method"].Value,
                             Argument = match.Groups["argument"].Value,
                             wt.Value
                         }
-                        group call by call.Method).ToList();
+                        group call by call.GroupKey).ToList();
 
             if (sinkDirectives.Any())
             {
@@ -95,8 +96,9 @@ namespace Serilog.Extras.AppSettings
 
                 foreach (var sinkDirective in sinkDirectives)
                 {
+                    string method = sinkDirective.First().Method;
                     var target = sinkConfigurationMethods
-                        .Where(m => m.Name == sinkDirective.Key &&
+                        .Where(m => m.Name == method &&
                             m.GetParameters().Skip(1).All(p => p.HasDefaultValue || sinkDirective.Any(s => s.Argument == p.Name)))
                         .OrderByDescending(m => m.GetParameters().Length)
                         .FirstOrDefault();
