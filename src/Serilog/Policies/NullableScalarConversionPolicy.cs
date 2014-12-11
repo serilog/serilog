@@ -29,10 +29,9 @@ namespace Serilog.Policies
                 return false;
             }
 
-            var dynamicValue = (dynamic)value;
-            var innerValue = dynamicValue.HasValue ? (object)dynamicValue.Value : null;
+            var targetType = type.GenericTypeArguments[0];
+            var innerValue = Convert.ChangeType(value, targetType);
             result = propertyValueFactory.CreatePropertyValue(innerValue) as ScalarValue;
-
             return result != null;
         }
     }
