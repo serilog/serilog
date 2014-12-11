@@ -220,5 +220,29 @@ namespace Serilog.Sinks.AzureTableStorage.Tests
 			Assert.AreEqual("[[1, 2, 3, 4, 5], [\"a\", \"b\", \"c\", \"d\", \"e\"]]", entity.Properties["Sequence"].StringValue);
 		}
 
+		[Test]
+		public void CreateEntityWithPropertiesShouldNotAddMoreThan252Properties()
+		{
+			var messageTemplate = string.Empty;
+
+			var properties = new List<LogEventProperty>();
+
+			for (var i = 0; i < 300; ++i)
+			{
+				var propName = "Prop" + i;
+				properties.Add(new LogEventProperty(propName, new ScalarValue(i)));
+
+				messageTemplate += string.Format("{{{0}}}", propName);
+			};
+
+			var template = new MessageTemplateParser().Parse(messageTemplate);
+
+			var logEvent = new Events.LogEvent(DateTime.Now, LogEventLevel.Information, null, template, properties);
+
+			var entity = AzureTableStorageEntityFactory.CreateEntityWithProperties(logEvent, null, null);
+
+			Assert.AreEqual(252, entity.Properties.Count);
+			Assert.Contains("AggregatedProperties", entity.Properties.Keys.ToList());
+		}
 	}
 }

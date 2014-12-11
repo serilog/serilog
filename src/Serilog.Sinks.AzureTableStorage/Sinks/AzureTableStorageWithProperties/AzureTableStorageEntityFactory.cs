@@ -15,6 +15,8 @@
 using Microsoft.WindowsAzure.Storage.Table;
 using Serilog.Events;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -25,7 +27,12 @@ namespace Serilog.Sinks.AzureTableStorage
 	/// </summary>
 	public static class AzureTableStorageEntityFactory
 	{
+		// Valid RowKey name characters
 		static readonly Regex _rowKeyNotAllowedMatch = new Regex(@"(\\|/|#|\?)");
+
+		// Azure tables support a maximum of 255 properties. PartitionKey, RowKey and Timestamp
+		// bring the maximum to 252.
+		const int _maxNumberOfPropertiesPerRow = 252;
 
 		/// <summary>
 		/// Creates a DynamicTableEntity for Azure Storage, given a Serilog <see cref="LogEvent"/>.Properties
@@ -54,9 +61,28 @@ namespace Serilog.Sinks.AzureTableStorage
 				dynamicProperties.Add("Exception", new EntityProperty(logEvent.Exception.ToString()));
 			}
 
+
+			List<KeyValuePair<ScalarValue, LogEventPropertyValue>> additionalData = null;
+			int count = dynamicProperties.Count;
 			foreach (var logProperty in logEvent.Properties)
 			{
-				dynamicProperties.Add(logProperty.Key, AzurePropertyFormatter.ToEntityProperty(logProperty.Value));
+				if (count++ < _maxNumberOfPropertiesPerRow - 1)
+				{
+					dynamicProperties.Add(logProperty.Key, AzurePropertyFormatter.ToEntityProperty(logProperty.Value, null, formatProvider));
+				}
+				else
+				{
+					if (additionalData == null)
+					{
+						additionalData = new List<KeyValuePair<ScalarValue, LogEventPropertyValue>>();
+					}
+					additionalData.Add(new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(logProperty.Key), logProperty.Value));
+				}
+			}
+
+			if (additionalData != null)
+			{
+				dynamicProperties.Add("AggregatedProperties", AzurePropertyFormatter.ToEntityProperty(new DictionaryValue(additionalData), null, formatProvider));
 			}
 
 			return tableEntity;
