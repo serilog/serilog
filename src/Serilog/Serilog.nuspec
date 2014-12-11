@@ -27,5 +27,14 @@
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
+
+    <!-- Pre-built binaries for ASP.NET 5 Core -->
+    <file src="..\..\pre-built\aspnetcore50\Serilog.dll" target="lib\aspnetcore50" />
+    <file src="..\..\pre-built\aspnetcore50\Serilog.xml" target="lib\aspnetcore50" />
+    <file src="..\..\pre-built\aspnetcore50\Serilog.pdb" target="lib\aspnetcore50" />
+    <file src="..\..\pre-built\aspnetcore50\Serilog.FullNetFx.dll" target="lib\aspnetcore50" />
+    <file src="..\..\pre-built\aspnetcore50\Serilog.FullNetFx.xml" target="lib\aspnetcore50" />
+    <file src="..\..\pre-built\aspnetcore50\Serilog.FullNetFx.pdb" target="lib\aspnetcore50" />
+
   </files>
 </package>
