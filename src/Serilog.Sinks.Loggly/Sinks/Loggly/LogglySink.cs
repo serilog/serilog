@@ -15,9 +15,11 @@
 using System;
 using System.Linq;
 using Loggly;
+using Loggly.Config;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using SyslogLevel=Loggly.Transports.Syslog.Level;
 
 namespace Serilog.Sinks.Loggly
 {
@@ -27,18 +29,17 @@ namespace Serilog.Sinks.Loggly
     public class LogglySink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        Logger _client;
+        LogglyClient _client;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account. Properties are being send as data and the level is used as tag.
         /// </summary>
         ///  <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="inputKey">The input key as found on the Loggly website.</param>
-        public LogglySink(IFormatProvider formatProvider, string inputKey)
+        public LogglySink(IFormatProvider formatProvider)
         {
             _formatProvider = formatProvider;
 
-            _client = new Logger(inputKey);
+            _client = new LogglyClient();
         }
 
         /// <summary>
@@ -47,40 +48,60 @@ namespace Serilog.Sinks.Loggly
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var category = "info";
+            var logglyEvent = new LogglyEvent();
+
+            var isHttpTransport = LogglyConfig.Instance.Transport.LogTransport == LogTransport.Https;
+            logglyEvent.Syslog.Level = ToSyslogLevel(logEvent);
+
+            foreach (var key in logEvent.Properties.Keys)
+            {
+                var propertyValue = logEvent.Properties[key];
+                var simpleValue = LogglyPropertyFormatter.Simplify(propertyValue);
+                logglyEvent.Data.AddIfAbsent(key, simpleValue);
+            }
+
+            logglyEvent.Data.AddIfAbsent("Message", logEvent.RenderMessage(_formatProvider));
+            
+            if (isHttpTransport)
+            {
+                // syslog will capture these via the header
+                logglyEvent.Data.AddIfAbsent("Level", logEvent.Level.ToString());
+            }
+
+            if (logEvent.Exception != null)
+            {
+                logglyEvent.Data.AddIfAbsent("Exception", logEvent.Exception);
+            }
+
+            _client.Log(logglyEvent);
+        }
+
+        static SyslogLevel ToSyslogLevel(LogEvent logEvent)
+        {
+            SyslogLevel syslogLevel;
+            // map the level to a syslog level in case that transport is used.
             switch (logEvent.Level)
             {
                 case LogEventLevel.Verbose:
                 case LogEventLevel.Debug:
-                    category = "verbose";
+                    syslogLevel = SyslogLevel.Notice;
                     break;
                 case LogEventLevel.Information:
-                    category = "info";
+                    syslogLevel = SyslogLevel.Information;
                     break;
                 case LogEventLevel.Warning:
-                    category = "warning";
+                    syslogLevel = SyslogLevel.Warning;
                     break;
                 case LogEventLevel.Error:
                 case LogEventLevel.Fatal:
-                    category = "error";
+                    syslogLevel = SyslogLevel.Error;
                     break;
                 default:
-                    SelfLog.WriteLine("Unexpected logging level, writing to loggly as Info");
-
+                    SelfLog.WriteLine("Unexpected logging level, writing to loggly as Information");
+                    syslogLevel = SyslogLevel.Information;
                     break;
             }
-
-            var properties = logEvent.Properties
-                         .Select(pv => new { Name = pv.Key, Value = LogglyPropertyFormatter.Simplify(pv.Value) })
-                         .ToDictionary(a => a.Name, b => b.Value);
-
-            if (logEvent.Exception != null)
-                properties.Add("Exception", logEvent.Exception);
-
-            _client.Log(logEvent.RenderMessage(_formatProvider), category, properties);
-
-
-
+            return syslogLevel;
         }
     }
 }

@@ -1,5 +1,5 @@
-Serilog
-=======
+Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj?svg=true)](https://ci.appveyor.com/project/serilog/serilog)
+=================================================================================================================================================
 
 A no-nonsense logging library for the NoSQL era. Combines the best of traditional and structured diagnostic logging in an easy-to-use package.
 

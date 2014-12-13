@@ -2,30 +2,30 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Serilog Contributors</authors>
     <description>The best of traditional and structured logging for .NET</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
-    <tags>serilog logging nosql events semantic structured</tags>
+    <tags>serilog logging events semantic structured</tags>
   </metadata>
   <files>
-    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog\bin\Release\Serilog.pdb" target="lib\portable-net45+win8+wp8" />
-    <file src="src\Serilog\bin\Release\Serilog.dll" target="lib\net45" />
-    <file src="src\Serilog\bin\Release\Serilog.xml" target="lib\net45" />
-    <file src="src\Serilog\bin\Release\Serilog.pdb" target="lib\net45" />
-    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
-    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
-    <file src="src\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.pdb" target="lib\net45" />
-    <file src="src\Serilog\bin40\Release\Serilog.dll" target="lib\net40" />
-    <file src="src\Serilog\bin40\Release\Serilog.xml" target="lib\net40" />
-    <file src="src\Serilog\bin40\Release\Serilog.pdb" target="lib\net40" />
-    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
-    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
-    <file src="src\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
+    <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.xml" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.dll" target="lib\net45" />
+    <file src="bin\Release\Serilog.xml" target="lib\net45" />
+    <file src="bin\Release\Serilog.pdb" target="lib\net45" />
+    <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
+    <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
+    <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.pdb" target="lib\net45" />
+    <file src="bin40\Release\Serilog.dll" target="lib\net40" />
+    <file src="bin40\Release\Serilog.xml" target="lib\net40" />
+    <file src="bin40\Release\Serilog.pdb" target="lib\net40" />
+    <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
+    <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
+    <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
   </files>
 </package>

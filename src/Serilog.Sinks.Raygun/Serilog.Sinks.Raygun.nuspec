@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.Raygun</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Michiel van Oudheusden</authors>
     <description>Serilog event sink that writes to the Raygun.io service.</description>
     <language>en-US</language>
@@ -11,12 +11,8 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging Raygun.io error</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
       <dependency id="Mindscape.Raygun4Net.Signed" version="2.0.4" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="src\Serilog.Sinks.Raygun\bin\Release\Serilog.Sinks.Raygun.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.Raygun\bin\Release\Serilog.Sinks.Raygun.xml" target="lib\net45" />
-  </files>
 </package>

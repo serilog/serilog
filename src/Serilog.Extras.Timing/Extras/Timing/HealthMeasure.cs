@@ -52,7 +52,7 @@ namespace Serilog.Extras.Timing
 			try {
 				result = _operation ();
 			} catch (Exception ex) {
-				result = new HealthCheckResult ("Unable to execute health check", ex);
+				result = new HealthCheckResult (string.Format ("Unable to execute the health check named '{0}'. See inner exception for more details.", _name), ex);
 			}
 
 			_logger.Write (result.IsHealthty ? _levelHealthy : _levelUnhealthy, result.Exception, _template, _name, result.Message, result.IsHealthty);

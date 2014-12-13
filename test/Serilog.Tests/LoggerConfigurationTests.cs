@@ -156,5 +156,23 @@ namespace Serilog.Tests
 
             Assert.That(enrichedPropertySeen);
         }
+
+        [Test]
+        public void MaximumDestructuringDepthIsEffective()
+        {
+            var x = new { A = new { B = new { C = new { D = "F" } } } };
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumDepth(3)
+                .CreateLogger();
+
+            log.Information("{@X}", x);
+            var xs = evt.Properties["X"].ToString();
+
+            Assert.That(xs, Is.StringContaining("C"));
+            Assert.That(xs, Is.Not.StringContaining("D"));
+        }
     }
 }

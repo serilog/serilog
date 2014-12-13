@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if !ASPNETCORE50
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -135,22 +136,27 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             try
             {
+                bool batchWasFull;
                 do
                 {
                     LogEvent next;
-                    while (_waitingBatch.Count < _batchSizeLimit && _queue.TryDequeue(out next))
+                    while (_waitingBatch.Count < _batchSizeLimit &&
+                        _queue.TryDequeue(out next))
                     {
-                        _waitingBatch.Enqueue(next);
+                        if (CanInclude(next))
+                            _waitingBatch.Enqueue(next);
                     }
 
                     if (_waitingBatch.Count == 0)
                         return;
 
                     EmitBatch(_waitingBatch);
+
+                    batchWasFull = _waitingBatch.Count >= _batchSizeLimit;
                     _waitingBatch.Clear();
                     _status.MarkSuccess();
                 }
-                while (true);
+                while (batchWasFull); // Otherwise, allow the period to elapse
             }
             catch (Exception ex)
             {
@@ -205,5 +211,17 @@ namespace Serilog.Sinks.PeriodicBatching
 
             _queue.Enqueue(logEvent);
         }
+
+        /// <summary>
+        /// Determine whether a queued log event should be included in the batch. If
+        /// an override returns false, the event will be dropped.
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <returns></returns>
+        protected virtual bool CanInclude(LogEvent evt)
+        {
+            return true;
+        }
     }
 }
+#endif

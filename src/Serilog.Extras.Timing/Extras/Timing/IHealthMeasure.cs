@@ -11,14 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-using System;
-using Serilog.Events;
 
 namespace Serilog.Extras.Timing
 {
 
 	/// <summary>
-	/// Executes a heath check and report the effect of it. 
+	/// Executes a heath check and reports the effect of it. 
 	/// </summary>
 	public interface IHealthMeasure: IMeasure{
 	

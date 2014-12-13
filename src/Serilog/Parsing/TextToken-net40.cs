@@ -30,11 +30,20 @@ namespace Serilog.Parsing
         /// Construct a <see cref="TextToken"/>.
         /// </summary>
         /// <param name="text">The text of the token.</param>
+        /// <param name="startIndex">The token's start index in the template.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public TextToken(string text)
+        public TextToken(string text, int startIndex = -1) : base(startIndex)
         {
             if (text == null) throw new ArgumentNullException("text");
             _text = text;
+        }
+
+        /// <summary>
+        /// The token's length.
+        /// </summary>
+        public override int Length
+        {
+            get { return _text.Length; }
         }
 
         /// <summary>

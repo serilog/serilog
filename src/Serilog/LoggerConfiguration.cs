@@ -36,6 +36,8 @@ namespace Serilog
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
         
         LogEventLevel _minimumLevel = LogEventLevel.Information;
+        LoggingLevelSwitch _levelSwitch;
+        int _maximumDestructuringDepth = 5;
 
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
@@ -58,7 +60,9 @@ namespace Serilog
         {
             get
             {
-                return new LoggerMinimumLevelConfiguration(this, l => _minimumLevel = l);
+                return new LoggerMinimumLevelConfiguration(this,
+                    l => _minimumLevel = l,
+                    sw => _levelSwitch = sw);
             }
         }
 
@@ -92,7 +96,11 @@ namespace Serilog
         {
             get
             {
-                return new LoggerDestructuringConfiguration(this, _additionalScalarTypes.Add, _additionalDestructuringPolicies.Add);
+                return new LoggerDestructuringConfiguration(
+                    this,
+                    _additionalScalarTypes.Add,
+                    _additionalDestructuringPolicies.Add,
+                    depth => _maximumDestructuringDepth = depth);
             }
         }
         
@@ -116,10 +124,12 @@ namespace Serilog
             if (_filters.Any())
                 sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
 
-            var converter = new PropertyValueConverter(_additionalScalarTypes, _additionalDestructuringPolicies);
+            var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);
 
-            return new Logger(processor, _minimumLevel, sink, _enrichers, dispose);
+            return _levelSwitch == null ? 
+                new Logger(processor, _minimumLevel, sink, _enrichers, dispose) :
+                new Logger(processor, _levelSwitch, sink, _enrichers, dispose);
         }
     }
 }

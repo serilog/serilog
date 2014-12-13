@@ -28,24 +28,19 @@ namespace Serilog
         /// Adds a sink that writes log events to the Loggly.com webservice. Properties are being send as data and the level is used as category.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="inputKey">The input key as found on the Loggly.com website. Make sure to select an HTTP input with JSON enabled.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Loggly(
             this LoggerSinkConfiguration loggerConfiguration,
-             string inputKey,  
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
-            if (string.IsNullOrWhiteSpace(inputKey))
-                throw new ArgumentNullException("inputKey");
-
             return loggerConfiguration.Sink(
-                new LogglySink(formatProvider, inputKey),
+                new LogglySink(formatProvider),
                 restrictedToMinimumLevel);
         }
 

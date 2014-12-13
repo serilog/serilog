@@ -15,8 +15,10 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using Serilog.Configuration;
+using Serilog.Debugging;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
@@ -127,7 +129,23 @@ namespace Serilog
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new FileSink(path, formatter, fileSizeLimitBytes), restrictedToMinimumLevel);
+            
+            FileSink sink;
+            try
+            {
+                sink = new FileSink(path, formatter, fileSizeLimitBytes);
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Unable to open file sink for {0}: {1}", path, ex);
+                return sinkConfiguration.Sink(new NullSink());
+            }
+
+            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 
         /// <summary>
@@ -194,12 +212,14 @@ namespace Serilog
         /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
+#if !ASPNETCORE50
         public static LoggerConfiguration FromLogContext(
             this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
             return enrichmentConfiguration.With<LogContextEnricher>();
         }
+#endif
 
         /// <summary>
         /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.

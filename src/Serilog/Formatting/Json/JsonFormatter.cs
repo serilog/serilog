@@ -88,7 +88,7 @@ namespace Serilog.Formatting.Json
                 { typeof(string), (v, q, w) => WriteString((string)v, w) },
                 { typeof(DateTime), (v, q, w) => WriteDateTime((DateTime)v, w) },
                 { typeof(DateTimeOffset), (v, q, w) => WriteOffset((DateTimeOffset)v, w) },
-                { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w) },
+                { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w, q) },
                 { typeof(SequenceValue), (v, q, w) => WriteSequence(((SequenceValue)v).Elements, w) },
                 { typeof(DictionaryValue), (v, q, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },
                 { typeof(StructureValue), (v, q, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
@@ -109,25 +109,20 @@ namespace Serilog.Formatting.Json
                 output.Write("{");
 
             var delim = "";
-            WriteJsonProperty("Timestamp", logEvent.Timestamp, ref delim, output);
-            WriteJsonProperty("Level", logEvent.Level, ref delim, output);
-            WriteJsonProperty("MessageTemplate", logEvent.MessageTemplate.Text, ref delim, output);
+            WriteTimestamp(logEvent.Timestamp, ref delim, output);
+            WriteLevel(logEvent.Level, ref delim, output);
+            WriteMessageTemplate(logEvent.MessageTemplate.Text, ref delim, output);
             if (_renderMessage)
-                WriteJsonProperty("RenderedMessage", logEvent.RenderMessage(_formatProvider), ref delim, output);
+            {
+                var message = logEvent.RenderMessage(_formatProvider);
+                WriteRenderedMessage(message, ref delim, output);
+            }
 
             if (logEvent.Exception != null)
-                WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
+                WriteException(logEvent.Exception, ref delim, output);
 
             if (logEvent.Properties.Count != 0)
-            {
-                output.Write(",\"Properties\":{");
-                var precedingDelimiter = "";
-                foreach (var property in logEvent.Properties)
-                {
-                    WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
-                }
-                output.Write("}");
-            }
+                WriteProperties(logEvent.Properties, output);
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
                 .OfType<PropertyToken>()
@@ -137,37 +132,7 @@ namespace Serilog.Formatting.Json
 
             if (tokensWithFormat.Length != 0)
             {
-                output.Write(",\"Renderings\":{");
-                var rdelim = "";
-                foreach (var ptoken in tokensWithFormat)
-                {
-                    output.Write(rdelim);
-                    rdelim = ",";
-                    output.Write("\"");
-                    output.Write(ptoken.Key);
-                    output.Write("\":[");
-
-                    var fdelim = "";
-                    foreach (var format in ptoken)
-                    {
-                        output.Write(fdelim);
-                        fdelim = ",";
-
-                        output.Write("{");
-                        var eldelim = "";
-
-                        WriteJsonProperty("Format", format.Format, ref eldelim, output);
-
-                        var sw = new StringWriter();
-                        format.Render(logEvent.Properties, sw);
-                        WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
-
-                        output.Write("}");
-                    }
-
-                    output.Write("]");
-                }
-                output.Write("}");
+                WriteRenderings(tokensWithFormat, logEvent.Properties, output);
             }
 
             if (!_omitEnclosingObject)
@@ -176,22 +141,136 @@ namespace Serilog.Formatting.Json
                 output.Write(_closingDelimiter);
             }
         }
+        
+        /// <summary>
+        /// Writes out individual renderings of attached properties
+        /// </summary>
+        protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            output.Write(",\"{0}\":{{", "Renderings");
+            WriteRenderingsValues(tokensWithFormat, properties, output);
+            output.Write("}");
+        }
+        
+        /// <summary>
+        /// Writes out the values of individual renderings of attached properties
+        /// </summary>
+        protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            var rdelim = "";
+            foreach (var ptoken in tokensWithFormat)
+            {
+                output.Write(rdelim);
+                rdelim = ",";
+                output.Write("\"");
+                output.Write(ptoken.Key);
+                output.Write("\":[");
 
-        void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
+                var fdelim = "";
+                foreach (var format in ptoken)
+                {
+                    output.Write(fdelim);
+                    fdelim = ",";
+
+                    output.Write("{");
+                    var eldelim = "";
+
+                    WriteJsonProperty("Format", format.Format, ref eldelim, output);
+
+                    var sw = new StringWriter();
+                    format.Render(properties, sw);
+                    WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+
+                    output.Write("}");
+                }
+
+                output.Write("]");
+            }
+        }
+        
+        /// <summary>
+        /// Writes out the attached properties
+        /// </summary>
+        protected virtual void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            output.Write(",\"{0}\":{{", "Properties");
+            WritePropertiesValues(properties, output);
+            output.Write("}");
+        }
+
+        /// <summary>
+        /// Writes out the attached properties values
+        /// </summary>
+        protected virtual void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
+            var precedingDelimiter = "";
+            foreach (var property in properties)
+            {
+                WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
+            }
+        }
+        
+        /// <summary>
+        /// Writes out the attached exception
+        /// </summary>
+        protected virtual void WriteException(Exception exception, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("Exception", exception, ref delim, output);
+        }
+           
+        /// <summary>
+        /// (Optionally) writes out the rendered message
+        /// </summary>
+        protected virtual void WriteRenderedMessage(string message, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("RenderedMessage", message, ref delim, output);
+        }
+        
+        /// <summary>
+        /// Writes out the message template for the logevent.
+        /// </summary>
+        protected virtual void WriteMessageTemplate(string template, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("MessageTemplate", template, ref delim, output);
+        }
+        
+        /// <summary>
+        /// Writes out the log level
+        /// </summary>
+        protected virtual void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("Level", level, ref delim, output);
+        }
+        
+        /// <summary>
+        /// Writes out the log timestamp
+        /// </summary>
+        protected virtual void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
+        {
+            WriteJsonProperty("Timestamp", timestamp, ref delim, output);
+        }
+
+        /// <summary>
+        /// Writes out a structure property
+        /// </summary>
+        protected virtual void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
         {
             output.Write("{");
 
             var delim = "";
             if (typeTag != null)
                 WriteJsonProperty("_typeTag", typeTag, ref delim, output);
-            
+
             foreach (var property in properties)
                 WriteJsonProperty(property.Name, property.Value, ref delim, output);
 
             output.Write("}");
         }
-
-        void WriteSequence(IEnumerable elements, TextWriter output)
+        
+        /// <summary>
+        /// Writes out a sequence property
+        /// </summary>
+        protected virtual void WriteSequence(IEnumerable elements, TextWriter output)
         {
             output.Write("[");
             var delim = "";
@@ -203,8 +282,11 @@ namespace Serilog.Formatting.Json
             }
             output.Write("]");
         }
-
-        void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
+           
+        /// <summary>
+        /// Writes out a dictionary 
+        /// </summary>
+        protected virtual void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
         {
             output.Write("{");
             var delim = "";
@@ -218,8 +300,11 @@ namespace Serilog.Formatting.Json
             }
             output.Write("}");
         }
-
-        void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
+        
+        /// <summary>
+        /// Writes out a json property with the specified value on output writer
+        /// </summary>
+        protected virtual void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
         {
             output.Write(precedingDelimiter);
             output.Write("\"");
@@ -227,6 +312,16 @@ namespace Serilog.Formatting.Json
             output.Write("\":");
             WriteLiteral(value, output);
             precedingDelimiter = ",";
+        }
+
+        /// <summary>
+        /// Allows a subclass to write out objects that have no configured literal writer.
+        /// </summary>
+        /// <param name="value">The value to be written as a json construct</param>
+        /// <param name="output">The writer to write on</param>
+        protected virtual void WriteLiteralValue(object value, TextWriter output)
+        {
+            WriteString(value.ToString(), output);
         }
 
         void WriteLiteral(object value, TextWriter output, bool forceQuotation = false)
@@ -244,13 +339,13 @@ namespace Serilog.Formatting.Json
                 return;
             }
 
-            WriteString(value.ToString(), output);
+            WriteLiteralValue(value, output);
         }
 
         static void WriteToString(object number, bool quote, TextWriter output)
         {
             if (quote) output.Write('"');
-            
+
             var fmt = number as IFormattable;
             if (fmt != null)
                 output.Write(fmt.ToString(null, CultureInfo.InvariantCulture));
@@ -313,41 +408,41 @@ namespace Serilog.Formatting.Json
                     switch (c)
                     {
                         case '"':
-                        {
-                            escapedResult.Append("\\\"");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\\"");
+                                break;
+                            }
                         case '\\':
-                        {
-                            escapedResult.Append("\\\\");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\\\");
+                                break;
+                            }
                         case '\n':
-                        {
-                            escapedResult.Append("\\n");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\n");
+                                break;
+                            }
                         case '\r':
-                        {
-                            escapedResult.Append("\\r");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\r");
+                                break;
+                            }
                         case '\f':
-                        {
-                            escapedResult.Append("\\f");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\f");
+                                break;
+                            }
                         case '\t':
-                        {
-                            escapedResult.Append("\\t");
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\t");
+                                break;
+                            }
                         default:
-                        {
-                            escapedResult.Append("\\u");
-                            escapedResult.Append(((int)c).ToString("X4"));
-                            break;
-                        }
+                            {
+                                escapedResult.Append("\\u");
+                                escapedResult.Append(((int)c).ToString("X4"));
+                                break;
+                            }
                     }
                 }
             }

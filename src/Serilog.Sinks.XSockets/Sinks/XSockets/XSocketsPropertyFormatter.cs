@@ -15,24 +15,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog.Debugging;
 using Serilog.Events;
 
-namespace Serilog.Sinks.ElasticSearch
+namespace Serilog.Sinks.XSockets
 {
-    /// <summary>
-    /// Converts <see cref="LogEventProperty"/> values into simple scalars,
-    /// dictionaries and lists so that they can be persisted in ElasticSearch.
-    /// </summary>
-    static class ESPropertyFormatter
+    static class XSocketsPropertyFormatter
     {
-        static readonly HashSet<Type> ESSpecialScalars = new HashSet<Type>
+        static readonly HashSet<Type> XSocketsSpecialScalars = new HashSet<Type>
         {
             typeof(bool),
             typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
                 typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(byte[])
-        }; 
+        };
 
         /// <summary>
         /// Simplify the object so as to make handling the serialized
@@ -48,26 +43,9 @@ namespace Serilog.Sinks.ElasticSearch
 
             var dict = value as DictionaryValue;
             if (dict != null)
-            {
-                var result = new Dictionary<object, object>();
-                foreach (var element in dict.Elements)
-                {
-                    var key = SimplifyScalar(element.Key);
-                    if (result.ContainsKey(key))
-                    {
-                        SelfLog.WriteLine("The key {0} is not unique in the provided dictionary after simplification to {1}.", element.Key, key);
-                        return dict.Elements.Select(e => new Dictionary<string, object>
-                        {
-                            { "Key", SimplifyScalar(element.Key) },
-                            { "Value", Simplify(element.Value) }
-                        })
-                        .ToArray();
-                    }
-                    
-                    result.Add(key, Simplify(element.Value));
-                }
-                return result;
-            }
+                return dict
+                    .Elements
+                    .ToDictionary(kv => SimplifyScalar(kv.Key), kv => Simplify(kv.Value));
 
             var seq = value as SequenceValue;
             if (seq != null)
@@ -84,13 +62,15 @@ namespace Serilog.Sinks.ElasticSearch
 
             return null;
         }
-        
+
         static object SimplifyScalar(object value)
         {
-            if (value == null) return null;
+            if (value == null)
+                return null;
 
             var valueType = value.GetType();
-            if (ESSpecialScalars.Contains(valueType)) return value;
+            if (XSocketsSpecialScalars.Contains(valueType))
+                return value;
 
             return value.ToString();
         }

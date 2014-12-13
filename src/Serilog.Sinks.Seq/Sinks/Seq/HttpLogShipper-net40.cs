@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Serilog.Debugging;
+using Serilog.Events;
 
 namespace Serilog.Sinks.Seq
 {
@@ -16,6 +17,7 @@ namespace Serilog.Sinks.Seq
         readonly Timer _timer;
         readonly TimeSpan _period;
         readonly object _stateLock = new object();
+        LogEventLevel? _minimumAcceptedLevel;
         volatile bool _unloading;
         readonly string _bookmarkFilename;
         readonly string _logFolder;
@@ -75,6 +77,18 @@ namespace Serilog.Sinks.Seq
         }
 
         /// <summary>
+        /// Get the last "minimum level" indicated by the Seq server, if any.
+        /// </summary>
+        public LogEventLevel? MinimumAcceptedLevel
+        {
+            get
+            {
+                lock (_stateLock)
+                    return _minimumAcceptedLevel;
+            }
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <filterpriority>2</filterpriority>
@@ -103,6 +117,8 @@ namespace Serilog.Sinks.Seq
 
         void OnTick()
         {
+            LogEventLevel? minimumAcceptedLevel = null;
+
             try
             {
                 var count = 0;
@@ -161,6 +177,8 @@ namespace Serilog.Sinks.Seq
                                 if (result.IsSuccessStatusCode)
                                 {
                                     WriteBookmark(bookmark, nextLineBeginsAtOffset, currentFile);
+                                    var returned = result.Content.ReadAsStringAsync().Result;
+                                    minimumAcceptedLevel = SeqApi.ReadEventInputResult(returned);
                                 }
                                 else
                                 {
@@ -199,6 +217,7 @@ namespace Serilog.Sinks.Seq
             {
                 lock (_stateLock)
                 {
+                    _minimumAcceptedLevel = minimumAcceptedLevel;
                     if (!_unloading)
                         SetTimer();
                 }

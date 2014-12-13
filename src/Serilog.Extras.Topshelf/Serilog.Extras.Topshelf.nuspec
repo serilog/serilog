@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Extras.Topshelf</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Serilog Contributors</authors>
     <description>Serilog logging support for the Topshelf Windows service host.</description>
     <language>en-US</language>
@@ -11,12 +11,13 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging topshelf</tags>
     <dependencies>
-      <dependency id="Serilog" />
-      <dependency id="Topshelf" />
+      <dependency id="Serilog" version="$version$" />
+      <dependency id="Topshelf" version="3.1.4" />
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Serilog.Extras.Topshelf\bin\Release\Serilog.Extras.Topshelf.dll" target="lib\net45" />
-    <file src="src\Serilog.Extras.Topshelf\bin\Release\Serilog.Extras.Topshelf.xml" target="lib\net45" />
+    <file src="bin40\Release\Serilog.Extras.Topshelf.dll" target="lib\net40" />
+    <file src="bin40\Release\Serilog.Extras.Topshelf.xml" target="lib\net40" />
+    <file src="bin40\Release\Serilog.Extras.Topshelf.pdb" target="lib\net40" />
   </files>
 </package>

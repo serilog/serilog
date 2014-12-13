@@ -58,6 +58,9 @@
     <Compile Include="Extras\Timing\IMeasure.cs" />
     <Compile Include="LoggerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Extras\Timing\TimedOperation.cs" />
     <Compile Include="Extras\Timing\MeterMeasure.cs" />
     <Compile Include="Extras\Timing\IMeterMeasure.cs" />

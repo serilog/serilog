@@ -2,10 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
       <id>Serilog.Sinks.Log4Net</id>
-      <version>0.1.0</version>
-      <title />
+      <version>$version$</version>
       <authors>Serilog Contributors</authors>
-      <owners />
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
       <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
@@ -13,12 +11,8 @@
       <description>Serilog event sink that writes to Log4Net. Merge your new Serilog event stream into your existing log4net infrastructure.</description>
       <tags>serilog logging log4net</tags>
       <dependencies>
-            <dependency id="log4net" />
-            <dependency id="Serilog" />
-        </dependencies>
+        <dependency id="Serilog" version="$version$" />
+        <dependency id="log4net" version="2.0.2" />
+      </dependencies>
     </metadata>
-    <files>
-      <file src="src\Serilog.Sinks.Log4Net\bin\Release\Serilog.Sinks.Log4Net.dll" target="lib\net45" />
-      <file src="src\Serilog.Sinks.Log4Net\bin\Release\Serilog.Sinks.Log4Net.xml" target="lib\net45" />
-    </files>
 </package>

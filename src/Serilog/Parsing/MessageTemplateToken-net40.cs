@@ -24,6 +24,30 @@ namespace Serilog.Parsing
     /// </summary>
     public abstract class MessageTemplateToken
     {
+        readonly int _startIndex;
+
+        /// <summary>
+        /// Construct a <see cref="MessageTemplateToken"/>.
+        /// </summary>
+        /// <param name="startIndex">The token's start index in the template.</param>
+        protected MessageTemplateToken(int startIndex)
+        {
+            _startIndex = startIndex;
+        }
+
+        /// <summary>
+        /// The token's start index in the template.
+        /// </summary>
+        public int StartIndex
+        {
+            get { return _startIndex; }
+        }
+
+        /// <summary>
+        /// The token's length.
+        /// </summary>
+        public abstract int Length { get; }
+
         /// <summary>
         /// Render the token to the output.
         /// </summary>

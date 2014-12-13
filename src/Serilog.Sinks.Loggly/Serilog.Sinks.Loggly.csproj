@@ -42,10 +42,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Loggly">
-      <HintPath>..\..\packages\loggly-csharp.2.3\lib\net35\Loggly.dll</HintPath>
+      <HintPath>..\..\packages\loggly-csharp.4.5.0.2\lib\net45\Loggly.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.5.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Loggly.Config">
+      <HintPath>..\..\packages\loggly-csharp-config.4.5.0.2\lib\net45\Loggly.Config.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,6 +58,9 @@
   <ItemGroup>
     <Compile Include="LoggerConfigurationLogglyExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sinks\Loggly\LogglyPropertyFormatter.cs" />
     <Compile Include="Sinks\Loggly\LogglySink.cs" />
   </ItemGroup>

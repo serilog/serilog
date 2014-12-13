@@ -55,8 +55,10 @@ namespace Serilog.Parsing
         /// <param name="format">The format applied to the property, if any.</param>
         /// <param name="alignment">The alignment applied to the property, if any.</param>
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
+        /// <param name="startIndex">The token's start index in the template.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
+        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
+            : base(startIndex)
         {
             if (propertyName == null) throw new ArgumentNullException("propertyName");
             if (rawText == null) throw new ArgumentNullException("rawText");
@@ -72,6 +74,14 @@ namespace Serilog.Parsing
             {
                 _position = position;
             }
+        }
+
+        /// <summary>
+        /// The token's length.
+        /// </summary>
+        public override int Length
+        {
+            get { return _rawText.Length; }
         }
 
         /// <summary>

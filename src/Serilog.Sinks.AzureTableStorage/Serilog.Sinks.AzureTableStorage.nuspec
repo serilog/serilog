@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.AzureTableStorage</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Robert Moore</authors>
     <description>Serilog event sink that writes to Azure Table Storage over HTTP.</description>
     <language>en-US</language>
@@ -11,12 +11,8 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging azure</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
       <dependency id="WindowsAzure.Storage" version="2.0" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="src\Serilog.Sinks.AzureTableStorage\bin\Release\Serilog.Sinks.AzureTableStorage.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.AzureTableStorage\bin\Release\Serilog.Sinks.AzureTableStorage.xml" target="lib\net45" />
-  </files>
 </package>

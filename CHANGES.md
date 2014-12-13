@@ -1,3 +1,60 @@
+1.4.39
+ * #289 - Elasticsearch sink improvements and new virtual methods on `JsonFormatter`
+
+1.4.33
+ * #302 - If a the last batch of log events sent by `PeriodicBatchingSink` was not full, wait the `period`
+ * #304 - Make sure IO exceptions are suppressed by the `WriteTo.File()` configuration method
+
+1.4.28
+ * #303 - `AssemblyInformationalVersion` needs to track the package, not assembly, version, in order to play nicely with MSI
+
+1.4.27
+ * #283 - New solution targeting ASP.NET v.NEXT (when final, we'll refactor to give this first-class support)
+ * #301 - _Serilog.Extras.Web_ improvements
+
+1.4.23
+ * Fixed some more NuGet packaging issues (_Serilog.Sinks.Splunk_ this time)
+
+1.4.22
+ * #297 - Update _loggly-csharp_ package dependency
+
+1.4.21
+ * Fixed some NuGet packaging issues (including a return to dependency groups for _Serilog.Sinks.Seq_)
+
+1.4.18
+1.4.17
+1.4.16
+ * New CI server used
+ * #227 - Reduced default maximum destructuring depth and added configuration option
+ * #245 - XML content escaping fixed in MSSQL sink
+ * #272 - Allow underscores in property names
+
+1.4.15
+ * #259 - Update _loggly-sharp_ dependency (breaking change for _Serilog.Sinks.Loggly_, see PR for instructions)
+ * #257 - Added _Serilog.Sinks.XSockets_
+ * #246 - Changed target from _Profile78_ to (compatible but broader) _Profile259_
+ * #250 - Allow an existing `MongoDatabase` instance to be used when configuring Mongo sink
+
+1.4.14
+ * #253 - Added `MessageTemplateFormatMethodAttribute`
+
+1.4.13
+ * #244 - Improvements to ElasticSearch sink, switch to just ElasticSearch.NET
+ * #254 - Fix ElasticSearch dependency version
+ * #249 - Track message template token indexes in parser to support tooling (binary-breaking)
+
+1.4.12
+ * #240 - Update TopShelf dependency
+ * #243 - Caching in `AttributedDestructuringPolicy` closes over first seen object of a type rather than using the passed parameter
+ * #242 - Update NLogSink to map `Verbose` level to `Trace` level in NLog
+ * #229 - Created net40 version of Extras Topshelf
+ * #236 - Ensure dictionary keys are quoted in JSON even when they're numeric
+ * #237 - When `JsonFormatter` formats a dictionary of `<int, object>`, the key should be double quoted
+ * #235 - Fixed serialization of dicationary keys in ES and similar sinks
+
+1.4.11
+ * #238 - Dynamic level switching
+
 1.4.10
  * #225 - Ensure Azure Tablestorage rowkey is unique
  * #224 - Use UTC to generate partitionkey

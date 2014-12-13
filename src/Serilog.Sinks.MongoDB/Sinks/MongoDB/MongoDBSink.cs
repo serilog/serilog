@@ -24,14 +24,14 @@ using Serilog.Sinks.PeriodicBatching;
 namespace Serilog.Sinks.MongoDB
 {
     /// <summary>
-    /// Writes log events as documents to a CouchDB database.
+    /// Writes log events as documents to a MongoDB database.
     /// </summary>
     public class MongoDBSink : PeriodicBatchingSink
     {
         readonly string _collectionName;
         readonly IMongoCollectionOptions _collectionCreationOptions;
         readonly IFormatProvider _formatProvider;
-        readonly MongoUrl _mongoUrl;
+        readonly MongoDatabase _mongoDatabase;
 
         /// <summary>
         /// A reasonable default for the number of events posted in
@@ -52,43 +52,67 @@ namespace Serilog.Sinks.MongoDB
         /// <summary>
         /// Construct a sink posting to the specified database.
         /// </summary>
-        /// <param name="databaseUrl">The URL of a CouchDB database.</param>
+        /// <param name="databaseUrl">The URL of a MongoDB database.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
         /// <param name="collectionCreationOptions">Collection Creation Options for the log collection creation.</param>
         public MongoDBSink(string databaseUrl, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, IMongoCollectionOptions collectionCreationOptions)
+            : this (DatabaseFromMongoUrl(databaseUrl), batchPostingLimit, period, formatProvider, collectionName, collectionCreationOptions)
+        {
+        }
+
+        /// <summary>
+        /// Construct a sink posting to a specified database.
+        /// </summary>
+        /// <param name="database">The MongoDB database.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
+        /// <param name="collectionCreationOptions">Collection Creation Options for the log collection creation.</param>
+        public MongoDBSink(MongoDatabase database, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, IMongoCollectionOptions collectionCreationOptions)
             : base(batchPostingLimit, period)
         {
-            if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+            if (database == null) throw new ArgumentNullException("database");
 
+            _mongoDatabase = database;
             _collectionName = collectionName;
             _collectionCreationOptions = collectionCreationOptions;
             _formatProvider = formatProvider;
-            _mongoUrl = new MongoUrl(databaseUrl);
         }
+
+        /// <summary>
+        /// Get the MongoDatabase for a specified database url
+        /// </summary>
+        /// <param name="databaseUrl">The URL of a MongoDB database.</param>
+        /// <returns>The Mongodatabase</returns>
+        private static MongoDatabase DatabaseFromMongoUrl (string databaseUrl)
+        {
+            if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
+
+            var mongoUrl = new MongoUrl(databaseUrl);
+            var mongoClient = new MongoClient(mongoUrl);
+            var server = mongoClient.GetServer();
+            return server.GetDatabase(mongoUrl.DatabaseName);
+        }
+
 
         MongoCollection<BsonDocument> GetLogCollection()
         {
-            var mongoClient = new MongoClient(_mongoUrl);
-            var server = mongoClient.GetServer();
-            var logDb = server.GetDatabase(_mongoUrl.DatabaseName);
-
-            VerifyCollection(logDb);
-
-            return logDb.GetCollection(_collectionName);
+            VerifyCollection();
+            return _mongoDatabase.GetCollection(_collectionName);
         }
 
         /// <summary>
         /// Verifies the the MongoDatabase collection exists or creates it if it doesn't.
         /// </summary>
-        /// <param name="logDb"></param>
-        protected void VerifyCollection(MongoDatabase logDb)
+        protected void VerifyCollection()
         {
-            if (!logDb.CollectionExists(_collectionName))
+            if (!_mongoDatabase.CollectionExists(_collectionName))
             {
-                logDb.CreateCollection(_collectionName, _collectionCreationOptions);
+                _mongoDatabase.CreateCollection(_collectionName, _collectionCreationOptions);
             }
         }
 

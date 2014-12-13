@@ -59,7 +59,7 @@ namespace Serilog.Sinks.Email
         public string FromEmail { get; set; }
 
         /// <summary>
-        /// The email address emails will be sent to.
+        /// The email address(es) emails will be sent to. Accepts multiple email addresses separated by comma or semicolon.
         /// </summary>
         public string ToEmail { get; set; }
 

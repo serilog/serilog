@@ -52,14 +52,14 @@ namespace Serilog.Sinks.Couchbase
                 var result = new Dictionary<object, object>();
                 foreach (var element in dict.Elements)
                 {
-                    var key = SimplifyScalar(element.Key);
+                    var key = SimplifyScalar(element.Key.Value);
                     if (result.ContainsKey(key))
                     {
                         SelfLog.WriteLine("The key {0} is not unique in the provided dictionary after simplification to {1}.", element.Key, key);
                         return dict.Elements.Select(e => new Dictionary<string, object>
                         {
-                            { "Key", SimplifyScalar(element.Key) },
-                            { "Value", Simplify(element.Value) }
+                            { "Key", SimplifyScalar(e.Key.Value) },
+                            { "Value", Simplify(e.Value) }
                         })
                         .ToArray();
                     }

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.MSSqlServer</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Michiel van Oudheusden</authors>
     <description>Serilog event sink that writes to a Microsoft SQL Server database.</description>
     <language>en-US</language>
@@ -11,11 +11,7 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging MS SQL Server DB</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="src\Serilog.Sinks.MSSqlServer\bin\Release\Serilog.Sinks.MSSqlServer.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.MSSqlServer\bin\Release\Serilog.Sinks.MSSqlServer.xml" target="lib\net45" />
-  </files>
 </package>

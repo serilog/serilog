@@ -14,25 +14,29 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Nest;
+using Elasticsearch.Net;
+using Elasticsearch.Net.Connection;
+using Elasticsearch.Net.Serialization;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
+using System.Text;
 
 namespace Serilog.Sinks.ElasticSearch
 {
     /// <summary>
     /// Writes log events as documents to ElasticSearch.
     /// </summary>
-    class ElasticSearchSink : PeriodicBatchingSink
+    public class ElasticsearchSink : PeriodicBatchingSink
     {
+        private readonly ElasticsearchJsonFormatter _formatter;
         readonly string _indexFormat;
-        readonly IFormatProvider _formatProvider;
-        readonly ElasticClient _client;
-    
+        readonly string _typeName;
+        readonly ElasticsearchClient _client;
+
         /// <summary>
-        /// A reasonable default for the number of events posted in
-        /// each batch.
+        /// A reasonable default for the number of events posted in each batch.
         /// </summary>
         public const int DefaultBatchPostingLimit = 50;
 
@@ -42,25 +46,42 @@ namespace Serilog.Sinks.ElasticSearch
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
         /// <summary>
-        /// Construct a sink posting to the specified database.
+        /// Default to the Logstash index name format
         /// </summary>
-        /// <param name="server">The server where ElasticSearch is running.</param>
-        /// <param name="indexFormat">The index name formatter. A string.Format using the DateTime.UtcNow is run over this string.</param>
-        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
-        /// <param name="connectionTimeOutInMilliseconds">The connection time out in milliseconds.</param>
-        /// <param name="period">The time to wait between checking for event batches.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ElasticSearchSink(Uri server, string indexFormat, int batchPostingLimit, int connectionTimeOutInMilliseconds, TimeSpan period, IFormatProvider formatProvider)
-            : base(batchPostingLimit, period)
-        {
-            if (connectionTimeOutInMilliseconds <= 0)
-                connectionTimeOutInMilliseconds = 5000;
+        public const string DefaultIndexFormat = "logstash-{0:yyyy.MM.dd}";
 
-            _indexFormat = indexFormat ?? "logstash-{0:yyyy.MM.dd}";
-            _formatProvider = formatProvider;
-            _client = new ElasticClient(new ConnectionSettings(server)
-                          .SetMaximumAsyncConnections(20)
-                          .SetTimeout(connectionTimeOutInMilliseconds));
+        /// <summary>
+        /// Defaults to the type of logevent
+        /// </summary>
+        public const string DefaultTypeName = "logevent";
+
+        /// <summary>
+        /// Default connection timeout in milliseconds
+        /// </summary>
+        public const int DefaultConnectionTimeout = 5000;
+
+        /// <summary>
+        /// Creates a new ElasticsearchSink instance with the provided options
+        /// </summary>
+        /// <param name="options">Options configuring how the sink behaves</param>
+        public ElasticsearchSink(ElasticsearchSinkOptions options)
+            : base(options.BatchPostingLimit ?? DefaultBatchPostingLimit, options.Period ?? DefaultPeriod)
+        {
+            _indexFormat = !string.IsNullOrWhiteSpace(options.IndexFormat) ? options.IndexFormat : DefaultIndexFormat;
+            _typeName = !string.IsNullOrWhiteSpace(options.TypeName) ? options.TypeName : DefaultTypeName;
+            var configuration = new ConnectionConfiguration(options.ConnectionPool)
+                .SetTimeout(DefaultConnectionTimeout)
+                .SetMaximumAsyncConnections(20);
+            if (options.ModifyConnectionSetttings != null)
+                configuration = options.ModifyConnectionSetttings(configuration);
+            _client = new ElasticsearchClient(configuration, connection: options.Connection, serializer: options.Serializer);
+            _formatter = new ElasticsearchJsonFormatter(
+                formatProvider: options.FormatProvider,
+                renderMessage: true,
+                closingDelimiter: string.Empty,
+                serializer: options.Serializer,
+                inlineFields: options.InlineFields
+            );
         }
 
         /// <summary>
@@ -68,18 +89,30 @@ namespace Serilog.Sinks.ElasticSearch
         /// </summary>
         /// <param name="events">The events to emit.</param>
         /// <remarks>
-        /// Override either <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})" /> or <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})" />,
+        /// Override either <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})" />
+        ///  or <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})" />,
         /// not both.
         /// </remarks>
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
-            var indexName = string.Format(_indexFormat, DateTime.UtcNow);
-            var items = events
-                .Select(logEvent => new Data.LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)))
-                .ToList();
+            // ReSharper disable PossibleMultipleEnumeration
+            if (!events.Any())
+                return;
 
-            if (items.Any() && _client !=null)
-                _client.IndexMany(items, indexName);            
-        }     
+            var payload = new List<string>();
+
+            foreach (var e in events)
+            {
+                var indexName = string.Format(_indexFormat, e.Timestamp.ToUniversalTime());
+                var action = new { index = new { _index = indexName, _type = _typeName } };
+                var actionJson = _client.Serializer.Serialize(action, SerializationFormatting.None);
+                payload.Add(Encoding.UTF8.GetString(actionJson));
+                var sw = new StringWriter();
+                _formatter.Format(e, sw);
+                payload.Add(sw.ToString());
+            }
+
+            _client.Bulk(payload);
+        }
     }
 }

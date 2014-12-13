@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.RavenDB</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Nick Van Eeckhout</authors>
     <description>Serilog event sink that writes to a RavenDB database.</description>
     <language>en-US</language>
@@ -11,12 +11,8 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging ravendb</tags>
     <dependencies>
-      <dependency id="Serilog" />
-      <dependency id="RavenDB.Client" />
+      <dependency id="Serilog" version="$version$" />
+      <dependency id="RavenDB.Client" version="2.5.2750" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="src\Serilog.Sinks.RavenDB\bin\Release\Serilog.Sinks.RavenDB.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.RavenDB\bin\Release\Serilog.Sinks.RavenDB.xml" target="lib\net45" />
-  </files>
 </package>
