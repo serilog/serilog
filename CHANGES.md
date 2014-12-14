@@ -1,3 +1,8 @@
+1.4.92
+ * #340 - Accept an `Encoding` parameter on the file sinks
+ * #336 - Use stream when writing to Splunk via HTTP
+ * #335 - Remove use of `dynamic` when destructuring `Nullable<T>` (iOS)
+
 1.4.65
  * #321 - Revert ES sink message property name to original value
  * #324 - Calculate ES index name from UTC timestamp
