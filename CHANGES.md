@@ -1,3 +1,10 @@
+1.4.65
+ * #321 - Revert ES sink message property name to original value
+ * #324 - Calculate ES index name from UTC timestamp
+ * #315 - Remove Logentries SSL cert pinning (the cert changed)
+ * #327 - Hide obsolete ES configuration methods
+ * #311 - Accept multiple recipient addresses in the email sink
+
 1.4.39
  * #289 - Elasticsearch sink improvements and new virtual methods on `JsonFormatter`
 
