@@ -26,33 +26,66 @@ namespace Serilog
     public static class LoggerExtensions
     {
 
-        const string DefaultGaugeTemplate = "{GaugeName} value = {GaugeValue} {GaugeUnit:l}";
-        const string DefaultCountTemplate = "{CounterName} count = {CounterValue} {CounterUnit:l}";
-		const string DefaultMeterTemplate = "{MeterName} count = {CounterValue}, mean rate {MeanRate:l}, 1 minute rate {OneMinuteRate:l}, 5 minute rate {FiveMinuteRate:l}, 15 minute rate {FifteenMinuteRate:l}";
-		const string DefaultHealthTemplate = "Health check {HealthCheckName} result is {HealthCheckMessage}.";
+		/// <summary>
+		/// The default gauge template.
+		/// </summary>
+        public const string DefaultGaugeTemplate = "{GaugeName} value = {GaugeValue} {GaugeUnit:l}";
+        
+		/// <summary>
+		/// The default count template.
+		/// </summary>
+		public const string DefaultCountTemplate = "{CounterName} count = {CounterValue} {CounterUnit:l}";
+
+		/// <summary>
+		/// The default meter template.
+		/// </summary>
+		public const string DefaultMeterTemplate = "{MeterName} count = {CounterValue}, mean rate {MeanRate:l}, 1 minute rate {OneMinuteRate:l}, 5 minute rate {FiveMinuteRate:l}, 15 minute rate {FifteenMinuteRate:l}";
+
+		/// <summary>
+		/// The default health template.
+		/// </summary>
+		public const string DefaultHealthTemplate = "Health check {HealthCheckName} result is {HealthCheckMessage}.";
 
         /// <summary>
         /// Begins an operation by placing the code to be timed inside a using block. 
         /// When the block is being exited, the time it took is logged.
+		/// 
+		/// In addition you can specify a warning limit. If it takes more time to execute the code than the specified limit, another message will be logged.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="identifier">The identifier used for the timing. If non specified, a random guid will be used.</param>
         /// <param name="description">A description for this operation.</param>
         /// <param name="level">The level used to write the timing operation details to the log. By default this is the information level.</param>
         /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
-        /// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
-        public static IDisposable BeginTimedOperation(
+		/// <param name = "levelExceeds">The level used when the timed operation exceeds the limit set. By default this is Warning.</param>
+		/// <param name = "beginningMessage">Template used to indicate the begin of a timed operation. By default it uses the BeginningOperationTemplate.</param>
+		/// <param name = "completedMessage">Template used to indicate the completion of a timed operation. By default it uses the CompletedOperationTemplate.</param>
+		/// <param name = "exceededOperationMessage">Template used to indicate the exceeding of an operation. By default it uses the OperationExceededTemlate.</param>
+		/// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
+		/// <example>
+		/// See the example how to wrap 
+		/// <code>
+		/// using (logger.BeginTimedOperation("Time a thread sleep for 2 seconds."))
+		/// {
+		///  	Thread.Sleep(2000);
+		/// }
+		/// </code>
+		/// </example>
+		public static IDisposable BeginTimedOperation(
             this ILogger logger,
             string description,
             string identifier = null,
             LogEventLevel level = LogEventLevel.Information,
-            TimeSpan? warnIfExceeds = null)
+			TimeSpan? warnIfExceeds = null,			
+			LogEventLevel levelExceeds= LogEventLevel.Warning, 
+			string beginningMessage = TimedOperation.BeginningOperationTemplate, string completedMessage = TimedOperation.CompletedOperationTemplate, string exceededOperationMessage = TimedOperation.OperationExceededTemplate)
         {
             object operationIdentifier = identifier;
+
             if (string.IsNullOrEmpty(identifier))
                 operationIdentifier = Guid.NewGuid();
 
-            return new TimedOperation(logger, level, warnIfExceeds, operationIdentifier, description);
+			return new TimedOperation(logger, level, warnIfExceeds, operationIdentifier, description, levelExceeds, beginningMessage, completedMessage, exceededOperationMessage);
         }
 
         /// <summary>

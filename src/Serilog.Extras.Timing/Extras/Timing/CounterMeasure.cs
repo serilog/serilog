@@ -77,5 +77,10 @@ namespace Serilog.Extras.Timing
             var value = _value.Get();
             _logger.Write(_level, _template, _name, value, _counts);
         }
+
+		public long Value(){
+
+			return _value.Get ();
+		}
     }
 }

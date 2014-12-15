@@ -33,6 +33,11 @@ namespace Serilog.Extras.Timing
         /// Resets the counter back to zero.
         /// </summary>
         void Reset();
+
+		/// <summary>
+		/// Retrieves the current value.
+		/// </summary>
+		long Value ();
     }
 
 }

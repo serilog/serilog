@@ -22,10 +22,31 @@ namespace Serilog.Extras.Timing
     {
         readonly ILogger _logger;
         readonly LogEventLevel _level;
+		readonly LogEventLevel _levelExceeds;
+
         readonly TimeSpan? _warnIfExceeds;
         readonly object _identifier;
         readonly string _description;
         readonly Stopwatch _sw;
+
+		/// <summary>
+		/// The beginning operation template.
+		/// </summary>
+		public const string BeginningOperationTemplate = "Beginning operation {TimedOperationId}: {TimedOperationDescription}";
+
+		/// <summary>
+		/// The completed operation template.
+		/// </summary>
+		public const string CompletedOperationTemplate = "Completed operation {TimedOperationId}: {TimedOperationDescription} in {TimedOperationElapsed} ({TimedOperationElapsedInMs} ms)";
+
+		/// <summary>
+		/// The operation exceeded template.
+		/// </summary>
+		public const string OperationExceededTemplate = "Operation {TimedOperationId}: {TimedOperationDescription} exceeded the limit of {WarningLimit} by completing in {TimedOperationElapsed}  ({TimedOperationElapsedInMs} ms)";
+
+		readonly string _beginningOperationMessage;
+		readonly string _completedOperationMessage;
+		readonly string _exceededOperationMessage;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimedOperation" /> class.
@@ -35,15 +56,28 @@ namespace Serilog.Extras.Timing
         /// <param name="description">A description for the operation.</param>
         /// <param name="level">The level used to write the timing operation details to the logger. By default this is the information level.</param>
         /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
-        public TimedOperation(ILogger logger, LogEventLevel level, TimeSpan? warnIfExceeds, object identifier, string description)
+		/// <param name = "levelExceeds">The level used when the timed operation exceeds the limit set. By default this is Warning.</param>
+		/// <param name = "beginningMessage">Template used to indicate the begin of a timed operation. By default it uses the BeginningOperationTemplate.</param>
+		/// <param name = "completedMessage">Template used to indicate the completion of a timed operation. By default it uses the CompletedOperationTemplate.</param>
+		/// <param name = "exceededOperationMessage">Template used to indicate the exceeding of an operation. By default it uses the OperationExceededTemlate.</param>
+		public TimedOperation(ILogger logger, LogEventLevel level, TimeSpan? warnIfExceeds, object identifier, string description, 
+			LogEventLevel levelExceeds= LogEventLevel.Warning, 
+			string beginningMessage = BeginningOperationTemplate, string completedMessage = CompletedOperationTemplate, string exceededOperationMessage = OperationExceededTemplate)
         {
             _logger = logger;
             _level = level;
+			_levelExceeds = levelExceeds;
             _warnIfExceeds = warnIfExceeds;
             _identifier = identifier;
             _description = description;
 
-            _logger.Write(_level, "Beginning operation {TimedOperationId}: {TimedOperationDescription}", _identifier, _description);
+			// Messages
+			_beginningOperationMessage = beginningMessage ?? BeginningOperationTemplate;
+			_completedOperationMessage = completedMessage ?? CompletedOperationTemplate;
+			_exceededOperationMessage = exceededOperationMessage ?? OperationExceededTemplate;
+
+			// Write first message to indicate start
+			_logger.Write (_level, _beginningOperationMessage, _identifier, _description);
 
             _sw = Stopwatch.StartNew();
         }
@@ -56,9 +90,9 @@ namespace Serilog.Extras.Timing
             _sw.Stop();
 
             if (_warnIfExceeds.HasValue && _sw.Elapsed > _warnIfExceeds.Value)
-                _logger.Write(LogEventLevel.Warning, "Operation {TimedOperationId}: {TimedOperationDescription} exceeded the limit of {WarningLimit} by completing in {TimedOperationElapsed}  ({TimedOperationElapsedInMs} ms)", _identifier, _description, _warnIfExceeds.Value, _sw.Elapsed, _sw.ElapsedMilliseconds);
+				_logger.Write (_levelExceeds, _exceededOperationMessage, _identifier, _description, _warnIfExceeds.Value, _sw.Elapsed, _sw.ElapsedMilliseconds);
             else
-                _logger.Write(_level, "Completed operation {TimedOperationId}: {TimedOperationDescription} in {TimedOperationElapsed} ({TimedOperationElapsedInMs} ms)", _identifier, _description, _sw.Elapsed, _sw.ElapsedMilliseconds);
+				_logger.Write (_level, _completedOperationMessage, _identifier, _description, _sw.Elapsed, _sw.ElapsedMilliseconds);
         }
     }
 }
