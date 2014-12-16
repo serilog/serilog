@@ -4,7 +4,7 @@ Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kdur
 A no-nonsense logging library for the NoSQL era. Combines the best of traditional and structured diagnostic logging in an easy-to-use package.
 
 * [Homepage](http://serilog.net)
-* [Documentation](https://github.com/nblumhardt/serilog/wiki)
+* [Documentation](https://github.com/serilog/serilog/wiki)
 * [Samples](https://github.com/serilog/serilog-samples)
 
 Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/serilog/serilog/issues?labels=up-for-grabs&state=open) label!
