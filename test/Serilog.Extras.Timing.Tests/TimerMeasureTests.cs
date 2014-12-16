@@ -16,6 +16,7 @@ using NUnit.Framework;
 using System;
 using Serilog.Events;
 using System.Reactive.Linq;
+using Serilog.Context;
 
 namespace Serilog.Extras.Timing.Tests
 {
@@ -34,6 +35,7 @@ namespace Serilog.Extras.Timing.Tests
 					.Do(evt => { _eventSeen = evt; })
 					.Subscribe())
 				.WriteTo.Console()                    // Still visible in the unit test console
+				.Enrich.FromLogContext()
 				.CreateLogger();
 
 			Log.Logger = logger;
@@ -51,6 +53,43 @@ namespace Serilog.Extras.Timing.Tests
 
 		}
 
+		[Test ()]
+		public void OperationThatExceedsTimeShouldRenderMessages ()
+		{
+			var check = Log.Logger.BeginTimedOperation("test", "test-id", LogEventLevel.Information, TimeSpan.FromMilliseconds(2));
+
+			Assert.AreEqual ("Beginning operation \"test-id\": \"test\"", _eventSeen.RenderMessage());
+
+			// Wait at least 3 milliseconds
+
+			System.Threading.Thread.Sleep (3);
+
+			check.Dispose ();
+
+			Assert.IsTrue (_eventSeen.RenderMessage ().Contains ("exceeded"));
+			Assert.AreEqual (LogEventLevel.Warning, _eventSeen.Level);
+			Assert.IsTrue (Convert.ToInt32(_eventSeen.Properties ["TimedOperationElapsedInMs"].ToString()) > 3);
+			Assert.IsTrue (_eventSeen.Properties.ContainsKey ("WarningLimit"));
+
+		}
+
+		[Test ()]
+		public void CanAddAdditionalProperties ()
+		{
+			var check = Log.Logger.BeginTimedOperation("test", "test-id");
+
+			using (LogContext.PushProperty ("numberOfOperations", 10)) {
+			
+				Assert.AreEqual ("Beginning operation \"test-id\": \"test\"", _eventSeen.RenderMessage ());
+			
+				check.Dispose ();
+				Assert.IsTrue (_eventSeen.RenderMessage ().StartsWith ("Completed operation \"test-id\"", StringComparison.Ordinal));
+			}
+
+			Assert.IsTrue (_eventSeen.Properties.ContainsKey ("numberOfOperations"));
+			Assert.IsTrue (_eventSeen.Properties ["numberOfOperations"].ToString() == "10");
+
+		}
 	}
 	
 }
