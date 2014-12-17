@@ -21,6 +21,7 @@ using Serilog.Context;
 namespace Serilog.Extras.Timing.Tests
 {
 
+
 	[TestFixture ()]
 	public class TimerMeasureTests
 	{
@@ -60,15 +61,15 @@ namespace Serilog.Extras.Timing.Tests
 
 			Assert.AreEqual ("Beginning operation \"test-id\": \"test\"", _eventSeen.RenderMessage());
 
-			// Wait at least 3 milliseconds
+			// Wait at least 30 milliseconds
 
-			System.Threading.Thread.Sleep (3);
+			System.Threading.Thread.Sleep (30);
 
 			check.Dispose ();
 
 			Assert.IsTrue (_eventSeen.RenderMessage ().Contains ("exceeded"));
 			Assert.AreEqual (LogEventLevel.Warning, _eventSeen.Level);
-			Assert.IsTrue (Convert.ToInt32(_eventSeen.Properties ["TimedOperationElapsedInMs"].ToString()) > 3);
+			Assert.IsTrue (Convert.ToInt32(_eventSeen.Properties ["TimedOperationElapsedInMs"].ToString()) >= 30);
 			Assert.IsTrue (_eventSeen.Properties.ContainsKey ("WarningLimit"));
 
 		}
@@ -81,7 +82,7 @@ namespace Serilog.Extras.Timing.Tests
 			using (LogContext.PushProperty ("numberOfOperations", 10)) {
 			
 				Assert.AreEqual ("Beginning operation \"test-id\": \"test\"", _eventSeen.RenderMessage ());
-			
+
 				check.Dispose ();
 				Assert.IsTrue (_eventSeen.RenderMessage ().StartsWith ("Completed operation \"test-id\"", StringComparison.Ordinal));
 			}
@@ -90,6 +91,8 @@ namespace Serilog.Extras.Timing.Tests
 			Assert.IsTrue (_eventSeen.Properties ["numberOfOperations"].ToString() == "10");
 
 		}
+
+
 	}
 	
 }

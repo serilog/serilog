@@ -49,6 +49,8 @@
     <Compile Include="HealthMeasureTests.cs" />
     <Compile Include="CounterMeasureTests.cs" />
     <Compile Include="TimerMeasureTests.cs" />
+    <Compile Include="GaugeMeasureTests.cs" />
+    <Compile Include="MeterMeasureTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
