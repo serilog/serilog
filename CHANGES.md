@@ -1,3 +1,7 @@
+1.4.99
+ * #342 - Accept `ILogEventEnricher` rather than just `PropertyEnricher` to `ForContext`
+ * #341 - Selectable logging level for request details in _Serilog.Extras.Web_
+
 1.4.92
  * #340 - Accept an `Encoding` parameter on the file sinks
  * #336 - Use stream when writing to Splunk via HTTP
