@@ -1,3 +1,5 @@
+ * #329 - Write event properties as columns using the new `WriteTo.AzureTableStorageWithProperties()`
+
 1.4.99
  * #342 - Accept `ILogEventEnricher` rather than just `PropertyEnricher` to `ForContext`
  * #341 - Selectable logging level for request details in _Serilog.Extras.Web_
