@@ -41,9 +41,9 @@
     <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.2.0.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.2.1.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin">
       <HintPath>..\..\packages\Microsoft.Owin.2.0.2\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -79,6 +79,7 @@
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Serilog.Sinks.SignalR.nuspec">
       <SubType>Designer</SubType>
