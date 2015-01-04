@@ -41,10 +41,9 @@ namespace Serilog.Sinks.NLog
             // pass along the event's properties to nlog
             foreach (var property in logEvent.Properties)
             {
-                // format simple scalar strings without wrapping quotes, which is more likely to be what nlog users expect
-                var format = (property.Value is ScalarValue && property.Value.GetType() == typeof(string))
-                    ? "l" // literal
-                    : null;
+                // format simple scalar strings as literals (without wrapping quotes), which is more likely to be what nlog users expect
+                var sv = property.Value as ScalarValue;
+                var format = (sv != null && sv.Value is string) ? "l" : null;
 
                 nlogEvent.Properties[property.Key] = property.Value.ToString(format, null);
             }
