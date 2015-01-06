@@ -1,4 +1,6 @@
  * #329 - Write event properties as columns using the new `WriteTo.AzureTableStorageWithProperties()`
+ * #346 - Pass all properties through to _Serilog.Sinks.NLog_ as context properties
+ * #347 - Update _Serilog.Sinks.SignalR_ to SignalR version 2.1.0 (breaking)
 
 1.4.99
  * #342 - Accept `ILogEventEnricher` rather than just `PropertyEnricher` to `ForContext`

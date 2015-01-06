@@ -29,34 +29,48 @@ namespace Serilog.Sinks.NLog
                 }
             }
 
+            var level = GetMappedLevel(logEvent);
             var message = logEvent.RenderMessage(formatProvider);
             var exception = logEvent.Exception;
 
+            var nlogEvent = new LogEventInfo(level, loggerName, message)
+            {
+                Exception = exception
+            };
+
+            // pass along the event's properties to nlog
+            foreach (var property in logEvent.Properties)
+            {
+                // format simple scalar strings as literals (without wrapping quotes), which is more likely to be what nlog users expect
+                var sv = property.Value as ScalarValue;
+                var format = (sv != null && sv.Value is string) ? "l" : null;
+
+                nlogEvent.Properties[property.Key] = property.Value.ToString(format, null);
+            }
+
             var logger = LogManager.GetLogger(loggerName);
+            logger.Log(nlogEvent);
+        }
+
+        private static LogLevel GetMappedLevel(LogEvent logEvent)
+        {
             switch (logEvent.Level)
             {
                 case LogEventLevel.Verbose:
-                    logger.Trace(message, exception);
-                    break;
+                    return LogLevel.Trace;
                 case LogEventLevel.Debug:
-                    logger.Debug(message, exception);
-                    break;
+                    return LogLevel.Debug;
                 case LogEventLevel.Information:
-                    logger.Info(message, exception);
-                    break;
+                    return LogLevel.Info;
                 case LogEventLevel.Warning:
-                    logger.Warn(message, exception);
-                    break;
+                    return LogLevel.Warn;
                 case LogEventLevel.Error:
-                    logger.Error(message, exception);
-                    break;
+                    return LogLevel.Error;
                 case LogEventLevel.Fatal:
-                    logger.Fatal(message, exception);
-                    break;
+                    return LogLevel.Fatal;
                 default:
                     SelfLog.WriteLine("Unexpected logging level, writing to NLog as Info");
-                    logger.Info(message, exception);
-                    break;
+                    return LogLevel.Info;
             }
         }
     }
