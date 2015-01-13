@@ -1,3 +1,6 @@
+1.4.118
+ * #351 - Azure Event Hubs sink
+
 1.4.113
  * #329 - Write event properties as columns using the new `WriteTo.AzureTableStorageWithProperties()`
  * #346 - Pass all properties through to _Serilog.Sinks.NLog_ as context properties
