@@ -13,5 +13,10 @@
     <dependencies>
       <dependency id="Serilog" version="$version$" />
     </dependencies>
+    <files>
+      <file src="bin\Release\Serilog.Extras.FSharp.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+      <file src="bin\Release\Serilog.Extras.FSharp.pdb" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+      <file src="bin\Release\Serilog.Extras.FSharp.xml" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    </files>
   </metadata>
 </package>
