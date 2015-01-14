@@ -8,7 +8,7 @@
     <ProjectGuid>088a4030-7c7a-4434-964a-8e9e42db17f0</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Serilog.Extras.FSharp</RootNamespace>
-    <AssemblyName>Serilog</AssemblyName>
+    <AssemblyName>Serilog.Extras.FSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetProfile>netcore</TargetProfile>
