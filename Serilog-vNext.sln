@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22310.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog", "src\Serilog\Serilog.kproj", "{3892F3AE-4E82-4134-B4ED-2B28E5B82451}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{95D91152-C6B2-45CD-9C3A-D2FE57A7EEFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E1740E33-407A-42F2-AA7F-B8677BAAD5DB}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		assets\Serilog.snk = assets\Serilog.snk
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{542E288D-8275-46B0-908B-E9346EB99336}"
+	ProjectSection(SolutionItems) = preProject
+		Build.ps1 = Build.ps1
+		sake.cmd = sake.cmd
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3892F3AE-4E82-4134-B4ED-2B28E5B82451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3892F3AE-4E82-4134-B4ED-2B28E5B82451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3892F3AE-4E82-4134-B4ED-2B28E5B82451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3892F3AE-4E82-4134-B4ED-2B28E5B82451}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3892F3AE-4E82-4134-B4ED-2B28E5B82451} = {95D91152-C6B2-45CD-9C3A-D2FE57A7EEFC}
+	EndGlobalSection
+EndGlobal
