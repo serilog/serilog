@@ -62,6 +62,10 @@ function Invoke-NuGetPack($version)
     pushd .\src\Serilog.Sinks.Splunk
     Invoke-NuGetPackSpec "Serilog.Sinks.Splunk.nuspec" $version
     popd
+
+    pushd .\src\Serilog.Extras.FSharp
+    Invoke-NuGetPackSpec "Serilog.Extras.FSharp.nuspec" $version
+    popd
 }
 
 function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
