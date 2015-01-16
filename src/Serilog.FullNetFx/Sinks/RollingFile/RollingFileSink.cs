@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -35,6 +36,7 @@ namespace Serilog.Sinks.RollingFile
         readonly ITextFormatter _textFormatter;
         readonly long? _fileSizeLimitBytes;
         readonly int? _retainedFileCountLimit;
+        readonly Encoding _encoding;
         readonly object _syncRoot = new object();
 
         bool _isDisposed;
@@ -50,12 +52,14 @@ namespace Serilog.Sinks.RollingFile
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
         /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
         /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
+        /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public RollingFileSink(string pathFormat, 
                               ITextFormatter textFormatter,
                               long? fileSizeLimitBytes,
-                              int? retainedFileCountLimit)
+                              int? retainedFileCountLimit, 
+                              Encoding encoding = null)
         {
             if (pathFormat == null) throw new ArgumentNullException("pathFormat");
             if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
@@ -65,6 +69,7 @@ namespace Serilog.Sinks.RollingFile
             _textFormatter = textFormatter;
             _fileSizeLimitBytes = fileSizeLimitBytes;
             _retainedFileCountLimit = retainedFileCountLimit;
+            _encoding = encoding ?? Encoding.UTF8;
         }
 
         /// <summary>
@@ -137,7 +142,7 @@ namespace Serilog.Sinks.RollingFile
 
                 try
                 {
-                    _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes);
+                    _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes, _encoding);
                 }
                 catch (IOException ex)
                 {

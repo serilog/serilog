@@ -26,6 +26,7 @@ namespace Serilog.Extras.Web
     {
         static volatile bool _logPostedFormData;
         static volatile bool _isEnabled = true;
+        static volatile LogEventLevel _requestLoggingLevel = LogEventLevel.Information;
 
         /// <summary>
         /// Register the module with the application (called automatically;
@@ -58,6 +59,15 @@ namespace Serilog.Extras.Web
         }
 
         /// <summary>
+        /// The level at which to log HTTP requests. The default is Information.
+        /// </summary>
+        public static LogEventLevel RequestLoggingLevel
+        {
+            get { return _requestLoggingLevel; }
+            set { _requestLoggingLevel = value; }
+        }
+
+        /// <summary>
         /// Initializes a module and prepares it to handle requests.
         /// </summary>
         /// <param name="context">An <see cref="T:System.Web.HttpApplication"/> that provides access to the methods, properties, and events common to all application objects within an ASP.NET application </param>
@@ -72,7 +82,7 @@ namespace Serilog.Extras.Web
             if (!_isEnabled) return;
 
             var request = HttpContext.Current.Request;
-            Log.Information("HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
+            Log.Write(_requestLoggingLevel, "HTTP {Method} for {RawUrl}", request.HttpMethod, request.RawUrl);
             if (_logPostedFormData && Log.IsEnabled(LogEventLevel.Debug))
             {
                 var form = request.Form;

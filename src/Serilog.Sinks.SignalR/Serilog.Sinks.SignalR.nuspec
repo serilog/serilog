@@ -12,7 +12,7 @@
     <tags>serilog logging signalr</tags>
     <dependencies>
       <dependency id="Serilog" version="$version$" />
-      <dependency id="Microsoft.AspNet.SignalR.Core" version="2.0.0" />
+      <dependency id="Microsoft.AspNet.SignalR.Core" version="2.1.0" />
     </dependencies>
   </metadata>
 </package>

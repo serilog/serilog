@@ -1,3 +1,27 @@
+1.4.118
+ * #351 - Azure Event Hubs sink
+
+1.4.113
+ * #329 - Write event properties as columns using the new `WriteTo.AzureTableStorageWithProperties()`
+ * #346 - Pass all properties through to _Serilog.Sinks.NLog_ as context properties
+ * #347 - Update _Serilog.Sinks.SignalR_ to SignalR version 2.1.0 (breaking)
+
+1.4.99
+ * #342 - Accept `ILogEventEnricher` rather than just `PropertyEnricher` to `ForContext`
+ * #341 - Selectable logging level for request details in _Serilog.Extras.Web_
+
+1.4.92
+ * #340 - Accept an `Encoding` parameter on the file sinks
+ * #336 - Use stream when writing to Splunk via HTTP
+ * #335 - Remove use of `dynamic` when destructuring `Nullable<T>` (iOS)
+
+1.4.65
+ * #321 - Revert ES sink message property name to original value
+ * #324 - Calculate ES index name from UTC timestamp
+ * #315 - Remove Logentries SSL cert pinning (the cert changed)
+ * #327 - Hide obsolete ES configuration methods
+ * #311 - Accept multiple recipient addresses in the email sink
+
 1.4.39
  * #289 - Elasticsearch sink improvements and new virtual methods on `JsonFormatter`
 

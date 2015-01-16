@@ -37,10 +37,11 @@ namespace Serilog.Sinks.IOFile
         /// <param name="textFormatter">Formatter used to convert log events to text.</param>
         /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
+        /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         /// <exception cref="IOException"></exception>
-        public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes)
+        public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null)
         {
             if (path == null) throw new ArgumentNullException("path");
             if (textFormatter == null) throw new ArgumentNullException("textFormatter");
@@ -51,7 +52,7 @@ namespace Serilog.Sinks.IOFile
             TryCreateDirectory(path);
 
             var file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
-            var outputWriter = new StreamWriter(file, Encoding.UTF8);
+            var outputWriter = new StreamWriter(file, encoding ?? Encoding.UTF8);
             if (fileSizeLimitBytes != null)
             {
                 var initialBytes = file.Length;
