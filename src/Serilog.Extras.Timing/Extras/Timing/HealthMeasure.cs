@@ -16,8 +16,10 @@ using Serilog.Events;
 
 namespace Serilog.Extras.Timing
 {
-
-	sealed class HealthMeasure: IHealthMeasure
+	/// <summary>
+	/// Health measure.
+	/// </summary>
+	public class HealthMeasure: IHealthMeasure
 	{
 
 		readonly ILogger _logger;
@@ -27,6 +29,15 @@ namespace Serilog.Extras.Timing
 		readonly LogEventLevel _levelUnhealthy;
 		readonly string _template;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Serilog.Extras.Timing.HealthMeasure"/> class.
+		/// </summary>
+		/// <param name="logger">Logger.</param>
+		/// <param name="name">Name.</param>
+		/// <param name="healthFunction">Health function.</param>
+		/// <param name="healthyLevel">Healthy level.</param>
+		/// <param name="unHealthyLevel">Un healthy level.</param>
+		/// <param name="template">Template.</param>
 		public HealthMeasure (ILogger logger, string name, Func<HealthCheckResult> healthFunction, LogEventLevel healthyLevel, LogEventLevel unHealthyLevel, string template)
 		{
 			if (string.IsNullOrWhiteSpace (name))
@@ -45,7 +56,10 @@ namespace Serilog.Extras.Timing
 
 		#region IMeasure implementation
 
-		public void Write ()
+		/// <summary>
+		/// Write the measurement data to the log system.
+		/// </summary>
+		public virtual void Write ()
 		{
 			HealthCheckResult result;
 			LogEventLevel eventLevel;

@@ -24,5 +24,11 @@ namespace Serilog.Extras.Timing
 		/// Marks the occurrence of an operation.
 		/// </summary>
 		void Mark(long n =1);
+
+		/// <summary>
+		///  Returns the total number of events which have been marked.
+		/// </summary>
+		/// <value>The total number.</value>
+		long Count{ get; }
 	}
 }

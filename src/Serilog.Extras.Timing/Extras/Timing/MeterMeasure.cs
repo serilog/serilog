@@ -19,7 +19,10 @@ using System.Threading.Tasks;
 
 namespace Serilog.Extras.Timing
 {
-	sealed class MeterMeasure : IMeterMeasure, IDisposable
+	/// <summary>
+	/// Meter measure.
+	/// </summary>
+	public class MeterMeasure : IMeterMeasure, IDisposable
 	{
 		private readonly ILogger _logger;
 		private readonly string _name;
@@ -38,6 +41,15 @@ namespace Serilog.Extras.Timing
 
 		private readonly long _startTime = DateTime.Now.Ticks;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Serilog.Extras.Timing.MeterMeasure"/> class.
+		/// </summary>
+		/// <param name="logger">Logger.</param>
+		/// <param name="name">Name.</param>
+		/// <param name="measuring">Measuring.</param>
+		/// <param name="rateUnit">Rate unit.</param>
+		/// <param name="level">Level.</param>
+		/// <param name="template">Template.</param>
 		public MeterMeasure(ILogger logger, string name, string measuring, TimeUnit rateUnit, LogEventLevel level, string template)
 		{
 			_logger = logger;
@@ -57,8 +69,11 @@ namespace Serilog.Extras.Timing
 				}, _cancellationToken.Token);
 		}
 
-
-		public void Mark(long n = 1)
+		/// <summary>
+		/// Marks the occurrence of an operation.
+		/// </summary>
+		/// <param name="n">N.</param>
+		public virtual void Mark(long n = 1)
 		{
 			_counter.AddAndGet(n);
 			_m1Rate.Update(n);
@@ -74,6 +89,14 @@ namespace Serilog.Extras.Timing
 			_m15Rate.Tick();
 		}
 
+		/// <summary>
+		/// Releases all resource used by the <see cref="Serilog.Extras.Timing.MeterMeasure"/> object.
+		/// </summary>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="Serilog.Extras.Timing.MeterMeasure"/>. The
+		/// <see cref="Dispose"/> method leaves the <see cref="Serilog.Extras.Timing.MeterMeasure"/> in an unusable state.
+		/// After calling <see cref="Dispose"/>, you must release all references to the
+		/// <see cref="Serilog.Extras.Timing.MeterMeasure"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="Serilog.Extras.Timing.MeterMeasure"/> was occupying.</remarks>
 		public void Dispose()
 		{
 			_cancellationToken.Cancel();
@@ -83,14 +106,16 @@ namespace Serilog.Extras.Timing
 		///  Returns the total number of events which have been marked.
 		/// </summary>
 		/// <returns></returns>
-		public long Count
+		public virtual long Count
 		{
 			get { return _counter.Get(); }
 		}
 
 
-
-		public void Write()
+		/// <summary>
+		/// Write the measurement data to the log system.
+		/// </summary>
+		public virtual void Write()
 		{
 			var value = _counter.Get();
 

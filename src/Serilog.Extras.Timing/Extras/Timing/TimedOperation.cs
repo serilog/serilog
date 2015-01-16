@@ -18,7 +18,10 @@ using Serilog.Events;
 
 namespace Serilog.Extras.Timing
 {
-    sealed class TimedOperation : IDisposable
+	/// <summary>
+	/// Timed operation.
+	/// </summary>
+    public class TimedOperation : IDisposable
     {
         readonly ILogger _logger;
         readonly LogEventLevel _level;
@@ -85,7 +88,7 @@ namespace Serilog.Extras.Timing
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             _sw.Stop();
 
