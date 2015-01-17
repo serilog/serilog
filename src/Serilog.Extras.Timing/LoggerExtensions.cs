@@ -61,6 +61,7 @@ namespace Serilog
 		/// <param name = "beginningMessage">Template used to indicate the begin of a timed operation. By default it uses the BeginningOperationTemplate.</param>
 		/// <param name = "completedMessage">Template used to indicate the completion of a timed operation. By default it uses the CompletedOperationTemplate.</param>
 		/// <param name = "exceededOperationMessage">Template used to indicate the exceeding of an operation. By default it uses the OperationExceededTemlate.</param>
+		/// <param name = "propertyValues">Additional values to be logged along side the timing data.</param>
 		/// <returns>A disposable object. Wrap this inside a using block so the dispose can be called to stop the timing.</returns>
 		/// <example>
 		/// See the example how to wrap 
@@ -78,15 +79,18 @@ namespace Serilog
             LogEventLevel level = LogEventLevel.Information,
 			TimeSpan? warnIfExceeds = null,			
 			LogEventLevel levelExceeds= LogEventLevel.Warning, 
-			string beginningMessage = TimedOperation.BeginningOperationTemplate, string completedMessage = TimedOperation.CompletedOperationTemplate, string exceededOperationMessage = TimedOperation.OperationExceededTemplate)
+			string beginningMessage = TimedOperation.BeginningOperationTemplate, string completedMessage = TimedOperation.CompletedOperationTemplate, string exceededOperationMessage = TimedOperation.OperationExceededTemplate,
+			params object[] propertyValues)
         {
             object operationIdentifier = identifier;
 
             if (string.IsNullOrEmpty(identifier))
                 operationIdentifier = Guid.NewGuid();
 
-			return new TimedOperation(logger, level, warnIfExceeds, operationIdentifier, description, levelExceeds, beginningMessage, completedMessage, exceededOperationMessage);
+			return new TimedOperation(logger, level, warnIfExceeds, operationIdentifier, description, levelExceeds, beginningMessage, completedMessage, exceededOperationMessage, propertyValues);
         }
+
+
 
         /// <summary>
         /// Retrieves a value as defined by the operation. For example the number of items inside a queue.

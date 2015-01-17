@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using System.Diagnostics;
 using Serilog.Events;
 
@@ -21,16 +22,17 @@ namespace Serilog.Extras.Timing
 	/// <summary>
 	/// Timed operation.
 	/// </summary>
-    public class TimedOperation : IDisposable
-    {
-        readonly ILogger _logger;
-        readonly LogEventLevel _level;
+	public class TimedOperation : IDisposable
+	{
+		readonly ILogger _logger;
+		readonly LogEventLevel _level;
 		readonly LogEventLevel _levelExceeds;
+		private object[] _propertyValues;
 
-        readonly TimeSpan? _warnIfExceeds;
-        readonly object _identifier;
-        readonly string _description;
-        readonly Stopwatch _sw;
+		readonly TimeSpan? _warnIfExceeds;
+		readonly object _identifier;
+		readonly string _description;
+		readonly Stopwatch _sw;
 
 		/// <summary>
 		/// The beginning operation template.
@@ -51,28 +53,31 @@ namespace Serilog.Extras.Timing
 		readonly string _completedOperationMessage;
 		readonly string _exceededOperationMessage;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TimedOperation" /> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        /// <param name="identifier">The identifier used for the timing. If non specified, a random guid will be used.</param>
-        /// <param name="description">A description for the operation.</param>
-        /// <param name="level">The level used to write the timing operation details to the logger. By default this is the information level.</param>
-        /// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TimedOperation" /> class.
+		/// </summary>
+		/// <param name="logger">The logger.</param>
+		/// <param name="identifier">The identifier used for the timing. If non specified, a random guid will be used.</param>
+		/// <param name="description">A description for the operation.</param>
+		/// <param name="level">The level used to write the timing operation details to the logger. By default this is the information level.</param>
+		/// <param name="warnIfExceeds">Specifies a limit, if it takes more than this limit, the level will be set to warning. By default this is not used.</param>
 		/// <param name = "levelExceeds">The level used when the timed operation exceeds the limit set. By default this is Warning.</param>
 		/// <param name = "beginningMessage">Template used to indicate the begin of a timed operation. By default it uses the BeginningOperationTemplate.</param>
 		/// <param name = "completedMessage">Template used to indicate the completion of a timed operation. By default it uses the CompletedOperationTemplate.</param>
 		/// <param name = "exceededOperationMessage">Template used to indicate the exceeding of an operation. By default it uses the OperationExceededTemlate.</param>
-		public TimedOperation(ILogger logger, LogEventLevel level, TimeSpan? warnIfExceeds, object identifier, string description, 
-			LogEventLevel levelExceeds= LogEventLevel.Warning, 
-			string beginningMessage = BeginningOperationTemplate, string completedMessage = CompletedOperationTemplate, string exceededOperationMessage = OperationExceededTemplate)
-        {
-            _logger = logger;
-            _level = level;
+		/// <param name = "propertyValues">Additional values to be logged along side the timing data.</param>
+		public TimedOperation (ILogger logger, LogEventLevel level, TimeSpan? warnIfExceeds, object identifier, string description, 
+		                      LogEventLevel levelExceeds = LogEventLevel.Warning,
+		                      string beginningMessage = BeginningOperationTemplate, string completedMessage = CompletedOperationTemplate, string exceededOperationMessage = OperationExceededTemplate,
+		                      params object[] propertyValues)
+		{
+			_logger = logger;
+			_level = level;
 			_levelExceeds = levelExceeds;
-            _warnIfExceeds = warnIfExceeds;
-            _identifier = identifier;
-            _description = description;
+			_warnIfExceeds = warnIfExceeds;
+			_identifier = identifier;
+			_description = description;
+			_propertyValues = propertyValues;
 
 			// Messages
 			_beginningOperationMessage = beginningMessage ?? BeginningOperationTemplate;
@@ -80,22 +85,36 @@ namespace Serilog.Extras.Timing
 			_exceededOperationMessage = exceededOperationMessage ?? OperationExceededTemplate;
 
 			// Write first message to indicate start
-			_logger.Write (_level, _beginningOperationMessage, _identifier, _description);
+			_logger.Write (_level, _beginningOperationMessage, GeneratePropertyBag (_identifier, _description));
 
-            _sw = Stopwatch.StartNew();
-        }
+			_sw = Stopwatch.StartNew ();
+		}
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            _sw.Stop();
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public virtual void Dispose ()
+		{
+			_sw.Stop ();
 
-            if (_warnIfExceeds.HasValue && _sw.Elapsed > _warnIfExceeds.Value)
-				_logger.Write (_levelExceeds, _exceededOperationMessage, _identifier, _description, _warnIfExceeds.Value, _sw.Elapsed, _sw.ElapsedMilliseconds);
-            else
-				_logger.Write (_level, _completedOperationMessage, _identifier, _description, _sw.Elapsed, _sw.ElapsedMilliseconds);
-        }
-    }
+			if (_warnIfExceeds.HasValue && _sw.Elapsed > _warnIfExceeds.Value)
+				_logger.Write (_levelExceeds, _exceededOperationMessage, GeneratePropertyBag (_identifier, _description, _warnIfExceeds.Value, _sw.Elapsed, _sw.ElapsedMilliseconds));
+			else
+				_logger.Write (_level, _completedOperationMessage, GeneratePropertyBag (_identifier, _description, _sw.Elapsed, _sw.ElapsedMilliseconds));
+		}
+
+		/// <summary>
+		/// Generates the property bag by combining parameter values with the timed operation values.
+		/// </summary>
+		/// <returns>The property bag with the combined values.</returns>
+		/// <param name="values">Values.</param>
+		protected virtual object[] GeneratePropertyBag (params object[] values)
+		{
+			if (_propertyValues != null)
+				return values.Concat (_propertyValues).ToArray ();
+			else
+				return values;
+		
+		}
+	}
 }
