@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Serilog.FullNetFx</name>
+    </assembly>
+    <members>
+        <member name="T:Serilog.LoggerConfigurationFullNetFxExtensions">
+            <summary>
+            Extends <see cref="T:Serilog.LoggerConfiguration"/> to add Full .NET Framework 
+            capabilities.
+            </summary>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.Console(Serilog.Configuration.LoggerSinkConfiguration,Serilog.Events.LogEventLevel,System.String,System.IFormatProvider)">
+            <summary>
+            Writes log events to <see cref="T:System.Console"/>.
+            </summary>
+            <param name="sinkConfiguration">Logger sink configuration.</param>
+            <param name="restrictedToMinimumLevel">The minimum level for
+            events passed through the sink.</param>
+            <param name="outputTemplate">A message template describing the format used to write to the sink.
+            the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.ColoredConsole(Serilog.Configuration.LoggerSinkConfiguration,Serilog.Events.LogEventLevel,System.String,System.IFormatProvider)">
+            <summary>
+            Writes log events to <see cref="T:System.Console"/>, using color to differentiate
+            between levels.
+            </summary>
+            <param name="sinkConfiguration">Logger sink configuration.</param>
+            <param name="restrictedToMinimumLevel">The minimum level for
+            events passed through the sink.</param>
+            <param name="outputTemplate">A message template describing the format used to write to the sink.
+            the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.DumpFile(Serilog.Configuration.LoggerSinkConfiguration,System.String,Serilog.Events.LogEventLevel)">
+            <summary>
+            Write log events in a simple text dump format to the specified file.
+            </summary>
+            <param name="sinkConfiguration">Logger sink configuration.</param>
+            <param name="path">Path to the dump file.</param>
+            <param name="restrictedToMinimumLevel">The minimum level for
+            events passed through the sink.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.File(Serilog.Configuration.LoggerSinkConfiguration,System.String,Serilog.Events.LogEventLevel,System.String,System.IFormatProvider,System.Nullable{System.Int64})">
+            <summary>
+            Write log events to the specified file.
+            </summary>
+            <param name="sinkConfiguration">Logger sink configuration.</param>
+            <param name="path">Path to the file.</param>
+            <param name="restrictedToMinimumLevel">The minimum level for
+            events passed through the sink.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <param name="outputTemplate">A message template describing the format used to write to the sink.
+            the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
+            <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
+            For unrestricted growth, pass null. The default is 1 GB.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+            <remarks>The file will be written using the UTF-8 character set.</remarks>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.RollingFile(Serilog.Configuration.LoggerSinkConfiguration,System.String,Serilog.Events.LogEventLevel,System.String,System.IFormatProvider,System.Nullable{System.Int64},System.Nullable{System.Int32})">
+            <summary>
+            Write log events to a series of files. Each file will be named according to
+            the date of the first log entry written to it. Only simple date-based rolling is
+            currently supported.
+            </summary>
+            <param name="sinkConfiguration">Logger sink configuration.</param>
+            <param name="pathFormat">String describing the location of the log files,
+            with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
+            files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
+            <param name="restrictedToMinimumLevel">The minimum level for
+            events passed through the sink.</param>
+            <param name="outputTemplate">A message template describing the format used to write to the sink.
+            the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <param name="fileSizeLimitBytes">The maximum size, in bytes, to which any single log file will be allowed to grow.
+            For unrestricted growth, pass null. The default is 1 GB.</param>
+            <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
+            including the current log file. For unlimited retention, pass null. The default is 31.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+            <remarks>The file will be written using the UTF-8 character set.</remarks>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.Trace(Serilog.Configuration.LoggerSinkConfiguration,Serilog.Events.LogEventLevel,System.String,System.IFormatProvider)">
+            <summary>
+            Write log events to the <see cref="T:System.Diagnostics.Trace"/>.
+            </summary>
+            <param name="sinkConfiguration">Logger sink configuration.</param>
+            <param name="restrictedToMinimumLevel">The minimum level for
+            events passed through the sink.</param>
+            <param name="outputTemplate">A message template describing the format used to write to the sink.
+            the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.WithThreadId(Serilog.Configuration.LoggerEnrichmentConfiguration)">
+            <summary>
+            Enrich log events with a ThreadId property containing the current <see cref="P:System.Threading.Thread.ManagedThreadId"/>.
+            </summary>
+            <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.WithProcessId(Serilog.Configuration.LoggerEnrichmentConfiguration)">
+            <summary>
+            Enrich log events with a ProcessId property containing the current <see cref="P:System.Diagnostics.Process.Id"/>.
+            </summary>
+            <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+        <member name="M:Serilog.LoggerConfigurationFullNetFxExtensions.WithMachineName(Serilog.Configuration.LoggerEnrichmentConfiguration)">
+            <summary>
+            Enrich log events with a MachineName property containing the current <see cref="!:Environment.MachineName"/>.
+            </summary>
+            <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+        <member name="T:Serilog.Enrichers.MachineNameEnricher">
+            <summary>
+            Enriches log events with a MachineName property containing <see cref="!:Environment.MachineName"/>.
+            </summary>
+        </member>
+        <member name="F:Serilog.Enrichers.MachineNameEnricher.MachineNamePropertyName">
+            <summary>
+            The property name added to enriched log events.
+            </summary>
+        </member>
+        <member name="M:Serilog.Enrichers.MachineNameEnricher.Enrich(Serilog.Events.LogEvent,Serilog.Core.ILogEventPropertyFactory)">
+            <summary>
+            Enrich the log event.
+            </summary>
+            <param name="logEvent">The log event to enrich.</param>
+            <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+        </member>
+        <member name="T:Serilog.Enrichers.ProcessIdEnricher">
+            <summary>
+            Enriches log events with a ProcessId property containing the current <see cref="P:System.Diagnostics.Process.Id"/>.
+            </summary>
+        </member>
+        <member name="F:Serilog.Enrichers.ProcessIdEnricher.ProcessIdPropertyName">
+            <summary>
+            The property name added to enriched log events.
+            </summary>
+        </member>
+        <member name="M:Serilog.Enrichers.ProcessIdEnricher.Enrich(Serilog.Events.LogEvent,Serilog.Core.ILogEventPropertyFactory)">
+            <summary>
+            Enrich the log event.
+            </summary>
+            <param name="logEvent">The log event to enrich.</param>
+            <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+        </member>
+        <member name="T:Serilog.Enrichers.ThreadIdEnricher">
+            <summary>
+            Enriches log events with a ThreadId property containing the current <see cref="P:System.Threading.Thread.ManagedThreadId"/>.
+            </summary>
+        </member>
+        <member name="F:Serilog.Enrichers.ThreadIdEnricher.ThreadIdPropertyName">
+            <summary>
+            The property name added to enriched log events.
+            </summary>
+        </member>
+        <member name="M:Serilog.Enrichers.ThreadIdEnricher.Enrich(Serilog.Events.LogEvent,Serilog.Core.ILogEventPropertyFactory)">
+            <summary>
+            Enrich the log event.
+            </summary>
+            <param name="logEvent">The log event to enrich.</param>
+            <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+        </member>
+        <member name="T:Serilog.Sinks.IOFile.FileSink">
+            <summary>
+            Write log events to a disk file.
+            </summary>
+        </member>
+        <member name="M:Serilog.Sinks.IOFile.FileSink.#ctor(System.String,Serilog.Formatting.ITextFormatter,System.Nullable{System.Int64})">
+            <summary>Construct a <see cref="T:Serilog.Sinks.IOFile.FileSink"/>.</summary>
+            <param name="path">Path to the file.</param>
+            <param name="textFormatter">Formatter used to convert log events to text.</param>
+            <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
+            For unrestricted growth, pass null. The default is 1 GB.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+            <remarks>The file will be written using the UTF-8 character set.</remarks>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Serilog.Sinks.IOFile.FileSink.Emit(Serilog.Events.LogEvent)">
+            <summary>
+            Emit the provided log event to the sink.
+            </summary>
+            <param name="logEvent">The log event to write.</param>
+        </member>
+        <member name="M:Serilog.Sinks.IOFile.FileSink.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or 
+            resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="T:Serilog.Sinks.IOFile.NullSink">
+            <summary>
+            An instance of this sink may be substituted when an instance of the
+            <see cref="T:Serilog.Sinks.IOFile.FileSink"/> is unable to be constructed.
+            </summary>
+        </member>
+        <member name="T:Serilog.Sinks.PeriodicBatching.BatchedConnectionStatus">
+            <summary>
+            Manages reconnection period and transient fault response for <see cref="!:PeriodicBatchingSink"/>.
+            During normal operation an object of this type will simply echo the configured batch transmission
+            period. When availabilty fluctuates, the class tracks the number of failed attempts, each time
+            increasing the interval before reconnection is attempted (up to a set maximum) and at predefined
+            points indicating that either the current batch, or entire waiting queue, should be dropped. This
+            Serves two purposes - first, a loaded receiver may need a temporary reduction in traffic while coming
+            back online. Second, the sender needs to account for both bad batches (the first fault response) and
+            also overproduction (the second, queue-dropping response). In combination these should provide a
+            reasonable delivery effort but ultimately protect the sender from memory exhaustion.
+            </summary>
+            <remarks>
+            Currently used only by <see cref="!:PeriodicBatchingSink"/>, but may
+            provide the basis for a "smart" exponential backoff timer. There are other factors to consider
+            including the desire to send batches "when full" rather than continuing to buffer, and so-on.
+            </remarks>
+        </member>
+        <member name="T:Serilog.Sinks.RollingFile.RollingFileSink">
+            <summary>
+            Write log events to a series of files. Each file will be named according to
+            the date of the first log entry written to it. Only simple date-based rolling is
+            currently supported.
+            </summary>
+        </member>
+        <member name="M:Serilog.Sinks.RollingFile.RollingFileSink.#ctor(System.String,Serilog.Formatting.ITextFormatter,System.Nullable{System.Int64},System.Nullable{System.Int32})">
+            <summary>Construct a <see cref="T:Serilog.Sinks.RollingFile.RollingFileSink"/>.</summary>
+            <param name="pathFormat">String describing the location of the log files,
+            with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
+            files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
+            <param name="textFormatter">Formatter used to convert log events to text.</param>
+            <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
+            For unrestricted growth, pass null. The default is 1 GB.</param>
+            <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
+            including the current log file. For unlimited retention, pass null. The default is 31.</param>
+            <returns>Configuration object allowing method chaining.</returns>
+            <remarks>The file will be written using the UTF-8 character set.</remarks>
+        </member>
+        <member name="M:Serilog.Sinks.RollingFile.RollingFileSink.Emit(Serilog.Events.LogEvent)">
+            <summary>
+            Emit the provided log event to the sink.
+            </summary>
+            <param name="logEvent">The log event to write.</param>
+            <remarks>Events that come in out-of-order (e.g. around the rollovers)
+            may end up written to a later file than their timestamp
+            would indicate.</remarks> 
+        </member>
+        <member name="M:Serilog.Sinks.RollingFile.RollingFileSink.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or 
+            resetting unmanaged resources.
+            </summary>
+        </member>
+    </members>
+</doc>
