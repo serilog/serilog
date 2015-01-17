@@ -1,3 +1,6 @@
+1.4.126
+ * #354 - Added _Serilog.Extras.FSharp_
+
 1.4.118
  * #351 - Azure Event Hubs sink
 
