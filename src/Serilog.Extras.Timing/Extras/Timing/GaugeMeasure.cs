@@ -17,7 +17,10 @@ using Serilog.Events;
 
 namespace Serilog.Extras.Timing
 {
-    sealed class GaugeMeasure<T> : IGaugeMeasure
+	/// <summary>
+	/// Gauge measure.
+	/// </summary>
+    public class GaugeMeasure<T> : IGaugeMeasure
     {
         readonly ILogger _logger;
         readonly string _name;
@@ -46,7 +49,10 @@ namespace Serilog.Extras.Timing
             _template = template;
         }
 
-        public void Write()
+		/// <summary>
+		/// Write the measurement data to the log system.
+		/// </summary>
+        public virtual void Write()
         {
             var value = _operation.Invoke();
 

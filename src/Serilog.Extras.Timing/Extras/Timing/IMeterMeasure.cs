@@ -14,30 +14,21 @@
 
 namespace Serilog.Extras.Timing
 {
-    /// <summary>
-    /// Provides a counter which allow increments and decrements. 
-    /// </summary>
-    public interface ICounterMeasure  : IMeasure
-    {
-        /// <summary>
-        /// Increments the counter.
-        /// </summary>
-        void Increment();
 
-        /// <summary>
-        /// Decrements the counter.
-        /// </summary>
-        void Decrement();
-
-        /// <summary>
-        /// Resets the counter back to zero.
-        /// </summary>
-        void Reset();
+	/// <summary>
+	/// Measures a metered operation.
+	/// </summary>
+	public interface IMeterMeasure : IMeasure
+	{
+		/// <summary>
+		/// Marks the occurrence of an operation.
+		/// </summary>
+		void Mark(long n =1);
 
 		/// <summary>
-		/// Retrieves the current value.
+		///  Returns the total number of events which have been marked.
 		/// </summary>
-		long Value ();
-    }
-
+		/// <value>The total number.</value>
+		long Count{ get; }
+	}
 }

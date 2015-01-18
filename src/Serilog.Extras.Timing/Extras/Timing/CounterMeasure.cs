@@ -16,7 +16,10 @@ using Serilog.Events;
 
 namespace Serilog.Extras.Timing
 {
-    sealed class CounterMeasure : ICounterMeasure
+	/// <summary>
+	/// Counter measure.
+	/// </summary>
+    public class CounterMeasure : ICounterMeasure
     {
         readonly ILogger _logger;
         readonly string _name;
@@ -24,7 +27,7 @@ namespace Serilog.Extras.Timing
         readonly LogEventLevel _level;
         readonly string _template;
         readonly bool _directWrite;
-        static AtomicLong _value;
+        readonly AtomicLong _value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CounterMeasure"/> class.
@@ -46,8 +49,10 @@ namespace Serilog.Extras.Timing
             _value = new AtomicLong();
         }
 
-
-        public void Increment()
+		/// <summary>
+		/// Increments the counter.
+		/// </summary>
+        public virtual void Increment()
         {
             _value.Increment();
 
@@ -55,7 +60,10 @@ namespace Serilog.Extras.Timing
                 Write();
         }
 
-        public void Decrement()
+		/// <summary>
+		/// Decrements the counter.
+		/// </summary>
+        public virtual void Decrement()
         {
             _value.Decrement();
 
@@ -64,7 +72,10 @@ namespace Serilog.Extras.Timing
 
         }
 
-        public void Reset()
+		/// <summary>
+		/// Resets the counter back to zero.
+		/// </summary>
+        public virtual void Reset()
         {
             _value.Set(0);
 
@@ -72,10 +83,21 @@ namespace Serilog.Extras.Timing
                 Write();
         }
 
-        public void Write()
+		/// <summary>
+		/// Write the measurement data to the log system.
+		/// </summary>
+		public virtual void Write()
         {
             var value = _value.Get();
             _logger.Write(_level, _template, _name, value, _counts);
         }
+
+		/// <summary>
+		/// Retrieves the current value.
+		/// </summary>
+		public virtual long Value(){
+
+			return _value.Get ();
+		}
     }
 }

@@ -14,30 +14,13 @@
 
 namespace Serilog.Extras.Timing
 {
-    /// <summary>
-    /// Provides a counter which allow increments and decrements. 
-    /// </summary>
-    public interface ICounterMeasure  : IMeasure
-    {
-        /// <summary>
-        /// Increments the counter.
-        /// </summary>
-        void Increment();
 
-        /// <summary>
-        /// Decrements the counter.
-        /// </summary>
-        void Decrement();
+	/// <summary>
+	/// Executes a heath check and reports the effect of it. 
+	/// </summary>
+	public interface IHealthMeasure: IMeasure{
+	
+	}
 
-        /// <summary>
-        /// Resets the counter back to zero.
-        /// </summary>
-        void Reset();
-
-		/// <summary>
-		/// Retrieves the current value.
-		/// </summary>
-		long Value ();
-    }
 
 }

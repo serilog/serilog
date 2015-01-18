@@ -62,6 +62,11 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Extras\Timing\TimedOperation.cs" />
+    <Compile Include="Extras\Timing\MeterMeasure.cs" />
+    <Compile Include="Extras\Timing\IMeterMeasure.cs" />
+    <Compile Include="Extras\Timing\IHealthMeasure.cs" />
+    <Compile Include="Extras\Timing\HealthMeasure.cs" />
+    <Compile Include="Extras\Timing\HealthCheckResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
@@ -71,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog.csproj">
-      <Project>{0915dbd9-0f7c-4439-8d9e-74c3d579b219}</Project>
+      <Project>{0915DBD9-0F7C-4439-8D9E-74C3D579B219}</Project>
       <Name>Serilog</Name>
     </ProjectReference>
   </ItemGroup>
