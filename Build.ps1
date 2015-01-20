@@ -101,7 +101,9 @@ function Install-Kvm()
 
 function Install-Kre()
 {
-    $kvmPath = Join-Path $env:UserProfile "\.kre\bin\kvm.cmd"
+	$krePath = Join-Path $env:UserProfile "\.kre"
+	$env:KRE_HOME = $krePath
+    $kvmPath = Join-Path $krePath "\bin\kvm.cmd"
     Write-Output "Using KRE-$runtime-$selectedKreArch.$selectedKreVersion"
     & $kvmPath "install $selectedKreVersion -$selectedKreArch -r $runtime"
     & $kvmPath "use $selectedKreVersion -$selectedKreArch -r $runtime"
