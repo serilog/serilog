@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.AzureDocumentDb</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Robert Moore</authors>
     <description>Serilog event sink that writes to Azure DocumentDB over HTTP.</description>
     <language>en-US</language>
@@ -11,12 +11,8 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging azure</tags>
     <dependencies>
-      <dependency id="Serilog" />
+      <dependency id="Serilog" version="$version$" />
       <dependency id="Microsoft.Azure.Documents.Client" version="0.9.0" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="src\Serilog.Sinks.AzureDocumentDb\bin\Release\Serilog.Sinks.AzureDocumentDb.dll" target="lib\net45" />
-    <file src="src\Serilog.Sinks.AzureDocumentDb\\bin\Release\Serilog.Sinks.AzureDocumentDb.xml" target="lib\net45" />
-  </files>
 </package>
