@@ -12,8 +12,8 @@
     <tags>serilog logging Loggly error</tags>
     <dependencies>
       <dependency id="Serilog" version="$version$" />
-      <dependency id="loggly-csharp" version="3.5" />
-      <dependency id="Newtonsoft.Json" version="6.0.6"  />
+      <dependency id="loggly-csharp" version="4.5.0.3" />
+      <dependency id="Newtonsoft.Json" version="6.0.8"  />
     </dependencies>
   </metadata>
 </package>
