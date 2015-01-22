@@ -49,6 +49,7 @@ function Invoke-NuGetPack($version)
         Where-Object { -not ($_.Name -eq "Serilog.csproj") } |
         Where-Object { -not ($_.Name -eq "Serilog.Sinks.Seq.csproj") } |
         Where-Object { -not ($_.Name -eq "Serilog.Sinks.Splunk.csproj") } |
+        Where-Object { -not ($_.Name -eq "Serilog.Sinks.Mono*.csproj") } |
         ForEach-Object { Invoke-NuGetPackProj $_ }
 
     pushd .\src\Serilog
