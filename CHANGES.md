@@ -1,3 +1,8 @@
+1.4.139
+ * #125 - Merged _MonoTouch_ and _MonoAndroid_ sinks (**not currently published  to NuGet**)
+ * #362 - Update Loggly sink package dependencies
+ * #203 - _Azure Document DB_ sink
+
 1.4.126
  * #354 - Added _Serilog.Extras.FSharp_
 
