@@ -60,11 +60,21 @@ namespace Serilog.Sinks.PeriodicBatching
 
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
+            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
         }
 
         void OnAppDomainUnloading(object sender, EventArgs args)
         {
+            if (ComeFromInvalidAppDomainContext(args)) 
+                return;
+
             CloseAndFlush();
+        }
+
+        static bool ComeFromInvalidAppDomainContext(EventArgs args)
+        {
+            var eventArgs = args as UnhandledExceptionEventArgs;
+            return eventArgs == null || !eventArgs.IsTerminating;
         }
 
         void CloseAndFlush()
@@ -79,6 +89,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
+            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
 
             var wh = new ManualResetEvent(false);
             if (_timer.Dispose(wh))
