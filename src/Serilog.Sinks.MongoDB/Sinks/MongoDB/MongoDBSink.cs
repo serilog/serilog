@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Serilog.Sinks.MongoDB
 {
@@ -31,7 +33,7 @@ namespace Serilog.Sinks.MongoDB
         readonly string _collectionName;
         readonly IMongoCollectionOptions _collectionCreationOptions;
         readonly IFormatProvider _formatProvider;
-        readonly MongoDatabase _mongoDatabase;
+        readonly IMongoDatabase _mongoDatabase;
 
         /// <summary>
         /// A reasonable default for the number of events posted in
@@ -72,7 +74,7 @@ namespace Serilog.Sinks.MongoDB
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="collectionName">Name of the MongoDb collection to use for the log. Default is "log".</param>
         /// <param name="collectionCreationOptions">Collection Creation Options for the log collection creation.</param>
-        public MongoDBSink(MongoDatabase database, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, IMongoCollectionOptions collectionCreationOptions)
+        public MongoDBSink(IMongoDatabase database, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string collectionName, IMongoCollectionOptions collectionCreationOptions)
             : base(batchPostingLimit, period)
         {
             if (database == null) throw new ArgumentNullException("database");
@@ -88,32 +90,27 @@ namespace Serilog.Sinks.MongoDB
         /// </summary>
         /// <param name="databaseUrl">The URL of a MongoDB database.</param>
         /// <returns>The Mongodatabase</returns>
-        private static MongoDatabase DatabaseFromMongoUrl (string databaseUrl)
+        private static IMongoDatabase DatabaseFromMongoUrl (string databaseUrl)
         {
             if (databaseUrl == null) throw new ArgumentNullException("databaseUrl");
 
             var mongoUrl = new MongoUrl(databaseUrl);
             var mongoClient = new MongoClient(mongoUrl);
-            var server = mongoClient.GetServer();
-            return server.GetDatabase(mongoUrl.DatabaseName);
+            return mongoClient.GetDatabase(mongoUrl.DatabaseName);
         }
 
 
-        MongoCollection<BsonDocument> GetLogCollection()
+        IMongoCollection<BsonDocument> GetLogCollection()
         {
-            VerifyCollection();
-            return _mongoDatabase.GetCollection(_collectionName);
+            return _mongoDatabase.GetCollection<BsonDocument>(_collectionName);
         }
 
         /// <summary>
         /// Verifies the the MongoDatabase collection exists or creates it if it doesn't.
         /// </summary>
+        [Obsolete("MongoDB no longer needs to be checked, it'll create on the fly")]
         protected void VerifyCollection()
         {
-            if (!_mongoDatabase.CollectionExists(_collectionName))
-            {
-                _mongoDatabase.CreateCollection(_collectionName, _collectionCreationOptions);
-            }
         }
 
         /// <summary>
@@ -145,8 +142,8 @@ namespace Serilog.Sinks.MongoDB
             payload.Write("]}");
 
             var bson = BsonDocument.Parse(payload.ToString());
-            var docs = bson["d"].AsBsonArray;
-            GetLogCollection().InsertBatch(docs);
+            var docs = bson["d"].AsBsonArray.Select(x => x.AsBsonDocument);
+            Task.WaitAll(GetLogCollection().InsertManyAsync(docs));
         }
     }
 }

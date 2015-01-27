@@ -12,7 +12,7 @@
       <tags>serilog logging mongodb</tags>
       <dependencies>
         <dependency id="Serilog" version="$version$" />
-        <dependency id="mongocsharpdriver" version="1.8.3" />
+        <dependency id="MongoDB.Driver" version="2.0.0-beta1" />
       </dependencies>
     </metadata>
 </package>
