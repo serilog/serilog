@@ -2,17 +2,18 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Serilog.Sinks.ApplicationInsights</id>
-    <version>$version$</version>
+    <version>$version$-pre</version>
     <authors>Joerg Battermann</authors>
-    <description>Serilog event sink that writes to Microsoft Application Insights for Visual Studio Online.</description>
+    <description>Serilog event sink that writes to the new Azure based Microsoft Application Insights.</description>
     <language>en-US</language>
+    <releaseNotes>Updated to 0.12.* pre-release build of Microsoft.ApplicationInsights that works with the new Azure Portal only. The previous Visual Studio Online based Application Insights is no longer supported, neither by MS nor by this sink.</releaseNotes>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging azure</tags>
     <dependencies>
       <dependency id="Serilog" version="$version$" />
-      <dependency id="Microsoft.ApplicationInsights.Tracing" version="0.7.1" />
+      <dependency id="Microsoft.ApplicationInsights" version="[0.12.0-build17386,]" />
     </dependencies>
   </metadata>
 </package>

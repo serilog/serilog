@@ -13,40 +13,46 @@
 // limitations under the License.
 
 using System;
-using Microsoft.ApplicationInsights.Tracing;
-using Newtonsoft.Json;
+using System.Globalization;
+using System.Linq;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Sinks.ApplicationInsights
 {
     /// <summary>
-    /// Writes log events to a Microsoft Application Insights account. Inspired by their NLog Appender implementation.
+    /// Writes log events to a Microsoft Azure Application Insights account.
+    /// Inspired by their NLog Appender implementation.
     /// </summary>
-    public class ApplicationInsightsSink : ILogEventSink, IDisposable
+    public class ApplicationInsightsSink : ILogEventSink
     {
         private readonly IFormatProvider _formatProvider;
 
         /// <summary>
-        /// Holds the actual Application Insights Logging Controller
+        /// Holds the actual Application Insights TelemetryClient that will be used for logging.
         /// </summary>
-        private LoggingController _loggingController;
-        
+        private readonly TelemetryClient _telemetryClient;
+
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
-        /// <param name="applicationInsightsComponentId">The ID that determines the application component under which your data appears in Application Insights.</param>
+        /// <param name="applicationInsightsInstrumentationKey">The ID that determines the application component under which your data appears in Application Insights.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public ApplicationInsightsSink(string applicationInsightsComponentId, IFormatProvider formatProvider)
+        public ApplicationInsightsSink(string applicationInsightsInstrumentationKey, IFormatProvider formatProvider)
         {
-            if (applicationInsightsComponentId == null) throw new ArgumentNullException("applicationInsightsComponentId");
-            if (string.IsNullOrWhiteSpace(applicationInsightsComponentId)) throw new ArgumentOutOfRangeException("applicationInsightsComponentId", "Cannot be empty.");
+            if (applicationInsightsInstrumentationKey == null) throw new ArgumentNullException("applicationInsightsInstrumentationKey");
+            if (string.IsNullOrWhiteSpace(applicationInsightsInstrumentationKey)) throw new ArgumentOutOfRangeException("applicationInsightsInstrumentationKey", "Cannot be empty.");
 
             _formatProvider = formatProvider;
+            _telemetryClient = new TelemetryClient();
 
-            _loggingController = LoggingController.CreateLoggingController(applicationInsightsComponentId);
+            if (!string.IsNullOrWhiteSpace(applicationInsightsInstrumentationKey))
+                _telemetryClient.Context.InstrumentationKey = applicationInsightsInstrumentationKey;
         }
-        
+
         #region Implementation of ILogEventSink
 
         /// <summary>
@@ -55,24 +61,28 @@ namespace Serilog.Sinks.ApplicationInsights
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            // this logs the message & its metadata to application insights
-            _loggingController.LogMessageWithData(logEvent.RenderMessage(_formatProvider), logEvent, new JsonConverter[] { ApplicationInsightsDictionaryJsonConverter.Instance });
-        }
+            var renderedMessage = logEvent.RenderMessage(_formatProvider);
 
-        #endregion
+            // writing logEvent as corresponding ITelemetry instance
+            var telemetry = logEvent.Exception != null
+                ? (ITelemetry)new ExceptionTelemetry(logEvent.Exception)
+                : new TraceTelemetry(renderedMessage);
 
-        #region Implementation of IDisposable
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if (_loggingController != null)
+            // and forwaring properties and logEvent Data to the traceTelemetry's properties
+            var properties = telemetry.Context.Properties;
+            properties.Add("LogLevel", logEvent.Level.ToString());
+            properties.Add("LogMessage", renderedMessage);
+            properties.Add("LogMessageTemplate", logEvent.MessageTemplate.Text);
+            properties.Add("LogTimeStamp", logEvent.Timestamp.ToString(CultureInfo.InvariantCulture));
+
+            foreach (var property in logEvent.Properties.Where(property => property.Value != null && !properties.ContainsKey(property.Key)))
             {
-                _loggingController.Dispose();
-                _loggingController = null;
+                properties.Add(property.Key, property.Value.ToString());
             }
+
+            // an finally - this logs the message & its metadata to application insights
+            _telemetryClient.Track(telemetry);
         }
 
         #endregion
