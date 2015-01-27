@@ -1,4 +1,5 @@
- * #365 - _Serilog.Sinks.ApplicationInsights_ now targets the new Azure Portal-based version (breaking)
+ * #365 - _Serilog.Sinks.ApplicationInsights_ now targets the new Azure Portal-based version (preview)
+ * #367 - _Serilog.Sinks.MongoDB_ now targets the new preview driver (preview)
 
 1.4.139
  * #125 - Merged _MonoTouch_ and _MonoAndroid_ sinks (**not currently published  to NuGet**)
