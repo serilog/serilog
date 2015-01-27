@@ -1,3 +1,5 @@
+ * #365 - _Serilog.Sinks.ApplicationInsights_ now targets the new Azure Portal-based version (breaking)
+
 1.4.139
  * #125 - Merged _MonoTouch_ and _MonoAndroid_ sinks (**not currently published  to NuGet**)
  * #362 - Update Loggly sink package dependencies
