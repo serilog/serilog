@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
       <id>Serilog.Sinks.MongoDB</id>
-      <version>$version$</version>
+      <version>$version$-pre</version>
       <authors>Kiran Makkapati</authors>
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://serilog.net</projectUrl>
