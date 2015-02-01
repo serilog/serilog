@@ -42,8 +42,9 @@
     <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mindscape.Raygun4Net">
-      <HintPath>..\..\packages\Mindscape.Raygun4Net.Signed.2.0.4\lib\net35\Mindscape.Raygun4Net.dll</HintPath>
+    <Reference Include="Mindscape.Raygun4Net, Version=4.2.0.0, Culture=neutral, PublicKeyToken=002e1b57394fa9b9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Mindscape.Raygun4Net.Signed.4.2.0\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
