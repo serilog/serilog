@@ -49,9 +49,12 @@ namespace Serilog.Context
         static readonly string DataSlotName = typeof(LogContext).FullName;
         
         /// <summary>
-        /// 
+        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
+        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
+        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
+        /// should be preferred.
         /// </summary>
-        public static bool PermitCrossAppDomainCalls;
+        public static bool PermitCrossAppDomainCalls { get; set; }
 
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
