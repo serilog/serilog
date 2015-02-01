@@ -1,3 +1,5 @@
+1.4.152
+ * #196 - `LogContext.PermitCrossAppDomainCalls` property to prevent serialization exceptions in test frameworks and when .NET remoting is used
  * #365 - _Serilog.Sinks.ApplicationInsights_ now targets the new Azure Portal-based version (preview)
  * #367 - _Serilog.Sinks.MongoDB_ now targets the new preview driver (preview)
  * #369 - Fixed log message property in .NET 4.0 build of Elasticsearch sink
