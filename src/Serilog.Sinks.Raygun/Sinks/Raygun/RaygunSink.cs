@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Mindscape.Raygun4Net;
+using Mindscape.Raygun4Net.Builders;
 using Mindscape.Raygun4Net.Messages;
 using Serilog.Core;
 using Serilog.Events;
@@ -55,7 +56,7 @@ namespace Serilog.Sinks.Raygun
 
             _client = new RaygunClient(applicationKey);
             if (wrapperExceptions != null)
-                _client.AddWrapperExceptions(wrapperExceptions);
+                _client.AddWrapperExceptions(wrapperExceptions.ToArray());
         }
 
         /// <summary>
@@ -83,7 +84,7 @@ namespace Serilog.Sinks.Raygun
 
             // Add exception when available
             if (logEvent.Exception != null)
-                raygunMessage.Details.Error = new RaygunErrorMessage(logEvent.Exception);
+				raygunMessage.Details.Error = RaygunErrorMessageBuilder.Build(logEvent.Exception);
 
             // Add user when requested
             if (!String.IsNullOrWhiteSpace(_userNameProperty) &&
@@ -108,7 +109,7 @@ namespace Serilog.Sinks.Raygun
             raygunMessage.Details.MachineName = Environment.MachineName;
           
             if (HttpContext.Current != null)
-                raygunMessage.Details.Request = new RaygunRequestMessage(HttpContext.Current.Request, null);
+				raygunMessage.Details.Request = RaygunRequestMessageBuilder.Build(HttpContext.Current.Request, null);
 
             // Submit
             _client.SendInBackground(raygunMessage);
