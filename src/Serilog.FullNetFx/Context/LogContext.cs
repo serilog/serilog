@@ -47,6 +47,14 @@ namespace Serilog.Context
     public static class LogContext
     {
         static readonly string DataSlotName = typeof(LogContext).FullName;
+        
+        /// <summary>
+        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
+        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
+        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
+        /// should be preferred.
+        /// </summary>
+        public static bool PermitCrossAppDomainCalls { get; set; }
 
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
@@ -126,8 +134,30 @@ namespace Serilog.Context
 
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
-            get { return (ImmutableStack<ILogEventEnricher>)CallContext.LogicalGetData(DataSlotName); }
-            set { CallContext.LogicalSetData(DataSlotName, value); }
+            get
+            {
+                
+                var data = CallContext.LogicalGetData(DataSlotName);
+
+                ImmutableStack<ILogEventEnricher> context;
+                if (PermitCrossAppDomainCalls)
+                {
+                    context = data != null ? ((Wrapper)data).Value : null;
+                }
+                else
+                {
+                    context = (ImmutableStack<ILogEventEnricher>)data;
+                }
+
+                return context;
+            }
+            set
+            {
+                
+                var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper { Value = value };
+
+                CallContext.LogicalSetData(DataSlotName, context);
+            }
         }
 
         internal static void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
@@ -156,6 +186,12 @@ namespace Serilog.Context
                 Enrichers = _bookmark;
             }
         }
+
+        sealed class Wrapper : MarshalByRefObject
+        {
+            public ImmutableStack<ILogEventEnricher> Value { get; set; }
+        }
     }
 }
+
 #endif
