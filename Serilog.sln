@@ -106,6 +106,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MonoTouch", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.AzureDocumentDb", "src\Serilog.Sinks.AzureDocumentDb\Serilog.Sinks.AzureDocumentDb.csproj", "{C1875BEA-4509-4E04-AB8F-C2F8169BF001}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.MsTests", "test\Serilog.MsTests\Serilog.MsTests.csproj", "{7FC9FC46-5014-4461-A448-815E6CCE21E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -290,6 +292,10 @@ Global
 		{C1875BEA-4509-4E04-AB8F-C2F8169BF001}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1875BEA-4509-4E04-AB8F-C2F8169BF001}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1875BEA-4509-4E04-AB8F-C2F8169BF001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FC9FC46-5014-4461-A448-815E6CCE21E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FC9FC46-5014-4461-A448-815E6CCE21E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FC9FC46-5014-4461-A448-815E6CCE21E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FC9FC46-5014-4461-A448-815E6CCE21E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -340,5 +346,6 @@ Global
 		{129D844D-273B-4E51-904B-2BD8169427DF} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{7E96D14B-2224-4EB9-B26B-6306D225024F} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{C1875BEA-4509-4E04-AB8F-C2F8169BF001} = {037440DE-440B-4129-9F7A-09B42D00397E}
+		{7FC9FC46-5014-4461-A448-815E6CCE21E5} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 	EndGlobalSection
 EndGlobal
