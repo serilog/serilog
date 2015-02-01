@@ -22,14 +22,14 @@ using Serilog.Events;
 
 namespace Serilog.Sinks.AzureDocumentDb
 {
-    public class AzureDocumentDbSink : ILogEventSink
+    public class AzureDocumentDBSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
         DocumentClient _client;
         Database _database;
         DocumentCollection _collection;
 
-        public AzureDocumentDbSink(Uri endpointUri, string authorizationKey, string databaseName, string collectionName, IFormatProvider formatProvider)
+        public AzureDocumentDBSink(Uri endpointUri, string authorizationKey, string databaseName, string collectionName, IFormatProvider formatProvider)
         {
             _formatProvider = formatProvider;
             _client = new DocumentClient(endpointUri, authorizationKey);

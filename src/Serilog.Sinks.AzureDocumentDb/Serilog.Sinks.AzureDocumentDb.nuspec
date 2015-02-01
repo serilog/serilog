@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Serilog.Sinks.AzureDocumentDb</id>
+    <id>Serilog.Sinks.AzureDocumentDB</id>
     <version>$version$</version>
     <authors>Robert Moore</authors>
     <description>Serilog event sink that writes to Azure DocumentDB over HTTP.</description>

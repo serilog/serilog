@@ -104,7 +104,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MonoAndroid",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.MonoTouch", "src\Serilog.Sinks.MonoTouch\Serilog.Sinks.MonoTouch.csproj", "{7E96D14B-2224-4EB9-B26B-6306D225024F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.AzureDocumentDb", "src\Serilog.Sinks.AzureDocumentDb\Serilog.Sinks.AzureDocumentDb.csproj", "{C1875BEA-4509-4E04-AB8F-C2F8169BF001}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.AzureDocumentDB", "src\Serilog.Sinks.AzureDocumentDb\Serilog.Sinks.AzureDocumentDB.csproj", "{C1875BEA-4509-4E04-AB8F-C2F8169BF001}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.MsTests", "test\Serilog.MsTests\Serilog.MsTests.csproj", "{7FC9FC46-5014-4461-A448-815E6CCE21E5}"
 EndProject

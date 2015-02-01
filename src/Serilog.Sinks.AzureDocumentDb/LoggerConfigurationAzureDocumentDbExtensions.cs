@@ -22,7 +22,7 @@ namespace Serilog
     /// <summary>
     /// Adds the WriteTo.AzureDocumentDb() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public static class LoggerConfigurationAzureDocumentDbExtensions
+    public static class LoggerConfigurationAzureDocumentDBExtensions
     {
         /// <summary>
         /// Adds a sink that writes log events to a Azure DocumentDB table in the provided endpoint.
@@ -35,7 +35,7 @@ namespace Serilog
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration AzureDocumentDb(
+        public static LoggerConfiguration AzureDocumentDB(
             this LoggerSinkConfiguration loggerConfiguration,
             Uri endpointUri,
             string authorizationKey,
@@ -48,7 +48,7 @@ namespace Serilog
             if (endpointUri == null) throw new ArgumentNullException("endpointUri");
             if (authorizationKey == null) throw new ArgumentNullException("authorizationKey");
             return loggerConfiguration.Sink(
-                new AzureDocumentDbSink(endpointUri, authorizationKey, databaseName, collectionName, formatProvider),
+                new AzureDocumentDBSink(endpointUri, authorizationKey, databaseName, collectionName, formatProvider),
                 restrictedToMinimumLevel);
         }
     }

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Serilog</RootNamespace>
-    <AssemblyName>Serilog.Sinks.AzureDocumentDb</AssemblyName>
+    <AssemblyName>Serilog.Sinks.AzureDocumentDB</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -51,18 +51,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoggerConfigurationAzureDocumentDbExtensions.cs" />
+    <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="LoggerConfigurationAzureDocumentDBExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sinks\AzureDocumentDb\AzureDocumentDbSink.cs" />
-    <Compile Include="Sinks\AzureDocumentDb\Data\LogEvent.cs" />
-    <Compile Include="Sinks\AzureDocumentDb\DocumentDbPropertyFormatter.cs" />
+    <Compile Include="Sinks\AzureDocumentDB\AzureDocumentDBSink.cs" />
+    <Compile Include="Sinks\AzureDocumentDB\Data\LogEvent.cs" />
+    <Compile Include="Sinks\AzureDocumentDB\DocumentDBPropertyFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Serilog.Sinks.AzureDocumentDb.nuspec">
+    <None Include="Serilog.Sinks.AzureDocumentDB.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

@@ -43,7 +43,7 @@ namespace Serilog.Sinks.AzureDocumentDb.Data
             Properties = new Dictionary<string, object>();
             foreach (var pair in logEvent.Properties)
             {
-                Properties.Add(pair.Key, DocumentDbPropertyFormatter.Simplify(pair.Value));
+                Properties.Add(pair.Key, DocumentDBPropertyFormatter.Simplify(pair.Value));
             }
         }
 

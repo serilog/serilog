@@ -24,7 +24,7 @@ namespace Serilog.Sinks.AzureDocumentDb
     /// Converts <see cref="LogEventProperty"/> values into simple scalars,
     /// dictionaries and lists so that they can be persisted in Azure DocumentDB.
     /// </summary>
-    public static class DocumentDbPropertyFormatter
+    public static class DocumentDBPropertyFormatter
     {
         static readonly HashSet<Type> ScalarTypes = new HashSet<Type>
         {
