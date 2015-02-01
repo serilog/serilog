@@ -2,6 +2,7 @@
  * #367 - _Serilog.Sinks.MongoDB_ now targets the new preview driver (preview)
  * #369 - Fixed log message property in .NET 4.0 build of Elasticsearch sink
  * #373 - Update the _Raygun_ sink from 2.0.4 to 4.2.0
+ * #344 - Moved the _MongoDB_ and _Application Insights_ sinks out to independent repositories
 
 1.4.139
  * #125 - Merged _MonoTouch_ and _MonoAndroid_ sinks (**not currently published  to NuGet**)
