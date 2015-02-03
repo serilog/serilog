@@ -163,9 +163,9 @@ namespace Serilog.Parameters
 
         bool IsValueTypeDictionary(Type valueType)
         {
-            return valueType.IsGenericType &&
-                   valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-                   IsValidDictionaryKeyType(valueType.GetGenericArguments()[0]);
+            return valueType.IsConstructedGenericType &&
+                   valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
+                   IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]);
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
