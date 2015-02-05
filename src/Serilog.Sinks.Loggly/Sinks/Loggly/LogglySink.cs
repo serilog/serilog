@@ -13,12 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Loggly;
 using Loggly.Config;
-using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Sinks.PeriodicBatching;
 using SyslogLevel=Loggly.Transports.Syslog.Level;
 
 namespace Serilog.Sinks.Loggly
@@ -26,16 +27,30 @@ namespace Serilog.Sinks.Loggly
     /// <summary>
     /// Writes log events to the Loggly.com service.
     /// </summary>
-    public class LogglySink : ILogEventSink
+    public class LogglySink : PeriodicBatchingSink
     {
         readonly IFormatProvider _formatProvider;
         LogglyClient _client;
 
         /// <summary>
+        /// A reasonable default for the number of events posted in
+        /// each batch.
+        /// </summary>
+        public const int DefaultBatchPostingLimit = 10;
+
+        /// <summary>
+        /// A reasonable default time to wait between checking for event batches.
+        /// </summary>
+        public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(5);
+
+        /// <summary>
         /// Construct a sink that saves logs to the specified storage account. Properties are being send as data and the level is used as tag.
         /// </summary>
+        /// <param name="batchSizeLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
         ///  <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public LogglySink(IFormatProvider formatProvider)
+        public LogglySink(IFormatProvider formatProvider, int batchSizeLimit, TimeSpan period)
+            : base (batchSizeLimit, period)
         {
             _formatProvider = formatProvider;
 
@@ -43,10 +58,24 @@ namespace Serilog.Sinks.Loggly
         }
 
         /// <summary>
+        /// Emit a batch of log events, running asynchronously.
+        /// </summary>
+        /// <param name="events">The events to emit.</param>
+        /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
+        /// not both.</remarks>
+        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        {
+            foreach (var evt in events)
+            {
+                await EmitOneEvent(evt);
+            }
+        }
+
+        /// <summary>
         /// Emit the provided log event to the sink.
         /// </summary>
         /// <param name="logEvent">The log event to write.</param>
-        public void Emit(LogEvent logEvent)
+        private async Task EmitOneEvent(LogEvent logEvent)
         {
             var logglyEvent = new LogglyEvent();
 
@@ -73,7 +102,7 @@ namespace Serilog.Sinks.Loggly
                 logglyEvent.Data.AddIfAbsent("Exception", logEvent.Exception);
             }
 
-            _client.Log(logglyEvent).Wait();
+            await _client.Log(logglyEvent);
         }
 
         static SyslogLevel ToSyslogLevel(LogEvent logEvent)
