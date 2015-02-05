@@ -73,7 +73,7 @@ namespace Serilog.Sinks.Loggly
                 logglyEvent.Data.AddIfAbsent("Exception", logEvent.Exception);
             }
 
-            _client.Log(logglyEvent);
+            _client.Log(logglyEvent).Wait();
         }
 
         static SyslogLevel ToSyslogLevel(LogEvent logEvent)
