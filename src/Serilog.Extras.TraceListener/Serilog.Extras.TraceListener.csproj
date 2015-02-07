@@ -58,7 +58,7 @@
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
-    <None Include="App.config" />
+    <None Include="Serilog.Extras.TraceListener.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serilog\Serilog.csproj">
