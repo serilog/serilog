@@ -144,9 +144,8 @@ namespace Serilog.Parameters
                         .Where(kvp => kvp.Key.Value != null));
                 }
 
-                return
-                    new SequenceValue(
-                        enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
+                return new SequenceValue(
+                    enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
             
             if (destructuring == Destructuring.Destructure)
