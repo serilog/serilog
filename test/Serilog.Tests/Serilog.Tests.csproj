@@ -100,7 +100,9 @@
     <Compile Include="Sinks\TextWriter\TextWriterSinkTests.cs" />
     <Compile Include="Support\DelegatingEnricher.cs" />
     <Compile Include="Support\DelegatingSink.cs" />
+    <Compile Include="Support\DictionaryContainsKeyConstraint.cs" />
     <Compile Include="Support\Extensions.cs" />
+    <Compile Include="Support\LogEventAssert.cs" />
     <Compile Include="Support\Some.cs" />
   </ItemGroup>
   <ItemGroup>
