@@ -1,3 +1,5 @@
+ * #374 - Run destructuring policies before converting `IEnumerable` types
+
 1.4.152
  * #196 - `LogContext.PermitCrossAppDomainCalls` property to prevent serialization exceptions in test frameworks and when .NET remoting is used
  * #365 - _Serilog.Sinks.ApplicationInsights_ now targets the new Azure Portal-based version (preview)
