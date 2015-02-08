@@ -1,3 +1,4 @@
+ * #376 - Fixed flushing of async events to Loggly sink (moved to serilog/serilog-sinks-loggly)
  * #374 - Run destructuring policies before converting `IEnumerable` types
 
 1.4.152
