@@ -106,12 +106,22 @@ namespace Serilog.Parameters
 
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
-
+            
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
                 ScalarValue converted;
                 if (scalarConversionPolicy.TryConvertToScalar(value, limiter, out converted))
                     return converted;
+            }
+
+            if (destructuring == Destructuring.Destructure)
+            {
+                foreach (var destructuringPolicy in _destructuringPolicies)
+                {
+                    LogEventPropertyValue result;
+                    if (destructuringPolicy.TryDestructure(value, limiter, out result))
+                        return result;
+                }
             }
 
             var enumerable = value as IEnumerable;
@@ -125,32 +135,21 @@ namespace Serilog.Parameters
                 // Only actual dictionaries are supported, as arbitrary types
                 // can implement multiple IDictionary interfaces and thus introduce
                 // multiple different interpretations.
-                if (valueType.IsConstructedGenericType &&
-                    valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-                    IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+                if (IsValueTypeDictionary(valueType))
                 {
                     return new DictionaryValue(enumerable.Cast<dynamic>()
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                            (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
-                            limiter.CreatePropertyValue(kvp.Value, destructuring)))
-                        .Where(kvp => kvp.Key.Value != null)); // Limiting may kick in
+                                           (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
+                                           limiter.CreatePropertyValue(kvp.Value, destructuring)))
+                        .Where(kvp => kvp.Key.Value != null));
                 }
 
                 return new SequenceValue(
                     enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
-
-            // Unknown types
-
+            
             if (destructuring == Destructuring.Destructure)
             {
-                foreach (var destructuringPolicy in _destructuringPolicies)
-                {
-                    LogEventPropertyValue result;
-                    if (destructuringPolicy.TryDestructure(value, limiter, out result))
-                        return result;
-                }
-
                 var typeTag = value.GetType().Name;
                 if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
                     typeTag = null;
@@ -159,6 +158,13 @@ namespace Serilog.Parameters
             }
 
             return new ScalarValue(value.ToString());
+        }
+
+        bool IsValueTypeDictionary(Type valueType)
+        {
+            return valueType.IsConstructedGenericType &&
+                   valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
+                   IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]);
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
