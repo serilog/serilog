@@ -30,17 +30,23 @@ namespace Serilog
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Loggly(
             this LoggerSinkConfiguration loggerConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            int batchPostingLimit = LogglySink.DefaultBatchPostingLimit,
+            TimeSpan? period = null,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
+            var defaultedPeriod = period ?? LogglySink.DefaultPeriod;
+
             return loggerConfiguration.Sink(
-                new LogglySink(formatProvider),
+                new LogglySink(formatProvider, batchPostingLimit, defaultedPeriod),
                 restrictedToMinimumLevel);
         }
 
