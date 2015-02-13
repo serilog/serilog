@@ -69,7 +69,12 @@ namespace Serilog.Sinks.ElasticSearch
         /// The connectionpool describing the cluster to write event to
         /// </summary>
         public IConnectionPool ConnectionPool { get; private set; }
-        
+
+        /// <summary>
+        /// Function to decide which index to write the LogEvent to
+        /// </summary>
+        public Func<LogEvent, DateTimeOffset, string> IndexDecider { get; set; }
+
         /// <summary>
         /// Configures the elasticsearch sink
         /// </summary>
