@@ -56,7 +56,7 @@ namespace Serilog.Extras.AppSettings
 
             var directives = settings.AllKeys
                 .Where(k => supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => settings[k]);
+                .ToDictionary(k => k, k => Environment.ExpandEnvironmentVariables(settings[k]));
 
             string minimumLevelDirective;
             LogEventLevel minimumLevel;

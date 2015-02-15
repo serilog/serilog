@@ -13,7 +13,7 @@
     <dependencies>
       <dependency id="Serilog" version="$version$" />
       <dependency id="elmah.corelibrary" version="1.2.2" />
-      <dependency id="elmah.io.core" version="1.0.0.38" />
+      <dependency id="elmah.io.core" version="1.0.0.40" />
     </dependencies>
   </metadata>
 </package>

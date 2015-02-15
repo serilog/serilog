@@ -55,5 +55,25 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.IsNotNull(evt);
             Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
         }
+
+        [Test]
+        public void EnvironmentVariableExpansionIsApplied()
+        {
+            var configuration = new LoggerConfiguration();
+            var settings = new NameValueCollection
+            {
+                { "serilog:enrich:with-property:Path", "%PATH%" }
+            };
+
+            PrefixedAppSettingsReader.ConfigureLogger(configuration, settings);
+
+            LogEvent evt = null;
+            var log = configuration.WriteTo.Sink(new DelegatingSink(e => evt = e)).CreateLogger();
+
+            log.Information("Has a Path property with value expanded from the environment variable");
+
+            Assert.IsNotNull(evt);
+            Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace Serilog.Extras.Timing
         readonly LogEventLevel _level;
         readonly string _template;
         readonly bool _directWrite;
-        static AtomicLong _value;
+        readonly AtomicLong _value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CounterMeasure"/> class.
