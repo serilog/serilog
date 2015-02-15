@@ -1,3 +1,8 @@
+1.4.182
+ * #382 - Fixed `CounterMeasure` counting in _Serilog.Extras.Timing_
+ * #386 - Expand environment variables on _Serilog.Extras.AppSettings_ values
+ * #387 - Elmah.io sink dependency version updated
+
 1.4.168
  * #376 - Fixed flushing of async events to Loggly sink (moved to serilog/serilog-sinks-loggly)
  * #374 - Run destructuring policies before converting `IEnumerable` types
