@@ -65,16 +65,11 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void OnAppDomainUnloading(object sender, EventArgs args)
         {
-            if (ComeFromInvalidAppDomainContext(args)) 
+            var eventArgs = args as UnhandledExceptionEventArgs;
+            if (eventArgs != null && !eventArgs.IsTerminating) 
                 return;
 
             CloseAndFlush();
-        }
-
-        static bool ComeFromInvalidAppDomainContext(EventArgs args)
-        {
-            var eventArgs = args as UnhandledExceptionEventArgs;
-            return eventArgs == null || !eventArgs.IsTerminating;
         }
 
         void CloseAndFlush()
