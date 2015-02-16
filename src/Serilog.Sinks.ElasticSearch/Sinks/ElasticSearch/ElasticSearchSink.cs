@@ -30,10 +30,10 @@ namespace Serilog.Sinks.ElasticSearch
     /// </summary>
     public class ElasticsearchSink : PeriodicBatchingSink
     {
-        private readonly ElasticsearchJsonFormatter _formatter;
-        readonly string _indexFormat;
+        readonly ElasticsearchJsonFormatter _formatter;
         readonly string _typeName;
         readonly ElasticsearchClient _client;
+        readonly Func<LogEvent, DateTimeOffset, string> _indexDecider;
 
         /// <summary>
         /// A reasonable default for the number of events posted in each batch.
@@ -67,7 +67,7 @@ namespace Serilog.Sinks.ElasticSearch
         public ElasticsearchSink(ElasticsearchSinkOptions options)
             : base(options.BatchPostingLimit ?? DefaultBatchPostingLimit, options.Period ?? DefaultPeriod)
         {
-            _indexFormat = !string.IsNullOrWhiteSpace(options.IndexFormat) ? options.IndexFormat : DefaultIndexFormat;
+            _indexDecider = options.IndexDecider ?? DefaultIndexDecider(options.IndexFormat);
             _typeName = !string.IsNullOrWhiteSpace(options.TypeName) ? options.TypeName : DefaultTypeName;
             var configuration = new ConnectionConfiguration(options.ConnectionPool)
                 .SetTimeout(DefaultConnectionTimeout)
@@ -82,6 +82,12 @@ namespace Serilog.Sinks.ElasticSearch
                 serializer: options.Serializer,
                 inlineFields: options.InlineFields
             );
+        }
+
+        Func<LogEvent, DateTimeOffset, string> DefaultIndexDecider(string indexFormat)
+        {
+            var closedIndexFormat = !string.IsNullOrWhiteSpace(indexFormat) ? indexFormat : DefaultIndexFormat;
+            return (@event, offset) => string.Format(closedIndexFormat, offset);
         }
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace Serilog.Sinks.ElasticSearch
 
             foreach (var e in events)
             {
-                var indexName = string.Format(_indexFormat, e.Timestamp.ToUniversalTime());
+                var indexName = _indexDecider(e, e.Timestamp.ToUniversalTime());
                 var action = new { index = new { _index = indexName, _type = _typeName } };
                 var actionJson = _client.Serializer.Serialize(action, SerializationFormatting.None);
                 payload.Add(Encoding.UTF8.GetString(actionJson));
