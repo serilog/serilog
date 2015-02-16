@@ -9,7 +9,7 @@ using Serilog.Sinks.ElasticSearch;
 
 namespace Serilog.Sinks.Elasticsearch.Tests
 {
-    public class ModifyElasticSearchPayload : ElasticsearchSinkTestsBase
+    public class IndexDeciderTests : ElasticsearchSinkTestsBase
     {
         [Test]
         public void IndexDecider_EndsUpInTheOutput()
