@@ -87,7 +87,7 @@ namespace Serilog.Sinks.ElasticSearch
         {
             nodes = nodes != null && nodes.Any(n=>n != null) 
                 ? nodes.Where(n=>n != null) 
-                : new[] { new Uri("http://locahost:9200") };
+                : new[] { new Uri("http://localhost:9200") };
             if (nodes.Count() == 1)
                 ConnectionPool = new SingleNodeConnectionPool(nodes.First());
             else 
