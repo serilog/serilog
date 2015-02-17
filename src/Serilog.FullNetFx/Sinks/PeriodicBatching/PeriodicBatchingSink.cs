@@ -84,7 +84,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
-            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
+            AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnloading;
 
             var wh = new ManualResetEvent(false);
             if (_timer.Dispose(wh))
