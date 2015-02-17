@@ -175,7 +175,7 @@ namespace Serilog
         /// <param name="loggerSinkConfiguration"></param>
 	    /// <param name="options">Provides options specific to the Elasticsearch sink</param>
         /// <returns></returns>
-        public static LoggerConfiguration Elasticsearch(this LoggerSinkConfiguration loggerSinkConfiguration, ElasticsearchSinkOptions options)
+        public static LoggerConfiguration Elasticsearch(this LoggerSinkConfiguration loggerSinkConfiguration, ElasticsearchSinkOptions options = null)
         {
             options = options ?? new ElasticsearchSinkOptions(new [] { new Uri("http://localhost:9200") });
             var sink = new ElasticsearchSink(options);
