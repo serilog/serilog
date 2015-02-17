@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -9,8 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0D135C0C-A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
-		assets\CommonAssemblyInfo.cs = assets\CommonAssemblyInfo.cs
 		.editorconfig = .editorconfig
+		assets\CommonAssemblyInfo.cs = assets\CommonAssemblyInfo.cs
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection

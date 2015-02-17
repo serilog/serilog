@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Configuration;
 using Elasticsearch.Net.Connection;
 using Elasticsearch.Net.ConnectionPool;
 using Elasticsearch.Net.Serialization;
@@ -69,7 +68,17 @@ namespace Serilog.Sinks.ElasticSearch
         /// The connectionpool describing the cluster to write event to
         /// </summary>
         public IConnectionPool ConnectionPool { get; private set; }
-        
+
+        /// <summary>
+        /// Optional path to directory that can be used as a log shipping buffer for increasing the reliability of the log forwarding.
+        /// </summary>
+        public string BufferBaseFilename { get; set; }
+
+        /// <summary>
+        /// The maximum size, in bytes, to which the buffer log file for a specific date will be allowed to grow. By default no limit will be applied.
+        /// </summary>
+        public long? BufferFileSizeLimitBytes { get; set; }
+
         /// <summary>
         /// Configures the elasticsearch sink
         /// </summary>

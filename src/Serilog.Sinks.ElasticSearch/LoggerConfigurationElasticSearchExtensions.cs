@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using Elasticsearch.Net.Connection;
 using Elasticsearch.Net.Serialization;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.ElasticSearch;
 
@@ -178,7 +179,11 @@ namespace Serilog
         public static LoggerConfiguration Elasticsearch(this LoggerSinkConfiguration loggerSinkConfiguration, ElasticsearchSinkOptions options)
         {
             options = options ?? new ElasticsearchSinkOptions(new [] { new Uri("http://locahost:9200") });
-            var sink = new ElasticsearchSink(options);
+
+            var sink = string.IsNullOrWhiteSpace(options.BufferBaseFilename)
+                ? (ILogEventSink) new ElasticsearchSink(options)
+                : new DurableElasticSearchSink(options);
+
             return loggerSinkConfiguration.Sink(sink, options.MinimumLogEventLevel ?? LevelAlias.Minimum);
         }
     }
