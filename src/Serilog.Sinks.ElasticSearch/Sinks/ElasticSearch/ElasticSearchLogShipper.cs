@@ -33,7 +33,7 @@ namespace Serilog.Sinks.ElasticSearch
 
         readonly int _batchPostingLimit;
         readonly Timer _timer;
-        readonly TimeSpan _period = TimeSpan.FromSeconds(5);
+        readonly TimeSpan _period;
         readonly object _stateLock = new object();
         volatile bool _unloading;
         readonly string _bookmarkFilename;
@@ -47,6 +47,8 @@ namespace Serilog.Sinks.ElasticSearch
             var configuration = new ConnectionConfiguration(options.ConnectionPool)
                 .SetTimeout(ElasticsearchSink.DefaultConnectionTimeout)
                 .SetMaximumAsyncConnections(20);
+
+            _period = options.BufferLogShippingInterval ?? TimeSpan.FromSeconds(5);
 
             _indexFormat = !string.IsNullOrWhiteSpace(options.IndexFormat) ? options.IndexFormat : ElasticsearchSink.DefaultIndexFormat;
             _typeName = !string.IsNullOrWhiteSpace(options.TypeName) ? options.TypeName : ElasticsearchSink.DefaultTypeName;

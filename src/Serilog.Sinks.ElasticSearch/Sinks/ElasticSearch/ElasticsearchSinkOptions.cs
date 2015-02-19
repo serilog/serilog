@@ -19,6 +19,7 @@ using Elasticsearch.Net.Connection;
 using Elasticsearch.Net.ConnectionPool;
 using Elasticsearch.Net.Serialization;
 using Serilog.Events;
+using Serilog.Formatting;
 
 namespace Serilog.Sinks.ElasticSearch
 {
@@ -92,6 +93,16 @@ namespace Serilog.Sinks.ElasticSearch
         /// The maximum size, in bytes, to which the buffer log file for a specific date will be allowed to grow. By default no limit will be applied.
         /// </summary>
         public long? BufferFileSizeLimitBytes { get; set; }
+
+        /// <summary>
+        /// The interval between checking the buffer files
+        /// </summary>
+        public TimeSpan? BufferLogShippingInterval { get; set; }
+
+        /// <summary>
+        /// Customizes the formatter used when converting log events into ElasticSearch documents. Please note that the formatter output must be valid JSON :)
+        /// </summary>
+        public ITextFormatter CustomFormatter { get; set; }
 
         /// <summary>
         /// Configures the elasticsearch sink
