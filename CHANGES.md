@@ -1,3 +1,8 @@
+1.4.196
+ * #393 - Removed the Splunk sink for move to https://github.com/serilog/serilog-sinks-splunk
+ * #389 - Fixed the default URI in the ES sink
+ * #385 - Provided `IndexDecider` option to ES sink configuration
+
 1.4.182
  * #382 - Fixed `CounterMeasure` counting in _Serilog.Extras.Timing_
  * #386 - Expand environment variables on _Serilog.Extras.AppSettings_ values
