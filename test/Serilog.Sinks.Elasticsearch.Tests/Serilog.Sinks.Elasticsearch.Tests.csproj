@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="ElasticsearchSinkTestsBase.cs" />
     <Compile Include="InlineFieldsTests.cs" />
+    <Compile Include="IndexDeciderTests.cs" />
     <Compile Include="RealExceptionNoSerializerTests.cs" />
     <Compile Include="RealExceptionTests.cs" />
     <Compile Include="PropertyNameTests.cs" />

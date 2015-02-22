@@ -83,11 +83,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Attributed.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.DestructureByIgnoring", "src\Serilog.Extras.DestructureByIgnoring\Serilog.Extras.DestructureByIgnoring.csproj", "{C5CC62F4-310F-495C-96EA-B8E5D26F8D57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk", "src\Serilog.Sinks.Splunk\Serilog.Sinks.Splunk.csproj", "{13771374-CF5A-4955-BCDB-EBEFE70944B8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.DestructureByIgnoring.Tests", "test\Serilog.Extras.DestructureByIgnoring.Tests\Serilog.Extras.DestructureByIgnoring.Tests.csproj", "{977E42C3-D501-4730-98FF-525B753B1E3A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Splunk.FullNetFx", "src\Serilog.Sinks.Splunk.FullNetFx\Serilog.Sinks.Splunk.FullNetFx.csproj", "{17DEED0F-F9CB-48FB-B4DC-53FB6AEE64D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Seq", "src\Serilog.Sinks.Seq\Serilog.Sinks.Seq.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
