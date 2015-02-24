@@ -16,6 +16,7 @@ using System;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.Logentries;
+using Serilog.Formatting;
 
 namespace Serilog
 {
@@ -62,5 +63,41 @@ namespace Serilog
                 restrictedToMinimumLevel);
         }
 
+        /// <summary>
+        /// Adds a sink that writes log events to the Logentries.com webservice. 
+        /// Create a token TCP input for this on the logentries website. 
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="token">The token as found on the Logentries.com website.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="textFormatter">Used to format the logs sent to Logentries.</param>
+        /// <param name="useSsl">Specify if the connection needs to be secured.</param>
+        /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
+        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration Logentries(
+            this LoggerSinkConfiguration loggerConfiguration,
+             string token, 
+            ITextFormatter textFormatter,
+            bool useSsl = true,
+            int batchPostingLimit = LogentriesSink.DefaultBatchPostingLimit,
+            TimeSpan? period = null,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        {
+            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+
+            if (string.IsNullOrWhiteSpace(token))
+                throw new ArgumentNullException("token");
+
+            if (textFormatter == null)
+                throw new ArgumentNullException("textFormatter");
+
+            var defaultedPeriod = period ?? LogentriesSink.DefaultPeriod;
+
+            return loggerConfiguration.Sink(
+                new LogentriesSink(textFormatter, token, useSsl, batchPostingLimit, defaultedPeriod),
+                restrictedToMinimumLevel);
+        }
     }
 }
