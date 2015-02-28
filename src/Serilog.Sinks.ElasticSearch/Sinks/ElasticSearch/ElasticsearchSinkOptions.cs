@@ -1,11 +1,25 @@
+// Copyright 2014 Serilog Contributors
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Configuration;
 using Elasticsearch.Net.Connection;
 using Elasticsearch.Net.ConnectionPool;
 using Elasticsearch.Net.Serialization;
 using Serilog.Events;
+using Serilog.Formatting;
 
 namespace Serilog.Sinks.ElasticSearch
 {
@@ -69,6 +83,26 @@ namespace Serilog.Sinks.ElasticSearch
         /// The connectionpool describing the cluster to write event to
         /// </summary>
         public IConnectionPool ConnectionPool { get; private set; }
+
+        /// <summary>
+        /// Optional path to directory that can be used as a log shipping buffer for increasing the reliability of the log forwarding.
+        /// </summary>
+        public string BufferBaseFilename { get; set; }
+
+        /// <summary>
+        /// The maximum size, in bytes, to which the buffer log file for a specific date will be allowed to grow. By default no limit will be applied.
+        /// </summary>
+        public long? BufferFileSizeLimitBytes { get; set; }
+
+        /// <summary>
+        /// The interval between checking the buffer files
+        /// </summary>
+        public TimeSpan? BufferLogShippingInterval { get; set; }
+
+        /// <summary>
+        /// Customizes the formatter used when converting log events into ElasticSearch documents. Please note that the formatter output must be valid JSON :)
+        /// </summary>
+        public ITextFormatter CustomFormatter { get; set; }
 
         /// <summary>
         /// Function to decide which index to write the LogEvent to

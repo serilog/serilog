@@ -60,7 +60,9 @@
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Sinks\ElasticSearch\DurableElasticSearchSink.cs" />
     <Compile Include="Sinks\ElasticSearch\ElasticsearchJsonFormatter-net40.cs" />
+    <Compile Include="Sinks\ElasticSearch\ElasticSearchLogShipper.cs" />
     <Compile Include="Sinks\ElasticSearch\ElasticSearchSink.cs" />
     <Compile Include="Sinks\ElasticSearch\ElasticsearchSinkOptions.cs" />
   </ItemGroup>

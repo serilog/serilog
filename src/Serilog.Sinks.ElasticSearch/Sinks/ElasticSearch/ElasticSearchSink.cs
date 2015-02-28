@@ -22,6 +22,7 @@ using Elasticsearch.Net.Serialization;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using System.Text;
+using Serilog.Formatting;
 
 namespace Serilog.Sinks.ElasticSearch
 {
@@ -30,7 +31,7 @@ namespace Serilog.Sinks.ElasticSearch
     /// </summary>
     public class ElasticsearchSink : PeriodicBatchingSink
     {
-        readonly ElasticsearchJsonFormatter _formatter;
+        readonly ITextFormatter _formatter;
         readonly string _typeName;
         readonly ElasticsearchClient _client;
         readonly Func<LogEvent, DateTimeOffset, string> _indexDecider;
@@ -75,7 +76,8 @@ namespace Serilog.Sinks.ElasticSearch
             if (options.ModifyConnectionSetttings != null)
                 configuration = options.ModifyConnectionSetttings(configuration);
             _client = new ElasticsearchClient(configuration, connection: options.Connection, serializer: options.Serializer);
-            _formatter = new ElasticsearchJsonFormatter(
+            
+            _formatter = options.CustomFormatter ?? new ElasticsearchJsonFormatter(
                 formatProvider: options.FormatProvider,
                 renderMessage: true,
                 closingDelimiter: string.Empty,
