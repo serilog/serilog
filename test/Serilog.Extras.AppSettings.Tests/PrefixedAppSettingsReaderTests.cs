@@ -1,4 +1,8 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -75,5 +79,31 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.IsNotNull(evt);
             Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
-    }
+
+		[Test]
+	    public void SingleUriConvertsToUri()
+	    {
+			var result = (Uri)PrefixedAppSettingsReader.ConvertToType("http://localhost:9200/", typeof(Uri));
+			Assert.AreEqual(result.AbsoluteUri, "http://localhost:9200/");
+	    }
+
+		[Test]
+		public void MultipleUriConvertsToEnumerableUri()
+		{
+			var resultEnumerable = (IEnumerable<Uri>)PrefixedAppSettingsReader.ConvertToType("http://localhost:9200/ http://localhost:9201/", typeof(IEnumerable<Uri>));
+			
+			Assert.IsNotNull(resultEnumerable);
+			Assert.IsInstanceOf(typeof(IEnumerable<Uri>), resultEnumerable);
+			
+			var result = resultEnumerable as IList<Uri> ?? resultEnumerable.ToList();
+			
+			Assert.AreEqual(result.Count(), 2);
+
+			Assert.IsInstanceOf(typeof(Uri), result[0]);
+			Assert.AreEqual(result[0].AbsoluteUri, "http://localhost:9200/");
+			
+			Assert.IsInstanceOf(typeof(Uri), result[1]);
+			Assert.AreEqual(result[1].AbsoluteUri, "http://localhost:9201/");
+		}
+	}
 }

@@ -134,7 +134,8 @@ namespace Serilog.Extras.AppSettings
             var extendedTypeConversions = new Dictionary<Type, Func<string, object>>
             {
                 { typeof(Uri), s => new Uri(s) },
-                { typeof(TimeSpan), s => TimeSpan.Parse(s) }
+                { typeof(TimeSpan), s => TimeSpan.Parse(s) },
+                { typeof(IEnumerable<Uri>), s => s.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(u => new Uri(u)) }
             };
 
             var convertor = extendedTypeConversions
