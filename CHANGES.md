@@ -1,3 +1,6 @@
+1.4.204
+ * #344 (partial) - Moved remaining sinks to individual repositories
+
 1.4.196
  * #393 - Removed the Splunk sink for move to https://github.com/serilog/serilog-sinks-splunk
  * #389 - Fixed the default URI in the ES sink
