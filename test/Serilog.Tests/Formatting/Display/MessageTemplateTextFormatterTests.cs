@@ -1,6 +1,9 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using NUnit.Framework;
+using Serilog.Events;
+using Serilog.Parsing;
 using Serilog.Tests.Support;
 using Serilog.Formatting.Display;
 
@@ -78,6 +81,18 @@ namespace Serilog.Tests.Formatting.Display
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.AreEqual("Information Nick", sw.ToString());
+        }
+
+        [Test]
+        public void FormatSpecifierWhenScalarValueHasNullValue()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Name}", CultureInfo.InvariantCulture);
+            var messageTemplate = new MessageTemplate(new MessageTemplateToken[0]);
+            var properties = new[] { new LogEventProperty("Name", new ScalarValue(null)) };
+            var evt = new LogEvent(new DateTimeOffset(), LogEventLevel.Error, null, messageTemplate, properties);
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.AreEqual("null", sw.ToString());
         }
     }
 }
