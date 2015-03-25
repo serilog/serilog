@@ -7,7 +7,7 @@ using Serilog.Parsing;
 
 namespace Serilog.Tests.Support
 {
-    static class Some
+    public static class Some
     {
         static int Counter;
 
@@ -24,6 +24,11 @@ namespace Serilog.Tests.Support
         public static string String(string tag = null)
         {
             return (tag ?? "") + "__" + Int();
+        }
+
+        public static Guid Guid()
+        {
+            return System.Guid.NewGuid();
         }
 
         public static TimeSpan TimeSpan()
@@ -54,7 +59,7 @@ namespace Serilog.Tests.Support
 
         public static string NonexistentTempFilePath()
         {
-            return Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".txt");
+            return Path.Combine(Path.GetTempPath(), Guid() + ".txt");
         }
 
         public static string TempFilePath()
@@ -64,7 +69,7 @@ namespace Serilog.Tests.Support
 
         public static string TempFolderPath()
         {
-            var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            var dir = Path.Combine(Path.GetTempPath(), Guid().ToString());
             Directory.CreateDirectory(dir);
             return dir;
         }
