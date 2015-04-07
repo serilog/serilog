@@ -52,10 +52,6 @@ function Invoke-NuGetPack($version)
     pushd .\src\Serilog
     Invoke-NuGetPackSpec "Serilog.nuspec" $version
     popd
-
-    pushd .\src\Serilog.Extras.FSharp
-    Invoke-NuGetPackSpec "Serilog.Extras.FSharp.nuspec" $version
-    popd
 }
 
 function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)

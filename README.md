@@ -9,6 +9,4 @@ Serilog combines the best features of traditional and structured diagnostic logg
 
 Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/serilog/serilog/issues?labels=up-for-grabs&state=open) label!
 
-Copyright &copy; 2014 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html).
-
-Needle and thread logo a derivative of work by [Kenneth Appiah](http://thenounproject.com/kenset/).
+Copyright &copy; 2014 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/).

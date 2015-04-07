@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.FullNetFx-net40", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Tests-net40", "test\Serilog.Tests\Serilog.Tests-net40.csproj", "{D5648551-D19D-41E3-9FC1-E74B111EEF41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Extras.Topshelf-net40", "src\Serilog.Extras.Topshelf\Serilog.Extras.Topshelf-net40.csproj", "{52B596D5-5B55-4E8B-86F7-037CCA22AEC5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5648551-D19D-41E3-9FC1-E74B111EEF41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52B596D5-5B55-4E8B-86F7-037CCA22AEC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52B596D5-5B55-4E8B-86F7-037CCA22AEC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52B596D5-5B55-4E8B-86F7-037CCA22AEC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52B596D5-5B55-4E8B-86F7-037CCA22AEC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
