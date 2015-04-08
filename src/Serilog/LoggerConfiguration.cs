@@ -103,7 +103,18 @@ namespace Serilog
                     depth => _maximumDestructuringDepth = depth);
             }
         }
-        
+
+        /// <summary>
+        /// Apply external settings to the logger configuration.
+        /// </summary>
+        public LoggerSettingsConfiguration ReadFrom
+        {
+            get
+            {
+                return new LoggerSettingsConfiguration(this);
+            }
+        }
+
         /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
         /// </summary>

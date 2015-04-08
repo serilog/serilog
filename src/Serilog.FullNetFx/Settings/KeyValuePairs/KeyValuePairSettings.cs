@@ -14,8 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -23,40 +22,44 @@ using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.RollingFile;
-using System.ComponentModel;
 
-namespace Serilog.Extras.AppSettings
+namespace Serilog.Settings.KeyValuePairs
 {
-    class PrefixedAppSettingsReader
+    class KeyValuePairSettings : ILoggerSettings
     {
-        const string UsingDirective = "serilog:using";
-        const string WriteToDirective = "serilog:write-to";
-        const string MinimumLevelDirective = "serilog:minimum-level";
-        const string EnrichWithPropertyDirective = "serilog:enrich:with-property";
+        const string UsingDirective = "using";
+        const string WriteToDirective = "write-to";
+        const string MinimumLevelDirective = "minimum-level";
+        const string EnrichWithPropertyDirective = "enrich:with-property";
 
-        const string UsingDirectiveFullFormPrefix = "serilog:using:";
-        const string EnrichWithPropertyDirectivePrefix = "serilog:enrich:with-property:";
+        const string UsingDirectiveFullFormPrefix = "using:";
+        const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
 
-        const string WriteToDirectiveRegex = @"^serilog:write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string WriteToDirectiveRegex = @"^write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
 
-        public static void ConfigureLogger(LoggerConfiguration loggerConfiguration)
+        readonly string[] _supportedDirectives =
         {
-            ConfigureLogger(loggerConfiguration, ConfigurationManager.AppSettings);
+            UsingDirective,
+            WriteToDirective,
+            MinimumLevelDirective,
+            EnrichWithPropertyDirective
+        };
+
+        readonly Dictionary<string, string> _settings;
+
+        public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings)
+        {
+            if (settings == null) throw new ArgumentNullException("settings");
+            _settings = settings.ToDictionary(s => s.Key, s => s.Value);
         }
 
-        internal static void ConfigureLogger(LoggerConfiguration loggerConfiguration, NameValueCollection settings)
+        public void Configure(LoggerConfiguration loggerConfiguration)
         {
-            var supportedDirectives = new[]
-            {
-                UsingDirective,
-                WriteToDirective,
-                MinimumLevelDirective,
-                EnrichWithPropertyDirective
-            };
+            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
-            var directives = settings.AllKeys
-                .Where(k => supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => Environment.ExpandEnvironmentVariables(settings[k]));
+            var directives = _settings.Keys
+                .Where(k => _supportedDirectives.Any(k.StartsWith))
+                .ToDictionary(k => k, k => Environment.ExpandEnvironmentVariables(_settings[k]));
 
             string minimumLevelDirective;
             LogEventLevel minimumLevel;
@@ -66,7 +69,7 @@ namespace Serilog.Extras.AppSettings
                 loggerConfiguration.MinimumLevel.Is(minimumLevel);
             }
 
-            foreach (var enrichDirective in directives.Where(dir => 
+            foreach (var enrichDirective in directives.Where(dir =>
                 dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
             {
                 var name = enrichDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
@@ -76,20 +79,19 @@ namespace Serilog.Extras.AppSettings
             var splitWriteTo = new Regex(WriteToDirectiveRegex);
 
             var sinkDirectives = (from wt in directives
-                        where splitWriteTo.IsMatch(wt.Key)
-                        let match = splitWriteTo.Match(wt.Key)
-                        let call = new {
-                            Method = match.Groups["method"].Value,
-                            Argument = match.Groups["argument"].Value,
-                            wt.Value
-                        }
-                        group call by call.Method).ToList();
+                                  where splitWriteTo.IsMatch(wt.Key)
+                                  let match = splitWriteTo.Match(wt.Key)
+                                  let call = new
+                                  {
+                                      Method = match.Groups["method"].Value,
+                                      Argument = match.Groups["argument"].Value,
+                                      wt.Value
+                                  }
+                                  group call by call.Method).ToList();
 
             if (sinkDirectives.Any())
             {
-                var extensionMethods = FindExtensionMethods(directives);
-
-                var sinkConfigurationMethods = extensionMethods
+                var sinkConfigurationMethods = FindExtensionMethods(directives)
                     .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration))
                     .ToList();
 
@@ -106,8 +108,8 @@ namespace Serilog.Extras.AppSettings
                         var config = loggerConfiguration.WriteTo;
 
                         var call = (from p in target.GetParameters().Skip(1)
-                                   let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
-                                   select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
+                                    let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
+                                    select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
 
                         call.Insert(0, config);
 
@@ -145,9 +147,9 @@ namespace Serilog.Extras.AppSettings
             return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
         }
 
-        static IList<MethodInfo> FindExtensionMethods(Dictionary<string, string> directives)
+        static IEnumerable<MethodInfo> FindExtensionMethods(Dictionary<string, string> directives)
         {
-            var extensionAssemblies = new List<Assembly> {typeof (ILogger).Assembly, typeof (RollingFileSink).Assembly};
+            var extensionAssemblies = new List<Assembly> { typeof(ILogger).Assembly, typeof(RollingFileSink).Assembly };
             foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
                                                                  d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
             {
@@ -157,7 +159,7 @@ namespace Serilog.Extras.AppSettings
             return extensionAssemblies
                 .SelectMany(a => a.ExportedTypes.Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
                 .SelectMany(t => t.GetMethods())
-                .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof (ExtensionAttribute), false))
+                .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .ToList();
         }
     }

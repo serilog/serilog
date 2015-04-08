@@ -1,54 +1,53 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using Serilog.Events;
+using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 
 namespace Serilog.Extras.AppSettings.Tests
 {
     [TestFixture]
-    public class PrefixedAppSettingsReaderTests
+    public class KeyValuePairSettingsTests
     {
         [Test]
         public void ConvertibleValuesConvertToTIfTargetIsNullable()
         {
-            var result = (int?)PrefixedAppSettingsReader.ConvertToType("3", typeof(int?));
+            var result = (int?)KeyValuePairSettings.ConvertToType("3", typeof(int?));
             Assert.That(result == 3);
         }
 
         [Test]
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
-            var result = (int?)PrefixedAppSettingsReader.ConvertToType(null, typeof(int?));
+            var result = (int?)KeyValuePairSettings.ConvertToType(null, typeof(int?));
             Assert.That(result == null);
         }
 
         [Test]
         public void EmptyStringValuesConvertToNullIfTargetIsNullable()
         {
-            var result = (int?)PrefixedAppSettingsReader.ConvertToType("", typeof(int?));
+            var result = (int?)KeyValuePairSettings.ConvertToType("", typeof(int?));
             Assert.That(result == null);
         }
 
         [Test]
         public void ValuesConvertToEnumMembers()
         {
-            var result = (LogEventLevel)PrefixedAppSettingsReader.ConvertToType("Information", typeof(LogEventLevel));
+            var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
             Assert.AreEqual(LogEventLevel.Information, result);
         }
 
         [Test]
         public void PropertyEnrichmentIsApplied()
         {
-            var configuration = new LoggerConfiguration();
-            var settings = new NameValueCollection
-            {
-                { "serilog:enrich:with-property:App", "Test" }
-            };
-
-            PrefixedAppSettingsReader.ConfigureLogger(configuration, settings);
-
             LogEvent evt = null;
-            var log = configuration.WriteTo.Sink(new DelegatingSink(e => evt = e)).CreateLogger();
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    {"enrich:with-property:App", "Test"}
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
 
             log.Information("Has a test property");
 
@@ -59,16 +58,14 @@ namespace Serilog.Extras.AppSettings.Tests
         [Test]
         public void EnvironmentVariableExpansionIsApplied()
         {
-            var configuration = new LoggerConfiguration();
-            var settings = new NameValueCollection
-            {
-                { "serilog:enrich:with-property:Path", "%PATH%" }
-            };
-
-            PrefixedAppSettingsReader.ConfigureLogger(configuration, settings);
-
             LogEvent evt = null;
-            var log = configuration.WriteTo.Sink(new DelegatingSink(e => evt = e)).CreateLogger();
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    {"enrich:with-property:Path", "%PATH%"}
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
 
             log.Information("Has a Path property with value expanded from the environment variable");
 
