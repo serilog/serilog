@@ -57,7 +57,6 @@
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Settings\KeyValuePairs\KeyValuePairSettings.cs" />
     <Compile Include="Settings\AppSettings\AppSettingsSettings.cs" />
     <Compile Include="Sinks\IOFile\CharacterCountLimitedTextWriter.cs" />
     <Compile Include="Sinks\IOFile\FileSink.cs" />

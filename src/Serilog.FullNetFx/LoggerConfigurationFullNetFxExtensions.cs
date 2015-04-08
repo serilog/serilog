@@ -261,20 +261,6 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Apply settings specified in the Serilog key-value setting format to the logger configuration.
-        /// </summary>
-        /// <param name="settingConfiguration">Logger setting configuration</param>
-        /// <param name="settings">A list of key-value pairs describing logger settings.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public static LoggerConfiguration KeyValuePairs(
-            this LoggerSettingsConfiguration settingConfiguration,
-            IEnumerable<KeyValuePair<string, string>> settings)
-        {
-            if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
-            return settingConfiguration.Settings(new KeyValuePairSettings(settings));
-        }
-
-        /// <summary>
         /// Reads the &lt;appSettings&gt; element of App.config or Web.config, searching for for keys
         /// that look like: <code>serilog:*</code>, which are used to configure
         /// the logger. To add a sink, use a key like <code>serilog:write-to:File.path</code> for

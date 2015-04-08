@@ -14,14 +14,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.RollingFile;
 
 namespace Serilog.Settings.KeyValuePairs
 {
@@ -59,7 +57,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             var directives = _settings.Keys
                 .Where(k => _supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => Environment.ExpandEnvironmentVariables(_settings[k]));
+                .ToDictionary(k => k, k => _settings[k]);
 
             string minimumLevelDirective;
             LogEventLevel minimumLevel;
@@ -121,16 +119,17 @@ namespace Serilog.Settings.KeyValuePairs
 
         internal static object ConvertToType(string value, Type toType)
         {
-            if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            var toTypeInfo = toType.GetTypeInfo();
+            if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 if (string.IsNullOrEmpty(value))
                     return null;
 
                 // unwrap Nullable<> type since we're not handling null situations
-                toType = (new NullableConverter(toType)).UnderlyingType;
+                toType = toTypeInfo.GenericTypeArguments[0];
             }
 
-            if (toType.IsEnum)
+            if (toTypeInfo.IsEnum)
                 return Enum.Parse(toType, value);
 
             var extendedTypeConversions = new Dictionary<Type, Func<string, object>>
@@ -140,7 +139,7 @@ namespace Serilog.Settings.KeyValuePairs
             };
 
             var convertor = extendedTypeConversions
-                .Where(t => t.Key.IsAssignableFrom(toType))
+                .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
                 .Select(t => t.Value)
                 .FirstOrDefault();
 
@@ -149,16 +148,16 @@ namespace Serilog.Settings.KeyValuePairs
 
         static IEnumerable<MethodInfo> FindExtensionMethods(Dictionary<string, string> directives)
         {
-            var extensionAssemblies = new List<Assembly> { typeof(ILogger).Assembly, typeof(RollingFileSink).Assembly };
+            var extensionAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
             foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
                                                                  d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
             {
-                extensionAssemblies.Add(Assembly.Load(usingDirective.Value));
+                extensionAssemblies.Add(Assembly.Load(new AssemblyName(usingDirective.Value)));
             }
 
             return extensionAssemblies
-                .SelectMany(a => a.ExportedTypes.Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
-                .SelectMany(t => t.GetMethods())
+                .SelectMany(a => a.ExportedTypes.Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
+                .SelectMany(t => t.DeclaredMethods)
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .ToList();
         }

@@ -55,11 +55,12 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
         }
 
-        [Test]
+        [Test, Ignore("Requires an App.config file to enable this feature")]
         public void EnvironmentVariableExpansionIsApplied()
         {
             LogEvent evt = null;
             var log = new LoggerConfiguration()
+                // Only available with ReadFrom.AppSettings()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
                     {"enrich:with-property:Path", "%PATH%"}
