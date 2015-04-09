@@ -46,7 +46,9 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ILoggerSettings.cs" />
     <Compile Include="Configuration\LoggerDestructuringConfiguration.cs" />
+    <Compile Include="Configuration\LoggerSettingsConfiguration.cs" />
     <Compile Include="Configuration\LoggerFilterConfiguration.cs" />
     <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Settings\KeyValuePairs\KeyValuePairSettings.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink.cs" />
   </ItemGroup>
