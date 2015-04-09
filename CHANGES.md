@@ -1,3 +1,6 @@
+1.5.1
+ * #402 - `<appSettings>` configuration support now in the Serilog package
+
 1.4.214
  * #344 - Moved "Extras" including Web, Owin, F#, destructuring to new organisations
 

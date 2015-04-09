@@ -91,6 +91,7 @@
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
+    <Compile Include="Settings\KeyValuePairSettingsTests.cs" />
     <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
     <Compile Include="Sinks\Observable\ObservableSinkTests.cs" />
     <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatusTests.cs" />

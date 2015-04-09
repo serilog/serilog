@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
@@ -23,8 +22,6 @@ using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Raw;
-using Serilog.Settings.AppSettings;
-using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.DiagnosticTrace;
 using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
@@ -214,12 +211,14 @@ namespace Serilog
         /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
+#if !ASPNETCORE50
         public static LoggerConfiguration FromLogContext(
             this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
             return enrichmentConfiguration.With<LogContextEnricher>();
         }
+#endif
 
         /// <summary>
         /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.
@@ -256,23 +255,6 @@ namespace Serilog
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
             return enrichmentConfiguration.With<MachineNameEnricher>();
-        }
-
-        /// <summary>
-        /// Reads the &lt;appSettings&gt; element of App.config or Web.config, searching for for keys
-        /// that look like: <code>serilog:*</code>, which are used to configure
-        /// the logger. To add a sink, use a key like <code>serilog:write-to:File.path</code> for
-        /// each parameter to the sink's configuration method. To add an additional assembly
-        /// containing sinks, use <code>serilog:using</code>. To set the level use 
-        /// <code>serilog:minimum-level</code>.
-        /// </summary>
-        /// <param name="settingConfiguration">Logger setting configuration</param>
-        /// <returns>An object allowing configuration to continue.</returns>
-        public static LoggerConfiguration AppSettings(
-            this LoggerSettingsConfiguration settingConfiguration)
-        {
-            if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
-            return settingConfiguration.Settings(new AppSettingsSettings());
         }
     }
 }

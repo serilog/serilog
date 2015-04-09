@@ -40,10 +40,12 @@
     <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ILoggerSettings.cs" />
     <Compile Include="Configuration\LoggerDestructuringConfiguration.cs" />
     <Compile Include="Configuration\LoggerFilterConfiguration.cs" />
     <Compile Include="Configuration\LoggerEnrichmentConfiguration.cs" />
     <Compile Include="Configuration\LoggerMinimumLevelConfiguration.cs" />
+    <Compile Include="Configuration\LoggerSettingsConfiguration-net40.cs" />
     <Compile Include="Configuration\LoggerSinkConfiguration.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\Enrichers\PropertyEnricher.cs" />
