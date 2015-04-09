@@ -89,9 +89,8 @@ namespace Serilog.Settings.KeyValuePairs
 
             if (sinkDirectives.Any())
             {
-                var sinkConfigurationMethods = FindExtensionMethods(directives)
-                    .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration))
-                    .ToList();
+                var configurationAssemblies = LoadConfigurationAssemblies(directives);
+                var sinkConfigurationMethods = FindSinkConfigurationMethods(configurationAssemblies);
 
                 foreach (var sinkDirective in sinkDirectives)
                 {
@@ -115,6 +114,19 @@ namespace Serilog.Settings.KeyValuePairs
                     }
                 }
             }
+        }
+
+        internal static IEnumerable<Assembly> LoadConfigurationAssemblies(Dictionary<string, string> directives)
+        {
+            var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
+
+            foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
+                                                                 d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
+            {
+                configurationAssemblies.Add(Assembly.Load(new AssemblyName(usingDirective.Value)));
+            }
+
+            return configurationAssemblies.Distinct();
         }
 
         internal static object ConvertToType(string value, Type toType)
@@ -146,20 +158,13 @@ namespace Serilog.Settings.KeyValuePairs
             return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
         }
 
-        static IEnumerable<MethodInfo> FindExtensionMethods(Dictionary<string, string> directives)
+        internal static IEnumerable<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
         {
-            var extensionAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
-            foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
-                                                                 d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
-            {
-                extensionAssemblies.Add(Assembly.Load(new AssemblyName(usingDirective.Value)));
-            }
-
-            return extensionAssemblies
+            return configurationAssemblies
                 .SelectMany(a => a.ExportedTypes.Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
                 .SelectMany(t => t.DeclaredMethods)
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
-                .ToList();
+                .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration));
         }
     }
 }

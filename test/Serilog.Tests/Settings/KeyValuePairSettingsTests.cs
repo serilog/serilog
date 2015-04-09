@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
+using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
 
 namespace Serilog.Extras.AppSettings.Tests
@@ -35,6 +37,37 @@ namespace Serilog.Extras.AppSettings.Tests
         {
             var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
             Assert.AreEqual(LogEventLevel.Information, result);
+        }
+
+        [Test]
+        public void FindsConfigurationAssemblies()
+        {
+            var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>
+            {
+                {"using:FullNetFx", "Serilog.FullNetFx"}
+            }).ToList();
+
+            // The core Serilog assembly is always considered
+            Assert.AreEqual(2, configurationAssemblies.Count);
+        }
+
+        [Test]
+        public void FindsConfigurationMethodsWithinAnAssembly()
+        {
+            var configurationMethods = KeyValuePairSettings
+                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink).Assembly })
+                .Select(m => m.Name)
+                .Distinct()
+                .ToList();
+
+            Assert.AreEqual(6, configurationMethods.Count);
+
+            Assert.That(configurationMethods.Contains("ColoredConsole"));
+            Assert.That(configurationMethods.Contains("Console"));
+            Assert.That(configurationMethods.Contains("DumpFile"));
+            Assert.That(configurationMethods.Contains("File"));
+            Assert.That(configurationMethods.Contains("RollingFile"));
+            Assert.That(configurationMethods.Contains("Trace"));
         }
 
         [Test]

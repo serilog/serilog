@@ -214,14 +214,12 @@ namespace Serilog
         /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-#if !ASPNETCORE50
         public static LoggerConfiguration FromLogContext(
             this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
             if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
             return enrichmentConfiguration.With<LogContextEnricher>();
         }
-#endif
 
         /// <summary>
         /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.
