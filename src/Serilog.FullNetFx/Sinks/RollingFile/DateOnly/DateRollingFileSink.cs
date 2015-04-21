@@ -23,14 +23,14 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.IOFile;
 
-namespace Serilog.Sinks.RollingFile
+namespace Serilog.Sinks.RollingFile.DateOnly
 {
     /// <summary>
     /// Write log events to a series of files. Each file will be named according to
     /// the date of the first log entry written to it. Only simple date-based rolling is
     /// currently supported.
     /// </summary>
-    public sealed class RollingFileSink : ILogEventSink, IDisposable
+    public sealed class DateRollingFileSink : IRollingFileSink
     {
         readonly TemplatedPathRoller _roller;
         readonly ITextFormatter _textFormatter;
@@ -43,7 +43,7 @@ namespace Serilog.Sinks.RollingFile
         DateTime? _nextCheckpoint;
         FileSink _currentFile;
 
-        /// <summary>Construct a <see cref="RollingFileSink"/>.</summary>
+        /// <summary>Construct a <see cref="DateRollingFileSink"/>.</summary>
         /// <param name="pathFormat">String describing the location of the log files,
         /// with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
         /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
@@ -55,7 +55,7 @@ namespace Serilog.Sinks.RollingFile
         /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
-        public RollingFileSink(string pathFormat, 
+        public DateRollingFileSink(string pathFormat, 
                               ITextFormatter textFormatter,
                               long? fileSizeLimitBytes,
                               int? retainedFileCountLimit, 

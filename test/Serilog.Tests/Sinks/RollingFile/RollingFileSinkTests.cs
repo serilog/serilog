@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using Serilog.Events;
-using Serilog.Sinks.RollingFile;
+using Serilog.Sinks.RollingFile.DateOnly;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.RollingFile
@@ -55,7 +55,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             try
             {
                 log = new LoggerConfiguration()
-                    .WriteTo.RollingFile(pathFormat, retainedFileCountLimit: 3)
+                    .WriteTo.RollingFile(pathFormat, maxDaysRetainedLimit: 3)
                     .CreateLogger();
 
                 log.Write(Some.InformationEvent());
@@ -85,7 +85,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             var pathFormat = Path.Combine(folder, fileName);
 
             var log = new LoggerConfiguration()
-                .WriteTo.RollingFile(pathFormat, retainedFileCountLimit: retainedFiles)
+                .WriteTo.RollingFile(pathFormat, maxDaysRetainedLimit: retainedFiles)
                 .CreateLogger();
 
             var verified = new List<string>();

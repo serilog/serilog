@@ -25,6 +25,7 @@ using Serilog.Formatting.Raw;
 using Serilog.Sinks.DiagnosticTrace;
 using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
+using Serilog.Sinks.RollingFile.DateOnly;
 using Serilog.Sinks.SystemConsole;
 
 namespace Serilog
@@ -149,8 +150,8 @@ namespace Serilog
 
         /// <summary>
         /// Write log events to a series of files. Each file will be named according to
-        /// the date of the first log entry written to it. Only simple date-based rolling is
-        /// currently supported.
+        /// the date of the first log entry written to it. Roll over based on size and date
+        /// are supported.
         /// </summary>
         /// <param name="sinkConfiguration">Logger sink configuration.</param>
         /// <param name="pathFormat">String describing the location of the log files,
@@ -163,8 +164,10 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which any single log file will be allowed to grow.
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
-        /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
+        /// <param name="rollOnFileSize">Create a new file when size limit is reached</param>
+        /// <param name="maxDaysRetainedLimit">The maximum number of days for which log files will be retained,
         /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
+        /// <param name="rollOnDate">Create a new file after midnight</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public static LoggerConfiguration RollingFile(
@@ -174,12 +177,15 @@ namespace Serilog
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
             long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
-            int? retainedFileCountLimit = DefaultRetainedFileCountLimit)
+            bool rollOnFileSize = false,
+            int? maxDaysRetainedLimit = DefaultRetainedFileCountLimit,
+            bool rollOnDate = true)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            var sink = new RollingFileSink(pathFormat, formatter, fileSizeLimitBytes, retainedFileCountLimit);
+            var sink = RollingFileSinkFactory.Construct(pathFormat, formatter, rollOnDate, rollOnFileSize,
+                fileSizeLimitBytes, maxDaysRetainedLimit);
             return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
 

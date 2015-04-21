@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Serilog.Sinks.RollingFile
+namespace Serilog.Sinks.RollingFile.DateOnly
 {
     class RollingLogFile
     {

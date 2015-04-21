@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Serilog.Sinks.RollingFile;
+using Serilog.Sinks.RollingFile.DateOnly;
 
 namespace Serilog.Tests.Sinks.RollingFile
 {

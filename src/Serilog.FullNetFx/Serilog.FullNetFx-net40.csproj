@@ -63,10 +63,17 @@
     <Compile Include="Sinks\IOFile\NullSink.cs" />
     <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatus.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink-net40.cs" />
-    <Compile Include="Sinks\RollingFile\Clock.cs" />
-    <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
-    <Compile Include="Sinks\RollingFile\RollingLogFile.cs" />
-    <Compile Include="Sinks\RollingFile\TemplatedPathRoller.cs" />
+    <Compile Include="Sinks\RollingFile\DateOnly\Clock.cs" />
+    <Compile Include="Sinks\RollingFile\DateOnly\DateRollingFileSink.cs" />
+    <Compile Include="Sinks\RollingFile\DateOnly\RollingLogFile.cs" />
+    <Compile Include="Sinks\RollingFile\IRollingFileSink.cs" />
+    <Compile Include="Sinks\RollingFile\RollingFileSinkFactory.cs" />
+    <Compile Include="Sinks\RollingFile\SizeOnly\FileNameComponents.cs" />
+    <Compile Include="Sinks\RollingFile\SizeOnly\FileNameParser.cs" />
+    <Compile Include="Sinks\RollingFile\SizeOnly\SizeLimitedFileSink.cs" />
+    <Compile Include="Sinks\RollingFile\SizeOnly\SizeLimitedLogFile.cs" />
+    <Compile Include="Sinks\RollingFile\SizeOnly\SizeRollingFileSink.cs" />
+    <Compile Include="Sinks\RollingFile\DateOnly\TemplatedPathRoller.cs" />
     <Compile Include="Sinks\SystemConsole\ColoredConsoleSink-net40.cs" />
     <Compile Include="Sinks\SystemConsole\ConsoleSink.cs" />
     <Compile Include="Sinks\DiagnosticTrace\DiagnosticTraceSink.cs" />
@@ -88,5 +95,6 @@
       <Name>Serilog-net40</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
