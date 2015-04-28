@@ -37,7 +37,7 @@ namespace Serilog
         
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
-        int _maximumDestructuringDepth = 5;
+        int _maximumDestructuringDepth = 10;
 
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
