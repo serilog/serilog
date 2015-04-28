@@ -1,3 +1,6 @@
+1.5.5
+ * #433 - Revert the default destructuring depth back to 10
+
 1.5.1
  * #402 - `<appSettings>` configuration support now in the Serilog package
 
