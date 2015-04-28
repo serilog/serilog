@@ -77,6 +77,9 @@
     <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
     <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSinkTests.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSinkTests.cs" />
+    <Compile Include="Sinks\RollingFile\Size\FileNameComponentsTests.cs" />
+    <Compile Include="Sinks\RollingFile\Size\SizeLimitReachedTests.cs" />
+    <Compile Include="Sinks\RollingFile\Size\TemplateParserTests.cs" />
     <Compile Include="Sinks\RollingFile\TemplatedPathRollerTests.cs" />
     <Compile Include="Sinks\TextWriter\TextWriterSinkTests.cs" />
     <Compile Include="Support\DelegatingEnricher.cs" />
