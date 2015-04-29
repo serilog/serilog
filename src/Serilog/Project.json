@@ -1,32 +1,36 @@
 ﻿{
     "version": "1.0.0-beta-*",
-    "dependencies": { },
+    "dependencies": {
+    },
     "code": "**/*.cs",
-    "exclude": "**/*net40.cs",
-
+    "exclude": [ "**/*net40.cs", "bin/*" ],
     "frameworks": {
+        "aspnet50": {
+        },
         "aspnetcore50": {
             "dependencies": {
-                "Microsoft.CSharp": "4.0.0-beta-22231",
-                "System.Collections": "4.0.10-beta-22231",
-                "System.Collections.Concurrent": "4.0.0-beta-22231",
-                "System.Collections.NonGeneric": "4.0.0-beta-22231",
-                "System.Collections.Specialized": "4.0.0-beta-22231",
-                "System.Diagnostics.Debug": "4.0.10-beta-22231",
-                "System.Diagnostics.Tools": "4.0.0-beta-22231",
-                "System.Dynamic.Runtime": "4.0.0-beta-22231",
-                "System.Globalization": "4.0.10-beta-22231",
-                "System.Globalization.Calendars": "4.0.0-beta-22231",
-                "System.IO": "4.0.10-beta-22231",
+                "Microsoft.CSharp": "4.0.0-beta-*",
+                "System.Collections": "4.0.10-beta-*",
+                "System.Collections.Concurrent": "4.0.0-beta-*",
+                "System.Collections.NonGeneric": "4.0.0-beta-*",
+                "System.Collections.Specialized": "4.0.0-beta-*",
+                "System.Diagnostics.Debug": "4.0.10-beta-*",
+                "System.Diagnostics.Tools": "4.0.0-beta-*",
+                "System.Dynamic.Runtime": "4.0.0-beta-*",
+                "System.Globalization": "4.0.10-beta-*",
+                "System.Globalization.Calendars": "4.0.0-beta-*",
+                "System.IO": "4.0.10-beta-*",
                 "System.Linq": "4.0.0-beta-*",
-                "System.Net.Sockets": "4.0.0-beta-22231",
-                "System.ObjectModel": "4.0.0-beta-22231",
-                "System.Reflection": "4.0.10-beta-22231",
-                "System.Runtime": "4.0.20-beta-22231",
-                "System.Runtime.Extensions": "4.0.10-beta-22231",
-                "System.Threading": "4.0.0-beta-22231",
-                "System.Threading.Thread": "4.0.0-beta-22231"
+                "System.Net.Sockets": "4.0.0-beta-*",
+                "System.ObjectModel": "4.0.0-beta-*",
+                "System.Reflection": "4.0.10-beta-*",
+                "System.Runtime": "4.0.20-beta-*",
+                "System.Runtime.Extensions": "4.0.10-beta-*",
+                "System.Threading": "4.0.0-beta-*",
+                "System.Threading.Thread": "4.0.0-beta-*"
             }
+        },
+        "net45": {
         }
     }
 }
