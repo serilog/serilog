@@ -11,12 +11,12 @@
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging events semantic structured</tags>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.1" />
-      <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.1" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.1" />
-      <frameworkAssembly assemblyName="System.Runtime" targetFramework="DNX4.5.1" />
-      <frameworkAssembly assemblyName="System.IO" targetFramework="DNX4.5.1" />
-      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="mscorlib" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System.Runtime" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System.IO" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="dnx451" />
     </frameworkAssemblies>
   </metadata>
   <files>
