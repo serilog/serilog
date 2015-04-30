@@ -28,4 +28,12 @@
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
   </files>
+  <frameworkAssemblies>
+    <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.1" />
+    <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.1" />
+    <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.1" />
+    <frameworkAssembly assemblyName="System.Runtime" targetFramework="DNX4.5.1" />
+    <frameworkAssembly assemblyName="System.IO" targetFramework="DNX4.5.1" />
+    <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.1" />
+  </frameworkAssemblies>
 </package>
