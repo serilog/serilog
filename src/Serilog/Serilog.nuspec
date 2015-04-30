@@ -10,6 +10,14 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging events semantic structured</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Runtime" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.IO" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.1" />
+    </frameworkAssemblies>
   </metadata>
   <files>
     <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
@@ -28,12 +36,4 @@
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
   </files>
-  <frameworkAssemblies>
-    <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.1" />
-    <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.1" />
-    <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.1" />
-    <frameworkAssembly assemblyName="System.Runtime" targetFramework="DNX4.5.1" />
-    <frameworkAssembly assemblyName="System.IO" targetFramework="DNX4.5.1" />
-    <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.1" />
-  </frameworkAssemblies>
 </package>
