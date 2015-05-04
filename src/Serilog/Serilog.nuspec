@@ -4,7 +4,7 @@
     <id>Serilog</id>
     <version>$version$</version>
     <authors>Serilog Contributors</authors>
-    <description>The best of traditional and structured logging for .NET</description>
+    <description>Simple .NET logging with fully-structured events</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
