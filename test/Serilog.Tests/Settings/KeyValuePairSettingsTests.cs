@@ -33,6 +33,13 @@ namespace Serilog.Extras.AppSettings.Tests
         }
 
         [Test]
+        public void ValuesConvertToNullableTimeSpan()
+        {
+            var result = (System.TimeSpan?)KeyValuePairSettings.ConvertToType("00:01:00", typeof(System.TimeSpan?));
+            Assert.AreEqual(System.TimeSpan.FromMinutes(1), result);
+        }
+
+        [Test]
         public void ValuesConvertToEnumMembers()
         {
             var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
