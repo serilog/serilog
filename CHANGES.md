@@ -1,3 +1,6 @@
+1.5.16
+ * #441 - Fix conversion of `Nullable<>` settings
+
 1.5.5
  * #433 - Revert the default destructuring depth back to 10
 
