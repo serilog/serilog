@@ -1,6 +1,7 @@
 param(
     [String] $majorMinor = "0.0",  # 1.4
     [String] $patch = "0",         # $env:APPVEYOR_BUILD_VERSION
+    [String] $branch = "private",  # $env:APPVEYOR_REPO_BRANCH
     [String] $customLogger = "",   # C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll
     [Switch] $notouch
 )
@@ -54,9 +55,14 @@ function Invoke-NuGetPack($version)
     popd
 }
 
-function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
+function Invoke-Build($majorMinor, $patch, $branch, $customLogger, $notouch)
 {
-    $package="$majorMinor.$patch"
+    $target = (Get-Content ./CHANGES.md -First 1).Trim()
+    $package = $target
+    if ($branch -ne "master")
+    {
+        $package = "$target-pre-$patch"
+    }
 
     Write-Output "Building Serilog $package"
 
@@ -77,4 +83,4 @@ function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
 }
 
 $ErrorActionPreference = "Stop"
-Invoke-Build $majorMinor $patch $customLogger $notouch
+Invoke-Build $majorMinor $patch $branch $customLogger $notouch
