@@ -6,12 +6,12 @@ param(
     [Switch] $notouch
 )
 
-function Set-AssemblyVersions($informational, $assembly)
+function Set-AssemblyVersions($informational, $file, $assembly)
 {
     (Get-Content assets/CommonAssemblyInfo.cs) |
         ForEach-Object { $_ -replace """1.0.0.0""", """$assembly""" } |
         ForEach-Object { $_ -replace """1.0.0""", """$informational""" } |
-        ForEach-Object { $_ -replace """1.1.1.1""", """$($informational).0""" } |
+        ForEach-Object { $_ -replace """1.1.1.1""", """$file""" } |
         Set-Content assets/CommonAssemblyInfo.cs
 }
 
@@ -58,6 +58,7 @@ function Invoke-NuGetPack($version)
 function Invoke-Build($majorMinor, $patch, $branch, $customLogger, $notouch)
 {
     $target = (Get-Content ./CHANGES.md -First 1).Trim()
+    $file = "$target.$patch"
     $package = $target
     if ($branch -ne "master")
     {
@@ -71,7 +72,7 @@ function Invoke-Build($majorMinor, $patch, $branch, $customLogger, $notouch)
         $assembly = "$majorMinor.0.0"
 
         Write-Output "Assembly version will be set to $assembly"
-        Set-AssemblyVersions $package $assembly
+        Set-AssemblyVersions $package $file $assembly
     }
 
     Install-NuGetPackages
