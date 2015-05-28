@@ -112,7 +112,6 @@
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Settings\KeyValuePairs\AssemblyExtensions-net40.cs" />
     <Compile Include="Settings\KeyValuePairs\KeyValuePairSettings-net40.cs" />
     <Compile Include="Settings\KeyValuePairs\ParameterInfoExtensions-40.cs" />
     <Compile Include="Settings\KeyValuePairs\TypeExtensions-40.cs" />

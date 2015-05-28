@@ -74,6 +74,4 @@ namespace Serilog.Settings.KeyValuePairs
             }
         }
     }
-
-
 }
