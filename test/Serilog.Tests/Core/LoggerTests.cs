@@ -86,5 +86,24 @@ namespace Serilog.Tests.Core
             Assert.AreEqual(4, events.Count);
             Assert.That(events.All(evt => evt.RenderMessage() == "Emitted"));
         }
+
+        [Test]
+        public void LoggingShouldWorkWithOnlySinkLogEventLevel()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(sink, LogEventLevel.Debug)
+                .CreateLogger()
+                .ForContext<LoggerTests>();
+
+            log.Verbose("Suppressed");
+            log.Information("Emitted");
+            log.Debug("Emitted");
+
+            Assert.AreEqual(2, events.Count);
+            Assert.That(events.All(evt => evt.RenderMessage() == "Emitted"));
+        }
     }
 }
