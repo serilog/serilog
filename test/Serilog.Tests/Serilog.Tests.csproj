@@ -52,6 +52,7 @@
       <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Reactive.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Rx-Core.2.2.1-beta\lib\net45\System.Reactive.Core.dll</HintPath>
@@ -91,6 +92,7 @@
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />
     <Compile Include="Parsing\MessageTemplateParserTests.cs" />
+    <Compile Include="Settings\AppSettingsTests.cs" />
     <Compile Include="Settings\KeyValuePairSettingsTests.cs" />
     <Compile Include="Sinks\IOFile\FileSinkTests.cs" />
     <Compile Include="Sinks\Observable\ObservableSinkTests.cs" />

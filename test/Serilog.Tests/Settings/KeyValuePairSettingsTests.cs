@@ -94,24 +94,5 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.IsNotNull(evt);
             Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
         }
-
-        [Test, Ignore("Requires an App.config file to enable this feature")]
-        public void EnvironmentVariableExpansionIsApplied()
-        {
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                // Only available with ReadFrom.AppSettings()
-                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
-                {
-                    {"enrich:with-property:Path", "%PATH%"}
-                })
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .CreateLogger();
-
-            log.Information("Has a Path property with value expanded from the environment variable");
-
-            Assert.IsNotNull(evt);
-            Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
-        }
     }
 }
