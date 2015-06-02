@@ -14,6 +14,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using Serilog.Configuration;
@@ -23,17 +24,32 @@ namespace Serilog.Settings.AppSettings
 {
     class AppSettingsSettings : ILoggerSettings
     {
+        readonly Action<Dictionary<string, string>> _exposeSettings;
         const string SettingPrefix = "serilog:";
+
+        public AppSettingsSettings(Action<Dictionary<string, string>> exposeSettings = null)
+        {
+            _exposeSettings = exposeSettings;
+        }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
 
             var settings = ConfigurationManager.AppSettings;
-            
-            var pairs = settings.AllKeys
+
+            var serilogSettings = settings.AllKeys
                 .Where(k => k.StartsWith(SettingPrefix))
-                .ToDictionary(k => k.Substring(SettingPrefix.Length), k => Environment.ExpandEnvironmentVariables(settings[k]));
+                .ToDictionary(k => k, k => settings[k]);
+
+            if (_exposeSettings != null)
+            {
+                _exposeSettings(serilogSettings);
+            }
+
+            var pairs = serilogSettings.Keys
+                .Where(k => k.StartsWith(SettingPrefix))
+                .ToDictionary(k => k.Substring(SettingPrefix.Length), k => Environment.ExpandEnvironmentVariables(serilogSettings[k]));
 
             // Add the FullNetFx assembly by default so that all built-in Serilog sinks are available without "using"
             pairs.Add("using:_ImpliedSerilogFullNetFx", typeof(AppSettingsSettings).Assembly.FullName);
