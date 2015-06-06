@@ -1,4 +1,4 @@
-Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj?svg=true)](https://ci.appveyor.com/project/serilog/serilog)
+Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj?svg=true)](https://ci.appveyor.com/project/serilog/serilog) [![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/) 
 =================================================================================================================================================
 
 Serilog combines the best features of traditional and structured diagnostic logging in an easy-to-use package.
