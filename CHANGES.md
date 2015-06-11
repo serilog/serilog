@@ -1,3 +1,6 @@
+1.5.7
+ * #456 - support `ReadFrom.AppSettings()` and friends on .NET 4.0
+
 1.5.6
  * Builds on `master` now derive their version from `CHANGES.md` (rather than vice-versa)
  * #441 - Fix conversion of `Nullable<>` settings
