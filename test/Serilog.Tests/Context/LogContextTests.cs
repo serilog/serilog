@@ -102,6 +102,35 @@ namespace Serilog.Tests.Context
             }
         }
 
+        [Test]
+        public async Task ContextPropertiesPersistWhenCrossAppDomainCallsAreEnabled()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            LogContext.PermitCrossAppDomainCalls = true;
+
+            using (LogContext.PushProperty("A", 1))
+            {
+                var pre = Thread.CurrentThread.ManagedThreadId;
+
+                await Task.Delay(1000);
+
+                var post = Thread.CurrentThread.ManagedThreadId;
+
+                log.Write(Some.InformationEvent());
+                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+
+                // No problem if this happens occasionally.
+                if (pre == post)
+                    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
+            }
+        }
+
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
         // Fails if the Serilog assemblies cannot be loaded in the
