@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using NUnit.Framework;
 using Serilog.Context;
 using Serilog.Events;
@@ -16,7 +17,8 @@ namespace Serilog.Tests.Context
         [SetUp]
         public void Setup()
         {
-            LogContext.Suspend();
+            LogContext.PermitCrossAppDomainCalls = false;
+            CallContext.LogicalSetData(typeof(LogContext).FullName, null);
         }
 
         [Test]
