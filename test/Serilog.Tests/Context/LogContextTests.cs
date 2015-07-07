@@ -13,6 +13,12 @@ namespace Serilog.Tests.Context
     [TestFixture]
     public class LogContextTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            LogContext.Suspend();
+        }
+
         [Test]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
