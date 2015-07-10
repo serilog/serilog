@@ -12,18 +12,20 @@
     <tags>serilog logging events semantic structured</tags>
   </metadata>
   <files>
-    <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
-    <file src="bin\Release\Serilog.xml" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
-    <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
+    <file src="bin\Release\Serilog.dll" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
+    <file src="bin\Release\Serilog.xml" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
+    <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
+	
     <file src="bin\Release\Serilog.dll" target="lib\net45" />
     <file src="bin\Release\Serilog.xml" target="lib\net45" />
     <file src="bin\Release\Serilog.pdb" target="lib\net45" />
     <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.dll" target="lib\net45" />
     <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.xml" target="lib\net45" />
     <file src="..\Serilog.FullNetFx\bin\Release\Serilog.FullNetFx.pdb" target="lib\net45" />
+	
     <file src="bin40\Release\Serilog.dll" target="lib\net40" />
     <file src="bin40\Release\Serilog.xml" target="lib\net40" />
-    <file src="bin40\Release\Serilog.pdb" target="lib\net40" />
+    <file src="bin40\Release\Serilog.pdb" target="lib\net40" />	
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.dll" target="lib\net40" />
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.xml" target="lib\net40" />
     <file src="..\Serilog.FullNetFx\bin40\Release\Serilog.FullNetFx.pdb" target="lib\net40" />
