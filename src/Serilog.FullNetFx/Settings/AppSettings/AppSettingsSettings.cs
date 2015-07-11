@@ -32,7 +32,7 @@ namespace Serilog.Settings.AppSettings
             var settings = ConfigurationManager.AppSettings;
             
             var pairs = settings.AllKeys
-                .Where(k => k.StartsWith(SettingPrefix))
+                .Where(k => k.StartsWith(SettingPrefix, StringComparison.CurrentCulture))
                 .ToDictionary(k => k.Substring(SettingPrefix.Length), k => Environment.ExpandEnvironmentVariables(settings[k]));
 
             // Add the FullNetFx assembly by default so that all built-in Serilog sinks are available without "using"

@@ -110,7 +110,7 @@ namespace Serilog.Sinks.SystemConsole
             string nextLine;
             while ((nextLine = lines.ReadLine()) != null)
             {
-                if (nextLine.StartsWith(StackFrameLinePrefix))
+                if (nextLine.StartsWith(StackFrameLinePrefix, StringComparison.CurrentCulture))
                     SetBaseColors(palette);
                 else
                     SetHighlightColors(palette);

@@ -121,7 +121,7 @@ namespace Serilog.Settings.KeyValuePairs
             var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
 
             foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
-                                                                 d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
+                                                                 d.Key.StartsWith(UsingDirectiveFullFormPrefix, StringComparison.CurrentCulture)))
             {
                 configurationAssemblies.Add(Assembly.Load(new AssemblyName(usingDirective.Value)));
             }

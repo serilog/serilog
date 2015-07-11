@@ -20,8 +20,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\Serilog.FullNetFx.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,8 +62,6 @@
     <Compile Include="Sinks\IOFile\CharacterCountLimitedTextWriter.cs" />
     <Compile Include="Sinks\IOFile\FileSink.cs" />
     <Compile Include="Sinks\IOFile\NullSink.cs" />
-    <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatus.cs" />
-    <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink.cs" />
     <Compile Include="Sinks\RollingFile\Clock.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
     <Compile Include="Sinks\RollingFile\RollingLogFile.cs" />

@@ -43,7 +43,7 @@ namespace Serilog.Filters
         {
             if (source == null) throw new ArgumentNullException("source");
             var sourcePrefix = source + ".";
-            return WithProperty<string>(Constants.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix)));
+            return WithProperty<string>(Constants.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix, StringComparison.CurrentCulture)));
         }
 
         /// <summary>

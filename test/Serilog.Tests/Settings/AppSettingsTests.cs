@@ -23,7 +23,7 @@ namespace Serilog.Extras.AppSettings.Tests
             log.Information("Has a Path property with value expanded from the environment variable");
 
             Assert.IsNotNull(evt);
-            Assert.IsNotNullOrEmpty((string)evt.Properties["Path"].LiteralValue());
+            Assert.IsFalse(string.IsNullOrEmpty((string)evt.Properties["Path"].LiteralValue()));
             Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
     }
