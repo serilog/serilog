@@ -11,7 +11,7 @@
         <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
         <tags>serilog logging events semantic structured</tags>
         <dependencies>
-            <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1">
+            <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS">
                 <dependency id="System.Collections.Concurrent" version="4.0.10-beta-23019" />
             </group>
             <group targetFramework="net45">
@@ -21,9 +21,9 @@
         </dependencies>
     </metadata>    
     <files>
-        <file src="bin\Release\Serilog.dll" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
-        <file src="bin\Release\Serilog.xml" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
-        <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1" />
+        <file src="bin\Release\Serilog.dll" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS" />
+        <file src="bin\Release\Serilog.xml" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS" />
+        <file src="bin\Release\Serilog.pdb" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS" />
 
         <file src="bin\Release\Serilog.dll" target="lib\net45" />
         <file src="bin\Release\Serilog.xml" target="lib\net45" />
