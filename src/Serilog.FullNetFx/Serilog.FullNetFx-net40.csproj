@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin40\Debug\Serilog.FullNetFx.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin40\Release\Serilog.FullNetFx.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -47,6 +47,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Serilog\Sinks\PeriodicBatching\BatchedConnectionStatus.cs">
+      <Link>Sinks\PeriodicBatching\BatchedConnectionStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\Serilog\Sinks\PeriodicBatching\PeriodicBatchingSink-net40.cs">
+      <Link>Sinks\PeriodicBatching\PeriodicBatchingSink-net40.cs</Link>
+    </Compile>
     <Compile Include="Context\ImmutableStack.cs" />
     <Compile Include="Enrichers\LogContextEnricher.cs" />
     <Compile Include="Enrichers\ProcessIdEnricher.cs" />
@@ -62,8 +68,6 @@
     <Compile Include="Sinks\IOFile\CharacterCountLimitedTextWriter.cs" />
     <Compile Include="Sinks\IOFile\FileSink.cs" />
     <Compile Include="Sinks\IOFile\NullSink.cs" />
-    <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatus.cs" />
-    <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink-net40.cs" />
     <Compile Include="Sinks\RollingFile\Clock.cs" />
     <Compile Include="Sinks\RollingFile\RollingFileSink.cs" />
     <Compile Include="Sinks\RollingFile\RollingLogFile.cs" />

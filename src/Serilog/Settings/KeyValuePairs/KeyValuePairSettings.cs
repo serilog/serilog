@@ -68,7 +68,7 @@ namespace Serilog.Settings.KeyValuePairs
             }
 
             foreach (var enrichDirective in directives.Where(dir =>
-                dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
+                dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix, StringComparison.CurrentCulture) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
             {
                 var name = enrichDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
                 loggerConfiguration.Enrich.WithProperty(name, enrichDirective.Value);

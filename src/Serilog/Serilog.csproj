@@ -31,10 +31,10 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;_USE_PCL_TIMER_CUSTOM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\Serilog.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -69,6 +69,7 @@
     <Compile Include="Filters\Matching.cs" />
     <Compile Include="Formatting\Display\LiteralStringValue.cs" />
     <Compile Include="Formatting\Raw\RawFormatter.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\GetablePropertyFinder.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />

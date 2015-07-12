@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\Serilog.FullNetFx.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -53,6 +53,7 @@
     <Compile Include="Enrichers\MachineNameEnricher.cs" />
     <Compile Include="Enrichers\ThreadIdEnricher.cs" />
     <Compile Include="Context\LogContext.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LoggerConfigurationFullNetFxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\assets\CommonAssemblyInfo.cs">

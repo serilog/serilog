@@ -97,6 +97,7 @@
     <Compile Include="Events\LogEventPropertyValueTests.cs" />
     <Compile Include="Filters\MatchingTests.cs" />
     <Compile Include="Formatting\Display\MessageTemplateTextFormatterTests.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LoggerConfigurationTests.cs" />
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />
