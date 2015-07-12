@@ -1,53 +1,80 @@
-Param(
-    [Parameter(Position=1,Mandatory=0)]
-    [string[]]$task_list = @(),
-
-	[Parameter()]
-	[string]$Configuration = "Release",
-
-	[Parameter()]
-    [string]$BuildMetaData,
-
-	[Parameter()]
-    [string]$version,
-
-	[Parameter()]
-    [string]$patch
+param(
+    [String] $majorMinor = "0.0",  # 1.4
+    [String] $patch = "0",         # $env:APPVEYOR_BUILD_VERSION
+    [String] $customLogger = "",   # C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll
+    [Switch] $notouch
 )
 
-$build_file = 'default.ps1'
-
-# Properties for the psake build script
-$properties = @{
-
-    # Build configuration to use
-    "configuration" = $Configuration;
-
-    # Version number to use if running the Publish build task.
-    # This will be read from the command line args
-    "version_override"       = $version;
-
-	# Build number metadata that will be appended to main version number (patch level, pre-build, etc)
-	"build_meta" = $patch;
-	
-    # Path to the solution file
-    "solutions"  = @('Serilog.sln', 'Serilog-net40.sln');
-
-    # Folder containing source code
-    "source_folder" = '';
-
-    # Folder to output deployable packages to. This folder should be ignored
-    # from any source control, as we don't commit build artefacts to source
-    # control
-    "deploy_folder" = 'deploy';
-	
-	"build_folder" = 'build';
-
-    "projects" = @(    
-	)
-
+function Set-AssemblyVersions($informational, $assembly)
+{
+    (Get-Content assets/CommonAssemblyInfo.cs) |
+        ForEach-Object { $_ -replace """1.0.0.0""", """$assembly""" } |
+        ForEach-Object { $_ -replace """1.0.0""", """$informational""" } |
+        ForEach-Object { $_ -replace """1.1.1.1""", """$($informational).0""" } |
+        Set-Content assets/CommonAssemblyInfo.cs
 }
 
-import-module .\packages\psake.4.4.2\tools\psake.psm1
+function Install-NuGetPackages()
+{
+    nuget restore Serilog.sln
+}
 
-invoke-psake $build_file $task_list -Properties $properties
+function Invoke-MSBuild($solution, $customLogger)
+{
+    if ($customLogger)
+    {
+        msbuild "$solution" /verbosity:minimal /p:Configuration=Release /logger:"$customLogger"
+    }
+    else
+    {
+        msbuild "$solution" /verbosity:minimal /p:Configuration=Release
+    }
+}
+
+function Invoke-NuGetPackProj($csproj)
+{
+    nuget pack -Prop Configuration=Release -Symbols $csproj
+}
+
+function Invoke-NuGetPackSpec($nuspec, $version)
+{
+    nuget pack $nuspec -Version $version -OutputDirectory ..\..\
+}
+
+function Invoke-NuGetPack($version)
+{
+    ls src/**/*.csproj |
+        Where-Object { -not ($_.Name -like "*net40*") } |
+        Where-Object { -not ($_.Name -like "*FullNetFx*") } |
+        Where-Object { -not ($_.Name -eq "Serilog.csproj") } |
+        ForEach-Object { Invoke-NuGetPackProj $_ }
+
+    pushd .\src\Serilog
+    Invoke-NuGetPackSpec "Serilog.nuspec" $version
+    popd
+}
+
+function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
+{
+    $package="$majorMinor.$patch"
+
+    Write-Output "Building Serilog $package"
+
+    if (-not $notouch)
+    {
+        $assembly = "$majorMinor"
+
+        Write-Output "Assembly version will be set to $assembly"
+        Set-AssemblyVersions $package $assembly
+    }
+
+    Install-NuGetPackages
+    
+    Invoke-MSBuild "Serilog-net40.sln" $customLogger
+    Invoke-MSBuild "Serilog.sln" $customLogger
+
+    Invoke-NuGetPack $package
+}
+
+$ErrorActionPreference = "Stop"
+Invoke-Build $majorMinor $patch $customLogger $notouch
