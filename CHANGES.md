@@ -1,3 +1,6 @@
+1.5.8
+ * #484 - generic overloads on `Log` to avoid boxing/allocation
+
 1.5.7
  * #456 - support `ReadFrom.AppSettings()` and friends on .NET 4.0
 
