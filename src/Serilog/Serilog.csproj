@@ -20,20 +20,21 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;_USE_PCL_TIMER_CUSTOM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\Serilog.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;_USE_PCL_TIMER_CUSTOM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\Serilog.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -42,9 +43,6 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ILoggerSettings.cs" />
     <Compile Include="Configuration\LoggerDestructuringConfiguration.cs" />
@@ -71,6 +69,7 @@
     <Compile Include="Filters\Matching.cs" />
     <Compile Include="Formatting\Display\LiteralStringValue.cs" />
     <Compile Include="Formatting\Raw\RawFormatter.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Parameters\DepthLimiter.cs" />
     <Compile Include="Parameters\GetablePropertyFinder.cs" />
     <Compile Include="Parameters\MessageTemplateProcessor.cs" />
@@ -123,15 +122,24 @@
     <Compile Include="Settings\KeyValuePairs\KeyValuePairSettings.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink.cs" />
+    <Compile Include="Sinks\PeriodicBatching\BatchedConnectionStatus.cs" />
+    <Compile Include="Sinks\PeriodicBatching\PeriodicBatchingSink.cs" />
+    <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
       <Link>Serilog.snk</Link>
     </None>
+    <None Include="packages.config" />
     <None Include="Serilog.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="System.Collections.Concurrent, Version=4.0.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Concurrent.4.0.10-beta-23019\lib\dotnet\System.Collections.Concurrent.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

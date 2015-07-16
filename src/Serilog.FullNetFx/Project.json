@@ -1,7 +1,8 @@
-﻿{
+{
     "version": "1.0.0-beta-*",
     "dependencies": {
-        "Serilog": ""
+        "Serilog": "",
+        "System.Text.Encoding": "4.0.10-beta-22816"
     },
     "code": "**/*.cs",
     "exclude": "**/*-net40.cs",

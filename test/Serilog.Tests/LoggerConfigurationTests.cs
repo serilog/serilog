@@ -171,8 +171,8 @@ namespace Serilog.Tests
             log.Information("{@X}", x);
             var xs = evt.Properties["X"].ToString();
 
-            Assert.That(xs, Is.StringContaining("C"));
-            Assert.That(xs, Is.Not.StringContaining("D"));
+            Assert.That(xs, Does.Contain("C"));
+            Assert.That(xs, Does.Not.Contain("D"));
         }
     }
 }

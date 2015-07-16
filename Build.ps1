@@ -1,17 +1,16 @@
 param(
     [String] $majorMinor = "0.0",  # 1.4
     [String] $patch = "0",         # $env:APPVEYOR_BUILD_VERSION
-    [String] $branch = "private",  # $env:APPVEYOR_REPO_BRANCH
     [String] $customLogger = "",   # C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll
     [Switch] $notouch
 )
 
-function Set-AssemblyVersions($informational, $file, $assembly)
+function Set-AssemblyVersions($informational, $assembly)
 {
     (Get-Content assets/CommonAssemblyInfo.cs) |
         ForEach-Object { $_ -replace """1.0.0.0""", """$assembly""" } |
         ForEach-Object { $_ -replace """1.0.0""", """$informational""" } |
-        ForEach-Object { $_ -replace """1.1.1.1""", """$file""" } |
+        ForEach-Object { $_ -replace """1.1.1.1""", """$($informational).0""" } |
         Set-Content assets/CommonAssemblyInfo.cs
 }
 
@@ -55,24 +54,18 @@ function Invoke-NuGetPack($version)
     popd
 }
 
-function Invoke-Build($majorMinor, $patch, $branch, $customLogger, $notouch)
+function Invoke-Build($majorMinor, $patch, $customLogger, $notouch)
 {
-    $target = (Get-Content ./CHANGES.md -First 1).Trim()
-    $file = "$target.$patch"
-    $package = $target
-    if ($branch -ne "master")
-    {
-        $package = "$target-pre-$patch"
-    }
+    $package="$majorMinor.$patch"
 
     Write-Output "Building Serilog $package"
 
     if (-not $notouch)
     {
-        $assembly = "$majorMinor.0.0"
+        $assembly = "$majorMinor"
 
         Write-Output "Assembly version will be set to $assembly"
-        Set-AssemblyVersions $package $file $assembly
+        Set-AssemblyVersions $package $assembly
     }
 
     Install-NuGetPackages
@@ -84,4 +77,4 @@ function Invoke-Build($majorMinor, $patch, $branch, $customLogger, $notouch)
 }
 
 $ErrorActionPreference = "Stop"
-Invoke-Build $majorMinor $patch $branch $customLogger $notouch
+Invoke-Build $majorMinor $patch $customLogger $notouch

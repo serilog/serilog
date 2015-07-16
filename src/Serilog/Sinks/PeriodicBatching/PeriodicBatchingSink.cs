@@ -57,19 +57,6 @@ namespace Serilog.Sinks.PeriodicBatching
             _queue = new ConcurrentQueue<LogEvent>();
             _timer = new Timer(s => OnTick());
             _status = new BatchedConnectionStatus(period);
-
-            AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
-            AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
-            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
-        }
-
-        void OnAppDomainUnloading(object sender, EventArgs args)
-        {
-            var eventArgs = args as UnhandledExceptionEventArgs;
-            if (eventArgs != null && !eventArgs.IsTerminating) 
-                return;
-
-            CloseAndFlush();
         }
 
         void CloseAndFlush()
@@ -81,10 +68,6 @@ namespace Serilog.Sinks.PeriodicBatching
 
                 _unloading = true;
             }
-
-            AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
-            AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
-            AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnloading;
 
             var wh = new ManualResetEvent(false);
             if (_timer.Dispose(wh))
@@ -145,7 +128,7 @@ namespace Serilog.Sinks.PeriodicBatching
                 bool batchWasFull;
                 do
                 {
-                    LogEvent next;
+                    LogEvent next = null;
                     while (_waitingBatch.Count < _batchSizeLimit &&
                         _queue.TryDequeue(out next))
                     {
@@ -180,11 +163,11 @@ namespace Serilog.Sinks.PeriodicBatching
                     while (_queue.TryDequeue(out evt)) { }
                 }
 
-                lock (_stateLock)
-                {
-                    if (!_unloading)
-                        _timer.Change(_status.NextInterval, Timeout.InfiniteTimeSpan);
-                }
+                //lock (_stateLock)
+                //{
+                //    if (!_unloading)
+                //        _timer.Change(_status.NextInterval, Timeout.InfiniteTimeSpan);
+                //}
             }
         }
 
@@ -211,7 +194,7 @@ namespace Serilog.Sinks.PeriodicBatching
                     // Special handling to try to get the first event across as quickly
                     // as possible to show we're alive!
                     _started = true;
-                    _timer.Change(TimeSpan.Zero, Timeout.InfiniteTimeSpan);
+                    //_timer.Change(TimeSpan.Zero, Timeout.InfiniteTimeSpan);
                 }
             }
 

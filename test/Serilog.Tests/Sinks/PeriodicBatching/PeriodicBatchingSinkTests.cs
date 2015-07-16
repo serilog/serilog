@@ -31,6 +31,8 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             lock (_stateLock)
             {
                 _stopped = true;
+
+                base.Dispose(true);
             }
         }
 

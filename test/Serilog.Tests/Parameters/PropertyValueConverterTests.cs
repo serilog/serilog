@@ -141,7 +141,7 @@ namespace Serilog.Tests.Parameters
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (string)pv.LiteralValue();
-            Assert.That(lv.EndsWith("(1025 bytes)"));
+            Assert.That(lv.EndsWith("(1025 bytes)", StringComparison.Ordinal));
         }
 
         public class Thrower

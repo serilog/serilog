@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -12,8 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		.editorconfig = .editorconfig
 		Build.ps1 = Build.ps1
 		assets\CommonAssemblyInfo.cs = assets\CommonAssemblyInfo.cs
+		default.ps1 = default.ps1
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog", "src\Serilog\Serilog.csproj", "{0915DBD9-0F7C-4439-8D9E-74C3D579B219}"
@@ -27,6 +29,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.SmokeTest", "test\Serilog.SmokeTest\Serilog.SmokeTest.csproj", "{58563C46-B781-4799-ABD5-9745F94478FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.MsTests", "test\Serilog.MsTests\Serilog.MsTests.csproj", "{7FC9FC46-5014-4461-A448-815E6CCE21E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2AF81E25-171E-4A48-8A5D-744EA1A05DC8}"
+	ProjectSection(SolutionItems) = preProject
+		nuspec.xsd = nuspec.xsd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
