@@ -46,15 +46,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Serilog.FullNetFx\Serilog.FullNetFx.csproj">
-      <Project>{7a9e1095-167d-402a-b43d-b36b97ff183d}</Project>
-      <Name>Serilog.FullNetFx</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Serilog\Serilog.csproj">
-      <Project>{0915DBD9-0F7C-4439-8D9E-74C3D579B219}</Project>
-      <Name>Serilog</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

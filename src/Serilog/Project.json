@@ -1,31 +1,80 @@
 ﻿{
-    "version": "1.0.0-beta-*",
-    "dependencies": { },
-    "code": "**/*.cs",
-    "exclude": "**/*net40.cs",
-
+    "version": "2.0.0-beta-*",
+    "description": "Simple .NET logging with fully-structured events",
+    "authors": [ "Serilog Contributors" ],
+    "tags": [ "serilog", "logging", "semantic", "structured" ],
+    "projectUrl": "http://serilog.net",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "frameworks": {
-        "aspnetcore50": {
+        "net40": {
+            "compilationOptions": {
+                "define": [ "NET40" ],
+                "keyFile": "..\\assets\\Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Configuration": "",
+                "Microsoft.CSharp": ""
+            },
             "dependencies": {
-                "Microsoft.CSharp": "4.0.0-beta-22231",
-                "System.Collections": "4.0.10-beta-22231",
-                "System.Collections.Concurrent": "4.0.0-beta-22231",
-                "System.Collections.NonGeneric": "4.0.0-beta-22231",
-                "System.Collections.Specialized": "4.0.0-beta-22231",
-                "System.Diagnostics.Debug": "4.0.10-beta-22231",
-                "System.Diagnostics.Tools": "4.0.0-beta-22231",
-                "System.Dynamic.Runtime": "4.0.0-beta-22231",
-                "System.Globalization": "4.0.10-beta-22231",
-                "System.Globalization.Calendars": "4.0.0-beta-22231",
-                "System.IO": "4.0.10-beta-22231",
-                "System.Linq": "4.0.0-beta-*",
-                "System.Net.Sockets": "4.0.0-beta-22231",
-                "System.ObjectModel": "4.0.0-beta-22231",
-                "System.Reflection": "4.0.10-beta-22231",
-                "System.Runtime": "4.0.20-beta-22231",
-                "System.Runtime.Extensions": "4.0.10-beta-22231",
-                "System.Threading": "4.0.0-beta-22231",
-                "System.Threading.Thread": "4.0.0-beta-22231"
+                "Microsoft.Bcl.Async": "1.0.168"
+            }
+        },
+        "net45": {
+            "compilationOptions": {
+                "define": [ "NET45" ],
+                "keyFile": "..\\assets\\Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Configuration": ""
+            }
+        },
+        "dnx451": {
+            "compilationOptions": {
+                "keyFile": "..\\assets\\Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Runtime": "",
+                "System.Configuration": ""
+            }
+        },
+        ".NETPortable,Version=v4.5,Profile=Profile259": {
+            "compilationOptions": {
+                "define": [ "PROFILE259" ]
+            },
+            "frameworkAssemblies": {
+                "System.Collections": "",
+                "System.Globalization": "",
+                "System.Runtime": "",
+                "System.Runtime.Extensions": "",
+                "System.Linq": "",
+                "System.IO": "",
+                "System.Reflection": "",
+                "System.Reflection.Extensions": "",
+                "System.Text.RegularExpressions": "",
+                "System.Diagnostics.Debug": "",
+                "System.Threading": "",
+                "System.Threading.Tasks": "",
+                "Microsoft.CSharp": ""
+            }
+        },
+        "dnxcore50": {
+            "compilationOptions": {
+                "define": [ "DNXCORE50" ]
+            },
+            "dependencies": {
+                "System.Collections": "4.0.10-beta-23019",
+                "System.Console": "4.0.0-beta-23019",
+                "System.Linq": "4.0.0-beta-23019",
+                "System.Text.RegularExpressions": "4.0.0-beta-23019",
+                "System.Threading": "4.0.10-beta-23019",
+                "System.Threading.Thread": "4.0.0-beta-23019",
+                "System.Threading.Timer": "4.0.0-beta-23019",
+                "Microsoft.CSharp": "4.0.0-beta-23019",
+                "System.Runtime": "4.0.20-beta-23019",
+                "System.Runtime.Extensions": "4.0.10-beta-23019",
+                "System.IO.FileSystem": "4.0.0-beta-23019",
+                "System.Diagnostics.TraceSource": "4.0.0-beta-23019",
+                "System.Diagnostics.Process": "4.0.0-beta-23019"
             }
         }
     }

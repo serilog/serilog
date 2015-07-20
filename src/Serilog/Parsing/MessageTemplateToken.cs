@@ -13,9 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using Serilog.Events;
+
+#if NET40
+using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#else
+using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#endif
 
 namespace Serilog.Parsing
 {
@@ -54,6 +58,6 @@ namespace Serilog.Parsing
         /// <param name="properties">Properties that may be represented by the token.</param>
         /// <param name="output">Output for the rendered string.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public abstract void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null);
+        public abstract void Render(IPropertyDictionary properties, TextWriter output, IFormatProvider formatProvider = null);
     }
 }

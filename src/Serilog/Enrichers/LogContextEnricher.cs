@@ -12,28 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Reflection;
+#if !PROFILE259 && !DNXCORE50
+using Serilog.Context;
 using Serilog.Core;
 using Serilog.Events;
 
-#if NET40
-using Serilog.Platform;
-#endif
-
-namespace Serilog.Policies
+namespace Serilog.Enrichers
 {
-    class EnumScalarConversionPolicy : IScalarConversionPolicy
+    sealed class LogContextEnricher : ILogEventEnricher
     {
-        public bool TryConvertToScalar(object value, ILogEventPropertyValueFactory propertyValueFactory, out ScalarValue result)
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            if (value.GetType().GetTypeInfo().IsEnum)
-            {
-                result = new ScalarValue(value);
-                return true;
-            }
-
-            result = null;
-            return false;
+            LogContext.Enrich(logEvent, propertyFactory);
         }
     }
 }
+#endif

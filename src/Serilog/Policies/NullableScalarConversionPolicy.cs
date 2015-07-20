@@ -23,13 +23,26 @@ namespace Serilog.Policies
         public bool TryConvertToScalar(object value, ILogEventPropertyValueFactory propertyValueFactory, out ScalarValue result)
         {
             var type = value.GetType();
-            if (!type.IsConstructedGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+            if (!
+#if NET40
+                type.IsGenericType
+#else
+                type.IsConstructedGenericType
+#endif
+                || type.GetGenericTypeDefinition() != typeof(Nullable<>))
             {
                 result = null;
                 return false;
             }
 
-            var targetType = type.GenericTypeArguments[0];
+            var targetType =
+#if NET40
+                type.GetGenericArguments()
+#else
+                type.GenericTypeArguments
+#endif
+                [0];
+
             var innerValue = Convert.ChangeType(value, targetType);
             result = propertyValueFactory.CreatePropertyValue(innerValue) as ScalarValue;
             return result != null;
