@@ -10,6 +10,14 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <iconUrl>http://serilog.net/images/serilog-nuget.png</iconUrl>
     <tags>serilog logging events semantic structured</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System.Runtime" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="System.IO" targetFramework="dnx451" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="dnx451" />
+    </frameworkAssemblies>
   </metadata>
   <files>
     <file src="bin\Release\Serilog.dll" target="lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10" />
