@@ -24,7 +24,6 @@ using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Raw;
 using Serilog.Settings.AppSettings;
-using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.DiagnosticTrace;
 using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
@@ -266,13 +265,14 @@ namespace Serilog
         /// containing sinks, use <code>serilog:using</code>. To set the level use 
         /// <code>serilog:minimum-level</code>.
         /// </summary>
-        /// <param name="settingConfiguration">Logger setting configuration</param>
+        /// <param name="settingConfiguration">Logger setting configuration.</param>
+        /// <param name="exposeSettings">Action allowing changes to the Serilog settings read from the App.config.</param>
         /// <returns>An object allowing configuration to continue.</returns>
         public static LoggerConfiguration AppSettings(
-            this LoggerSettingsConfiguration settingConfiguration)
+            this LoggerSettingsConfiguration settingConfiguration, Action<Dictionary<string, string>> exposeSettings = null)
         {
             if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
-            return settingConfiguration.Settings(new AppSettingsSettings());
+            return settingConfiguration.Settings(new AppSettingsSettings(exposeSettings));
         }
     }
 }
