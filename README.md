@@ -5,8 +5,7 @@
 
 Branch  | Status
 ------------- | -------------
-dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev) 
-dev-v2  | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev-v2?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev-v2)
+dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev)  
 
 Serilog combines the best features of traditional and structured diagnostic logging in an easy-to-use package.
 
