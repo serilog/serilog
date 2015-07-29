@@ -174,5 +174,120 @@ namespace Serilog.Tests
             Assert.That(xs, Is.StringContaining("C"));
             Assert.That(xs, Is.Not.StringContaining("D"));
         }
+
+        [Test]
+        public void ResetClearsAllConfiguration()
+        {
+            var enricherUsed = false;
+            var filterUsed = false;
+            var sink1Used = false;
+
+            var events = new List<LogEvent>();
+            var filter = new DelegateFilter(e => { filterUsed = true; return true; });
+            var sink1 = new DelegatingSink(e => sink1Used = true);
+            var sink2 = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink1)
+                .Enrich.With(new DelegatingEnricher((e, f) => enricherUsed = true))
+                .Filter.With(filter)
+                .Destructure.AsScalar<AB>()
+                .MinimumLevel.Error()
+                .Reset()
+                .WriteTo.Sink(sink2)
+                .CreateLogger();
+
+            logger.Information("{@AB}", new AB());
+
+            Assert.AreEqual(1, events.Count);
+
+            var abProp = events.First().Properties["AB"];
+            Assert.IsInstanceOf<StructureValue>(abProp);
+
+            Assert.False(enricherUsed);
+            Assert.False(filterUsed);
+            Assert.False(sink1Used);
+        }
+
+        [Test]
+        public void ClearingSinksRemovesAllSinks()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .ClearSinks()
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.IsEmpty(events);
+        }
+
+        [Test]
+        public void ClearingEnrichersRemovesAllEnrichers()
+        {
+            var enricherUsed = false;
+
+            var logger = new LoggerConfiguration()
+                .Enrich.With(new DelegatingEnricher((e, f) => enricherUsed = true))
+                .ClearEnrichers()
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.False(enricherUsed);
+        }
+
+        [Test]
+        public void ClearingFiltersRemovesAllFilters()
+        {
+            var @event = Some.InformationEvent();
+
+            var filter = new DelegateFilter(e => false);
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .Filter.With(filter)
+                .ClearFilters()
+                .CreateLogger();
+
+            logger.Write(@event);
+
+            Assert.AreEqual(1, events.Count);
+            Assert.That(events.Contains(@event));
+        }
+
+        // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
+        class CD { public int C { get; set; } public int D { get; set; } }
+        // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
+
+        [Test]
+        public void ClearingDesctructureRemovesAllConfig()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .Destructure.AsScalar<AB>()
+                .Destructure.ByTransforming<CD>(cd => new { E = cd.D })
+                .ClearDestructureConfig()
+                .CreateLogger();
+
+            logger.Information("{@AB} {@CD}", new AB(), new CD());
+
+            var ev = events.Single();
+            var abProp = ev.Properties["AB"];
+            Assert.IsInstanceOf<StructureValue>(abProp);
+
+            var cdProp = (StructureValue) ev.Properties["CD"];
+            Assert.AreEqual(2, cdProp.Properties.Count);
+            Assert.AreEqual("C", cdProp.Properties[0].Name);
+            Assert.AreEqual("D", cdProp.Properties[1].Name);
+        }
     }
 }
