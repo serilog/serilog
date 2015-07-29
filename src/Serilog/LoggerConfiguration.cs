@@ -29,14 +29,38 @@ namespace Serilog
     /// </summary>
     public class LoggerConfiguration
     {
-        readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
-        readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>(); 
-        readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
-        readonly List<Type> _additionalScalarTypes = new List<Type>();
-        readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-        
-        LogEventLevel _minimumLevel = LogEventLevel.Information;
+        /// <summary>
+        /// The sinks that log events will be emitted to.
+        /// </summary>
+        protected readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
+
+        /// <summary>
+        /// Enrichers of <see cref="LogEvent"/>s.
+        /// </summary>
+        protected readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>();
+
+        /// <summary>
+        /// Global filters of <see cref="LogEvent"/>s.
+        /// </summary>
+        protected readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
+
+        /// <summary>
+        /// Types to be destructed as scalar values.
+        /// </summary>
+        protected readonly List<Type> _additionalScalarTypes = new List<Type>();
+
+        /// <summary>
+        /// Policies for destructuring certain objects.
+        /// </summary>
+        protected readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
+
+        /// <summary>
+        /// Minimum logging level.
+        /// </summary>
+        protected LogEventLevel _minimumLevel = LogEventLevel.Information;
+
         LoggingLevelSwitch _levelSwitch;
+
         int _maximumDestructuringDepth = 10;
 
         /// <summary>
