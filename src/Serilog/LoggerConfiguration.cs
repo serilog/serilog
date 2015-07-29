@@ -140,6 +140,56 @@ namespace Serilog
         }
 
         /// <summary>
+        /// Resets the configuration object to its original default state.
+        /// </summary>
+        public LoggerConfiguration Reset()
+        {
+            ClearSinks();
+            ClearEnrichers();
+            ClearFilters();
+            ClearDestructureConfig();
+            _minimumLevel = LogEventLevel.Information;
+            return this;
+        }
+
+        /// <summary>
+        /// Removes all configured sinks.
+        /// </summary>
+        public LoggerConfiguration ClearSinks()
+        {
+            _logEventSinks.Clear();
+            return this;
+        }
+
+        /// <summary>
+        /// Removes all configured enrichers.
+        /// </summary>
+        public LoggerConfiguration ClearEnrichers()
+        {
+            _enrichers.Clear();
+            return this;
+        }
+
+        /// <summary>
+        /// Removes all configured filters.
+        /// </summary>
+        public LoggerConfiguration ClearFilters()
+        {
+            _filters.Clear();
+            return this;
+        }
+
+        /// <summary>
+        /// Removes all configured destructuring customizations.
+        /// </summary>
+        public LoggerConfiguration ClearDestructureConfig()
+        {
+            _additionalScalarTypes.Clear();
+            _additionalDestructuringPolicies.Clear();
+            return this;
+        }
+
+        /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
         /// </summary>
         /// <returns>The logger.</returns>
