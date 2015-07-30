@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Display
@@ -51,6 +52,11 @@ namespace Serilog.Formatting.Display
         public const string ExceptionPropertyName = "Exception";
 
         /// <summary>
+        /// Message which will be rendered in place of an exception if the original exception could not be rendered
+        /// </summary>
+        public const string FailedToRenderExceptionMessage = "-Could Not Render Exception-";
+
+        /// <summary>
         /// Create properties from the provided log event.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
@@ -68,10 +74,45 @@ namespace Serilog.Formatting.Display
             result[LevelPropertyName] = new ScalarValue(logEvent.Level);
             result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
 
-            var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
+            var exception = RenderException(logEvent.Exception);
             result[ExceptionPropertyName] = new LiteralStringValue(exception);
 
             return result;
+        }
+        
+        /// <summary>
+        /// Renders an exception to a string
+        /// </summary>
+        /// <param name="exception">Exception to render</param>
+        private static string RenderException(Exception exception)
+        {
+            if (exception != null)
+            {
+                // Handle exception which themselves throw exceptions when rendered - don't prevent
+                // the log message from being written!
+                try
+                {
+                    return exception + Environment.NewLine;
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Failed to Render Exception via ToString(): " + ex);
+
+                    // .ToString() on the exception threw - render a fallback representation
+                    try
+                    {
+                        return String.Format("Exception {0}: {1}", exception.GetType().FullName, exception.Message) 
+                            + Environment.NewLine;
+                    }
+                    catch (Exception)
+                    {
+                        // .Message on the exception also threw, just render a static complaint
+                        return FailedToRenderExceptionMessage + Environment.NewLine;
+                    }
+                }
+            }
+
+            return String.Empty;
         }
     }
 }
