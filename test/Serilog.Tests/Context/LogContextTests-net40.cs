@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿#if NET40
+using NUnit.Framework;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -38,3 +39,4 @@ namespace Serilog.Tests.Context
         }
     }
 }
+#endif

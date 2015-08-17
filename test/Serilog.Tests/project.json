@@ -1,0 +1,11 @@
+﻿{
+    "dependencies": {
+        "Newtonsoft.Json": "6.0.6",
+        "NUnit": "2.6.4",
+        "Rx-Main": "2.2.5",
+        "Serilog": ""
+    },
+    "frameworks": {
+        "dnx451": { }
+    }
+}
