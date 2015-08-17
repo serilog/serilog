@@ -1,8 +1,12 @@
 ﻿{
+    "version": "2.0.0-beta-*",
+    "commands": {
+        "test": "xunit.runner.dnx"
+    },
     "dependencies": {
         "Newtonsoft.Json": "6.0.6",
         "Rx-Main": "2.2.5",
-        "Serilog": "",
+        "Serilog": "2.0.0-beta-*",
         "xunit": "2.1.0-beta4-*",
         "xunit.runner.dnx": "2.1.0-beta4-*"
     },
