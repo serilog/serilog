@@ -29,7 +29,7 @@ namespace Serilog.Tests.Sinks.TextWriter
         {
             var sw = new StringWriter();
 
-            var french = CultureInfo.GetCultureInfo("fr-FR");
+            var french = new CultureInfo("fr-FR");
             var log = new LoggerConfiguration()
                 .WriteTo.TextWriter(sw, formatProvider: french)
                 .CreateLogger();

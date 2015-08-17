@@ -61,8 +61,8 @@ namespace Serilog.Tests.Events
         {
             var num = Some.Decimal();
             var value = _converter.CreatePropertyValue(num, Destructuring.Default);
-            var str = value.ToString(null, CultureInfo.GetCultureInfo("fr-FR"));
-            Assert.Equal(num.ToString(CultureInfo.GetCultureInfo("fr-FR")), str);
+            var str = value.ToString(null, new CultureInfo("fr-FR"));
+            Assert.Equal(num.ToString(new CultureInfo("fr-FR")), str);
         }
 
         [Fact]

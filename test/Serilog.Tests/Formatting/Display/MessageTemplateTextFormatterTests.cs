@@ -11,7 +11,7 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void UsesFormatProvider()
         {
-            var french = CultureInfo.GetCultureInfo("fr-FR");
+            var french = new CultureInfo("fr-FR");
             var formatter = new MessageTemplateTextFormatter("{Message}", french);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{0}", 12.345));
             var sw = new StringWriter();

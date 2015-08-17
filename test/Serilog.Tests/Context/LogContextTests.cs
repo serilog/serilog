@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !DNXCORE50
+using System;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
 using Xunit;
@@ -208,3 +209,4 @@ namespace Serilog.Tests.Context
         }
     }
 }
+#endif

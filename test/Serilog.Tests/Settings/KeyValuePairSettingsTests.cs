@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
@@ -61,7 +62,12 @@ namespace Serilog.Extras.AppSettings.Tests
         public void FindsConfigurationMethodsWithinAnAssembly()
         {
             var configurationMethods = KeyValuePairSettings
-                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink).Assembly })
+                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink)
+#if DNXCORE50
+                    .GetTypeInfo()
+#endif
+                    .Assembly
+                    })
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();

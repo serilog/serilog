@@ -26,7 +26,7 @@ namespace Serilog.Tests.Formatting.Json
                 new LogEventProperty[0]);
 
             var formatted = FormatJson(@event);
-            
+
             Assert.Equal(
                 "2013-03-11T15:59:00.1230000+10:00",
                 (string)formatted.Timestamp);
@@ -83,7 +83,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
 
-            Assert.Equal(value.ToString(CultureInfo.InvariantCulture), (string)formatted.Properties[name]);
+            Assert.Equal(value.ToString(), (string)formatted.Properties[name]);
         }
 
         [Fact]

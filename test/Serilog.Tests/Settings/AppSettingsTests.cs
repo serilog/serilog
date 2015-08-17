@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿#if !DNXCORE50
+using System.Configuration;
 using Xunit;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -27,3 +28,4 @@ namespace Serilog.Extras.AppSettings.Tests
         }
     }
 }
+#endif

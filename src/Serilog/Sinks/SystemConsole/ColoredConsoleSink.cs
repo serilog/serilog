@@ -26,7 +26,7 @@ using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Seril
 using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
 #endif
 
-#if !PROFILE259 && !DNXCORE50
+#if !PROFILE259
 namespace Serilog.Sinks.SystemConsole
 {
     class ColoredConsoleSink : ILogEventSink

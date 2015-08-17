@@ -4,13 +4,14 @@
         "test": "xunit.runner.dnx"
     },
     "dependencies": {
-        "Newtonsoft.Json": "6.0.6",
+        "Newtonsoft.Json": "7.0.1",
         "Rx-Main": "2.2.5",
         "Serilog": "2.0.0-beta-*",
         "xunit": "2.1.0-beta4-*",
         "xunit.runner.dnx": "2.1.0-beta4-*"
     },
     "frameworks": {
-        "dnx451": { }
+        "dnx451": { },
+        "dnxcore50": { }
     }
 }

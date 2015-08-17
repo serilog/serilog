@@ -69,7 +69,6 @@ namespace Serilog
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
 
-#if !DNXCORE50
         /// <summary>
         /// Writes log events to <see cref="System.Console"/>, using color to differentiate
         /// between levels.
@@ -91,7 +90,6 @@ namespace Serilog
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
             return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel);
         }
-#endif
 
         /// <summary>
         /// Write log events in a simple text dump format to the specified file.

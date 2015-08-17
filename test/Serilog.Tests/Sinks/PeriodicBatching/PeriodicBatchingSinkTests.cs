@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !DNXCORE50
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -19,7 +20,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         // Post-mortem only
         public bool WasCalledAfterDisposal { get; private set; }
         public IList<IList<LogEvent>> Batches { get; private set; }
- 
+
         public InMemoryPeriodicBatchingSink(int batchSizeLimit, TimeSpan period, TimeSpan batchEmitDelay) : base(batchSizeLimit, period)
         {
             _batchEmitDelay = batchEmitDelay;
@@ -101,3 +102,4 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         }
     }
 }
+#endif

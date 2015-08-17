@@ -46,7 +46,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void AnObjectIsRenderedInSimpleNotationUsingFormatProvider()
         {
-            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "I received {@Receipt}", new Receipt());
+            var m = Render(new CultureInfo("fr-FR"), "I received {@Receipt}", new Receipt());
             Assert.Equal("I received Receipt { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
         }
 
@@ -60,7 +60,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutTypeUsingFormatProvider()
         {
-            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "I received {@Receipt}", new { Sum = 12.345, When = new DateTime(2013, 5, 20, 16, 39, 0) });
+            var m = Render(new CultureInfo("fr-FR"), "I received {@Receipt}", new { Sum = 12.345, When = new DateTime(2013, 5, 20, 16, 39, 0) });
             Assert.Equal("I received { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
         }
 
@@ -88,7 +88,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void MultiplePropertiesUseFormatProvider()
         {
-            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Income was {Income} at {Date:d}", 1234.567, new DateTime(2013, 5, 20));
+            var m = Render(new CultureInfo("fr-FR"), "Income was {Income} at {Date:d}", 1234.567, new DateTime(2013, 5, 20));
             Assert.Equal("Income was 1234,567 at 20/05/2013", m);
         }
 
@@ -114,7 +114,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void FormatProviderIsUsed()
         {
-            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Please pay {Sum}", 12.345);
+            var m = Render(new CultureInfo("fr-FR"), "Please pay {Sum}", 12.345);
             Assert.Equal("Please pay 12,345", m);
         }
 
@@ -145,7 +145,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void ATemplateWithOnlyPositionalPropertiesUsesFormatProvider()
         {
-            var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "{1}, {0}", 12.345, "Hello");
+            var m = Render(new CultureInfo("fr-FR"), "{1}, {0}", 12.345, "Hello");
             Assert.Equal("\"Hello\", 12,345", m);
         }
 

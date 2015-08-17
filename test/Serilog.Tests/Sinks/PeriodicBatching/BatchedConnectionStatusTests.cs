@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !DNXCORE50
+using System;
 using Xunit;
 using Serilog.Sinks.PeriodicBatching;
 
@@ -76,3 +77,4 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         }
     }
 }
+#endif
