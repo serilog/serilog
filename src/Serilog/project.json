@@ -26,9 +26,6 @@
             }
         },
         "dnx451": {
-            "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
-            },
             "frameworkAssemblies": {
                 "System.Configuration": ""
             }
