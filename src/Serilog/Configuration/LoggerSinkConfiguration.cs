@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using Serilog.Core;
 using Serilog.Core.Sinks;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.IOTextWriter;
@@ -46,15 +47,27 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="logEventSink">The sink.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Sink(
             ILogEventSink logEventSink,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
         {
             var sink = logEventSink;
-            if (restrictedToMinimumLevel > LevelAlias.Minimum)
-                sink = new RestrictedSink(sink, restrictedToMinimumLevel);
+            if (levelSwitch != null)
+            {
+                if (restrictedToMinimumLevel != LevelAlias.Minimum)
+                    SelfLog.WriteLine("Sink {0} was configured with both a level switch and minimum level '{1}'; the minimum level will be ignored and the switch level used", sink, restrictedToMinimumLevel);
+
+                sink = new RestrictedSink(sink, levelSwitch);
+            }
+            else if (restrictedToMinimumLevel > LevelAlias.Minimum)
+            {
+                sink = new RestrictedSink(sink, new LoggingLevelSwitch(restrictedToMinimumLevel));
+            }
 
             _addSink(sink);
             return _loggerConfiguration;
@@ -65,12 +78,16 @@ namespace Serilog.Configuration
         /// </summary>
         /// <typeparam name="TSink">The sink.</typeparam>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Sink<TSink>(LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        public LoggerConfiguration Sink<TSink>(
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
             where TSink : ILogEventSink, new()
         {
-            return Sink(new TSink(), restrictedToMinimumLevel);
+            return Sink(new TSink(), restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -79,7 +96,9 @@ namespace Serilog.Configuration
         /// <param name="textWriter">The text writer to write log events to.</param>
         /// <param name="outputTemplate">Message template describing the output format.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -87,14 +106,15 @@ namespace Serilog.Configuration
             TextWriter textWriter,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (textWriter == null) throw new ArgumentNullException("textWriter");
             if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             var sink = new TextWriterSink(textWriter, formatter);
-            return Sink(sink, restrictedToMinimumLevel);
+            return Sink(sink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -105,16 +125,19 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="configureLogger">An action that configures the sub-logger.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Logger(
             Action<LoggerConfiguration> configureLogger,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (configureLogger == null) throw new ArgumentNullException("configureLogger");
             var lc = new LoggerConfiguration();
             configureLogger(lc);
-            return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()), restrictedToMinimumLevel);
+            return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()), restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -123,16 +146,19 @@ namespace Serilog.Configuration
         /// <param name="configureObservers">An action that provides an observable
         /// to which observers can subscribe.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Observers(
             Action<IObservable<LogEvent>> configureObservers,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (configureObservers == null) throw new ArgumentNullException("configureObservers");
             var observable = new ObservableSink();
             configureObservers(observable);
-            return Sink(observable, restrictedToMinimumLevel);
+            return Sink(observable, restrictedToMinimumLevel, levelSwitch);
         }
     }
 }
