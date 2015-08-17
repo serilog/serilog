@@ -8,7 +8,7 @@ namespace Serilog.Tests.Formatting.Display
 {
     public class MessageTemplateTextFormatterTests
     {
-        [Test]
+        [Fact]
         public void UsesFormatProvider()
         {
             var french = CultureInfo.GetCultureInfo("fr-FR");
@@ -19,7 +19,7 @@ namespace Serilog.Tests.Formatting.Display
             Assert.AreEqual("12,345", sw.ToString());
         }
 
-        [Test]
+        [Fact]
         public void MessageTemplatesContainingFormatStringPropertiesRenderCorrectly()
         {
             var formatter = new MessageTemplateTextFormatter("{Message}", CultureInfo.InvariantCulture);
@@ -29,7 +29,7 @@ namespace Serilog.Tests.Formatting.Display
             Assert.AreEqual("\"Hello, world!\"", sw.ToString());
         }
 
-        [Test]
+        [Fact]
         public void UppercaseFormatSpecifierIsSupportedForStrings()
         {
             var formatter = new MessageTemplateTextFormatter("{Name:u}", CultureInfo.InvariantCulture);
@@ -39,7 +39,7 @@ namespace Serilog.Tests.Formatting.Display
             Assert.AreEqual("NICK", sw.ToString());
         }
 
-        [Test]
+        [Fact]
         public void LowercaseFormatSpecifierIsSupportedForStrings()
         {
             var formatter = new MessageTemplateTextFormatter("{Name:w}", CultureInfo.InvariantCulture);

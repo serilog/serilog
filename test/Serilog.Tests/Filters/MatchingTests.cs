@@ -6,7 +6,7 @@ namespace Serilog.Tests.Filters
 {
     public class MatchingTests
     {
-        [Test]
+        [Fact]
         public void EventsCanBeExcludedBySource()
         {
             var written = false;
@@ -22,7 +22,7 @@ namespace Serilog.Tests.Filters
             Assert.IsFalse(written);
         }
 
-        [Test]
+        [Fact]
         public void EventsCanBeExcludedByPredicate()
         {
             var seen = 0;
@@ -40,7 +40,7 @@ namespace Serilog.Tests.Filters
             Assert.AreEqual(3, seen);
         }
 
-        [Test]
+        [Fact]
         public void SourceFiltersWorkOnNamespaces()
         {
             var written = false;

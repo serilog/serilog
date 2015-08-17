@@ -7,7 +7,7 @@ namespace Serilog.Tests.Core
 {
     public class SafeAggregateSinkTests
     {
-        [Test]
+        [Fact]
         public void AnExceptionThrownByASinkIsNotPropagated()
         {
             var thrown = false;
@@ -22,7 +22,7 @@ namespace Serilog.Tests.Core
             Assert.IsTrue(thrown);
         }
 
-        [Test]
+        [Fact]
         public void WhenASinkThrowsOtherSinksAreStillInvoked()
         {
             bool called1 = false, called2 = false;

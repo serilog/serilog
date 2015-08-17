@@ -10,13 +10,13 @@ namespace Serilog.Tests.Sinks.RollingFile
 {
     public class RollingFileSinkTests
     {
-        [Test]
+        [Fact]
         public void LogEventsAreEmittedToTheFileNamedAccordingToTheEventTimestamp()
         {
             TestRollingEventSequence(Some.InformationEvent());
         }
 
-        [Test]
+        [Fact]
         public void WhenTheDateChangesTheCorrectFileIsWritten()
         {
             var e1 = Some.InformationEvent();
@@ -24,7 +24,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             TestRollingEventSequence(e1, e2);
         }
 
-        [Test]
+        [Fact]
         public void WhenRetentionCountIsSetOldFilesAreDeleted()
         {
             LogEvent e1 = Some.InformationEvent(),
@@ -41,7 +41,7 @@ namespace Serilog.Tests.Sinks.RollingFile
                 });
         }
 
-        [Test]
+        [Fact]
         public void IfTheLogFolderDoesNotExistItWillBeCreated()
         {
             var fileName = Some.String() + "-{Date}.txt";

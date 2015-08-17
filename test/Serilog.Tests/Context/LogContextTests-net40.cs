@@ -8,7 +8,7 @@ namespace Serilog.Tests.Context
 {
     public class LogContextTests
     {
-        [Test]
+        [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;

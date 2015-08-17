@@ -15,7 +15,7 @@ namespace Serilog.Tests.Formatting.Json
 {
     public class JsonFormatterTests
     {
-        [Test]
+        [Fact]
         public void JsonFormattedEventsIncludeTimestamp()
         {
             var @event = new LogEvent(
@@ -47,7 +47,7 @@ namespace Serilog.Tests.Formatting.Json
             return serializer.Deserialize(new JsonTextReader(new StringReader(output)));
         }
 
-        [Test]
+        [Fact]
         public void AnIntegerPropertySerializesAsIntegerValue()
         {
             var name = Some.String();
@@ -60,7 +60,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual(value, (int)formatted.Properties[name]);
         }
 
-        [Test]
+        [Fact]
         public void ABooleanPropertySerializesAsBooleanValue()
         {
             var name = Some.String();
@@ -73,7 +73,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual(value, (bool)formatted.Properties[name]);
         }
 
-        [Test]
+        [Fact]
         public void ACharPropertySerializesAsStringValue()
         {
             var name = Some.String();
@@ -86,7 +86,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual(value.ToString(CultureInfo.InvariantCulture), (string)formatted.Properties[name]);
         }
 
-        [Test]
+        [Fact]
         public void ADecimalSerializesAsNumericValue()
         {
             var name = Some.String();
@@ -99,7 +99,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual(value, (decimal)formatted.Properties[name]);
         }
 
-        [Test]
+        [Fact]
         public void ASequencePropertySerializesAsArrayValue()
         {
             var name = Some.String();
@@ -116,7 +116,7 @@ namespace Serilog.Tests.Formatting.Json
             CollectionAssert.AreEqual(ints, result);
         }
 
-        [Test]
+        [Fact]
         public void AStructureSerializesAsAnObject()
         {
             var value = Some.Int();
@@ -131,7 +131,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual(value, result);
         }
 
-        [Test]
+        [Fact]
         public void ADictionaryWithScalarKeySerializesAsAnObject()
         {
             var dictKey = Some.Int();
@@ -148,7 +148,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.IsTrue(formatted.Contains(expected));
         }
 
-        [Test]
+        [Fact]
         public void WellKnownSpecialCharactersAreEscapedAsNormal()
         {
             const string s = "\\\"\t\r\n\f";
@@ -156,7 +156,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual("\\\\\\\"\\t\\r\\n\\f", escaped);
         }
 
-        [Test]
+        [Fact]
         public void StringsWithoutSpecialCharactersAreUnchanged()
         {
             const string s = "Hello, world!";
@@ -164,7 +164,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreSame(s, escaped);
         }
 
-        [Test]
+        [Fact]
         public void UnprintableCharactersAreEscapedAsUnicodeSequences()
         {
             const string s = "\u0001";
@@ -172,7 +172,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual("\\u0001", escaped);
         }
 
-        [Test]
+        [Fact]
         public void EmbeddedEscapesPreservePrefixAndSuffix()
         {
             const string s = "a\nb";
@@ -180,7 +180,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual("a\\nb", escaped);
         }
 
-        [Test]
+        [Fact]
         public void DictionariesAreSerialisedAsObjects()
         {
             var dict = new Dictionary<string, object> {
@@ -195,7 +195,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.AreEqual(1.2, (double)f.Properties.ADictionary.nums[0]);
         }
 
-        [Test]
+        [Fact]
         public void PropertyTokensWithFormatStringsAreIncludedAsRenderings()
         {
             var p = new MessageTemplateParser();
@@ -224,7 +224,7 @@ namespace Serilog.Tests.Formatting.Json
             return d;
         }
 
-        [Test]
+        [Fact]
         public void PropertyTokensWithoutFormatStringsAreNotIncludedAsRenderings()
         {
             var p = new MessageTemplateParser();
@@ -237,7 +237,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.IsNull(rs);
         }
 
-        [Test]
+        [Fact]
         public void SequencesOfSequencesAreSerialized()
         {
             var p = new MessageTemplateParser();

@@ -7,7 +7,7 @@ namespace Serilog.Tests.Sinks.Observable
 {
     public class ObservableSinkTests
     {
-        [Test]
+        [Fact]
         public void EventsAreWrittenToObservers()
         {
             var eventSeen = false;

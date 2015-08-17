@@ -7,7 +7,7 @@ namespace Serilog.Tests.Core
 {
     public class CopyingSinkTests
     {
-        [Test]
+        [Fact]
         public void ModifyingCopiesPassedThroughTheSinkPreservesOriginal()
         {
             var e = Some.InformationEvent();

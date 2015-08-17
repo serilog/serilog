@@ -7,7 +7,7 @@ namespace Serilog.Tests.Events
 {
     public class DictionaryValueTests
     {
-        [Test]
+        [Fact]
         public void ADictionaryValueRendersAsMappingOfKeysToValues()
         {
             var dict = new DictionaryValue(new[] {

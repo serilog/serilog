@@ -28,7 +28,7 @@ namespace Serilog.Tests.Events
     {
         readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
 
-        [Test]
+        [Fact]
         public void AnEnumIsConvertedToANonStringScalarValue()
         {
             var value = _converter.CreatePropertyValue(LogEventLevel.Debug, Destructuring.Default);
@@ -38,7 +38,7 @@ namespace Serilog.Tests.Events
             Assert.IsInstanceOf<LogEventLevel>(sv.Value);
         }
 
-        [Test]
+        [Fact]
         public void AScalarValueToStringRendersTheValue()
         {
             var num = Some.Int();
@@ -47,7 +47,7 @@ namespace Serilog.Tests.Events
             Assert.AreEqual(num.ToString(CultureInfo.InvariantCulture), str);
         }
 
-        [Test]
+        [Fact]
         public void AScalarValueToStringRendersTheValueUsingFormat()
         {
             var num = Some.Decimal();
@@ -56,7 +56,7 @@ namespace Serilog.Tests.Events
             Assert.AreEqual(num.ToString("N2", CultureInfo.InvariantCulture), str);
         }
 
-        [Test]
+        [Fact]
         public void AScalarValueToStringRendersTheValueUsingFormatProvider()
         {
             var num = Some.Decimal();
@@ -65,7 +65,7 @@ namespace Serilog.Tests.Events
             Assert.AreEqual(num.ToString(CultureInfo.GetCultureInfo("fr-FR")), str);
         }
 
-        [Test]
+        [Fact]
         public void WhenDestructuringAKnownLiteralTypeIsScalar()
         {
             var guid = Guid.NewGuid();

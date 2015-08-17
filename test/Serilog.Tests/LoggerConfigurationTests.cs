@@ -23,7 +23,7 @@ namespace Serilog.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void DisposableSinksAreDisposedAlongWithRootLogger()
         {
             var sink = new DisposableSink();
@@ -35,7 +35,7 @@ namespace Serilog.Tests
             Assert.IsTrue(sink.IsDisposed);
         }
 
-        [Test]
+        [Fact]
         public void DisposableSinksAreNotDisposedAlongWithContextualLoggers()
         {
             var sink = new DisposableSink();
@@ -48,7 +48,7 @@ namespace Serilog.Tests
             Assert.IsFalse(sink.IsDisposed);
         }
 
-        [Test]
+        [Fact]
         public void AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
             var excluded = Some.InformationEvent();
@@ -71,7 +71,7 @@ namespace Serilog.Tests
         class AB { public int A { get; set; } public int B { get; set; } }
 // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
-        [Test]
+        [Fact]
         public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
         {
             var events = new List<LogEvent>();
@@ -89,7 +89,7 @@ namespace Serilog.Tests
             Assert.IsInstanceOf<ScalarValue>(prop);
         }
 
-        [Test]
+        [Fact]
         public void TransformationsAreAppliedToEventProperties()
         {
             var events = new List<LogEvent>();
@@ -109,7 +109,7 @@ namespace Serilog.Tests
             Assert.AreEqual("C", c.Name);
         }
 
-        [Test]
+        [Fact]
         public void WritingToALoggerWritesToSubLogger()
         {
             var eventReceived = false;
@@ -124,7 +124,7 @@ namespace Serilog.Tests
             Assert.That(eventReceived);
         }
 
-        [Test]
+        [Fact]
         public void SubLoggerRestrictsFilter()
         {
             var eventReceived = false;
@@ -140,7 +140,7 @@ namespace Serilog.Tests
             Assert.That(!eventReceived);
         }
 
-        [Test]
+        [Fact]
         public void EnrichersExecuteInConfigurationOrder()
         {
             var property = Some.LogEventProperty();
@@ -156,7 +156,7 @@ namespace Serilog.Tests
             Assert.That(enrichedPropertySeen);
         }
 
-        [Test]
+        [Fact]
         public void MaximumDestructuringDepthIsEffective()
         {
             var x = new { A = new { B = new { C = new { D = "F" } } } };

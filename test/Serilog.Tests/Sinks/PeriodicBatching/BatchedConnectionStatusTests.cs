@@ -8,14 +8,14 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
     {
         readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
-        [Test]
+        [Fact]
         public void WhenNoFailuresHaveOccurredTheRegularIntervalIsUsed()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
             Assert.AreEqual(DefaultPeriod, bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenOneFailureHasOccurredTheRegularIntervalIsUsed()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
@@ -23,7 +23,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.AreEqual(DefaultPeriod, bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenTwoFailuresHaveOccurredTheIntervalBacksOff()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
@@ -32,7 +32,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.AreEqual(TimeSpan.FromSeconds(10), bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenABatchSucceedsTheStatusResets()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
@@ -42,7 +42,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.AreEqual(DefaultPeriod, bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenThreeFailuresHaveOccurredTheIntervalBacksOff()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
@@ -53,7 +53,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.IsFalse(bcs.ShouldDropBatch);
         }
 
-        [Test]
+        [Fact]
         public void WhenFourFailuresHaveOccurredTheIntervalBacksOffAndBatchIsDropped()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
@@ -66,7 +66,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.IsFalse(bcs.ShouldDropQueue);
         }
 
-        [Test]
+        [Fact]
         public void WhenSixFailuresHaveOccurredTheQueueIsDropped()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);

@@ -8,21 +8,21 @@ namespace Serilog.Tests.Sinks.RollingFile
 {
     public class TemplatedPathRollerTests
     {
-        [Test]
+        [Fact]
         public void WhenOldStyleSpecifierIsSuppliedTheExceptionIsInformative()
         {
             var ex = Assert.Throws<ArgumentException>(() => new TemplatedPathRoller("log-{0}.txt"));
             Assert.That(ex.Message.Contains("{Date}"));
         }
 
-        [Test]
+        [Fact]
         public void NewStyleSpecifierCannotBeProvidedInDirectory()
         {
             var ex = Assert.Throws<ArgumentException>(() => new TemplatedPathRoller("{Date}\\log.txt"));
             Assert.That(ex.Message.Contains("directory"));
         }
         
-        [Test]
+        [Fact]
         public void TheLogFileIncludesDateToken()
         {
             var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
@@ -32,7 +32,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             AssertAreEqualAbsolute("Logs\\log.20130714.txt", path);
         }
 
-        [Test]
+        [Fact]
         public void ANonZeroIncrementIsIncludedAndPadded()
         {
             var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
@@ -49,14 +49,14 @@ namespace Serilog.Tests.Sinks.RollingFile
             Assert.AreEqual(abs1, abs2);
         }
 
-        [Test]
+        [Fact]
         public void TheRollerReturnsTheLogFileDirectory()
         {
             var roller = new TemplatedPathRoller("Logs\\log.{Date}.txt");
             AssertAreEqualAbsolute("Logs", roller.LogFileDirectory);
         }
 
-        [Test]
+        [Fact]
         public void IfNoTokenIsSpecifiedDashFollowedByTheDateIsImplied()
         {
             var roller = new TemplatedPathRoller("Logs\\log.txt");
@@ -66,7 +66,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             AssertAreEqualAbsolute("Logs\\log-20130714.txt", path);
         }
 
-        [Test]
+        [Fact]
         public void TheLogFileIsNotRequiredToIncludeAnExtension()
         {
             var roller = new TemplatedPathRoller("Logs\\log-{Date}");
@@ -76,7 +76,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             AssertAreEqualAbsolute("Logs\\log-20130714", path);
         }
 
-        [Test]
+        [Fact]
         public void TheLogFileIsNotRequiredToIncludeADirectory()
         {
             var roller = new TemplatedPathRoller("log-{Date}");
@@ -86,14 +86,14 @@ namespace Serilog.Tests.Sinks.RollingFile
             AssertAreEqualAbsolute("log-20130714", path);
         }
 
-        [Test]
+        [Fact]
         public void TheDirectorSearchPatternUsesWildcardInPlaceOfDate()
         {
             var roller = new TemplatedPathRoller("Logs\\log-{Date}.txt");
             Assert.AreEqual("log-*.txt", roller.DirectorySearchPattern);
         }
 
-        [Test]
+        [Fact]
         public void MatchingSelectsFiles()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");
@@ -105,7 +105,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             Assert.AreEqual(31, matched[1].SequenceNumber);
         }
 
-        [Test]
+        [Fact]
         public void MatchingExcludesSimilarButNonmatchingFiles()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");
@@ -115,7 +115,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             Assert.AreEqual(0, matched.Count());
         }
 
-        [Test]
+        [Fact]
         public void MatchingParsesDates()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");

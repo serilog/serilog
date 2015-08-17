@@ -10,7 +10,7 @@ namespace Serilog.Tests.Core
 {
     public class LoggerTests
     {
-        [Test]
+        [Fact]
         public void AnExceptionThrownByAnEnricherIsNotPropagated()
         {
             var thrown = false;
@@ -26,7 +26,7 @@ namespace Serilog.Tests.Core
             Assert.IsTrue(thrown);
         }
 
-        [Test]
+        [Fact]
         public void AContextualLoggerAddsTheSourceTypeName()
         {
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext<LoggerTests>()
@@ -36,7 +36,7 @@ namespace Serilog.Tests.Core
             Assert.AreEqual(typeof(LoggerTests).FullName, lv);
         }
 
-        [Test]
+        [Fact]
         public void PropertiesInANestedContextOverrideParentContextValues()
         {
             var name = Some.String();
@@ -50,14 +50,14 @@ namespace Serilog.Tests.Core
             Assert.AreEqual(v2, pActual.LiteralValue());
         }
 
-        [Test]
+        [Fact]
         public void ParametersForAnEmptyTemplateAreIgnored()
         {
             var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
             Assert.AreEqual("message", e.RenderMessage());
         }
 
-        [Test]
+        [Fact]
         public void LoggingLevelSwitchDynamicallyChangesLevel()
         {
             var events = new List<LogEvent>();

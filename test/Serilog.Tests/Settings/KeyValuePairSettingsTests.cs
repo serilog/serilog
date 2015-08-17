@@ -10,42 +10,42 @@ namespace Serilog.Extras.AppSettings.Tests
 {
     public class KeyValuePairSettingsTests
     {
-        [Test]
+        [Fact]
         public void ConvertibleValuesConvertToTIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType("3", typeof(int?));
             Assert.That(result == 3);
         }
 
-        [Test]
+        [Fact]
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType(null, typeof(int?));
             Assert.That(result == null);
         }
 
-        [Test]
+        [Fact]
         public void EmptyStringValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType("", typeof(int?));
             Assert.That(result == null);
         }
 
-        [Test]
+        [Fact]
         public void ValuesConvertToNullableTimeSpan()
         {
             var result = (System.TimeSpan?)KeyValuePairSettings.ConvertToType("00:01:00", typeof(System.TimeSpan?));
             Assert.AreEqual(System.TimeSpan.FromMinutes(1), result);
         }
 
-        [Test]
+        [Fact]
         public void ValuesConvertToEnumMembers()
         {
             var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
             Assert.AreEqual(LogEventLevel.Information, result);
         }
 
-        [Test]
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>
@@ -57,7 +57,7 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.AreEqual(2, configurationAssemblies.Count);
         }
 
-        [Test]
+        [Fact]
         public void FindsConfigurationMethodsWithinAnAssembly()
         {
             var configurationMethods = KeyValuePairSettings
@@ -76,7 +76,7 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.That(configurationMethods.Contains("Trace"));
         }
 
-        [Test]
+        [Fact]
         public void PropertyEnrichmentIsApplied()
         {
             LogEvent evt = null;

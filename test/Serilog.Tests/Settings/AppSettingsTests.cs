@@ -7,7 +7,7 @@ namespace Serilog.Extras.AppSettings.Tests
 {
     public class AppSettingsTests
     {
-        [Test]
+        [Fact]
         public void EnvironmentVariableExpansionIsApplied()
         {
             // Make sure we have the expected key in the App.config

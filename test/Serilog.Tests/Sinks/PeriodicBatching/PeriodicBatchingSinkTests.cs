@@ -63,7 +63,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
 
         // Some very, very approximate tests here :)
 
-        [Test]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnFlush()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
@@ -76,7 +76,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.IsFalse(pbs.WasCalledAfterDisposal);
         }
 
-        [Test]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
@@ -88,7 +88,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.IsFalse(pbs.WasCalledAfterDisposal);
         }
 
-        [Test]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_FlushWhileRunning()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, MicroWait, TinyWait + TinyWait);

@@ -20,7 +20,7 @@ namespace Serilog.Tests.Context
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
         }
 
-        [Test]
+        [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
@@ -49,7 +49,7 @@ namespace Serilog.Tests.Context
             Assert.IsFalse(lastEvent.Properties.ContainsKey("A"));
         }
 
-        [Test]
+        [Fact]
         public void MultipleNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
@@ -82,7 +82,7 @@ namespace Serilog.Tests.Context
             Assert.IsFalse(lastEvent.Properties.ContainsKey("A2"));
         }
 
-        [Test]
+        [Fact]
         public async Task ContextPropertiesCrossAsyncCalls()
         {
             LogEvent lastEvent = null;
@@ -109,7 +109,7 @@ namespace Serilog.Tests.Context
             }
         }
 
-        [Test]
+        [Fact]
         public async Task ContextPropertiesPersistWhenCrossAppDomainCallsAreEnabled()
         {
             LogEvent lastEvent = null;
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Context
         // since user property types may not be serializable.
         // Fails if the Serilog assemblies cannot be loaded in the
         // remote domain. See also LogContext.Suspend()
-        [Test]
+        [Fact]
         public void DoesNotPreventCrossDomainCalls()
         {
             AppDomain domain = null;
@@ -164,7 +164,7 @@ namespace Serilog.Tests.Context
             }
         }
 
-        [Test]
+        [Fact]
         public void WhenSuspendedAllPropertiesAreRemovedFromTheContext()
         {
             LogEvent lastEvent = null;

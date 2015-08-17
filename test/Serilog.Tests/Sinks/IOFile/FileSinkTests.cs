@@ -9,21 +9,21 @@ namespace Serilog.Tests.Sinks.IOFile
 {
     public class FileSinkTests
     {
-        [Test]
+        [Fact]
         public void FileIsWrittenIfNonexistent()
         {
             var path = Some.NonexistentTempFilePath();
             TestLoggingAndDelete(path);
         }
 
-        [Test]
+        [Fact]
         public void FileIsAppendedToWhenAlreadyCreated()
         {
             var path = Some.TempFilePath();
             TestLoggingAndDelete(path);
         }
 
-        [Test]
+        [Fact]
         public void WhenLimitIsSpecifiedFileSizeIsRestricted()
         {
             const int maxBytes = 100;

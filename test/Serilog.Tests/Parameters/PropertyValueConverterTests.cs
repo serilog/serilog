@@ -14,7 +14,7 @@ namespace Serilog.Tests.Parameters
     {
         readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
 
-        [Test]
+        [Fact]
         public void UnderDestructuringAByteArrayIsAScalarValue()
         {
             var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
@@ -22,7 +22,7 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<byte[]>(((ScalarValue)pv).Value);
         }
 
-        [Test]
+        [Fact]
         public void UnderDestructuringABooleanIsAScalarValue()
         {
             var pv = _converter.CreatePropertyValue(true, Destructuring.Destructure);
@@ -30,21 +30,21 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<bool>(((ScalarValue)pv).Value);
         }
 
-        [Test]
+        [Fact]
         public void UnderDestructuringAnIntegerArrayIsASequenceValue()
         {
             var pv = _converter.CreatePropertyValue(new int[0], Destructuring.Destructure);
             Assert.IsInstanceOf<SequenceValue>(pv);
         }
 
-        [Test]
+        [Fact]
         public void ByDefaultADestructuredNullNullableIsAScalarNull()
         {
             var pv = _converter.CreatePropertyValue(new int?(), Destructuring.Destructure);
             Assert.IsNull(((ScalarValue)pv).Value);
         }
 
-        [Test]
+        [Fact]
         public void ByDefaultADestructuredNonNullNullableIsItsValue()
         {
             // ReSharper disable RedundantExplicitNullableCreation
@@ -65,7 +65,7 @@ namespace Serilog.Tests.Parameters
 // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
-        [Test]
+        [Fact]
         public void DestructuringACyclicStructureDoesNotStackOverflow()
         {
             var ab = new A { B = new B() };
@@ -87,7 +87,7 @@ namespace Serilog.Tests.Parameters
             public IList<C?> C { get; set; } 
         }
 
-        [Test]
+        [Fact]
         public void CollectionsAndCustomPoliciesInCyclesDoNotStackOverflow()
         {
             var cd = new C { D = new D() };
@@ -97,7 +97,7 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<StructureValue>(pv);
         }
 
-        [Test]
+        [Fact]
         public void ByDefaultAScalarDictionaryIsADictionaryValue()
         {
             var pv = _converter.CreatePropertyValue(new Dictionary<int, string> { { 1, "hello" } }, Destructuring.Default);
@@ -106,7 +106,7 @@ namespace Serilog.Tests.Parameters
             Assert.AreEqual(1, dv.Elements.Count);
         }
 
-        [Test]
+        [Fact]
         public void ByDefaultANonScalarDictionaryIsASequenceValue()
         {
             var pv = _converter.CreatePropertyValue(new Dictionary<A, string> { { new A(), "hello" } }, Destructuring.Default);
@@ -115,7 +115,7 @@ namespace Serilog.Tests.Parameters
             Assert.AreEqual(1, sv.Elements.Count);
         }
 
-        [Test]
+        [Fact]
         public void DelegatesAreConvertedToScalarStringsWhenDestructuring()
         {
             Action del = DelegatesAreConvertedToScalarStringsWhenDestructuring;
@@ -124,7 +124,7 @@ namespace Serilog.Tests.Parameters
             Assert.IsInstanceOf<string>(pv.LiteralValue());
         }
 
-        [Test]
+        [Fact]
         public void WhenByteArraysAreConvertedTheyAreCopiedToArrayScalars()
         {
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
@@ -134,7 +134,7 @@ namespace Serilog.Tests.Parameters
             Assert.AreNotSame(bytes, lv);
         }
 
-        [Test]
+        [Fact]
         public void ByteArraysLargerThan1kAreConvertedToStrings()
         {
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
@@ -149,7 +149,7 @@ namespace Serilog.Tests.Parameters
             public string Doesnt { get { return "Hello"; } }
         }
 
-        [Test]
+        [Fact]
         public void FailsGracefullyWhenGettersThrow()
         {
             var pv = _converter.CreatePropertyValue(new Thrower(), Destructuring.Destructure);
@@ -161,7 +161,7 @@ namespace Serilog.Tests.Parameters
             Assert.AreEqual("Hello", d.Value.LiteralValue());
         }
 
-        [Test]
+        [Fact]
         public void SurvivesDestructuringASystemType()
         {
             var pv = _converter.CreatePropertyValue(typeof(string), Destructuring.Destructure);
@@ -182,7 +182,7 @@ namespace Serilog.Tests.Parameters
             public string PropD { get; set; }
         }
 
-        [Test]
+        [Fact]
         public void NewAndInheritedPropertiesAppearOnlyOnce()
         {
             var valAsDerived = new DerivedWithOverrides
@@ -208,7 +208,7 @@ namespace Serilog.Tests.Parameters
             public string this[int index] { get { return "Indexer"; } }
         }
 
-        [Test]
+        [Fact]
         public void IndexerPropertiesAreIgnoredWhenDestructuring()
         {
             var indexed = new HasIndexer();
@@ -223,7 +223,7 @@ namespace Serilog.Tests.Parameters
             public string Item { get { return "Item"; } }
         }
 
-        [Test]
+        [Fact]
         public void ItemPropertiesNotAreIgnoredWhenDestructuring()
         {
             var indexed = new HasItem();

@@ -8,7 +8,7 @@ namespace Serilog.Tests.Sinks.TextWriter
 {
     public class TextWriterSinkTests
     {
-        [Test]
+        [Fact]
         public void EventsAreWrittenToTheTextWriter()
         {
             var sw = new StringWriter();
@@ -24,7 +24,7 @@ namespace Serilog.Tests.Sinks.TextWriter
             Assert.That(s.Contains(mt));
         }
 
-        [Test]
+        [Fact]
         public void EventsAreWrittenToTheTextWriterUsingFormatProvider()
         {
             var sw = new StringWriter();

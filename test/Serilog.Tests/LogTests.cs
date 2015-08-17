@@ -5,7 +5,7 @@ namespace Serilog.Tests
 {
     public class LogTests
     {
-        [Test]
+        [Fact]
         public void TheUninitializedLoggerIsSilent()
         {
             Assert.IsInstanceOf<SilentLogger>(Log.Logger);
