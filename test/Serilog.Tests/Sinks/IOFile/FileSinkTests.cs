@@ -37,8 +37,8 @@ namespace Serilog.Tests.Sinks.IOFile
                 {
                     log.Information(new string('n', maxBytes + 1));
                     var size = new FileInfo(path).Length;
-                    Assert.That(size > 0);
-                    Assert.That(size < maxBytes);
+                    Assert.True(size > 0);
+                    Assert.True(size < maxBytes);
                 });
         }
 
@@ -64,7 +64,7 @@ namespace Serilog.Tests.Sinks.IOFile
                     var content = new StreamReader(refile).ReadToEnd();
                     refile.Dispose();
 
-                    Assert.That(content.Contains(message.Text));
+                    Assert.True(content.Contains(message.Text));
                 });
         }
 

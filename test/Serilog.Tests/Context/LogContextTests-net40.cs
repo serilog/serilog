@@ -21,20 +21,20 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperty("A", 1))
             {
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 using (LogContext.PushProperty("A", 2))
                 {
                     log.Write(Some.InformationEvent());
-                    Assert.AreEqual(2, lastEvent.Properties["A"].LiteralValue());
+                    Assert.Equal(2, lastEvent.Properties["A"].LiteralValue());
                 }
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
             }
 
             log.Write(Some.InformationEvent());
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A"));
+            Assert.False(lastEvent.Properties.ContainsKey("A"));
         }
     }
 }

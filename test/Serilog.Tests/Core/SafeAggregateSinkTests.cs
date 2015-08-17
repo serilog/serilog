@@ -19,7 +19,7 @@ namespace Serilog.Tests.Core
 
             s.Emit(Some.InformationEvent());
 
-            Assert.IsTrue(thrown);
+            Assert.True(thrown);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace Serilog.Tests.Core
 
             s.Emit(Some.InformationEvent());
 
-            Assert.IsTrue(called1 && called2);
+            Assert.True(called1 && called2);
         }
     }
 }

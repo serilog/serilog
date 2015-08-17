@@ -21,7 +21,7 @@ namespace Serilog.Tests.Sinks.TextWriter
             log.Information(mt);
 
             var s = sw.ToString();
-            Assert.That(s.Contains(mt));
+            Assert.True(s.Contains(mt));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace Serilog.Tests.Sinks.TextWriter
             log.Information("{0}", 12.345);
 
             var s = sw.ToString();
-            Assert.That(s.Contains(mt));
+            Assert.True(s.Contains(mt));
         }
     }
 }

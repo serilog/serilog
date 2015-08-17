@@ -70,10 +70,10 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             var evt = Some.InformationEvent();
             pbs.Emit(evt);
             pbs.Dispose();
-            Assert.AreEqual(1, pbs.Batches.Count);
-            Assert.AreEqual(1, pbs.Batches[0].Count);
-            Assert.AreSame(evt, pbs.Batches[0][0]);
-            Assert.IsFalse(pbs.WasCalledAfterDisposal);
+            Assert.Equal(1, pbs.Batches.Count);
+            Assert.Equal(1, pbs.Batches[0].Count);
+            Assert.Same(evt, pbs.Batches[0][0]);
+            Assert.False(pbs.WasCalledAfterDisposal);
         }
 
         [Fact]
@@ -84,8 +84,8 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             pbs.Emit(evt);
             Thread.Sleep(TinyWait + TinyWait);
             pbs.Stop();
-            Assert.AreEqual(1, pbs.Batches.Count);
-            Assert.IsFalse(pbs.WasCalledAfterDisposal);
+            Assert.Equal(1, pbs.Batches.Count);
+            Assert.False(pbs.WasCalledAfterDisposal);
         }
 
         [Fact]
@@ -96,8 +96,8 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             pbs.Emit(evt);
             Thread.Sleep(TinyWait);
             pbs.Dispose();
-            Assert.AreEqual(1, pbs.Batches.Count);
-            Assert.IsFalse(pbs.WasCalledAfterDisposal);
+            Assert.Equal(1, pbs.Batches.Count);
+            Assert.False(pbs.WasCalledAfterDisposal);
         }
     }
 }

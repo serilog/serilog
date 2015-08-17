@@ -34,10 +34,10 @@ namespace Serilog.Tests.Sinks.RollingFile
             TestRollingEventSequence(new[] { e1, e2, e3 }, 2,
                 files =>
                 {
-                    Assert.AreEqual(3, files.Count);
-                    Assert.That(!File.Exists(files[0]));
-                    Assert.That(File.Exists(files[1]));
-                    Assert.That(File.Exists(files[2]));
+                    Assert.Equal(3, files.Count);
+                    Assert.True(!File.Exists(files[0]));
+                    Assert.True(File.Exists(files[1]));
+                    Assert.True(File.Exists(files[2]));
                 });
         }
 
@@ -59,7 +59,7 @@ namespace Serilog.Tests.Sinks.RollingFile
 
                 log.Write(Some.InformationEvent());
 
-                Assert.That(Directory.Exists(folder));
+                Assert.True(Directory.Exists(folder));
             }
             finally
             {
@@ -97,7 +97,7 @@ namespace Serilog.Tests.Sinks.RollingFile
                     log.Write(@event);
 
                     var expected = pathFormat.Replace("{Date}", @event.Timestamp.ToString("yyyyMMdd"));
-                    Assert.That(File.Exists(expected));
+                    Assert.True(File.Exists(expected));
 
                     verified.Add(expected);
                 }

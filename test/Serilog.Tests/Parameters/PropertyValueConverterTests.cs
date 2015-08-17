@@ -18,30 +18,30 @@ namespace Serilog.Tests.Parameters
         public void UnderDestructuringAByteArrayIsAScalarValue()
         {
             var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
-            Assert.IsInstanceOf<ScalarValue>(pv);
-            Assert.IsInstanceOf<byte[]>(((ScalarValue)pv).Value);
+            Assert.IsType<ScalarValue>(pv);
+            Assert.IsType<byte[]>(((ScalarValue)pv).Value);
         }
 
         [Fact]
         public void UnderDestructuringABooleanIsAScalarValue()
         {
             var pv = _converter.CreatePropertyValue(true, Destructuring.Destructure);
-            Assert.IsInstanceOf<ScalarValue>(pv);
-            Assert.IsInstanceOf<bool>(((ScalarValue)pv).Value);
+            Assert.IsType<ScalarValue>(pv);
+            Assert.IsType<bool>(((ScalarValue)pv).Value);
         }
 
         [Fact]
         public void UnderDestructuringAnIntegerArrayIsASequenceValue()
         {
             var pv = _converter.CreatePropertyValue(new int[0], Destructuring.Destructure);
-            Assert.IsInstanceOf<SequenceValue>(pv);
+            Assert.IsType<SequenceValue>(pv);
         }
 
         [Fact]
         public void ByDefaultADestructuredNullNullableIsAScalarNull()
         {
             var pv = _converter.CreatePropertyValue(new int?(), Destructuring.Destructure);
-            Assert.IsNull(((ScalarValue)pv).Value);
+            Assert.Null(((ScalarValue)pv).Value);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Serilog.Tests.Parameters
             // ReSharper disable RedundantExplicitNullableCreation
             var pv = _converter.CreatePropertyValue(new int?(2), Destructuring.Destructure);
             // ReSharper restore RedundantExplicitNullableCreation
-            Assert.AreEqual(2, ((ScalarValue)pv).Value);
+            Assert.Equal(2, ((ScalarValue)pv).Value);
         }
 
         class A
@@ -72,7 +72,7 @@ namespace Serilog.Tests.Parameters
             ab.B.A = ab;
 
             var pv = _converter.CreatePropertyValue(ab, true);
-            Assert.IsInstanceOf<StructureValue>(pv);
+            Assert.IsType<StructureValue>(pv);
         }
 
         struct C
@@ -94,25 +94,25 @@ namespace Serilog.Tests.Parameters
             cd.D.C = new List<C?> { cd };
 
             var pv = _converter.CreatePropertyValue(cd, true);
-            Assert.IsInstanceOf<StructureValue>(pv);
+            Assert.IsType<StructureValue>(pv);
         }
 
         [Fact]
         public void ByDefaultAScalarDictionaryIsADictionaryValue()
         {
             var pv = _converter.CreatePropertyValue(new Dictionary<int, string> { { 1, "hello" } }, Destructuring.Default);
-            Assert.IsInstanceOf<DictionaryValue>(pv);
+            Assert.IsType<DictionaryValue>(pv);
             var dv = (DictionaryValue)pv;
-            Assert.AreEqual(1, dv.Elements.Count);
+            Assert.Equal(1, dv.Elements.Count);
         }
 
         [Fact]
         public void ByDefaultANonScalarDictionaryIsASequenceValue()
         {
             var pv = _converter.CreatePropertyValue(new Dictionary<A, string> { { new A(), "hello" } }, Destructuring.Default);
-            Assert.IsInstanceOf<SequenceValue>(pv);
+            Assert.IsType<SequenceValue>(pv);
             var sv = (SequenceValue)pv;
-            Assert.AreEqual(1, sv.Elements.Count);
+            Assert.Equal(1, sv.Elements.Count);
         }
 
         [Fact]
@@ -120,8 +120,8 @@ namespace Serilog.Tests.Parameters
         {
             Action del = DelegatesAreConvertedToScalarStringsWhenDestructuring;
             var pv = _converter.CreatePropertyValue(del, Destructuring.Destructure);
-            Assert.IsInstanceOf<ScalarValue>(pv);
-            Assert.IsInstanceOf<string>(pv.LiteralValue());
+            Assert.IsType<ScalarValue>(pv);
+            Assert.IsType<string>(pv.LiteralValue());
         }
 
         [Fact]
@@ -130,8 +130,8 @@ namespace Serilog.Tests.Parameters
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (byte[])pv.LiteralValue();
-            Assert.AreEqual(bytes.Length, lv.Length);
-            Assert.AreNotSame(bytes, lv);
+            Assert.Equal(bytes.Length, lv.Length);
+            Assert.NotSame(bytes, lv);
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace Serilog.Tests.Parameters
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (string)pv.LiteralValue();
-            Assert.That(lv.EndsWith("(1025 bytes)"));
+            Assert.True(lv.EndsWith("(1025 bytes)"));
         }
 
         public class Thrower
@@ -154,18 +154,18 @@ namespace Serilog.Tests.Parameters
         {
             var pv = _converter.CreatePropertyValue(new Thrower(), Destructuring.Destructure);
             var sv = (StructureValue)pv;
-            Assert.AreEqual(2, sv.Properties.Count);
+            Assert.Equal(2, sv.Properties.Count);
             var t = sv.Properties.Single(m => m.Name == "Throws");
-            Assert.AreEqual("The property accessor threw an exception: NotSupportedException", t.Value.LiteralValue());
+            Assert.Equal("The property accessor threw an exception: NotSupportedException", t.Value.LiteralValue());
             var d = sv.Properties.Single(m => m.Name == "Doesnt");
-            Assert.AreEqual("Hello", d.Value.LiteralValue());
+            Assert.Equal("Hello", d.Value.LiteralValue());
         }
 
         [Fact]
         public void SurvivesDestructuringASystemType()
         {
             var pv = _converter.CreatePropertyValue(typeof(string), Destructuring.Destructure);
-            Assert.AreEqual(typeof(string), pv.LiteralValue()); 
+            Assert.Equal(typeof(string), pv.LiteralValue()); 
         }
 
         public class BaseWithProps
@@ -198,9 +198,9 @@ namespace Serilog.Tests.Parameters
 
             var pv = (StructureValue) _converter.CreatePropertyValue(valAsDerived, true);
 
-            Assert.AreEqual(4, pv.Properties.Count);
-            Assert.AreEqual("A", pv.Properties.Single(pp => pp.Name == "PropA").Value.LiteralValue());
-            Assert.AreEqual("B", pv.Properties.Single(pp => pp.Name == "PropB").Value.LiteralValue());
+            Assert.Equal(4, pv.Properties.Count);
+            Assert.Equal("A", pv.Properties.Single(pp => pp.Name == "PropA").Value.LiteralValue());
+            Assert.Equal("B", pv.Properties.Single(pp => pp.Name == "PropB").Value.LiteralValue());
         }
 
         class HasIndexer
@@ -213,7 +213,7 @@ namespace Serilog.Tests.Parameters
         {
             var indexed = new HasIndexer();
             var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
-            Assert.AreEqual(0, pv.Properties.Count);
+            Assert.Equal(0, pv.Properties.Count);
         }
 
         // Important because we use "Item" to short cut indexer checking
@@ -228,9 +228,9 @@ namespace Serilog.Tests.Parameters
         {
             var indexed = new HasItem();
             var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
-            Assert.AreEqual(1, pv.Properties.Count);
+            Assert.Equal(1, pv.Properties.Count);
             var item = pv.Properties.Single();
-            Assert.AreEqual("Item", item.Name);
+            Assert.Equal("Item", item.Name);
         }
     }
 }

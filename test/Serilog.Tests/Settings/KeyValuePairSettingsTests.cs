@@ -14,35 +14,35 @@ namespace Serilog.Extras.AppSettings.Tests
         public void ConvertibleValuesConvertToTIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType("3", typeof(int?));
-            Assert.That(result == 3);
+            Assert.True(result == 3);
         }
 
         [Fact]
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType(null, typeof(int?));
-            Assert.That(result == null);
+            Assert.True(result == null);
         }
 
         [Fact]
         public void EmptyStringValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType("", typeof(int?));
-            Assert.That(result == null);
+            Assert.True(result == null);
         }
 
         [Fact]
         public void ValuesConvertToNullableTimeSpan()
         {
             var result = (System.TimeSpan?)KeyValuePairSettings.ConvertToType("00:01:00", typeof(System.TimeSpan?));
-            Assert.AreEqual(System.TimeSpan.FromMinutes(1), result);
+            Assert.Equal(System.TimeSpan.FromMinutes(1), result);
         }
 
         [Fact]
         public void ValuesConvertToEnumMembers()
         {
             var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
-            Assert.AreEqual(LogEventLevel.Information, result);
+            Assert.Equal(LogEventLevel.Information, result);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace Serilog.Extras.AppSettings.Tests
             }).ToList();
 
             // The core Serilog assembly is always considered
-            Assert.AreEqual(2, configurationAssemblies.Count);
+            Assert.Equal(2, configurationAssemblies.Count);
         }
 
         [Fact]
@@ -66,14 +66,14 @@ namespace Serilog.Extras.AppSettings.Tests
                 .Distinct()
                 .ToList();
 
-            Assert.AreEqual(6, configurationMethods.Count);
+            Assert.Equal(6, configurationMethods.Count);
 
-            Assert.That(configurationMethods.Contains("ColoredConsole"));
-            Assert.That(configurationMethods.Contains("Console"));
-            Assert.That(configurationMethods.Contains("DumpFile"));
-            Assert.That(configurationMethods.Contains("File"));
-            Assert.That(configurationMethods.Contains("RollingFile"));
-            Assert.That(configurationMethods.Contains("Trace"));
+            Assert.True(configurationMethods.Contains("ColoredConsole"));
+            Assert.True(configurationMethods.Contains("Console"));
+            Assert.True(configurationMethods.Contains("DumpFile"));
+            Assert.True(configurationMethods.Contains("File"));
+            Assert.True(configurationMethods.Contains("RollingFile"));
+            Assert.True(configurationMethods.Contains("Trace"));
         }
 
         [Fact]
@@ -90,8 +90,8 @@ namespace Serilog.Extras.AppSettings.Tests
 
             log.Information("Has a test property");
 
-            Assert.IsNotNull(evt);
-            Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
+            Assert.NotNull(evt);
+            Assert.Equal("Test", evt.Properties["App"].LiteralValue());
         }
     }
 }

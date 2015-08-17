@@ -11,7 +11,7 @@ namespace Serilog.Extras.AppSettings.Tests
         public void EnvironmentVariableExpansionIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.AreEqual("%PATH%", ConfigurationManager.AppSettings["serilog:enrich:with-property:Path"]);
+            Assert.Equal("%PATH%", ConfigurationManager.AppSettings["serilog:enrich:with-property:Path"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -21,9 +21,9 @@ namespace Serilog.Extras.AppSettings.Tests
 
             log.Information("Has a Path property with value expanded from the environment variable");
 
-            Assert.IsNotNull(evt);
-            Assert.IsNotNullOrEmpty((string)evt.Properties["Path"].LiteralValue());
-            Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
+            Assert.NotNull(evt);
+            Assert.NotEmpty((string)evt.Properties["Path"].LiteralValue());
+            Assert.NotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
     }
 }

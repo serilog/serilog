@@ -14,7 +14,7 @@ namespace Serilog.Tests.Parsing
         static void AssertParsedAs(string message, params MessageTemplateToken[] messageTemplateTokens)
         {
             var parsed = Parse(message);
-            CollectionAssert.AreEqual(
+            Assert.Equal(
                 parsed,
                 messageTemplateTokens);
         }
@@ -23,8 +23,8 @@ namespace Serilog.Tests.Parsing
         public void AnEmptyMessageIsASingleTextToken()
         {
             var t = Parse("");
-            Assert.AreEqual(1, t.Length);
-            Assert.IsInstanceOf<TextToken>(t.Single());
+            Assert.Equal(1, t.Length);
+            Assert.IsType<TextToken>(t.Single());
         }
 
         [Fact]
@@ -73,15 +73,15 @@ namespace Serilog.Tests.Parsing
         public void AnIntegerPropertyNameIsParsedAsPositionalProperty()
         {
             var parsed = (PropertyToken) Parse("{0}").Single();
-            Assert.AreEqual("0", parsed.PropertyName);
-            Assert.IsTrue(parsed.IsPositional);
+            Assert.Equal("0", parsed.PropertyName);
+            Assert.True(parsed.IsPositional);
         }
 
         [Fact]
         public void FormatsCanContainColons()
         {
             var parsed = (PropertyToken) Parse("{Time:hh:mm}").Single();
-            Assert.AreEqual("hh:mm", parsed.Format);
+            Assert.Equal("hh:mm", parsed.Format);
         }
 
         [Fact]
@@ -141,14 +141,14 @@ namespace Serilog.Tests.Parsing
         public void DestructureHintIsParsedCorrectly()
         {
             var parsed = (PropertyToken)Parse("{@Hello}").Single();
-            Assert.AreEqual(Destructuring.Destructure, parsed.Destructuring);
+            Assert.Equal(Destructuring.Destructure, parsed.Destructuring);
         }
 
         [Fact]
         public void StringifyHintIsParsedCorrectly()
         {
             var parsed = (PropertyToken)Parse("{$Hello}").Single();
-            Assert.AreEqual(Destructuring.Stringify, parsed.Destructuring);
+            Assert.Equal(Destructuring.Stringify, parsed.Destructuring);
         }
 
         [Fact]

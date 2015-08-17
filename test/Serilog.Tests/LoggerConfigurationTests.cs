@@ -32,7 +32,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             logger.Dispose(); 
-            Assert.IsTrue(sink.IsDisposed);
+            Assert.True(sink.IsDisposed);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Serilog.Tests
                 .ForContext<LoggerConfigurationTests>();
 
             logger.Dispose();
-            Assert.IsFalse(sink.IsDisposed);
+            Assert.False(sink.IsDisposed);
         }
 
         [Fact]
@@ -63,8 +63,8 @@ namespace Serilog.Tests
                 .CreateLogger();
             logger.Write(included);
             logger.Write(excluded);
-            Assert.AreEqual(1, events.Count);
-            Assert.That(events.Contains(included));
+            Assert.Equal(1, events.Count);
+            Assert.True(events.Contains(included));
         }
 
 // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
@@ -86,7 +86,7 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            Assert.IsInstanceOf<ScalarValue>(prop);
+            Assert.IsType<ScalarValue>(prop);
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace Serilog.Tests
             var prop = ev.Properties["AB"];
             var sv = (StructureValue)prop;
             var c = sv.Properties.Single();
-            Assert.AreEqual("C", c.Name);
+            Assert.Equal("C", c.Name);
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.That(eventReceived);
+            Assert.True(eventReceived);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.That(!eventReceived);
+            Assert.True(!eventReceived);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.That(enrichedPropertySeen);
+            Assert.True(enrichedPropertySeen);
         }
 
         [Fact]
@@ -170,8 +170,8 @@ namespace Serilog.Tests
             log.Information("{@X}", x);
             var xs = evt.Properties["X"].ToString();
 
-            Assert.That(xs, Is.StringContaining("C"));
-            Assert.That(xs, Is.Not.StringContaining("D"));
+            Assert.Contains("C", xs);
+            Assert.DoesNotContain(xs, "D");
         }
     }
 }

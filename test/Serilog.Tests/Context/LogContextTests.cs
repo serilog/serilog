@@ -33,20 +33,20 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperty("A", 1))
             {
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 using (LogContext.PushProperty("A", 2))
                 {
                     log.Write(Some.InformationEvent());
-                    Assert.AreEqual(2, lastEvent.Properties["A"].LiteralValue());
+                    Assert.Equal(2, lastEvent.Properties["A"].LiteralValue());
                 }
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
             }
 
             log.Write(Some.InformationEvent());
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A"));
+            Assert.False(lastEvent.Properties.ContainsKey("A"));
         }
 
         [Fact]
@@ -62,24 +62,24 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperties(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
             {
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
-                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
                 using (LogContext.PushProperties(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
                 {
                     log.Write(Some.InformationEvent());
-                    Assert.AreEqual(10, lastEvent.Properties["A1"].LiteralValue());
-                    Assert.AreEqual(20, lastEvent.Properties["A2"].LiteralValue());
+                    Assert.Equal(10, lastEvent.Properties["A1"].LiteralValue());
+                    Assert.Equal(20, lastEvent.Properties["A2"].LiteralValue());
                 }
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
-                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
             }
 
             log.Write(Some.InformationEvent());
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A2"));
+            Assert.False(lastEvent.Properties.ContainsKey("A1"));
+            Assert.False(lastEvent.Properties.ContainsKey("A2"));
         }
 
         [Fact]
@@ -101,11 +101,12 @@ namespace Serilog.Tests.Context
                 var post = Thread.CurrentThread.ManagedThreadId;
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 // No problem if this happens occasionally.
-                if (pre == post)
-                    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
+                // TODO: xUnit inconclusive?
+                //if (pre == post)
+                //    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
             }
         }
 
@@ -130,11 +131,12 @@ namespace Serilog.Tests.Context
                 var post = Thread.CurrentThread.ManagedThreadId;
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 // No problem if this happens occasionally.
-                if (pre == post)
-                    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
+                // TODO: xUnit inconclusive?
+                //if (pre == post)
+                //    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
             }
         }
 
@@ -155,7 +157,7 @@ namespace Serilog.Tests.Context
                 var callable = (RemotelyCallable)domain.CreateInstanceAndUnwrap(typeof(RemotelyCallable).Assembly.FullName, typeof(RemotelyCallable).FullName);
 
                 using (LogContext.PushProperty("Anything", 1001))
-                    Assert.That(callable.IsCallable());
+                    Assert.True(callable.IsCallable());
             }
             finally
             {
@@ -179,11 +181,11 @@ namespace Serilog.Tests.Context
                 using (LogContext.Suspend())
                 {
                     log.Write(Some.InformationEvent());
-                    Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
+                    Assert.False(lastEvent.Properties.ContainsKey("A1"));
                 }
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
             }
         }
     }

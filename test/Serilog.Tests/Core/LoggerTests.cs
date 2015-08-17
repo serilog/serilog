@@ -23,7 +23,7 @@ namespace Serilog.Tests.Core
 
             l.Information(Some.String());
 
-            Assert.IsTrue(thrown);
+            Assert.True(thrown);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Serilog.Tests.Core
                                         .Information(Some.String()));
 
             var lv = evt.Properties[Constants.SourceContextPropertyName].LiteralValue();
-            Assert.AreEqual(typeof(LoggerTests).FullName, lv);
+            Assert.Equal(typeof(LoggerTests).FullName, lv);
         }
 
         [Fact]
@@ -47,14 +47,14 @@ namespace Serilog.Tests.Core
                                         .Write(Some.InformationEvent()));
 
             var pActual = evt.Properties[name];
-            Assert.AreEqual(v2, pActual.LiteralValue());
+            Assert.Equal(v2, pActual.LiteralValue());
         }
 
         [Fact]
         public void ParametersForAnEmptyTemplateAreIgnored()
         {
             var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
-            Assert.AreEqual("message", e.RenderMessage());
+            Assert.Equal("message", e.RenderMessage());
         }
 
         [Fact]
@@ -82,8 +82,8 @@ namespace Serilog.Tests.Core
             log.Error("Emitted");
             log.Fatal("Emitted");
 
-            Assert.AreEqual(4, events.Count);
-            Assert.That(events.All(evt => evt.RenderMessage() == "Emitted"));
+            Assert.Equal(4, events.Count);
+            Assert.True(events.All(evt => evt.RenderMessage() == "Emitted"));
         }
     }
 }

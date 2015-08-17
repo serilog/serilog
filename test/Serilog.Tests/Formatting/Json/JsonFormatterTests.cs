@@ -27,7 +27,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
             
-            Assert.AreEqual(
+            Assert.Equal(
                 "2013-03-11T15:59:00.1230000+10:00",
                 (string)formatted.Timestamp);
         }
@@ -57,7 +57,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
 
-            Assert.AreEqual(value, (int)formatted.Properties[name]);
+            Assert.Equal(value, (int)formatted.Properties[name]);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
 
-            Assert.AreEqual(value, (bool)formatted.Properties[name]);
+            Assert.Equal(value, (bool)formatted.Properties[name]);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
 
-            Assert.AreEqual(value.ToString(CultureInfo.InvariantCulture), (string)formatted.Properties[name]);
+            Assert.Equal(value.ToString(CultureInfo.InvariantCulture), (string)formatted.Properties[name]);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
 
-            Assert.AreEqual(value, (decimal)formatted.Properties[name]);
+            Assert.Equal(value, (decimal)formatted.Properties[name]);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace Serilog.Tests.Formatting.Json
             foreach (var el in formatted.Properties[name])
                 result.Add((int)el);
 
-            CollectionAssert.AreEqual(ints, result);
+            Assert.Equal(ints, result);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatJson(@event);
             var result = (int)formatted.Properties[structureProp.Name][memberProp.Name];
-            Assert.AreEqual(value, result);
+            Assert.Equal(value, result);
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatToJson(@event);
             var expected = string.Format("{{\"{0}\":{1}}}", dictKey, dictValue);
-            Assert.IsTrue(formatted.Contains(expected));
+            Assert.True(formatted.Contains(expected));
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             const string s = "\\\"\t\r\n\f";
             var escaped = JsonFormatter.Escape(s);
-            Assert.AreEqual("\\\\\\\"\\t\\r\\n\\f", escaped);
+            Assert.Equal("\\\\\\\"\\t\\r\\n\\f", escaped);
         }
 
         [Fact]
@@ -161,7 +161,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             const string s = "Hello, world!";
             var escaped = JsonFormatter.Escape(s);
-            Assert.AreSame(s, escaped);
+            Assert.Same(s, escaped);
         }
 
         [Fact]
@@ -169,7 +169,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             const string s = "\u0001";
             var escaped = JsonFormatter.Escape(s);
-            Assert.AreEqual("\\u0001", escaped);
+            Assert.Equal("\\u0001", escaped);
         }
 
         [Fact]
@@ -177,7 +177,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             const string s = "a\nb";
             var escaped = JsonFormatter.Escape(s);
-            Assert.AreEqual("a\\nb", escaped);
+            Assert.Equal("a\\nb", escaped);
         }
 
         [Fact]
@@ -191,8 +191,8 @@ namespace Serilog.Tests.Formatting.Json
             var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
             var f = FormatJson(e);
 
-            Assert.AreEqual("world", (string)f.Properties.ADictionary["hello"]);
-            Assert.AreEqual(1.2, (double)f.Properties.ADictionary.nums[0]);
+            Assert.Equal("world", (string)f.Properties.ADictionary["hello"]);
+            Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
         }
 
         [Fact]
@@ -205,12 +205,12 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var rs = ((IEnumerable)d.Renderings).Cast<dynamic>().ToArray();
-            Assert.AreEqual(1, rs.Count());
+            Assert.Equal(1, rs.Count());
             var ap = d.Renderings.AProperty;
             var fs = ((IEnumerable)ap).Cast<dynamic>().ToArray();
-            Assert.AreEqual(1, fs.Count());
-            Assert.AreEqual("000", (string)fs.Single().Format);
-            Assert.AreEqual("012", (string)fs.Single().Rendering);
+            Assert.Equal(1, fs.Count());
+            Assert.Equal("000", (string)fs.Single().Format);
+            Assert.Equal("012", (string)fs.Single().Rendering);
         }
 
         static dynamic FormatEvent(LogEvent e)
@@ -234,7 +234,7 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var rs = ((IEnumerable)d.Renderings);
-            Assert.IsNull(rs);
+            Assert.Null(rs);
         }
 
         [Fact]
@@ -247,7 +247,7 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var h = (string)d.Properties.AProperty[0][0];
-            Assert.AreEqual("Hello", h);
+            Assert.Equal("Hello", h);
         }
     }
 }

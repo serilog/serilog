@@ -40,81 +40,82 @@ namespace Serilog.Tests.Core
         public void AnObjectIsRenderedInSimpleNotation()
         {
             var m = Render("I sat at {@Chair}", new Chair());
-            Assert.AreEqual("I sat at Chair { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
+            Assert.Equal("I sat at Chair { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
         }
 
         [Fact]
         public void AnObjectIsRenderedInSimpleNotationUsingFormatProvider()
         {
             var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "I received {@Receipt}", new Receipt());
-            Assert.AreEqual("I received Receipt { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
+            Assert.Equal("I received Receipt { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
         }
 
         [Fact]
         public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutType()
         {
             var m = Render("I sat at {@Chair}", new { Back = "straight", Legs = new[] { 1, 2, 3, 4 } });
-            Assert.AreEqual("I sat at { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
+            Assert.Equal("I sat at { Back: \"straight\", Legs: [1, 2, 3, 4] }", m);
         }
 
         [Fact]
         public void AnAnonymousObjectIsRenderedInSimpleNotationWithoutTypeUsingFormatProvider()
         {
             var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "I received {@Receipt}", new { Sum = 12.345, When = new DateTime(2013, 5, 20, 16, 39, 0) });
-            Assert.AreEqual("I received { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
+            Assert.Equal("I received { Sum: 12,345, When: 20/05/2013 16:39:00 }", m);
         }
 
         [Fact]
         public void AnObjectWithDefaultDestructuringIsRenderedAsAStringLiteral()
         {
             var m = Render("I sat at {Chair}", new Chair());
-            Assert.AreEqual("I sat at \"a chair\"", m);
+            Assert.Equal("I sat at \"a chair\"", m);
         }
 
         [Fact]
         public void AnObjectWithStringifyDestructuringIsRenderedAsAString()
         {
             var m = Render("I sat at {$Chair}", new Chair());
-            Assert.AreEqual("I sat at \"a chair\"", m);
+            Assert.Equal("I sat at \"a chair\"", m);
         }
 
         [Fact]
         public void MultiplePropertiesAreRenderedInOrder()
         {
             var m = Render("Just biting {Fruit} number {Count}", "Apple", 12);
-            Assert.AreEqual("Just biting \"Apple\" number 12", m);
+            Assert.Equal("Just biting \"Apple\" number 12", m);
         }
 
         [Fact]
         public void MultiplePropertiesUseFormatProvider()
         {
             var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Income was {Income} at {Date:d}", 1234.567, new DateTime(2013, 5, 20));
-            Assert.AreEqual("Income was 1234,567 at 20/05/2013", m);
+            Assert.Equal("Income was 1234,567 at 20/05/2013", m);
         }
 
         [Fact]
         public void FormatStringsArePropagated()
         {
             var m = Render("Welcome, customer {CustomerId:0000}", 12);
-            Assert.AreEqual("Welcome, customer 0012", m);
+            Assert.Equal("Welcome, customer 0012", m);
         }
 
-        [TestCase("Welcome, customer #{CustomerId,-10}, pleasure to see you", ExpectedResult = "Welcome, customer #1234      , pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,-10:000000}, pleasure to see you", ExpectedResult = "Welcome, customer #001234    , pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,10}, pleasure to see you", ExpectedResult = "Welcome, customer #      1234, pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,10:000000}, pleasure to see you", ExpectedResult = "Welcome, customer #    001234, pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId,10:0,0}, pleasure to see you", ExpectedResult = "Welcome, customer #     1,234, pleasure to see you")]
-        [TestCase("Welcome, customer #{CustomerId:0,0}, pleasure to see you", ExpectedResult = "Welcome, customer #1,234, pleasure to see you")]
-        public string AlignmentStringsArePropagated(string value)
+        [Theory]
+        [InlineData("Welcome, customer #{CustomerId,-10}, pleasure to see you", "Welcome, customer #1234      , pleasure to see you")]
+        [InlineData("Welcome, customer #{CustomerId,-10:000000}, pleasure to see you", "Welcome, customer #001234    , pleasure to see you")]
+        [InlineData("Welcome, customer #{CustomerId,10}, pleasure to see you", "Welcome, customer #      1234, pleasure to see you")]
+        [InlineData("Welcome, customer #{CustomerId,10:000000}, pleasure to see you", "Welcome, customer #    001234, pleasure to see you")]
+        [InlineData("Welcome, customer #{CustomerId,10:0,0}, pleasure to see you", "Welcome, customer #     1,234, pleasure to see you")]
+        [InlineData("Welcome, customer #{CustomerId:0,0}, pleasure to see you", "Welcome, customer #1,234, pleasure to see you")]
+        public void AlignmentStringsArePropagated(string value, string expected)
         {
-            return Render(value, 1234);
+            Assert.Equal(expected, Render(value, 1234));
         }
 
         [Fact]
         public void FormatProviderIsUsed()
         {
             var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "Please pay {Sum}", 12.345);
-            Assert.AreEqual("Please pay 12,345", m);
+            Assert.Equal("Please pay 12,345", m);
         }
 
         static string Render(string messageTemplate, params object[] properties)
@@ -138,14 +139,14 @@ namespace Serilog.Tests.Core
         public void ATemplateWithOnlyPositionalPropertiesIsAnalyzedAndRenderedPositionally()
         {
             var m = Render("{1}, {0}", "world", "Hello");
-            Assert.AreEqual("\"Hello\", \"world\"", m);
+            Assert.Equal("\"Hello\", \"world\"", m);
         }
 
         [Fact]
         public void ATemplateWithOnlyPositionalPropertiesUsesFormatProvider()
         {
             var m = Render(CultureInfo.GetCultureInfo("fr-FR"), "{1}, {0}", 12.345, "Hello");
-            Assert.AreEqual("\"Hello\", 12,345", m);
+            Assert.Equal("\"Hello\", 12,345", m);
         }
 
         // Debatable what the behavior should be, here.
@@ -153,14 +154,14 @@ namespace Serilog.Tests.Core
         public void ATemplateWithNamesAndPositionalsUsesNamesForAllValues()
         {
             var m = Render("{1}, {Place}", "world", "Hello");
-            Assert.AreEqual("\"world\", \"Hello\"", m);
+            Assert.Equal("\"world\", \"Hello\"", m);
         }
 
         [Fact]
         public void MissingPositionalParametersRenderAsTextLikeStandardFormats()
         {
             var m = Render("{1}, {0}", "world");
-            Assert.AreEqual("{1}, \"world\"", m);
+            Assert.Equal("{1}, \"world\"", m);
         }
     }
 }

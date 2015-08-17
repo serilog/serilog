@@ -19,7 +19,7 @@ namespace Serilog.Tests.Sinks.Observable
                 .CreateLogger();
 
             log.Write(Some.InformationEvent());
-            Assert.That(eventSeen);
+            Assert.True(eventSeen);
         }
     }
 }

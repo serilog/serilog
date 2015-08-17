@@ -22,7 +22,7 @@ namespace Serilog.Tests.Events
 
             var rendered = sw.ToString();
 
-            Assert.AreEqual("[(1: \"hello\"), (\"world\": [1.2])]", rendered);
+            Assert.Equal("[(1: \"hello\"), (\"world\": [1.2])]", rendered);
         }
     }
 }
