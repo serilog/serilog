@@ -8,7 +8,6 @@
     "frameworks": {
         "net40": {
             "compilationOptions": {
-                "define": [ "NET40" ],
                 "keyFile": "..\\assets\\Serilog.snk"
             },
             "frameworkAssemblies": {
@@ -21,7 +20,6 @@
         },
         "net45": {
             "compilationOptions": {
-                "define": [ "NET45" ],
                 "keyFile": "..\\assets\\Serilog.snk"
             },
             "frameworkAssemblies": {
@@ -58,9 +56,6 @@
             }
         },
         "dnxcore50": {
-            "compilationOptions": {
-                "define": [ "DNXCORE50" ]
-            },
             "dependencies": {
                 "System.Collections": "4.0.10-beta-23019",
                 "System.Console": "4.0.0-beta-23019",
