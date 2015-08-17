@@ -13,8 +13,7 @@ namespace Serilog.Tests.Context
 {
     public class LogContextTests
     {
-        [SetUp]
-        public void Setup()
+        public LogContextTests()
         {
             LogContext.PermitCrossAppDomainCalls = false;
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
