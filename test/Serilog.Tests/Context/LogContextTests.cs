@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;

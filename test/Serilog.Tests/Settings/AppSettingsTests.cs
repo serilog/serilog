@@ -1,5 +1,5 @@
 ﻿using System.Configuration;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 using Serilog.Tests.Support;
 

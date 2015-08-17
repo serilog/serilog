@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;

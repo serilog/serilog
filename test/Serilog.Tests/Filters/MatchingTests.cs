@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Filters;
 using Serilog.Tests.Support;
 

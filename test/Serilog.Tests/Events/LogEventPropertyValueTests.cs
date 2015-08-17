@@ -15,7 +15,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parameters;

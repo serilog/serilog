@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Formatting.Json;

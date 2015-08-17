@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using Serilog.Tests.Support;

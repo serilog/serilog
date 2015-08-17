@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Tests.Support;

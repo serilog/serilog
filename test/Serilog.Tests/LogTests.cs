@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Core.Pipeline;
 
 namespace Serilog.Tests

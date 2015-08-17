@@ -1,5 +1,5 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Core.Sinks;
 using Serilog.Tests.Support;
 

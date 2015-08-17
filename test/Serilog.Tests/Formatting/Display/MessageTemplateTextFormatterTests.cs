@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Tests.Support;
 using Serilog.Formatting.Display;
 

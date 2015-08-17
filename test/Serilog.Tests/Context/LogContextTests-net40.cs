@@ -1,5 +1,5 @@
 ﻿#if NET40
-using NUnit.Framework;
+using Xunit;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Tests.Support;

@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Parsing;
 
 namespace Serilog.Tests.Parsing

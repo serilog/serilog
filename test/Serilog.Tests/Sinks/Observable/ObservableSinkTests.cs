@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.Observable

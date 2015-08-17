@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Sinks.RollingFile;
 
 namespace Serilog.Tests.Sinks.RollingFile

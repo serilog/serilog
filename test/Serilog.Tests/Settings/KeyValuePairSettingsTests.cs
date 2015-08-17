@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.RollingFile;

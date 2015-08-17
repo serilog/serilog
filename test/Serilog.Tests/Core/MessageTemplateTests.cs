@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Core;
 using Serilog.Parameters;
 using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
