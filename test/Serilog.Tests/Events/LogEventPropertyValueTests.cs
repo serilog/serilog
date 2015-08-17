@@ -24,7 +24,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Events
 {
-    [TestFixture]
     public class LogEventPropertyValueTests
     {
         readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());

@@ -5,7 +5,6 @@ using Serilog.Events;
 
 namespace Serilog.Tests.Events
 {
-    [TestFixture]
     public class DictionaryValueTests
     {
         [Test]

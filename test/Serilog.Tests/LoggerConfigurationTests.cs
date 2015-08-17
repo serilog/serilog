@@ -9,7 +9,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests
 {
-    [TestFixture]
     public class LoggerConfigurationTests
     {
         class DisposableSink : ILogEventSink, IDisposable

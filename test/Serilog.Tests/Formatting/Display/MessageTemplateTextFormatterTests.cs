@@ -6,7 +6,6 @@ using Serilog.Formatting.Display;
 
 namespace Serilog.Tests.Formatting.Display
 {
-    [TestFixture]
     public class MessageTemplateTextFormatterTests
     {
         [Test]

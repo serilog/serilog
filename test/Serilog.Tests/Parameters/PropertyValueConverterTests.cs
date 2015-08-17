@@ -10,7 +10,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Parameters
 {
-    [TestFixture]
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());

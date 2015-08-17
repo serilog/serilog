@@ -4,7 +4,6 @@ using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Tests.Sinks.PeriodicBatching
 {
-    [TestFixture]
     public class BatchedConnectionStatusTests
     {
         readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);

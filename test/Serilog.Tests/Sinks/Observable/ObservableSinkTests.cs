@@ -5,7 +5,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.Observable
 {
-    [TestFixture]
     public class ObservableSinkTests
     {
         [Test]

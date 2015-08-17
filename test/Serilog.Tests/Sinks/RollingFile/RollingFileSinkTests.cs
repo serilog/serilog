@@ -8,7 +8,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.RollingFile
 {
-    [TestFixture]
     public class RollingFileSinkTests
     {
         [Test]

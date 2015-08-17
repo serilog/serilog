@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace Serilog.Tests.Context
 {
-    [TestFixture]
     public class LogContextTests
     {
         [SetUp]

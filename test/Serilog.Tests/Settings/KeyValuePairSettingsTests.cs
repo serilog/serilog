@@ -8,7 +8,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Extras.AppSettings.Tests
 {
-    [TestFixture]
     public class KeyValuePairSettingsTests
     {
         [Test]

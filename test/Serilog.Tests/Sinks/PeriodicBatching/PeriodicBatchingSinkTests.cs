@@ -56,7 +56,6 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         }
     }
 
-    [TestFixture]
     public class PeriodicBatchingSinkTests
     {
         static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);

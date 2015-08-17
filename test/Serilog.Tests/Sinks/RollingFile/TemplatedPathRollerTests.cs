@@ -6,7 +6,6 @@ using Serilog.Sinks.RollingFile;
 
 namespace Serilog.Tests.Sinks.RollingFile
 {
-    [TestFixture]
     public class TemplatedPathRollerTests
     {
         [Test]

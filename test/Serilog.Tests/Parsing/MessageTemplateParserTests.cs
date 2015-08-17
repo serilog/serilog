@@ -4,7 +4,6 @@ using Serilog.Parsing;
 
 namespace Serilog.Tests.Parsing
 {
-    [TestFixture]
     public class MessageTemplateParserTests
     {
         static MessageTemplateToken[] Parse(string messsageTemplate)

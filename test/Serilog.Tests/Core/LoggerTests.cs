@@ -8,7 +8,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class LoggerTests
     {
         [Test]

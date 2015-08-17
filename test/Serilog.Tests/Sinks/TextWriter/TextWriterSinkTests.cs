@@ -6,7 +6,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.TextWriter
 {
-    [TestFixture]
     public class TextWriterSinkTests
     {
         [Test]

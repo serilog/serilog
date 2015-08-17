@@ -10,7 +10,6 @@ using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class MessageTemplateTests
     {
         class Chair

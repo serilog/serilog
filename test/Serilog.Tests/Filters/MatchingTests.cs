@@ -4,7 +4,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Filters
 {
-    [TestFixture]
     public class MatchingTests
     {
         [Test]

@@ -6,7 +6,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Context
 {
-    [TestFixture]
     public class LogContextTests
     {
         [Test]

@@ -7,7 +7,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.IOFile
 {
-    [TestFixture]
     public class FileSinkTests
     {
         [Test]

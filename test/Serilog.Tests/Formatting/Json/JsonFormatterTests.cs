@@ -13,7 +13,6 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Formatting.Json
 {
-    [TestFixture]
     public class JsonFormatterTests
     {
         [Test]
