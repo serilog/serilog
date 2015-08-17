@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using Serilog.Core;
 using Serilog.Core.Sinks;
@@ -47,6 +48,24 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="logEventSink">The sink.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>Provided for binary compatibility for earlier versions,
+        /// should be removed in 2.0. Not marked obsolete because warnings
+        /// would be syntactically annoying to avoid.</remarks>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public LoggerConfiguration Sink(
+            ILogEventSink logEventSink,
+            LogEventLevel restrictedToMinimumLevel)
+        {
+            return Sink(logEventSink, restrictedToMinimumLevel, null);
+        }
+
+        /// <summary>
+        /// Write log events to the specified <see cref="ILogEventSink"/>.
+        /// </summary>
+        /// <param name="logEventSink">The sink.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
         /// <param name="levelSwitch">A switch allowing the pass-through minimum level
         /// to be changed at runtime.</param>
@@ -54,6 +73,7 @@ namespace Serilog.Configuration
         public LoggerConfiguration Sink(
             ILogEventSink logEventSink,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            // ReSharper disable once MethodOverloadWithOptionalParameter
             LoggingLevelSwitch levelSwitch = null)
         {
             var sink = logEventSink;
