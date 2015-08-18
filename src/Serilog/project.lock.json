@@ -1224,45 +1224,44 @@
     "": [],
     ".NETFramework,Version=v4.0": [
       "Microsoft.Bcl.Async >= 1.0.168",
-      "fx/System.Configuration ",
-      "fx/Microsoft.CSharp "
+      "fx/System.Configuration "
     ],
     ".NETFramework,Version=v4.5": [
       "fx/System.Configuration "
     ],
     "DNX,Version=v4.5.1": [
-      "fx/System.Runtime ",
       "fx/System.Configuration "
     ],
     ".NETPortable,Version=v4.5,Profile=Profile259": [
+      "fx/Microsoft.CSharp ",
       "fx/System.Collections ",
+      "fx/System.Diagnostics.Debug ",
+      "fx/System.Dynamic.Runtime ",
       "fx/System.Globalization ",
-      "fx/System.Runtime ",
-      "fx/System.Runtime.Extensions ",
-      "fx/System.Linq ",
       "fx/System.IO ",
+      "fx/System.Linq ",
       "fx/System.Reflection ",
       "fx/System.Reflection.Extensions ",
+      "fx/System.Runtime ",
+      "fx/System.Runtime.Extensions ",
       "fx/System.Text.RegularExpressions ",
-      "fx/System.Diagnostics.Debug ",
       "fx/System.Threading ",
-      "fx/System.Threading.Tasks ",
-      "fx/Microsoft.CSharp "
+      "fx/System.Threading.Tasks "
     ],
     "DNXCore,Version=v5.0": [
+      "Microsoft.CSharp >= 4.0.0-beta-23019",
       "System.Collections >= 4.0.10-beta-23019",
       "System.Console >= 4.0.0-beta-23019",
+      "System.Diagnostics.Process >= 4.0.0-beta-23019",
+      "System.Diagnostics.TraceSource >= 4.0.0-beta-23019",
+      "System.IO.FileSystem >= 4.0.0-beta-23019",
       "System.Linq >= 4.0.0-beta-23019",
+      "System.Runtime >= 4.0.20-beta-23019",
+      "System.Runtime.Extensions >= 4.0.10-beta-23019",
       "System.Text.RegularExpressions >= 4.0.0-beta-23019",
       "System.Threading >= 4.0.10-beta-23019",
       "System.Threading.Thread >= 4.0.0-beta-23019",
-      "System.Threading.Timer >= 4.0.0-beta-23019",
-      "Microsoft.CSharp >= 4.0.0-beta-23019",
-      "System.Runtime >= 4.0.20-beta-23019",
-      "System.Runtime.Extensions >= 4.0.10-beta-23019",
-      "System.IO.FileSystem >= 4.0.0-beta-23019",
-      "System.Diagnostics.TraceSource >= 4.0.0-beta-23019",
-      "System.Diagnostics.Process >= 4.0.0-beta-23019"
+      "System.Threading.Timer >= 4.0.0-beta-23019"
     ]
   }
 }
