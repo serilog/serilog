@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.TextWriter
 {
-    [TestFixture]
     public class TextWriterSinkTests
     {
-        [Test]
+        [Fact]
         public void EventsAreWrittenToTheTextWriter()
         {
             var sw = new StringWriter();
@@ -22,15 +21,15 @@ namespace Serilog.Tests.Sinks.TextWriter
             log.Information(mt);
 
             var s = sw.ToString();
-            Assert.That(s.Contains(mt));
+            Assert.True(s.Contains(mt));
         }
 
-        [Test]
+        [Fact]
         public void EventsAreWrittenToTheTextWriterUsingFormatProvider()
         {
             var sw = new StringWriter();
 
-            var french = CultureInfo.GetCultureInfo("fr-FR");
+            var french = new CultureInfo("fr-FR");
             var log = new LoggerConfiguration()
                 .WriteTo.TextWriter(sw, formatProvider: french)
                 .CreateLogger();
@@ -39,7 +38,7 @@ namespace Serilog.Tests.Sinks.TextWriter
             log.Information("{0}", 12.345);
 
             var s = sw.ToString();
-            Assert.That(s.Contains(mt));
+            Assert.True(s.Contains(mt));
         }
     }
 }

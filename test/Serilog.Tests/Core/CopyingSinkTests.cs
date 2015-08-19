@@ -1,14 +1,13 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class CopyingSinkTests
     {
-        [Test]
+        [Fact]
         public void ModifyingCopiesPassedThroughTheSinkPreservesOriginal()
         {
             var e = Some.InformationEvent();
@@ -18,11 +17,11 @@ namespace Serilog.Tests.Core
                 .CreateLogger()
                 .Write(e);
             
-            Assert.AreNotSame(e, copy);
+            Assert.NotSame(e, copy);
             var p = Some.LogEventProperty();
             copy.AddPropertyIfAbsent(p);
-            Assert.IsTrue(copy.Properties.ContainsKey(p.Name));
-            Assert.IsFalse(e.Properties.ContainsKey(p.Name));
+            Assert.True(copy.Properties.ContainsKey(p.Name));
+            Assert.False(e.Properties.ContainsKey(p.Name));
         }
     }
 }

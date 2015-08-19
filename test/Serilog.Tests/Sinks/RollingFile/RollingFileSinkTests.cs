@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.RollingFile
 {
-    [TestFixture]
     public class RollingFileSinkTests
     {
-        [Test]
+        [Fact]
         public void LogEventsAreEmittedToTheFileNamedAccordingToTheEventTimestamp()
         {
             TestRollingEventSequence(Some.InformationEvent());
         }
 
-        [Test]
+        [Fact]
         public void WhenTheDateChangesTheCorrectFileIsWritten()
         {
             var e1 = Some.InformationEvent();
@@ -25,7 +24,7 @@ namespace Serilog.Tests.Sinks.RollingFile
             TestRollingEventSequence(e1, e2);
         }
 
-        [Test]
+        [Fact]
         public void WhenRetentionCountIsSetOldFilesAreDeleted()
         {
             LogEvent e1 = Some.InformationEvent(),
@@ -35,14 +34,14 @@ namespace Serilog.Tests.Sinks.RollingFile
             TestRollingEventSequence(new[] { e1, e2, e3 }, 2,
                 files =>
                 {
-                    Assert.AreEqual(3, files.Count);
-                    Assert.That(!File.Exists(files[0]));
-                    Assert.That(File.Exists(files[1]));
-                    Assert.That(File.Exists(files[2]));
+                    Assert.Equal(3, files.Count);
+                    Assert.True(!File.Exists(files[0]));
+                    Assert.True(File.Exists(files[1]));
+                    Assert.True(File.Exists(files[2]));
                 });
         }
 
-        [Test]
+        [Fact]
         public void IfTheLogFolderDoesNotExistItWillBeCreated()
         {
             var fileName = Some.String() + "-{Date}.txt";
@@ -60,7 +59,7 @@ namespace Serilog.Tests.Sinks.RollingFile
 
                 log.Write(Some.InformationEvent());
 
-                Assert.That(Directory.Exists(folder));
+                Assert.True(Directory.Exists(folder));
             }
             finally
             {
@@ -98,7 +97,7 @@ namespace Serilog.Tests.Sinks.RollingFile
                     log.Write(@event);
 
                     var expected = pathFormat.Replace("{Date}", @event.Timestamp.ToString("yyyyMMdd"));
-                    Assert.That(File.Exists(expected));
+                    Assert.True(File.Exists(expected));
 
                     verified.Add(expected);
                 }

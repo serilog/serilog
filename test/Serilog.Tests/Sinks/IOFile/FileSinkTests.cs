@@ -1,30 +1,29 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.IOFile
 {
-    [TestFixture]
     public class FileSinkTests
     {
-        [Test]
+        [Fact]
         public void FileIsWrittenIfNonexistent()
         {
             var path = Some.NonexistentTempFilePath();
             TestLoggingAndDelete(path);
         }
 
-        [Test]
+        [Fact]
         public void FileIsAppendedToWhenAlreadyCreated()
         {
             var path = Some.TempFilePath();
             TestLoggingAndDelete(path);
         }
 
-        [Test]
+        [Fact]
         public void WhenLimitIsSpecifiedFileSizeIsRestricted()
         {
             const int maxBytes = 100;
@@ -38,8 +37,8 @@ namespace Serilog.Tests.Sinks.IOFile
                 {
                     log.Information(new string('n', maxBytes + 1));
                     var size = new FileInfo(path).Length;
-                    Assert.That(size > 0);
-                    Assert.That(size < maxBytes);
+                    Assert.True(size > 0);
+                    Assert.True(size < maxBytes);
                 });
         }
 
@@ -65,7 +64,7 @@ namespace Serilog.Tests.Sinks.IOFile
                     var content = new StreamReader(refile).ReadToEnd();
                     refile.Dispose();
 
-                    Assert.That(content.Contains(message.Text));
+                    Assert.True(content.Contains(message.Text));
                 });
         }
 
