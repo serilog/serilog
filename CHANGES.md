@@ -1,3 +1,6 @@
+1.5.9
+ * #491 - enable `ReadFrom.KeyValuePairs()` in .NET 4.0 build
+
 1.5.8
  * #484 - generic overloads on `Log` to avoid boxing/allocation
 
