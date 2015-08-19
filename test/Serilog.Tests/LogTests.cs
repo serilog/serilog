@@ -1,15 +1,14 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Core.Pipeline;
 
 namespace Serilog.Tests
 {
-    [TestFixture]
     public class LogTests
     {
-        [Test]
+        [Fact]
         public void TheUninitializedLoggerIsSilent()
         {
-            Assert.IsInstanceOf<SilentLogger>(Log.Logger);
+            Assert.IsType<SilentLogger>(Log.Logger);
         }
     }
 }

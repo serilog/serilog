@@ -16,6 +16,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+#if NET40
+using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#else
+using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#endif
+
 namespace Serilog.Events
 {
     /// <summary>
@@ -98,7 +104,7 @@ namespace Serilog.Events
         /// <summary>
         /// Properties associated with the event, including those presented in <see cref="LogEvent.MessageTemplate"/>.
         /// </summary>
-        public IReadOnlyDictionary<string, LogEventPropertyValue> Properties
+        public IPropertyDictionary Properties
         {
             get { return _properties; }
         }

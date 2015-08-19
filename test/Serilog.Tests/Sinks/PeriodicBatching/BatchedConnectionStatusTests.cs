@@ -1,60 +1,60 @@
-﻿using System;
-using NUnit.Framework;
+﻿#if !DNXCORE50
+using System;
+using Xunit;
 using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Tests.Sinks.PeriodicBatching
 {
-    [TestFixture]
     public class BatchedConnectionStatusTests
     {
         readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
-        [Test]
+        [Fact]
         public void WhenNoFailuresHaveOccurredTheRegularIntervalIsUsed()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
-            Assert.AreEqual(DefaultPeriod, bcs.NextInterval);
+            Assert.Equal(DefaultPeriod, bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenOneFailureHasOccurredTheRegularIntervalIsUsed()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
             bcs.MarkFailure();
-            Assert.AreEqual(DefaultPeriod, bcs.NextInterval);
+            Assert.Equal(DefaultPeriod, bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenTwoFailuresHaveOccurredTheIntervalBacksOff()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
             bcs.MarkFailure();
             bcs.MarkFailure();
-            Assert.AreEqual(TimeSpan.FromSeconds(10), bcs.NextInterval);
+            Assert.Equal(TimeSpan.FromSeconds(10), bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenABatchSucceedsTheStatusResets()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
             bcs.MarkFailure();
             bcs.MarkFailure();
             bcs.MarkSuccess();
-            Assert.AreEqual(DefaultPeriod, bcs.NextInterval);
+            Assert.Equal(DefaultPeriod, bcs.NextInterval);
         }
 
-        [Test]
+        [Fact]
         public void WhenThreeFailuresHaveOccurredTheIntervalBacksOff()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
             bcs.MarkFailure();
             bcs.MarkFailure();
             bcs.MarkFailure();
-            Assert.AreEqual(TimeSpan.FromSeconds(20), bcs.NextInterval);
-            Assert.IsFalse(bcs.ShouldDropBatch);
+            Assert.Equal(TimeSpan.FromSeconds(20), bcs.NextInterval);
+            Assert.False(bcs.ShouldDropBatch);
         }
 
-        [Test]
+        [Fact]
         public void WhenFourFailuresHaveOccurredTheIntervalBacksOffAndBatchIsDropped()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
@@ -62,18 +62,19 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             bcs.MarkFailure();
             bcs.MarkFailure();
             bcs.MarkFailure();
-            Assert.AreEqual(TimeSpan.FromSeconds(40), bcs.NextInterval);
-            Assert.That(bcs.ShouldDropBatch);
-            Assert.IsFalse(bcs.ShouldDropQueue);
+            Assert.Equal(TimeSpan.FromSeconds(40), bcs.NextInterval);
+            Assert.True(bcs.ShouldDropBatch);
+            Assert.False(bcs.ShouldDropQueue);
         }
 
-        [Test]
+        [Fact]
         public void WhenSixFailuresHaveOccurredTheQueueIsDropped()
         {
             var bcs = new BatchedConnectionStatus(DefaultPeriod);
             for (var i = 0; i < 6; ++i )
                 bcs.MarkFailure();
-            Assert.That(bcs.ShouldDropQueue);
+            Assert.True(bcs.ShouldDropQueue);
         }
     }
 }
+#endif

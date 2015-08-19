@@ -1,0 +1,72 @@
+﻿{
+    "version": "2.0.0-beta-*",
+    "description": "Simple .NET logging with fully-structured events",
+    "authors": [ "Serilog Contributors" ],
+    "tags": [ "serilog", "logging", "semantic", "structured" ],
+    "projectUrl": "http://serilog.net",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "frameworks": {
+        "net40": {
+            "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Configuration": ""
+            },
+            "dependencies": {
+                "Microsoft.Bcl.Async": "1.0.168"
+            }
+        },
+        "net45": {
+            "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Configuration": ""
+            }
+        },
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Configuration": ""
+            }
+        },
+        ".NETPortable,Version=v4.5,Profile=Profile259": {
+            "compilationOptions": {
+                "define": [ "PROFILE259" ]
+            },
+            "frameworkAssemblies": {
+                "Microsoft.CSharp": "",
+                "System.Collections": "",
+                "System.Diagnostics.Debug": "",
+                "System.Dynamic.Runtime": "",
+                "System.Globalization": "",
+                "System.IO": "",
+                "System.Linq": "",
+                "System.Reflection": "",
+                "System.Reflection.Extensions": "",
+                "System.Runtime": "",
+                "System.Runtime.Extensions": "",
+                "System.Text.RegularExpressions": "",
+                "System.Threading": "",
+                "System.Threading.Tasks": ""
+            }
+        },
+        "dnxcore50": {
+            "dependencies": {
+                "Microsoft.CSharp": "4.0.0-beta-23019",
+                "System.Collections": "4.0.10-beta-23019",
+                "System.Console": "4.0.0-beta-23019",
+                "System.Diagnostics.Process": "4.0.0-beta-23019",
+                "System.Diagnostics.TraceSource": "4.0.0-beta-23019",
+                "System.IO.FileSystem": "4.0.0-beta-23019",
+                "System.Linq": "4.0.0-beta-23019",
+                "System.Runtime": "4.0.20-beta-23019",
+                "System.Runtime.Extensions": "4.0.10-beta-23019",
+                "System.Text.RegularExpressions": "4.0.0-beta-23019",
+                "System.Threading": "4.0.10-beta-23019",
+                "System.Threading.Thread": "4.0.0-beta-23019",
+                "System.Threading.Timer": "4.0.0-beta-23019"
+            }
+        }
+    }
+}

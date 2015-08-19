@@ -15,7 +15,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parameters;
@@ -24,55 +24,54 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Events
 {
-    [TestFixture]
     public class LogEventPropertyValueTests
     {
         readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
 
-        [Test]
+        [Fact]
         public void AnEnumIsConvertedToANonStringScalarValue()
         {
             var value = _converter.CreatePropertyValue(LogEventLevel.Debug, Destructuring.Default);
-            Assert.IsInstanceOf<ScalarValue>(value);
+            Assert.IsType<ScalarValue>(value);
             var sv = (ScalarValue)value;
-            Assert.IsNotNull(sv.Value);
-            Assert.IsInstanceOf<LogEventLevel>(sv.Value);
+            Assert.NotNull(sv.Value);
+            Assert.IsType<LogEventLevel>(sv.Value);
         }
 
-        [Test]
+        [Fact]
         public void AScalarValueToStringRendersTheValue()
         {
             var num = Some.Int();
             var value = _converter.CreatePropertyValue(num, Destructuring.Default);
             var str = value.ToString();
-            Assert.AreEqual(num.ToString(CultureInfo.InvariantCulture), str);
+            Assert.Equal(num.ToString(CultureInfo.InvariantCulture), str);
         }
 
-        [Test]
+        [Fact]
         public void AScalarValueToStringRendersTheValueUsingFormat()
         {
             var num = Some.Decimal();
             var value = _converter.CreatePropertyValue(num, Destructuring.Default);
             var str = value.ToString("N2", null);
-            Assert.AreEqual(num.ToString("N2", CultureInfo.InvariantCulture), str);
+            Assert.Equal(num.ToString("N2", CultureInfo.InvariantCulture), str);
         }
 
-        [Test]
+        [Fact]
         public void AScalarValueToStringRendersTheValueUsingFormatProvider()
         {
             var num = Some.Decimal();
             var value = _converter.CreatePropertyValue(num, Destructuring.Default);
-            var str = value.ToString(null, CultureInfo.GetCultureInfo("fr-FR"));
-            Assert.AreEqual(num.ToString(CultureInfo.GetCultureInfo("fr-FR")), str);
+            var str = value.ToString(null, new CultureInfo("fr-FR"));
+            Assert.Equal(num.ToString(new CultureInfo("fr-FR")), str);
         }
 
-        [Test]
+        [Fact]
         public void WhenDestructuringAKnownLiteralTypeIsScalar()
         {
             var guid = Guid.NewGuid();
             var value = _converter.CreatePropertyValue(guid, Destructuring.Destructure);
             var str = value.ToString();
-            Assert.AreEqual(guid.ToString(), str);
+            Assert.Equal(guid.ToString(), str);
         }
     }
 }

@@ -17,6 +17,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+#if NET40
+using IScalarDictionary = System.Collections.Generic.IDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue>;
+#else
+using IScalarDictionary = System.Collections.Generic.IReadOnlyDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue>;
+#endif
+
 namespace Serilog.Events
 {
     /// <summary>
@@ -24,7 +30,7 @@ namespace Serilog.Events
     /// </summary>
     public class DictionaryValue : LogEventPropertyValue
     {
-        readonly IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> _elements;
+        readonly IScalarDictionary _elements;
 
         /// <summary>
         /// Create a <see cref="DictionaryValue"/> with the provided <paramref name="elements"/>.
@@ -40,7 +46,7 @@ namespace Serilog.Events
         /// <summary>
         /// The dictionary mapping.
         /// </summary>
-        public IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> Elements { get { return _elements; } }
+        public IScalarDictionary Elements { get { return _elements; } }
 
         /// <summary>
         /// Render the value to the output.

@@ -21,6 +21,10 @@ using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
 
+#if NET40
+using Serilog.Platform;
+#endif
+
 namespace Serilog.Settings.KeyValuePairs
 {
     class KeyValuePairSettings : ILoggerSettings
@@ -96,7 +100,13 @@ namespace Serilog.Settings.KeyValuePairs
                 {
                     var target = sinkConfigurationMethods
                         .Where(m => m.Name == sinkDirective.Key &&
-                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || sinkDirective.Any(s => s.Argument == p.Name)))
+                            m.GetParameters().Skip(1).All(p =>
+#if NET40
+                            (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
+#else
+                            p.HasDefaultValue
+#endif
+                            || sinkDirective.Any(s => s.Argument == p.Name)))
                         .OrderByDescending(m => m.GetParameters().Length)
                         .FirstOrDefault();
 
@@ -156,13 +166,23 @@ namespace Serilog.Settings.KeyValuePairs
                 .Select(t => t.Value)
                 .FirstOrDefault();
 
+#if !PROFILE259
             return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
+#else
+            return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
+#endif
         }
 
         internal static IEnumerable<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
         {
             return configurationAssemblies
-                .SelectMany(a => a.ExportedTypes.Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
+                .SelectMany(a => a.
+#if NET40
+                GetExportedTypes()
+#else
+                ExportedTypes
+#endif
+                .Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
                 .SelectMany(t => t.DeclaredMethods)
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration));

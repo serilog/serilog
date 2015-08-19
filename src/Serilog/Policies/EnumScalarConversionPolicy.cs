@@ -16,6 +16,10 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Events;
 
+#if NET40
+using Serilog.Platform;
+#endif
+
 namespace Serilog.Policies
 {
     class EnumScalarConversionPolicy : IScalarConversionPolicy
