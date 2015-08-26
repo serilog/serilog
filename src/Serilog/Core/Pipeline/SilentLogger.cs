@@ -54,6 +54,11 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
+        public void Write(DateTimeOffset timestamp, LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+        }
+
         public bool IsEnabled(LogEventLevel level)
         {
             return false;

@@ -91,6 +91,17 @@ namespace Serilog
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
 
         /// <summary>
+        /// Write a log event with the specified level and associated exception.
+        /// </summary>
+        /// <param name="timestamp">Timestamp for the log event.</param>
+        /// <param name="level">The level of the event.</param>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Write(DateTimeOffset timestamp, LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
         /// Determine if events at the specified level will be passed through
         /// to the log sinks.
         /// </summary>
