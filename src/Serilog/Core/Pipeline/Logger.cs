@@ -123,6 +123,12 @@ namespace Serilog.Core.Pipeline
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            Write(DateTimeOffset.Now, level, exception, messageTemplate, propertyValues);
+        }
+
+        [MessageTemplateFormatMethod("messageTemplate")]
+        public void Write(DateTimeOffset timestamp, LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        {
             if (messageTemplate == null) return;
             if (!IsEnabled(level)) return;
 
@@ -131,13 +137,11 @@ namespace Serilog.Core.Pipeline
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            var now = DateTimeOffset.Now;
-
             MessageTemplate parsedTemplate;
             IEnumerable<LogEventProperty> properties;
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out properties);
 
-            var logEvent = new LogEvent(now, level, exception, parsedTemplate, properties);
+            var logEvent = new LogEvent(timestamp, level, exception, parsedTemplate, properties);
             Dispatch(logEvent);
         }
 
