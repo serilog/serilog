@@ -1,3 +1,6 @@
+1.5.10
+ * #514 - provide `OnEmptyBatch()` to allow batching sinks to perform background work
+
 1.5.9
  * #491 - enable `ReadFrom.KeyValuePairs()` in .NET 4.0 build
 
