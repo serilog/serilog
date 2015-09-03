@@ -154,7 +154,10 @@ namespace Serilog.Sinks.PeriodicBatching
                     }
 
                     if (_waitingBatch.Count == 0)
+                    {
+                        OnEmptyBatch();
                         return;
+                    }
 
                     EmitBatch(_waitingBatch);
 
@@ -227,6 +230,14 @@ namespace Serilog.Sinks.PeriodicBatching
         protected virtual bool CanInclude(LogEvent evt)
         {
             return true;
+        }
+
+        /// <summary>
+        /// Allows derived sinks to perform periodic work without requiring additional threads
+        /// or timers (thus avoiding additional flush/shut-down complexity).
+        /// </summary>
+        protected virtual void OnEmptyBatch()
+        {            
         }
     }
 }
