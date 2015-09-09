@@ -1,3 +1,6 @@
+1.5.11
+ * #523 - prevent excessive RAM use when large strings are cached as message templates
+
 1.5.10
  * #514 - provide `OnEmptyBatch()` to allow batching sinks to perform background work
 
