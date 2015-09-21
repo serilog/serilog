@@ -24,7 +24,6 @@ using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Raw;
 using Serilog.Settings.AppSettings;
-using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.DiagnosticTrace;
 using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
@@ -273,6 +272,25 @@ namespace Serilog
         {
             if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
             return settingConfiguration.Settings(new AppSettingsSettings());
+        }
+
+        /// <summary>
+        /// Reads the application settings name value collection, searching for for keys
+        /// that look like: <code>serilog:*</code>, which are used to configure
+        /// the logger. To add a sink, use a key like <code>serilog:write-to:File.path</code> for
+        /// each parameter to the sink's configuration method. To add an additional assembly
+        /// containing sinks, use <code>serilog:using</code>. To set the level use 
+        /// <code>serilog:minimum-level</code>.
+        /// </summary>
+        /// <param name="settingConfiguration">Logger setting configuration</param>
+        /// <param name="settings">Application settings name value collection</param>
+        /// <returns>An object allowing configuration to continue.</returns>
+        public static LoggerConfiguration AppSettings(
+            this LoggerSettingsConfiguration settingConfiguration, Dictionary<string, string> settings)
+        {
+            if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
+            if (settings == null) throw new ArgumentNullException("settings");
+            return settingConfiguration.Settings(new AppSettingsSettings(settings));
         }
     }
 }
