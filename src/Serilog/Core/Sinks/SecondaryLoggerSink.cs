@@ -19,32 +19,46 @@ using Serilog.Events;
 namespace Serilog.Core.Sinks
 {
     /// <summary>
-    /// Copies log events so that mutations performed on the copies do not
-    /// affect the originals.
+    /// Forwards log events to another logging pipeline. Copies the events so
+    /// that mutations performed on the copies do not affect the originals.
     /// </summary>
     /// <remarks>The properties dictionary is copied, however the values within
     /// the dictionary (of type <see cref="LogEventProperty"/> are expected to
     /// be immutable.</remarks>
-    class CopyingSink : ILogEventSink
+    sealed class SecondaryLoggerSink : ILogEventSink, IDisposable
     {
-        readonly ILogEventSink _copyToSink;
+        readonly ILogger _logger;
+        readonly bool _attemptDispose;
 
-        public CopyingSink(ILogEventSink copyToSink)
+        public SecondaryLoggerSink(ILogger logger, bool attemptDispose = false)
         {
-            if (copyToSink == null) throw new ArgumentNullException("copyToSink");
-            _copyToSink = copyToSink;
+            if (logger == null) throw new ArgumentNullException("logger");
+            _logger = logger;
+            _attemptDispose = attemptDispose;
         }
 
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
+
             var copy = new LogEvent(
                 logEvent.Timestamp,
                 logEvent.Level,
                 logEvent.Exception,
                 logEvent.MessageTemplate,
                 logEvent.Properties.Select(p => new LogEventProperty(p.Key, p.Value)));
-            _copyToSink.Emit(copy);
+
+            _logger.Write(copy);
+        }
+
+        public void Dispose()
+        {
+            if (!_attemptDispose)
+                return;
+
+            var target = _logger as IDisposable;
+            if (target != null)
+                target.Dispose();
         }
     }
 }

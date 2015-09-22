@@ -80,7 +80,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Context\LogContextTests.cs" />
-    <Compile Include="Core\CopyingSinkTests.cs" />
+    <Compile Include="Core\SecondaryLoggerSinkTests.cs" />
     <Compile Include="Core\LoggerTests.cs" />
     <Compile Include="Core\SafeAggregateSinkTests.cs" />
     <Compile Include="Core\MessageTemplateTests.cs" />
@@ -101,8 +101,10 @@
     <Compile Include="Sinks\RollingFile\RollingFileSinkTests.cs" />
     <Compile Include="Sinks\RollingFile\TemplatedPathRollerTests.cs" />
     <Compile Include="Sinks\TextWriter\TextWriterSinkTests.cs" />
+    <Compile Include="Support\CollectingSink.cs" />
     <Compile Include="Support\DelegatingEnricher.cs" />
     <Compile Include="Support\DelegatingSink.cs" />
+    <Compile Include="Support\DisposeTrackingSink.cs" />
     <Compile Include="Support\Extensions.cs" />
     <Compile Include="Support\Some.cs" />
   </ItemGroup>

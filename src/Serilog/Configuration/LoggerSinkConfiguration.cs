@@ -114,7 +114,26 @@ namespace Serilog.Configuration
             if (configureLogger == null) throw new ArgumentNullException("configureLogger");
             var lc = new LoggerConfiguration();
             configureLogger(lc);
-            return Sink(new CopyingSink((ILogEventSink)lc.CreateLogger()), restrictedToMinimumLevel);
+            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel);
+        }
+
+        /// <summary>
+        /// Write log events to a sub-logger, where further processing may occur. Events through
+        /// the sub-logger will be constrained by filters and enriched by enrichers that are
+        /// active in the parent. A sub-logger cannot be used to log at a more verbose level, but
+        /// a less verbose level is possible.
+        /// </summary>
+        /// <param name="logger">The sub-logger. This will <em>not</em> be shut down automatically when the
+        /// parent logger is disposed.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Logger(
+            ILogger logger,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        {
+            if (logger == null) throw new ArgumentNullException("logger");
+            return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
         }
 
         /// <summary>
