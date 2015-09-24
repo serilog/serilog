@@ -52,13 +52,13 @@
     <Compile Include="Core\IScalarConversionPolicy.cs" />
     <Compile Include="Core\LoggingLevelSwitch.cs" />
     <Compile Include="Core\MessageTemplateFormatMethodAttribute.cs" />
-    <Compile Include="Core\Sinks\CopyingSink.cs" />
     <Compile Include="Core\Filters\DelegateFilter.cs" />
     <Compile Include="Core\Sinks\FilteringSink.cs" />
     <Compile Include="Core\IDestructuringPolicy.cs" />
     <Compile Include="Core\ILogEventFilter.cs" />
     <Compile Include="Core\ILogEventPropertyFactory.cs" />
     <Compile Include="Core\ILogEventPropertyValueFactory.cs" />
+    <Compile Include="Core\Sinks\SecondaryLoggerSink.cs" />
     <Compile Include="Events\DictionaryValue-net40.cs" />
     <Compile Include="Events\LevelAlias.cs" />
     <Compile Include="Filters\Matching.cs" />
