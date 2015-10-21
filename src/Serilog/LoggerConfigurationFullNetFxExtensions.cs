@@ -14,7 +14,6 @@
 
 #if !PROFILE259
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
@@ -24,7 +23,6 @@ using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Raw;
-using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.DiagnosticTrace;
 using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
@@ -63,8 +61,8 @@ namespace Serilog
             string outputTemplate = DefaultConsoleOutputTemplate,
             IFormatProvider formatProvider = null)
         {
-            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
         }
@@ -86,8 +84,8 @@ namespace Serilog
             string outputTemplate = DefaultConsoleOutputTemplate,
             IFormatProvider formatProvider = null)
         {
-            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel);
         }
 
@@ -105,8 +103,8 @@ namespace Serilog
             string path,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
-            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
-            if (path == null) throw new ArgumentNullException("path");
+            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
+            if (path == null) throw new ArgumentNullException(nameof(path));
             return sinkConfiguration.Sink(new FileSink(path, new RawFormatter(), null), restrictedToMinimumLevel);
         }
 
@@ -132,8 +130,8 @@ namespace Serilog
             IFormatProvider formatProvider = null,
             long? fileSizeLimitBytes = DefaultFileSizeLimitBytes)
         {
-            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             
             FileSink sink;
@@ -183,8 +181,8 @@ namespace Serilog
             long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
             int? retainedFileCountLimit = DefaultRetainedFileCountLimit)
         {
-            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             var sink = new RollingFileSink(pathFormat, formatter, fileSizeLimitBytes, retainedFileCountLimit);
             return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
@@ -206,8 +204,8 @@ namespace Serilog
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null)
         {
-            if (sinkConfiguration == null) throw new ArgumentNullException("sinkConfiguration");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
         }
@@ -222,7 +220,7 @@ namespace Serilog
         public static LoggerConfiguration FromLogContext(
             this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With<LogContextEnricher>();
         }
 #endif
@@ -236,7 +234,7 @@ namespace Serilog
         public static LoggerConfiguration WithThreadId(
             this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With<ThreadIdEnricher>();
         }
 
@@ -248,7 +246,7 @@ namespace Serilog
         public static LoggerConfiguration WithProcessId(
            this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With<ProcessIdEnricher>();
         }
 
@@ -260,7 +258,7 @@ namespace Serilog
         public static LoggerConfiguration WithMachineName(
            this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With<MachineNameEnricher>();
         }
 
@@ -278,7 +276,7 @@ namespace Serilog
         public static LoggerConfiguration AppSettings(
             this LoggerSettingsConfiguration settingConfiguration)
         {
-            if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
+            if (settingConfiguration == null) throw new ArgumentNullException(nameof(settingConfiguration));
             return settingConfiguration.Settings(new AppSettingsSettings());
         }
 #endif

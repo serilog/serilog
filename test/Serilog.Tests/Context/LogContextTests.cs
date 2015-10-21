@@ -103,10 +103,9 @@ namespace Serilog.Tests.Context
                 log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
-                // No problem if this happens occasionally.
-                // TODO: xUnit inconclusive?
-                //if (pre == post)
-                //    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
+                // No problem if this happens occasionally; was Assert.Inconclusive().
+                // The test was marshalled back to the same thread after awaiting.
+                Assert.NotSame(pre, post);
             }
         }
 
@@ -133,10 +132,9 @@ namespace Serilog.Tests.Context
                 log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
-                // No problem if this happens occasionally.
-                // TODO: xUnit inconclusive?
-                //if (pre == post)
-                //    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
+                // No problem if this happens occasionally; was Assert.Inconclusive().
+                // The test was marshalled back to the same thread after awaiting.
+                Assert.NotSame(pre, post);
             }
         }
 
