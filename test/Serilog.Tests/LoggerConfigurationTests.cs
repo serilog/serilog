@@ -13,7 +13,7 @@ namespace Serilog.Tests
     {
         class DisposableSink : ILogEventSink, IDisposable
         {
-            public bool IsDisposed { get; set; }
+            public bool IsDisposed { get; private set; }
 
             public void Emit(LogEvent logEvent) { }
 
@@ -172,6 +172,41 @@ namespace Serilog.Tests
 
             Assert.Contains("C", xs);
             Assert.DoesNotContain(xs, "D");
+        }
+
+        [Fact]
+        public void DynamicallySwitchingSinkRestrictsOutput()
+        {
+            var eventsReceived = 0;
+            var levelSwitch = new LoggingLevelSwitch();
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(
+                    new DelegatingSink(e => eventsReceived++),
+                    levelSwitch: levelSwitch)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+            levelSwitch.MinimumLevel = LogEventLevel.Warning;
+            logger.Write(Some.InformationEvent());
+            levelSwitch.MinimumLevel = LogEventLevel.Verbose;
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(2, eventsReceived);
+        }
+
+        [Fact]
+        public void LevelSwitchTakesPrecedenceOverMinimumLevel()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink, LogEventLevel.Fatal, new LoggingLevelSwitch())
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(1, sink.Events.Count);
         }
     }
 }

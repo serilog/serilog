@@ -20,20 +20,21 @@ namespace Serilog.Core.Sinks
     class RestrictedSink : ILogEventSink
     {
         readonly ILogEventSink _sink;
-        readonly LogEventLevel _restrictedMinimumLevel;
+        readonly LoggingLevelSwitch _levelSwitch;
 
-        public RestrictedSink(ILogEventSink sink, LogEventLevel restrictedMinimumLevel)
+        public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
         {
             if (sink == null) throw new ArgumentNullException("sink");
+            if (levelSwitch == null) throw new ArgumentNullException("levelSwitch");
             _sink = sink;
-            _restrictedMinimumLevel = restrictedMinimumLevel;
+            _levelSwitch = levelSwitch;
         }
 
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException("logEvent");
 
-            if (logEvent.Level < _restrictedMinimumLevel)
+            if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
                 return;
 
             _sink.Emit(logEvent);

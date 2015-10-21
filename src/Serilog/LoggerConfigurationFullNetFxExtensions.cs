@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Enrichers;
 using Serilog.Events;
@@ -50,7 +51,9 @@ namespace Serilog
         /// </summary>
         /// <param name="sinkConfiguration">Logger sink configuration.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -59,12 +62,13 @@ namespace Serilog
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultConsoleOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -73,7 +77,9 @@ namespace Serilog
         /// </summary>
         /// <param name="sinkConfiguration">Logger sink configuration.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -82,11 +88,12 @@ namespace Serilog
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultConsoleOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
-            return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -114,7 +121,9 @@ namespace Serilog
         /// <param name="sinkConfiguration">Logger sink configuration.</param>
         /// <param name="path">Path to the file.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
@@ -128,7 +137,8 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
-            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes)
+            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
@@ -149,7 +159,7 @@ namespace Serilog
                 return sinkConfiguration.Sink(new NullSink());
             }
 
-            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -162,7 +172,9 @@ namespace Serilog
         /// with {Date} in the place of the file date. E.g. "Logs\myapp-{Date}.log" will result in log
         /// files such as "Logs\myapp-2013-10-20.log", "Logs\myapp-2013-10-21.log" and so on.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -179,13 +191,14 @@ namespace Serilog
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
             long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
-            int? retainedFileCountLimit = DefaultRetainedFileCountLimit)
+            int? retainedFileCountLimit = DefaultRetainedFileCountLimit,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             var sink = new RollingFileSink(pathFormat, formatter, fileSizeLimitBytes, retainedFileCountLimit);
-            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -193,7 +206,9 @@ namespace Serilog
         /// </summary>
         /// <param name="sinkConfiguration">Logger sink configuration.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink.
         /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -202,12 +217,13 @@ namespace Serilog
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            LoggingLevelSwitch levelSwitch = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel);
+            return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
 
 #if !DNXCORE50
