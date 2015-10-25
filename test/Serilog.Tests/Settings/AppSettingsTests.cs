@@ -26,5 +26,30 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.IsNotNullOrEmpty((string)evt.Properties["Path"].LiteralValue());
             Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
+
+        [Test]
+        public void CanUseCustomPrefixToConfigureSettings()
+        {
+            const string prefix1 = "custom1:";
+            const string prefix2 = "custom2:";
+
+            // Make sure we have the expected keys in the App.config
+            Assert.AreEqual("Warning", ConfigurationManager.AppSettings[prefix1 + "serilog:minimum-level"]);
+            Assert.AreEqual("Error", ConfigurationManager.AppSettings[prefix2 + "serilog:minimum-level"]);
+
+            var log1 = new LoggerConfiguration()
+                .ReadFrom.AppSettings(prefix1)
+                .CreateLogger();
+
+            var log2 = new LoggerConfiguration()
+                .ReadFrom.AppSettings(prefix2)
+                .CreateLogger();
+
+            Assert.IsFalse(log1.IsEnabled(LogEventLevel.Information));
+            Assert.IsTrue(log1.IsEnabled(LogEventLevel.Warning));
+
+            Assert.IsFalse(log2.IsEnabled(LogEventLevel.Warning));
+            Assert.IsTrue(log2.IsEnabled(LogEventLevel.Error));
+        }
     }
 }

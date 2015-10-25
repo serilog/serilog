@@ -279,12 +279,13 @@ namespace Serilog
         /// <code>serilog:minimum-level</code>.
         /// </summary>
         /// <param name="settingConfiguration">Logger setting configuration</param>
+        /// <param name="settingPrefix">Optional prefix to use when reading keys in appSettings</param>
         /// <returns>An object allowing configuration to continue.</returns>
         public static LoggerConfiguration AppSettings(
-            this LoggerSettingsConfiguration settingConfiguration)
+            this LoggerSettingsConfiguration settingConfiguration, string settingPrefix = null)
         {
             if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
-            return settingConfiguration.Settings(new AppSettingsSettings());
+            return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix));
         }
     }
 }

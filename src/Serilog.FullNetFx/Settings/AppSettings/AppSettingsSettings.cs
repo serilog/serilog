@@ -23,7 +23,12 @@ namespace Serilog.Settings.AppSettings
 {
     class AppSettingsSettings : ILoggerSettings
     {
-        const string SettingPrefix = "serilog:";
+        readonly string SettingPrefix;
+
+        public AppSettingsSettings(string settingPrefix = null)
+        {
+            SettingPrefix = string.Format("{0}serilog:", settingPrefix);
+        }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
