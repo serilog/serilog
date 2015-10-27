@@ -26,6 +26,31 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.NotEmpty((string)evt.Properties["Path"].LiteralValue());
             Assert.NotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
+
+        [Fact(Skip = "Fails on DNX451")]
+        public void CanUseCustomPrefixToConfigureSettings()
+        {
+            const string prefix1 = "custom1:serilog";
+            const string prefix2 = "custom2:serilog";
+
+            // Make sure we have the expected keys in the App.config
+            Assert.Equal("Warning", ConfigurationManager.AppSettings[prefix1 + ":minimum-level"]);
+            Assert.Equal("Error", ConfigurationManager.AppSettings[prefix2 + ":minimum-level"]);
+
+            var log1 = new LoggerConfiguration()
+                .ReadFrom.AppSettings(prefix1)
+                .CreateLogger();
+
+            var log2 = new LoggerConfiguration()
+                .ReadFrom.AppSettings(prefix2)
+                .CreateLogger();
+
+            Assert.False(log1.IsEnabled(LogEventLevel.Information));
+            Assert.True(log1.IsEnabled(LogEventLevel.Warning));
+
+            Assert.False(log2.IsEnabled(LogEventLevel.Warning));
+            Assert.True(log2.IsEnabled(LogEventLevel.Error));
+        }
     }
 }
 #endif
