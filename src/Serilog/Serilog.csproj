@@ -123,6 +123,7 @@
     <Compile Include="Settings\KeyValuePairs\KeyValuePairSettings.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink.cs" />
+    <Compile Include="Sources\EventSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">

@@ -79,6 +79,7 @@
     <Compile Include="Sinks\RollingFile\RollingFileSinkTests.cs" />
     <Compile Include="Sinks\RollingFile\TemplatedPathRollerTests.cs" />
     <Compile Include="Sinks\TextWriter\TextWriterSinkTests.cs" />
+    <Compile Include="Sources\EventSourceTests.cs" />
     <Compile Include="Support\CollectingSink.cs" />
     <Compile Include="Support\DelegatingEnricher.cs" />
     <Compile Include="Support\DelegatingSink.cs" />
