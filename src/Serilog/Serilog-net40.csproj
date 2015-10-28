@@ -117,6 +117,7 @@
     <Compile Include="Settings\KeyValuePairs\TypeExtensions-40.cs" />
     <Compile Include="Sinks\IOTextWriter\TextWriterSink.cs" />
     <Compile Include="Sinks\Observable\ObservableSink-net40.cs" />
+    <Compile Include="Sources\EventSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\Serilog.snk">
