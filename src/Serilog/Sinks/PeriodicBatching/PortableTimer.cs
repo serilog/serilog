@@ -55,7 +55,7 @@ namespace Serilog.Sinks.PeriodicBatching
                 // current API, which allows the tick handler to reenter and set the next interval.
 
                 if (_state == PortableTimerState.Waiting)
-                    throw new InvalidOperationException("The timer is already set");
+                    throw new InvalidOperationException("The timer is already set.");
 
                 if (_cancel.IsCancellationRequested) return;
 

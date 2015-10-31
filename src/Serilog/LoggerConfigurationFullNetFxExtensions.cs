@@ -294,6 +294,8 @@ namespace Serilog
             this LoggerSettingsConfiguration settingConfiguration, string settingPrefix = "serilog")
         {
             if (settingConfiguration == null) throw new ArgumentNullException(nameof(settingConfiguration));
+            if (settingPrefix == null) throw new ArgumentNullException(nameof(settingPrefix));
+            if (settingPrefix.Contains(":")) throw new ArgumentException("Custom setting prefixes cannot contain the colon (:) character.");
             return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix));
         }
 #endif

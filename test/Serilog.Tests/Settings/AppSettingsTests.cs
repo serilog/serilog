@@ -1,4 +1,5 @@
 ﻿#if !DNXCORE50
+using System;
 using System.Configuration;
 using Xunit;
 using Serilog.Events;
@@ -30,8 +31,8 @@ namespace Serilog.Extras.AppSettings.Tests
         [Fact]
         public void CanUseCustomPrefixToConfigureSettings()
         {
-            const string prefix1 = "custom1:serilog";
-            const string prefix2 = "custom2:serilog";
+            const string prefix1 = "custom1-serilog";
+            const string prefix2 = "custom2-serilog";
 
             // Make sure we have the expected keys in the App.config
             Assert.Equal("Warning", ConfigurationManager.AppSettings[prefix1 + ":minimum-level"]);
@@ -50,6 +51,13 @@ namespace Serilog.Extras.AppSettings.Tests
 
             Assert.False(log2.IsEnabled(LogEventLevel.Warning));
             Assert.True(log2.IsEnabled(LogEventLevel.Error));
+        }
+
+        [Fact]
+        public void CustomPrefixCannotContainColon()
+        {
+            Assert.Throws<ArgumentException>(() => 
+                new LoggerConfiguration().ReadFrom.AppSettings("custom1:serilog"));
         }
     }
 }
