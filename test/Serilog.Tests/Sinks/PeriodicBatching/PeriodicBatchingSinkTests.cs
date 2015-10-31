@@ -77,7 +77,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.False(pbs.WasCalledAfterDisposal);
         }
 
-        [Fact(Skip = "Fails on DNX451")]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);

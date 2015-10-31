@@ -8,7 +8,7 @@ namespace Serilog.Extras.AppSettings.Tests
 {
     public class AppSettingsTests
     {
-        [Fact(Skip = "Fails on DNX451")]
+        [Fact]
         public void EnvironmentVariableExpansionIsApplied()
         {
             // Make sure we have the expected key in the App.config

@@ -51,22 +51,22 @@
                 "System.Threading.Tasks": ""
             }
         },
-        "dnxcore50": {
-            "dependencies": {
-                "Microsoft.CSharp": "4.0.0-beta-23019",
-                "System.Collections": "4.0.10-beta-23019",
-                "System.Console": "4.0.0-beta-23019",
-                "System.Diagnostics.Process": "4.0.0-beta-23019",
-                "System.Diagnostics.TraceSource": "4.0.0-beta-23019",
-                "System.IO.FileSystem": "4.0.0-beta-23019",
-                "System.Linq": "4.0.0-beta-23019",
-                "System.Runtime": "4.0.20-beta-23019",
-                "System.Runtime.Extensions": "4.0.10-beta-23019",
-                "System.Text.RegularExpressions": "4.0.0-beta-23019",
-                "System.Threading": "4.0.10-beta-23019",
-                "System.Threading.Thread": "4.0.0-beta-23019",
-                "System.Threading.Timer": "4.0.0-beta-23019"
-            }
+      "dnxcore50": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.0.1-beta-23225",
+          "System.Collections": "4.0.11-beta-23225",
+          "System.Console": "4.0.0-beta-23225",
+          "System.Diagnostics.Process": "4.0.0-beta-23225",
+          "System.Diagnostics.TraceSource": "4.0.0-beta-23109",
+          "System.IO.FileSystem": "4.0.1-beta-23225",
+          "System.Linq": "4.0.1-beta-23225",
+          "System.Runtime": "4.0.21-beta-23409",
+          "System.Runtime.Extensions": "4.0.11-beta-23225",
+          "System.Text.RegularExpressions": "4.0.11-beta-23225",
+          "System.Threading": "4.0.11-beta-23225",
+          "System.Threading.Thread": "4.0.0-beta-23225",
+          "System.Threading.Timer": "4.0.1-beta-23225"
         }
+      }
     }
 }
