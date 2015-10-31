@@ -34,8 +34,8 @@ namespace Serilog.Sinks.Observable
 
             public Unsubscriber(ObservableSink sink, IObserver<LogEvent> observer)
             {
-                if (sink == null) throw new ArgumentNullException("sink");
-                if (observer == null) throw new ArgumentNullException("observer");
+                if (sink == null) throw new ArgumentNullException(nameof(sink));
+                if (observer == null) throw new ArgumentNullException(nameof(observer));
                 _sink = sink;
                 _observer = observer;
             }
@@ -48,15 +48,19 @@ namespace Serilog.Sinks.Observable
 
         public IDisposable Subscribe(IObserver<LogEvent> observer)
         {
-            if (observer == null) throw new ArgumentNullException("observer");
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
 
             lock (_syncRoot)
             {
                 // Makes the assumption that list iteration is not
                 // mutating - correct but not guaranteed by the BCL.
-                var newObservers = _observers.ToList();
-                newObservers.Add(observer);
-                Interlocked.Exchange(ref _observers, newObservers);
+                var old = _observers;
+                var newObservers = _observers.Concat(new [] { observer}).ToList();
+                while (old != Interlocked.Exchange(ref _observers, newObservers))
+                {
+                    old = _observers;
+                    newObservers = _observers.Concat(new[] { observer }).ToList();
+                }
             }
 
             return new Unsubscriber(this, observer);
@@ -64,15 +68,25 @@ namespace Serilog.Sinks.Observable
 
         void Unsubscribe(IObserver<LogEvent> observer)
         {
-            if (observer == null) throw new ArgumentNullException("observer");
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
 
             lock (_syncRoot)
-                _observers.Remove(observer);
+            {
+                // Makes the assumption that list iteration is not
+                // mutating - correct but not guaranteed by the BCL.
+                var old = _observers;
+                var newObservers = _observers.Except(new[] { observer }).ToList();
+                while (old != Interlocked.Exchange(ref _observers, newObservers))
+                {
+                    old = _observers;
+                    newObservers = _observers.Except(new[] { observer }).ToList();
+                }
+            }
         }
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
 #if NET40
             Thread.MemoryBarrier();
@@ -82,6 +96,8 @@ namespace Serilog.Sinks.Observable
 
             IList<Exception> exceptions = null;
 
+            // Mutations are made by replacing _observers wholesale.
+            // ReSharper disable once InconsistentlySynchronizedField
             foreach (var observer in _observers)
             {
                 try
