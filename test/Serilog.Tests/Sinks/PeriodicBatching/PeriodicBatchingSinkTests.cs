@@ -58,7 +58,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
 
     public class PeriodicBatchingSinkTests
     {
-        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);
+        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(200);
         static readonly TimeSpan MicroWait = TimeSpan.FromMilliseconds(1);
 
         // Some very, very approximate tests here :)
