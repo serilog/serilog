@@ -27,7 +27,7 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.NotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
 
-        [Fact(Skip = "Fails on DNX451")]
+        [Fact]
         public void CanUseCustomPrefixToConfigureSettings()
         {
             const string prefix1 = "custom1:serilog";

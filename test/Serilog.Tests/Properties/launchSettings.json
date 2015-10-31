@@ -1,6 +1,9 @@
 {
   "profiles": {
     "test": {
+      "commandName": "test"
+    },
+    "test-dnxcore50": {
       "commandName": "test",
       "sdkVersion": "dnx-coreclr-win-x86.1.0.0-beta8"
     }

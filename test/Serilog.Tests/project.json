@@ -1,7 +1,8 @@
 ﻿{
     "version": "2.0.0-beta-*",
     "commands": {
-        "test": "xunit.runner.dnx"
+        "test": "xunit.runner.dnx",
+        "test-dnxcore50": "xunit.runner.dnx"
     },
     "dependencies": {
         "Newtonsoft.Json": "7.0.1",
