@@ -145,6 +145,12 @@ namespace Serilog.Tests.Context
         [Fact]
         public void DoesNotPreventCrossDomainCalls()
         {
+            var projectRoot = Environment.CurrentDirectory;
+            while (!File.Exists(Path.Combine(projectRoot, "global.json")))
+            {
+                projectRoot = Directory.GetParent(projectRoot).FullName;
+            }
+
             AppDomain domain = null;
             try
             {
@@ -157,7 +163,7 @@ namespace Serilog.Tests.Context
 
                 var domaininfo = new AppDomainSetup
                 {
-                    ApplicationBase = @"..\..\artifacts\bin\",
+                    ApplicationBase = Path.Combine(projectRoot, @"artifacts\bin\"),
                     PrivateBinPath = @"Serilog\Debug\dnx451;Serilog.Tests\Debug\dnx451".Replace("Debug", configuration)
                 };
                 var evidence = AppDomain.CurrentDomain.Evidence;

@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		.editorconfig = .editorconfig
 		Build.ps1 = Build.ps1
 		assets\CommonAssemblyInfo.cs = assets\CommonAssemblyInfo.cs
+		global.json = global.json
 		NuGet.Config = NuGet.Config
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk

@@ -40,7 +40,7 @@ function Build-Projects
 function Test-Projects
 {
     param([string] $DirectoryName)
-    & dnx ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
+    & dnx -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Remove-PathVariable
