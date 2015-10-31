@@ -34,12 +34,14 @@ function Restore-Packages
 function Build-Projects
 {
     param([string] $DirectoryName)
+    & dnu build ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\testbin; if($LASTEXITCODE -ne 0) { exit 1 }
     & dnu pack ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\packages; if($LASTEXITCODE -ne 0) { exit 1 }
 }
 
 function Test-Projects
 {
     param([string] $DirectoryName)
+    & dnu build ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\testbin; if($LASTEXITCODE -ne 0) { exit 1 }
     & dnx -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
 }
 
