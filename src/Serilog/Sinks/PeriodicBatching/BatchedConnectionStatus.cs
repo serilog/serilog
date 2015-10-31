@@ -14,7 +14,7 @@
 
 using System;
 
-#if !PROFILE259 && !DNXCORE50
+#if !PROFILE259
 namespace Serilog.Sinks.PeriodicBatching
 {
     /// <summary>

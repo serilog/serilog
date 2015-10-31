@@ -116,6 +116,26 @@
           "lib/DNXCore50/System.Collections.dll": {}
         }
       },
+      "System.Collections.Concurrent/4.0.11-beta-23225": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.Resources.ResourceManager": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10"
+        },
+        "compile": {
+          "ref/dotnet/System.Collections.Concurrent.dll": {}
+        },
+        "runtime": {
+          "lib/dotnet/System.Collections.Concurrent.dll": {}
+        }
+      },
       "System.Console/4.0.0-beta-23225": {
         "type": "package",
         "dependencies": {
@@ -195,6 +215,18 @@
         },
         "runtime": {
           "lib/DNXCore50/System.Diagnostics.TraceSource.dll": {}
+        }
+      },
+      "System.Diagnostics.Tracing/4.0.20": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.0.0"
+        },
+        "compile": {
+          "ref/dotnet/System.Diagnostics.Tracing.dll": {}
+        },
+        "runtime": {
+          "lib/DNXCore50/System.Diagnostics.Tracing.dll": {}
         }
       },
       "System.Dynamic.Runtime/4.0.0": {
@@ -752,6 +784,26 @@
           "lib/DNXCore50/System.Collections.dll": {}
         }
       },
+      "System.Collections.Concurrent/4.0.11-beta-23225": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.Resources.ResourceManager": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10"
+        },
+        "compile": {
+          "ref/dotnet/System.Collections.Concurrent.dll": {}
+        },
+        "runtime": {
+          "lib/dotnet/System.Collections.Concurrent.dll": {}
+        }
+      },
       "System.Console/4.0.0-beta-23225": {
         "type": "package",
         "dependencies": {
@@ -831,6 +883,18 @@
         },
         "runtime": {
           "lib/DNXCore50/System.Diagnostics.TraceSource.dll": {}
+        }
+      },
+      "System.Diagnostics.Tracing/4.0.20": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.0.0"
+        },
+        "compile": {
+          "ref/dotnet/System.Diagnostics.Tracing.dll": {}
+        },
+        "runtime": {
+          "lib/DNXCore50/System.Diagnostics.Tracing.dll": {}
         }
       },
       "System.Dynamic.Runtime/4.0.0": {
@@ -1302,6 +1366,26 @@
           "lib/DNXCore50/System.Collections.dll": {}
         }
       },
+      "System.Collections.Concurrent/4.0.11-beta-23225": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.Resources.ResourceManager": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10"
+        },
+        "compile": {
+          "ref/dotnet/System.Collections.Concurrent.dll": {}
+        },
+        "runtime": {
+          "lib/dotnet/System.Collections.Concurrent.dll": {}
+        }
+      },
       "System.Console/4.0.0-beta-23225": {
         "type": "package",
         "dependencies": {
@@ -1381,6 +1465,18 @@
         },
         "runtime": {
           "lib/DNXCore50/System.Diagnostics.TraceSource.dll": {}
+        }
+      },
+      "System.Diagnostics.Tracing/4.0.20": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.0.0"
+        },
+        "compile": {
+          "ref/dotnet/System.Diagnostics.Tracing.dll": {}
+        },
+        "runtime": {
+          "lib/DNXCore50/System.Diagnostics.Tracing.dll": {}
         }
       },
       "System.Dynamic.Runtime/4.0.0": {
@@ -2059,6 +2155,28 @@
         "System.Collections.nuspec"
       ]
     },
+    "System.Collections.Concurrent/4.0.11-beta-23225": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "v20w+6uz/rj9kmbly4FDgltPLUtvUhEVxElnpJIcmZ2UEKKM2jNSPGonCdDqdOCWhXiswUPKv0Dxqqe9wwg0Qg==",
+      "files": [
+        "lib/dotnet/System.Collections.Concurrent.dll",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "ref/dotnet/System.Collections.Concurrent.dll",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "System.Collections.Concurrent.4.0.11-beta-23225.nupkg",
+        "System.Collections.Concurrent.4.0.11-beta-23225.nupkg.sha512",
+        "System.Collections.Concurrent.nuspec"
+      ]
+    },
     "System.Console/4.0.0-beta-23225": {
       "type": "package",
       "serviceable": true,
@@ -2159,6 +2277,40 @@
         "System.Diagnostics.TraceSource.4.0.0-beta-23109.nupkg",
         "System.Diagnostics.TraceSource.4.0.0-beta-23109.nupkg.sha512",
         "System.Diagnostics.TraceSource.nuspec"
+      ]
+    },
+    "System.Diagnostics.Tracing/4.0.20": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "gn/wexGHc35Fv++5L1gYHMY5g25COfiZ0PGrL+3PfwzoJd4X2LbTAm/U8d385SI6BKQBI/z4dQfvneS9J27+Tw==",
+      "files": [
+        "lib/DNXCore50/System.Diagnostics.Tracing.dll",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/_._",
+        "lib/netcore50/System.Diagnostics.Tracing.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "ref/dotnet/de/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/es/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/fr/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/it/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/ja/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/ko/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/ru/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/System.Diagnostics.Tracing.dll",
+        "ref/dotnet/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/zh-hans/System.Diagnostics.Tracing.xml",
+        "ref/dotnet/zh-hant/System.Diagnostics.Tracing.xml",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "runtimes/win8-aot/lib/netcore50/System.Diagnostics.Tracing.dll",
+        "System.Diagnostics.Tracing.4.0.20.nupkg",
+        "System.Diagnostics.Tracing.4.0.20.nupkg.sha512",
+        "System.Diagnostics.Tracing.nuspec"
       ]
     },
     "System.Dynamic.Runtime/4.0.0": {
@@ -3072,6 +3224,7 @@
     "DNXCore,Version=v5.0": [
       "Microsoft.CSharp >= 4.0.1-beta-23225",
       "System.Collections >= 4.0.11-beta-23225",
+      "System.Collections.Concurrent >= 4.0.11-beta-23225",
       "System.Console >= 4.0.0-beta-23225",
       "System.Diagnostics.Process >= 4.0.0-beta-23225",
       "System.Diagnostics.TraceSource >= 4.0.0-beta-23109",

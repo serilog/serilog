@@ -29,6 +29,7 @@ namespace Serilog.Debugging
         /// <example>
         /// SelfLog.Out = Console.Error;
         /// </example>
+        // ReSharper disable once MemberCanBePrivate.Global, UnusedAutoPropertyAccessor.Global
         public static TextWriter Out { get; set; }
 
         /// <summary>

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !PROFILE259 && !DNXCORE50
+#if !PROFILE259
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -42,7 +42,11 @@ namespace Serilog.Sinks.PeriodicBatching
         readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>(); 
 
         readonly object _stateLock = new object();
+#if !DNXCORE50
         readonly Timer _timer;
+#else
+        readonly PortableTimer _timer;
+#endif
         bool _unloading;
         bool _started;
 
@@ -55,14 +59,19 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             _batchSizeLimit = batchSizeLimit;
             _queue = new ConcurrentQueue<LogEvent>();
-            _timer = new Timer(s => OnTick(), null, -1, -1);
             _status = new BatchedConnectionStatus(period);
 
+#if !DNXCORE50
+            _timer = new Timer(s => OnTick(), null, -1, -1);
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
+#else
+            _timer = new PortableTimer(cancel => OnTick());
+#endif
         }
 
+#if !DNXCORE50
         void OnAppDomainUnloading(object sender, EventArgs args)
         {
             var eventArgs = args as UnhandledExceptionEventArgs;
@@ -71,6 +80,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
             CloseAndFlush();
         }
+#endif
 
         void CloseAndFlush()
         {
@@ -82,6 +92,7 @@ namespace Serilog.Sinks.PeriodicBatching
                 _unloading = true;
             }
 
+#if !DNXCORE50
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnloading;
@@ -89,6 +100,9 @@ namespace Serilog.Sinks.PeriodicBatching
             var wh = new ManualResetEvent(false);
             if (_timer.Dispose(wh))
                 wh.WaitOne();
+#else
+            _timer.Dispose();
+#endif
 
             OnTick();
         }
@@ -186,15 +200,23 @@ namespace Serilog.Sinks.PeriodicBatching
                 lock (_stateLock)
                 {
                     if (!_unloading)
-                        _timer.Change(_status.NextInterval,
-#if NET40
-                            TimeSpan.FromMilliseconds(-1)
-#else
-                            Timeout.InfiniteTimeSpan
-#endif
-                            );
+                        SetTimer(_status.NextInterval);
                 }
             }
+        }
+
+        void SetTimer(TimeSpan interval)
+        {
+#if DNXCORE50
+            _timer.Start(interval);
+#else
+            _timer.Change(interval,
+#if NET40
+                TimeSpan.FromMilliseconds(-1));
+#else
+                Timeout.InfiniteTimeSpan);
+#endif
+#endif
         }
 
         /// <summary>
@@ -220,13 +242,7 @@ namespace Serilog.Sinks.PeriodicBatching
                     // Special handling to try to get the first event across as quickly
                     // as possible to show we're alive!
                     _started = true;
-                    _timer.Change(TimeSpan.Zero,
-#if NET40
-                        TimeSpan.FromMilliseconds(-1)
-#else
-                        Timeout.InfiniteTimeSpan
-#endif
-                        );
+                    SetTimer(TimeSpan.Zero);
                 }
             }
 
