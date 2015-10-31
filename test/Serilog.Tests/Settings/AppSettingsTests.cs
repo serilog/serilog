@@ -31,12 +31,12 @@ namespace Serilog.Extras.AppSettings.Tests
         [Fact]
         public void CanUseCustomPrefixToConfigureSettings()
         {
-            const string prefix1 = "custom1-serilog";
-            const string prefix2 = "custom2-serilog";
+            const string prefix1 = "custom1";
+            const string prefix2 = "custom2";
 
             // Make sure we have the expected keys in the App.config
-            Assert.Equal("Warning", ConfigurationManager.AppSettings[prefix1 + ":minimum-level"]);
-            Assert.Equal("Error", ConfigurationManager.AppSettings[prefix2 + ":minimum-level"]);
+            Assert.Equal("Warning", ConfigurationManager.AppSettings[prefix1 + ":serilog:minimum-level"]);
+            Assert.Equal("Error", ConfigurationManager.AppSettings[prefix2 + ":serilog:minimum-level"]);
 
             var log1 = new LoggerConfiguration()
                 .ReadFrom.AppSettings(prefix1)
@@ -56,8 +56,15 @@ namespace Serilog.Extras.AppSettings.Tests
         [Fact]
         public void CustomPrefixCannotContainColon()
         {
-            Assert.Throws<ArgumentException>(() => 
-                new LoggerConfiguration().ReadFrom.AppSettings("custom1:serilog"));
+            Assert.Throws<ArgumentException>(() =>
+                new LoggerConfiguration().ReadFrom.AppSettings("custom1:custom2"));
+        }
+
+        [Fact]
+        public void CustomPrefixCannotBeSerilog()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                new LoggerConfiguration().ReadFrom.AppSettings("serilog"));
         }
     }
 }
