@@ -51,23 +51,19 @@
                 "System.Threading.Tasks": ""
             }
         },
-      "dnxcore50": {
-        "dependencies": {
-          "Microsoft.CSharp": "4.0.1-beta-23225",
-          "System.Collections": "4.0.11-beta-23225",
-          "System.Collections.Concurrent":  "4.0.11-beta-23225",
-          "System.Console": "4.0.0-beta-23225",
-          "System.Diagnostics.Process": "4.0.0-beta-23225",
-          "System.Diagnostics.TraceSource": "4.0.0-beta-23109",
-          "System.IO.FileSystem": "4.0.1-beta-23225",
-          "System.Linq": "4.0.1-beta-23225",
-          "System.Runtime": "4.0.21-beta-23409",
-          "System.Runtime.Extensions": "4.0.11-beta-23225",
-          "System.Text.RegularExpressions": "4.0.11-beta-23225",
-          "System.Threading": "4.0.11-beta-23225",
-          "System.Threading.Thread": "4.0.0-beta-23225",
-          "System.Threading.Timer": "4.0.1-beta-23225"
+        "dotnet": {
+            "compilationOptions": {
+                "define": [ "DNXCORE50" ]
+            },
+            "dependencies": {
+                "Microsoft.NETCore.Platforms": "1.0.0",
+                "Microsoft.NETCore": "5.0.0",
+                "System.Collections.Concurrent":  "4.0.11-beta-23225",
+                "System.Console": "4.0.0-beta-23225",
+                "System.Diagnostics.Process": "4.0.0-beta-23225",
+                "System.Diagnostics.TraceSource": "4.0.0-beta-23109",
+                "System.Threading.Thread": "4.0.0-beta-23225"
+            }
         }
-      }
     }
 }

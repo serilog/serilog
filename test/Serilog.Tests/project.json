@@ -44,6 +44,8 @@
     },
     "dnxcore50": {
       "dependencies": {
+        "Microsoft.NETCore.Platforms": "1.0.0",
+        "Microsoft.NETCore": "5.0.0",
         "Microsoft.CSharp": "4.0.1-beta-23225",
         "System.Collections": "4.0.11-beta-23225",
         "System.Console": "4.0.0-beta-23225",
