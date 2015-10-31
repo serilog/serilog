@@ -23,6 +23,10 @@ namespace Serilog.Sinks.Observable
 {
     sealed class ObservableSink : IObservable<LogEvent>, ILogEventSink, IDisposable
     {
+        // Uses memory barriers for non-blocking reads during Emit, and replaces the
+        // list of observers completely upon subscribe/unsubscribe.
+        // Makes the assumption that list iteration is not
+        // mutating - correct but not guaranteed by the BCL.
         readonly object _syncRoot = new object();
         IList<IObserver<LogEvent>> _observers = new List<IObserver<LogEvent>>();
         bool _disposed;
@@ -52,8 +56,9 @@ namespace Serilog.Sinks.Observable
 
             lock (_syncRoot)
             {
-                // Makes the assumption that list iteration is not
-                // mutating - correct but not guaranteed by the BCL.
+                if (_disposed)
+                    throw new ObjectDisposedException(message: "The Serilog Observable sink is disposed.", innerException: null);
+
                 var old = _observers;
                 var newObservers = _observers.Concat(new [] { observer}).ToList();
                 while (old != Interlocked.Exchange(ref _observers, newObservers))
@@ -72,8 +77,9 @@ namespace Serilog.Sinks.Observable
 
             lock (_syncRoot)
             {
-                // Makes the assumption that list iteration is not
-                // mutating - correct but not guaranteed by the BCL.
+                if (_disposed)
+                    throw new ObjectDisposedException(message: "The Serilog Observable sink is disposed.", innerException: null);
+
                 var old = _observers;
                 var newObservers = _observers.Except(new[] { observer }).ToList();
                 while (old != Interlocked.Exchange(ref _observers, newObservers))
