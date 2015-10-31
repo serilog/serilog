@@ -57,7 +57,6 @@
         },
         "dotnet": {
             "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk",
                 "define": [ "DNXCORE50" ]
             },
             "dependencies": {

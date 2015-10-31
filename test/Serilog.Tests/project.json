@@ -46,9 +46,6 @@
       }
     },
     "dnxcore50": {
-      "compilationOptions": {
-        "keyFile": "../../assets/Serilog.snk"
-      },
       "dependencies": {
         "Microsoft.NETCore.Platforms": "1.0.0",
         "Microsoft.NETCore": "5.0.0",
