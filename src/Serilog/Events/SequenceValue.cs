@@ -39,7 +39,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
         {
-            if (elements == null) throw new ArgumentNullException("elements");
+            if (elements == null) throw new ArgumentNullException(nameof(elements));
             _elements = elements.ToArray();
         }
 
@@ -57,7 +57,7 @@ namespace Serilog.Events
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            if (output == null) throw new ArgumentNullException("output");
+            if (output == null) throw new ArgumentNullException(nameof(output));
 
             output.Write('[');
             var allButLast = _elements.Length - 1;

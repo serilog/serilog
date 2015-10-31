@@ -30,8 +30,8 @@ namespace Serilog.Configuration
             LoggerConfiguration loggerConfiguration, 
             Action<ILogEventEnricher> addEnricher)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (addEnricher == null) throw new ArgumentNullException("addEnricher");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (addEnricher == null) throw new ArgumentNullException(nameof(addEnricher));
             _loggerConfiguration = loggerConfiguration;
             _addEnricher = addEnricher;
         }
@@ -45,7 +45,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration With(params ILogEventEnricher[] enrichers)
         {
-            if (enrichers == null) throw new ArgumentNullException("enrichers");
+            if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
             foreach (var logEventEnricher in enrichers)
             {
                 if (logEventEnricher == null)

@@ -25,15 +25,15 @@ namespace Serilog.Policies
 
         public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
         {
-            if (canApply == null) throw new ArgumentNullException("canApply");
-            if (projection == null) throw new ArgumentNullException("projection");
+            if (canApply == null) throw new ArgumentNullException(nameof(canApply));
+            if (projection == null) throw new ArgumentNullException(nameof(projection));
             _canApply = canApply;
             _projection = projection;
         }
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
-            if (value == null) throw new ArgumentNullException("value");
+            if (value == null) throw new ArgumentNullException(nameof(value));
 
             if (!_canApply(value.GetType()))
             {

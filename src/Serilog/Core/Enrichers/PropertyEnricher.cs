@@ -39,7 +39,7 @@ namespace Serilog.Core.Enrichers
         /// <exception cref="ArgumentNullException"></exception>
         public PropertyEnricher(string name, object value, bool destructureObjects = false)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Property name must not be null or empty.", "name");
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Property name must not be null or empty.", nameof(name));
             _name = name;
             _value = value;
             _destructureObjects = destructureObjects;
@@ -52,8 +52,8 @@ namespace Serilog.Core.Enrichers
         /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
-            if (propertyFactory == null) throw new ArgumentNullException("propertyFactory");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+            if (propertyFactory == null) throw new ArgumentNullException(nameof(propertyFactory));
             var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
             logEvent.AddPropertyIfAbsent(property);
         }

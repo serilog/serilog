@@ -28,13 +28,13 @@ namespace Serilog.Sinks.DiagnosticTrace
 
         public DiagnosticTraceSink(ITextFormatter textFormatter)
         {
-            if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             _textFormatter = textFormatter;
         }
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             var sr = new StringWriter();
             _textFormatter.Format(logEvent, sr);
 

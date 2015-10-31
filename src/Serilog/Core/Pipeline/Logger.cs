@@ -65,8 +65,8 @@ namespace Serilog.Core.Pipeline
             Action dispose = null,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (sink == null) throw new ArgumentNullException("sink");
-            if (enrichers == null) throw new ArgumentNullException("enrichers");
+            if (sink == null) throw new ArgumentNullException(nameof(sink));
+            if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
 
             _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
@@ -96,7 +96,7 @@ namespace Serilog.Core.Pipeline
 
         public ILogger ForContext(Type source)
         {
-            if (source == null) throw new ArgumentNullException("source");
+            if (source == null) throw new ArgumentNullException(nameof(source));
             return ForContext(Constants.SourceContextPropertyName, source.FullName);
         }
 
@@ -150,7 +150,7 @@ namespace Serilog.Core.Pipeline
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             Write(logEvent);
         }
 

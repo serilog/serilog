@@ -39,7 +39,7 @@ namespace Serilog.Sinks.RollingFile
 
         public TemplatedPathRoller(string pathTemplate)
         {
-            if (pathTemplate == null) throw new ArgumentNullException("pathTemplate");
+            if (pathTemplate == null) throw new ArgumentNullException(nameof(pathTemplate));
             if (pathTemplate.Contains(OldStyleDateSpecifier))
                 throw new ArgumentException("The old-style date specifier " + OldStyleDateSpecifier +
                     " is no longer supported, instead please use " + DateSpecifier);

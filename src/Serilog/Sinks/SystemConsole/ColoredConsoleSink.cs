@@ -65,7 +65,7 @@ namespace Serilog.Sinks.SystemConsole
 
         public ColoredConsoleSink(string outputTemplate, IFormatProvider formatProvider)
         {
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
             _formatProvider = formatProvider;
         }
@@ -74,7 +74,7 @@ namespace Serilog.Sinks.SystemConsole
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
             var outputProperties = OutputProperties.GetOutputProperties(logEvent);
             var palette = GetPalette(logEvent.Level);

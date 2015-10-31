@@ -37,7 +37,7 @@ namespace Serilog.Parsing
         public MessageTemplate Parse(string messageTemplate)
         {
             if (messageTemplate == null)
-                throw new ArgumentNullException("messageTemplate");
+                throw new ArgumentNullException(nameof(messageTemplate));
             return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
         }
 

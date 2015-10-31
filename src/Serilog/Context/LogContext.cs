@@ -89,7 +89,7 @@ namespace Serilog.Context
         /// <exception cref="ArgumentNullException"></exception>
         public static IDisposable PushProperties(params ILogEventEnricher[] properties)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
 
             var stack = GetOrCreateEnricherStack();
             var bookmark = new ContextStackBookmark(stack);

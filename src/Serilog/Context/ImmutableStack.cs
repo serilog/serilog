@@ -40,7 +40,7 @@ namespace Serilog.Context
 
         ImmutableStack(ImmutableStack<T> under, T top)
         {
-            if (under == null) throw new ArgumentNullException("under"); 
+            if (under == null) throw new ArgumentNullException(nameof(under)); 
             _under = under;
             _count = under.Count + 1;
             _top = top;

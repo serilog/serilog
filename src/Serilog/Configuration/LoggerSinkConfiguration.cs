@@ -37,8 +37,8 @@ namespace Serilog.Configuration
 
         internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (addSink == null) throw new ArgumentNullException("addSink");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (addSink == null) throw new ArgumentNullException(nameof(addSink));
             _loggerConfiguration = loggerConfiguration;
             _addSink = addSink;
         }
@@ -129,8 +129,8 @@ namespace Serilog.Configuration
             IFormatProvider formatProvider = null,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (textWriter == null) throw new ArgumentNullException("textWriter");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (textWriter == null) throw new ArgumentNullException(nameof(textWriter));
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             var sink = new TextWriterSink(textWriter, formatter);
@@ -154,7 +154,7 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (configureLogger == null) throw new ArgumentNullException("configureLogger");
+            if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
             var lc = new LoggerConfiguration();
             configureLogger(lc);
             return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel);
@@ -175,7 +175,7 @@ namespace Serilog.Configuration
             ILogger logger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
-            if (logger == null) throw new ArgumentNullException("logger");
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
             return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
         }
 
@@ -194,7 +194,7 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (configureObservers == null) throw new ArgumentNullException("configureObservers");
+            if (configureObservers == null) throw new ArgumentNullException(nameof(configureObservers));
             var observable = new ObservableSink();
             configureObservers(observable);
             return Sink(observable, restrictedToMinimumLevel, levelSwitch);

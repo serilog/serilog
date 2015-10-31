@@ -41,7 +41,7 @@ namespace Serilog.Filters
         /// <returns>A function that matches log events emitted by the source.</returns>
         public static Func<LogEvent, bool> FromSource(string source)
         {
-            if (source == null) throw new ArgumentNullException("source");
+            if (source == null) throw new ArgumentNullException(nameof(source));
             var sourcePrefix = source + ".";
             return WithProperty<string>(Constants.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix)));
         }
@@ -54,7 +54,7 @@ namespace Serilog.Filters
         /// <returns>A predicate for matching events.</returns>
         public static Func<LogEvent, bool> WithProperty(string propertyName)
         {
-            if (propertyName == null) throw new ArgumentNullException("propertyName");
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
             return e => e.Properties.ContainsKey(propertyName);
         }
 
@@ -67,7 +67,7 @@ namespace Serilog.Filters
         /// <returns>A predicate for matching events.</returns>
         public static Func<LogEvent, bool> WithProperty(string propertyName, object scalarValue)
         {
-            if (propertyName == null) throw new ArgumentNullException("propertyName");
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
             var scalar = new ScalarValue(scalarValue);
             return e =>
             {
@@ -86,8 +86,8 @@ namespace Serilog.Filters
         /// <returns>A predicate for matching events.</returns>
         public static Func<LogEvent, bool> WithProperty<TScalar>(string propertyName, Func<TScalar, bool> predicate)
         {
-            if (propertyName == null) throw new ArgumentNullException("propertyName");
-            if (predicate == null) throw new ArgumentNullException("predicate");
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             return e =>
             {

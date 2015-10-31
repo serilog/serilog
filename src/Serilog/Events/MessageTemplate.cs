@@ -59,8 +59,8 @@ namespace Serilog.Events
         /// <param name="tokens">The text and property tokens defining the template.</param>
         public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
-            if (text == null) throw new ArgumentNullException("text");
-            if (tokens == null) throw new ArgumentNullException("tokens");
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (tokens == null) throw new ArgumentNullException(nameof(tokens));
 
             _text = text;
             _tokens = tokens.ToArray();

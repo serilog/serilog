@@ -32,14 +32,14 @@ namespace Serilog.Core.Sinks
 
         public SecondaryLoggerSink(ILogger logger, bool attemptDispose = false)
         {
-            if (logger == null) throw new ArgumentNullException("logger");
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
             _logger = logger;
             _attemptDispose = attemptDispose;
         }
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
             var copy = new LogEvent(
                 logEvent.Timestamp,

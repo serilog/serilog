@@ -28,7 +28,7 @@ namespace Serilog.Settings.AppSettings
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
 
             var settings = ConfigurationManager.AppSettings;
             

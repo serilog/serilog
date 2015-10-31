@@ -29,13 +29,13 @@ namespace Serilog.Core.Pipeline
 
         public MessageTemplateCache(IMessageTemplateParser innerParser)
         {
-            if (innerParser == null) throw new ArgumentNullException("innerParser");
+            if (innerParser == null) throw new ArgumentNullException(nameof(innerParser));
             _innerParser = innerParser;
         }
 
         public MessageTemplate Parse(string messageTemplate)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
+            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
 
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);

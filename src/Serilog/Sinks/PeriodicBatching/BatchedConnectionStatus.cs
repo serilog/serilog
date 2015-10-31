@@ -47,7 +47,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
         public BatchedConnectionStatus(TimeSpan period)
         {
-            if (period < TimeSpan.Zero) throw new ArgumentOutOfRangeException("period", "The batching period must be a positive timespan");
+            if (period < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(period), "The batching period must be a positive timespan");
 
             _period = period;
         }

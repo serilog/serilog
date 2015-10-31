@@ -29,8 +29,8 @@ namespace Serilog.Configuration
 
         internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, Action<LoggingLevelSwitch> setLevelSwitch)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (setMinimum == null) throw new ArgumentNullException("setMinimum");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (setMinimum == null) throw new ArgumentNullException(nameof(setMinimum));
             _loggerConfiguration = loggerConfiguration;
             _setMinimum = setMinimum;
             _setLevelSwitch = setLevelSwitch;
@@ -54,7 +54,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
         {
-            if (levelSwitch == null) throw new ArgumentNullException("levelSwitch");
+            if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
             _setLevelSwitch(levelSwitch);
             return _loggerConfiguration;
         }

@@ -44,8 +44,8 @@ namespace Serilog.Sinks.IOFile
         /// <exception cref="IOException"></exception>
         public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
 
             _textFormatter = textFormatter;
@@ -88,7 +88,7 @@ namespace Serilog.Sinks.IOFile
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             lock (_syncRoot)
             {
                 _textFormatter.Format(logEvent, _output);

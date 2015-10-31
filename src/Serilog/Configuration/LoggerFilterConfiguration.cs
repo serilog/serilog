@@ -31,8 +31,8 @@ namespace Serilog.Configuration
             LoggerConfiguration loggerConfiguration,
             Action<ILogEventFilter> addFilter)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (addFilter == null) throw new ArgumentNullException("addFilter");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (addFilter == null) throw new ArgumentNullException(nameof(addFilter));
             _loggerConfiguration = loggerConfiguration;
             _addFilter = addFilter;
         }
@@ -45,7 +45,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration With(params ILogEventFilter[] filters)
         {
-            if (filters == null) throw new ArgumentNullException("filters");
+            if (filters == null) throw new ArgumentNullException(nameof(filters));
             foreach (var logEventFilter in filters)
             {
                 if (logEventFilter == null)

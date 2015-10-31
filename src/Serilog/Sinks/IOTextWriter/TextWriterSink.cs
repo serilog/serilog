@@ -28,14 +28,14 @@ namespace Serilog.Sinks.IOTextWriter
 
         public TextWriterSink(TextWriter textWriter, ITextFormatter textFormatter)
         {
-            if (textFormatter == null) throw new ArgumentNullException("textFormatter");
+            if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             _textWriter = textWriter;
             _textFormatter = textFormatter;
         }
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             lock (_syncRoot)
             {
                 _textFormatter.Format(logEvent, _textWriter);

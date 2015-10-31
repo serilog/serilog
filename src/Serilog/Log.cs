@@ -49,7 +49,7 @@ namespace Serilog
             get { return _logger; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null) throw new ArgumentNullException(nameof(value));
                 _logger = value;
             }
         }

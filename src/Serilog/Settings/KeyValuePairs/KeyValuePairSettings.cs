@@ -51,13 +51,13 @@ namespace Serilog.Settings.KeyValuePairs
 
         public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings)
         {
-            if (settings == null) throw new ArgumentNullException("settings");
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             _settings = settings.ToDictionary(s => s.Key, s => s.Value);
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
 
             var directives = _settings.Keys
                 .Where(k => _supportedDirectives.Any(k.StartsWith))

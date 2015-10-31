@@ -27,7 +27,7 @@ namespace Serilog.Sinks.IOFile
 
         public CharacterCountLimitedTextWriter(TextWriter outputWriter, long remainingCharacters)
         {
-            if (outputWriter == null) throw new ArgumentNullException("outputWriter");
+            if (outputWriter == null) throw new ArgumentNullException(nameof(outputWriter));
             _outputWriter = outputWriter;
             _remainingCharacters = remainingCharacters;
         }

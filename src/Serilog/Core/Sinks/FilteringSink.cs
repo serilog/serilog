@@ -26,8 +26,8 @@ namespace Serilog.Core.Sinks
 
         public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters)
         {
-            if (sink == null) throw new ArgumentNullException("sink");
-            if (filters == null) throw new ArgumentNullException("filters");
+            if (sink == null) throw new ArgumentNullException(nameof(sink));
+            if (filters == null) throw new ArgumentNullException(nameof(filters));
             _sink = sink;
             _filters = filters.ToArray();
         }
