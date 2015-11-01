@@ -5,6 +5,7 @@
     "tags": [ "serilog", "logging", "semantic", "structured" ],
     "projectUrl": "http://serilog.net",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "iconUrl": "http://serilog.net/images/serilog-nuget.png",
     "frameworks": {
         "net40": {
             "compilationOptions": {
