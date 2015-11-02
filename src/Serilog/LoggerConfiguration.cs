@@ -124,14 +124,14 @@ namespace Serilog
         /// disposed.</remarks>
         public ILogger CreateLogger()
         {
+            if (!_logEventSinks.Any())
+                return new SilentLogger();
+
             Action dispose = () =>
             {
                 foreach (var disposable in _logEventSinks.OfType<IDisposable>())
                     disposable.Dispose();
             };
-
-            if (!_logEventSinks.Any())
-                return new SilentLogger();
 
             var sink = new SafeAggregateSink(_logEventSinks);
             
