@@ -130,6 +130,9 @@ namespace Serilog
                     disposable.Dispose();
             };
 
+            if (!_logEventSinks.Any())
+                return new SilentLogger();
+
             var sink = new SafeAggregateSink(_logEventSinks);
             
             if (_filters.Any())

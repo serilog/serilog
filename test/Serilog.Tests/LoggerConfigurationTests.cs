@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -148,6 +149,7 @@ namespace Serilog.Tests
             var enrichedPropertySeen = false;
 
             var logger = new LoggerConfiguration()
+                .WriteTo.TextWriter(new StringWriter())
                 .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
                 .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
@@ -173,6 +175,13 @@ namespace Serilog.Tests
 
             Assert.That(xs, Is.StringContaining("C"));
             Assert.That(xs, Is.Not.StringContaining("D"));
+        }
+
+        [Test]
+        public void AnUnconfiguredLoggerShouldBeTheNullLogger()
+        {
+            var actual = new LoggerConfiguration().CreateLogger();
+            Assert.That(actual.GetType().Name, Is.EqualTo("SilentLogger"));
         }
     }
 }
