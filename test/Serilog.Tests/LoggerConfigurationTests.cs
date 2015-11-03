@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xunit;
 using Serilog.Core;
@@ -157,6 +158,7 @@ namespace Serilog.Tests
             var enrichedPropertySeen = false;
 
             var logger = new LoggerConfiguration()
+                .WriteTo.TextWriter(new StringWriter())  //NullSink?
                 .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
                 .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
