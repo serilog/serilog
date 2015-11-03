@@ -133,10 +133,10 @@ namespace Serilog
                     disposable.Dispose();
             };
 
-            var sink = new SafeAggregateSink(_logEventSinks);
+            ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
             
             if (_filters.Any())
-                sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
+                sink = new FilteringSink(sink, _filters);
 
             var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);
