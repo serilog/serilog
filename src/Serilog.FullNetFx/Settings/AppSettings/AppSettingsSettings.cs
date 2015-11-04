@@ -14,6 +14,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using Serilog.Configuration;
@@ -25,13 +26,29 @@ namespace Serilog.Settings.AppSettings
     {
         const string SettingPrefix = "serilog:";
 
+        readonly IDictionary<string, string> _settings;
+
+        public AppSettingsSettings()
+        {
+            _settings = ReadConfiguration();
+        }
+
+        public AppSettingsSettings(IDictionary<string, string> settings)
+        {
+            _settings = settings;
+        }
+
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            Configure(loggerConfiguration, _settings);
+        }
 
-            var settings = ConfigurationManager.AppSettings;
-            
-            var pairs = settings.AllKeys
+        static void Configure(LoggerConfiguration loggerConfiguration, IDictionary<string, string> settings)
+        {
+            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (settings == null) throw new ArgumentNullException("settings");
+
+            var pairs = settings.Keys
                 .Where(k => k.StartsWith(SettingPrefix))
                 .ToDictionary(k => k.Substring(SettingPrefix.Length), k => Environment.ExpandEnvironmentVariables(settings[k]));
 
@@ -40,6 +57,12 @@ namespace Serilog.Settings.AppSettings
 
             var keyValuePairSettings = new KeyValuePairSettings(pairs);
             keyValuePairSettings.Configure(loggerConfiguration);
+        }
+
+        static Dictionary<string, string> ReadConfiguration()
+        {
+            return ConfigurationManager.AppSettings.AllKeys
+                .ToDictionary(k => k, k => ConfigurationManager.AppSettings[k]);
         }
     }
 }
