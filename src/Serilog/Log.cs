@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;
@@ -52,6 +53,16 @@ namespace Serilog
                 if (value == null) throw new ArgumentNullException("value");
                 _logger = value;
             }
+        }
+
+        /// <summary>
+        /// Resets <see cref="Logger"/> to the default and disposes the original if possible
+        /// </summary>
+        public static void CloseAndFlush()
+        {
+            ILogger logger = Interlocked.Exchange(ref _logger, new SilentLogger());
+
+            (logger as IDisposable)?.Dispose();
         }
 
         /// <summary>
