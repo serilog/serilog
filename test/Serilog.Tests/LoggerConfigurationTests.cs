@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xunit;
 using Serilog.Core;
@@ -15,7 +16,9 @@ namespace Serilog.Tests
         {
             public bool IsDisposed { get; private set; }
 
-            public void Emit(LogEvent logEvent) { }
+            public void Emit(LogEvent logEvent)
+            {
+            }
 
             public void Dispose()
             {
@@ -31,7 +34,7 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.Dispose(); 
+            logger.Dispose();
             Assert.True(sink.IsDisposed);
         }
 
@@ -68,7 +71,12 @@ namespace Serilog.Tests
         }
 
 // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
-        class AB { public int A { get; set; } public int B { get; set; } }
+        class AB
+        {
+            public int A { get; set; }
+            public int B { get; set; }
+        }
+
 // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
         [Fact]
@@ -76,7 +84,7 @@ namespace Serilog.Tests
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
-            
+
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .Destructure.AsScalar(typeof(AB))
@@ -97,14 +105,17 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
-                .Destructure.ByTransforming<AB>(ab => new { C = ab.B })
+                .Destructure.ByTransforming<AB>(ab => new
+                {
+                    C = ab.B
+                })
                 .CreateLogger();
 
             logger.Information("{@AB}", new AB());
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            var sv = (StructureValue)prop;
+            var sv = (StructureValue) prop;
             var c = sv.Properties.Single();
             Assert.Equal("C", c.Name);
         }
@@ -147,6 +158,7 @@ namespace Serilog.Tests
             var enrichedPropertySeen = false;
 
             var logger = new LoggerConfiguration()
+                .WriteTo.TextWriter(new StringWriter())  //NullSink?
                 .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
                 .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
@@ -159,7 +171,19 @@ namespace Serilog.Tests
         [Fact]
         public void MaximumDestructuringDepthIsEffective()
         {
-            var x = new { A = new { B = new { C = new { D = "F" } } } };
+            var x = new
+            {
+                A = new
+                {
+                    B = new
+                    {
+                        C = new
+                        {
+                            D = "F"
+                        }
+                    }
+                }
+            };
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -207,6 +231,13 @@ namespace Serilog.Tests
             logger.Write(Some.InformationEvent());
 
             Assert.Equal(1, sink.Events.Count);
+        }
+
+        [Fact]
+        public void AnUnconfiguredLoggerShouldBeTheNullLogger()
+        {
+            var actual = new LoggerConfiguration().CreateLogger();
+            Assert.Equal(actual.GetType().Name, "SilentLogger");
         }
     }
 }

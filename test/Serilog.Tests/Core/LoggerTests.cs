@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xunit;
 using Serilog.Core;
@@ -16,6 +17,7 @@ namespace Serilog.Tests.Core
             var thrown = false;
 
             var l = new LoggerConfiguration()
+                .WriteTo.TextWriter(new StringWriter())
                 .Enrich.With(new DelegatingEnricher((le, pf) => {
                     thrown = true;
                     throw new Exception("No go, pal."); }))
