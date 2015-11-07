@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Context\ImmutableStack.cs" />
     <Compile Include="Enrichers\LogContextEnricher.cs" />
+    <Compile Include="Enrichers\EnvironmentUserNameEnricher.cs" />
     <Compile Include="Enrichers\ProcessIdEnricher.cs" />
     <Compile Include="Enrichers\MachineNameEnricher.cs" />
     <Compile Include="Enrichers\ThreadIdEnricher.cs" />

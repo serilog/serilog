@@ -259,6 +259,18 @@ namespace Serilog
         }
 
         /// <summary>
+        /// Enriches log events with an EnvironmentUserName property containing [<see cref="Environment.UserDomainName"/>\]<see cref="Environment.UserName"/>.
+        /// </summary>
+        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration WithEnvironmentUserName(
+           this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            return enrichmentConfiguration.With<EnvironmentUserNameEnricher>();
+        }
+
+        /// <summary>
         /// Reads the &lt;appSettings&gt; element of App.config or Web.config, searching for for keys
         /// that look like: <code>serilog:*</code>, which are used to configure
         /// the logger. To add a sink, use a key like <code>serilog:write-to:File.path</code> for
