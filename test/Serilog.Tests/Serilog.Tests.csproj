@@ -84,6 +84,7 @@
     <Compile Include="Core\LoggerTests.cs" />
     <Compile Include="Core\SafeAggregateSinkTests.cs" />
     <Compile Include="Core\MessageTemplateTests.cs" />
+    <Compile Include="Enrichers\EnvironmentUserNameEnricherTests.cs" />
     <Compile Include="Events\DictionaryValueTests.cs" />
     <Compile Include="Events\LogEventPropertyValueTests.cs" />
     <Compile Include="Filters\MatchingTests.cs" />
