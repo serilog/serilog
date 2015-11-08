@@ -143,7 +143,12 @@ namespace Serilog.Formatting.Json
                 output.Write(_closingDelimiter);
             }
         }
-        
+
+        /// <summary>
+        /// Adds a writer function for a given type.
+        /// </summary>
+        /// <param name="type">The type of values, which <paramref name="writer" /> handles.</param>
+        /// <param name="writer">The function, which writes the values.</param>
         protected void AddLiteralWriter(Type type, Action<object, TextWriter> writer)
         {
             if (type == null) throw new ArgumentNullException("type");
