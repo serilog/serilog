@@ -286,5 +286,29 @@ namespace Serilog
             if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
             return settingConfiguration.Settings(new AppSettingsSettings());
         }
+
+        /// <summary>
+        /// Reads the &lt;appSettings&gt; element of App.config or Web.config, searching for for keys
+        /// that look like: <code>serilog:*</code>, which are used to configure
+        /// the logger. To add a sink, use a key like <code>serilog:write-to:File.path</code> for
+        /// each parameter to the sink's configuration method. To add an additional assembly
+        /// containing sinks, use <code>serilog:using</code>. To set the level use \
+        /// <code>serilog:minimum-level</code>.
+        /// </summary>
+        /// <param name="settingConfiguration">Logger setting configuration</param>
+        /// <param name="settingPrefix">Optional prefix to use when reading keys in appSettings</param>
+        /// <returns>An object allowing configuration to continue.</returns>
+        public static LoggerConfiguration AppSettings(
+            this LoggerSettingsConfiguration settingConfiguration, string settingPrefix)
+        {
+            if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
+            if (settingPrefix != null)
+            {
+                if (settingPrefix.Contains(":")) throw new ArgumentException("Custom setting prefixes cannot contain the colon (:) character.");
+                if (settingPrefix == "serilog") throw new ArgumentException("The value \"serilog\" is not a permitted setting prefix. To use the default, do not specify a custom prefix at all.");
+                if (string.IsNullOrWhiteSpace(settingPrefix)) throw new ArgumentException("To use the default setting prefix, do not supply the settingPrefix parameter, instead pass the default null.");
+            }
+            return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix));
+        }
     }
 }
