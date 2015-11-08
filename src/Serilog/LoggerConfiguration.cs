@@ -38,6 +38,7 @@ namespace Serilog
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
+        bool _loggerCreated;
 
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
@@ -124,6 +125,10 @@ namespace Serilog
         /// disposed.</remarks>
         public ILogger CreateLogger()
         {
+            if (_loggerCreated)
+                throw new InvalidOperationException($"CreateLogger was previously called and can only be called once.");
+            _loggerCreated = true;
+
             if (!_logEventSinks.Any())
                 return new SilentLogger();
 
