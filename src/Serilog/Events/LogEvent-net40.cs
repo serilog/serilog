@@ -67,6 +67,14 @@ namespace Serilog.Events
         }
 
         /// <summary>
+        /// A shortened, fixed-length representation of the event level.
+        /// </summary>
+        public FixedLengthLogEventLevel FixedLengthLevel
+        {
+            get { return (FixedLengthLogEventLevel) (int) _level; }
+        }
+
+        /// <summary>
         /// The message template describing the event.
         /// </summary>
         public MessageTemplate MessageTemplate
