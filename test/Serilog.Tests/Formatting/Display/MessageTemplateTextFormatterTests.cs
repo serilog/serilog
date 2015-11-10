@@ -53,7 +53,7 @@ namespace Serilog.Tests.Formatting.Display
         [Test]
         public void FixedLengthLevelIsSupported()
         {
-            var formatter = new MessageTemplateTextFormatter("{Lev}", CultureInfo.InvariantCulture);
+            var formatter = new MessageTemplateTextFormatter("{Lvl}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);

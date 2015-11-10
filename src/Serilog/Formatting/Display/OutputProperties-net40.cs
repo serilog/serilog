@@ -43,7 +43,7 @@ namespace Serilog.Formatting.Display
         /// <summary>
         /// The level of the log event.
         /// </summary>
-        public const string FixedLengthLevelPropertyName = "Lev";
+        public const string FixedLengthLevelPropertyName = "Lvl";
 
         /// <summary>
         /// A new line.
