@@ -48,11 +48,15 @@ namespace Serilog.Configuration
         /// Apply settings specified in the Serilog key-value setting format to the logger configuration.
         /// </summary>
         /// <param name="settings">A list of key-value pairs describing logger settings.</param>
+        /// <param name="settingDelimiter"></param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
+        public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings,string settingDelimiter = null)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            return Settings(new KeyValuePairSettings(settings));
+
+            var _settingDelimiter = settingDelimiter ?? ":";
+
+            return Settings(new KeyValuePairSettings(settings,_settingDelimiter));
         }
     }
 }
