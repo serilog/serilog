@@ -54,6 +54,11 @@ namespace Serilog.Configuration
         {
             if (settings == null) throw new ArgumentNullException("settings");
 
+            if (settingDelimiter != null)
+            {
+                if (settingDelimiter.Contains("-")) throw new ArgumentException("Custom setting delimiter cannot contain the - character.");
+            }
+
             var _settingDelimiter = settingDelimiter ?? ":";
 
             return Settings(new KeyValuePairSettings(settings,_settingDelimiter));

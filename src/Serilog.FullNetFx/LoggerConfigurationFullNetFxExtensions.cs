@@ -300,7 +300,7 @@ namespace Serilog
         /// <param name="settingDelimiter">Optional parameter to control what character is used to separate settings</param>
         /// <returns>An object allowing configuration to continue.</returns>
         public static LoggerConfiguration AppSettings(
-            this LoggerSettingsConfiguration settingConfiguration, string settingPrefix, string settingDelimiter = ":")
+            this LoggerSettingsConfiguration settingConfiguration, string settingPrefix, string settingDelimiter = null)
         {
             if (settingConfiguration == null) throw new ArgumentNullException("settingConfiguration");
 
@@ -313,9 +313,9 @@ namespace Serilog
 
             if (settingDelimiter != null)
             {
-                if (settingDelimiter.Contains("-")) throw new ArgumentException("Custom setting prefixes cannot contain the - character.");
-                if (settingDelimiter == "serilog") throw new ArgumentException("The value \"serilog\" is not a permitted setting prefix. To use the default, do not specify a custom prefix at all.");
-                if (string.IsNullOrWhiteSpace(settingDelimiter)) throw new ArgumentException("To use the default setting prefix, do not supply the settingPrefix parameter, instead pass the default.");
+                if (settingDelimiter.Contains("-")) throw new ArgumentException("Custom setting delimiter cannot contain the - character.");
+                if (settingDelimiter == "serilog") throw new ArgumentException("The value \"serilog\" is not a permitted setting delimiter. To use the default, do not specify a delimiter at all.");
+                if (string.IsNullOrWhiteSpace(settingDelimiter)) throw new ArgumentException("To use the default setting prefix, do not supply the settingDelimiter parameter, instead pass the default.");
             }
 
             return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix,settingDelimiter));
