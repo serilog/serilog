@@ -1,3 +1,6 @@
+1.5.14
+ * #567 - allow literal formatting to be overridden in `JsonFormatter`
+
 1.5.13
  * #579 - fixed `NullReferenceException` in some `RollingFileSink` failure modes
  * #550 - support custom prefixes in `ReadFrom.AppSettings()` configuration
