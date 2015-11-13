@@ -46,7 +46,7 @@ namespace Serilog.Settings.KeyValuePairs
             EnrichWithPropertyDirective = string.Format("enrich{0}with-property",settingDelimiter);
             UsingDirectiveFullFormPrefix = string.Format("using{0}",settingDelimiter);
             EnrichWithPropertyDirectivePrefix = string.Format("enrich{0}with-property{0}",settingDelimiter);
-            WriteToDirectiveRegex = string.Format(@"^write-to{0}(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$",settingDelimiter);
+            WriteToDirectiveRegex = string.Format(@"^write-to{0}(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){{0,1}}$",settingDelimiter);
 
             _supportedDirectives.Add(UsingDirective);
             _supportedDirectives.Add(WriteToDirective);
