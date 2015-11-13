@@ -1,3 +1,9 @@
+1.5.13
+ * #579 - fixed `NullReferenceException` in some `RollingFileSink` failure modes
+ * #550 - support custom prefixes in `ReadFrom.AppSettings()` configuration
+ * #570 - added `Enrich.WithEnvironmentUserName()`
+ * #562 - turn logging off when no sinks are configured
+
 1.5.12
  * #538 - mark assemblies as CLS compliant
  * #532 - `WriteTo.Logger()` improvements for sub-pipelines
