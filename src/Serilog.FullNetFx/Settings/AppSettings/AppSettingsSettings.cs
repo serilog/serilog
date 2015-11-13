@@ -25,9 +25,11 @@ namespace Serilog.Settings.AppSettings
     {
         readonly string _settingPrefix;
 
-        public AppSettingsSettings(string settingPrefix = null)
+        public AppSettingsSettings(string settingPrefix = null, string settingDelimiter = null)
         {
-            _settingPrefix = settingPrefix == null ? "serilog:" : string.Format("{0}:serilog:", settingPrefix);
+            var _settingDelimiter = settingDelimiter == null ? ":" : string.Format("{0}", settingDelimiter);
+
+            _settingPrefix = settingPrefix == null ? "serilog" + _settingDelimiter : string.Format("{0}{1}serilog{1}", settingPrefix, _settingDelimiter);
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
