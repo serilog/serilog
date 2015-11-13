@@ -53,5 +53,32 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.IsFalse(log2.IsEnabled(LogEventLevel.Warning));
             Assert.IsTrue(log2.IsEnabled(LogEventLevel.Error));
         }
+
+        [Test]
+        public void CanUseCustomSettingDelimiterToConfigureSettings()
+        {
+            const string prefix1 = "|";
+            const string prefix2 = "!";
+
+            // Make sure we have the expected keys in the App.config
+            Assert.AreEqual("Warning", ConfigurationManager.AppSettings["serilog|minimum-level"]);
+            Assert.AreEqual("Error", ConfigurationManager.AppSettings["serilog!minimum-level"]);
+
+            var log1 = new LoggerConfiguration()
+           .WriteTo.Observers(o => { })
+           .ReadFrom.AppSettings(null,prefix1)
+           .CreateLogger();
+
+            var log2 = new LoggerConfiguration()
+                .WriteTo.Observers(o => { })
+                .ReadFrom.AppSettings(null,prefix2)
+                .CreateLogger();
+
+            Assert.IsFalse(log1.IsEnabled(LogEventLevel.Information));
+            Assert.IsTrue(log1.IsEnabled(LogEventLevel.Warning));
+
+            Assert.IsFalse(log2.IsEnabled(LogEventLevel.Warning));
+            Assert.IsTrue(log2.IsEnabled(LogEventLevel.Error));
+        }
     }
 }
