@@ -41,6 +41,11 @@ namespace Serilog.Formatting.Display
         public const string LevelPropertyName = "Level";
 
         /// <summary>
+        /// The level of the log event.
+        /// </summary>
+        public const string FixedLengthLevelPropertyName = "Lvl";
+
+        /// <summary>
         /// A new line.
         /// </summary>
         public const string NewLinePropertyName = "NewLine";
@@ -66,6 +71,7 @@ namespace Serilog.Formatting.Display
             result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
             result[LevelPropertyName] = new ScalarValue(logEvent.Level);
+            result[FixedLengthLevelPropertyName] = new ScalarValue(logEvent.FixedLengthLevel);
             result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);

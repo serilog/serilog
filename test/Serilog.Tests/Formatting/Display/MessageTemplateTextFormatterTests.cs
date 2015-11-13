@@ -49,5 +49,25 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.AreEqual("nick", sw.ToString());
         }
+
+        [Test]
+        public void FixedLengthLevelIsSupported()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Lvl}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.AreEqual("INF", sw.ToString());
+        }
+
+        [Test]
+        public void DefaultLevelLengthIsFullText()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Level}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.AreEqual("Information", sw.ToString());
+        }
     }
 }
