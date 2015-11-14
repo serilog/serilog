@@ -1,0 +1,4 @@
+assembly-versioning-scheme: MajorMinorPatch
+mode: ContinuousDeployment
+next-version: 1.5.15
+branches: {}

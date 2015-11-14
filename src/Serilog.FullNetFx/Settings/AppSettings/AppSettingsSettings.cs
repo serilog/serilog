@@ -24,10 +24,13 @@ namespace Serilog.Settings.AppSettings
     class AppSettingsSettings : ILoggerSettings
     {
         readonly string _settingPrefix;
+        private string _settingDelimiter;
 
-        public AppSettingsSettings(string settingPrefix = null)
+        public AppSettingsSettings(string settingPrefix = null, string settingDelimiter = null)
         {
-            _settingPrefix = settingPrefix == null ? "serilog:" : string.Format("{0}:serilog:", settingPrefix);
+            _settingDelimiter = settingDelimiter == null ? ":" : string.Format("{0}", settingDelimiter);
+
+            _settingPrefix = settingPrefix == null ? "serilog" + _settingDelimiter : string.Format("{0}{1}serilog{1}", settingPrefix, _settingDelimiter);
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
@@ -41,9 +44,9 @@ namespace Serilog.Settings.AppSettings
                 .ToDictionary(k => k.Substring(_settingPrefix.Length), k => Environment.ExpandEnvironmentVariables(settings[k]));
 
             // Add the FullNetFx assembly by default so that all built-in Serilog sinks are available without "using"
-            pairs.Add("using:_ImpliedSerilogFullNetFx", typeof(AppSettingsSettings).Assembly.FullName);
+            pairs.Add(string.Format("using{0}_ImpliedSerilogFullNetFx", _settingDelimiter), typeof(AppSettingsSettings).Assembly.FullName);
 
-            var keyValuePairSettings = new KeyValuePairSettings(pairs);
+            var keyValuePairSettings = new KeyValuePairSettings(pairs,_settingDelimiter);
             keyValuePairSettings.Configure(loggerConfiguration);
         }
     }

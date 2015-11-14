@@ -94,5 +94,23 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.IsNotNull(evt);
             Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
         }
+
+        [Test]
+        public void PropertyEnrichmentIsAppliedWithCustomDelimiter()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    {"enrich|with-property|App", "Test"}
+                },"|")
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Has a test property");
+
+            Assert.IsNotNull(evt);
+            Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
+        }
     }
 }
