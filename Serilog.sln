@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		Build.ps1 = Build.ps1
 		assets\CommonAssemblyInfo.cs = assets\CommonAssemblyInfo.cs
 		README.md = README.md
+		src\Serilog\Serilog.nuspec = src\Serilog\Serilog.nuspec
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
 EndProject

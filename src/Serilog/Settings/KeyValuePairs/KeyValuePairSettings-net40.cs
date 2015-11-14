@@ -28,26 +28,31 @@ namespace Serilog.Settings.KeyValuePairs
         const string UsingDirective = "using";
         const string WriteToDirective = "write-to";
         const string MinimumLevelDirective = "minimum-level";
-        const string EnrichWithPropertyDirective = "enrich:with-property";
 
-        const string UsingDirectiveFullFormPrefix = "using:";
-        const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
+        static string EnrichWithPropertyDirective;
+        static string UsingDirectiveFullFormPrefix;
+        static string EnrichWithPropertyDirectivePrefix;
+        static string WriteToDirectiveRegex;
 
-        const string WriteToDirectiveRegex = @"^write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        List<string> _supportedDirectives = new List<string>();
 
-        readonly string[] _supportedDirectives =
-        {
-            UsingDirective,
-            WriteToDirective,
-            MinimumLevelDirective,
-            EnrichWithPropertyDirective
-        };
 
         readonly Dictionary<string, string> _settings;
 
-        public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings)
+        public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings, string settingDelimiter = ":")
         {
             if (settings == null) throw new ArgumentNullException("settings");
+
+            EnrichWithPropertyDirective = string.Format("enrich{0}with-property", settingDelimiter);
+            UsingDirectiveFullFormPrefix = string.Format("using{0}", settingDelimiter);
+            EnrichWithPropertyDirectivePrefix = string.Format("enrich{0}with-property{0}", settingDelimiter);
+            WriteToDirectiveRegex = string.Format(@"^write-to{0}(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){{0,1}}$", settingDelimiter);
+
+            _supportedDirectives.Add(UsingDirective);
+            _supportedDirectives.Add(WriteToDirective);
+            _supportedDirectives.Add(MinimumLevelDirective);
+            _supportedDirectives.Add(EnrichWithPropertyDirective);
+
             _settings = settings.ToDictionary(s => s.Key, s => s.Value);
         }
 
@@ -95,10 +100,10 @@ namespace Serilog.Settings.KeyValuePairs
                 foreach (var sinkDirective in sinkDirectives)
                 {
                     var target = sinkConfigurationMethods
-                        .Where(m => m.Name == sinkDirective.Key &&
-                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue() || sinkDirective.Any(s => s.Argument == p.Name)))
-                        .OrderByDescending(m => m.GetParameters().Length)
-                        .FirstOrDefault();
+                       .Where(m => m.Name == sinkDirective.Key &&
+                           m.GetParameters().Skip(1).All(p => p.HasDefaultValue() || sinkDirective.Any(s => s.Argument == p.Name)))
+                       .OrderByDescending(m => m.GetParameters().Length)
+                       .FirstOrDefault();
 
                     if (target != null)
                     {
@@ -162,10 +167,10 @@ namespace Serilog.Settings.KeyValuePairs
         internal static IEnumerable<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
         {
             return configurationAssemblies
-                .SelectMany(a => a.GetExportedTypes().Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
-                .SelectMany(t => t.DeclaredMethods)
-                .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
-                .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration));
+                      .SelectMany(a => a.GetExportedTypes().Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
+                      .SelectMany(t => t.DeclaredMethods)
+                      .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
+                      .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration));
         }
     }
 }
