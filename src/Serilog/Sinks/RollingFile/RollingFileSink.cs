@@ -216,8 +216,12 @@ namespace Serilog.Sinks.RollingFile
 
         void CloseFile()
         {
-            _currentFile.Dispose();
-            _currentFile = null;
+            if (_currentFile != null)
+            {
+                _currentFile.Dispose();
+                _currentFile = null;
+            }
+
             _nextCheckpoint = null;
         }
     }

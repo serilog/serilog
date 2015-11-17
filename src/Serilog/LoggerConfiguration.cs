@@ -124,9 +124,9 @@ namespace Serilog
         /// disposed.</remarks>
         public ILogger CreateLogger()
         {
-
             if (!_logEventSinks.Any())
                 return new SilentLogger();
+
 
             Action dispose = () =>
             {

@@ -26,7 +26,7 @@ namespace Serilog.Settings.AppSettings
     {
         readonly string _settingPrefix;
 
-        public AppSettingsSettings(string settingPrefix)
+        public AppSettingsSettings(string settingPrefix = null)
         {
             _settingPrefix = settingPrefix == null ? "serilog:" : $"{settingPrefix}:serilog:";
         }
