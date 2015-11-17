@@ -1,4 +1,4 @@
-// Copyright 2014 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ namespace Serilog.Context
 
         ImmutableStack(ImmutableStack<T> under, T top)
         {
-            if (under == null) throw new ArgumentNullException("under"); 
+            if (under == null) throw new ArgumentNullException(nameof(under)); 
             _under = under;
             _count = under.Count + 1;
             _top = top;

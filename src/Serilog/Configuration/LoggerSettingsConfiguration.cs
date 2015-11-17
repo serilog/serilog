@@ -27,7 +27,7 @@ namespace Serilog.Configuration
 
         internal LoggerSettingsConfiguration(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             _loggerConfiguration = loggerConfiguration;
         }
 
@@ -37,7 +37,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Settings(ILoggerSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException("settings");
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
 
             settings.Configure(_loggerConfiguration);
 
@@ -51,7 +51,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
-            if (settings == null) throw new ArgumentNullException("settings");
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             return Settings(new KeyValuePairSettings(settings));
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ namespace Serilog.Sinks.RollingFile
                               int? retainedFileCountLimit, 
                               Encoding encoding = null)
         {
-            if (pathFormat == null) throw new ArgumentNullException("pathFormat");
+            if (pathFormat == null) throw new ArgumentNullException(nameof(pathFormat));
             if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
             if (retainedFileCountLimit.HasValue && retainedFileCountLimit < 1) throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1");
 
@@ -82,7 +82,7 @@ namespace Serilog.Sinks.RollingFile
         /// would indicate.</remarks> 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
             lock (_syncRoot)
             {

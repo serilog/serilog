@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,9 +52,9 @@ namespace Serilog.Parameters
 
         public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
-            if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
-            if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
-            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException("maximumDestructuringDepth");
+            if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
+            if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
 

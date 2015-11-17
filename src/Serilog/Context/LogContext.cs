@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ namespace Serilog.Context
         /// <exception cref="ArgumentNullException"></exception>
         public static IDisposable PushProperties(params ILogEventEnricher[] properties)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
 
             var stack = GetOrCreateEnricherStack();
             var bookmark = new ContextStackBookmark(stack);

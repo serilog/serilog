@@ -5,6 +5,7 @@
     "tags": [ "serilog", "logging", "semantic", "structured" ],
     "projectUrl": "http://serilog.net",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "iconUrl": "http://serilog.net/images/serilog-nuget.png",
     "frameworks": {
         "net40": {
             "compilationOptions": {
@@ -26,12 +27,16 @@
             }
         },
         "dnx451": {
+            "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk"
+            },
             "frameworkAssemblies": {
                 "System.Configuration": ""
             }
         },
         ".NETPortable,Version=v4.5,Profile=Profile259": {
             "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk",
                 "define": [ "PROFILE259" ]
             },
             "frameworkAssemblies": {
@@ -51,21 +56,18 @@
                 "System.Threading.Tasks": ""
             }
         },
-        "dnxcore50": {
+        "dotnet": {
+            "compilationOptions": {
+                "define": [ "DNXCORE50" ]
+            },
             "dependencies": {
-                "Microsoft.CSharp": "4.0.0-beta-23019",
-                "System.Collections": "4.0.10-beta-23019",
-                "System.Console": "4.0.0-beta-23019",
-                "System.Diagnostics.Process": "4.0.0-beta-23019",
-                "System.Diagnostics.TraceSource": "4.0.0-beta-23019",
-                "System.IO.FileSystem": "4.0.0-beta-23019",
-                "System.Linq": "4.0.0-beta-23019",
-                "System.Runtime": "4.0.20-beta-23019",
-                "System.Runtime.Extensions": "4.0.10-beta-23019",
-                "System.Text.RegularExpressions": "4.0.0-beta-23019",
-                "System.Threading": "4.0.10-beta-23019",
-                "System.Threading.Thread": "4.0.0-beta-23019",
-                "System.Threading.Timer": "4.0.0-beta-23019"
+                "Microsoft.NETCore.Platforms": "1.0.0",
+                "Microsoft.NETCore": "5.0.0",
+                "System.Collections.Concurrent":  "4.0.11-beta-23225",
+                "System.Console": "4.0.0-beta-23225",
+                "System.Diagnostics.Process": "4.0.0-beta-23225",
+                "System.Diagnostics.TraceSource": "4.0.0-beta-23109",
+                "System.Threading.Thread": "4.0.0-beta-23225"
             }
         }
     }

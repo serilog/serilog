@@ -1,5 +1,4 @@
-﻿#if !DNXCORE50
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -59,7 +58,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
 
     public class PeriodicBatchingSinkTests
     {
-        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);
+        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(200);
         static readonly TimeSpan MicroWait = TimeSpan.FromMilliseconds(1);
 
         // Some very, very approximate tests here :)
@@ -77,7 +76,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             Assert.False(pbs.WasCalledAfterDisposal);
         }
 
-        [Fact(Skip = "Fails on DNX451")]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
@@ -102,4 +101,3 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         }
     }
 }
-#endif

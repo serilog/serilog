@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,15 +24,15 @@ namespace Serilog.Core.Sinks
 
         public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
         {
-            if (sink == null) throw new ArgumentNullException("sink");
-            if (levelSwitch == null) throw new ArgumentNullException("levelSwitch");
+            if (sink == null) throw new ArgumentNullException(nameof(sink));
+            if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
             _sink = sink;
             _levelSwitch = levelSwitch;
         }
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
             if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
                 return;

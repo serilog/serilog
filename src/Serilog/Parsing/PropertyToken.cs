@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,8 +65,8 @@ namespace Serilog.Parsing
         public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
-            if (propertyName == null) throw new ArgumentNullException("propertyName");
-            if (rawText == null) throw new ArgumentNullException("rawText");
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+            if (rawText == null) throw new ArgumentNullException(nameof(rawText));
             _propertyName = propertyName;
             _format = format;
             _destructuring = destructuring;
@@ -97,8 +97,8 @@ namespace Serilog.Parsing
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public override void Render(IPropertyDictionary properties, TextWriter output, IFormatProvider formatProvider = null)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
-            if (output == null) throw new ArgumentNullException("output");
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
+            if (output == null) throw new ArgumentNullException(nameof(output));
 
             LogEventPropertyValue propertyValue;
             if (!properties.TryGetValue(_propertyName, out propertyValue))

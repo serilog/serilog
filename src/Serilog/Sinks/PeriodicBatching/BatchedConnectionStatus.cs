@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 using System;
 
-#if !PROFILE259 && !DNXCORE50
+#if !PROFILE259
 namespace Serilog.Sinks.PeriodicBatching
 {
     /// <summary>
@@ -47,7 +47,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
         public BatchedConnectionStatus(TimeSpan period)
         {
-            if (period < TimeSpan.Zero) throw new ArgumentOutOfRangeException("period", "The batching period must be a positive timespan");
+            if (period < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(period), "The batching period must be a positive timespan");
 
             _period = period;
         }

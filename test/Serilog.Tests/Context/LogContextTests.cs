@@ -142,13 +142,30 @@ namespace Serilog.Tests.Context
         // since user property types may not be serializable.
         // Fails if the Serilog assemblies cannot be loaded in the
         // remote domain. See also LogContext.Suspend()
-        [Fact(Skip = "Fails on DNX451")]
+        [Fact(Skip = "Fails when run from Build.ps1, needs more work.")]
         public void DoesNotPreventCrossDomainCalls()
         {
+            var projectRoot = Environment.CurrentDirectory;
+            while (!File.Exists(Path.Combine(projectRoot, "global.json")))
+            {
+                projectRoot = Directory.GetParent(projectRoot).FullName;
+            }
+
             AppDomain domain = null;
             try
             {
-                var domaininfo = new AppDomainSetup { ApplicationBase = Path.GetDirectoryName(GetType().Assembly.CodeBase.Replace("file:///", "")) };
+                const string configuration =
+#if DEBUG
+                "Debug";
+#else
+                "Release";
+#endif
+
+                var domaininfo = new AppDomainSetup
+                {
+                    ApplicationBase = Path.Combine(projectRoot, @"artifacts\"),
+                    PrivateBinPath = @"testbin\Debug\dnx451;bin\Serilog\Debug\dnx451;bin\Serilog.Tests\Debug\dnx451;".Replace("Debug", configuration)
+                };
                 var evidence = AppDomain.CurrentDomain.Evidence;
                 domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);
 

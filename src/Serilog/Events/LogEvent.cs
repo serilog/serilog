@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,8 +45,8 @@ namespace Serilog.Events
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
         public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
-            if (properties == null) throw new ArgumentNullException("properties");
+            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
             _timestamp = timestamp;
             _level = level;
             _exception = exception;
@@ -124,7 +124,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public void AddOrUpdateProperty(LogEventProperty property)
         {
-            if (property == null) throw new ArgumentNullException("property");
+            if (property == null) throw new ArgumentNullException(nameof(property));
             _properties[property.Name] = property.Value;
         }
 
@@ -135,7 +135,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public void AddPropertyIfAbsent(LogEventProperty property)
         {
-            if (property == null) throw new ArgumentNullException("property");
+            if (property == null) throw new ArgumentNullException(nameof(property));
             if (!_properties.ContainsKey(property.Name))
                 _properties.Add(property.Name, property.Value);
         }

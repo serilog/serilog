@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -287,13 +287,22 @@ namespace Serilog
         /// containing sinks, use <code>serilog:using</code>. To set the level use 
         /// <code>serilog:minimum-level</code>.
         /// </summary>
-        /// <param name="settingConfiguration">Logger setting configuration</param>
-        /// <param name="settingPrefix">Prefix to use when reading keys in appSettings</param>
+        /// <param name="settingConfiguration">Logger setting configuration.</param>
+        /// <param name="settingPrefix">Prefix to use when reading keys in appSettings. If specified the value
+        /// will be prepended to the setting keys and followed by :, for example "myapp" will use "myapp:serilog:minumum-level. If null
+        /// no prefix is applied.</param>
         /// <returns>An object allowing configuration to continue.</returns>
         public static LoggerConfiguration AppSettings(
-            this LoggerSettingsConfiguration settingConfiguration, string settingPrefix = "serilog")
+            this LoggerSettingsConfiguration settingConfiguration, string settingPrefix = null)
         {
             if (settingConfiguration == null) throw new ArgumentNullException(nameof(settingConfiguration));
+            if (settingPrefix != null)
+            {
+                if (settingPrefix.Contains(":")) throw new ArgumentException("Custom setting prefixes cannot contain the colon (:) character.");
+                if (settingPrefix == "serilog") throw new ArgumentException("The value \"serilog\" is not a permitted setting prefix. To use the default, do not specify a custom prefix at all.");
+                if (string.IsNullOrWhiteSpace(settingPrefix)) throw new ArgumentException("To use the default setting prefix, do not supply the settingPrefix parameter, instead pass the default null.");
+            }
+
             return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix));
         }
 #endif

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ namespace Serilog.Formatting.Display
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider formatProvider)
         {
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
+            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
             _formatProvider = formatProvider;
         }
@@ -55,8 +55,8 @@ namespace Serilog.Formatting.Display
         /// <param name="output">The output.</param>
         public void Format(LogEvent logEvent, TextWriter output)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
-            if (output == null) throw new ArgumentNullException("output");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+            if (output == null) throw new ArgumentNullException(nameof(output));
 
             // This could be lazier: the output properties include
             // everything from the log event, but often we won't need any more than

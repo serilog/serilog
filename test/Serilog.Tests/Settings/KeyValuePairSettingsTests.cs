@@ -46,16 +46,13 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.Equal(LogEventLevel.Information, result);
         }
 
-        [Fact(Skip = "Fails on DNX451")]
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
-            var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>
-            {
-                {"using:FullNetFx", "Serilog.FullNetFx"}
-            }).ToList();
+            var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
 
             // The core Serilog assembly is always considered
-            Assert.Equal(2, configurationAssemblies.Count);
+            Assert.Equal(1, configurationAssemblies.Count);
         }
 
         [Fact]

@@ -34,13 +34,20 @@ function Restore-Packages
 function Build-Projects
 {
     param([string] $DirectoryName)
+    & dnu build ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\testbin; if($LASTEXITCODE -ne 0) { exit 1 }
     & dnu pack ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\packages; if($LASTEXITCODE -ne 0) { exit 1 }
+}
+
+function Build-TestProjects
+{
+    param([string] $DirectoryName)
+    & dnu build ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\testbin; if($LASTEXITCODE -ne 0) { exit 1 }
 }
 
 function Test-Projects
 {
     param([string] $DirectoryName)
-    & dnx ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
+    & dnx -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Remove-PathVariable
@@ -82,6 +89,7 @@ Write-Host "Build number: " $env:DNX_BUILD_VERSION
 
 # Build/package
 Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_.DirectoryName }
+Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Build-TestProjects $_.DirectoryName }
 
 # Test
 Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Test-Projects $_.DirectoryName }
