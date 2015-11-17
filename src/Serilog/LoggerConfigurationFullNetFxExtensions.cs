@@ -278,7 +278,6 @@ namespace Serilog
             return enrichmentConfiguration.With<MachineNameEnricher>();
         }
 
-#if !DNXCORE50
         /// <summary>
         /// Enriches log events with an EnvironmentUserName property containing [<see cref="Environment.UserDomainName"/>\]<see cref="Environment.UserName"/>.
         /// </summary>
@@ -287,10 +286,11 @@ namespace Serilog
         public static LoggerConfiguration WithEnvironmentUserName(
            this LoggerEnrichmentConfiguration enrichmentConfiguration)
         {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException("enrichmentConfiguration");
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With<EnvironmentUserNameEnricher>();
         }
 
+#if !DNXCORE50
         /// <summary>
         /// Reads the &lt;appSettings&gt; element of App.config or Web.config, searching for for keys
         /// that look like: <code>serilog:*</code>, which are used to configure
@@ -315,7 +315,8 @@ namespace Serilog
                 if (string.IsNullOrWhiteSpace(settingPrefix)) throw new ArgumentException("To use the default setting prefix, do not supply the settingPrefix parameter, instead pass the default null.");
             }
 
-
+            return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix));
+        }
 #endif
     }
 }
