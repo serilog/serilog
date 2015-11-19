@@ -29,6 +29,7 @@ namespace Serilog.Settings.AppSettings
         public AppSettingsSettings(string settingPrefix = null)
         {
             _settingPrefix = settingPrefix == null ? "serilog:" : $"{settingPrefix}:serilog:";
+            System.Console.WriteLine(_settingPrefix);
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
@@ -40,9 +41,6 @@ namespace Serilog.Settings.AppSettings
             var pairs = settings.AllKeys
                 .Where(k => k.StartsWith(_settingPrefix))
                 .ToDictionary(k => k.Substring(_settingPrefix.Length), k => Environment.ExpandEnvironmentVariables(settings[k]));
-
-            // Add the FullNetFx assembly by default so that all built-in Serilog sinks are available without "using"
-            pairs.Add("using:_ImpliedSerilogFullNetFx", typeof(AppSettingsSettings).Assembly.FullName);
 
             var keyValuePairSettings = new KeyValuePairSettings(pairs);
             keyValuePairSettings.Configure(loggerConfiguration);

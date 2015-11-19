@@ -7,7 +7,7 @@ using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
 
-namespace Serilog.Extras.AppSettings.Tests
+namespace Serilog.Tests.AppSettings.Tests
 {
     public class KeyValuePairSettingsTests
     {

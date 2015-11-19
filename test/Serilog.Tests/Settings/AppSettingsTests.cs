@@ -5,7 +5,7 @@ using Xunit;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
-namespace Serilog.Extras.AppSettings.Tests
+namespace Serilog.Tests.AppSettings.Tests
 {
     public class AppSettingsTests
     {
@@ -39,10 +39,12 @@ namespace Serilog.Extras.AppSettings.Tests
             Assert.Equal("Error", ConfigurationManager.AppSettings[prefix2 + ":serilog:minimum-level"]);
 
             var log1 = new LoggerConfiguration()
+                .WriteTo.Observers(o => { })
                 .ReadFrom.AppSettings(prefix1)
                 .CreateLogger();
 
             var log2 = new LoggerConfiguration()
+                .WriteTo.Observers(o => { })
                 .ReadFrom.AppSettings(prefix2)
                 .CreateLogger();
 
