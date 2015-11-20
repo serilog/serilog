@@ -27,6 +27,14 @@ namespace Serilog.Tests
         }
 
         [Fact]
+        public void CreateLoggerThrowsIfCalledMoreThanOnce()
+        {
+            var loggerConfiguration = new LoggerConfiguration();
+            loggerConfiguration.CreateLogger();
+            Assert.Throws<InvalidOperationException>(() => loggerConfiguration.CreateLogger());
+        }
+
+        [Fact]
         public void DisposableSinksAreDisposedAlongWithRootLogger()
         {
             var sink = new DisposableSink();
