@@ -70,6 +70,7 @@
     <Compile Include="Events\LogEventPropertyValueTests.cs" />
     <Compile Include="Filters\MatchingTests.cs" />
     <Compile Include="Formatting\Display\MessageTemplateTextFormatterTests.cs" />
+    <Compile Include="Formatting\Display\OutputPropertiesTests.cs" />
     <Compile Include="LoggerConfigurationTests.cs" />
     <Compile Include="LogTests.cs" />
     <Compile Include="Parameters\PropertyValueConverterTests.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Support\DelegatingSink.cs" />
     <Compile Include="Support\DisposeTrackingSink.cs" />
     <Compile Include="Support\Extensions.cs" />
+    <Compile Include="Support\SerialAttribute.cs" />
     <Compile Include="Support\Some.cs" />
   </ItemGroup>
   <ItemGroup>
