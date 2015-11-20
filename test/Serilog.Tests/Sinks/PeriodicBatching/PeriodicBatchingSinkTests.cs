@@ -18,9 +18,10 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
 
         // Post-mortem only
         public bool WasCalledAfterDisposal { get; private set; }
-        public IList<IList<LogEvent>> Batches { get; private set; }
+        public IList<IList<LogEvent>> Batches { get; }
 
-        public InMemoryPeriodicBatchingSink(int batchSizeLimit, TimeSpan period, TimeSpan batchEmitDelay) : base(batchSizeLimit, period)
+        public InMemoryPeriodicBatchingSink(int batchSizeLimit, TimeSpan period, TimeSpan batchEmitDelay)
+            : base(batchSizeLimit, period)
         {
             _batchEmitDelay = batchEmitDelay;
             Batches = new List<IList<LogEvent>>();
@@ -82,7 +83,7 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
             var evt = Some.InformationEvent();
             pbs.Emit(evt);
-            Thread.Sleep(TinyWait + TinyWait);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             pbs.Stop();
             Assert.Equal(1, pbs.Batches.Count);
             Assert.False(pbs.WasCalledAfterDisposal);
