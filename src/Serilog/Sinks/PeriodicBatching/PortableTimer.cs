@@ -64,7 +64,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
             try
             {
-                await Task.Delay(interval, _cancel.Token);
+                await Task.Delay(interval, _cancel.Token).ConfigureAwait(false);
 
                 _state = PortableTimerState.Active;
 
@@ -90,8 +90,6 @@ namespace Serilog.Sinks.PeriodicBatching
 
             while (true)
             {
-                // Thread.Sleep() would be handy here...
-
                 lock (_stateLock)
                 {
                     if (_state == PortableTimerState.Disposed ||
@@ -101,6 +99,8 @@ namespace Serilog.Sinks.PeriodicBatching
                         return;
                     }
                 }
+
+                Thread.Sleep(10);
             }
         }
     }
