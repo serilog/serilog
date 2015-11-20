@@ -79,10 +79,10 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
-            var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, MicroWait);
+            var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
             var evt = Some.InformationEvent();
             pbs.Emit(evt);
-            Thread.Sleep(TinyWait + TinyWait + TinyWait);
+            Thread.Sleep(TinyWait + TinyWait);
             pbs.Stop();
             Assert.Equal(1, pbs.Batches.Count);
             Assert.False(pbs.WasCalledAfterDisposal);
