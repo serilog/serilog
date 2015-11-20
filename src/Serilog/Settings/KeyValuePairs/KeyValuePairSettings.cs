@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,10 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
+
+#if NET40
+using Serilog.Platform;
+#endif
 
 namespace Serilog.Settings.KeyValuePairs
 {
@@ -47,13 +51,13 @@ namespace Serilog.Settings.KeyValuePairs
 
         public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings)
         {
-            if (settings == null) throw new ArgumentNullException("settings");
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             _settings = settings.ToDictionary(s => s.Key, s => s.Value);
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
 
             var directives = _settings.Keys
                 .Where(k => _supportedDirectives.Any(k.StartsWith))
@@ -96,7 +100,13 @@ namespace Serilog.Settings.KeyValuePairs
                 {
                     var target = sinkConfigurationMethods
                         .Where(m => m.Name == sinkDirective.Key &&
-                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || sinkDirective.Any(s => s.Argument == p.Name)))
+                            m.GetParameters().Skip(1).All(p =>
+#if NET40
+                            (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
+#else
+                            p.HasDefaultValue
+#endif
+                            || sinkDirective.Any(s => s.Argument == p.Name)))
                         .OrderByDescending(m => m.GetParameters().Length)
                         .FirstOrDefault();
 
@@ -156,13 +166,23 @@ namespace Serilog.Settings.KeyValuePairs
                 .Select(t => t.Value)
                 .FirstOrDefault();
 
+#if !PROFILE259
             return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
+#else
+            return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
+#endif
         }
 
         internal static IEnumerable<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
         {
             return configurationAssemblies
-                .SelectMany(a => a.ExportedTypes.Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
+                .SelectMany(a => a.
+#if NET40
+                GetExportedTypes()
+#else
+                ExportedTypes
+#endif
+                .Select(t => t.GetTypeInfo()).Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
                 .SelectMany(t => t.DeclaredMethods)
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration));

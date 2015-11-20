@@ -1,14 +1,13 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Core.Sinks;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class SafeAggregateSinkTests
     {
-        [Test]
+        [Fact]
         public void AnExceptionThrownByASinkIsNotPropagated()
         {
             var thrown = false;
@@ -20,10 +19,10 @@ namespace Serilog.Tests.Core
 
             s.Emit(Some.InformationEvent());
 
-            Assert.IsTrue(thrown);
+            Assert.True(thrown);
         }
 
-        [Test]
+        [Fact]
         public void WhenASinkThrowsOtherSinksAreStillInvoked()
         {
             bool called1 = false, called2 = false;
@@ -36,7 +35,7 @@ namespace Serilog.Tests.Core
 
             s.Emit(Some.InformationEvent());
 
-            Assert.IsTrue(called1 && called2);
+            Assert.True(called1 && called2);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ namespace Serilog.Core.Sinks
 
         public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters)
         {
-            if (sink == null) throw new ArgumentNullException("sink");
-            if (filters == null) throw new ArgumentNullException("filters");
+            if (sink == null) throw new ArgumentNullException(nameof(sink));
+            if (filters == null) throw new ArgumentNullException(nameof(filters));
             _sink = sink;
             _filters = filters.ToArray();
         }

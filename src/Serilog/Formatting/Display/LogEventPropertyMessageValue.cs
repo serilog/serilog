@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,18 +13,23 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
+
+#if NET40
+using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#else
+using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#endif
 
 namespace Serilog.Formatting.Display
 {
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {
         readonly MessageTemplate _template;
-        readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
+        readonly IPropertyDictionary _properties;
 
-        public LogEventPropertyMessageValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
+        public LogEventPropertyMessageValue(MessageTemplate template, IPropertyDictionary properties)
         {
             _template = template;
             _properties = properties;

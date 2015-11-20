@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+#if NET40
+using IPropertyValueList = System.Collections.Generic.IList<Serilog.Events.LogEventPropertyValue>;
+#else
+using IPropertyValueList = System.Collections.Generic.IReadOnlyList<Serilog.Events.LogEventPropertyValue>;
+#endif
+
 namespace Serilog.Events
 {
     /// <summary>
@@ -33,14 +39,14 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
         {
-            if (elements == null) throw new ArgumentNullException("elements");
+            if (elements == null) throw new ArgumentNullException(nameof(elements));
             _elements = elements.ToArray();
         }
 
         /// <summary>
         /// The elements of the sequence.
         /// </summary>
-        public IReadOnlyList<LogEventPropertyValue> Elements { get { return _elements; } }
+        public IPropertyValueList Elements { get { return _elements; } }
 
         /// <summary>
         /// Render the value to the output.
@@ -51,7 +57,7 @@ namespace Serilog.Events
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            if (output == null) throw new ArgumentNullException("output");
+            if (output == null) throw new ArgumentNullException(nameof(output));
 
             output.Write('[');
             var allButLast = _elements.Length - 1;

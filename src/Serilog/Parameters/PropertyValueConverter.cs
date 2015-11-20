@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,10 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
+
+#if NET40
+using Serilog.Platform;
+#endif
 
 namespace Serilog.Parameters
 {
@@ -48,9 +52,9 @@ namespace Serilog.Parameters
 
         public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
-            if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
-            if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
-            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException("maximumDestructuringDepth");
+            if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
+            if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
 
@@ -162,9 +166,20 @@ namespace Serilog.Parameters
 
         bool IsValueTypeDictionary(Type valueType)
         {
-            return valueType.IsConstructedGenericType &&
+            return
+#if NET40
+                   valueType.IsGenericType &&
+#else
+                   valueType.IsConstructedGenericType &&
+#endif
                    valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
-                   IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]);
+                   IsValidDictionaryKeyType(
+#if NET40
+                       valueType.GetGenericArguments()
+#else
+                       valueType.GenericTypeArguments
+#endif
+                       [0]);
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
@@ -180,7 +195,11 @@ namespace Serilog.Parameters
                 object propValue;
                 try
                 {
+#if NET40
+                    propValue = prop.GetValue(value, null);
+#else
                     propValue = prop.GetValue(value);
+#endif
                 }
                 catch (TargetParameterCountException)
                 {

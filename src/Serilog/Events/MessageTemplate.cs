@@ -1,4 +1,4 @@
-// Copyright 2014 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,12 @@ using System.IO;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Parsing;
+
+#if NET40
+using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#else
+using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#endif
 
 namespace Serilog.Events
 {
@@ -53,8 +59,8 @@ namespace Serilog.Events
         /// <param name="tokens">The text and property tokens defining the template.</param>
         public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
-            if (text == null) throw new ArgumentNullException("text");
-            if (tokens == null) throw new ArgumentNullException("tokens");
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (tokens == null) throw new ArgumentNullException(nameof(tokens));
 
             _text = text;
             _tokens = tokens.ToArray();
@@ -130,7 +136,7 @@ namespace Serilog.Events
         /// <returns>The message created from the template and properties. If the
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</returns>
-        public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider formatProvider = null)
+        public string Render(IPropertyDictionary properties, IFormatProvider formatProvider = null)
         {
             var writer = new StringWriter(formatProvider);
             Render(properties, writer, formatProvider);
@@ -146,7 +152,7 @@ namespace Serilog.Events
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
+        public void Render(IPropertyDictionary properties, TextWriter output, IFormatProvider formatProvider = null)
         {
             foreach (var token in _tokens)
             {

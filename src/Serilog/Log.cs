@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;
@@ -49,9 +50,19 @@ namespace Serilog
             get { return _logger; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null) throw new ArgumentNullException(nameof(value));
                 _logger = value;
             }
+        }
+
+        /// <summary>
+        /// Resets <see cref="Logger"/> to the default and disposes the original if possible
+        /// </summary>
+        public static void CloseAndFlush()
+        {
+            ILogger logger = Interlocked.Exchange(ref _logger, new SilentLogger());
+
+            (logger as IDisposable)?.Dispose();
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Serilog.Events
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            if (output == null) throw new ArgumentNullException("output");
+            if (output == null) throw new ArgumentNullException(nameof(output));
 
             if (_value == null)
             {

@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Filters;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Filters
 {
-    [TestFixture]
     public class MatchingTests
     {
-        [Test]
+        [Fact]
         public void EventsCanBeExcludedBySource()
         {
             var written = false;
@@ -20,10 +19,10 @@ namespace Serilog.Tests.Filters
             var sourceContext = log.ForContext<MatchingTests>();
             sourceContext.Write(Some.InformationEvent());
 
-            Assert.IsFalse(written);
+            Assert.False(written);
         }
 
-        [Test]
+        [Fact]
         public void EventsCanBeExcludedByPredicate()
         {
             var seen = 0;
@@ -38,10 +37,10 @@ namespace Serilog.Tests.Filters
             log.Information("{Count}", "wrong type");
             log.Information("{Count}", 15);
 
-            Assert.AreEqual(3, seen);
+            Assert.Equal(3, seen);
         }
 
-        [Test]
+        [Fact]
         public void SourceFiltersWorkOnNamespaces()
         {
             var written = false;
@@ -52,7 +51,7 @@ namespace Serilog.Tests.Filters
                 .ForContext<MatchingTests>();
 
             log.Write(Some.InformationEvent());
-            Assert.IsFalse(written);
+            Assert.False(written);
         }
     }
 }

@@ -1,18 +1,19 @@
-﻿using System.Configuration;
-using NUnit.Framework;
+﻿#if !DNXCORE50
+using System;
+using System.Configuration;
+using Xunit;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
-namespace Serilog.Extras.AppSettings.Tests
+namespace Serilog.Tests.AppSettings.Tests
 {
-    [TestFixture]
     public class AppSettingsTests
     {
-        [Test]
+        [Fact]
         public void EnvironmentVariableExpansionIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.AreEqual("%PATH%", ConfigurationManager.AppSettings["serilog:enrich:with-property:Path"]);
+            Assert.Equal("%PATH%", ConfigurationManager.AppSettings["serilog:enrich:with-property:Path"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -22,20 +23,20 @@ namespace Serilog.Extras.AppSettings.Tests
 
             log.Information("Has a Path property with value expanded from the environment variable");
 
-            Assert.IsNotNull(evt);
-            Assert.IsNotNullOrEmpty((string)evt.Properties["Path"].LiteralValue());
-            Assert.AreNotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
+            Assert.NotNull(evt);
+            Assert.NotEmpty((string)evt.Properties["Path"].LiteralValue());
+            Assert.NotEqual("%PATH%", evt.Properties["Path"].LiteralValue());
         }
 
-        [Test]
+        [Fact]
         public void CanUseCustomPrefixToConfigureSettings()
         {
             const string prefix1 = "custom1";
             const string prefix2 = "custom2";
 
             // Make sure we have the expected keys in the App.config
-            Assert.AreEqual("Warning", ConfigurationManager.AppSettings[prefix1 + ":serilog:minimum-level"]);
-            Assert.AreEqual("Error", ConfigurationManager.AppSettings[prefix2 + ":serilog:minimum-level"]);
+            Assert.Equal("Warning", ConfigurationManager.AppSettings[prefix1 + ":serilog:minimum-level"]);
+            Assert.Equal("Error", ConfigurationManager.AppSettings[prefix2 + ":serilog:minimum-level"]);
 
             var log1 = new LoggerConfiguration()
                 .WriteTo.Observers(o => { })
@@ -47,11 +48,26 @@ namespace Serilog.Extras.AppSettings.Tests
                 .ReadFrom.AppSettings(prefix2)
                 .CreateLogger();
 
-            Assert.IsFalse(log1.IsEnabled(LogEventLevel.Information));
-            Assert.IsTrue(log1.IsEnabled(LogEventLevel.Warning));
+            Assert.False(log1.IsEnabled(LogEventLevel.Information));
+            Assert.True(log1.IsEnabled(LogEventLevel.Warning));
 
-            Assert.IsFalse(log2.IsEnabled(LogEventLevel.Warning));
-            Assert.IsTrue(log2.IsEnabled(LogEventLevel.Error));
+            Assert.False(log2.IsEnabled(LogEventLevel.Warning));
+            Assert.True(log2.IsEnabled(LogEventLevel.Error));
+        }
+
+        [Fact]
+        public void CustomPrefixCannotContainColon()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                new LoggerConfiguration().ReadFrom.AppSettings("custom1:custom2"));
+        }
+
+        [Fact]
+        public void CustomPrefixCannotBeSerilog()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                new LoggerConfiguration().ReadFrom.AppSettings("serilog"));
         }
     }
 }
+#endif

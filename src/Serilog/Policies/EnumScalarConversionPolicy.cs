@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
 using System.Reflection;
 using Serilog.Core;
 using Serilog.Events;
+
+#if NET40
+using Serilog.Platform;
+#endif
 
 namespace Serilog.Policies
 {

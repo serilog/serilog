@@ -1,13 +1,12 @@
 ﻿using System;
-using NUnit.Framework;
 using Serilog.Tests.Support;
+using Xunit;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class SecondaryLoggerSinkTests
     {
-        [Test]
+        [Fact]
         public void ModifyingCopiesPassedThroughTheSinkPreservesOriginal()
         {
             var secondary = new CollectingSink();
@@ -21,14 +20,14 @@ namespace Serilog.Tests.Core
                 .CreateLogger()
                 .Write(e);
             
-            Assert.AreNotSame(e, secondary.SingleEvent);
+            Assert.NotSame(e, secondary.SingleEvent);
             var p = Some.LogEventProperty();
             secondary.SingleEvent.AddPropertyIfAbsent(p);
-            Assert.IsTrue(secondary.SingleEvent.Properties.ContainsKey(p.Name));
-            Assert.IsFalse(e.Properties.ContainsKey(p.Name));
+            Assert.True(secondary.SingleEvent.Properties.ContainsKey(p.Name));
+            Assert.False(e.Properties.ContainsKey(p.Name));
         }
 
-        [Test]
+        [Fact]
         public void WhenOwnedByCallerSecondaryLoggerIsNotDisposed()
         {
             var secondary = new DisposeTrackingSink();
@@ -40,10 +39,10 @@ namespace Serilog.Tests.Core
                 .WriteTo.Logger(secondaryLogger)
                 .CreateLogger()).Dispose();
 
-            Assert.IsFalse(secondary.IsDisposed);
+            Assert.False(secondary.IsDisposed);
         }
 
-        [Test]
+        [Fact]
         public void WhenOwnedByPrimaryLoggerSecondaryIsDisposed()
         {
             var secondary = new DisposeTrackingSink();
@@ -52,7 +51,7 @@ namespace Serilog.Tests.Core
                 .WriteTo.Logger(lc => lc.WriteTo.Sink(secondary))
                 .CreateLogger()).Dispose();
 
-            Assert.That(secondary.IsDisposed);
+            Assert.True(secondary.IsDisposed);
         }
     }
 }

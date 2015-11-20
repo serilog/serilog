@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ namespace Serilog.Core.Filters
 
         public DelegateFilter(Func<LogEvent, bool> isEnabled)
         {
-            if (isEnabled == null) throw new ArgumentNullException("isEnabled");
+            if (isEnabled == null) throw new ArgumentNullException(nameof(isEnabled));
             _isEnabled = isEnabled;
         }
 
         public bool IsEnabled(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             return _isEnabled(logEvent);
         }
     }

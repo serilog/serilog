@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using NUnit.Framework;
+using System.Threading.Tasks;
+using Xunit;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using Serilog.Tests.Support;
@@ -18,9 +19,10 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
 
         // Post-mortem only
         public bool WasCalledAfterDisposal { get; private set; }
-        public IList<IList<LogEvent>> Batches { get; private set; }
- 
-        public InMemoryPeriodicBatchingSink(int batchSizeLimit, TimeSpan period, TimeSpan batchEmitDelay) : base(batchSizeLimit, period)
+        public IList<IList<LogEvent>> Batches { get; }
+
+        public InMemoryPeriodicBatchingSink(int batchSizeLimit, TimeSpan period, TimeSpan batchEmitDelay)
+            : base(batchSizeLimit, period)
         {
             _batchEmitDelay = batchEmitDelay;
             Batches = new List<IList<LogEvent>>();
@@ -56,28 +58,27 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         }
     }
 
-    [TestFixture]
     public class PeriodicBatchingSinkTests
     {
-        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(50);
+        static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(200);
         static readonly TimeSpan MicroWait = TimeSpan.FromMilliseconds(1);
 
         // Some very, very approximate tests here :)
 
-        [Test]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnFlush()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
             var evt = Some.InformationEvent();
             pbs.Emit(evt);
             pbs.Dispose();
-            Assert.AreEqual(1, pbs.Batches.Count);
-            Assert.AreEqual(1, pbs.Batches[0].Count);
-            Assert.AreSame(evt, pbs.Batches[0][0]);
-            Assert.IsFalse(pbs.WasCalledAfterDisposal);
+            Assert.Equal(1, pbs.Batches.Count);
+            Assert.Equal(1, pbs.Batches[0].Count);
+            Assert.Same(evt, pbs.Batches[0][0]);
+            Assert.False(pbs.WasCalledAfterDisposal);
         }
 
-        [Test]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
@@ -85,11 +86,11 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             pbs.Emit(evt);
             Thread.Sleep(TinyWait + TinyWait);
             pbs.Stop();
-            Assert.AreEqual(1, pbs.Batches.Count);
-            Assert.IsFalse(pbs.WasCalledAfterDisposal);
+            Assert.Equal(1, pbs.Batches.Count);
+            Assert.False(pbs.WasCalledAfterDisposal);
         }
 
-        [Test]
+        [Fact]
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_FlushWhileRunning()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, MicroWait, TinyWait + TinyWait);
@@ -97,8 +98,8 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
             pbs.Emit(evt);
             Thread.Sleep(TinyWait);
             pbs.Dispose();
-            Assert.AreEqual(1, pbs.Batches.Count);
-            Assert.IsFalse(pbs.WasCalledAfterDisposal);
+            Assert.Equal(1, pbs.Batches.Count);
+            Assert.False(pbs.WasCalledAfterDisposal);
         }
     }
 }

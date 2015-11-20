@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
-using Serilog.Events;
+﻿using Serilog.Events;
 using Serilog.Tests.Support;
+using Xunit;
 
 namespace Serilog.Tests.Enrichers
 {
-    [TestFixture]
     public class EnvironmentUserNameEnricherTests
     {
-        [Test]
+        [Fact]
         public void EnvironmentUserNameEnricherIsApplied()
         {
             LogEvent evt = null;
@@ -18,8 +17,8 @@ namespace Serilog.Tests.Enrichers
 
             log.Information(@"Has an EnvironmentUserName property with [domain\]userName");
 
-            Assert.IsNotNull(evt);
-            Assert.IsNotNullOrEmpty((string)evt.Properties["EnvironmentUserName"].LiteralValue());
+            Assert.NotNull(evt);
+            Assert.NotEmpty((string)evt.Properties["EnvironmentUserName"].LiteralValue());
         }
     }
 }

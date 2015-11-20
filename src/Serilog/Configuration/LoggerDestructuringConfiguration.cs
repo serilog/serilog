@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ namespace Serilog.Configuration
             Action<IDestructuringPolicy> addPolicy,
             Action<int> setMaximumDepth)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (addScalar == null) throw new ArgumentNullException("addScalar");
-            if (addPolicy == null) throw new ArgumentNullException("addPolicy");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (addScalar == null) throw new ArgumentNullException(nameof(addScalar));
+            if (addPolicy == null) throw new ArgumentNullException(nameof(addPolicy));
             _loggerConfiguration = loggerConfiguration;
             _addScalar = addScalar;
             _addPolicy = addPolicy;
@@ -51,7 +51,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration AsScalar(Type scalarType)
         {
-            if (scalarType == null) throw new ArgumentNullException("scalarType");
+            if (scalarType == null) throw new ArgumentNullException(nameof(scalarType));
             _addScalar(scalarType);
             return _loggerConfiguration;
         }
@@ -75,7 +75,7 @@ namespace Serilog.Configuration
         // ReSharper disable once MemberCanBePrivate.Global
         public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
         {
-            if (destructuringPolicies == null) throw new ArgumentNullException("destructuringPolicies");
+            if (destructuringPolicies == null) throw new ArgumentNullException(nameof(destructuringPolicies));
             foreach (var destructuringPolicy in destructuringPolicies)
             {
                 if (destructuringPolicy == null)
@@ -107,7 +107,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException"></exception>
         public LoggerConfiguration ByTransforming<TValue>(Func<TValue, object> transformation)
         {
-            if (transformation == null) throw new ArgumentNullException("transformation");
+            if (transformation == null) throw new ArgumentNullException(nameof(transformation));
             var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
                                                           o => transformation((TValue)o));
             return With(policy);
@@ -123,7 +123,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth)
         {
-            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException("maximumDestructuringDepth");
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
             _setMaximumDepth(maximumDestructuringDepth);
             return _loggerConfiguration;
         }

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using Serilog.Events;
+
+#if NET40
+using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#else
+using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
+#endif
 
 namespace Serilog.Parsing
 {
@@ -34,7 +38,7 @@ namespace Serilog.Parsing
         /// <exception cref="ArgumentNullException"></exception>
         public TextToken(string text, int startIndex = -1) : base(startIndex)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null) throw new ArgumentNullException(nameof(text));
             _text = text;
         }
 
@@ -52,9 +56,9 @@ namespace Serilog.Parsing
         /// <param name="properties">Properties that may be represented by the token.</param>
         /// <param name="output">Output for the rendered string.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
+        public override void Render(IPropertyDictionary properties, TextWriter output, IFormatProvider formatProvider = null)
         {
-            if (output == null) throw new ArgumentNullException("output");
+            if (output == null) throw new ArgumentNullException(nameof(output));
             output.Write(Text);
         }
 

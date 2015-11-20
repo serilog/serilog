@@ -1,87 +1,103 @@
-param(
-    [String] $majorMinor = "0.0",  # 1.4
-    [String] $patch = "0",         # $env:APPVEYOR_BUILD_VERSION
-    [String] $branch = "private",  # $env:APPVEYOR_REPO_BRANCH
-    [String] $customLogger = "",   # C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll
-    [Switch] $notouch
-)
-
-function Set-AssemblyVersions($informational, $file, $assembly)
+function Install-Dnvm
 {
-    (Get-Content assets/CommonAssemblyInfo.cs) |
-        ForEach-Object { $_ -replace """1.0.0.0""", """$assembly""" } |
-        ForEach-Object { $_ -replace """1.0.0""", """$informational""" } |
-        ForEach-Object { $_ -replace """1.1.1.1""", """$file""" } |
-        Set-Content assets/CommonAssemblyInfo.cs
-}
-
-function Install-NuGetPackages()
-{
-    nuget restore Serilog.sln
-}
-
-function Invoke-MSBuild($solution, $customLogger)
-{
-    if ($customLogger)
+    & where.exe dnvm 2>&1 | Out-Null
+    if(($LASTEXITCODE -ne 0) -Or ((Test-Path Env:\APPVEYOR) -eq $true))
     {
-        msbuild "$solution" /verbosity:minimal /p:Configuration=Release /logger:"$customLogger"
-    }
-    else
-    {
-        msbuild "$solution" /verbosity:minimal /p:Configuration=Release
+        Write-Host "DNVM not found"
+        &{$Branch='dev';iex ((New-Object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}
+
+        # Normally this happens automatically during install but AppVeyor has
+        # an issue where you may need to manually re-run setup from within this process.
+        if($env:DNX_HOME -eq $NULL)
+        {
+            Write-Host "Initial DNVM environment setup failed; running manual setup"
+            $tempDnvmPath = Join-Path $env:TEMP "dnvminstall"
+            $dnvmSetupCmdPath = Join-Path $tempDnvmPath "dnvm.ps1"
+            & $dnvmSetupCmdPath setup
+        }
     }
 }
 
-function Invoke-NuGetPackProj($csproj)
+function Get-DnxVersion
 {
-    nuget pack -Prop Configuration=Release -Symbols $csproj
+    $globalJson = Join-Path $PSScriptRoot "global.json"
+    $jsonData = Get-Content -Path $globalJson -Raw | ConvertFrom-JSON
+    return $jsonData.sdk.version
 }
 
-function Invoke-NuGetPackSpec($nuspec, $version)
+function Restore-Packages
 {
-    nuget pack $nuspec -Version $version -OutputDirectory ..\..\
+    param([string] $DirectoryName)
+    & dnu restore ("""" + $DirectoryName + """")
 }
 
-function Invoke-NuGetPack($version)
+function Build-Projects
 {
-    ls src/**/*.csproj |
-        Where-Object { -not ($_.Name -like "*net40*") } |
-        Where-Object { -not ($_.Name -like "*FullNetFx*") } |
-        Where-Object { -not ($_.Name -eq "Serilog.csproj") } |
-        ForEach-Object { Invoke-NuGetPackProj $_ }
-
-    pushd .\src\Serilog
-    Invoke-NuGetPackSpec "Serilog.nuspec" $version
-    popd
+    param([string] $DirectoryName)
+    & dnu build ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\testbin; if($LASTEXITCODE -ne 0) { exit 1 }
+    & dnu pack ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\packages; if($LASTEXITCODE -ne 0) { exit 1 }
 }
 
-function Invoke-Build($majorMinor, $patch, $branch, $customLogger, $notouch)
+function Build-TestProjects
 {
-    $target = (Get-Content ./CHANGES.md -First 1).Trim()
-    $file = "$target.$patch"
-    $package = $target
-    if ($branch -ne "master")
-    {
-        $package = "$target-pre-$patch"
-    }
-
-    Write-Output "Building Serilog $package"
-
-    if (-not $notouch)
-    {
-        $assembly = "$majorMinor.0.0"
-
-        Write-Output "Assembly version will be set to $assembly"
-        Set-AssemblyVersions $package $file $assembly
-    }
-
-    Install-NuGetPackages
-    
-    Invoke-MSBuild "Serilog-net40.sln" $customLogger
-    Invoke-MSBuild "Serilog.sln" $customLogger
-
-    Invoke-NuGetPack $package
+    param([string] $DirectoryName)
+    & dnu build ("""" + $DirectoryName + """") --configuration Release --out .\artifacts\testbin; if($LASTEXITCODE -ne 0) { exit 1 }
 }
 
-$ErrorActionPreference = "Stop"
-Invoke-Build $majorMinor $patch $branch $customLogger $notouch
+function Test-Projects
+{
+    param([string] $DirectoryName)
+    & dnx -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
+}
+
+function Remove-PathVariable
+{
+    param([string] $VariableToRemove)
+    $path = [Environment]::GetEnvironmentVariable("PATH", "User")
+    $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
+    [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "User")
+    $path = [Environment]::GetEnvironmentVariable("PATH", "Process")
+    $newItems = $path.Split(';') | Where-Object { $_.ToString() -inotlike $VariableToRemove }
+    [Environment]::SetEnvironmentVariable("PATH", [System.String]::Join(';', $newItems), "Process")
+}
+
+Push-Location $PSScriptRoot
+
+$dnxVersion = Get-DnxVersion
+
+# Clean
+if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
+
+# Remove the installed DNVM from the path and force use of
+# per-user DNVM (which we can upgrade as needed without admin permissions)
+Remove-PathVariable "*Program Files\Microsoft DNX\DNVM*"
+
+# Make sure per-user DNVM is installed
+Install-Dnvm
+
+# Install DNX
+dnvm install $dnxVersion -r CoreCLR -NoNative
+dnvm install $dnxVersion -r CLR -NoNative
+dnvm use $dnxVersion -r CLR
+
+# Package restore
+Get-ChildItem -Path . -Filter *.xproj -Recurse | ForEach-Object { Restore-Packages $_.DirectoryName }
+
+# Set build number
+$env:DNX_BUILD_VERSION = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+Write-Host "Build number: " $env:DNX_BUILD_VERSION
+
+# Build/package
+Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_.DirectoryName }
+Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Build-TestProjects $_.DirectoryName }
+
+# Test
+Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Test-Projects $_.DirectoryName }
+
+# Switch to Core CLR
+dnvm use $dnxVersion -r CoreCLR
+
+# Test again
+Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Test-Projects $_.DirectoryName }
+
+Pop-Location

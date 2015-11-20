@@ -29,6 +29,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=FieldCanBeMadeReadOnly_002ELocal/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InconsistentNaming/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=LocalizableElement/@EntryIndexedValue">DO_NOT_SHOW</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=MemberCanBePrivate_002EGlobal/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=MultipleOrderBy/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NotAccessedField_002EGlobal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NotAccessedVariable/@EntryIndexedValue">ERROR</s:String>
@@ -41,6 +42,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleMistakenCallToGetType_002E1/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleMistakenCallToGetType_002E2/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleNullReferenceException/@EntryIndexedValue">WARNING</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleUnintendedReferenceComparison/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PrivateFieldCanBeConvertedToLocalVariable/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=RedundantAssignment/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=RedundantBaseConstructorCall/@EntryIndexedValue">ERROR</s:String>
@@ -123,7 +125,8 @@
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_OBJECT_AND_COLLECTION_INITIALIZER_STYLE/@EntryValue">CHOP_ALWAYS</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/ALIGN_MULTIPLE_DECLARATION/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/JavaScriptFormatOther/ALIGN_MULTIPLE_DECLARATION/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"&gt;&#xD;
+	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&#xD;
+&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"&gt;&#xD;
   &lt;TypePattern DisplayName="COM interfaces or structs"&gt;&#xD;
     &lt;TypePattern.Match&gt;&#xD;
       &lt;Or&gt;&#xD;
@@ -134,77 +137,67 @@
             &lt;HasAttribute Name="System.Runtime.InteropServices.ComImport" /&gt;&#xD;
           &lt;/Or&gt;&#xD;
         &lt;/And&gt;&#xD;
-        &lt;HasAttribute Name="System.Runtime.InteropServices.StructLayoutAttribute" /&gt;&#xD;
+        &lt;Kind Is="Struct" /&gt;&#xD;
       &lt;/Or&gt;&#xD;
     &lt;/TypePattern.Match&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
-&#xD;
   &lt;TypePattern DisplayName="NUnit Test Fixtures" RemoveRegions="All"&gt;&#xD;
     &lt;TypePattern.Match&gt;&#xD;
       &lt;And&gt;&#xD;
         &lt;Kind Is="Class" /&gt;&#xD;
-        &lt;HasAttribute Name="NUnit.Framework.TestFixtureAttribute" Inherited="true" /&gt;&#xD;
-        &lt;HasAttribute Name="NUnit.Framework.TestCaseFixtureAttribute" Inherited="true" /&gt;&#xD;
+        &lt;HasAttribute Name="NUnit.Framework.TestFixtureAttribute" Inherited="True" /&gt;&#xD;
+        &lt;HasAttribute Name="NUnit.Framework.TestCaseFixtureAttribute" Inherited="True" /&gt;&#xD;
       &lt;/And&gt;&#xD;
     &lt;/TypePattern.Match&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="Setup/Teardown Methods"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;And&gt;&#xD;
           &lt;Kind Is="Method" /&gt;&#xD;
           &lt;Or&gt;&#xD;
-            &lt;HasAttribute Name="NUnit.Framework.SetUpAttribute" Inherited="true" /&gt;&#xD;
-            &lt;HasAttribute Name="NUnit.Framework.TearDownAttribute" Inherited="true" /&gt;&#xD;
-            &lt;HasAttribute Name="NUnit.Framework.FixtureSetUpAttribute" Inherited="true" /&gt;&#xD;
-            &lt;HasAttribute Name="NUnit.Framework.FixtureTearDownAttribute" Inherited="true" /&gt;&#xD;
+            &lt;HasAttribute Name="NUnit.Framework.SetUpAttribute" Inherited="True" /&gt;&#xD;
+            &lt;HasAttribute Name="NUnit.Framework.TearDownAttribute" Inherited="True" /&gt;&#xD;
+            &lt;HasAttribute Name="NUnit.Framework.FixtureSetUpAttribute" Inherited="True" /&gt;&#xD;
+            &lt;HasAttribute Name="NUnit.Framework.FixtureTearDownAttribute" Inherited="True" /&gt;&#xD;
           &lt;/Or&gt;&#xD;
         &lt;/And&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="All other members" /&gt;&#xD;
-&#xD;
-    &lt;Entry DisplayName="Test Methods" Priority="100"&gt;&#xD;
+    &lt;Entry Priority="100" DisplayName="Test Methods"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;And&gt;&#xD;
           &lt;Kind Is="Method" /&gt;&#xD;
-          &lt;HasAttribute Name="NUnit.Framework.TestAttribute" Inherited="false" /&gt;&#xD;
+          &lt;HasAttribute Name="NUnit.Framework.TestAttribute" /&gt;&#xD;
         &lt;/And&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
-&#xD;
   &lt;TypePattern DisplayName="Default Pattern"&gt;&#xD;
-    &lt;Entry DisplayName="Public Delegates" Priority="100"&gt;&#xD;
+    &lt;Entry Priority="100" DisplayName="Public Delegates"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;And&gt;&#xD;
           &lt;Access Is="Public" /&gt;&#xD;
           &lt;Kind Is="Delegate" /&gt;&#xD;
         &lt;/And&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
-    &lt;Entry DisplayName="Public Enums" Priority="100"&gt;&#xD;
+    &lt;Entry Priority="100" DisplayName="Public Enums"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;And&gt;&#xD;
           &lt;Access Is="Public" /&gt;&#xD;
           &lt;Kind Is="Enum" /&gt;&#xD;
         &lt;/And&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="Static Fields and Constants"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Or&gt;&#xD;
@@ -215,17 +208,10 @@
           &lt;/And&gt;&#xD;
         &lt;/Or&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
-        &lt;Kind&gt;&#xD;
-          &lt;Kind.Order&gt;&#xD;
-            &lt;DeclarationKind&gt;Constant&lt;/DeclarationKind&gt;&#xD;
-            &lt;DeclarationKind&gt;Field&lt;/DeclarationKind&gt;&#xD;
-          &lt;/Kind.Order&gt;&#xD;
-        &lt;/Kind&gt;&#xD;
+        &lt;Kind Order="Constant Field" /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="Fields"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;And&gt;&#xD;
@@ -235,23 +221,19 @@
           &lt;/Not&gt;&#xD;
         &lt;/And&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Readonly /&gt;&#xD;
         &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="Constructors"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Kind Is="Constructor" /&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
-        &lt;Static/&gt;&#xD;
+        &lt;Static /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="Properties, Indexers"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Or&gt;&#xD;
@@ -260,30 +242,25 @@
         &lt;/Or&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
-    &lt;Entry DisplayName="Interface Implementations" Priority="100"&gt;&#xD;
+    &lt;Entry Priority="100" DisplayName="Interface Implementations"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;And&gt;&#xD;
           &lt;Kind Is="Member" /&gt;&#xD;
           &lt;ImplementsInterface /&gt;&#xD;
         &lt;/And&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-&#xD;
       &lt;Entry.SortBy&gt;&#xD;
-        &lt;ImplementsInterface Immediate="true" /&gt;&#xD;
+        &lt;ImplementsInterface Immediate="True" /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="All other members" /&gt;&#xD;
-&#xD;
     &lt;Entry DisplayName="Nested Types"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Kind Is="Type" /&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
     &lt;/Entry&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
-&lt;/Patterns&gt;&#xD;
-</s:String>
+&lt;/Patterns&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpMemberOrderPattern/CustomPattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-8" ?&gt;&#xD;
 &#xD;
 &lt;!--&#xD;
@@ -548,6 +525,8 @@ II.2.12 &lt;HandlesEvent /&gt;&#xD;
 	<s:String x:Key="/Default/CodeStyle/Naming/VBNaming/PredefinedNamingRules/=TypeParameters/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="T" Suffix="" Style="AaBb" /&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/VBNaming/PredefinedNamingRules/=TypesAndNamespaces/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb" /&gt;</s:String>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ECSharpFileLayoutPatternsUpgrade/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EAddAccessorOwnerDeclarationBracesMigration/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EAlwaysTreatStructAsNotReorderableMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EMigrateBlankLinesAroundFieldToBlankLinesAroundProperty/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EMigrateThisQualifierSettings/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002EJavaScript_002ECodeStyle_002ESettingsUpgrade_002EJsCodeFormatterSettingsUpgrader/@EntryIndexedValue">True</s:Boolean>

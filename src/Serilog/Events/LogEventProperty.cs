@@ -1,4 +1,4 @@
-﻿// Copyright 2014 Serilog Contributors
+﻿// Copyright 2013-2015 Serilog Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public LogEventProperty(string name, LogEventPropertyValue value)
         {
-            if (value == null) throw new ArgumentNullException("value");
+            if (value == null) throw new ArgumentNullException(nameof(value));
             if (!IsValidName(name))
                 throw new ArgumentException("Property name is not valid.");
 
