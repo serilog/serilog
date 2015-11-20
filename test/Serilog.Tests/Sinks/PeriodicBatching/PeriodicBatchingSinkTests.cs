@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
@@ -81,9 +82,15 @@ namespace Serilog.Tests.Sinks.PeriodicBatching
         public void WhenAnEventIsEnqueuedItIsWrittenToABatch_OnTimer()
         {
             var pbs = new InMemoryPeriodicBatchingSink(2, TinyWait, TimeSpan.Zero);
-            var evt = Some.InformationEvent();
-            pbs.Emit(evt);
+            Task.Run(() =>
+            {
+                Console.WriteLine("TEST: Writing");
+                var evt = Some.InformationEvent();
+                pbs.Emit(evt);
+            });
+            Console.WriteLine("TEST: Sleeping");
             Thread.Sleep(TimeSpan.FromSeconds(1));
+            Console.WriteLine("TEST: Stopping");
             pbs.Stop();
             Assert.Equal(1, pbs.Batches.Count);
             Assert.False(pbs.WasCalledAfterDisposal);
