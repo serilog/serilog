@@ -10,6 +10,6 @@ Would you like to help make Serilog even better? We keep a list of issues that a
 Branch  | Status
 ------------- | -------------
 dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev)  
-dev-v2 | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev-v2?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev-v2)  
+master | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master)
 
 Copyright &copy; 2015 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/).
