@@ -29,7 +29,7 @@ using Serilog.Sinks.IOFile;
 using Serilog.Sinks.RollingFile;
 using Serilog.Sinks.SystemConsole;
 
-#if !DNXCORE50
+#if !DOTNET5_4
 using Serilog.Settings.AppSettings;
 #endif
 
@@ -226,7 +226,7 @@ namespace Serilog
             return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
 
-#if !DNXCORE50
+#if !DOTNET5_4
         /// <summary>
         /// Enrich log events with properties from <see cref="Context.LogContext"/>.
         /// </summary>
@@ -290,7 +290,7 @@ namespace Serilog
             return enrichmentConfiguration.With<EnvironmentUserNameEnricher>();
         }
 
-#if !DNXCORE50
+#if !DOTNET5_4
         /// <summary>
         /// Reads the &lt;appSettings&gt; element of App.config or Web.config, searching for for keys
         /// that look like: <code>serilog:*</code>, which are used to configure
