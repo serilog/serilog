@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-#if DNXCORE50
+#if DOTNET5_4
 [assembly: InternalsVisibleTo("Serilog.Tests")]
 #else
 [assembly: InternalsVisibleTo("Serilog.Tests, PublicKey=" +

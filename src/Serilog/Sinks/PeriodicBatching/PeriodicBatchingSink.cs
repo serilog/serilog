@@ -42,7 +42,7 @@ namespace Serilog.Sinks.PeriodicBatching
         readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>(); 
 
         readonly object _stateLock = new object();
-#if !DNXCORE50
+#if !DOTNET5_4
         readonly Timer _timer;
 #else
         readonly PortableTimer _timer;
@@ -61,7 +61,7 @@ namespace Serilog.Sinks.PeriodicBatching
             _queue = new ConcurrentQueue<LogEvent>();
             _status = new BatchedConnectionStatus(period);
 
-#if !DNXCORE50
+#if !DOTNET5_4
             _timer = new Timer(s => OnTick(), null, -1, -1);
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
@@ -71,7 +71,7 @@ namespace Serilog.Sinks.PeriodicBatching
 #endif
         }
 
-#if !DNXCORE50
+#if !DOTNET5_4
         void OnAppDomainUnloading(object sender, EventArgs args)
         {
             var eventArgs = args as UnhandledExceptionEventArgs;
@@ -92,7 +92,7 @@ namespace Serilog.Sinks.PeriodicBatching
                 _unloading = true;
             }
 
-#if !DNXCORE50
+#if !DOTNET5_4
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnloading;
@@ -207,7 +207,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void SetTimer(TimeSpan interval)
         {
-#if DNXCORE50
+#if DOTNET5_4
             _timer.Start(interval);
 #else
             _timer.Change(interval,

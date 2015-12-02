@@ -11,59 +11,58 @@
         "xunit": "2.1.0",
         "xunit.runner.visualstudio": "2.1.0"
     },
-  "frameworks": {
-    "net45": {
-      "compilationOptions": {
-        "keyFile": "../../assets/Serilog.snk"
-      },
-      "frameworkAssemblies": {
-        "System.Configuration": "",
-        "Microsoft.CSharp": "",
-        "System.Collections": "",
-        "System.Diagnostics.Debug": "",
-        "System.Dynamic.Runtime": "",
-        "System.Globalization": "",
-        "System.IO": "",
-        "System.Linq": "",
-        "System.Reflection": "",
-        "System.Reflection.Extensions": "",
-        "System.Runtime": "",
-        "System.Runtime.Extensions": "",
-        "System.Text.RegularExpressions": "",
-        "System.Threading": "",
-        "System.Threading.Tasks": ""
-      }
-    },
-    "dnx451": {
-      "compilationOptions": {
-        "keyFile": "../../assets/Serilog.snk"
-      },
-      "frameworkAssemblies": {
-        "System.Configuration": ""
-      },
-      "dependencies": {
-        "xunit.runner.dnx": "2.1.0-beta5-build169"
-      }
-    },
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.NETCore.Platforms": "1.0.0",
-        "Microsoft.NETCore": "5.0.0",
-        "Microsoft.CSharp": "4.0.1-beta-23225",
-        "System.Collections": "4.0.11-beta-23225",
-        "System.Console": "4.0.0-beta-23225",
-        "System.Diagnostics.Process": "4.0.0-beta-23225",
-        "System.Diagnostics.TraceSource": "4.0.0-beta-23109",
-        "System.IO.FileSystem": "4.0.1-beta-23225",
-        "System.Linq": "4.0.1-beta-23225",
-        "System.Runtime": "4.0.21-beta-23409",
-        "System.Runtime.Extensions": "4.0.11-beta-23225",
-        "System.Text.RegularExpressions": "4.0.11-beta-23225",
-        "System.Threading": "4.0.11-beta-23225",
-        "System.Threading.Thread": "4.0.0-beta-23225",
-        "System.Threading.Timer": "4.0.1-beta-23225",
-        "xunit.runner.dnx": "2.1.0-beta5-build169"
-      }
+    "frameworks": {
+        "net45": {
+            "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Configuration": "",
+                "Microsoft.CSharp": "",
+                "System.Collections": "",
+                "System.Diagnostics.Debug": "",
+                "System.Dynamic.Runtime": "",
+                "System.Globalization": "",
+                "System.IO": "",
+                "System.Linq": "",
+                "System.Reflection": "",
+                "System.Reflection.Extensions": "",
+                "System.Runtime": "",
+                "System.Runtime.Extensions": "",
+                "System.Text.RegularExpressions": "",
+                "System.Threading": "",
+                "System.Threading.Tasks": ""
+            }
+        },
+        "dnx451": {
+            "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk"
+            },
+            "frameworkAssemblies": {
+                "System.Configuration": ""
+            },
+            "dependencies": {
+                "xunit.runner.dnx": "2.1.0-rc1-build204"
+            }
+        },
+        "dnxcore50": {
+            "dependencies": {
+                "Microsoft.CSharp": "4.0.1-beta-23516",
+                "System.Collections": "4.0.11-beta-23516",
+                "System.Console": "4.0.0-beta-23516",
+                "System.Diagnostics.Process": "4.1.0-beta-23516",
+                "System.Diagnostics.TraceSource": "4.0.0-beta-23516",
+                "System.Dynamic.Runtime": "4.0.11-beta-23516",
+                "System.IO.FileSystem": "4.0.1-beta-23516",
+                "System.Linq": "4.0.1-beta-23516",
+                "System.Runtime": "4.0.21-beta-23516",
+                "System.Runtime.Extensions": "4.0.11-beta-23516",
+                "System.Text.RegularExpressions": "4.0.11-beta-23516",
+                "System.Threading": "4.0.11-beta-23516",
+                "System.Threading.Thread": "4.0.0-beta-23516",
+                "System.Threading.Timer": "4.0.1-beta-23516",
+                "xunit.runner.dnx": "2.1.0-rc1-build204"
+            }
+        }
     }
-  }
 }
