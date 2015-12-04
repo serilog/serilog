@@ -48,7 +48,7 @@ namespace Serilog
         /// </summary>
         /// <returns>A logger that will enrich log events as specified.</returns>
         ILogger ForContext(string propertyName, object value, bool destructureObjects = false);
-
+        
         /// <summary>
         /// Create a logger that marks log events as being from the specified
         /// source type.

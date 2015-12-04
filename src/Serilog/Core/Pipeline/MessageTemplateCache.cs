@@ -18,7 +18,7 @@ using Serilog.Events;
 
 namespace Serilog.Core.Pipeline
 {
-    class MessageTemplateCache : IMessageTemplateParser
+    public class MessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
         readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string,MessageTemplate>();

@@ -117,12 +117,12 @@ namespace Serilog.Events
             get { return _tokens; }
         }
 
-        internal PropertyToken[] NamedProperties
+        public PropertyToken[] NamedProperties
         {
             get { return _namedProperties; }
         }
 
-        internal PropertyToken[] PositionalProperties
+        public PropertyToken[] PositionalProperties
         {
             get { return _positionalProperties; }
         }
