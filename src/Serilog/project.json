@@ -26,14 +26,6 @@
                 "System.Configuration": ""
             }
         },
-        "dnx451": {
-            "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
-            },
-            "frameworkAssemblies": {
-                "System.Configuration": ""
-            }
-        },
         ".NETPortable,Version=v4.5,Profile=Profile259": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
