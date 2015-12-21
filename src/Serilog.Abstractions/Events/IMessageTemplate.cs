@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Serilog.Events;
+
+using Serilog.Parsing;
 
 #if NET40
 using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
@@ -22,22 +25,16 @@ using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Seril
 using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
 #endif
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Events
 {
-    class LogEventPropertyMessageValue : LogEventPropertyValue
+    public interface IMessageTemplate
     {
-        readonly IMessageTemplate _template;
-        readonly IPropertyDictionary _properties;
+        void Render(IPropertyDictionary properties, TextWriter output, IFormatProvider formatProvider = null);
 
-        public LogEventPropertyMessageValue(IMessageTemplate template, IPropertyDictionary properties)
-        {
-            _template = template;
-            _properties = properties;
-        }
+        string Render(IPropertyDictionary properties, IFormatProvider formatProvider = null);
 
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
-        {
-            _template.Render(_properties, output, formatProvider);
-        }
+        IEnumerable<MessageTemplateToken> Tokens { get; }
+
+        string Text { get; }
     }
 }

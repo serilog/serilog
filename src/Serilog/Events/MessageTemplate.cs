@@ -32,7 +32,7 @@ namespace Serilog.Events
     /// can subsequently render the template in textual form given the list
     /// of properties.
     /// </summary>
-    public class MessageTemplate
+    public class MessageTemplate :IMessageTemplate
     {
         readonly string _text;
         readonly MessageTemplateToken[] _tokens;
@@ -117,12 +117,12 @@ namespace Serilog.Events
             get { return _tokens; }
         }
 
-        public PropertyToken[] NamedProperties
+        internal PropertyToken[] NamedProperties
         {
             get { return _namedProperties; }
         }
 
-        public PropertyToken[] PositionalProperties
+        internal PropertyToken[] PositionalProperties
         {
             get { return _positionalProperties; }
         }

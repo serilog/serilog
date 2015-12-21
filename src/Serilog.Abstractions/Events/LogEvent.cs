@@ -32,7 +32,7 @@ namespace Serilog.Events
         readonly DateTimeOffset _timestamp;
         readonly LogEventLevel _level;
         readonly Exception _exception;
-        readonly MessageTemplate _messageTemplate;
+        readonly IMessageTemplate _messageTemplate;
         readonly Dictionary<string, LogEventPropertyValue> _properties;
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
+        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, IMessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         {
             if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
             if (properties == null) throw new ArgumentNullException(nameof(properties));
@@ -75,7 +75,7 @@ namespace Serilog.Events
         /// <summary>
         /// The message template describing the event.
         /// </summary>
-        public MessageTemplate MessageTemplate
+        public IMessageTemplate MessageTemplate
         {
             get { return _messageTemplate; }
         }
