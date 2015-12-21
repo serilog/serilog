@@ -1,11 +1,14 @@
 {
-    "version": "2.0.0-beta-*",
-    "description": "Simple .NET logging with fully-structured events",
-    "authors": [ "Serilog Contributors" ],
-    "tags": [ "serilog", "logging", "semantic", "structured" ],
-    "projectUrl": "http://serilog.net",
-    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
-    "iconUrl": "http://serilog.net/images/serilog-nuget.png",
+  "version": "2.0.0-beta-*",
+  "description": "Simple .NET logging with fully-structured events",
+  "authors": [ "Serilog Contributors" ],
+  "tags": [ "serilog", "logging", "semantic", "structured" ],
+  "projectUrl": "http://serilog.net",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "iconUrl": "http://serilog.net/images/serilog-nuget.png",
+  "dependencies": {
+    "Serilog.Abstractions": "2.0.0-beta-*"
+  },
   "frameworks": {
     "net40": {
       "compilationOptions": {
@@ -70,8 +73,5 @@
         "System.Threading.Thread": "4.0.0-beta-23516"
       }
     }
-  },
-  "dependencies": {
-    "Serilog.Abstractions": "2.0.0-beta-*"
   }
 }
