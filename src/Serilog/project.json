@@ -9,7 +9,8 @@
     "frameworks": {
         "net40": {
             "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
+                "keyFile": "../../assets/Serilog.snk",
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -20,7 +21,8 @@
         },
         "net45": {
             "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
+                "keyFile": "../../assets/Serilog.snk",
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -28,7 +30,7 @@
         },
         "dotnet5.1": {
             "compilationOptions": {
-                "define": [ "PROFILE259" ]
+                "define": [ "NO_APPDOMAIN" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -45,6 +47,9 @@
             }
         },
         "dotnet5.4": {
+            "compilationOptions": {
+                "define": [ "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
+            },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
                 "System.Collections.Concurrent": "4.0.11-beta-23516",

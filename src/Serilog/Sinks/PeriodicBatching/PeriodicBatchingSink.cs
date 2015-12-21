@@ -1,26 +1,30 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !PROFILE259
+#if PERIODIC_BATCHING
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+
+#if !NO_TIMER
+using System.Threading;
+#endif
 
 namespace Serilog.Sinks.PeriodicBatching
 {
@@ -39,13 +43,13 @@ namespace Serilog.Sinks.PeriodicBatching
         readonly int _batchSizeLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly BatchedConnectionStatus _status;
-        readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>(); 
+        readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>();
 
         readonly object _stateLock = new object();
-#if !DOTNET5_4
-        readonly Timer _timer;
-#else
+#if NO_TIMER
         readonly PortableTimer _timer;
+#else
+        readonly Timer _timer;
 #endif
         bool _unloading;
         bool _started;
@@ -61,21 +65,24 @@ namespace Serilog.Sinks.PeriodicBatching
             _queue = new ConcurrentQueue<LogEvent>();
             _status = new BatchedConnectionStatus(period);
 
-#if !DOTNET5_4
+#if NO_TIMER
+            _timer = new PortableTimer(cancel => OnTick());
+#else
             _timer = new Timer(s => OnTick(), null, -1, -1);
+#endif
+
+#if !NO_APPDOMAIN
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
-#else
-            _timer = new PortableTimer(cancel => OnTick());
 #endif
         }
 
-#if !DOTNET5_4
+#if !NO_APPDOMAIN
         void OnAppDomainUnloading(object sender, EventArgs args)
         {
             var eventArgs = args as UnhandledExceptionEventArgs;
-            if (eventArgs != null && !eventArgs.IsTerminating) 
+            if (eventArgs != null && !eventArgs.IsTerminating)
                 return;
 
             CloseAndFlush();
@@ -92,16 +99,18 @@ namespace Serilog.Sinks.PeriodicBatching
                 _unloading = true;
             }
 
-#if !DOTNET5_4
+#if !NO_APPDOMAIN
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnloading;
+#endif
 
+#if NO_TIMER
+            _timer.Dispose();
+#else
             var wh = new ManualResetEvent(false);
             if (_timer.Dispose(wh))
                 wh.WaitOne();
-#else
-            _timer.Dispose();
 #endif
 
             OnTick();
@@ -190,7 +199,7 @@ namespace Serilog.Sinks.PeriodicBatching
             {
                 if (_status.ShouldDropBatch)
                     _waitingBatch.Clear();
-                
+
                 if (_status.ShouldDropQueue)
                 {
                     LogEvent evt;
@@ -207,7 +216,7 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void SetTimer(TimeSpan interval)
         {
-#if DOTNET5_4
+#if NO_TIMER
             _timer.Start(interval);
 #else
             _timer.Change(interval,
@@ -265,7 +274,7 @@ namespace Serilog.Sinks.PeriodicBatching
         /// or timers (thus avoiding additional flush/shut-down complexity).
         /// </summary>
         protected virtual void OnEmptyBatch()
-        {            
+        {
         }
     }
 }

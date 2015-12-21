@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if PROCESS
+
 using Serilog.Core;
 using Serilog.Events;
 
-#if !PROFILE259
 namespace Serilog.Enrichers
 {
     /// <summary>

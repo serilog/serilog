@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if FILE_IO
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
@@ -111,3 +113,4 @@ namespace Serilog.Tests.Sinks.RollingFile
         }
     }
 }
+#endif

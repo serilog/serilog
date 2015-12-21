@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if FILE_IO
+
 using System;
 using System.IO;
 using System.Linq;
@@ -23,7 +25,6 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.IOFile;
 
-#if !PROFILE259
 namespace Serilog.Sinks.RollingFile
 {
     /// <summary>

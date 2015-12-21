@@ -16,7 +16,6 @@ using System.Threading;
 using Serilog.Core;
 using Serilog.Events;
 
-#if !PROFILE259
 namespace Serilog.Enrichers
 {
     /// <summary>
@@ -40,4 +39,3 @@ namespace Serilog.Enrichers
         }
     }
 }
-#endif

@@ -1,4 +1,6 @@
-﻿using Serilog.Events;
+﻿#if PROCESS
+
+using Serilog.Events;
 using Serilog.Tests.Support;
 using Xunit;
 
@@ -22,3 +24,4 @@ namespace Serilog.Tests.Enrichers
         }
     }
 }
+#endif
