@@ -16,7 +16,7 @@ using Serilog.Events;
 
 namespace Serilog.Core
 {
-    public interface IMessageTemplateParser
+    interface IMessageTemplateParser
     {
         MessageTemplate Parse(string messageTemplate);
     }
