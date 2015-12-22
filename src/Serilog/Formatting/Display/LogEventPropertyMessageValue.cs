@@ -26,10 +26,10 @@ namespace Serilog.Formatting.Display
 {
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {
-        readonly MessageTemplate _template;
+        readonly IMessageTemplate _template;
         readonly IPropertyDictionary _properties;
 
-        public LogEventPropertyMessageValue(MessageTemplate template, IPropertyDictionary properties)
+        public LogEventPropertyMessageValue(IMessageTemplate template, IPropertyDictionary properties)
         {
             _template = template;
             _properties = properties;
