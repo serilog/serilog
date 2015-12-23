@@ -89,21 +89,9 @@ namespace Serilog.Sinks.PeriodicBatching
             }
         }
 
-        public bool ShouldDropBatch
-        {
-            get
-            {
-                return _failuresSinceSuccessfulBatch >= FailuresBeforeDroppingBatch;
-            }
-        }
+        public bool ShouldDropBatch => _failuresSinceSuccessfulBatch >= FailuresBeforeDroppingBatch;
 
-        public bool ShouldDropQueue
-        {
-            get
-            {
-                return _failuresSinceSuccessfulBatch >= FailuresBeforeDroppingQueue;
-            }
-        }
+        public bool ShouldDropQueue => _failuresSinceSuccessfulBatch >= FailuresBeforeDroppingQueue;
     }
 }
 #endif

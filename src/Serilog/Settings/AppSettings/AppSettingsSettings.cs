@@ -29,7 +29,6 @@ namespace Serilog.Settings.AppSettings
         public AppSettingsSettings(string settingPrefix = null)
         {
             _settingPrefix = settingPrefix == null ? "serilog:" : $"{settingPrefix}:serilog:";
-            System.Console.WriteLine(_settingPrefix);
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)

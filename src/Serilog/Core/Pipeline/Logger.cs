@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ namespace Serilog.Core.Pipeline
         readonly Action _dispose;
         readonly ILogEventEnricher[] _enrichers;
 
-        // It's important that checking minimum level is a very 
+        // It's important that checking minimum level is a very
         // quick (CPU-cacheable) read in the simple case, hence
         // we keep a separate field from the switch, which may
         // not be specified. If it is, we'll set _minimumLevel
@@ -80,7 +80,7 @@ namespace Serilog.Core.Pipeline
         {
             return new Logger(
                 _messageTemplateProcessor,
-                _minimumLevel, 
+                _minimumLevel,
                 this,
                 (enrichers ?? new ILogEventEnricher[0]).ToArray(),
                 null,
@@ -245,8 +245,7 @@ namespace Serilog.Core.Pipeline
 
         public void Dispose()
         {
-            if (_dispose != null)
-                _dispose();
+            _dispose?.Invoke();
         }
     }
 }

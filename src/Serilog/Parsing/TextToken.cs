@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,6 @@ namespace Serilog.Parsing
     /// </summary>
     public class TextToken : MessageTemplateToken
     {
-        readonly string _text;
-
         /// <summary>
         /// Construct a <see cref="TextToken"/>.
         /// </summary>
@@ -39,16 +37,13 @@ namespace Serilog.Parsing
         public TextToken(string text, int startIndex = -1) : base(startIndex)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
-            _text = text;
+            Text = text;
         }
 
         /// <summary>
         /// The token's length.
         /// </summary>
-        public override int Length
-        {
-            get { return _text.Length; }
-        }
+        public override int Length => Text.Length;
 
         /// <summary>
         /// Render the token to the output.
@@ -72,20 +67,17 @@ namespace Serilog.Parsing
         public override bool Equals(object obj)
         {
             var tt = obj as TextToken;
-            return tt != null && tt._text == _text;
+            return tt != null && tt.Text == Text;
         }
 
         /// <summary>
-        /// Serves as a hash function for a particular type. 
+        /// Serves as a hash function for a particular type.
         /// </summary>
         /// <returns>
         /// A hash code for the current <see cref="T:System.Object"/>.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return _text.GetHashCode();
-        }
+        public override int GetHashCode() => Text.GetHashCode();
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -94,17 +86,11 @@ namespace Serilog.Parsing
         /// A string that represents the current object.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
 
         /// <summary>
         /// The text of the token.
         /// </summary>
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
     }
 }

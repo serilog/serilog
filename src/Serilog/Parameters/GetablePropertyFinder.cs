@@ -1,11 +1,11 @@
 // Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,12 +35,11 @@ namespace Serilog.Parameters
             {
                 var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
 #if NET40
-                                                                                     p.GetGetMethod().IsPublic && !p.GetGetMethod().IsStatic &&
+                    p.GetGetMethod().IsPublic && !p.GetGetMethod().IsStatic &&
 #else
-                                                                                     p.GetMethod.IsPublic && !p.GetMethod.IsStatic &&
+                    p.GetMethod.IsPublic && !p.GetMethod.IsStatic &&
 #endif
-                                                                                     (p.Name != "Item" || p.GetIndexParameters().Length == 0) &&
-                                                                                     !seenNames.Contains(p.Name));
+                    (p.Name != "Item" || p.GetIndexParameters().Length == 0) && !seenNames.Contains(p.Name));
 
                 foreach (var propertyInfo in unseenProperties)
                 {

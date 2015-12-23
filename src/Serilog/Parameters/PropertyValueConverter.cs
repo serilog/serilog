@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,13 +40,13 @@ namespace Serilog.Parameters
             typeof(bool),
             typeof(char),
             typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-                typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
+            typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
             typeof(Guid), typeof(Uri)
         };
 
-        readonly IDestructuringPolicy[] _destructuringPolicies; 
+        readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
 
@@ -70,7 +70,7 @@ namespace Serilog.Parameters
             _destructuringPolicies = additionalDestructuringPolicies
                 .Concat(new []
                 {
-                    new DelegateDestructuringPolicy() 
+                    new DelegateDestructuringPolicy()
                 })
                 .ToArray();
         }
@@ -110,7 +110,7 @@ namespace Serilog.Parameters
 
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
-            
+
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
                 ScalarValue converted;
@@ -151,7 +151,7 @@ namespace Serilog.Parameters
                 return new SequenceValue(
                     enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
-            
+
             if (destructuring == Destructuring.Destructure)
             {
                 var typeTag = value.GetType().Name;

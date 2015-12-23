@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +21,6 @@ namespace Serilog.Events
     /// </summary>
     public class LogEventProperty
     {
-        readonly string _name;
-        readonly LogEventPropertyValue _value;
-
         /// <summary>
         /// Construct a <see cref="LogEventProperty"/> with the specified name and value.
         /// </summary>
@@ -37,25 +34,19 @@ namespace Serilog.Events
             if (!IsValidName(name))
                 throw new ArgumentException("Property name is not valid.");
 
-            _name = name;
-            _value = value;
+            Name = name;
+            Value = value;
         }
 
         /// <summary>
         /// The name of the property.
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// The value of the property.
         /// </summary>
-        public LogEventPropertyValue Value
-        {
-            get { return _value; }
-        }
+        public LogEventPropertyValue Value { get; }
 
         /// <summary>
         /// Test <paramref name="name" /> to determine if it is a valid property name.

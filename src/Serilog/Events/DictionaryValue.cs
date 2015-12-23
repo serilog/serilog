@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,8 +30,6 @@ namespace Serilog.Events
     /// </summary>
     public class DictionaryValue : LogEventPropertyValue
     {
-        readonly IScalarDictionary _elements;
-
         /// <summary>
         /// Create a <see cref="DictionaryValue"/> with the provided <paramref name="elements"/>.
         /// </summary>
@@ -40,13 +38,13 @@ namespace Serilog.Events
         public DictionaryValue(IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> elements)
         {
             if (elements == null) throw new ArgumentNullException(nameof(elements));
-            _elements = elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Elements = elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         /// <summary>
         /// The dictionary mapping.
         /// </summary>
-        public IScalarDictionary Elements { get { return _elements; } }
+        public IScalarDictionary Elements { get; }
 
         /// <summary>
         /// Render the value to the output.
@@ -61,7 +59,7 @@ namespace Serilog.Events
 
             output.Write('[');
             var delim = "(";
-            foreach (var kvp in _elements)
+            foreach (var kvp in Elements)
             {
                 output.Write(delim);
                 delim = ", (";
