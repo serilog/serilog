@@ -13,14 +13,14 @@ namespace Serilog.Core
     /// {
     ///     // Do something
     /// }
-    /// 
+    ///
     /// public void Foo()
     /// {
     ///     Information("Hello, {Name}!") // Warning: Non-existing argument in message template.
     /// }
     /// </code>
     /// </example>
-    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
     public sealed class MessageTemplateFormatMethodAttribute : Attribute
     {
         /// <summary>

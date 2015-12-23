@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if NET40
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-#if NET40
 namespace Serilog.Platform
 {
     /// <summary>
@@ -24,75 +25,36 @@ namespace Serilog.Platform
     /// </summary>
     internal class TypeInfo
     {
-        readonly Type _type;
-
         public TypeInfo(Type type)
         {
-            _type = type;
+            Type = type;
         }
 
-        public Type AsType()
-        {
-            return _type;
-        }
+        public Type AsType() => Type;
 
-        public Type BaseType
-        {
-            get
-            {
-                return _type.BaseType;
-            }
-        }
+        public Type Type { get; }
 
-        public bool IsGenericType
-        {
-            get { return _type.IsGenericType; }
-        }
+        public Type BaseType => Type.BaseType;
 
-        public Type[] GenericTypeArguments
-        {
-            get { return _type.GetGenericArguments(); }
-        }
+        public bool IsGenericType => Type.IsGenericType;
 
-        public bool IsEnum
-        {
-            get { return _type.IsEnum; }
-        }
+        public Type[] GenericTypeArguments => Type.GetGenericArguments();
 
-        public Assembly Assembly
-        {
-            get { return _type.Assembly; }
-        }
+        public bool IsEnum => Type.IsEnum;
 
-        public bool IsSealed
-        {
-            get { return _type.IsSealed; }
-        }
+        public Assembly Assembly => Type.Assembly;
 
-        public bool IsAbstract
-        {
-            get { return _type.IsAbstract; }
-        }
+        public bool IsSealed => Type.IsSealed;
 
-        public bool IsNested
-        {
-            get { return _type.IsNested; }
-        }
+        public bool IsAbstract => Type.IsAbstract;
 
-        public IEnumerable<MethodInfo> DeclaredMethods
-        {
-            get { return _type.GetMethods(); }
-        }
+        public bool IsNested => Type.IsNested;
 
-        public IEnumerable<PropertyInfo> DeclaredProperties
-        {
-            get { return _type.GetProperties(); }
-        }
+        public IEnumerable<MethodInfo> DeclaredMethods => Type.GetMethods();
 
-        public bool IsAssignableFrom(TypeInfo targetType)
-        {
-            return _type.IsAssignableFrom(targetType._type);
-        }
+        public IEnumerable<PropertyInfo> DeclaredProperties => Type.GetProperties();
+
+        public bool IsAssignableFrom(TypeInfo targetType) => Type.IsAssignableFrom(targetType.Type);
     }
 }
 #endif

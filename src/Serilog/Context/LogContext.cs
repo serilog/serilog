@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ namespace Serilog.Context
     public static class LogContext
     {
         static readonly string DataSlotName = typeof(LogContext).FullName;
-        
+
         /// <summary>
         /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
         /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
@@ -136,13 +136,13 @@ namespace Serilog.Context
         {
             get
             {
-                
+
                 var data = CallContext.LogicalGetData(DataSlotName);
 
                 ImmutableStack<ILogEventEnricher> context;
                 if (PermitCrossAppDomainCalls)
                 {
-                    context = data != null ? ((Wrapper)data).Value : null;
+                    context = ((Wrapper) data)?.Value;
                 }
                 else
                 {
@@ -153,7 +153,7 @@ namespace Serilog.Context
             }
             set
             {
-                
+
                 var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper { Value = value };
 
                 CallContext.LogicalSetData(DataSlotName, context);
@@ -193,5 +193,4 @@ namespace Serilog.Context
         }
     }
 }
-
 #endif

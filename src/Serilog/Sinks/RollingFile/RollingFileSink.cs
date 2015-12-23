@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,10 +56,10 @@ namespace Serilog.Sinks.RollingFile
         /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
-        public RollingFileSink(string pathFormat, 
+        public RollingFileSink(string pathFormat,
                               ITextFormatter textFormatter,
                               long? fileSizeLimitBytes,
-                              int? retainedFileCountLimit, 
+                              int? retainedFileCountLimit,
                               Encoding encoding = null)
         {
             if (pathFormat == null) throw new ArgumentNullException(nameof(pathFormat));
@@ -79,7 +79,7 @@ namespace Serilog.Sinks.RollingFile
         /// <param name="logEvent">The log event to write.</param>
         /// <remarks>Events that come in out-of-order (e.g. around the rollovers)
         /// may end up written to a later file than their timestamp
-        /// would indicate.</remarks> 
+        /// would indicate.</remarks>
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
@@ -117,7 +117,7 @@ namespace Serilog.Sinks.RollingFile
 
             // We only take one attempt at it because repeated failures
             // to open log files REALLY slow an app down.
-            _nextCheckpoint = date.AddDays(1);            
+            _nextCheckpoint = date.AddDays(1);
 
             var existingFiles = Enumerable.Empty<string>();
             try
@@ -166,7 +166,7 @@ namespace Serilog.Sinks.RollingFile
         void ApplyRetentionPolicy(string currentFilePath)
         {
             if (_retainedFileCountLimit == null) return;
-            
+
             var currentFileName = Path.GetFileName(currentFilePath);
 
             // We consider the current file to exist, even if nothing's been written yet,
@@ -201,7 +201,7 @@ namespace Serilog.Sinks.RollingFile
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or 
+        /// Performs application-defined tasks associated with freeing, releasing, or
         /// resetting unmanaged resources.
         /// </summary>
         public void Dispose()

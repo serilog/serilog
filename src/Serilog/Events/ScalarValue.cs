@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,6 @@ namespace Serilog.Events
     /// </summary>
     public class ScalarValue : LogEventPropertyValue
     {
-        readonly object _value;
-
         /// <summary>
         /// Construct a <see cref="ScalarValue"/> with the specified
         /// value.
@@ -32,13 +30,13 @@ namespace Serilog.Events
         /// <param name="value">The value, which may be <code>null</code>.</param>
         public ScalarValue(object value)
         {
-            _value = value;
+            Value = value;
         }
 
         /// <summary>
         /// The value, which may be <code>null</code>.
         /// </summary>
-        public object Value { get { return _value; } }
+        public object Value { get; }
 
         /// <summary>
         /// Render the value to the output.
@@ -51,13 +49,13 @@ namespace Serilog.Events
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            if (_value == null)
+            if (Value == null)
             {
                 output.Write("null");
             }
             else
             {
-                var s = _value as string;
+                var s = Value as string;
                 if (s != null)
                 {
                     if (format != "l")
@@ -73,14 +71,14 @@ namespace Serilog.Events
                 }
                 else
                 {
-                    var f = _value as IFormattable;
+                    var f = Value as IFormattable;
                     if (f != null)
                     {
                         output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
                     }
                     else
                     {
-                        output.Write(_value.ToString());
+                        output.Write(Value.ToString());
                     }
                 }
             }
@@ -95,7 +93,7 @@ namespace Serilog.Events
         {
             var sv = obj as ScalarValue;
             if (sv == null) return false;
-            return Equals(_value, sv._value);
+            return Equals(Value, sv.Value);
         }
 
         /// <summary>
@@ -104,8 +102,8 @@ namespace Serilog.Events
         /// <returns>The instance's hash code.</returns>
         public override int GetHashCode()
         {
-            if (_value == null) return 0;
-            return _value.GetHashCode();
+            if (Value == null) return 0;
+            return Value.GetHashCode();
         }
     }
 }

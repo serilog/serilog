@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -158,8 +158,8 @@ namespace Serilog.Formatting.Json
         /// <param name="writer">The function, which writes the values.</param>
         protected void AddLiteralWriter(Type type, Action<object, TextWriter> writer)
         {
-            if (type == null) throw new ArgumentNullException("type");
-            if (writer == null) throw new ArgumentNullException("writer");
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
 
             _literalWriters[type] = (v, _, w) => writer(v, w);
         }
@@ -173,7 +173,7 @@ namespace Serilog.Formatting.Json
             WriteRenderingsValues(tokensWithFormat, properties, output);
             output.Write("}");
         }
-        
+
         /// <summary>
         /// Writes out the values of individual renderings of attached properties
         /// </summary>
@@ -209,7 +209,7 @@ namespace Serilog.Formatting.Json
                 output.Write("]");
             }
         }
-        
+
         /// <summary>
         /// Writes out the attached properties
         /// </summary>
@@ -231,7 +231,7 @@ namespace Serilog.Formatting.Json
                 WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
             }
         }
-        
+
         /// <summary>
         /// Writes out the attached exception
         /// </summary>
@@ -239,7 +239,7 @@ namespace Serilog.Formatting.Json
         {
             WriteJsonProperty("Exception", exception, ref delim, output);
         }
-           
+
         /// <summary>
         /// (Optionally) writes out the rendered message
         /// </summary>
@@ -247,7 +247,7 @@ namespace Serilog.Formatting.Json
         {
             WriteJsonProperty("RenderedMessage", message, ref delim, output);
         }
-        
+
         /// <summary>
         /// Writes out the message template for the logevent.
         /// </summary>
@@ -255,7 +255,7 @@ namespace Serilog.Formatting.Json
         {
             WriteJsonProperty("MessageTemplate", template, ref delim, output);
         }
-        
+
         /// <summary>
         /// Writes out the log level
         /// </summary>
@@ -263,7 +263,7 @@ namespace Serilog.Formatting.Json
         {
             WriteJsonProperty("Level", level, ref delim, output);
         }
-        
+
         /// <summary>
         /// Writes out the log timestamp
         /// </summary>
@@ -288,7 +288,7 @@ namespace Serilog.Formatting.Json
 
             output.Write("}");
         }
-        
+
         /// <summary>
         /// Writes out a sequence property
         /// </summary>
@@ -304,9 +304,9 @@ namespace Serilog.Formatting.Json
             }
             output.Write("]");
         }
-           
+
         /// <summary>
-        /// Writes out a dictionary 
+        /// Writes out a dictionary
         /// </summary>
         protected virtual void WriteDictionary(IScalarDictionary elements, TextWriter output)
         {
@@ -322,7 +322,7 @@ namespace Serilog.Formatting.Json
             }
             output.Write("}");
         }
-        
+
         /// <summary>
         /// Writes out a json property with the specified value on output writer
         /// </summary>

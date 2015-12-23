@@ -1,11 +1,11 @@
 ﻿// Copyright 2013-2015 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,8 +33,7 @@ namespace Serilog.Sinks.RollingFile
         const string DefaultSeparator = "-";
 
         readonly string _pathTemplate;
-        readonly string _directorySearchPattern;
-        readonly string _directory;
+
         readonly Regex _filenameMatcher;
 
         public TemplatedPathRoller(string pathTemplate)
@@ -72,19 +71,19 @@ namespace Serilog.Sinks.RollingFile
             _filenameMatcher = new Regex(
                 "^" +
                 Regex.Escape(prefix) +
-                "(?<date>\\d{" + DateFormat.Length + "})" + 
+                "(?<date>\\d{" + DateFormat.Length + "})" +
                 "(?<inc>_[0-9]{3,}){0,1}" +
                 Regex.Escape(suffix) +
                 "$");
 
-            _directorySearchPattern = filenameTemplate.Replace(DateSpecifier, "*");
-            _directory = directory;
-            _pathTemplate = Path.Combine(_directory, filenameTemplate); 
+            DirectorySearchPattern = filenameTemplate.Replace(DateSpecifier, "*");
+            LogFileDirectory = directory;
+            _pathTemplate = Path.Combine(LogFileDirectory, filenameTemplate);
         }
 
-        public string LogFileDirectory { get { return _directory; } }
+        public string LogFileDirectory { get; }
 
-        public string DirectorySearchPattern { get { return _directorySearchPattern; } }
+        public string DirectorySearchPattern { get; }
 
         public void GetLogFilePath(DateTime date, int sequenceNumber, out string path)
         {
@@ -114,9 +113,9 @@ namespace Serilog.Sinks.RollingFile
                     DateTime date;
                     var datePart = match.Groups["date"].Captures[0].Value;
                     if (!DateTime.TryParseExact(
-                        datePart, 
-                        DateFormat, 
-                        CultureInfo.InvariantCulture, 
+                        datePart,
+                        DateFormat,
+                        CultureInfo.InvariantCulture,
                         DateTimeStyles.None,
                         out date))
                         continue;
