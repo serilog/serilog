@@ -65,7 +65,8 @@ namespace Serilog.Sinks.PeriodicBatching
 
             try
             {
-                await Task.Delay(interval, _cancel.Token).ConfigureAwait(false);
+                if (interval > TimeSpan.Zero)
+                    await Task.Delay(interval, _cancel.Token).ConfigureAwait(false);
 
                 _state = PortableTimerState.Active;
 
