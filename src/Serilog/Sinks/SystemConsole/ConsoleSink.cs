@@ -18,7 +18,6 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 
-#if !PROFILE259
 namespace Serilog.Sinks.SystemConsole
 {
     class ConsoleSink : ILogEventSink
@@ -40,4 +39,3 @@ namespace Serilog.Sinks.SystemConsole
         }
     }
 }
-#endif

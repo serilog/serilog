@@ -1,4 +1,4 @@
-﻿#if !DNXCORE50
+﻿#if LOGCONTEXT
 using System;
 using System.IO;
 using System.Runtime.Remoting.Messaging;

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if FILE_IO
+
 using Serilog.Core;
 using Serilog.Events;
 
@@ -28,3 +30,4 @@ namespace Serilog.Sinks.IOFile
         }
     }
 }
+#endif

@@ -1,4 +1,4 @@
-﻿#if !DNXCORE50
+﻿#if APPSETTINGS
 using System;
 using System.Configuration;
 using Xunit;

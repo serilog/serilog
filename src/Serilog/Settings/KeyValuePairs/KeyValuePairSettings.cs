@@ -166,11 +166,7 @@ namespace Serilog.Settings.KeyValuePairs
                 .Select(t => t.Value)
                 .FirstOrDefault();
 
-#if !PROFILE259
             return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
-#else
-            return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
-#endif
         }
 
         internal static IList<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)

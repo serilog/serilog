@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if FILE_IO
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 
-#if !PROFILE259
 namespace Serilog.Sinks.RollingFile
 {
     // Rolls files based on the current date, using a path
@@ -33,7 +34,6 @@ namespace Serilog.Sinks.RollingFile
         const string DefaultSeparator = "-";
 
         readonly string _pathTemplate;
-
         readonly Regex _filenameMatcher;
 
         public TemplatedPathRoller(string pathTemplate)

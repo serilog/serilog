@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if FILE_IO
+
+using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -86,3 +88,4 @@ namespace Serilog.Tests.Sinks.IOFile
         }
     }
 }
+#endif

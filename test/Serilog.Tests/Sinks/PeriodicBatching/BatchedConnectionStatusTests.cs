@@ -1,4 +1,4 @@
-﻿#if !DNXCORE50
+﻿#if PERIODIC_BATCHING
 using System;
 using Xunit;
 using Serilog.Sinks.PeriodicBatching;

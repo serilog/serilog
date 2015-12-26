@@ -9,7 +9,8 @@
     "frameworks": {
         "net40": {
             "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
+                "keyFile": "../../assets/Serilog.snk",
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -20,53 +21,49 @@
         },
         "net45": {
             "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
-            },
-            "frameworkAssemblies": {
-                "System.Configuration": ""
-            }
-        },
-        "dnx451": {
-            "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk"
-            },
-            "frameworkAssemblies": {
-                "System.Configuration": ""
-            }
-        },
-        ".NETPortable,Version=v4.5,Profile=Profile259": {
-            "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "PROFILE259" ]
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
             },
             "frameworkAssemblies": {
-                "Microsoft.CSharp": "",
-                "System.Collections": "",
-                "System.Diagnostics.Debug": "",
-                "System.Dynamic.Runtime": "",
-                "System.Globalization": "",
-                "System.IO": "",
-                "System.Linq": "",
-                "System.Reflection": "",
-                "System.Reflection.Extensions": "",
-                "System.Runtime": "",
-                "System.Runtime.Extensions": "",
-                "System.Text.RegularExpressions": "",
-                "System.Threading": "",
-                "System.Threading.Tasks": ""
+                "System.Configuration": ""
+            }
+        },
+        "dotnet5.1": {
+            "compilationOptions": {
+                "define": [ "NO_APPDOMAIN" ]
+            },
+            "dependencies": {
+                "Microsoft.CSharp": "4.0.1-beta-23516",
+                "System.Console": "4.0.0-beta-23516",
+                "System.Diagnostics.TraceSource": "4.0.0-beta-23516",
+                "System.Globalization": "4.0.11-beta-23516",
+                "System.IO": "4.0.11-beta-23516",
+                "System.Linq": "4.0.1-beta-23516",
+                "System.Reflection.Extensions": "4.0.1-beta-23516",
+                "System.Runtime.Extensions": "4.0.11-beta-23516",
+                "System.Text.RegularExpressions": "4.0.11-beta-23516",
+                "System.Threading": "4.0.11-beta-23516",
+                "System.Threading.Thread": "4.0.0-beta-23516"
             }
         },
         "dotnet5.4": {
+            "compilationOptions": {
+                "define": [ "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
+            },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
                 "System.Collections.Concurrent": "4.0.11-beta-23516",
                 "System.Console": "4.0.0-beta-23516",
                 "System.Diagnostics.Process": "4.1.0-beta-23516",
                 "System.Diagnostics.TraceSource": "4.0.0-beta-23516",
+                "System.Globalization": "4.0.11-beta-23516",
                 "System.IO": "4.0.11-beta-23516",
                 "System.IO.FileSystem": "4.0.1-beta-23516",
                 "System.Linq": "4.0.1-beta-23516",
+                "System.Reflection.Extensions": "4.0.1-beta-23516",
+                "System.Runtime.Extensions": "4.0.11-beta-23516",
                 "System.Text.RegularExpressions": "4.0.11-beta-23516",
+                "System.Threading": "4.0.11-beta-23516",
                 "System.Threading.Thread": "4.0.0-beta-23516"
             }
         }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-#if DOTNET5_4
+#if DOTNET5_4 || DOTNET5_1
 [assembly: InternalsVisibleTo("Serilog.Tests")]
 #else
 [assembly: InternalsVisibleTo("Serilog.Tests, PublicKey=" +

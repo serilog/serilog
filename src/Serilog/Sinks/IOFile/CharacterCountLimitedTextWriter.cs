@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if FILE_IO
+
 using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 
-#if !PROFILE259
 namespace Serilog.Sinks.IOFile
 {
     sealed class CharacterCountLimitedTextWriter : TextWriter

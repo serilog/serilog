@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !PROFILE259 && !DOTNET5_4
+#if LOGCONTEXT
 using Serilog.Context;
 using Serilog.Core;
 using Serilog.Events;
