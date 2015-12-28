@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Parameters;
 using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
@@ -127,7 +128,9 @@ namespace Serilog.Tests.Core
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
             var binder = new PropertyBinder(new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>()));
-            var props = binder.ConstructProperties(mt, properties);
+
+            //TODO: Pull 602 Fix this
+            var props = binder.ConstructProperties(mt as CachedMessageTemplate, properties);
             var output = new StringBuilder();
             var writer = new StringWriter(output);
             mt.Render(props.ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);

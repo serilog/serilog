@@ -38,7 +38,7 @@ namespace Serilog.Parsing
         {
             if (messageTemplate == null)
                 throw new ArgumentNullException(nameof(messageTemplate));
-            return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
+            return new CachedMessageTemplate(messageTemplate, Tokenize(messageTemplate));
         }
 
         static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)

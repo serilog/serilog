@@ -41,7 +41,7 @@ namespace Serilog.Parameters
         /// represented in the message template.</param>
         /// <returns>A list of properties; if the template is malformed then
         /// this will be empty.</returns>
-        public IEnumerable<LogEventProperty> ConstructProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
+        public IEnumerable<LogEventProperty> ConstructProperties(CachedMessageTemplate messageTemplate, object[] messageTemplateParameters)
         {
             if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
             {
@@ -57,7 +57,7 @@ namespace Serilog.Parameters
             return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
         }
 
-        IEnumerable<LogEventProperty> ConstructPositionalProperties(MessageTemplate template, object[] messageTemplateParameters)
+        IEnumerable<LogEventProperty> ConstructPositionalProperties(CachedMessageTemplate template, object[] messageTemplateParameters)
         {
             var positionalProperties = template.PositionalProperties;
 
@@ -93,7 +93,7 @@ namespace Serilog.Parameters
             return result;
         }
 
-        IEnumerable<LogEventProperty> ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
+        IEnumerable<LogEventProperty> ConstructNamedProperties(CachedMessageTemplate template, object[] messageTemplateParameters)
         {
             var namedProperties = template.NamedProperties;
             if (namedProperties == null)

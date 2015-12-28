@@ -22,7 +22,7 @@ namespace Serilog.Parameters
 {
     class MessageTemplateProcessor : ILogEventPropertyFactory
     {
-        readonly IMessageTemplateParser _parser = new MessageTemplateCache(new MessageTemplateParser());
+        readonly MessageTemplateCache _parser = new MessageTemplateCache(new MessageTemplateParser());
         readonly PropertyBinder _propertyBinder;
         readonly PropertyValueConverter _propertyValueConverter;
 
@@ -34,8 +34,10 @@ namespace Serilog.Parameters
 
         public void Process(string messageTemplate, object[] messageTemplateParameters, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> properties)
         {
-            parsedTemplate = _parser.Parse(messageTemplate);
-            properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters);
+            parsedTemplate = _parser.Parse(messageTemplate) ;
+
+            //TODO: Pull 602 Fix this 
+            properties = _propertyBinder.ConstructProperties(parsedTemplate as CachedMessageTemplate, messageTemplateParameters);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
