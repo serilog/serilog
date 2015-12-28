@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using System.Threading;
 
 #if !NO_TIMER
 using System.Threading;
@@ -144,9 +145,18 @@ namespace Serilog.Sinks.PeriodicBatching
         /// not both.</remarks>
         protected virtual void EmitBatch(IEnumerable<LogEvent> events)
         {
-            // Wait so that the timer thread stays busy and thus
-            // we know we're working when flushing.
-            EmitBatchAsync(events).Wait();
+            var prevContext = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(null);
+            try
+            {
+                // Wait so that the timer thread stays busy and thus
+                // we know we're working when flushing.
+                EmitBatchAsync(events).Wait();
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(prevContext);
+            }
         }
 
         /// <summary>
