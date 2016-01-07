@@ -41,19 +41,21 @@ namespace Serilog.Sinks.PeriodicBatching
     /// </remarks>
     public abstract class PeriodicBatchingSink : ILogEventSink, IDisposable
     {
+        const int NotStarted = 0;
+        const int Started = 1;
+        const int Unloading = 2;
+
         readonly int _batchSizeLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly BatchedConnectionStatus _status;
         readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>();
 
-        readonly object _stateLock = new object();
 #if NO_TIMER
         readonly PortableTimer _timer;
 #else
         readonly Timer _timer;
 #endif
-        bool _unloading;
-        bool _started;
+        volatile int _state;
 
         /// <summary>
         /// Construct a sink posting to the specified database.
@@ -92,13 +94,8 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void CloseAndFlush()
         {
-            lock (_stateLock)
-            {
-                if (!_started || _unloading)
-                    return;
-
-                _unloading = true;
-            }
+            if (Interlocked.CompareExchange(ref _state, Unloading, Started) != Started)
+                return;
 
 #if !NO_APPDOMAIN
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
@@ -216,11 +213,8 @@ namespace Serilog.Sinks.PeriodicBatching
                     while (_queue.TryDequeue(out evt)) { }
                 }
 
-                lock (_stateLock)
-                {
-                    if (!_unloading)
-                        SetTimer(_status.NextInterval);
-                }
+                if (_state == Started)
+                    SetTimer(_status.NextInterval);
             }
         }
 
@@ -253,14 +247,14 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-            lock (_stateLock)
+            if (_state == Unloading) return;
+
+            if (_state == NotStarted)
             {
-                if (_unloading) return;
-                if (!_started)
+                if (Interlocked.CompareExchange(ref _state, Started, NotStarted) == NotStarted)
                 {
                     // Special handling to try to get the first event across as quickly
                     // as possible to show we're alive!
-                    _started = true;
                     SetTimer(TimeSpan.Zero);
                 }
             }
