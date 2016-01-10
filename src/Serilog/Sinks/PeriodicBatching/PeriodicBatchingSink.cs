@@ -23,10 +23,6 @@ using Serilog.Debugging;
 using Serilog.Events;
 using System.Threading;
 
-#if !NO_TIMER
-using System.Threading;
-#endif
-
 namespace Serilog.Sinks.PeriodicBatching
 {
     /// <summary>

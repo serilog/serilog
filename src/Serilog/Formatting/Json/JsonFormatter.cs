@@ -91,8 +91,8 @@ namespace Serilog.Formatting.Json
                 { typeof(uint), WriteToString },
                 { typeof(long), WriteToString },
                 { typeof(ulong), WriteToString },
-                { typeof(float), WriteToString },
-                { typeof(double), WriteToString },
+                { typeof(float), (v, q, w) => WriteSingle((float)v, w) },
+                { typeof(double), (v, q, w) => WriteDouble((double)v, w) },
                 { typeof(decimal), WriteToString },
                 { typeof(string), (v, q, w) => WriteString((string)v, w) },
                 { typeof(DateTime), (v, q, w) => WriteDateTime((DateTime)v, w) },
@@ -380,6 +380,16 @@ namespace Serilog.Formatting.Json
         static void WriteBoolean(bool value, TextWriter output)
         {
             output.Write(value ? "true" : "false");
+        }
+
+        static void WriteSingle(float value, TextWriter output)
+        {
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+        }
+
+        static void WriteDouble(double value, TextWriter output)
+        {
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)
