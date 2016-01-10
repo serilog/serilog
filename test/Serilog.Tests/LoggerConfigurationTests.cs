@@ -59,6 +59,8 @@ namespace Serilog.Tests
             Assert.False(sink.IsDisposed);
         }
 
+#if INTERNAL_TESTS
+
         [Fact]
         public void AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
@@ -78,7 +80,9 @@ namespace Serilog.Tests
             Assert.True(events.Contains(included));
         }
 
-// ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
+#endif
+
+        // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
         class AB
         {
             public int A { get; set; }

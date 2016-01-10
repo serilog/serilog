@@ -30,6 +30,7 @@
         },
         "dotnet5.1": {
             "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk",
                 "define": [ "NO_APPDOMAIN" ]
             },
             "dependencies": {
@@ -48,6 +49,7 @@
         },
         "dotnet5.4": {
             "compilationOptions": {
+                "keyFile": "../../assets/Serilog.snk",
                 "define": [ "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
             },
             "dependencies": {
