@@ -95,6 +95,18 @@ namespace Serilog.Tests.Sinks.RollingFile
         }
 
         [Test]
+        public void TheRollerExpandsEnvironmentVariables()
+        {
+            var roller = new TemplatedPathRoller("%TEMP%\\log-{Date}.txt");
+            var now = new DateTime(2013, 7, 14, 3, 24, 9, 980);
+            var tempPath = Path.GetTempPath();
+            string path;
+            roller.GetLogFilePath(now, 0, out path);
+            var expectedPath = Path.Combine(tempPath, "log-20130714.txt");
+            AssertAreEqualAbsolute(expectedPath, path);
+        }
+
+        [Test]
         public void MatchingSelectsFiles()
         {
             var roller = new TemplatedPathRoller("log-{Date}.txt");

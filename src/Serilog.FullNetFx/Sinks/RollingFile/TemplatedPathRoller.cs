@@ -74,7 +74,8 @@ namespace Serilog.Sinks.RollingFile
         /// <returns></returns>
         static string GetFullPathOfDirectory(string path)
         {
-            var directory = Path.GetDirectoryName(path);
+            var exandedPath = Environment.ExpandEnvironmentVariables(path);
+            var directory = Path.GetDirectoryName(exandedPath);
             if (string.IsNullOrEmpty(directory))
             {
 #if ASPNETCORE50
