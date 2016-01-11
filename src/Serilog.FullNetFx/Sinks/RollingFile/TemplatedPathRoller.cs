@@ -20,10 +20,18 @@ using System.Text.RegularExpressions;
 
 namespace Serilog.Sinks.RollingFile
 {
-    // Rolls files based on the current date, using a path
-    // formatting pattern like:
-    //    Logs/log-{Date}.txt
-    //
+    ///<summary>
+    /// Rolls files based on the current date using a path formatting pattern
+    /// like: <c>Logs/log-{Date}.txt</c>
+    /// </summary>
+    /// <remarks>
+    /// If the {Date} specifier is not found in the path template, it will be
+    /// added prior to the file name extension. E.g. <c>Log.txt</c> becomes
+    /// <c>Log-{Date}.txt</c>. Dates are automatically formatted as yyyyMMdd.
+    /// E.g. this will create filenames like <c>Log-20151225.txt</c>.
+    /// Sequences of files can also be generated and will be in the format:
+    /// <c>Log-20151225_001.txt</c>.
+    /// </remarks>
     class TemplatedPathRoller
     {
         const string OldStyleDateSpecifier = "{0}";
@@ -34,16 +42,39 @@ namespace Serilog.Sinks.RollingFile
         readonly string _pathTemplate;
         readonly string _directorySearchPattern;
         readonly string _directory;
-        readonly Regex _filenameMatcher;
+        readonly Regex _fileNameMatcher;
 
         public TemplatedPathRoller(string pathTemplate)
         {
             if (pathTemplate == null) throw new ArgumentNullException("pathTemplate");
             if (pathTemplate.Contains(OldStyleDateSpecifier))
-                throw new ArgumentException("The old-style date specifier " + OldStyleDateSpecifier +
-                    " is no longer supported, instead please use " + DateSpecifier);
+                throw new ArgumentException(
+                    string.Format(
+                        "The old-style date specifier {0} is no longer supported, instead please use {1}",
+                        OldStyleDateSpecifier,
+                        DateSpecifier));
 
-            var directory = Path.GetDirectoryName(pathTemplate);
+            var directory = GetFullPathOfDirectory(pathTemplate);
+            if (directory.Contains(DateSpecifier))
+                throw new ArgumentException("The date cannot form part of the directory name");
+
+            var fileNameTemplate = GetFileNameTemplate(pathTemplate);
+
+            _fileNameMatcher = CreateFileNameMatcher(fileNameTemplate);
+            _directorySearchPattern = fileNameTemplate.Replace(DateSpecifier, "*");
+            _directory = directory;
+            _pathTemplate = Path.Combine(_directory, fileNameTemplate);
+        }
+
+        /// <summary>
+        /// Gets the full path of the provided path, or the current directory
+        /// if no explicit directory is provided
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        static string GetFullPathOfDirectory(string path)
+        {
+            var directory = Path.GetDirectoryName(path);
             if (string.IsNullOrEmpty(directory))
             {
 #if ASPNETCORE50
@@ -53,37 +84,54 @@ namespace Serilog.Sinks.RollingFile
 #endif
             }
 
-            directory = Path.GetFullPath(directory);
+            return Path.GetFullPath(directory);
+        }
 
-            if (directory.Contains(DateSpecifier))
-                throw new ArgumentException("The date cannot form part of the directory name");
-
-            var filenameTemplate = Path.GetFileName(pathTemplate);
-            if (!filenameTemplate.Contains(DateSpecifier))
+        /// <summary>
+        /// Adds {Date} to the file name if not specified
+        /// </summary>
+        /// <param name="pathTemplate"></param>
+        /// <returns></returns>
+        static string GetFileNameTemplate(string pathTemplate)
+        {
+            var fileNameTemplate = Path.GetFileName(pathTemplate);
+            if (fileNameTemplate != null && !fileNameTemplate.Contains(DateSpecifier))
             {
-                filenameTemplate = Path.GetFileNameWithoutExtension(filenameTemplate) + DefaultSeparator +
-                    DateSpecifier + Path.GetExtension(filenameTemplate);
+                fileNameTemplate = Path.GetFileNameWithoutExtension(fileNameTemplate) + DefaultSeparator +
+                                   DateSpecifier + Path.GetExtension(fileNameTemplate);
             }
+            return fileNameTemplate;
+        }
 
+        /// <summary>
+        /// Creates a regex that matches files generated from this filename template.
+        /// E.g. <c>Log-{Date}.txt</c> will match <c>Log-20151225.txt</c> but not <c>Log-123.txt</c>.
+        /// </summary>
+        /// <param name="filenameTemplate"></param>
+        /// <returns></returns>
+        static Regex CreateFileNameMatcher(string filenameTemplate)
+        {
             var indexOfSpecifier = filenameTemplate.IndexOf(DateSpecifier, StringComparison.Ordinal);
             var prefix = filenameTemplate.Substring(0, indexOfSpecifier);
             var suffix = filenameTemplate.Substring(indexOfSpecifier + DateSpecifier.Length);
-            _filenameMatcher = new Regex(
+            return new Regex(
                 "^" +
                 Regex.Escape(prefix) +
-                "(?<date>\\d{" + DateFormat.Length + "})" + 
+                "(?<date>\\d{" + DateFormat.Length + "})" +
                 "(?<inc>_[0-9]{3,}){0,1}" +
                 Regex.Escape(suffix) +
                 "$");
-
-            _directorySearchPattern = filenameTemplate.Replace(DateSpecifier, "*");
-            _directory = directory;
-            _pathTemplate = Path.Combine(_directory, filenameTemplate); 
         }
 
-        public string LogFileDirectory { get { return _directory; } }
+        public string LogFileDirectory
+        {
+            get { return _directory; }
+        }
 
-        public string DirectorySearchPattern { get { return _directorySearchPattern; } }
+        public string DirectorySearchPattern
+        {
+            get { return _directorySearchPattern; }
+        }
 
         public void GetLogFilePath(DateTime date, int sequenceNumber, out string path)
         {
@@ -99,29 +147,27 @@ namespace Serilog.Sinks.RollingFile
         {
             foreach (var filename in filenames)
             {
-                var match = _filenameMatcher.Match(filename);
-                if (match.Success)
+                var match = _fileNameMatcher.Match(filename);
+                if (!match.Success) continue;
+                var inc = 0;
+                var incGroup = match.Groups["inc"];
+                if (incGroup.Captures.Count != 0)
                 {
-                    var inc = 0;
-                    var incGroup = match.Groups["inc"];
-                    if (incGroup.Captures.Count != 0)
-                    {
-                        var incPart = incGroup.Captures[0].Value.Substring(1);
-                        inc = int.Parse(incPart, CultureInfo.InvariantCulture);
-                    }
-
-                    DateTime date;
-                    var datePart = match.Groups["date"].Captures[0].Value;
-                    if (!DateTime.TryParseExact(
-                        datePart, 
-                        DateFormat, 
-                        CultureInfo.InvariantCulture, 
-                        DateTimeStyles.None,
-                        out date))
-                        continue;
-
-                    yield return new RollingLogFile(filename, date, inc);
+                    var incPart = incGroup.Captures[0].Value.Substring(1);
+                    inc = int.Parse(incPart, CultureInfo.InvariantCulture);
                 }
+
+                DateTime date;
+                var datePart = match.Groups["date"].Captures[0].Value;
+                if (!DateTime.TryParseExact(
+                    datePart,
+                    DateFormat,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out date))
+                    continue;
+
+                yield return new RollingLogFile(filename, date, inc);
             }
         }
     }
