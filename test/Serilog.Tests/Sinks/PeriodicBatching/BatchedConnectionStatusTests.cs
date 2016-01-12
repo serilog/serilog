@@ -1,4 +1,4 @@
-﻿#if PERIODIC_BATCHING
+﻿#if PERIODIC_BATCHING && INTERNAL_TESTS
 using System;
 using Xunit;
 using Serilog.Sinks.PeriodicBatching;

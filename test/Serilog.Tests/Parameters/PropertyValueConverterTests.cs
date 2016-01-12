@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if INTERNAL_TESTS
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -234,3 +236,5 @@ namespace Serilog.Tests.Parameters
         }
     }
 }
+
+#endif

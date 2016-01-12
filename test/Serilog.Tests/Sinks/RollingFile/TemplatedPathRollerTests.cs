@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if INTERNAL_TESTS
+
+using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -126,3 +128,5 @@ namespace Serilog.Tests.Sinks.RollingFile
         }
     }
 }
+
+#endif
