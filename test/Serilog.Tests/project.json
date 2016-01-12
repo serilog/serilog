@@ -1,4 +1,4 @@
-﻿{
+{
     "version": "2.0.0-beta-*",
     "commands": {
         "test": "xunit.runner.dnx",
@@ -10,7 +10,8 @@
         "Serilog": { "target": "project" },
         "xunit": "2.1.0",
         "xunit.runner.visualstudio": "2.1.0",
-        "xunit.runner.dnx": "2.1.0-rc1-build204"
+      "xunit.runner.dnx": "2.1.0-rc1-build204",
+      "Serilog.Sinks.Console": "2.0.0-beta-*"
     },
     "frameworks": {
         "dnx451": {
