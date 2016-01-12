@@ -4,7 +4,6 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display; 
 
-
 namespace Serilog.Sinks.SystemConsole
 {
     public static class LoggingExtentsions

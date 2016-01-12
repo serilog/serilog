@@ -298,7 +298,7 @@ namespace Serilog
             {
                 if (settingPrefix.Contains(":")) throw new ArgumentException("Custom setting prefixes cannot contain the colon (:) character.");
                 if (settingPrefix == "serilog") throw new ArgumentException("The value \"serilog\" is not a permitted setting prefix. To use the default, do not specify a custom prefix at all.");
-                if (String.IsNullOrWhiteSpace(settingPrefix)) throw new ArgumentException("To use the default setting prefix, do not supply the settingPrefix parameter, instead pass the default null.");
+                if (string.IsNullOrWhiteSpace(settingPrefix)) throw new ArgumentException("To use the default setting prefix, do not supply the settingPrefix parameter, instead pass the default null.");
             }
 
             return settingConfiguration.Settings(new AppSettingsSettings(settingPrefix));
