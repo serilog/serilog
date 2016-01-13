@@ -2,7 +2,7 @@
   "version": "2.0.0-beta-*",
   "description": "The console sink for Serilog - Simple .NET logging with fully-structured events",
   "authors": [ "Serilog Contributors" ],
-  "tags": [ "serilog", "logging", "semantic", "structured", "console" ],
+  "tags": [ "serilog", "console" ],
   "projectUrl": "http://serilog.net",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
   "iconUrl": "http://serilog.net/images/serilog-nuget.png",

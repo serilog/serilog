@@ -6,7 +6,7 @@ using Serilog.Formatting.Display;
 
 namespace Serilog.Sinks.SystemConsole
 {
-    public static class LoggingExtentsions
+    public static class ConsoleLoggerConfigurationExtensions
     {
         const string DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
