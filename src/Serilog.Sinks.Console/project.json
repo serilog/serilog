@@ -13,11 +13,6 @@
     "keyFile": "../../assets/Serilog.snk"
   },
   "frameworks": {
-    "net40": {
-      "dependencies": {
-        "Microsoft.Bcl.Async": "1.0.168"
-      }
-    },
     "net45": {
     },
     "dotnet5.1": {
