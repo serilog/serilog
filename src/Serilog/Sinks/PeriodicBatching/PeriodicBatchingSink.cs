@@ -246,6 +246,8 @@ namespace Serilog.Sinks.PeriodicBatching
             var state = VolatileRead(ref _state);
             if (state == Unloading) return;
 
+            _queue.Enqueue(logEvent);
+
             if (state == NotStarted)
             {
                 if (Interlocked.CompareExchange(ref _state, Started, NotStarted) == NotStarted)
@@ -255,8 +257,6 @@ namespace Serilog.Sinks.PeriodicBatching
                     SetTimer(TimeSpan.Zero);
                 }
             }
-
-            _queue.Enqueue(logEvent);
         }
 
         /// <summary>
