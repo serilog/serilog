@@ -23,7 +23,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Tests", "test\Seril
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{FE18C7C8-5320-4A9A-B3C0-B625B381C9D6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ColoredConsoleSink", "src\Serilog.Sinks.ColoredConsoleSink\Serilog.Sinks.ColoredConsoleSink.xproj", "{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ColoredConsole", "src\Serilog.Sinks.ColoredConsole\Serilog.Sinks.ColoredConsole.xproj", "{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
