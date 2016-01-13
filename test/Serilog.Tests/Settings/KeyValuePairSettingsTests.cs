@@ -71,9 +71,8 @@ namespace Serilog.Tests.AppSettings.Tests
                 .Distinct()
                 .ToList();
 
-            Assert.Equal(6, configurationMethods.Count);
+            Assert.Equal(5, configurationMethods.Count);
 
-            Assert.True(configurationMethods.Contains("ColoredConsole"));
             Assert.True(configurationMethods.Contains("Console"));
             Assert.True(configurationMethods.Contains("DumpFile"));
             Assert.True(configurationMethods.Contains("File"));

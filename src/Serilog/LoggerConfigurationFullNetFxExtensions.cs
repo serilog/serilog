@@ -75,31 +75,6 @@ namespace Serilog
             return sinkConfiguration.Sink(new ConsoleSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
 
-        /// <summary>
-        /// Writes log events to <see cref="System.Console"/>, using color to differentiate
-        /// between levels.
-        /// </summary>
-        /// <param name="sinkConfiguration">Logger sink configuration.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
-        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
-        /// to be changed at runtime.</param>
-        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// the default is "{Timestamp} [{Level}] {Message}{NewLine}{Exception}".</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public static LoggerConfiguration ColoredConsole(
-            this LoggerSinkConfiguration sinkConfiguration,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultConsoleOutputTemplate,
-            IFormatProvider formatProvider = null,
-            LoggingLevelSwitch levelSwitch = null)
-        {
-            if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
-            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
-            return sinkConfiguration.Sink(new ColoredConsoleSink(outputTemplate, formatProvider), restrictedToMinimumLevel, levelSwitch);
-        }
-
 #if FILE_IO
         /// <summary>
         /// Write log events in a simple text dump format to the specified file.

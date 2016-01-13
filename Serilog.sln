@@ -21,6 +21,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog", "src\Serilog\Seri
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.xproj", "{3C2D8E01-5580-426A-BDD9-EC59CD98E618}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{FE18C7C8-5320-4A9A-B3C0-B625B381C9D6}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ColoredConsoleSink", "src\Serilog.Sinks.ColoredConsoleSink\Serilog.Sinks.ColoredConsoleSink.xproj", "{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,10 @@ Global
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCBC589B-9B6D-475A-BF79-179A4DA16CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,5 +50,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{803CD13A-D54B-4CEC-A55F-E22AE3D93B3C} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
+		{FE18C7C8-5320-4A9A-B3C0-B625B381C9D6} = {037440DE-440B-4129-9F7A-09B42D00397E}
+		{DCBC589B-9B6D-475A-BF79-179A4DA16CCC} = {FE18C7C8-5320-4A9A-B3C0-B625B381C9D6}
 	EndGlobalSection
 EndGlobal
