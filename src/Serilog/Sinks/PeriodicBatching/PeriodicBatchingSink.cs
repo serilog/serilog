@@ -23,10 +23,6 @@ using Serilog.Debugging;
 using Serilog.Events;
 using System.Threading;
 
-#if !NO_TIMER
-using System.Threading;
-#endif
-
 namespace Serilog.Sinks.PeriodicBatching
 {
     /// <summary>
@@ -55,7 +51,7 @@ namespace Serilog.Sinks.PeriodicBatching
 #else
         readonly Timer _timer;
 #endif
-        volatile int _state;
+        int _state;
 
         /// <summary>
         /// Construct a sink posting to the specified database.
@@ -213,7 +209,7 @@ namespace Serilog.Sinks.PeriodicBatching
                     while (_queue.TryDequeue(out evt)) { }
                 }
 
-                if (_state == Started)
+                if (VolatileRead(ref _state) == Started)
                     SetTimer(_status.NextInterval);
             }
         }
@@ -247,9 +243,10 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-            if (_state == Unloading) return;
+            var state = VolatileRead(ref _state);
+            if (state == Unloading) return;
 
-            if (_state == NotStarted)
+            if (state == NotStarted)
             {
                 if (Interlocked.CompareExchange(ref _state, Started, NotStarted) == NotStarted)
                 {
@@ -279,6 +276,15 @@ namespace Serilog.Sinks.PeriodicBatching
         /// </summary>
         protected virtual void OnEmptyBatch()
         {
+        }
+
+        static int VolatileRead(ref int location)
+        {
+#if NET40
+            return Thread.VolatileRead(ref location);
+#else
+            return Volatile.Read(ref location);
+#endif
         }
     }
 }
