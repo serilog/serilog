@@ -16,6 +16,7 @@ using System;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Sinks.SystemConsole;
 
 namespace Serilog
 {
