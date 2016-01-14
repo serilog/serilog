@@ -2,9 +2,10 @@
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting.Display; 
+using Serilog.Formatting.Display;
+using Serilog.Sinks.SystemConsole;
 
-namespace Serilog.Sinks.SystemConsole
+namespace Serilog
 {
     public static class ConsoleLoggerConfigurationExtensions
     {
