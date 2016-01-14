@@ -55,6 +55,8 @@ namespace Serilog.Platform
         public IEnumerable<PropertyInfo> DeclaredProperties => Type.GetProperties();
 
         public bool IsAssignableFrom(TypeInfo targetType) => Type.IsAssignableFrom(targetType.Type);
+
+        public bool IsNotPublic => Type.IsNotPublic;
     }
 }
 #endif
