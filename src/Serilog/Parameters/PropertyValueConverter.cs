@@ -25,6 +25,8 @@ using Serilog.Policies;
 
 #if NET40
 using Serilog.Platform;
+#else
+using System.Runtime.CompilerServices;
 #endif
 
 namespace Serilog.Parameters
@@ -154,9 +156,12 @@ namespace Serilog.Parameters
 
             if (destructuring == Destructuring.Destructure)
             {
-                var typeTag = value.GetType().Name;
-                if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
+                var type = value.GetType();
+                var typeTag = type.Name;
+                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+                {
                     typeTag = null;
+                }
 
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
@@ -213,6 +218,20 @@ namespace Serilog.Parameters
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }
+        }
+
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        internal static bool IsCompilerGeneratedType(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            var typeName = type.Name;
+
+            //C# Anonymous types always start with "<>" and VB's start with "VB$"
+            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
+                && (typeName[0] == '<'
+                    || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
     }
 }

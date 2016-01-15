@@ -71,9 +71,8 @@ namespace Serilog.Tests.AppSettings.Tests
                 .Distinct()
                 .ToList();
 
-            Assert.Equal(5, configurationMethods.Count);
-
-            Assert.True(configurationMethods.Contains("Console"));
+            Assert.Equal(4, configurationMethods.Count);
+            
             Assert.True(configurationMethods.Contains("DumpFile"));
             Assert.True(configurationMethods.Contains("File"));
             Assert.True(configurationMethods.Contains("RollingFile"));
