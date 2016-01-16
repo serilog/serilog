@@ -71,13 +71,12 @@ namespace Serilog.Tests.AppSettings.Tests
                 .Distinct()
                 .ToList();
 
-            Assert.Equal(5, configurationMethods.Count);
+            Assert.Equal(4, configurationMethods.Count);
 
             Assert.True(configurationMethods.Contains("ColoredConsole"));
             Assert.True(configurationMethods.Contains("DumpFile"));
             Assert.True(configurationMethods.Contains("File"));
             Assert.True(configurationMethods.Contains("RollingFile"));
-            Assert.True(configurationMethods.Contains("Trace"));
         }
 
         [Fact]
