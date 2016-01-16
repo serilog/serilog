@@ -32,9 +32,11 @@ namespace Serilog.Settings.KeyValuePairs
         const string UsingDirective = "using";
         const string WriteToDirective = "write-to";
         const string MinimumLevelDirective = "minimum-level";
+        const string EnrichWithDirective = "enrich:with";
         const string EnrichWithPropertyDirective = "enrich:with-property";
 
         const string UsingDirectiveFullFormPrefix = "using:";
+        const string EnrichWithEventEnricherPrefix = "enrich:with:";
         const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
 
         const string WriteToDirectiveRegex = @"^write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
@@ -44,7 +46,8 @@ namespace Serilog.Settings.KeyValuePairs
             UsingDirective,
             WriteToDirective,
             MinimumLevelDirective,
-            EnrichWithPropertyDirective
+            EnrichWithPropertyDirective,
+            EnrichWithDirective
         };
 
         readonly Dictionary<string, string> _settings;
@@ -71,13 +74,20 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.MinimumLevel.Is(minimumLevel);
             }
 
-            foreach (var enrichDirective in directives.Where(dir =>
+            foreach (var enrichProperyDirective in directives.Where(dir =>
                 dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
             {
-                var name = enrichDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
-                loggerConfiguration.Enrich.WithProperty(name, enrichDirective.Value);
+                var name = enrichProperyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
+                loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
             }
 
+            var eventEnricherDirectives = directives.Where(dir =>
+                dir.Key.StartsWith(EnrichWithEventEnricherPrefix) && dir.Key.Length > EnrichWithEventEnricherPrefix.Length)
+                .Select(dir => {
+                    var enricherName = dir.Key.Substring(EnrichWithEventEnricherPrefix.Length);
+                    return !enricherName.EndsWith("Enricher") ? String.Format("{0}Enricher", enricherName) : enricherName;
+                });
+            
             var splitWriteTo = new Regex(WriteToDirectiveRegex);
 
             var sinkDirectives = (from wt in directives
@@ -91,36 +101,60 @@ namespace Serilog.Settings.KeyValuePairs
                                   }
                                   group call by call.Method).ToList();
 
-            if (sinkDirectives.Any())
+            if (sinkDirectives.Any() || eventEnricherDirectives.Any())
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
-                var sinkConfigurationMethods = FindSinkConfigurationMethods(configurationAssemblies);
 
-                foreach (var sinkDirective in sinkDirectives)
+                if (eventEnricherDirectives.Any())
                 {
-                    var target = sinkConfigurationMethods
-                        .Where(m => m.Name == sinkDirective.Key &&
-                            m.GetParameters().Skip(1).All(p =>
+                    var eventEnricherTypes = FindEventEnrichers(configurationAssemblies);
+
+                    foreach(var eventEnricherDirective in eventEnricherDirectives)
+                    {
+                        var target = eventEnricherTypes
+                            .Where(e => e.AsType().Name == eventEnricherDirective)
+                            .FirstOrDefault();
+
+                        if (target != null)
+                        {
+                            var instansiatedTarget = Activator.CreateInstance(target.AsType()) as Core.ILogEventEnricher;
+                            loggerConfiguration.Enrich.With(instansiatedTarget);
+                        }
+                    }
+
+                    //eventEnricherDirectives
+                }
+
+                if (sinkDirectives.Any())
+                {
+                    var sinkConfigurationMethods = FindSinkConfigurationMethods(configurationAssemblies);
+
+                    foreach (var sinkDirective in sinkDirectives)
+                    {
+                        var target = sinkConfigurationMethods
+                            .Where(m => m.Name == sinkDirective.Key &&
+                                m.GetParameters().Skip(1).All(p =>
 #if NET40
                             (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
 #else
                             p.HasDefaultValue
 #endif
                             || sinkDirective.Any(s => s.Argument == p.Name)))
-                        .OrderByDescending(m => m.GetParameters().Length)
-                        .FirstOrDefault();
+                            .OrderByDescending(m => m.GetParameters().Length)
+                            .FirstOrDefault();
 
-                    if (target != null)
-                    {
-                        var config = loggerConfiguration.WriteTo;
+                        if (target != null)
+                        {
+                            var config = loggerConfiguration.WriteTo;
 
-                        var call = (from p in target.GetParameters().Skip(1)
-                                    let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
-                                    select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
+                            var call = (from p in target.GetParameters().Skip(1)
+                                        let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
+                                        select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
 
-                        call.Insert(0, config);
+                            call.Insert(0, config);
 
-                        target.Invoke(null, call.ToArray());
+                            target.Invoke(null, call.ToArray());
+                        }
                     }
                 }
             }
@@ -182,6 +216,20 @@ namespace Serilog.Settings.KeyValuePairs
                 .SelectMany(t => t.DeclaredMethods)
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .Where(m => m.GetParameters()[0].ParameterType == typeof(LoggerSinkConfiguration))
+                .ToList();
+        }
+
+        internal static IList<TypeInfo> FindEventEnrichers(IEnumerable<Assembly> configurationAssemblies)
+        {
+            var logEventEnricherInterface = typeof(Core.ILogEventEnricher).GetTypeInfo();
+            return configurationAssemblies
+                .SelectMany(a => a.
+#if NET40
+                GetTypes().Select(t => t.GetTypeInfo())
+#else
+                DefinedTypes
+#endif
+                .Where(t => logEventEnricherInterface.IsAssignableFrom(t) && !t.IsAbstract))
                 .ToList();
         }
     }

@@ -81,6 +81,34 @@ namespace Serilog.Tests.AppSettings.Tests
         }
 
         [Fact]
+        public void FindsEventEnrichersWithinAnAssembly()
+        {
+            var eventEnrichers = KeyValuePairSettings
+                .FindEventEnrichers(new[] { typeof(RollingFileSink)
+#if DNXCORE50
+                    .GetTypeInfo()
+#endif
+                    .Assembly
+                    })
+                .Select(m => m.Name)
+                .Distinct()
+                .ToList();
+
+            
+#if LOGCONTEXT
+            Assert.True(eventEnrichers.Contains("LogContextEnricher"));
+#endif
+#if !DOTNET5_1
+            Assert.True(eventEnrichers.Contains("EnvironmentUserNameEnricher"));
+            Assert.True(eventEnrichers.Contains("MachineNameEnricher"));
+#endif
+#if PROCESS
+            Assert.True(eventEnrichers.Contains("ProcessIdEnricher"));
+#endif
+            Assert.True(eventEnrichers.Contains("ThreadIdEnricher"));
+        }
+
+        [Fact]
         public void PropertyEnrichmentIsApplied()
         {
             LogEvent evt = null;

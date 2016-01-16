@@ -17,7 +17,7 @@
         "dnx451": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS" ]
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
