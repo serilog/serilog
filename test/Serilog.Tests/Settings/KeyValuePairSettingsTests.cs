@@ -84,7 +84,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void FindsEventEnrichersWithinAnAssembly()
         {
             var eventEnrichers = KeyValuePairSettings
-                .FindEventEnrichers(new[] { typeof(RollingFileSink)
+                .FindEventEnricherConfigurationMethods(new[] { typeof(RollingFileSink)
 #if DNXCORE50
                     .GetTypeInfo()
 #endif
@@ -96,16 +96,16 @@ namespace Serilog.Tests.AppSettings.Tests
 
             
 #if LOGCONTEXT
-            Assert.True(eventEnrichers.Contains("LogContextEnricher"));
+            Assert.True(eventEnrichers.Contains("FromLogContext"));
 #endif
 #if !DOTNET5_1
-            Assert.True(eventEnrichers.Contains("EnvironmentUserNameEnricher"));
-            Assert.True(eventEnrichers.Contains("MachineNameEnricher"));
+            Assert.True(eventEnrichers.Contains("WithEnvironmentUserName"));
+            Assert.True(eventEnrichers.Contains("WithMachineName"));
 #endif
 #if PROCESS
-            Assert.True(eventEnrichers.Contains("ProcessIdEnricher"));
+            Assert.True(eventEnrichers.Contains("WithProcessId"));
 #endif
-            Assert.True(eventEnrichers.Contains("ThreadIdEnricher"));
+            Assert.True(eventEnrichers.Contains("WithThreadId"));
         }
 
         [Fact]

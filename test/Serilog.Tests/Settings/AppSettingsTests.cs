@@ -74,7 +74,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void ThreadIdEnricherIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:with:ThreadId"]);
+            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:WithThreadId"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -93,7 +93,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void MachineNameEnricherIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:with:MachineName"]);
+            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:WithMachineName"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -112,7 +112,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void EnrivonmentUserNameEnricherIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:with:EnvironmentUserName"]);
+            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:WithEnvironmentUserName"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -133,7 +133,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void ProcessIdEnricherIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:with:ProcessId"]);
+            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:WithProcessId"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -154,7 +154,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void LogContextEnricherIsApplied()
         {
             // Make sure we have the expected key in the App.config
-            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:with:LogContext"]);
+            Assert.NotNull(ConfigurationManager.AppSettings["serilog:enrich:FromLogContext"]);
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
