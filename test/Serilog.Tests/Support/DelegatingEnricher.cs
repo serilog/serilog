@@ -10,7 +10,7 @@ namespace Serilog.Tests.Support
 
         public DelegatingEnricher(Action<LogEvent, ILogEventPropertyFactory> enrich)
         {
-            if (enrich == null) throw new ArgumentNullException("enrich");
+            if (enrich == null) throw new ArgumentNullException(nameof(enrich));
             _enrich = enrich;
         }
 

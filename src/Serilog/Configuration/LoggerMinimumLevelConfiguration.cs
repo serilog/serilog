@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Configuration
@@ -24,13 +25,15 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<LogEventLevel> _setMinimum;
+        readonly Action<LoggingLevelSwitch> _setLevelSwitch;
 
-        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum)
+        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, Action<LoggingLevelSwitch> setLevelSwitch)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (setMinimum == null) throw new ArgumentNullException("setMinimum");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (setMinimum == null) throw new ArgumentNullException(nameof(setMinimum));
             _loggerConfiguration = loggerConfiguration;
             _setMinimum = setMinimum;
+            _setLevelSwitch = setLevelSwitch;
         }
 
         /// <summary>
@@ -41,6 +44,18 @@ namespace Serilog.Configuration
         public LoggerConfiguration Is(LogEventLevel minimumLevel)
         {
             _setMinimum(minimumLevel);
+            return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// Sets the minimum level to be dynamically controlled by the provided switch.
+        /// </summary>
+        /// <param name="levelSwitch">The switch.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
+        {
+            if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+            _setLevelSwitch(levelSwitch);
             return _loggerConfiguration;
         }
 

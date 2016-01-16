@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Reactive.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Sinks.Observable
 {
-    [TestFixture]
     public class ObservableSinkTests
     {
-        [Test]
+        [Fact]
         public void EventsAreWrittenToObservers()
         {
             var eventSeen = false;
@@ -20,7 +19,7 @@ namespace Serilog.Tests.Sinks.Observable
                 .CreateLogger();
 
             log.Write(Some.InformationEvent());
-            Assert.That(eventSeen);
+            Assert.True(eventSeen);
         }
     }
 }

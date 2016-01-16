@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,10 +50,10 @@ namespace Serilog.Events
         /// <returns>
         /// The value of the current instance in the specified format.
         /// </returns>
-        /// <param name="format">The format to use.-or- A null reference (Nothing in Visual Basic) to use 
+        /// <param name="format">The format to use.-or- A null reference (Nothing in Visual Basic) to use
         /// the default format defined for the type of the <see cref="T:System.IFormattable"/> implementation. </param>
-        /// <param name="formatProvider">The provider to use to format the value.-or- A null reference 
-        /// (Nothing in Visual Basic) to obtain the numeric format information from the current locale 
+        /// <param name="formatProvider">The provider to use to format the value.-or- A null reference
+        /// (Nothing in Visual Basic) to obtain the numeric format information from the current locale
         /// setting of the operating system. </param><filterpriority>2</filterpriority>
         public string ToString(string format, IFormatProvider formatProvider)
         {

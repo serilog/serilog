@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Events;
 
 namespace Serilog.Tests.Events
 {
-    [TestFixture]
     public class DictionaryValueTests
     {
-        [Test]
+        [Fact]
         public void ADictionaryValueRendersAsMappingOfKeysToValues()
         {
             var dict = new DictionaryValue(new[] {
@@ -23,7 +22,7 @@ namespace Serilog.Tests.Events
 
             var rendered = sw.ToString();
 
-            Assert.AreEqual("[(1: \"hello\"), (\"world\": [1.2])]", rendered);
+            Assert.Equal("[(1: \"hello\"), (\"world\": [1.2])]", rendered);
         }
     }
 }

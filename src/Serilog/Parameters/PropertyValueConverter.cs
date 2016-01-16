@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,12 @@ using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
 
+#if NET40
+using Serilog.Platform;
+#else
+using System.Runtime.CompilerServices;
+#endif
+
 namespace Serilog.Parameters
 {
     // Values in Serilog are simplified down into a lowest-common-denominator internal
@@ -36,19 +42,23 @@ namespace Serilog.Parameters
             typeof(bool),
             typeof(char),
             typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-                typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
+            typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
             typeof(Guid), typeof(Uri)
         };
 
-        readonly IDestructuringPolicy[] _destructuringPolicies; 
-        readonly IScalarConversionPolicy[] _scalarConversionPolicies; 
+        readonly IDestructuringPolicy[] _destructuringPolicies;
+        readonly IScalarConversionPolicy[] _scalarConversionPolicies;
+        readonly int _maximumDestructuringDepth;
 
-        public PropertyValueConverter(IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
+        public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
-            if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
-            if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
+            if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
+            if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
+
+            _maximumDestructuringDepth = maximumDestructuringDepth;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -62,7 +72,7 @@ namespace Serilog.Parameters
             _destructuringPolicies = additionalDestructuringPolicies
                 .Concat(new []
                 {
-                    new DelegateDestructuringPolicy() 
+                    new DelegateDestructuringPolicy()
                 })
                 .ToArray();
         }
@@ -101,13 +111,23 @@ namespace Serilog.Parameters
                 return new ScalarValue(value.ToString());
 
             var valueType = value.GetType();
-            var limiter = new DepthLimiter(depth, this);
+            var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
                 ScalarValue converted;
                 if (scalarConversionPolicy.TryConvertToScalar(value, limiter, out converted))
                     return converted;
+            }
+
+            if (destructuring == Destructuring.Destructure)
+            {
+                foreach (var destructuringPolicy in _destructuringPolicies)
+                {
+                    LogEventPropertyValue result;
+                    if (destructuringPolicy.TryDestructure(value, limiter, out result))
+                        return result;
+                }
             }
 
             var enumerable = value as IEnumerable;
@@ -121,40 +141,50 @@ namespace Serilog.Parameters
                 // Only actual dictionaries are supported, as arbitrary types
                 // can implement multiple IDictionary interfaces and thus introduce
                 // multiple different interpretations.
-                if (valueType.IsConstructedGenericType &&
-                    valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-                    IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+                if (IsValueTypeDictionary(valueType))
                 {
                     return new DictionaryValue(enumerable.Cast<dynamic>()
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                            (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
-                            limiter.CreatePropertyValue(kvp.Value, destructuring)))
-                        .Where(kvp => kvp.Key.Value != null)); // Limiting may kick in
+                                           (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
+                                           limiter.CreatePropertyValue(kvp.Value, destructuring)))
+                        .Where(kvp => kvp.Key.Value != null));
                 }
 
                 return new SequenceValue(
                     enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
 
-            // Unknown types
-
             if (destructuring == Destructuring.Destructure)
             {
-                foreach (var destructuringPolicy in _destructuringPolicies)
+                var type = value.GetType();
+                var typeTag = type.Name;
+                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
                 {
-                    LogEventPropertyValue result;
-                    if (destructuringPolicy.TryDestructure(value, limiter, out result))
-                        return result;
-                }
-
-                var typeTag = value.GetType().Name;
-                if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
                     typeTag = null;
+                }
 
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
             return new ScalarValue(value.ToString());
+        }
+
+        bool IsValueTypeDictionary(Type valueType)
+        {
+            return
+#if NET40
+                   valueType.IsGenericType &&
+#else
+                   valueType.IsConstructedGenericType &&
+#endif
+                   valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
+                   IsValidDictionaryKeyType(
+#if NET40
+                       valueType.GetGenericArguments()
+#else
+                       valueType.GenericTypeArguments
+#endif
+                       [0]);
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
@@ -170,7 +200,11 @@ namespace Serilog.Parameters
                 object propValue;
                 try
                 {
+#if NET40
+                    propValue = prop.GetValue(value, null);
+#else
                     propValue = prop.GetValue(value);
+#endif
                 }
                 catch (TargetParameterCountException)
                 {
@@ -184,6 +218,20 @@ namespace Serilog.Parameters
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }
+        }
+
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        internal static bool IsCompilerGeneratedType(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            var typeName = type.Name;
+
+            //C# Anonymous types always start with "<>" and VB's start with "VB$"
+            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
+                && (typeName[0] == '<'
+                    || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
     }
 }

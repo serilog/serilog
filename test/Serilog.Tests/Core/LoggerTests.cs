@@ -1,19 +1,23 @@
 ﻿using System;
-using NUnit.Framework;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class LoggerTests
     {
-        [Test]
+        [Fact]
         public void AnExceptionThrownByAnEnricherIsNotPropagated()
         {
             var thrown = false;
 
             var l = new LoggerConfiguration()
+                .WriteTo.TextWriter(new StringWriter())
                 .Enrich.With(new DelegatingEnricher((le, pf) => {
                     thrown = true;
                     throw new Exception("No go, pal."); }))
@@ -21,20 +25,20 @@ namespace Serilog.Tests.Core
 
             l.Information(Some.String());
 
-            Assert.IsTrue(thrown);
+            Assert.True(thrown);
         }
 
-        [Test]
+        [Fact]
         public void AContextualLoggerAddsTheSourceTypeName()
         {
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext<LoggerTests>()
                                         .Information(Some.String()));
 
             var lv = evt.Properties[Constants.SourceContextPropertyName].LiteralValue();
-            Assert.AreEqual(typeof(LoggerTests).FullName, lv);
+            Assert.Equal(typeof(LoggerTests).FullName, lv);
         }
 
-        [Test]
+        [Fact]
         public void PropertiesInANestedContextOverrideParentContextValues()
         {
             var name = Some.String();
@@ -45,14 +49,43 @@ namespace Serilog.Tests.Core
                                         .Write(Some.InformationEvent()));
 
             var pActual = evt.Properties[name];
-            Assert.AreEqual(v2, pActual.LiteralValue());
+            Assert.Equal(v2, pActual.LiteralValue());
         }
 
-        [Test]
+        [Fact]
         public void ParametersForAnEmptyTemplateAreIgnored()
         {
             var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
-            Assert.AreEqual("message", e.RenderMessage());
+            Assert.Equal("message", e.RenderMessage());
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchDynamicallyChangesLevel()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
+
+            var log = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(levelSwitch)
+                .WriteTo.Sink(sink)
+                .CreateLogger()
+                .ForContext<LoggerTests>();
+
+            log.Debug("Suppressed");
+            log.Information("Emitted");
+            log.Warning("Emitted");
+
+            // Change the level
+            levelSwitch.MinimumLevel = LogEventLevel.Error;
+
+            log.Warning("Suppressed");
+            log.Error("Emitted");
+            log.Fatal("Emitted");
+
+            Assert.Equal(4, events.Count);
+            Assert.True(events.All(evt => evt.RenderMessage() == "Emitted"));
         }
     }
 }

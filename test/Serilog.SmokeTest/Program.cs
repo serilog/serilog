@@ -7,7 +7,7 @@ namespace Serilog.SmokeTest
         static void Main()
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.ColoredConsole()
+                .ReadFrom.AppSettings()
                 .CreateLogger();
 
             var library = typeof(Log).Assembly.GetName();
