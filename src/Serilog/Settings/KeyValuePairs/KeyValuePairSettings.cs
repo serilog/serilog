@@ -90,11 +90,11 @@ namespace Serilog.Settings.KeyValuePairs
             var sinkDirectives = (from wt in directives
                                   where splitWriteTo.IsMatch(wt.Key)
                                   let match = splitWriteTo.Match(wt.Key)
-                                  let call = new
+                                  let call = new MethodArgumentValue
                                   {
                                       Method = match.Groups["method"].Value,
                                       Argument = match.Groups["argument"].Value,
-                                      wt.Value
+                                      Value = wt.Value
                                   }
                                   group call by call.Method).ToList();
 
@@ -102,61 +102,48 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
-                if (eventEnricherDirectives.Any())
-                {
-                    var eventEnricherTypes = FindEventEnricherConfigurationMethods(configurationAssemblies);
+                ApplyDirectives(eventEnricherDirectives, () => FindEventEnricherConfigurationMethods(configurationAssemblies), loggerConfiguration.Enrich);
+                ApplyDirectives(sinkDirectives, () => FindSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.WriteTo);
+            }
+        }
 
-                    foreach(var eventEnricherDirective in eventEnricherDirectives)
-                    {
-                        var target = eventEnricherTypes
-                            .Where(e => e.Name == eventEnricherDirective &&
-                            e.GetParameters().Skip(1).All(p =>
+        private static void ApplyDirectives(IEnumerable<string> directives, Func<IList<MethodInfo>> getConfigurationMethods, object loggerConfigMethod)
+        {
+            var directivesGrouped = directives.Select(d => new MethodArgumentValue { Method = d }).GroupBy(m => m.Method).ToList();
+            ApplyDirectives(directivesGrouped, getConfigurationMethods, loggerConfigMethod);
+        }
+
+
+        private static void ApplyDirectives(List<IGrouping<string, MethodArgumentValue>> directives, Func<IList<MethodInfo>> getConfigurationMethods, object loggerConfigMethod)
+        {
+            if (directives.Any())
+            {
+                var configurationMethods = getConfigurationMethods();
+
+                foreach (var directiveInfo in directives)
+                {
+                    var target = configurationMethods
+                        .Where(m => m.Name == directiveInfo.Key &&
+                            m.GetParameters().Skip(1).All(p =>
 #if NET40
                             (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
 #else
                             p.HasDefaultValue
 #endif
-                            ))
-                            .OrderByDescending(m => m.GetParameters().Length)
-                            .FirstOrDefault();
+                            || directiveInfo.Any(s => s.Argument == p.Name)))
+                        .OrderByDescending(m => m.GetParameters().Length)
+                        .FirstOrDefault();
 
-                        if (target != null)
-                        {
-                            target.Invoke(null, new object[] { loggerConfiguration.Enrich });
-                        }
-                    }
-                }
-
-                if (sinkDirectives.Any())
-                {
-                    var sinkConfigurationMethods = FindSinkConfigurationMethods(configurationAssemblies);
-
-                    foreach (var sinkDirective in sinkDirectives)
+                    if (target != null)
                     {
-                        var target = sinkConfigurationMethods
-                            .Where(m => m.Name == sinkDirective.Key &&
-                                m.GetParameters().Skip(1).All(p =>
-#if NET40
-                            (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
-#else
-                            p.HasDefaultValue
-#endif
-                            || sinkDirective.Any(s => s.Argument == p.Name)))
-                            .OrderByDescending(m => m.GetParameters().Length)
-                            .FirstOrDefault();
 
-                        if (target != null)
-                        {
-                            var config = loggerConfiguration.WriteTo;
+                        var call = (from p in target.GetParameters().Skip(1)
+                                    let directive = directiveInfo.FirstOrDefault(s => s.Argument == p.Name)
+                                    select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
 
-                            var call = (from p in target.GetParameters().Skip(1)
-                                        let directive = sinkDirective.FirstOrDefault(s => s.Argument == p.Name)
-                                        select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
+                        call.Insert(0, loggerConfigMethod);
 
-                            call.Insert(0, config);
-
-                            target.Invoke(null, call.ToArray());
-                        }
+                        target.Invoke(null, call.ToArray());
                     }
                 }
             }
@@ -229,6 +216,13 @@ namespace Serilog.Settings.KeyValuePairs
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .Where(m => m.GetParameters()[0].ParameterType == configType)
                 .ToList();
+        }
+
+        private class MethodArgumentValue
+        {
+            public string Method { get; set; }
+            public string Argument { get; set; }
+            public string Value { get; set; }
         }
     }
 }
