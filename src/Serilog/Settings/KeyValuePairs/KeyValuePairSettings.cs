@@ -81,10 +81,6 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
             }
 
-            var eventEnricherDirectives = directives.Where(dir =>
-                dir.Key.StartsWith(EnrichWithEventEnricherPrefix) && !dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithEventEnricherPrefix.Length)
-                .Select(dir => dir.Key.Substring(EnrichWithEventEnricherPrefix.Length));
-            
             var splitWriteTo = new Regex(WriteToDirectiveRegex);
 
             var sinkDirectives = (from wt in directives
@@ -98,53 +94,57 @@ namespace Serilog.Settings.KeyValuePairs
                                   }
                                   group call by call.Method).ToList();
 
+            var eventEnricherDirectives = (from er in directives
+                                           where er.Key.StartsWith(EnrichWithEventEnricherPrefix) && !er.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && er.Key.Length > EnrichWithEventEnricherPrefix.Length
+                                           let match = er.Key.Substring(EnrichWithEventEnricherPrefix.Length)
+                                           let call = new MethodArgumentValue
+                                           {
+                                               Method = match
+                                           }
+                                           group call by call.Method).ToList();
+
             if (sinkDirectives.Any() || eventEnricherDirectives.Any())
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
-                ApplyDirectives(eventEnricherDirectives, () => FindEventEnricherConfigurationMethods(configurationAssemblies), loggerConfiguration.Enrich);
-                ApplyDirectives(sinkDirectives, () => FindSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.WriteTo);
+                if (sinkDirectives.Any())
+                {
+                    ApplyDirectives(sinkDirectives, FindSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.WriteTo);
+                }
+
+                if (eventEnricherDirectives.Any())
+                {
+                    ApplyDirectives(eventEnricherDirectives, FindEventEnricherConfigurationMethods(configurationAssemblies), loggerConfiguration.Enrich);
+                }
             }
         }
 
-        private static void ApplyDirectives(IEnumerable<string> directives, Func<IList<MethodInfo>> getConfigurationMethods, object loggerConfigMethod)
+        private static void ApplyDirectives(List<IGrouping<string, MethodArgumentValue>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
         {
-            var directivesGrouped = directives.Select(d => new MethodArgumentValue { Method = d }).GroupBy(m => m.Method).ToList();
-            ApplyDirectives(directivesGrouped, getConfigurationMethods, loggerConfigMethod);
-        }
-
-
-        private static void ApplyDirectives(List<IGrouping<string, MethodArgumentValue>> directives, Func<IList<MethodInfo>> getConfigurationMethods, object loggerConfigMethod)
-        {
-            if (directives.Any())
+            foreach (var directiveInfo in directives)
             {
-                var configurationMethods = getConfigurationMethods();
-
-                foreach (var directiveInfo in directives)
-                {
-                    var target = configurationMethods
-                        .Where(m => m.Name == directiveInfo.Key &&
-                            m.GetParameters().Skip(1).All(p =>
+                var target = configurationMethods
+                    .Where(m => m.Name == directiveInfo.Key &&
+                        m.GetParameters().Skip(1).All(p =>
 #if NET40
-                            (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
+                        (p.Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.None
 #else
-                            p.HasDefaultValue
+                        p.HasDefaultValue
 #endif
-                            || directiveInfo.Any(s => s.Argument == p.Name)))
-                        .OrderByDescending(m => m.GetParameters().Length)
-                        .FirstOrDefault();
+                        || directiveInfo.Any(s => s.Argument == p.Name)))
+                    .OrderByDescending(m => m.GetParameters().Length)
+                    .FirstOrDefault();
 
-                    if (target != null)
-                    {
+                if (target != null)
+                {
 
-                        var call = (from p in target.GetParameters().Skip(1)
-                                    let directive = directiveInfo.FirstOrDefault(s => s.Argument == p.Name)
-                                    select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
+                    var call = (from p in target.GetParameters().Skip(1)
+                                let directive = directiveInfo.FirstOrDefault(s => s.Argument == p.Name)
+                                select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
 
-                        call.Insert(0, loggerConfigMethod);
+                    call.Insert(0, loggerConfigMethod);
 
-                        target.Invoke(null, call.ToArray());
-                    }
+                    target.Invoke(null, call.ToArray());
                 }
             }
         }
