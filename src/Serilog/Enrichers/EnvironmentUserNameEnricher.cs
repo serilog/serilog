@@ -21,7 +21,11 @@ using Serilog.Events;
 namespace Serilog.Enrichers
 {
     /// <summary>
+#if USERNAMEFROMENV
+    /// Enriches log events with an EnvironmentUserName property containing [Environment.GetEnvironmentVariable("USERDOMAIN")\]Environment.GetEnvironmentVariable("USERNAME").
+#else
     /// Enriches log events with an EnvironmentUserName property containing [<see cref="Environment.UserDomainName"/>\]<see cref="Environment.UserName"/>.
+#endif
     /// </summary>
     public class EnvironmentUserNameEnricher : ILogEventEnricher
     {
@@ -45,12 +49,12 @@ namespace Serilog.Enrichers
 
         private static string GetEnvironmentUserName()
         {
-#if !DOTNET5_4
-            var userDomainName = Environment.UserDomainName;
-            var userName = Environment.UserName;
-#else
+#if USERNAMEFROMENV
             var userDomainName = Environment.GetEnvironmentVariable("USERNAME");
             var userName = Environment.GetEnvironmentVariable("USERDOMAIN");
+#else
+            var userDomainName = Environment.UserDomainName;
+            var userName = Environment.UserName;
 #endif
             return !string.IsNullOrWhiteSpace(userDomainName) ? $@"{userDomainName}\{userName}" : userName;
         }
