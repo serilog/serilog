@@ -1,5 +1,5 @@
 ﻿{
-    "version": "2.0.0-ps-beta-1",
+    "version": "2.0.0-beta-*",
     "description": "Simple .NET logging with fully-structured events",
     "authors": [ "Serilog Contributors" ],
     "tags": [ "serilog", "logging", "semantic", "structured" ],
