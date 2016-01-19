@@ -19,7 +19,7 @@
         "dotnet5.1": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "ASYNCLOCAL", "NO_APPDOMAIN" ]
+                "define": [ "NO_APPDOMAIN", "USERNAMEFROMENV" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
