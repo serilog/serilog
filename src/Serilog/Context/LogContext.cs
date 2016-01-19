@@ -12,9 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 #if LOGCONTEXT
 using System;
+#if REMOTING
 using System.Runtime.Remoting.Messaging;
+#endif
+#if ASYNCLOCAL
+using System.Collections.Generic;
+using System.Threading;
+#endif
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
@@ -42,11 +49,19 @@ namespace Serilog.Context
     /// </code>
     /// </example>
     /// <remarks>The scope of the context is the current logical thread, using
-    /// <see cref="CallContext.LogicalGetData"/> (and so is
-    /// preserved across async/await calls).</remarks>
+#if ASYNCLOCAL
+    /// <seealso cref="AsyncLocal{T}"/>
+#else
+    /// <seealso cref="CallContext"/>
+#endif
+    /// (and so is preserved across async/await calls).</remarks>
     public static class LogContext
     {
+#if ASYNCLOCAL
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
+#else
         static readonly string DataSlotName = typeof(LogContext).FullName;
+#endif
 
         /// <summary>
         /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
@@ -136,10 +151,13 @@ namespace Serilog.Context
         {
             get
             {
-
+#if ASYNCLOCAL
+                return data.Value;
+#else
                 var data = CallContext.LogicalGetData(DataSlotName);
 
                 ImmutableStack<ILogEventEnricher> context;
+#if REMOTING
                 if (PermitCrossAppDomainCalls)
                 {
                     context = ((Wrapper) data)?.Value;
@@ -148,17 +166,38 @@ namespace Serilog.Context
                 {
                     context = (ImmutableStack<ILogEventEnricher>)data;
                 }
-
+#else
+                context = data;
+#endif
                 return context;
+#endif
             }
             set
             {
-
-                var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper { Value = value };
-
+#if ASYNCLOCAL
+                data.Value = GetContext(value);
+#else
+                var context = GetContext(value);
                 CallContext.LogicalSetData(DataSlotName, context);
+#endif
             }
         }
+
+#if REMOTING
+        static object GetContext(ImmutableStack<ILogEventEnricher> value)
+        {
+            var context = !PermitCrossAppDomainCalls ? (object) value : new Wrapper
+            {
+                Value = value
+            };
+            return context;
+        }
+#else
+        static ImmutableStack<ILogEventEnricher> GetContext(ImmutableStack<ILogEventEnricher> value)
+        {
+            return value;
+        }
+#endif
 
         internal static void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
@@ -187,10 +226,13 @@ namespace Serilog.Context
             }
         }
 
+#if REMOTING
         sealed class Wrapper : MarshalByRefObject
         {
             public ImmutableStack<ILogEventEnricher> Value { get; set; }
         }
+#endif
     }
 }
+
 #endif

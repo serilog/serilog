@@ -21,15 +21,25 @@ namespace Serilog.Context
 {
     // Needed because of the shallow-copying behaviour of
     // LogicalCallContext.
+#if REMOTING
     [Serializable]
     class ImmutableStack<T> : IEnumerable<T>, ISerializable
+#else
+    class ImmutableStack<T> : IEnumerable<T>
+#endif
     {
         readonly ImmutableStack<T> _under;
         readonly T _top;
 
+#if REMOTING
         public ImmutableStack(SerializationInfo info, StreamingContext context)
         {
         }
+#else
+        public ImmutableStack(StreamingContext context)
+        {
+        }
+#endif
 
         ImmutableStack()
         {
@@ -68,9 +78,11 @@ namespace Serilog.Context
 
         public T Top => _top;
 
+#if REMOTING
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
         }
+#endif
     }
 }
 #endif
