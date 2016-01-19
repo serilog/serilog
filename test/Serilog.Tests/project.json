@@ -14,10 +14,10 @@
         "Serilog.Sinks.Console": { "target": "project" }
     },
     "frameworks": {
-        "dnx451": {
+        "dnx452": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS" ]
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS", "REMOTING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -25,7 +25,7 @@
         },
         "dnxcore50": {
             "compilationOptions": {
-                "define": [ "FILE_IO", "PERIODIC_BATCHING" ]
+                "define": [ "ASYNCLOCAL", "LOGCONTEXT", "FILE_IO", "PERIODIC_BATCHING", "NO_APPDOMAIN" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",

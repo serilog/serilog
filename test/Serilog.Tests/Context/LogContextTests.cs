@@ -1,12 +1,14 @@
-﻿#if LOGCONTEXT
-using System;
+﻿using System;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
+#if LOGCONTEXT
 using Xunit;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
+#if REMOTING
+using System.Runtime.Remoting.Messaging;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +19,9 @@ namespace Serilog.Tests.Context
         public LogContextTests()
         {
             LogContext.PermitCrossAppDomainCalls = false;
+#if !ASYNCLOCAL
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
+#endif
         }
 
         [Fact]
@@ -138,6 +142,7 @@ namespace Serilog.Tests.Context
             }
         }
 
+#if !NO_APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
         // Fails if the Serilog assemblies cannot be loaded in the
@@ -180,6 +185,7 @@ namespace Serilog.Tests.Context
                     AppDomain.Unload(domain);
             }
         }
+#endif
 
         [Fact]
         public void WhenSuspendedAllPropertiesAreRemovedFromTheContext()
@@ -205,6 +211,7 @@ namespace Serilog.Tests.Context
         }
     }
 
+#if REMOTING
     public class RemotelyCallable : MarshalByRefObject
     {
         public bool IsCallable()
@@ -223,5 +230,6 @@ namespace Serilog.Tests.Context
             return s == "42";
         }
     }
+#endif
 }
 #endif
