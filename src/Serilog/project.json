@@ -1,5 +1,5 @@
 ﻿{
-    "version": "2.0.0-beta-*",
+    "version": "2.0.0-ps-beta-1",
     "description": "Simple .NET logging with fully-structured events",
     "authors": [ "Serilog Contributors" ],
     "tags": [ "serilog", "logging", "semantic", "structured" ],
@@ -7,22 +7,10 @@
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "iconUrl": "http://serilog.net/images/serilog-nuget.png",
     "frameworks": {
-        "net40": {
-            "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
-            },
-            "frameworkAssemblies": {
-                "System.Configuration": ""
-            },
-            "dependencies": {
-                "Microsoft.Bcl.Async": "1.0.168"
-            }
-        },
         "net45": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
+                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "REMOTING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -31,7 +19,7 @@
         "dotnet5.1": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "NO_APPDOMAIN" ]
+                "define": [ "ASYNCLOCAL", "NO_APPDOMAIN" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -50,7 +38,8 @@
         "dotnet5.4": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
+                "define": [ "ASYNCLOCAL", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
+            
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -64,6 +53,7 @@
                 "System.Linq": "4.0.1-beta-23516",
                 "System.Reflection.Extensions": "4.0.1-beta-23516",
                 "System.Runtime.Extensions": "4.0.11-beta-23516",
+                "System.Runtime.Serialization.Primitives": "4.1.0-beta-23516",
                 "System.Text.RegularExpressions": "4.0.11-beta-23516",
                 "System.Threading": "4.0.11-beta-23516",
                 "System.Threading.Thread": "4.0.0-beta-23516"
