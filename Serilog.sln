@@ -37,6 +37,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.PeriodicBatch
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.Observable", "src\Serilog.Sinks.Observable\Serilog.Sinks.Observable.xproj", "{8D6C0BB9-D04D-49B6-9043-4A776AD275D5}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.IOTextWriter", "src\Serilog.Sinks.IOTextWriter\Serilog.Sinks.IOTextWriter.xproj", "{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{8D6C0BB9-D04D-49B6-9043-4A776AD275D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D6C0BB9-D04D-49B6-9043-4A776AD275D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D6C0BB9-D04D-49B6-9043-4A776AD275D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,5 +100,6 @@ Global
 		{50B24ACA-D8F0-4268-A477-871B0A92A04A} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
 		{324C2F52-D9F7-4844-9BC4-9906E228D380} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
 		{8D6C0BB9-D04D-49B6-9043-4A776AD275D5} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
+		{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
 	EndGlobalSection
 EndGlobal
