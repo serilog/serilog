@@ -20,8 +20,7 @@ using Serilog.Debugging;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Formatting.Display;
-using Serilog.Formatting.Raw;
-using Serilog.Sinks.SystemConsole;
+using Serilog.Formatting.Raw; 
 
 #if PROCESS
 using System.Diagnostics;
