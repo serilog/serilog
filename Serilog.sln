@@ -27,6 +27,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{9EC69873
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.DiagnosticTrace", "src\Serilog.Sinks.DiagnosticTrace\Serilog.Sinks.DiagnosticTrace.xproj", "{8849C92D-2120-4C82-8226-22DF40195237}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.IOFile", "src\Serilog.Sinks.IOFile\Serilog.Sinks.IOFile.xproj", "{57E0ED0E-0F45-48AB-A73D-6A92B7C32095}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.RollingFile", "src\Serilog.Sinks.RollingFile\Serilog.Sinks.RollingFile.xproj", "{A3E6E5B4-995F-4C3D-9673-A4B6000F4E21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,14 @@ Global
 		{8849C92D-2120-4C82-8226-22DF40195237}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8849C92D-2120-4C82-8226-22DF40195237}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8849C92D-2120-4C82-8226-22DF40195237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E0ED0E-0F45-48AB-A73D-6A92B7C32095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E0ED0E-0F45-48AB-A73D-6A92B7C32095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E0ED0E-0F45-48AB-A73D-6A92B7C32095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E0ED0E-0F45-48AB-A73D-6A92B7C32095}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E6E5B4-995F-4C3D-9673-A4B6000F4E21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E6E5B4-995F-4C3D-9673-A4B6000F4E21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E6E5B4-995F-4C3D-9673-A4B6000F4E21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E6E5B4-995F-4C3D-9673-A4B6000F4E21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,5 +71,7 @@ Global
 		{866A028E-27DB-49A0-AC78-E5FEF247C099} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
 		{9EC69873-5A97-4C25-AB5A-31DDE589B2D9} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{8849C92D-2120-4C82-8226-22DF40195237} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
+		{57E0ED0E-0F45-48AB-A73D-6A92B7C32095} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
+		{A3E6E5B4-995F-4C3D-9673-A4B6000F4E21} = {9EC69873-5A97-4C25-AB5A-31DDE589B2D9}
 	EndGlobalSection
 EndGlobal

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if FILE_IO
 
 using System;
 using System.IO;
@@ -227,4 +226,3 @@ namespace Serilog.Sinks.RollingFile
         }
     }
 }
-#endif
