@@ -21,7 +21,6 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.IOTextWriter;
-using Serilog.Sinks.Observable;
 
 namespace Serilog.Configuration
 {
@@ -177,27 +176,6 @@ namespace Serilog.Configuration
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
-        }
-
-        /// <summary>
-        /// Write events to Rx observers.
-        /// </summary>
-        /// <param name="configureObservers">An action that provides an observable
-        /// to which observers can subscribe.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
-        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
-        /// to be changed at runtime.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Observers(
-            Action<IObservable<LogEvent>> configureObservers,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
-        {
-            if (configureObservers == null) throw new ArgumentNullException(nameof(configureObservers));
-            var observable = new ObservableSink();
-            configureObservers(observable);
-            return Sink(observable, restrictedToMinimumLevel, levelSwitch);
-        }
+        } 
     }
 }

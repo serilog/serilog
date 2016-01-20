@@ -1,0 +1,34 @@
+﻿{
+  "version": "2.0.0-beta-*",
+  "description": "The observable sink for Serilog - Simple .NET logging with fully-structured events",
+  "authors": [ "Serilog Contributors" ],
+  "tags": [ "serilog", "observable", "reactive" ],
+  "projectUrl": "http://serilog.net",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "iconUrl": "http://serilog.net/images/serilog-sink-nuget.png",
+  "dependencies": {
+    "Serilog": { "target": "project" }
+  },
+  "compilationOptions": {
+    "keyFile": "../../assets/Serilog.snk"
+  },
+  "frameworks": {
+    "net45": {
+    },
+    "netcore50": {
+      "dependencies": {
+        "System.Collections.Concurrent": "4.0.11-beta-23516"
+      }
+    },
+    "dotnet5.2": {
+      "dependencies": {
+        "System.Collections.Concurrent": "4.0.11-beta-23516"
+      }
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "System.Collections.Concurrent": "4.0.11-beta-23516"
+      }
+    }
+  }
+}
