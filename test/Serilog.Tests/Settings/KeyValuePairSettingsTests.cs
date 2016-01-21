@@ -61,7 +61,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void FindsEventEnrichersWithinAnAssembly()
         {
             var eventEnrichers = KeyValuePairSettings
-                .FindEventEnricherConfigurationMethods(new[] { typeof(RollingFileSink)
+                .FindEventEnricherConfigurationMethods(new[] { typeof(Log)
 #if DNXCORE50
                     .GetTypeInfo()
 #endif
