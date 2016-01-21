@@ -19,6 +19,11 @@
       "dependencies": {
         "System.Console": "4.0.0-beta-23516"
       }
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "System.Console": "4.0.0-beta-23516"
+      }
     }
   }
 }

@@ -14,7 +14,7 @@
   },
   "frameworks": {
     "net45": {
-      "compilationOptions": { 
+      "compilationOptions": {
         "define": [ "PERIODIC_BATCHING" ]
       },
       "frameworkAssemblies": {
@@ -28,6 +28,14 @@
       "dependencies": {
         "System.Collections.Concurrent": "4.0.11-beta-23516"
       }
-    } 
+    },
+    "dotnet5.4": {
+      "compilationOptions": {
+        "define": [ "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
+      },
+      "dependencies": {
+        "System.Collections.Concurrent": "4.0.11-beta-23516"
+      }
+    }
   }
 }
