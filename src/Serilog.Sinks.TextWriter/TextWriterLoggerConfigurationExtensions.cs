@@ -8,7 +8,7 @@ using Serilog.Sinks.IOTextWriter;
 
 namespace Serilog
 {
-    public static class IOTextWriterLoggerConfigurationExtensions
+    public static class TextWriterLoggerConfigurationExtensions
     {
         /// <summary>
         /// Write log events to the provided <see cref="TextWriter"/>.

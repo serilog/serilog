@@ -33,7 +33,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.PeriodicBatch
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.Observable", "src\Serilog.Sinks.Observable\Serilog.Sinks.Observable.xproj", "{8D6C0BB9-D04D-49B6-9043-4A776AD275D5}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.IOTextWriter", "src\Serilog.Sinks.IOTextWriter\Serilog.Sinks.IOTextWriter.xproj", "{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.TextWriter", "src\Serilog.Sinks.IOTextWriter\Serilog.Sinks.TextWriter.xproj", "{E85ABEC7-9B4C-432C-9A04-AC5BE9205D9F}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ColoredConsole", "src\Serilog.Sinks.ColoredConsole\Serilog.Sinks.ColoredConsole.xproj", "{50B24ACA-D8F0-4268-A477-871B0A92A04A}"
 EndProject
