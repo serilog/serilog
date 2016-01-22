@@ -8,7 +8,7 @@
   "iconUrl": "http://serilog.net/images/serilog-sink-nuget.png",
   "dependencies": {
     "Serilog": { "target": "project" },
-    "Serilog.Sinks.IOFile": { "target": "project" }
+    "Serilog.Sinks.File": { "target": "project" }
   },
   "compilationOptions": {
     "keyFile": "../../assets/Serilog.snk"

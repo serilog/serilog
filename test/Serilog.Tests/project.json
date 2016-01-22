@@ -13,7 +13,7 @@
         "xunit.runner.dnx": "2.1.0-rc1-build204",
         "Serilog.Sinks.Console": { "target": "project" },
         "Serilog.Sinks.DiagnosticTrace": { "target": "project" },
-        "Serilog.Sinks.IOFile": { "target": "project" }, 
+        "Serilog.Sinks.File": { "target": "project" }, 
         "Serilog.Sinks.RollingFile": { "target": "project" },
         "Serilog.Sinks.PeriodicBatching": { "target": "project" },
         "Serilog.Sinks.Observable": { "target": "project" },

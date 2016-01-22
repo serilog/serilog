@@ -22,7 +22,7 @@ using Serilog.Sinks.IOFile;
 
 namespace Serilog
 {
-    public static class IOFileLoggerConfigurationExtensions
+    public static class FileLoggerConfigurationExtensions
     {
         /// <summary>
         /// Write log events to the specified file.
