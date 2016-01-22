@@ -8,7 +8,7 @@ using Serilog.Sinks.IOTextWriter;
 
 namespace Serilog
 {
-    public static class IOTextWriterConfigurationExtensions
+    public static class IOTextWriterLoggerConfigurationExtensions
     {
         /// <summary>
         /// Write log events to the provided <see cref="TextWriter"/>.
@@ -27,7 +27,7 @@ namespace Serilog
             this LoggerSinkConfiguration sinkConfiguration,
             TextWriter textWriter,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = LoggerConfigurationFullNetFxExtensions.DefaultOutputTemplate,
+            string outputTemplate = LoggerConfigurationExtensions.DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
             LoggingLevelSwitch levelSwitch = null)
         {

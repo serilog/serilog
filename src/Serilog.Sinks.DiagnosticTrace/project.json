@@ -1,6 +1,6 @@
 ﻿{
   "version": "2.0.0-beta-*",
-  "description": "The diagnostic trace sink for Serilog - Simple .NET logging with fully-structured events",
+  "description": "The diagnostic trace sink for Serilog.",
   "authors": [ "Serilog Contributors" ],
   "tags": [ "serilog", "trace", "diagnostic" ],
   "projectUrl": "http://serilog.net",

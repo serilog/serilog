@@ -37,7 +37,7 @@ namespace Serilog
     /// Extends <see cref="LoggerConfiguration"/> to add Full .NET Framework
     /// capabilities.
     /// </summary>
-    public static class LoggerConfigurationFullNetFxExtensions
+    public static class LoggerConfigurationFxExtensions
     {
         //TODO: Need to confirm this is the best location for this default.  Used in File, Trace, RollingFile.  Do we move this to each sink?
         public const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";

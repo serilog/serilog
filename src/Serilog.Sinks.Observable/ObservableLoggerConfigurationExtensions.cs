@@ -6,7 +6,7 @@ using Serilog.Sinks.Observable;
 
 namespace Serilog
 {
-    public static class ObservableConfigurationExtensions
+    public static class ObservableLoggerConfigurationExtensions
     {
         /// <summary>
         /// Write events to Rx observers.

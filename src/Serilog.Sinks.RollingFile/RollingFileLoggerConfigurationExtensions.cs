@@ -6,7 +6,7 @@ using Serilog.Formatting.Display;
 
 namespace Serilog.Sinks.RollingFile
 {
-    public static class RollingFileConfigurationExtensions
+    public static class RollingFileLoggerConfigurationExtensions
     {
         const int DefaultRetainedFileCountLimit = 31; // A long month of logs
 
@@ -36,9 +36,9 @@ namespace Serilog.Sinks.RollingFile
             this LoggerSinkConfiguration sinkConfiguration,
             string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = LoggerConfigurationFullNetFxExtensions.DefaultOutputTemplate,
+            string outputTemplate = LoggerConfigurationExtensions.DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
-            long? fileSizeLimitBytes = LoggerConfigurationFullNetFxExtensions.DefaultFileSizeLimitBytes,
+            long? fileSizeLimitBytes = LoggerConfigurationExtensions.DefaultFileSizeLimitBytes,
             int? retainedFileCountLimit = DefaultRetainedFileCountLimit,
             LoggingLevelSwitch levelSwitch = null)
         {
