@@ -24,11 +24,6 @@
       "dependencies": {
         "System.Collections.Concurrent": "4.0.11-beta-23516"
       }
-    },
-    "dotnet5.4": {
-      "dependencies": {
-        "System.Collections.Concurrent": "4.0.11-beta-23516"
-      }
     }
   }
 }
