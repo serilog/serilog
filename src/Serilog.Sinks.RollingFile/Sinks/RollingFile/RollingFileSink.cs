@@ -22,7 +22,7 @@ using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting;
-using Serilog.Sinks.IOFile;
+using Serilog.Sinks.File;
 
 namespace Serilog.Sinks.RollingFile
 {

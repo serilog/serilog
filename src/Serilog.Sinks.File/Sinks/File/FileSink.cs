@@ -20,7 +20,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.IOFile
+namespace Serilog.Sinks.File
 {
     /// <summary>
     /// Write log events to a disk file.
@@ -51,7 +51,7 @@ namespace Serilog.Sinks.IOFile
 
             TryCreateDirectory(path);
 
-            var file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
+            var file = System.IO.File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
             var outputWriter = new StreamWriter(file, encoding ?? Encoding.UTF8);
             if (fileSizeLimitBytes != null)
             {

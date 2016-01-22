@@ -4,7 +4,7 @@ using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
-using Serilog.Sinks.IOTextWriter;
+using Serilog.Sinks.TextWriter;
 
 namespace Serilog
 {

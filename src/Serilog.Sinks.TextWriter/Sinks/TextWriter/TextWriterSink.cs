@@ -18,15 +18,15 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.IOTextWriter
+namespace Serilog.Sinks.TextWriter
 {
     class TextWriterSink : ILogEventSink
     {
-        readonly TextWriter _textWriter;
+        readonly System.IO.TextWriter _textWriter;
         readonly ITextFormatter _textFormatter;
         readonly object _syncRoot = new object();
 
-        public TextWriterSink(TextWriter textWriter, ITextFormatter textFormatter)
+        public TextWriterSink(System.IO.TextWriter textWriter, ITextFormatter textFormatter)
         {
             if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             _textWriter = textWriter;

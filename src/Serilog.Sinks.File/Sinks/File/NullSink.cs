@@ -15,7 +15,7 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Sinks.IOFile
+namespace Serilog.Sinks.File
 {
     /// <summary>
     /// An instance of this sink may be substituted when an instance of the

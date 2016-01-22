@@ -18,7 +18,7 @@ using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting.Display;
-using Serilog.Sinks.IOFile;
+using Serilog.Sinks.File;
 
 namespace Serilog
 {

@@ -17,7 +17,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace Serilog.Sinks.IOFile
+namespace Serilog.Sinks.File
 {
     sealed class CharacterCountLimitedTextWriter : TextWriter
     {
