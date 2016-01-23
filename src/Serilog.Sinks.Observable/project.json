@@ -15,11 +15,6 @@
   "frameworks": {
     "net45": {
     },
-    "netcore50": {
-      "dependencies": {
-        "System.Collections.Concurrent": "4.0.11-beta-23516"
-      }
-    },
     "dotnet5.2": {
       "dependencies": {
         "System.Collections.Concurrent": "4.0.11-beta-23516"
