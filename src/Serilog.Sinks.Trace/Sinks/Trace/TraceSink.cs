@@ -21,11 +21,11 @@ using Serilog.Formatting;
 
 namespace Serilog.Sinks.DiagnosticTrace
 {
-    class DiagnosticTraceSink : ILogEventSink
+    class TraceSink : ILogEventSink
     {
         readonly ITextFormatter _textFormatter;
 
-        public DiagnosticTraceSink(ITextFormatter textFormatter)
+        public TraceSink(ITextFormatter textFormatter)
         {
             if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             _textFormatter = textFormatter;

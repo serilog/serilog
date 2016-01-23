@@ -22,7 +22,7 @@ using Serilog.Sinks.DiagnosticTrace;
 
 namespace Serilog
 {
-    public static class DiagnosticTraceLoggerConfigurationExtensions
+    public static class TraceLoggerConfigurationExtensions
     {
         /// <summary>
         /// Write log events to the <see cref="System.Diagnostics.Trace"/>.
@@ -46,7 +46,7 @@ namespace Serilog
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            return sinkConfiguration.Sink(new DiagnosticTraceSink(formatter), restrictedToMinimumLevel, levelSwitch);
+            return sinkConfiguration.Sink(new TraceSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
     }
 }
