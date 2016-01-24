@@ -39,10 +39,6 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationExtensions
     {
-        //TODO: Need to confirm this is the best location for this default.  Used in File, Trace, RollingFile.  Do we move this to each sink?
-        public const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
-        public const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
-        const string DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
          
 #if LOGCONTEXT
         /// <summary>

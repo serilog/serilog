@@ -24,6 +24,8 @@ namespace Serilog
 {
     public static class TraceLoggerConfigurationExtensions
     {
+        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
+
         /// <summary>
         /// Write log events to the <see cref="System.Diagnostics.Trace"/>.
         /// </summary>
@@ -39,7 +41,7 @@ namespace Serilog
         public static LoggerConfiguration Trace(
             this LoggerSinkConfiguration sinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = LoggerConfigurationExtensions.DefaultOutputTemplate,
+            string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
             LoggingLevelSwitch levelSwitch = null)
         {

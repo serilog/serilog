@@ -24,6 +24,9 @@ namespace Serilog
 {
     public static class FileLoggerConfigurationExtensions
     {
+        const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
+        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
+
         /// <summary>
         /// Write log events to the specified file.
         /// </summary>
@@ -44,9 +47,9 @@ namespace Serilog
             this LoggerSinkConfiguration sinkConfiguration,
             string path,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = LoggerConfigurationExtensions.DefaultOutputTemplate,
+            string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
-            long? fileSizeLimitBytes = LoggerConfigurationExtensions.DefaultFileSizeLimitBytes,
+            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
             LoggingLevelSwitch levelSwitch = null)
         {
             if (sinkConfiguration == null) throw new ArgumentNullException(nameof(sinkConfiguration));

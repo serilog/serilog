@@ -1,4 +1,18 @@
-﻿using System;
+﻿// Copyright 2013-2016 Serilog Contributors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
@@ -9,6 +23,8 @@ namespace Serilog.Sinks.RollingFile
     public static class RollingFileLoggerConfigurationExtensions
     {
         const int DefaultRetainedFileCountLimit = 31; // A long month of logs
+        const long DefaultFileSizeLimitBytes = 1L * 1024 * 1024 * 1024;
+        const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
 
         /// <summary>
         /// Write log events to a series of files. Each file will be named according to
@@ -36,9 +52,9 @@ namespace Serilog.Sinks.RollingFile
             this LoggerSinkConfiguration sinkConfiguration,
             string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = LoggerConfigurationExtensions.DefaultOutputTemplate,
+            string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
-            long? fileSizeLimitBytes = LoggerConfigurationExtensions.DefaultFileSizeLimitBytes,
+            long? fileSizeLimitBytes = DefaultFileSizeLimitBytes,
             int? retainedFileCountLimit = DefaultRetainedFileCountLimit,
             LoggingLevelSwitch levelSwitch = null)
         {
