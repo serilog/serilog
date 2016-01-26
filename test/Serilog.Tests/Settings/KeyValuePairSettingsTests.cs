@@ -55,13 +55,13 @@ namespace Serilog.Tests.AppSettings.Tests
 
             // The core Serilog assembly is always considered
             Assert.Equal(1, configurationAssemblies.Count);
-        }
+        } 
 
         [Fact]
-        public void FindsConfigurationMethodsWithinAnAssembly()
+        public void FindsEventEnrichersWithinAnAssembly()
         {
-            var configurationMethods = KeyValuePairSettings
-                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink)
+            var eventEnrichers = KeyValuePairSettings
+                .FindEventEnricherConfigurationMethods(new[] { typeof(Log)
 #if DNXCORE50
                     .GetTypeInfo()
 #endif
@@ -71,13 +71,18 @@ namespace Serilog.Tests.AppSettings.Tests
                 .Distinct()
                 .ToList();
 
-            Assert.Equal(5, configurationMethods.Count);
-
-            Assert.True(configurationMethods.Contains("ColoredConsole"));
-            Assert.True(configurationMethods.Contains("DumpFile"));
-            Assert.True(configurationMethods.Contains("File"));
-            Assert.True(configurationMethods.Contains("RollingFile"));
-            Assert.True(configurationMethods.Contains("Trace"));
+            
+#if LOGCONTEXT
+            Assert.True(eventEnrichers.Contains("FromLogContext"));
+#endif
+#if !DOTNET5_1
+            Assert.True(eventEnrichers.Contains("WithEnvironmentUserName"));
+            Assert.True(eventEnrichers.Contains("WithMachineName"));
+#endif
+#if PROCESS
+            Assert.True(eventEnrichers.Contains("WithProcessId"));
+#endif
+            Assert.True(eventEnrichers.Contains("WithThreadId"));
         }
 
         [Fact]
