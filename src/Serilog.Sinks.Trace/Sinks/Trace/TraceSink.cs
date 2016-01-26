@@ -13,18 +13,19 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.SystemConsole
+namespace Serilog.Sinks.DiagnosticTrace
 {
-    class ConsoleSink : ILogEventSink
+    class TraceSink : ILogEventSink
     {
         readonly ITextFormatter _textFormatter;
 
-        public ConsoleSink(ITextFormatter textFormatter)
+        public TraceSink(ITextFormatter textFormatter)
         {
             if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             _textFormatter = textFormatter;
@@ -33,9 +34,19 @@ namespace Serilog.Sinks.SystemConsole
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            var renderSpace = new StringWriter();
-            _textFormatter.Format(logEvent, renderSpace);
-            Console.Out.Write(renderSpace.ToString());
+            var sr = new StringWriter();
+            _textFormatter.Format(logEvent, sr);
+
+            var text = sr.ToString().Trim();
+
+            if (logEvent.Level == LogEventLevel.Error || logEvent.Level == LogEventLevel.Fatal)
+                Trace.TraceError(text);
+            else if (logEvent.Level == LogEventLevel.Warning)
+                Trace.TraceWarning(text);
+            else if (logEvent.Level == LogEventLevel.Information)
+                Trace.TraceInformation(text);
+            else
+                Trace.WriteLine(text);
         }
     }
 }

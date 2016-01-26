@@ -1,8 +1,8 @@
-{
+﻿{
   "version": "2.0.0-beta-*",
-  "description": "The console sink for Serilog.",
+  "description": "The observable sink for Serilog.",
   "authors": [ "Serilog Contributors" ],
-  "tags": [ "serilog", "console" ],
+  "tags": [ "serilog", "observable", "reactive" ],
   "projectUrl": "http://serilog.net",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
   "iconUrl": "http://serilog.net/images/serilog-sink-nuget.png",
@@ -15,9 +15,9 @@
   "frameworks": {
     "net45": {
     },
-    "dotnet5.1": {
+    "dotnet5.2": {
       "dependencies": {
-        "System.Console": "4.0.0-beta-23516"
+        "System.Collections.Concurrent": "4.0.11-beta-23516"
       }
     }
   }

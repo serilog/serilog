@@ -55,36 +55,13 @@ namespace Serilog.Tests.AppSettings.Tests
 
             // The core Serilog assembly is always considered
             Assert.Equal(1, configurationAssemblies.Count);
-        }
-
-        [Fact]
-        public void FindsConfigurationMethodsWithinAnAssembly()
-        {
-            var configurationMethods = KeyValuePairSettings
-                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink)
-#if DNXCORE50
-                    .GetTypeInfo()
-#endif
-                    .Assembly
-                    })
-                .Select(m => m.Name)
-                .Distinct()
-                .ToList();
-
-            Assert.Equal(5, configurationMethods.Count);
-
-            Assert.True(configurationMethods.Contains("ColoredConsole"));
-            Assert.True(configurationMethods.Contains("DumpFile"));
-            Assert.True(configurationMethods.Contains("File"));
-            Assert.True(configurationMethods.Contains("RollingFile"));
-            Assert.True(configurationMethods.Contains("Trace"));
-        }
+        } 
 
         [Fact]
         public void FindsEventEnrichersWithinAnAssembly()
         {
             var eventEnrichers = KeyValuePairSettings
-                .FindEventEnricherConfigurationMethods(new[] { typeof(RollingFileSink)
+                .FindEventEnricherConfigurationMethods(new[] { typeof(Log)
 #if DNXCORE50
                     .GetTypeInfo()
 #endif

@@ -23,7 +23,7 @@ namespace Serilog.Context
 {
     /// <summary>
     /// Holds ambient properties that can be attached to log events. To
-    /// configure, use the <see cref="LoggerConfigurationFullNetFxExtensions.FromLogContext"/>
+    /// configure, use the <see cref="LoggerConfigurationExtensions.FromLogContext"/>
     /// extension method.
     /// </summary>
     /// <example>

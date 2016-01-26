@@ -18,24 +18,29 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.SystemConsole
+namespace Serilog.Sinks.TextWriter
 {
-    class ConsoleSink : ILogEventSink
+    class TextWriterSink : ILogEventSink
     {
+        readonly System.IO.TextWriter _textWriter;
         readonly ITextFormatter _textFormatter;
+        readonly object _syncRoot = new object();
 
-        public ConsoleSink(ITextFormatter textFormatter)
+        public TextWriterSink(System.IO.TextWriter textWriter, ITextFormatter textFormatter)
         {
             if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
+            _textWriter = textWriter;
             _textFormatter = textFormatter;
         }
 
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            var renderSpace = new StringWriter();
-            _textFormatter.Format(logEvent, renderSpace);
-            Console.Out.Write(renderSpace.ToString());
+            lock (_syncRoot)
+            {
+                _textFormatter.Format(logEvent, _textWriter);
+                _textWriter.Flush();
+            }
         }
     }
 }

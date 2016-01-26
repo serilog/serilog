@@ -12,30 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting;
 
-namespace Serilog.Sinks.SystemConsole
+namespace Serilog.Sinks.File
 {
-    class ConsoleSink : ILogEventSink
+    /// <summary>
+    /// An instance of this sink may be substituted when an instance of the
+    /// <see cref="FileSink"/> is unable to be constructed.
+    /// </summary>
+    class NullSink : ILogEventSink
     {
-        readonly ITextFormatter _textFormatter;
-
-        public ConsoleSink(ITextFormatter textFormatter)
-        {
-            if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
-            _textFormatter = textFormatter;
-        }
-
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            var renderSpace = new StringWriter();
-            _textFormatter.Format(logEvent, renderSpace);
-            Console.Out.Write(renderSpace.ToString());
         }
     }
 }

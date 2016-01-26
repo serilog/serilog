@@ -11,7 +11,13 @@
         "xunit": "2.1.0",
         "xunit.runner.visualstudio": "2.1.0",
         "xunit.runner.dnx": "2.1.0-rc1-build204",
-        "Serilog.Sinks.Console": { "target": "project" }
+        "Serilog.Sinks.Console": { "target": "project" },
+        "Serilog.Sinks.Trace": { "target": "project" },
+        "Serilog.Sinks.File": { "target": "project" }, 
+        "Serilog.Sinks.RollingFile": { "target": "project" },
+        "Serilog.Sinks.PeriodicBatching": { "target": "project" },
+        "Serilog.Sinks.Observable": { "target": "project" },
+        "Serilog.Sinks.TextWriter": {"target": "project"}
     },
     "frameworks": {
         "dnx451": {
