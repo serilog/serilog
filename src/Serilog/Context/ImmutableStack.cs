@@ -37,6 +37,10 @@ namespace Serilog.Context
         public ImmutableStack(SerializationInfo info, StreamingContext context)
         {
         }
+
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+        }
 #endif
 
         ImmutableStack()
@@ -76,11 +80,6 @@ namespace Serilog.Context
 
         public T Top => _top;
 
-#if REMOTING
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-        }
-#endif
     }
 }
 #endif
