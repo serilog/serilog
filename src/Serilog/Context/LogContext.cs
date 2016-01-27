@@ -52,7 +52,7 @@ namespace Serilog.Context
 #if ASYNCLOCAL
     /// <seealso cref="AsyncLocal{T}"/>
 #else
-    /// <seealso cref="CallContext"/>
+    /// <seealso cref="CallContext.LogicalGetData"/>
 #endif
     /// (and so is preserved across async/await calls).</remarks>
     public static class LogContext
