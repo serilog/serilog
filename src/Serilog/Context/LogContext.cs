@@ -58,7 +58,7 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
 #else
         static readonly string DataSlotName = typeof(LogContext).FullName;
 #endif
@@ -152,11 +152,11 @@ namespace Serilog.Context
         {
             get
             {
-                return data.Value;
+                return Data.Value;
             }
             set
             {
-                data.Value = GetContext(value);
+                Data.Value = GetContext(value);
             }
         }
 #else
