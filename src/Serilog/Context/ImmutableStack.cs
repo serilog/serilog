@@ -15,7 +15,9 @@
 #if LOGCONTEXT
 using System;
 using System.Collections.Generic;
+#if REMOTING
 using System.Runtime.Serialization;
+#endif
 
 namespace Serilog.Context
 {
@@ -33,10 +35,6 @@ namespace Serilog.Context
 
 #if REMOTING
         public ImmutableStack(SerializationInfo info, StreamingContext context)
-        {
-        }
-#else
-        public ImmutableStack(StreamingContext context)
         {
         }
 #endif
