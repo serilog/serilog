@@ -147,20 +147,30 @@ namespace Serilog.Context
             return enrichers;
         }
 
+#if ASYNCLOCAL
+       static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                return data.Value;
+            }
+            set
+            {
+                data.Value = GetContext(value);
+            }
+        }
+#else
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
             get
             {
-#if ASYNCLOCAL
-                return data.Value;
-#else
                 var data = CallContext.LogicalGetData(DataSlotName);
 
                 ImmutableStack<ILogEventEnricher> context;
 #if REMOTING
                 if (PermitCrossAppDomainCalls)
                 {
-                    context = ((Wrapper) data)?.Value;
+                    context = ((Wrapper)data)?.Value;
                 }
                 else
                 {
@@ -170,18 +180,14 @@ namespace Serilog.Context
                 context = data;
 #endif
                 return context;
-#endif
             }
             set
             {
-#if ASYNCLOCAL
-                data.Value = GetContext(value);
-#else
                 var context = GetContext(value);
                 CallContext.LogicalSetData(DataSlotName, context);
-#endif
             }
         }
+#endif
 
 #if REMOTING
         static object GetContext(ImmutableStack<ILogEventEnricher> value)
