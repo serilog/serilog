@@ -64,14 +64,6 @@ namespace Serilog.Context
 #endif
 
         /// <summary>
-        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
-        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
-        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
-        /// should be preferred.
-        /// </summary>
-        public static bool PermitCrossAppDomainCalls { get; set; }
-
-        /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
         /// that can later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
@@ -190,6 +182,14 @@ namespace Serilog.Context
 #endif
 
 #if REMOTING
+        /// <summary>
+        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
+        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
+        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
+        /// should be preferred.
+        /// </summary>
+        public static bool PermitCrossAppDomainCalls { get; set; }
+
         static object GetContext(ImmutableStack<ILogEventEnricher> value)
         {
             var context = !PermitCrossAppDomainCalls ? (object) value : new Wrapper
