@@ -18,7 +18,9 @@ namespace Serilog.Tests.Context
     {
         public LogContextTests()
         {
+#if REMOTING
             LogContext.PermitCrossAppDomainCalls = false;
+#endif
 #if !ASYNCLOCAL
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
 #endif
@@ -113,6 +115,7 @@ namespace Serilog.Tests.Context
             }
         }
 
+#if REMOTING
         [Fact]
         public async Task ContextPropertiesPersistWhenCrossAppDomainCallsAreEnabled()
         {
@@ -141,6 +144,7 @@ namespace Serilog.Tests.Context
                 Assert.NotSame(pre, post);
             }
         }
+#endif
 
 #if !NO_APPDOMAIN
         // Must not actually try to pass context across domains,
