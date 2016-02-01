@@ -1,6 +1,8 @@
 ﻿using System;
 using Serilog.Tests.Support;
 using Xunit;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace Serilog.Tests.Core
 {
@@ -52,6 +54,39 @@ namespace Serilog.Tests.Core
                 .CreateLogger()).Dispose();
 
             Assert.True(secondary.IsDisposed);
+        }
+
+        [Fact]
+        public void ChildLoggerInheritsParentLevelByDefault()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Logger(lc => lc
+                    .WriteTo.Sink(sink))
+                .CreateLogger();
+
+            logger.Write(Some.DebugEvent());
+
+            Assert.Equal(1, sink.Events.Count);
+        }
+
+        [Fact]
+        public void ChildLoggerCanOverrideInheritedLevel()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Debug))
+                .WriteTo.Logger(lc => lc
+                    .MinimumLevel.Error()
+                    .WriteTo.Sink(sink))
+                .CreateLogger();
+
+            logger.Write(Some.DebugEvent());
+
+            Assert.Equal(0, sink.Events.Count);
         }
     }
 }

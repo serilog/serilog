@@ -47,7 +47,13 @@ namespace Serilog
         {
             get
             {
-                return new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s));
+                return new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), child =>
+                {
+                    if (_levelSwitch != null)
+                        child.MinimumLevel.ControlledBy(_levelSwitch);
+                    else
+                        child.MinimumLevel.Is(_minimumLevel);
+                });
             }
         }
 
@@ -62,7 +68,10 @@ namespace Serilog
             get
             {
                 return new LoggerMinimumLevelConfiguration(this,
-                    l => _minimumLevel = l,
+                    l => {
+                        _minimumLevel = l;
+                        _levelSwitch = null;
+                    },
                     sw => _levelSwitch = sw);
             }
         }

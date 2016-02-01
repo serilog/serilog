@@ -247,5 +247,21 @@ namespace Serilog.Tests
             var actual = new LoggerConfiguration().CreateLogger();
             Assert.Equal(actual.GetType().Name, "SilentLogger");
         }
+
+        [Fact]
+        public void LastMinimumLevelConfigurationWins()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Fatal))
+                .MinimumLevel.Debug()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(1, sink.Events.Count);
+        }
     }
 }
