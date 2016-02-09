@@ -17,12 +17,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-#if NET40
-using IPropertyValueList = System.Collections.Generic.IList<Serilog.Events.LogEventPropertyValue>;
-#else
-using IPropertyValueList = System.Collections.Generic.IReadOnlyList<Serilog.Events.LogEventPropertyValue>;
-#endif
-
 namespace Serilog.Events
 {
     /// <summary>
@@ -46,7 +40,7 @@ namespace Serilog.Events
         /// <summary>
         /// The elements of the sequence.
         /// </summary>
-        public IPropertyValueList Elements => _elements;
+        public IReadOnlyList<LogEventPropertyValue> Elements => _elements;
 
         /// <summary>
         /// Render the value to the output.

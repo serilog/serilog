@@ -23,15 +23,6 @@ using System.Text;
 using Serilog.Events;
 using Serilog.Parsing;
 
-#if NET40
-using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
-using IScalarDictionary = System.Collections.Generic.IDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue>;
-#else
-using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
-using IScalarDictionary = System.Collections.Generic.IReadOnlyDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue>;
-#endif
-
-
 namespace Serilog.Formatting.Json
 {
     /// <summary>
@@ -167,7 +158,7 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out individual renderings of attached properties
         /// </summary>
-        protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IPropertyDictionary properties, TextWriter output)
+        protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
             output.Write(",\"{0}\":{{", "Renderings");
             WriteRenderingsValues(tokensWithFormat, properties, output);
@@ -177,7 +168,7 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the values of individual renderings of attached properties
         /// </summary>
-        protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IPropertyDictionary properties, TextWriter output)
+        protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
             var rdelim = "";
             foreach (var ptoken in tokensWithFormat)
@@ -213,7 +204,7 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the attached properties
         /// </summary>
-        protected virtual void WriteProperties(IPropertyDictionary properties, TextWriter output)
+        protected virtual void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
             output.Write(",\"{0}\":{{", "Properties");
             WritePropertiesValues(properties, output);
@@ -223,7 +214,7 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the attached properties values
         /// </summary>
-        protected virtual void WritePropertiesValues(IPropertyDictionary properties, TextWriter output)
+        protected virtual void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
             var precedingDelimiter = "";
             foreach (var property in properties)
@@ -308,7 +299,7 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out a dictionary
         /// </summary>
-        protected virtual void WriteDictionary(IScalarDictionary elements, TextWriter output)
+        protected virtual void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
         {
             output.Write("{");
             var delim = "";

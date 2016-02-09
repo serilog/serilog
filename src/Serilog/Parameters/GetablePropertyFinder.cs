@@ -17,10 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-#if NET40
-using Serilog.Platform;
-#endif
-
 namespace Serilog.Parameters
 {
     static class GetablePropertyFinder
@@ -34,11 +30,7 @@ namespace Serilog.Parameters
             while (currentTypeInfo.AsType() != typeof(object))
             {
                 var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
-#if NET40
-                    p.GetGetMethod().IsPublic && !p.GetGetMethod().IsStatic &&
-#else
                     p.GetMethod.IsPublic && !p.GetMethod.IsStatic &&
-#endif
                     (p.Name != "Item" || p.GetIndexParameters().Length == 0) && !seenNames.Contains(p.Name));
 
                 foreach (var propertyInfo in unseenProperties)

@@ -22,12 +22,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
-
-#if NET40
-using Serilog.Platform;
-#else
 using System.Runtime.CompilerServices;
-#endif
 
 namespace Serilog.Parameters
 {
@@ -171,20 +166,9 @@ namespace Serilog.Parameters
 
         bool IsValueTypeDictionary(Type valueType)
         {
-            return
-#if NET40
-                   valueType.IsGenericType &&
-#else
-                   valueType.IsConstructedGenericType &&
-#endif
+            return valueType.IsConstructedGenericType &&
                    valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
-                   IsValidDictionaryKeyType(
-#if NET40
-                       valueType.GetGenericArguments()
-#else
-                       valueType.GenericTypeArguments
-#endif
-                       [0]);
+                   IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]);
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
@@ -200,11 +184,7 @@ namespace Serilog.Parameters
                 object propValue;
                 try
                 {
-#if NET40
-                    propValue = prop.GetValue(value, null);
-#else
                     propValue = prop.GetValue(value);
-#endif
                 }
                 catch (TargetParameterCountException)
                 {
@@ -220,9 +200,7 @@ namespace Serilog.Parameters
             }
         }
 
-#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         internal static bool IsCompilerGeneratedType(Type type)
         {
             var typeInfo = type.GetTypeInfo();
