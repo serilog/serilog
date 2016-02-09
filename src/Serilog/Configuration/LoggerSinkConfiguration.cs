@@ -30,15 +30,18 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventSink> _addSink;
+        readonly Action<LoggerConfiguration> _applyInheritedConfiguration;
 
         const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message}{NewLine}{Exception}";
 
-        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
+        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             if (addSink == null) throw new ArgumentNullException(nameof(addSink));
+            if (applyInheritedConfiguration == null) throw new ArgumentNullException(nameof(applyInheritedConfiguration));
             _loggerConfiguration = loggerConfiguration;
             _addSink = addSink;
+            _applyInheritedConfiguration = applyInheritedConfiguration;
         }
 
         /// <summary>
@@ -129,8 +132,11 @@ namespace Serilog.Configuration
         {
             if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
             var lc = new LoggerConfiguration();
+
+            _applyInheritedConfiguration(lc);
+
             configureLogger(lc);
-            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel);
+            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
