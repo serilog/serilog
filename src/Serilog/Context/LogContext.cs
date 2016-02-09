@@ -60,7 +60,12 @@ namespace Serilog.Context
 #if ASYNCLOCAL
         static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
 #else
+#if DOTNET5_1
+        [ThreadStatic]
+        static ImmutableStack<ILogEventEnricher> Data;
+#else
         static readonly string DataSlotName = typeof(LogContext).FullName;
+#endif
 #endif
 
         /// <summary>
@@ -152,6 +157,21 @@ namespace Serilog.Context
             }
         }
 #else
+
+#if DOTNET5_1
+       static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                return Data;
+            }
+            set
+            {
+                Data = GetContext(value);
+            }
+        }
+
+#else
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
             get
@@ -179,6 +199,7 @@ namespace Serilog.Context
                 CallContext.LogicalSetData(DataSlotName, context);
             }
         }
+#endif
 #endif
 
 #if REMOTING
