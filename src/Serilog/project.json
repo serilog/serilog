@@ -7,18 +7,6 @@
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "iconUrl": "http://serilog.net/images/serilog-nuget.png",
     "frameworks": {
-        "net40": {
-            "compilationOptions": {
-                "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
-            },
-            "frameworkAssemblies": {
-                "System.Configuration": ""
-            },
-            "dependencies": {
-                "Microsoft.Bcl.Async": "1.0.168"
-            }
-        },
         "net45": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
