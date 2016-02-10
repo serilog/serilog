@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-#if LOGCONTEXT
 using System;
 #if REMOTING
 using System.Runtime.Remoting.Messaging;
@@ -261,5 +260,3 @@ namespace Serilog.Context
 #endif
     }
 }
-
-#endif

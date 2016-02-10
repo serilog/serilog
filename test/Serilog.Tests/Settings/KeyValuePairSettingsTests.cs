@@ -72,9 +72,7 @@ namespace Serilog.Tests.AppSettings.Tests
                 .ToList();
 
             
-#if LOGCONTEXT
             Assert.True(eventEnrichers.Contains("FromLogContext"));
-#endif
 #if !DOTNET5_1
             Assert.True(eventEnrichers.Contains("WithEnvironmentUserName"));
             Assert.True(eventEnrichers.Contains("WithMachineName"));

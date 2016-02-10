@@ -23,7 +23,7 @@
         "dnx452": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS", "REMOTING" ]
+                "define": [ "APPSETTINGS", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS", "REMOTING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -31,7 +31,7 @@
         },
         "dnxcore50": {
             "compilationOptions": {
-                "define": [ "ASYNCLOCAL", "LOGCONTEXT", "FILE_IO", "PERIODIC_BATCHING", "NO_APPDOMAIN" ]
+                "define": [ "ASYNCLOCAL", "FILE_IO", "PERIODIC_BATCHING", "NO_APPDOMAIN" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",

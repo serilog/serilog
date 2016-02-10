@@ -10,7 +10,7 @@
         "net45": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "REMOTING" ]
+                "define": [ "APPSETTINGS", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "REMOTING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -19,7 +19,7 @@
         "dotnet5.1": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "NO_APPDOMAIN", "LOGCONTEXT" ]
+                "define": [ "NO_APPDOMAIN" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -39,7 +39,7 @@
         "dotnet5.4": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "ASYNCLOCAL", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN", "USERNAMEFROMENV" ]
+                "define": [ "ASYNCLOCAL", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN", "USERNAMEFROMENV" ]
             
             },
             "dependencies": {

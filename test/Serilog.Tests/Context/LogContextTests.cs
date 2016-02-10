@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-#if LOGCONTEXT
 using Xunit;
 using Serilog.Context;
 using Serilog.Events;
@@ -236,4 +235,3 @@ namespace Serilog.Tests.Context
     }
 #endif
 }
-#endif

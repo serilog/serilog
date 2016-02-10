@@ -149,7 +149,6 @@ namespace Serilog.Tests.AppSettings.Tests
         }
 #endif
 
-#if LOGCONTEXT
         [Fact]
         public void LogContextEnricherIsApplied()
         {
@@ -172,7 +171,6 @@ namespace Serilog.Tests.AppSettings.Tests
             Assert.NotNull(evt.Properties["A"].LiteralValue() as int?);
             Assert.Equal(1, (int)evt.Properties["A"].LiteralValue());
         }
-#endif
     }
 }
 #endif

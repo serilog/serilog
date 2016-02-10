@@ -40,7 +40,6 @@ namespace Serilog
     public static class LoggerConfigurationExtensions
     {
          
-#if LOGCONTEXT
         /// <summary>
         /// Enrich log events with properties from <see cref="Context.LogContext"/>.
         /// </summary>
@@ -53,7 +52,6 @@ namespace Serilog
             if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
             return enrichmentConfiguration.With<LogContextEnricher>();
         }
-#endif
 
         /// <summary>
         /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.

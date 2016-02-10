@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if LOGCONTEXT
 using System;
 using System.Collections.Generic;
 #if REMOTING
@@ -82,4 +81,3 @@ namespace Serilog.Context
 
     }
 }
-#endif
