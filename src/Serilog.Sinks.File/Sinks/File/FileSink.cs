@@ -30,6 +30,7 @@ namespace Serilog.Sinks.File
         const int BytesPerCharacterApproximate = 1;
         readonly TextWriter _output;
         readonly ITextFormatter _textFormatter;
+        readonly bool _buffered;
         readonly object _syncRoot = new object();
 
         /// <summary>Construct a <see cref="FileSink"/>.</summary>
@@ -38,16 +39,20 @@ namespace Serilog.Sinks.File
         /// <param name="fileSizeLimitBytes">The maximum size, in bytes, to which a log file will be allowed to grow.
         /// For unrestricted growth, pass null. The default is 1 GB.</param>
         /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8.</param>
+        /// <param name="buffered">Indicates if flushing to the output file can be buffered or not. The default
+        /// is false.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         /// <exception cref="IOException"></exception>
-        public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null)
+        public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null,
+            bool buffered = false)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             if (textFormatter == null) throw new ArgumentNullException(nameof(textFormatter));
             if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
 
             _textFormatter = textFormatter;
+            _buffered = buffered;
 
             TryCreateDirectory(path);
 
@@ -91,7 +96,8 @@ namespace Serilog.Sinks.File
             lock (_syncRoot)
             {
                 _textFormatter.Format(logEvent, _output);
-                _output.Flush();
+                if (!_buffered)
+                    _output.Flush();
             }
         }
 
