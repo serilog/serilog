@@ -38,6 +38,7 @@ namespace Serilog.Sinks.RollingFile
         readonly long? _fileSizeLimitBytes;
         readonly int? _retainedFileCountLimit;
         readonly Encoding _encoding;
+        readonly bool _buffered;
         readonly object _syncRoot = new object();
 
         bool _isDisposed;
@@ -54,13 +55,16 @@ namespace Serilog.Sinks.RollingFile
         /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
         /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
         /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8.</param>
+        /// <param name="buffered">Indicates if flushing to the output file can be buffered or not. The default
+        /// is false.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>The file will be written using the UTF-8 character set.</remarks>
         public RollingFileSink(string pathFormat,
                               ITextFormatter textFormatter,
                               long? fileSizeLimitBytes,
                               int? retainedFileCountLimit,
-                              Encoding encoding = null)
+                              Encoding encoding = null,
+                              bool buffered = false)
         {
             if (pathFormat == null) throw new ArgumentNullException(nameof(pathFormat));
             if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
@@ -71,6 +75,7 @@ namespace Serilog.Sinks.RollingFile
             _fileSizeLimitBytes = fileSizeLimitBytes;
             _retainedFileCountLimit = retainedFileCountLimit;
             _encoding = encoding ?? Encoding.UTF8;
+            _buffered = buffered;
         }
 
         /// <summary>
@@ -143,7 +148,7 @@ namespace Serilog.Sinks.RollingFile
 
                 try
                 {
-                    _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes, _encoding);
+                    _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes, _encoding, _buffered);
                 }
                 catch (IOException ex)
                 {
