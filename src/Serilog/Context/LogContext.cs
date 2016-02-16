@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if LOGCONTEXT
+
 using System;
+#if REMOTING
 using System.Runtime.Remoting.Messaging;
+#endif
+#if ASYNCLOCAL
+using System.Collections.Generic;
+using System.Threading;
+#endif
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
@@ -42,19 +48,24 @@ namespace Serilog.Context
     /// </code>
     /// </example>
     /// <remarks>The scope of the context is the current logical thread, using
-    /// <see cref="CallContext.LogicalGetData"/> (and so is
-    /// preserved across async/await calls).</remarks>
+#if ASYNCLOCAL
+    /// <seealso cref="AsyncLocal{T}"/>
+#else
+    /// <seealso cref="CallContext.LogicalGetData"/>
+#endif
+    /// (and so is preserved across async/await calls).</remarks>
     public static class LogContext
     {
+#if ASYNCLOCAL
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
+#else
+#if DOTNET5_1
+        [ThreadStatic]
+        static ImmutableStack<ILogEventEnricher> Data;
+#else
         static readonly string DataSlotName = typeof(LogContext).FullName;
-
-        /// <summary>
-        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
-        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
-        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
-        /// should be preferred.
-        /// </summary>
-        public static bool PermitCrossAppDomainCalls { get; set; }
+#endif
+#endif
 
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
@@ -132,33 +143,87 @@ namespace Serilog.Context
             return enrichers;
         }
 
+#if ASYNCLOCAL
+       static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                return Data.Value;
+            }
+            set
+            {
+                Data.Value = GetContext(value);
+            }
+        }
+#else
+
+#if DOTNET5_1
+       static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                return Data;
+            }
+            set
+            {
+                Data = GetContext(value);
+            }
+        }
+
+#else
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
             get
             {
-
                 var data = CallContext.LogicalGetData(DataSlotName);
 
                 ImmutableStack<ILogEventEnricher> context;
+#if REMOTING
                 if (PermitCrossAppDomainCalls)
                 {
-                    context = ((Wrapper) data)?.Value;
+                    context = ((Wrapper)data)?.Value;
                 }
                 else
                 {
                     context = (ImmutableStack<ILogEventEnricher>)data;
                 }
-
+#else
+                context = data;
+#endif
                 return context;
             }
             set
             {
-
-                var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper { Value = value };
-
+                var context = GetContext(value);
                 CallContext.LogicalSetData(DataSlotName, context);
             }
         }
+#endif
+#endif
+
+#if REMOTING
+        /// <summary>
+        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
+        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
+        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
+        /// should be preferred.
+        /// </summary>
+        public static bool PermitCrossAppDomainCalls { get; set; }
+
+        static object GetContext(ImmutableStack<ILogEventEnricher> value)
+        {
+            var context = !PermitCrossAppDomainCalls ? (object) value : new Wrapper
+            {
+                Value = value
+            };
+            return context;
+        }
+#else
+        static ImmutableStack<ILogEventEnricher> GetContext(ImmutableStack<ILogEventEnricher> value)
+        {
+            return value;
+        }
+#endif
 
         internal static void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
@@ -187,10 +252,11 @@ namespace Serilog.Context
             }
         }
 
+#if REMOTING
         sealed class Wrapper : MarshalByRefObject
         {
             public ImmutableStack<ILogEventEnricher> Value { get; set; }
         }
+#endif
     }
 }
-#endif

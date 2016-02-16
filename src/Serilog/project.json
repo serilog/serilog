@@ -10,7 +10,7 @@
         "net45": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "APPSETTINGS", "LOGCONTEXT", "PROCESS", "FILE_IO", "PERIODIC_BATCHING" ]
+                "define": [ "APPSETTINGS", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "REMOTING" ]
             },
             "frameworkAssemblies": {
                 "System.Configuration": ""
@@ -30,6 +30,7 @@
                 "System.Linq": "4.0.1-beta-23516",
                 "System.Reflection.Extensions": "4.0.1-beta-23516",
                 "System.Runtime.Extensions": "4.0.11-beta-23516",
+                "System.Runtime.Serialization.Primitives": "4.1.0-beta-23516",
                 "System.Text.RegularExpressions": "4.0.11-beta-23516",
                 "System.Threading": "4.0.11-beta-23516",
                 "System.Threading.Thread": "4.0.0-beta-23516"
@@ -38,7 +39,8 @@
         "dotnet5.4": {
             "compilationOptions": {
                 "keyFile": "../../assets/Serilog.snk",
-                "define": [ "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN" ]
+                "define": [ "ASYNCLOCAL", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "NO_TIMER", "NO_APPDOMAIN", "USERNAMEFROMENV" ]
+            
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -52,6 +54,7 @@
                 "System.Linq": "4.0.1-beta-23516",
                 "System.Reflection.Extensions": "4.0.1-beta-23516",
                 "System.Runtime.Extensions": "4.0.11-beta-23516",
+                "System.Runtime.Serialization.Primitives": "4.1.0-beta-23516",
                 "System.Text.RegularExpressions": "4.0.11-beta-23516",
                 "System.Threading": "4.0.11-beta-23516",
                 "System.Threading.Thread": "4.0.0-beta-23516"
