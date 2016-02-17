@@ -39,22 +39,8 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationExtensions
     {
-         
         /// <summary>
-        /// Enrich log events with properties from <see cref="Context.LogContext"/>.
-        /// </summary>
-        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static LoggerConfiguration FromLogContext(
-            this LoggerEnrichmentConfiguration enrichmentConfiguration)
-        {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With<LogContextEnricher>();
-        }
-
-        /// <summary>
-        /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.
+        /// Enrich log events with a ThreadId property containing the current <see cref="System.Threading.Thread.ManagedThreadId"/>.
         /// </summary>
         /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
