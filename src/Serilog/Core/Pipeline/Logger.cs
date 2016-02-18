@@ -148,7 +148,7 @@ namespace Serilog.Core.Pipeline
             Dispatch(logEvent);
         }
 
-        public void Emit(LogEvent logEvent)
+        void ILogEventSink.Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             Write(logEvent);
