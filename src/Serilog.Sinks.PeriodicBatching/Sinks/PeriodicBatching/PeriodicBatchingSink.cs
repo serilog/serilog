@@ -42,10 +42,10 @@ namespace Serilog.Sinks.PeriodicBatching
         readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>();
 
         readonly object _stateLock = new object();
-#if NO_TIMER
-        readonly PortableTimer _timer;
-#else
+#if WAITABLE_TIMER
         readonly Timer _timer;
+#else
+        readonly PortableTimer _timer;
 #endif
         bool _unloading;
         bool _started;
@@ -61,20 +61,20 @@ namespace Serilog.Sinks.PeriodicBatching
             _queue = new ConcurrentQueue<LogEvent>();
             _status = new BatchedConnectionStatus(period);
 
-#if NO_TIMER
-            _timer = new PortableTimer(cancel => OnTick());
-#else
+#if WAITABLE_TIMER
             _timer = new Timer(s => OnTick(), null, -1, -1);
+#else
+            _timer = new PortableTimer(cancel => OnTick());
 #endif
 
-#if !NO_APPDOMAIN
+#if APPDOMAIN
             AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnloading;
 #endif
         }
 
-#if !NO_APPDOMAIN
+#if APPDOMAIN
         void OnAppDomainUnloading(object sender, EventArgs args)
         {
             var eventArgs = args as UnhandledExceptionEventArgs;
@@ -95,18 +95,18 @@ namespace Serilog.Sinks.PeriodicBatching
                 _unloading = true;
             }
 
-#if !NO_APPDOMAIN
+#if APPDOMAIN
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
             AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnloading;
 #endif
 
-#if NO_TIMER
-            _timer.Dispose();
-#else
+#if WAITABLE_TIMER
             var wh = new ManualResetEvent(false);
             if (_timer.Dispose(wh))
                 wh.WaitOne();
+#else
+            _timer.Dispose();
 #endif
 
             OnTick();
@@ -221,16 +221,12 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void SetTimer(TimeSpan interval)
         {
-#if NO_TIMER
+#if WAITABLE_TIMER
+            _timer.Change(interval, Timeout.InfiniteTimeSpan);
+#else
             _timer.Start(interval);
-#else
-            _timer.Change(interval,
-#if NET40
-                TimeSpan.FromMilliseconds(-1));
-#else
-                Timeout.InfiniteTimeSpan);
 #endif
-#endif
+
         }
 
         /// <summary>

@@ -2,26 +2,23 @@
   "version": "2.0.0-beta-*",
   "description": "The periodic batching sink for Serilog",
   "authors": [ "Serilog Contributors" ],
-  "tags": [ "serilog", "batching", "timer"],
+  "tags": [ "serilog", "batching", "timer" ],
   "projectUrl": "http://serilog.net",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
   "iconUrl": "http://serilog.net/images/serilog-sink-nuget.png",
   "dependencies": {
-    "Serilog": { "target": "project" }, 
+    "Serilog": { "target": "project" },
   },
   "compilationOptions": {
     "keyFile": "../../assets/Serilog.snk"
   },
   "frameworks": {
     "net45": {
-      "frameworkAssemblies": {
-        "System.Configuration": ""
+      "compilationOptions": {
+        "define": [ "APPDOMAIN", "WAITABLE_TIMER" ]
       }
     },
     "dotnet5.2": {
-      "compilationOptions": {
-        "define": [ "NO_TIMER", "NO_APPDOMAIN" ]
-      },
       "dependencies": {
         "System.Collections.Concurrent": "4.0.11-beta-23516"
       }

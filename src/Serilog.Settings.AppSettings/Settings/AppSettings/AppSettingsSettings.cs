@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if APPSETTINGS
 using System;
 using System.Configuration;
 using System.Linq;
@@ -40,9 +39,7 @@ namespace Serilog.Settings.AppSettings
                 .Where(k => k.StartsWith(_settingPrefix))
                 .ToDictionary(k => k.Substring(_settingPrefix.Length), k => Environment.ExpandEnvironmentVariables(settings[k]));
 
-            var keyValuePairSettings = new KeyValuePairSettings(pairs);
-            keyValuePairSettings.Configure(loggerConfiguration);
+            loggerConfiguration.ReadFrom.KeyValuePairs(pairs);
         }
     }
 }
-#endif
