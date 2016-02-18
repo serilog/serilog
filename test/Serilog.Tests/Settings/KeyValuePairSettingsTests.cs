@@ -61,12 +61,7 @@ namespace Serilog.Tests.AppSettings.Tests
         public void FindsEventEnrichersWithinAnAssembly()
         {
             var eventEnrichers = KeyValuePairSettings
-                .FindEventEnricherConfigurationMethods(new[] { typeof(Log)
-#if DNXCORE50
-                    .GetTypeInfo()
-#endif
-                    .Assembly
-                    })
+                .FindEventEnricherConfigurationMethods(new[] { typeof(Log).GetTypeInfo().Assembly })
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();

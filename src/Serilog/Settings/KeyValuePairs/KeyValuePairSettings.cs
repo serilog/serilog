@@ -156,6 +156,9 @@ namespace Serilog.Settings.KeyValuePairs
             foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
                                                                  d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
             {
+                if (string.IsNullOrWhiteSpace(usingDirective.Value))
+                    throw new InvalidOperationException("A zero-length or whitespace assembly name was supplied to a serilog:using configuration statement.");
+
                 configurationAssemblies.Add(Assembly.Load(new AssemblyName(usingDirective.Value)));
             }
 
@@ -197,9 +200,22 @@ namespace Serilog.Settings.KeyValuePairs
             return FindConfigurationMethods(configurationAssemblies, typeof(LoggerSinkConfiguration));
         }
 
+        // Unlike the other configuration methods, FromLogContext is an instance method rather than an extension.
+
+        internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
+        {
+            return loggerEnrichmentConfiguration.FromLogContext();
+        }
+
+        static readonly MethodInfo SurrogateFromLogContextConfigurationMethod = typeof(KeyValuePairSettings).GetTypeInfo().DeclaredMethods.Single(m => m.Name == "FromLogContext");
+
         internal static IList<MethodInfo> FindEventEnricherConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
         {
-            return FindConfigurationMethods(configurationAssemblies, typeof(LoggerEnrichmentConfiguration));
+            var found = FindConfigurationMethods(configurationAssemblies, typeof(LoggerEnrichmentConfiguration));
+            if (configurationAssemblies.Contains(typeof(LoggerEnrichmentConfiguration).GetTypeInfo().Assembly))
+                found.Add(SurrogateFromLogContextConfigurationMethod);
+
+            return found;
         }
 
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
