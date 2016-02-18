@@ -14,23 +14,22 @@
 
 
 using System;
-#if REMOTING
-using System.Runtime.Remoting.Messaging;
-#endif
-#if ASYNCLOCAL
-using System.Collections.Generic;
-using System.Threading;
-#endif
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
+
+#if ASYNCLOCAL
+using System.Collections.Generic;
+using System.Threading;
+#elif REMOTING
+using System.Runtime.Remoting.Messaging;
+#endif
 
 namespace Serilog.Context
 {
     /// <summary>
     /// Holds ambient properties that can be attached to log events. To
-    /// configure, use the <see cref="LoggerConfigurationExtensions.FromLogContext"/>
-    /// extension method.
+    /// configure, use the <see cref="Serilog.Configuration.LoggerEnrichmentConfiguration.FromLogContext"/> method.
     /// </summary>
     /// <example>
     /// Configuration:
@@ -58,13 +57,11 @@ namespace Serilog.Context
     {
 #if ASYNCLOCAL
         static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
-#else
-#if DOTNET5_1
+#elif REMOTING
+        static readonly string DataSlotName = typeof(LogContext).FullName;
+#else // DOTNET_51
         [ThreadStatic]
         static ImmutableStack<ILogEventEnricher> Data;
-#else
-        static readonly string DataSlotName = typeof(LogContext).FullName;
-#endif
 #endif
 
         /// <summary>
@@ -143,88 +140,6 @@ namespace Serilog.Context
             return enrichers;
         }
 
-#if ASYNCLOCAL
-       static ImmutableStack<ILogEventEnricher> Enrichers
-        {
-            get
-            {
-                return Data.Value;
-            }
-            set
-            {
-                Data.Value = GetContext(value);
-            }
-        }
-#else
-
-#if DOTNET5_1
-       static ImmutableStack<ILogEventEnricher> Enrichers
-        {
-            get
-            {
-                return Data;
-            }
-            set
-            {
-                Data = GetContext(value);
-            }
-        }
-
-#else
-        static ImmutableStack<ILogEventEnricher> Enrichers
-        {
-            get
-            {
-                var data = CallContext.LogicalGetData(DataSlotName);
-
-                ImmutableStack<ILogEventEnricher> context;
-#if REMOTING
-                if (PermitCrossAppDomainCalls)
-                {
-                    context = ((Wrapper)data)?.Value;
-                }
-                else
-                {
-                    context = (ImmutableStack<ILogEventEnricher>)data;
-                }
-#else
-                context = data;
-#endif
-                return context;
-            }
-            set
-            {
-                var context = GetContext(value);
-                CallContext.LogicalSetData(DataSlotName, context);
-            }
-        }
-#endif
-#endif
-
-#if REMOTING
-        /// <summary>
-        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
-        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
-        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
-        /// should be preferred.
-        /// </summary>
-        public static bool PermitCrossAppDomainCalls { get; set; }
-
-        static object GetContext(ImmutableStack<ILogEventEnricher> value)
-        {
-            var context = !PermitCrossAppDomainCalls ? (object) value : new Wrapper
-            {
-                Value = value
-            };
-            return context;
-        }
-#else
-        static ImmutableStack<ILogEventEnricher> GetContext(ImmutableStack<ILogEventEnricher> value)
-        {
-            return value;
-        }
-#endif
-
         internal static void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             var enrichers = Enrichers;
@@ -252,10 +167,82 @@ namespace Serilog.Context
             }
         }
 
-#if REMOTING
+#if ASYNCLOCAL
+
+        static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                return Data.Value;
+            }
+            set
+            {
+                Data.Value = value;
+            }
+        }
+
+#elif REMOTING
+
+        /// <summary>
+        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
+        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
+        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
+        /// should be preferred.
+        /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public static bool PermitCrossAppDomainCalls { get; set; }
+
         sealed class Wrapper : MarshalByRefObject
         {
             public ImmutableStack<ILogEventEnricher> Value { get; set; }
+        }
+
+        static object GetContext(ImmutableStack<ILogEventEnricher> value)
+        {
+            var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper
+            {
+                Value = value
+            };
+            return context;
+        }
+
+        static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                var data = CallContext.LogicalGetData(DataSlotName);
+
+                ImmutableStack<ILogEventEnricher> context;
+                if (PermitCrossAppDomainCalls)
+                {
+                    context = ((Wrapper)data)?.Value;
+                }
+                else
+                {
+                    context = (ImmutableStack<ILogEventEnricher>)data;
+                }
+
+                return context;
+            }
+            set
+            {
+                var context = GetContext(value);
+                CallContext.LogicalSetData(DataSlotName, context);
+            }
+        }
+
+#else // DOTNET_51
+
+        static ImmutableStack<ILogEventEnricher> Enrichers
+        {
+            get
+            {
+                return Data;
+            }
+            set
+            {
+                Data = value;
+            }
         }
 #endif
     }

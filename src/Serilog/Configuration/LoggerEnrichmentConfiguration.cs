@@ -15,6 +15,7 @@
 using System;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
+using Serilog.Enrichers;
 
 namespace Serilog.Configuration
 {
@@ -78,6 +79,16 @@ namespace Serilog.Configuration
         public LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false)
         {
             return With(new PropertyEnricher(name, value, destructureObjects));
+        }
+
+        /// <summary>
+        /// Enrich log events with properties from <see cref="Context.LogContext"/>.
+        /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public LoggerConfiguration FromLogContext()
+        {
+            return With<LogContextEnricher>();
         }
     }
 }
