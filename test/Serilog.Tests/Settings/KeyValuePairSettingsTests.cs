@@ -8,6 +8,7 @@ using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
+using Serilog.Enrichers;
 
 namespace Serilog.Tests.AppSettings.Tests
 {
@@ -61,7 +62,21 @@ namespace Serilog.Tests.AppSettings.Tests
         public void FindsEventEnrichersWithinAnAssembly()
         {
             var eventEnrichers = KeyValuePairSettings
-                .FindEventEnricherConfigurationMethods(new[] { typeof(Log).GetTypeInfo().Assembly })
+                .FindEventEnricherConfigurationMethods(new[]
+                {
+                    typeof(Log).GetTypeInfo().Assembly
+
+
+#if !DOTNET5_1
+                    , typeof(MachineNameEnricher).GetTypeInfo().Assembly
+#endif
+
+#if !DOTNET5_1
+                    , typeof(ProcessIdEnricher).GetTypeInfo().Assembly
+#endif
+
+                    , typeof(ThreadIdEnricher).GetTypeInfo().Assembly
+                })
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();

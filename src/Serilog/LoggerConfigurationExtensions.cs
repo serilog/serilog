@@ -34,57 +34,5 @@ namespace Serilog
     /// </summary>
     public static class LoggerConfigurationExtensions
     {
-        /// <summary>
-        /// Enrich log events with a ThreadId property containing the current <see cref="System.Threading.Thread.ManagedThreadId"/>.
-        /// </summary>
-        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static LoggerConfiguration WithThreadId(
-            this LoggerEnrichmentConfiguration enrichmentConfiguration)
-        {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With<ThreadIdEnricher>();
-        }
-
-#if PROCESS
-        /// <summary>
-        /// Enrich log events with a ProcessId property containing the current <see cref="Process.Id"/>.
-        /// </summary>
-        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public static LoggerConfiguration WithProcessId(
-           this LoggerEnrichmentConfiguration enrichmentConfiguration)
-        {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With<ProcessIdEnricher>();
-        }
-#endif
-
-#if !DOTNET5_1
-        /// <summary>
-        /// Enrich log events with a MachineName property containing the current <see cref="Environment.MachineName"/>.
-        /// </summary>
-        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public static LoggerConfiguration WithMachineName(
-           this LoggerEnrichmentConfiguration enrichmentConfiguration)
-        {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With<MachineNameEnricher>();
-        }
-
-        /// <summary>
-        /// Enriches log events with an EnvironmentUserName property containing [<see cref="Environment.UserDomainName"/>\]<see cref="Environment.UserName"/>.
-        /// </summary>
-        /// <param name="enrichmentConfiguration">Logger enrichment configuration.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public static LoggerConfiguration WithEnvironmentUserName(
-           this LoggerEnrichmentConfiguration enrichmentConfiguration)
-        {
-            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
-            return enrichmentConfiguration.With<EnvironmentUserNameEnricher>();
-        }
-#endif
     }
 }

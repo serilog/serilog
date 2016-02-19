@@ -11,26 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#if !DOTNET5_1
-
-using System;
+ 
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Enrichers
 {
     /// <summary>
-    /// Enriches log events with a MachineName property containing <see cref="Environment.MachineName"/>.
+    /// Enriches log events with a ProcessId property containing the current <see cref="System.Diagnostics.Process.Id"/>.
     /// </summary>
-    public class MachineNameEnricher : ILogEventEnricher
+    public class ProcessIdEnricher : ILogEventEnricher
     {
         LogEventProperty _cachedProperty;
 
         /// <summary>
         /// The property name added to enriched log events.
         /// </summary>
-        public const string MachineNamePropertyName = "MachineName";
+        public const string ProcessIdPropertyName = "ProcessId";
 
         /// <summary>
         /// Enrich the log event.
@@ -39,13 +36,8 @@ namespace Serilog.Enrichers
         /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-#if !DOTNET5_4
-            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(MachineNamePropertyName, Environment.MachineName);
-#else
-            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(MachineNamePropertyName, Environment.GetEnvironmentVariable("COMPUTERNAME"));
-#endif
+            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(ProcessIdPropertyName, System.Diagnostics.Process.GetCurrentProcess().Id);
             logEvent.AddPropertyIfAbsent(_cachedProperty);
         }
     }
 }
-#endif

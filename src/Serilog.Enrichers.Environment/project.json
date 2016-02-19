@@ -1,0 +1,24 @@
+﻿{
+  "version": "2.0.0-beta-*",
+  "description": "The enviornment enrichers for Serilog.",
+  "authors": [ "Serilog Contributors" ],
+  "tags": [ "serilog", "machine", "enricher" ],
+  "projectUrl": "http://serilog.net",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "iconUrl": "http://serilog.net/images/serilog-extension-nuget.png",
+  "dependencies": {
+    "Serilog": { "target": "project" }
+  },
+  "compilationOptions": {
+    "keyFile": "../../assets/Serilog.snk"
+  },
+  "frameworks": {
+    "net45": {
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "System.Runtime.Extensions": "4.0.11-beta-23516"
+      }
+    }
+  }
+}
