@@ -14,12 +14,7 @@
 
 using Serilog.Core;
 using Serilog.Events;
-
-#if NET40
-using Serilog.Platform;
-#else
 using System.Reflection;
-#endif
 
 namespace Serilog.Policies
 {

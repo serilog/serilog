@@ -94,11 +94,7 @@ namespace Serilog.Sinks.Observable
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-#if NET40
-            Thread.MemoryBarrier();
-#else
             Interlocked.MemoryBarrier();
-#endif
 
             IList<Exception> exceptions = null;
 

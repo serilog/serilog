@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if NO_TIMER
+#if !WAITABLE_TIMER
 
 using Serilog.Debugging;
 using System;

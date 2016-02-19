@@ -145,7 +145,7 @@ namespace Serilog.Tests.Context
         }
 #endif
 
-#if !NO_APPDOMAIN
+#if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
         // Fails if the Serilog assemblies cannot be loaded in the
