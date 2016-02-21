@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,26 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#if !DOTNET5_1
+ 
 
 using System;
 using Serilog.Core;
 using Serilog.Events;
+using System.Runtime.InteropServices;
 
 namespace Serilog.Enrichers
 {
     /// <summary>
-    /// Enriches log events with an EnvironmentUserName property containing [<see cref="Environment.UserDomainName"/>\]<see cref="Environment.UserName"/>.
+    /// Enriches log events with a MachineName property containing <see cref="Environment.MachineName"/>.
     /// </summary>
-    public class EnvironmentUserNameEnricher : ILogEventEnricher
+    public class MachineNameEnricher : ILogEventEnricher
     {
         LogEventProperty _cachedProperty;
 
         /// <summary>
         /// The property name added to enriched log events.
         /// </summary>
-        public const string EnvironmentUserNamePropertyName = "EnvironmentUserName";
+        public const string MachineNamePropertyName = "MachineName";
 
         /// <summary>
         /// Enrich the log event.
@@ -39,22 +39,12 @@ namespace Serilog.Enrichers
         /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(EnvironmentUserNamePropertyName, GetEnvironmentUserName());
+#if !DOTNET5_4
+            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(MachineNamePropertyName, Environment.MachineName);
+#else
+            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(MachineNamePropertyName, Environment.GetEnvironmentVariable("COMPUTERNAME"));
+#endif
             logEvent.AddPropertyIfAbsent(_cachedProperty);
         }
-
-        private static string GetEnvironmentUserName()
-        {
-#if !DOTNET5_4
-            var userDomainName = Environment.UserDomainName;
-            var userName = Environment.UserName;
-#else
-            var userDomainName = Environment.GetEnvironmentVariable("USERNAME");
-            var userName = Environment.GetEnvironmentVariable("USERDOMAIN");
-#endif
-            return !string.IsNullOrWhiteSpace(userDomainName) ? $@"{userDomainName}\{userName}" : userName;
-        }
     }
-}
-
-#endif
+} 

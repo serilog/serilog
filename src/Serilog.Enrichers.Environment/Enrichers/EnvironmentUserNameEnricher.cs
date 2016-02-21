@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if PROCESS
+#if !DOTNET5_1
 
+using System;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Enrichers
 {
     /// <summary>
-    /// Enriches log events with a ProcessId property containing the current <see cref="System.Diagnostics.Process.Id"/>.
+    /// Enriches log events with an EnvironmentUserName property containing [<see cref="Environment.UserDomainName"/>\]<see cref="Environment.UserName"/>.
     /// </summary>
-    public class ProcessIdEnricher : ILogEventEnricher
+    public class EnvironmentUserNameEnricher : ILogEventEnricher
     {
         LogEventProperty _cachedProperty;
 
         /// <summary>
         /// The property name added to enriched log events.
         /// </summary>
-        public const string ProcessIdPropertyName = "ProcessId";
+        public const string EnvironmentUserNamePropertyName = "EnvironmentUserName";
 
         /// <summary>
         /// Enrich the log event.
@@ -38,9 +39,22 @@ namespace Serilog.Enrichers
         /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(ProcessIdPropertyName, System.Diagnostics.Process.GetCurrentProcess().Id);
+            _cachedProperty = _cachedProperty ?? propertyFactory.CreateProperty(EnvironmentUserNamePropertyName, GetEnvironmentUserName());
             logEvent.AddPropertyIfAbsent(_cachedProperty);
+        }
+
+        private static string GetEnvironmentUserName()
+        {
+#if !DOTNET5_4
+            var userDomainName = Environment.UserDomainName;
+            var userName = Environment.UserName;
+#else
+            var userDomainName = Environment.GetEnvironmentVariable("USERNAME");
+            var userName = Environment.GetEnvironmentVariable("USERDOMAIN");
+#endif
+            return !string.IsNullOrWhiteSpace(userDomainName) ? $@"{userDomainName}\{userName}" : userName;
         }
     }
 }
+
 #endif

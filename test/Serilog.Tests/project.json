@@ -17,7 +17,10 @@
     "Serilog.Sinks.RollingFile": { "target": "project" },
     "Serilog.Sinks.PeriodicBatching": { "target": "project" },
     "Serilog.Sinks.Observable": { "target": "project" },
-    "Serilog.Sinks.TextWriter": { "target": "project" }
+    "Serilog.Sinks.TextWriter": { "target": "project" },
+    "Serilog.Enrichers.Environment": { "target": "project" },
+    "Serilog.Enrichers.Thread": { "target": "project" },
+    "Serilog.Enrichers.Process": { "target": "project"}
   },
   "frameworks": {
     "dnx452": {
