@@ -26,7 +26,6 @@ namespace Serilog
     /// </summary>
     public static class ThreadLoggerConfigurationExtensions
     {
-
         /// <summary>
         /// Enrich log events with a ThreadId property containing the current <see cref="Thread.ManagedThreadId"/>.
         /// </summary>
