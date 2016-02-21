@@ -65,16 +65,10 @@ namespace Serilog.Tests.AppSettings.Tests
                 .FindEventEnricherConfigurationMethods(new[]
                 {
                     typeof(Log).GetTypeInfo().Assembly
-
-
 #if !DOTNET5_1
                     , typeof(MachineNameEnricher).GetTypeInfo().Assembly
-#endif
-
-#if !DOTNET5_1
                     , typeof(ProcessIdEnricher).GetTypeInfo().Assembly
 #endif
-
                     , typeof(ThreadIdEnricher).GetTypeInfo().Assembly
                 })
                 .Select(m => m.Name)

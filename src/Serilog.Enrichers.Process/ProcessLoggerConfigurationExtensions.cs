@@ -14,12 +14,15 @@
 
 
 using System;
-using System.Diagnostics;
 using Serilog.Configuration;
 using Serilog.Enrichers;
 
 namespace Serilog
 {
+    /// <summary>
+    /// Extends <see cref="LoggerConfiguration"/> to add enrichers related to process.
+    /// capabilities.
+    /// </summary>
     public static class ProcessLoggerConfigurationExtensions
     { 
         /// <summary>

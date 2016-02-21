@@ -5,7 +5,7 @@
   "tags": [ "serilog", "process", "enricher" ],
   "projectUrl": "http://serilog.net",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
-  "iconUrl": "http://serilog.net/images/serilog-extension-nuget.png",
+  "iconUrl": "http://serilog.net/images/serilog-enricher-nuget.png",
   "dependencies": {
     "Serilog": { "target": "project" }
   },

@@ -1,11 +1,11 @@
 ﻿{
   "version": "2.0.0-beta-*",
-  "description": "The enviornment enrichers for Serilog.",
+  "description": "Enrich Serilog log events with properties from System.Environment.",
   "authors": [ "Serilog Contributors" ],
   "tags": [ "serilog", "machine", "enricher" ],
   "projectUrl": "http://serilog.net",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
-  "iconUrl": "http://serilog.net/images/serilog-extension-nuget.png",
+  "iconUrl": "http://serilog.net/images/serilog-enricher-nuget.png",
   "dependencies": {
     "Serilog": { "target": "project" }
   },

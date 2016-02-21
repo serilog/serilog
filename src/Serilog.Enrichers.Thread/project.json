@@ -1,11 +1,11 @@
 ﻿{
   "version": "2.0.0-beta-*",
-  "description": "The thread enricher for Serilog.",
+  "description": "Enrich Serilog events with properties from the current thread.",
   "authors": [ "Serilog Contributors" ],
   "tags": [ "serilog", "thread", "enricher" ],
   "projectUrl": "http://serilog.net",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
-  "iconUrl": "http://serilog.net/images/serilog-extension-nuget.png",
+  "iconUrl": "http://serilog.net/images/serilog-enricher-nuget.png",
   "dependencies": {
     "Serilog": { "target": "project" }
   },
@@ -15,7 +15,7 @@
   "frameworks": {
     "net45": {
     },
-    "dotnet5.1": { 
+    "dotnet5.1": {
     }
   }
 }

@@ -18,6 +18,10 @@ using Serilog.Enrichers;
 
 namespace Serilog
 {
+    /// <summary>
+    /// Extends <see cref="LoggerConfiguration"/> to add enrichers for <see cref="System.Environment"/>.
+    /// capabilities.
+    /// </summary>
     public static class EnvironmentLoggerConfigurationExtensions
     { 
         /// <summary>
