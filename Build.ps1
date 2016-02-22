@@ -35,7 +35,7 @@ function Restore-Packages
 
 function Build-Projects
 {
-    param( $Directory)
+    param($Directory, $pack)
      
     $DirectoryName = $Directory.DirectoryName
     $artifactsFolder = join-path $root "artifacts"
@@ -44,22 +44,12 @@ function Build-Projects
     $packageFolder = join-path $projectsFolder "packages"
      
     & dnu build ("""" + $DirectoryName + """") --configuration Release --out $buildFolder; if($LASTEXITCODE -ne 0) { exit 1 }
-    & dnu pack ("""" + $DirectoryName + """") --configuration Release --out $packageFolder; if($LASTEXITCODE -ne 0) { exit 1 }
-}
-
-function Build-TestProjects
-{
-    param($Directory)
     
-    $DirectoryName = $Directory.DirectoryName
-    $artifactsFolder = join-path $root "artifacts"
-    $projectsFolder = join-path $artifactsFolder $Directory.Name 
-    $buildFolder = join-path $projectsFolder "testbin"
-    $packageFolder = join-path $projectsFolder "packages"
-    
-    & dnu build ("""" + $DirectoryName + """") --configuration Release --out $buildFolder; if($LASTEXITCODE -ne 0) { exit 1 }
+    if($pack){
+        & dnu pack ("""" + $DirectoryName + """") --configuration Release --out $packageFolder; if($LASTEXITCODE -ne 0) { exit 1 }
+    }
 }
-
+ 
 function Test-Projects
 {
     param([string] $DirectoryName)
@@ -104,8 +94,8 @@ $env:DNX_BUILD_VERSION = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$en
 Write-Host "Build number: " $env:DNX_BUILD_VERSION
 
 # Build/package
-Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_ }
-Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Build-TestProjects $_ }
+Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_ $true }
+Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_ $false }
 
 # Test
 Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Test-Projects $_.DirectoryName }
