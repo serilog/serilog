@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
 
-using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>; 
+using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
 
 namespace Serilog.Sinks.SystemConsole
 {
@@ -91,7 +91,15 @@ namespace Serilog.Sinks.SystemConsole
                         {
                             RenderOutputToken(palette, outputToken, outputProperties, output);
                         }
-                        else switch (propertyToken.PropertyName)
+                        else
+                        {
+                            LogEventPropertyValue propertyValue;
+                            if (!outputProperties.TryGetValue(propertyToken.PropertyName, out propertyValue))
+                            {
+                                continue;
+                            }
+
+                            switch (propertyToken.PropertyName)
                             {
                                 case OutputProperties.MessagePropertyName:
                                     RenderMessageToken(logEvent, palette, output);
@@ -103,6 +111,7 @@ namespace Serilog.Sinks.SystemConsole
                                     RenderOutputToken(palette, outputToken, outputProperties, output);
                                     break;
                             }
+                        }
                     }
                 }
                 finally { Console.ResetColor(); }
