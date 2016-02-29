@@ -37,21 +37,19 @@ namespace Serilog.Sinks.PeriodicBatching
     /// </remarks>
     public abstract class PeriodicBatchingSink : ILogEventSink, IDisposable
     {
-        const int NotStarted = 0;
-        const int Started = 1;
-        const int Unloading = 2;
-
         readonly int _batchSizeLimit;
         readonly ConcurrentQueue<LogEvent> _queue;
         readonly BatchedConnectionStatus _status;
         readonly Queue<LogEvent> _waitingBatch = new Queue<LogEvent>();
 
+        readonly object _stateLock = new object();
 #if NO_TIMER
         readonly PortableTimer _timer;
 #else
         readonly Timer _timer;
 #endif
-        int _state;
+        bool _unloading;
+        bool _started;
 
         /// <summary>
         /// Construct a sink posting to the specified database.
@@ -90,8 +88,13 @@ namespace Serilog.Sinks.PeriodicBatching
 
         void CloseAndFlush()
         {
-            if (Interlocked.CompareExchange(ref _state, Unloading, Started) != Started)
-                return;
+            lock (_stateLock)
+            {
+                if (!_started || _unloading)
+                    return;
+
+                _unloading = true;
+            }
 
 #if !NO_APPDOMAIN
             AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
@@ -209,8 +212,11 @@ namespace Serilog.Sinks.PeriodicBatching
                     while (_queue.TryDequeue(out evt)) { }
                 }
 
-                if (VolatileRead(ref _state) == Started)
-                    SetTimer(_status.NextInterval);
+                lock (_stateLock)
+                {
+                    if (!_unloading)
+                        SetTimer(_status.NextInterval);
+                }
             }
         }
 
@@ -243,20 +249,27 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-            var state = VolatileRead(ref _state);
-            if (state == Unloading) return;
+            if (_unloading)
+                return;
 
-            _queue.Enqueue(logEvent);
-
-            if (state == NotStarted)
+            if (!_started)
             {
-                if (Interlocked.CompareExchange(ref _state, Started, NotStarted) == NotStarted)
+                lock (_stateLock)
                 {
-                    // Special handling to try to get the first event across as quickly
-                    // as possible to show we're alive!
-                    SetTimer(TimeSpan.Zero);
+                    if (_unloading) return;
+                    if (!_started)
+                    {
+                        // Special handling to try to get the first event across as quickly
+                        // as possible to show we're alive!
+                        _queue.Enqueue(logEvent);
+                        _started = true;
+                        SetTimer(TimeSpan.Zero);
+                        return;
+                    }
                 }
             }
+
+            _queue.Enqueue(logEvent);
         }
 
         /// <summary>
@@ -276,15 +289,6 @@ namespace Serilog.Sinks.PeriodicBatching
         /// </summary>
         protected virtual void OnEmptyBatch()
         {
-        }
-
-        static int VolatileRead(ref int location)
-        {
-#if NET40
-            return Thread.VolatileRead(ref location);
-#else
-            return Volatile.Read(ref location);
-#endif
         }
     }
 }
