@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if INTERNAL_TESTS
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -232,5 +234,17 @@ namespace Serilog.Tests.Parameters
             var item = pv.Properties.Single();
             Assert.Equal("Item", item.Name);
         }
+
+        [Fact]
+        public void CSharpAnonymousTypesAreRecognizedWhenDestructuring()
+        {
+            var o = new { Foo = "Bar" };
+            var result = _converter.CreatePropertyValue(o, true);
+            Assert.Equal(typeof(StructureValue), result.GetType());
+            var structuredValue = (StructureValue)result;
+            Assert.Equal(null, structuredValue.TypeTag);
+        }
     }
 }
+
+#endif

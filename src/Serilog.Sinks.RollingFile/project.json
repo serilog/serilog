@@ -1,0 +1,26 @@
+﻿{
+  "version": "2.0.0-beta-*",
+  "description": "The rolling file sink for Serilog - Simple .NET logging with fully-structured events",
+  "authors": [ "Serilog Contributors" ],
+  "tags": [ "serilog", "file", "io", "rolling" ],
+  "projectUrl": "http://serilog.net",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "iconUrl": "http://serilog.net/images/serilog-sink-nuget.png",
+  "dependencies": {
+    "Serilog": { "target": "project" },
+    "Serilog.Sinks.File": { "target": "project" }
+  },
+  "compilationOptions": {
+    "keyFile": "../../assets/Serilog.snk"
+  },
+  "frameworks": {
+    "net45": {
+    }, 
+    "dotnet5.4": {
+      "dependencies": {
+        "System.IO": "4.0.11-beta-23516",
+        "System.IO.FileSystem.Primitives": "4.0.1-beta-23516" 
+      }
+    }
+  }
+}

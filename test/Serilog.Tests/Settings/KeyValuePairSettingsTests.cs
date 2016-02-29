@@ -8,6 +8,7 @@ using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
 using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
+using Serilog.Enrichers;
 
 namespace Serilog.Tests.AppSettings.Tests
 {
@@ -55,30 +56,35 @@ namespace Serilog.Tests.AppSettings.Tests
 
             // The core Serilog assembly is always considered
             Assert.Equal(1, configurationAssemblies.Count);
-        }
+        } 
 
         [Fact]
-        public void FindsConfigurationMethodsWithinAnAssembly()
+        public void FindsEventEnrichersWithinAnAssembly()
         {
-            var configurationMethods = KeyValuePairSettings
-                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink)
-#if DNXCORE50
-                    .GetTypeInfo()
+            var eventEnrichers = KeyValuePairSettings
+                .FindEventEnricherConfigurationMethods(new[]
+                {
+                    typeof(Log).GetTypeInfo().Assembly
+#if !DOTNET5_1
+                    , typeof(MachineNameEnricher).GetTypeInfo().Assembly
+                    , typeof(ProcessIdEnricher).GetTypeInfo().Assembly
 #endif
-                    .Assembly
-                    })
+                    , typeof(ThreadIdEnricher).GetTypeInfo().Assembly
+                })
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();
 
-            Assert.Equal(6, configurationMethods.Count);
-
-            Assert.True(configurationMethods.Contains("ColoredConsole"));
-            Assert.True(configurationMethods.Contains("Console"));
-            Assert.True(configurationMethods.Contains("DumpFile"));
-            Assert.True(configurationMethods.Contains("File"));
-            Assert.True(configurationMethods.Contains("RollingFile"));
-            Assert.True(configurationMethods.Contains("Trace"));
+            
+            Assert.True(eventEnrichers.Contains("FromLogContext"));
+#if !DOTNET5_1
+            Assert.True(eventEnrichers.Contains("WithEnvironmentUserName"));
+            Assert.True(eventEnrichers.Contains("WithMachineName"));
+#endif
+#if PROCESS
+            Assert.True(eventEnrichers.Contains("WithProcessId"));
+#endif
+            Assert.True(eventEnrichers.Contains("WithThreadId"));
         }
 
         [Fact]

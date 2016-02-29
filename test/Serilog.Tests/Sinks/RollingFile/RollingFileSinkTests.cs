@@ -1,4 +1,4 @@
-﻿#if FILE_IO
+﻿#if FILE_IO && INTERNAL_TESTS
 
 using System;
 using System.Collections.Generic;

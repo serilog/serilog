@@ -13,23 +13,18 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
-
-#if NET40
-using IPropertyDictionary = System.Collections.Generic.IDictionary<string, Serilog.Events.LogEventPropertyValue>;
-#else
-using IPropertyDictionary = System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue>;
-#endif
 
 namespace Serilog.Formatting.Display
 {
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {
         readonly MessageTemplate _template;
-        readonly IPropertyDictionary _properties;
+        readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
 
-        public LogEventPropertyMessageValue(MessageTemplate template, IPropertyDictionary properties)
+        public LogEventPropertyMessageValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
         {
             _template = template;
             _properties = properties;

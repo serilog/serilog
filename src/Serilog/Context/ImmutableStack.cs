@@ -12,24 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if LOGCONTEXT
 using System;
 using System.Collections.Generic;
+#if REMOTING
 using System.Runtime.Serialization;
+#endif
 
 namespace Serilog.Context
 {
     // Needed because of the shallow-copying behaviour of
     // LogicalCallContext.
+#if REMOTING
     [Serializable]
     class ImmutableStack<T> : IEnumerable<T>, ISerializable
+#else
+    class ImmutableStack<T> : IEnumerable<T>
+#endif
     {
         readonly ImmutableStack<T> _under;
         readonly T _top;
 
+#if REMOTING
         public ImmutableStack(SerializationInfo info, StreamingContext context)
         {
         }
+
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+        }
+#endif
 
         ImmutableStack()
         {
@@ -68,9 +79,5 @@ namespace Serilog.Context
 
         public T Top => _top;
 
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-        }
     }
 }
-#endif

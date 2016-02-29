@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if INTERNAL_TESTS
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -165,3 +167,5 @@ namespace Serilog.Tests.Core
         }
     }
 }
+
+#endif

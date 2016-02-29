@@ -22,10 +22,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
-
-#if NET40
-using Serilog.Platform;
-#endif
+using System.Runtime.CompilerServices;
 
 namespace Serilog.Parameters
 {
@@ -154,9 +151,12 @@ namespace Serilog.Parameters
 
             if (destructuring == Destructuring.Destructure)
             {
-                var typeTag = value.GetType().Name;
-                if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
+                var type = value.GetType();
+                var typeTag = type.Name;
+                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+                {
                     typeTag = null;
+                }
 
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
@@ -166,20 +166,9 @@ namespace Serilog.Parameters
 
         bool IsValueTypeDictionary(Type valueType)
         {
-            return
-#if NET40
-                   valueType.IsGenericType &&
-#else
-                   valueType.IsConstructedGenericType &&
-#endif
+            return valueType.IsConstructedGenericType &&
                    valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
-                   IsValidDictionaryKeyType(
-#if NET40
-                       valueType.GetGenericArguments()
-#else
-                       valueType.GenericTypeArguments
-#endif
-                       [0]);
+                   IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]);
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
@@ -195,11 +184,7 @@ namespace Serilog.Parameters
                 object propValue;
                 try
                 {
-#if NET40
-                    propValue = prop.GetValue(value, null);
-#else
                     propValue = prop.GetValue(value);
-#endif
                 }
                 catch (TargetParameterCountException)
                 {
@@ -213,6 +198,18 @@ namespace Serilog.Parameters
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool IsCompilerGeneratedType(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            var typeName = type.Name;
+
+            //C# Anonymous types always start with "<>" and VB's start with "VB$"
+            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
+                && (typeName[0] == '<'
+                    || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
     }
 }

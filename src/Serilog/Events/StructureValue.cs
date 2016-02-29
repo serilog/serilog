@@ -17,12 +17,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-#if NET40
-using IPropertyList = System.Collections.Generic.IList<Serilog.Events.LogEventProperty>;
-#else
-using IPropertyList = System.Collections.Generic.IReadOnlyList<Serilog.Events.LogEventProperty>;
-#endif
-
 namespace Serilog.Events
 {
     /// <summary>
@@ -58,7 +52,7 @@ namespace Serilog.Events
         /// <remarks>Not presented as a dictionary because dictionary construction is
         /// relatively expensive; it is cheaper to build a dictionary over properties only
         /// when the structure is of interest.</remarks>
-        public IPropertyList Properties => _properties;
+        public IReadOnlyList<LogEventProperty> Properties => _properties;
 
         /// <summary>
         /// Render the value to the output.

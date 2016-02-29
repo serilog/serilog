@@ -59,6 +59,8 @@ namespace Serilog.Tests
             Assert.False(sink.IsDisposed);
         }
 
+#if INTERNAL_TESTS
+
         [Fact]
         public void AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
@@ -78,7 +80,9 @@ namespace Serilog.Tests
             Assert.True(events.Contains(included));
         }
 
-// ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
+#endif
+
+        // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
         class AB
         {
             public int A { get; set; }
@@ -246,6 +250,22 @@ namespace Serilog.Tests
         {
             var actual = new LoggerConfiguration().CreateLogger();
             Assert.Equal(actual.GetType().Name, "SilentLogger");
+        }
+
+        [Fact]
+        public void LastMinimumLevelConfigurationWins()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Fatal))
+                .MinimumLevel.Debug()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(1, sink.Events.Count);
         }
     }
 }
