@@ -244,15 +244,23 @@ namespace Serilog.Sinks.PeriodicBatching
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-            lock (_stateLock)
+            if (_unloading)
+                return;
+
+            if (!_started)
             {
-                if (_unloading) return;
-                if (!_started)
+                lock (_stateLock)
                 {
-                    // Special handling to try to get the first event across as quickly
-                    // as possible to show we're alive!
-                    _started = true;
-                    SetTimer(TimeSpan.Zero);
+                    if (_unloading) return;
+                    if (!_started)
+                    {
+                        // Special handling to try to get the first event across as quickly
+                        // as possible to show we're alive!
+                        _queue.Enqueue(logEvent);
+                        _started = true;
+                        SetTimer(TimeSpan.Zero);
+                        return;
+                    }
                 }
             }
 
