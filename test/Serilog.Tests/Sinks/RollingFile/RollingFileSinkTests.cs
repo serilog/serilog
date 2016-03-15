@@ -69,6 +69,71 @@ namespace Serilog.Tests.Sinks.RollingFile
                 Directory.Delete(temp, true);
             }
         }
+        
+        [Test]
+        public void WhenFileSizeLimitIsReachedNextLogFileSequenceIsCreated()
+        {
+            SetupAndCleanup((logger, logFilePath, nextLogFilePath, maxBytes) => {
+                // fill the current log file
+                logger.Information(new string('a', maxBytes));
+
+                // now write a few more bytes that would push it past the file size limit
+                logger.Information(new string('b', 10));
+
+                // make sure that the first log file is at least as long as the file size limit
+                // then, check that the next log file exists
+                var size = new FileInfo(logFilePath).Length;
+                Assert.That(size >= maxBytes);
+                Assert.That(File.Exists(nextLogFilePath));
+            });
+        }
+
+        [Test]
+        public void WhenNextLogEventCannotFitWithinFileSizeLimitNextLogFileSequenceIsCreated()
+        {
+            SetupAndCleanup((logger, logFilePath, nextLogFilePath, maxBytes) => {
+                // write a few bytes less than the file size limit
+                logger.Information(new string('a', maxBytes - 10));
+
+                // now write a few more bytes that would push us past the file size limit
+                logger.Information(new string('b', 20));
+
+                // make sure that the first log file has not reached file size limit
+                // then, check that the next log file exists
+                var size = new FileInfo(logFilePath).Length;
+                Assert.That(size < maxBytes);
+                Assert.That(File.Exists(nextLogFilePath));
+            });
+        }
+        
+        void SetupAndCleanup(Action<ILogger,string,string,int> actAndAssert)
+        {
+            Clock.SetTestDateTimeNow(Some.Instant().Date);
+	        const int maxBytes = 100;
+            const string template = "{Message}";
+            var fileName = Guid.NewGuid().ToString() + "-{Date}.txt";
+            var pathFormat = Path.Combine(Path.GetTempPath(), fileName);
+            var logFilePath = pathFormat.Replace("{Date}", Some.Instant().ToString("yyyyMMdd"));
+            var nextLogFilePath = pathFormat.Replace("{Date}.txt", string.Format("{0}_001.txt", Some.Instant().ToString("yyyyMMdd")));
+            ILogger log = null;
+
+            try
+            {
+                log = new LoggerConfiguration()
+                    .WriteTo.RollingFile(pathFormat, fileSizeLimitBytes: maxBytes, outputTemplate: template)
+                    .CreateLogger();
+
+                actAndAssert(log, logFilePath, nextLogFilePath, maxBytes);
+            }
+            finally
+            {
+                var disposable = log as IDisposable;
+                if (disposable != null) disposable.Dispose();
+                GC.Collect();
+                if (File.Exists(logFilePath)) File.Delete(logFilePath);
+                if (File.Exists(nextLogFilePath)) File.Delete(nextLogFilePath);
+            }
+        }
 
         static void TestRollingEventSequence(params LogEvent[] events)
         {

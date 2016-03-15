@@ -42,6 +42,7 @@ namespace Serilog.Sinks.RollingFile
         bool _isDisposed;
         DateTime? _nextCheckpoint;
         FileSink _currentFile;
+        string _currentFilePath = string.Empty;
 
         /// <summary>Construct a <see cref="RollingFileSink"/>.</summary>
         /// <param name="pathFormat">String describing the location of the log files,
@@ -93,7 +94,22 @@ namespace Serilog.Sinks.RollingFile
                 // null until the next checkpoint passes, at which time another attempt will be made to
                 // open it.
                 if (_currentFile != null)
-                    _currentFile.Emit(logEvent);
+                {
+                    try
+                    {
+                        _currentFile.Emit(logEvent);
+                    }
+                    catch (IOException ioe)
+                    {
+                        var errorCode = Marshal.GetHRForException(ioe) & ((1 << 16) - 1);
+                        if (errorCode == FileSink.CustomHResultErrorCodeFileSizeLimitReached)
+                        {
+                            // if this log file has reached the file size limit, advance to the next log file and try logging this event again
+                            AlignCurrentFileTo(Clock.DateTimeNow);
+                            _currentFile.Emit(logEvent);
+                        }
+                    }
+                }
             }
         }
 
@@ -103,14 +119,20 @@ namespace Serilog.Sinks.RollingFile
             {
                 OpenFile(now);
             }
-            else if (now >= _nextCheckpoint.Value)
+            else if (now >= _nextCheckpoint.Value ||
+                    (File.Exists(_currentFilePath) && _fileSizeLimitBytes <= new FileInfo(_currentFilePath).Length))
             {
                 CloseFile();
                 OpenFile(now);
             }
+            else if (_currentFile.FileSizeLimitExceeded)
+            {
+                CloseFile();
+                OpenFile(now, true);
+            }
         }
 
-        void OpenFile(DateTime now)
+        void OpenFile(DateTime now, bool forceNextSequence = false)
         {
             var date = now.Date;
 
@@ -133,6 +155,7 @@ namespace Serilog.Sinks.RollingFile
                 .FirstOrDefault();
 
             var sequence = latestForThisDate != null ? latestForThisDate.SequenceNumber : 0;
+            if (forceNextSequence) { sequence++; }
 
             const int maxAttempts = 3;
             for (var attempt = 0; attempt < maxAttempts; attempt++)
@@ -143,6 +166,7 @@ namespace Serilog.Sinks.RollingFile
                 try
                 {
                     _currentFile = new FileSink(path, _textFormatter, _fileSizeLimitBytes, _encoding);
+                    _currentFilePath = path;
                 }
                 catch (IOException ex)
                 {
@@ -150,6 +174,12 @@ namespace Serilog.Sinks.RollingFile
                     if (errorCode == 32 || errorCode == 33)
                     {
                         SelfLog.WriteLine("Rolling file target {0} was locked, attempting to open next in sequence (attempt {1})", path, attempt + 1);
+                        sequence++;
+                        continue;
+                    }
+                    if (errorCode == FileSink.CustomHResultErrorCodeFileSizeLimitReached)
+                    {
+                        SelfLog.WriteLine("Rolling file target {0} has reached or exceeded the file size limit, attempting to open next in sequence (attempt {2})", path, attempt + 1);
                         sequence++;
                         continue;
                     }
@@ -220,7 +250,7 @@ namespace Serilog.Sinks.RollingFile
                 _currentFile.Dispose();
                 _currentFile = null;
             }
-
+            
             _nextCheckpoint = null;
         }
     }

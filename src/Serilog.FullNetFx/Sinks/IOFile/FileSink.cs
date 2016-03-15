@@ -32,6 +32,23 @@ namespace Serilog.Sinks.IOFile
         readonly ITextFormatter _textFormatter;
         readonly object _syncRoot = new object();
 
+        /// <summary>
+        /// Custom HResult for indicating that a log file has reached the configured max file size
+        /// </summary>
+        public const int CustomHResultErrorCodeFileSizeLimitReached = 20001;
+
+        /// <summary>
+        /// When fileSizeLimitBytes is not null, returns true if CharacterCountLimitedTextWriter has reached the character limit
+        /// </summary>
+        public bool FileSizeLimitExceeded
+        {
+            get
+            {
+                var writer = _output as CharacterCountLimitedTextWriter;
+                return writer != null && writer.CharacterLimitExceeded;
+            }
+        }
+
         /// <summary>Construct a <see cref="FileSink"/>.</summary>
         /// <param name="path">Path to the file.</param>
         /// <param name="textFormatter">Formatter used to convert log events to text.</param>
@@ -57,6 +74,7 @@ namespace Serilog.Sinks.IOFile
             {
                 var initialBytes = file.Length;
                 var remainingCharacters = Math.Max(fileSizeLimitBytes.Value - initialBytes, 0L) / BytesPerCharacterApproximate;
+                if (remainingCharacters <= 0) throw new IOException("File size limit has been reached or exceeded", CustomHResultErrorCodeFileSizeLimitReached);
                 _output = new CharacterCountLimitedTextWriter(outputWriter, remainingCharacters);
             }
             else
@@ -92,6 +110,11 @@ namespace Serilog.Sinks.IOFile
             {
                 _textFormatter.Format(logEvent, _output);
                 _output.Flush();
+            }
+
+            if (FileSizeLimitExceeded)
+            {
+                throw new IOException("File size limit has been exceeded", CustomHResultErrorCodeFileSizeLimitReached);
             }
         }
 
