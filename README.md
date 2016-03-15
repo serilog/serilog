@@ -1,5 +1,7 @@
 #Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master)  [![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/) [![Rager Releases](http://rager.io/badge.svg?url=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSerilog%2F)](http://rager.io/projects/search?badge=1&query=nuget.org/packages/Serilog/)
 
+[![Join the chat at https://gitter.im/serilog/serilog](https://badges.gitter.im/serilog/serilog.svg)](https://gitter.im/serilog/serilog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Serilog combines the best features of traditional and structured diagnostic logging in an easy-to-use package.
 
 * [Homepage](http://serilog.net)
