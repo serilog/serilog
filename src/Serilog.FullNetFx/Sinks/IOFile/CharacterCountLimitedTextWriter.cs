@@ -31,6 +31,14 @@ namespace Serilog.Sinks.IOFile
             _remainingCharacters = remainingCharacters;
         }
 
+        public bool CharacterLimitExceeded
+        { 
+            get
+            {
+                return _remainingCharacters < 0;
+            }
+        }
+
         public override Encoding Encoding
         {
             get
@@ -68,10 +76,17 @@ namespace Serilog.Sinks.IOFile
             {
                 _outputWriter.Write(buffer, index, count);
             }
-            else
+            else if (remaining == 0)
             {
                 // Prevent underflow (interlocking prevents torn reads)
                 Interlocked.Exchange(ref _remainingCharacters, 0L);
+            }
+            else
+            {
+                // Prevent underflow (interlocking prevents torn reads)
+                // This enables us to distinguish between the file size limit being reached (i.e. the condition above)
+                // and not having enough space for the current message
+                Interlocked.Exchange(ref _remainingCharacters, -1L);
             }
         }
 
