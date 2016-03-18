@@ -23,12 +23,6 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Tests", "test\Seril
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Settings.AppSettings", "src\Serilog.Settings.AppSettings\Serilog.Settings.AppSettings.xproj", "{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Enrichers.Environment", "src\Serilog.Enrichers.Environment\Serilog.Enrichers.Environment.xproj", "{B884782D-6C07-4779-9074-D97F622799A9}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Enrichers.Process", "src\Serilog.Enrichers.Process\Serilog.Enrichers.Process.xproj", "{2312A998-5E53-4355-9CB6-6014252B3E88}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Enrichers.Thread", "src\Serilog.Enrichers.Thread\Serilog.Enrichers.Thread.xproj", "{E0BD3797-55A5-4E8C-8DE7-8487BEB75914}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,18 +41,6 @@ Global
 		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B884782D-6C07-4779-9074-D97F622799A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B884782D-6C07-4779-9074-D97F622799A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B884782D-6C07-4779-9074-D97F622799A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B884782D-6C07-4779-9074-D97F622799A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2312A998-5E53-4355-9CB6-6014252B3E88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2312A998-5E53-4355-9CB6-6014252B3E88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2312A998-5E53-4355-9CB6-6014252B3E88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2312A998-5E53-4355-9CB6-6014252B3E88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E0BD3797-55A5-4E8C-8DE7-8487BEB75914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0BD3797-55A5-4E8C-8DE7-8487BEB75914}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E0BD3797-55A5-4E8C-8DE7-8487BEB75914}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E0BD3797-55A5-4E8C-8DE7-8487BEB75914}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,8 +49,5 @@ Global
 		{803CD13A-D54B-4CEC-A55F-E22AE3D93B3C} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4} = {037440DE-440B-4129-9F7A-09B42D00397E}
-		{B884782D-6C07-4779-9074-D97F622799A9} = {037440DE-440B-4129-9F7A-09B42D00397E}
-		{2312A998-5E53-4355-9CB6-6014252B3E88} = {037440DE-440B-4129-9F7A-09B42D00397E}
-		{E0BD3797-55A5-4E8C-8DE7-8487BEB75914} = {037440DE-440B-4129-9F7A-09B42D00397E}
 	EndGlobalSection
 EndGlobal
