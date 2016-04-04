@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 
 namespace Serilog.Parsing
 {
@@ -121,6 +122,11 @@ namespace Serilog.Parsing
             if (Alignment.Value.Direction == AlignmentDirection.Left)
                 output.Write(new string(' ', pad));
         }
+
+        /// <summary>
+        /// Return whether this is the Level output token
+        /// </summary>
+        public bool IsLevelProperty => OutputProperties.LevelPropertyName.Equals(PropertyName);
 
         /// <summary>
         /// The property name.

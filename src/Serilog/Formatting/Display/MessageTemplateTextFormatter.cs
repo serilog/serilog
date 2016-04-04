@@ -62,7 +62,7 @@ namespace Serilog.Formatting.Display
             // everything from the log event, but often we won't need any more than
             // just the standard timestamp/message etc.
             var outputProperties = OutputProperties.GetOutputProperties(logEvent);
-
+            
             foreach (var token in _outputTemplate.Tokens)
             {
                 var pt = token as PropertyToken;
@@ -87,6 +87,15 @@ namespace Serilog.Formatting.Display
                     var overridden = new Dictionary<string, LogEventPropertyValue>
                     {
                         { pt.PropertyName, new LiteralStringValue((string) sv.Value) }
+                    };
+
+                    token.Render(overridden, output, _formatProvider);
+                }
+                else if (pt.IsLevelProperty)
+                {
+                    var overridden = new Dictionary<string, LogEventPropertyValue>
+                    {
+                        { pt.PropertyName, new LogEventLevelValue(logEvent.Level, pt.Alignment) }
                     };
 
                     token.Render(overridden, output, _formatProvider);

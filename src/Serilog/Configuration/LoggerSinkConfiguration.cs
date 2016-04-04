@@ -14,12 +14,11 @@
 
 using System;
 using System.ComponentModel;
-using System.IO;
+
 using Serilog.Core;
 using Serilog.Core.Sinks;
 using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Formatting.Display; 
 
 namespace Serilog.Configuration
 {
