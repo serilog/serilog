@@ -23,12 +23,12 @@ namespace Serilog.Formatting.Display
 {
     // allows for the specific handling of the {Level} element.
     // can now have a fixed width applied to it, as well as casing rules.
-    class LogEventLevelValue : LogEventPropertyValue
+    internal class LogEventLevelValue : LogEventPropertyValue
     {
         private readonly LogEventLevel _value;
-        private readonly Alignment? _alignment;
 
-        private Dictionary<LogEventLevel, string[]> _shortenedLevelMap
+        // Assumes reading from Dictionary<,> is thread-safe after construction
+        private static readonly Dictionary<LogEventLevel, string[]> _shortenedLevelMap
             = new Dictionary<LogEventLevel, string[]>
                   {
                       { LogEventLevel.Verbose, new []{ "V", "Vb", "Vrb", "Verb" } },
@@ -40,50 +40,67 @@ namespace Serilog.Formatting.Display
                   };
 
         public LogEventLevelValue(
-            LogEventLevel value,
-            Alignment? alignment)
+            LogEventLevel value)
         {
             _value = value;
-            _alignment = alignment;
         }
 
-        public string FormattedValue()
+        /// <summary>
+        /// This method will apply only upper or lower case formatting, not fixed width
+        /// </summary>
+        public override void Render(
+            TextWriter output, 
+            string format = null, 
+            IFormatProvider formatProvider = null)
         {
-            var formattedValue = _value.ToString();
-
-            if (!_alignment.HasValue || _alignment.Value.Width <= 0)
-            {
-                return formattedValue;
-            }
-
-            var alignmentValue = _alignment.Value;
-
-            if (formattedValue.Length == alignmentValue.Width)
-            {
-                return formattedValue;
-            }
-
-            if (IsCustomWidthSupported(alignmentValue.Width))
-            {
-                return ShortLevelFor(alignmentValue);
-            }
-
-            if (IsOutputStringTooWide(alignmentValue, formattedValue))
-            {
-                return formattedValue.Substring(0, alignmentValue.Width);
-            }
-
-            return formattedValue;
+            ApplyFormatting(output, _value.ToString(), null, format);
         }
 
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        /// <summary>
+        /// Will apply fixed width rules using the provided alignment
+        /// </summary>
+        public void Render(
+            TextWriter output,
+            Alignment? alignment,
+            string format = null,
+            IFormatProvider formatProvider = null)
         {
-            new LiteralStringValue(FormattedValue()).Render(output, format, formatProvider);
+            ApplyFormatting(output, AlignedValue(alignment), alignment, format);
         }
 
-        private string ShortLevelFor(Alignment alignmentValue)
+        private string AlignedValue(Alignment? alignment)
         {
-            return _shortenedLevelMap[_value][alignmentValue.Width - 1];
+            if (!alignment.HasValue || alignment.Value.Width <= 0)
+            {
+                return _value.ToString();
+            }
+
+            if (_value.ToString().Length == alignment.Value.Width)
+            {
+                return _value.ToString();
+            }
+
+            if (IsCustomWidthSupported(alignment.Value.Width))
+            {
+                return ShortLevelFor(_value, alignment.Value);
+            }
+
+            if (IsOutputStringTooWide(alignment.Value, _value.ToString()))
+            {
+                return _value.ToString().Substring(0, alignment.Value.Width);
+            }
+
+            return _value.ToString();
+        }
+
+        private void ApplyFormatting(TextWriter output, string value, Alignment? alignment, string format = null)
+        {
+            Padding.Apply(output, Casing.Format(value, format), alignment);
+        }
+
+        private static string ShortLevelFor(LogEventLevel value, Alignment alignmentValue)
+        {
+            return _shortenedLevelMap[value][alignmentValue.Width - 1];
         }
 
         private static bool IsOutputStringTooWide(Alignment alignmentValue, string formattedValue)

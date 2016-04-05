@@ -91,14 +91,10 @@ namespace Serilog.Formatting.Display
 
                     token.Render(overridden, output, _formatProvider);
                 }
-                else if (pt.IsLevelProperty)
+                else if (OutputProperties.IsLevelProperty(pt))
                 {
-                    var overridden = new Dictionary<string, LogEventPropertyValue>
-                    {
-                        { pt.PropertyName, new LogEventLevelValue(logEvent.Level, pt.Alignment) }
-                    };
-
-                    token.Render(overridden, output, _formatProvider);
+                    var lpv = (LogEventLevelValue)propertyValue;
+                    lpv.Render(output, pt.Alignment, pt.Format);
                 }
                 else
                 {

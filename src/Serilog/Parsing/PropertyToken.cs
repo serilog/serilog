@@ -112,21 +112,8 @@ namespace Serilog.Parsing
                 return;
             }
 
-            var pad = Alignment.Value.Width - value.Length;
-
-            if (Alignment.Value.Direction == AlignmentDirection.Right)
-                output.Write(new string(' ', pad));
-
-            output.Write(value);
-
-            if (Alignment.Value.Direction == AlignmentDirection.Left)
-                output.Write(new string(' ', pad));
+            Padding.Apply(output, value, Alignment.Value);
         }
-
-        /// <summary>
-        /// Return whether this is the Level output token
-        /// </summary>
-        public bool IsLevelProperty => OutputProperties.LevelPropertyName.Equals(PropertyName);
 
         /// <summary>
         /// The property name.
