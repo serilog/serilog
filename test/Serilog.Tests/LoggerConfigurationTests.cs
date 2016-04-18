@@ -246,13 +246,6 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void AnUnconfiguredLoggerShouldBeTheNullLogger()
-        {
-            var actual = new LoggerConfiguration().CreateLogger();
-            Assert.Equal(actual.GetType().Name, "SilentLogger");
-        }
-
-        [Fact]
         public void LastMinimumLevelConfigurationWins()
         {
             var sink = new CollectingSink();
