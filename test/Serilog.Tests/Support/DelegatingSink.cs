@@ -23,6 +23,7 @@ namespace Serilog.Tests.Support
         {
             LogEvent result = null;
             var l = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
                 .WriteTo.Sink(new DelegatingSink(le => result = le))
                 .CreateLogger();
 

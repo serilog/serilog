@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
+using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
@@ -65,7 +66,7 @@ namespace Serilog.Formatting.Display
 
             result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
-            result[LevelPropertyName] = new ScalarValue(logEvent.Level);
+            result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
             result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
@@ -73,5 +74,10 @@ namespace Serilog.Formatting.Display
 
             return result;
         }
+
+        /// <summary>
+        /// Return whether the given token is for the Level property.
+        /// </summary>
+        public static bool IsLevelProperty(PropertyToken token) => LevelPropertyName.Equals(token.PropertyName);
     }
 }

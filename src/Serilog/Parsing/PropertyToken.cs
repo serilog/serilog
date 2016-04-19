@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 
 namespace Serilog.Parsing
 {
@@ -111,15 +112,7 @@ namespace Serilog.Parsing
                 return;
             }
 
-            var pad = Alignment.Value.Width - value.Length;
-
-            if (Alignment.Value.Direction == AlignmentDirection.Right)
-                output.Write(new string(' ', pad));
-
-            output.Write(value);
-
-            if (Alignment.Value.Direction == AlignmentDirection.Left)
-                output.Write(new string(' ', pad));
+            Padding.Apply(output, value, Alignment.Value);
         }
 
         /// <summary>
