@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 using Serilog.Events;
@@ -27,17 +26,16 @@ namespace Serilog.Formatting.Display
     {
         readonly LogEventLevel _value;
 
-        // Assumes reading from Dictionary<,> is thread-safe after construction
-        static readonly Dictionary<LogEventLevel, string[]> _shortenedLevelMap = new Dictionary<LogEventLevel, string[]>
-                                                                                  {
-                                                                                      { LogEventLevel.Verbose, new []{ "V", "Vb", "Vrb", "Verb" } },
-                                                                                      { LogEventLevel.Debug, new []{ "D", "De", "Dbg", "Dbug" } },
-                                                                                      { LogEventLevel.Information, new []{ "I", "In", "Inf", "Info" } },
-                                                                                      { LogEventLevel.Warning, new []{ "W", "Wn", "Wrn", "Warn" } },
-                                                                                      { LogEventLevel.Error, new []{ "E", "Er", "Err", "Eror" } },
-                                                                                      { LogEventLevel.Fatal, new []{ "F", "Fa", "Ftl", "Fatl" } },
-                                                                                  };
-
+        static readonly string[][] _shortenedLevelMap 
+            = {
+                new []{ "V", "Vb", "Vrb", "Verb" },
+                new []{ "D", "De", "Dbg", "Dbug" },
+                new []{ "I", "In", "Inf", "Info" },
+                new []{ "W", "Wn", "Wrn", "Warn" },
+                new []{ "E", "Er", "Err", "Eror" },
+                new []{ "F", "Fa", "Ftl", "Fatl" }
+              };
+        
         public LogEventLevelValue(
             LogEventLevel value)
         {
@@ -101,7 +99,11 @@ namespace Serilog.Formatting.Display
 
         private static string ShortLevelFor(LogEventLevel value, int width)
         {
-            return _shortenedLevelMap[value][width - 1];
+            var index = (int)value;
+            if (index < 0 || index > (int)LogEventLevel.Fatal)
+                return string.Empty;
+
+            return _shortenedLevelMap[index][width - 1];
         }
 
         private static bool IsOutputStringTooWide(Alignment alignmentValue, string formattedValue)
