@@ -4,7 +4,7 @@ using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
-    internal static class Padding
+    static class Padding
     {
         /// <summary>
         /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.

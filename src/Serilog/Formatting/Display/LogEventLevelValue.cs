@@ -23,21 +23,20 @@ namespace Serilog.Formatting.Display
 {
     // allows for the specific handling of the {Level} element.
     // can now have a fixed width applied to it, as well as casing rules.
-    internal class LogEventLevelValue : LogEventPropertyValue
+    class LogEventLevelValue : LogEventPropertyValue
     {
-        private readonly LogEventLevel _value;
+        readonly LogEventLevel _value;
 
         // Assumes reading from Dictionary<,> is thread-safe after construction
-        private static readonly Dictionary<LogEventLevel, string[]> _shortenedLevelMap
-            = new Dictionary<LogEventLevel, string[]>
-                  {
-                      { LogEventLevel.Verbose, new []{ "V", "Vb", "Vrb", "Verb" } },
-                      { LogEventLevel.Debug, new []{ "D", "De", "Dbg", "Dbug" } },
-                      { LogEventLevel.Information, new []{ "I", "In", "Inf", "Info" } },
-                      { LogEventLevel.Warning, new []{ "W", "Wn", "Wrn", "Warn" } },
-                      { LogEventLevel.Error, new []{ "E", "Er", "Err", "Eror" } },
-                      { LogEventLevel.Fatal, new []{ "F", "Fa", "Ftl", "Fatl" } },
-                  };
+        static readonly Dictionary<LogEventLevel, string[]> _shortenedLevelMap = new Dictionary<LogEventLevel, string[]>
+                                                                                  {
+                                                                                      { LogEventLevel.Verbose, new []{ "V", "Vb", "Vrb", "Verb" } },
+                                                                                      { LogEventLevel.Debug, new []{ "D", "De", "Dbg", "Dbug" } },
+                                                                                      { LogEventLevel.Information, new []{ "I", "In", "Inf", "Info" } },
+                                                                                      { LogEventLevel.Warning, new []{ "W", "Wn", "Wrn", "Warn" } },
+                                                                                      { LogEventLevel.Error, new []{ "E", "Er", "Err", "Eror" } },
+                                                                                      { LogEventLevel.Fatal, new []{ "F", "Fa", "Ftl", "Fatl" } },
+                                                                                  };
 
         public LogEventLevelValue(
             LogEventLevel value)
@@ -70,27 +69,29 @@ namespace Serilog.Formatting.Display
 
         private string AlignedValue(Alignment? alignment)
         {
+            var stringValue = _value.ToString();
+
             if (!alignment.HasValue || alignment.Value.Width <= 0)
             {
-                return _value.ToString();
+                return stringValue;
             }
 
-            if (_value.ToString().Length == alignment.Value.Width)
+            if (stringValue.Length == alignment.Value.Width)
             {
-                return _value.ToString();
+                return stringValue;
             }
 
             if (IsCustomWidthSupported(alignment.Value.Width))
             {
-                return ShortLevelFor(_value, alignment.Value);
+                return ShortLevelFor(_value, alignment.Value.Width);
             }
 
-            if (IsOutputStringTooWide(alignment.Value, _value.ToString()))
+            if (IsOutputStringTooWide(alignment.Value, stringValue))
             {
-                return _value.ToString().Substring(0, alignment.Value.Width);
+                return stringValue.Substring(0, alignment.Value.Width);
             }
 
-            return _value.ToString();
+            return stringValue;
         }
 
         private void ApplyFormatting(TextWriter output, string value, Alignment? alignment, string format = null)
@@ -98,9 +99,9 @@ namespace Serilog.Formatting.Display
             Padding.Apply(output, Casing.Format(value, format), alignment);
         }
 
-        private static string ShortLevelFor(LogEventLevel value, Alignment alignmentValue)
+        private static string ShortLevelFor(LogEventLevel value, int width)
         {
-            return _shortenedLevelMap[value][alignmentValue.Width - 1];
+            return _shortenedLevelMap[value][width - 1];
         }
 
         private static bool IsOutputStringTooWide(Alignment alignmentValue, string formattedValue)

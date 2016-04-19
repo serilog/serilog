@@ -82,6 +82,7 @@ namespace Serilog.Formatting.Display
                 // rendering and support some additional formats: 'u' for uppercase
                 // and 'w' for lowercase.
                 var sv = propertyValue as ScalarValue;
+                LogEventLevelValue lelv;
                 if (sv != null && sv.Value is string)
                 {
                     var overridden = new Dictionary<string, LogEventPropertyValue>
@@ -91,10 +92,9 @@ namespace Serilog.Formatting.Display
 
                     token.Render(overridden, output, _formatProvider);
                 }
-                else if (OutputProperties.IsLevelProperty(pt))
+                else if ((lelv = (propertyValue as LogEventLevelValue)) != null)
                 {
-                    var lpv = (LogEventLevelValue)propertyValue;
-                    lpv.Render(output, pt.Alignment, pt.Format);
+                    lelv.Render(output, pt.Alignment, pt.Format);
                 }
                 else
                 {
