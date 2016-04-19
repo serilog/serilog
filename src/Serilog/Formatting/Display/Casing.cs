@@ -1,6 +1,6 @@
 ﻿namespace Serilog.Formatting.Display
 {
-    internal static class Casing
+    static class Casing
     {
         /// <summary>
         /// Apply upper or lower casing to <paramref name="value"/> when <paramref name="format"/> is provided.

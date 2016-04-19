@@ -36,8 +36,7 @@ namespace Serilog.Formatting.Display
                 new []{ "F", "Fa", "Ftl", "Fatl" }
               };
         
-        public LogEventLevelValue(
-            LogEventLevel value)
+        public LogEventLevelValue(LogEventLevel value)
         {
             _value = value;
         }
@@ -45,10 +44,7 @@ namespace Serilog.Formatting.Display
         /// <summary>
         /// This method will apply only upper or lower case formatting, not fixed width
         /// </summary>
-        public override void Render(
-            TextWriter output, 
-            string format = null, 
-            IFormatProvider formatProvider = null)
+        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             ApplyFormatting(output, _value.ToString(), null, format);
         }
@@ -56,33 +52,24 @@ namespace Serilog.Formatting.Display
         /// <summary>
         /// Will apply fixed width rules using the provided alignment
         /// </summary>
-        public void Render(
-            TextWriter output,
-            Alignment? alignment,
-            string format = null,
-            IFormatProvider formatProvider = null)
+        public void Render(TextWriter output, Alignment? alignment, string format = null)
         {
             ApplyFormatting(output, AlignedValue(alignment), alignment, format);
         }
 
-        private string AlignedValue(Alignment? alignment)
+        string AlignedValue(Alignment? alignment)
         {
-            var stringValue = _value.ToString();
-
             if (!alignment.HasValue || alignment.Value.Width <= 0)
             {
-                return stringValue;
-            }
-
-            if (stringValue.Length == alignment.Value.Width)
-            {
-                return stringValue;
+                return _value.ToString();
             }
 
             if (IsCustomWidthSupported(alignment.Value.Width))
             {
                 return ShortLevelFor(_value, alignment.Value.Width);
             }
+
+            var stringValue = _value.ToString();
 
             if (IsOutputStringTooWide(alignment.Value, stringValue))
             {
@@ -92,12 +79,12 @@ namespace Serilog.Formatting.Display
             return stringValue;
         }
 
-        private void ApplyFormatting(TextWriter output, string value, Alignment? alignment, string format = null)
+        void ApplyFormatting(TextWriter output, string value, Alignment? alignment, string format = null)
         {
             Padding.Apply(output, Casing.Format(value, format), alignment);
         }
 
-        private static string ShortLevelFor(LogEventLevel value, int width)
+        static string ShortLevelFor(LogEventLevel value, int width)
         {
             var index = (int)value;
             if (index < 0 || index > (int)LogEventLevel.Fatal)
@@ -106,12 +93,12 @@ namespace Serilog.Formatting.Display
             return _shortenedLevelMap[index][width - 1];
         }
 
-        private static bool IsOutputStringTooWide(Alignment alignmentValue, string formattedValue)
+        static bool IsOutputStringTooWide(Alignment alignmentValue, string formattedValue)
         {
             return alignmentValue.Width < formattedValue.Length;
         }
 
-        private static bool IsCustomWidthSupported(int width)
+        static bool IsCustomWidthSupported(int width)
         {
             return width > 0 && width < 5;
         }

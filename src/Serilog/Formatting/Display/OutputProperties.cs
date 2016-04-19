@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
-using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
@@ -74,10 +73,5 @@ namespace Serilog.Formatting.Display
 
             return result;
         }
-
-        /// <summary>
-        /// Return whether the given token is for the Level property.
-        /// </summary>
-        public static bool IsLevelProperty(PropertyToken token) => LevelPropertyName.Equals(token.PropertyName);
     }
 }
