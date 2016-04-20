@@ -20,9 +20,9 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parameters;
 
-namespace Serilog.Core.Pipeline
+namespace Serilog.Core
 {
-    sealed class Logger : ILogger, ILogEventSink, IDisposable
+    public sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly ILogEventSink _sink;
@@ -37,7 +37,7 @@ namespace Serilog.Core.Pipeline
         readonly LogEventLevel _minimumLevel;
         readonly LoggingLevelSwitch _levelSwitch;
 
-        public Logger(
+        internal Logger(
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
@@ -47,7 +47,7 @@ namespace Serilog.Core.Pipeline
         {
         }
 
-        public Logger(
+        internal Logger(
             MessageTemplateProcessor messageTemplateProcessor,
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,

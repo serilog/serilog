@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Configuration;
 using Serilog.Core;
-using Serilog.Core.Pipeline;
 using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Parameters;
@@ -132,15 +131,11 @@ namespace Serilog
         /// <remarks>To free resources held by sinks ahead of program shutdown,
         /// the returned logger may be cast to <see cref="IDisposable"/> and
         /// disposed.</remarks>
-        public ILogger CreateLogger()
+        public Logger CreateLogger()
         {
             if (_loggerCreated)
-                throw new InvalidOperationException($"CreateLogger was previously called and can only be called once.");
+                throw new InvalidOperationException("CreateLogger was previously called and can only be called once.");
             _loggerCreated = true;
-
-            if (!_logEventSinks.Any())
-                return new SilentLogger();
-
 
             Action dispose = () =>
             {
