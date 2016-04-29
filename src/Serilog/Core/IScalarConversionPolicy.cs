@@ -6,7 +6,7 @@ namespace Serilog.Core
     /// Determine how a simple value is carried through the logging
     /// pipeline as an immutable <see cref="ScalarValue"/>.
     /// </summary>
-    public interface IScalarConversionPolicy
+    interface IScalarConversionPolicy
     {
         /// <summary>
         /// If supported, convert the provided value into an immutable scalar.
