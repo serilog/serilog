@@ -61,13 +61,13 @@ namespace Serilog.Parameters
                 new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
                 new ByteArrayScalarConversionPolicy(),
-                new ReflectionTypesScalarConversionPolicy()
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
-                .Concat(new []
+                .Concat(new IDestructuringPolicy []
                 {
-                    new DelegateDestructuringPolicy()
+                    new DelegateDestructuringPolicy(),
+                    new ReflectionTypesScalarDestructuringPolicy()
                 })
                 .ToArray();
         }

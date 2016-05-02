@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 using Serilog.Core;
 using Serilog.Core.Filters;
@@ -107,6 +108,76 @@ namespace Serilog.Tests
             var ev = events.Single();
             var prop = ev.Properties["AB"];
             Assert.IsType<ScalarValue>(prop);
+        }
+
+        [Fact]
+        public void DestructuringSystemTypeGivesScalarByDefault()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            var thisType = this.GetType();
+            logger.Information("{@thisType}", thisType);
+
+            var ev = events.Single();
+            var prop = ev.Properties["thisType"];
+            var sv = Assert.IsAssignableFrom<ScalarValue>(prop);
+            Assert.Equal(thisType, sv.LiteralValue());
+        }
+
+        class ProjectedDestructuringPolicy : IDestructuringPolicy
+        {
+            readonly Func<Type, bool> _canApply;
+            readonly Func<object, object> _projection;
+
+            public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
+            {
+                if (canApply == null) throw new ArgumentNullException(nameof(canApply));
+                if (projection == null) throw new ArgumentNullException(nameof(projection));
+                _canApply = canApply;
+                _projection = projection;
+            }
+
+            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value));
+
+                if (!_canApply(value.GetType()))
+                {
+                    result = null;
+                    return false;
+                }
+
+                var projected = _projection(value);
+                result = propertyValueFactory.CreatePropertyValue(projected, true);
+                return true;
+            }
+        }
+
+        [Fact]
+        public void DestructuringIsPossibleForSystemTypeDerivedProperties()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+            
+            var logger = new LoggerConfiguration()
+                .Destructure.With(new ProjectedDestructuringPolicy(
+                    canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
+                    projection: o => ((Type)o).AssemblyQualifiedName))
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            var thisType = this.GetType();
+            logger.Information("{@thisType}", thisType);
+
+            var ev = events.Single();
+            var prop = ev.Properties["thisType"];
+            var sv = Assert.IsAssignableFrom<ScalarValue>(prop);
+            Assert.Equal(thisType.AssemblyQualifiedName, sv.LiteralValue());
         }
 
         [Fact]

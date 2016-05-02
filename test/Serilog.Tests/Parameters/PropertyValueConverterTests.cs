@@ -167,7 +167,15 @@ namespace Serilog.Tests.Parameters
         public void SurvivesDestructuringASystemType()
         {
             var pv = _converter.CreatePropertyValue(typeof(string), Destructuring.Destructure);
-            Assert.Equal(typeof(string), pv.LiteralValue()); 
+            Assert.Equal(typeof(string), pv.LiteralValue());
+        }
+
+        [Fact]
+        public void SurvivesDestructuringMethodBase()
+        {
+            var theMethod = System.Reflection.MethodBase.GetCurrentMethod();
+            var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
+            Assert.Equal(theMethod, pv.LiteralValue());
         }
 
         public class BaseWithProps
