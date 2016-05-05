@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using Xunit;
+﻿using Xunit;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
 #if REMOTING
+using System;
+using System.IO;
 using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
@@ -150,7 +150,7 @@ namespace Serilog.Tests.Context
         // since user property types may not be serializable.
         // Fails if the Serilog assemblies cannot be loaded in the
         // remote domain. See also LogContext.Suspend()
-        [Fact(Skip = "Fails when run from Build.ps1, needs more work.")]
+        [Fact]
         public void DoesNotPreventCrossDomainCalls()
         {
             var projectRoot = Environment.CurrentDirectory;
@@ -172,7 +172,7 @@ namespace Serilog.Tests.Context
                 var domaininfo = new AppDomainSetup
                 {
                     ApplicationBase = Path.Combine(projectRoot, @"artifacts\"),
-                    PrivateBinPath = @"testbin\Debug\dnx451;bin\Serilog\Debug\dnx451;bin\Serilog.Tests\Debug\dnx451;".Replace("Debug", configuration)
+                    PrivateBinPath = @"testbin\Debug\dnx451;bin\Serilog\Debug\dnx452;bin\Serilog\Debug\net45;bin\Serilog.Tests\Debug\dnx452;".Replace("Debug", configuration)
                 };
                 var evidence = AppDomain.CurrentDomain.Evidence;
                 domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);
@@ -219,18 +219,17 @@ namespace Serilog.Tests.Context
     {
         public bool IsCallable()
         {
-            var sw = new StringWriter();
+            LogEvent lastEvent = null;
 
             var log = new LoggerConfiguration()
-                .WriteTo.TextWriter(sw, outputTemplate: "{Anything}{Number}")
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
             using (LogContext.PushProperty("Number", 42))
                 log.Information("Hello");
 
-            var s = sw.ToString();
-            return s == "42";
+            return 42.Equals(lastEvent.Properties["Number"].LiteralValue());
         }
     }
 #endif

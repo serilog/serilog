@@ -14,6 +14,7 @@
 
 
 using System;
+using System.Runtime.Serialization;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
@@ -192,18 +193,42 @@ namespace Serilog.Context
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public static bool PermitCrossAppDomainCalls { get; set; }
 
-        sealed class Wrapper : MarshalByRefObject
+        [Serializable]
+        sealed class Wrapper : ISerializable
         {
+            public Wrapper()
+            {
+            }
+
+            Wrapper(SerializationInfo info, StreamingContext context)
+            {
+            }
+
             public ImmutableStack<ILogEventEnricher> Value { get; set; }
+
+            public void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                // NOTE: actually instead of PermitCrossAppDomainCalls, we can analyze context.State for Remoting/CrossAppDomain flags
+                if (!PermitCrossAppDomainCalls)
+                {
+                    info.SetType(typeof(object));
+                }
+            }
         }
 
-        static object GetContext(ImmutableStack<ILogEventEnricher> value)
+        static object Wrap(ImmutableStack<ILogEventEnricher> value)
         {
-            var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper
+            return new Wrapper
             {
                 Value = value
             };
-            return context;
+        }
+
+        static ImmutableStack<ILogEventEnricher> Unwrap(object data)
+        {
+            var wrapper = data as Wrapper;
+
+            return wrapper?.Value;
         }
 
         static ImmutableStack<ILogEventEnricher> Enrichers
@@ -211,23 +236,13 @@ namespace Serilog.Context
             get
             {
                 var data = CallContext.LogicalGetData(DataSlotName);
-
-                ImmutableStack<ILogEventEnricher> context;
-                if (PermitCrossAppDomainCalls)
-                {
-                    context = ((Wrapper)data)?.Value;
-                }
-                else
-                {
-                    context = (ImmutableStack<ILogEventEnricher>)data;
-                }
+                var context = Unwrap(data);
 
                 return context;
             }
             set
             {
-                var context = GetContext(value);
-                CallContext.LogicalSetData(DataSlotName, context);
+                CallContext.LogicalSetData(DataSlotName, Wrap(value));
             }
         }
 
