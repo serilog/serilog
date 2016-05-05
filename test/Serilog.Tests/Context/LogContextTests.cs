@@ -172,7 +172,7 @@ namespace Serilog.Tests.Context
                 var domaininfo = new AppDomainSetup
                 {
                     ApplicationBase = Path.Combine(projectRoot, @"artifacts\"),
-                    PrivateBinPath = @"testbin\Debug\dnx451;bin\Serilog\Debug\dnx452;bin\Serilog\Debug\net45;bin\Serilog.Tests\Debug\dnx452;".Replace("Debug", configuration)
+                    PrivateBinPath = @"Serilog.Tests.xproj\testbin\Debug\dnx452;Serilog.xproj\testbin\Debug\net45;bin\Serilog\Debug\dnx452;bin\Serilog\Debug\net45;bin\Serilog.Tests\Debug\dnx452;".Replace("Debug", configuration)
                 };
                 var evidence = AppDomain.CurrentDomain.Evidence;
                 domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);

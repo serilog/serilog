@@ -36,6 +36,7 @@ function Restore-Packages
 function Build-Projects
 {
     param($Directory, $pack)
+
      
     $DirectoryName = $Directory.DirectoryName
     $artifactsFolder = join-path $root "artifacts"
@@ -53,7 +54,8 @@ function Build-Projects
 function Test-Projects
 {
     param([string] $DirectoryName)
-    & dnx -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
+
+    & dnx --configuration Release -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Remove-PathVariable
