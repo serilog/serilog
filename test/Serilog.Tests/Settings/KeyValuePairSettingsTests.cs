@@ -1,6 +1,4 @@
-﻿#if APPSETTINGS
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xunit;
@@ -64,12 +62,8 @@ namespace Serilog.Tests.AppSettings.Tests
             var eventEnrichers = KeyValuePairSettings
                 .FindEventEnricherConfigurationMethods(new[]
                 {
-                    typeof(Log).GetTypeInfo().Assembly
-#if !DOTNET5_1
-                    , typeof(MachineNameEnricher).GetTypeInfo().Assembly
-                    , typeof(ProcessIdEnricher).GetTypeInfo().Assembly
-#endif
-                    , typeof(ThreadIdEnricher).GetTypeInfo().Assembly
+                    typeof(Log).GetTypeInfo().Assembly,
+                    typeof(ThreadIdEnricher).GetTypeInfo().Assembly
                 })
                 .Select(m => m.Name)
                 .Distinct()
@@ -77,13 +71,6 @@ namespace Serilog.Tests.AppSettings.Tests
 
             
             Assert.True(eventEnrichers.Contains("FromLogContext"));
-#if !DOTNET5_1
-            Assert.True(eventEnrichers.Contains("WithEnvironmentUserName"));
-            Assert.True(eventEnrichers.Contains("WithMachineName"));
-#endif
-#if PROCESS
-            Assert.True(eventEnrichers.Contains("WithProcessId"));
-#endif
             Assert.True(eventEnrichers.Contains("WithThreadId"));
         }
 
@@ -106,4 +93,3 @@ namespace Serilog.Tests.AppSettings.Tests
         }
     }
 }
-#endif

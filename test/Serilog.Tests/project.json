@@ -20,17 +20,13 @@
     "Serilog.Enrichers.Thread": "2.0.0-beta-519"
 
   },
+  "compilationOptions": {
+    "keyFile": "../../assets/Serilog.snk"
+  },
   "frameworks": {
     "dnx452": {
       "compilationOptions": {
-        "keyFile": "../../assets/Serilog.snk",
-        "define": [ "APPSETTINGS", "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS", "REMOTING", "APPDOMAIN" ]
-      },
-      "frameworkAssemblies": {
-        "System.Configuration": ""
-      },
-      "dependencies": {
-        "Serilog.Settings.AppSettings": { "target": "project" }
+        "define": [ "PROCESS", "FILE_IO", "PERIODIC_BATCHING", "INTERNAL_TESTS", "REMOTING", "APPDOMAIN" ]
       }
     },
     "dnxcore50": {
