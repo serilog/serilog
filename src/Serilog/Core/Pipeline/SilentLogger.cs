@@ -109,6 +109,7 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal(string messageTemplate, params object[] propertyValues)
         {
         }

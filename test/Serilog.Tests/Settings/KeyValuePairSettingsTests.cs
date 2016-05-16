@@ -4,9 +4,9 @@ using System.Reflection;
 using Xunit;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
-using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
 using Serilog.Enrichers;
+using TestDummies;
 
 namespace Serilog.Tests.AppSettings.Tests
 {
@@ -63,7 +63,7 @@ namespace Serilog.Tests.AppSettings.Tests
                 .FindEventEnricherConfigurationMethods(new[]
                 {
                     typeof(Log).GetTypeInfo().Assembly,
-                    typeof(ThreadIdEnricher).GetTypeInfo().Assembly
+                    typeof(DummyThreadIdEnricher).GetTypeInfo().Assembly
                 })
                 .Select(m => m.Name)
                 .Distinct()
@@ -71,7 +71,7 @@ namespace Serilog.Tests.AppSettings.Tests
 
             
             Assert.True(eventEnrichers.Contains("FromLogContext"));
-            Assert.True(eventEnrichers.Contains("WithThreadId"));
+            Assert.True(eventEnrichers.Contains("WithDummyThreadId"));
         }
 
         [Fact]

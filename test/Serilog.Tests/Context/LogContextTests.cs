@@ -19,8 +19,6 @@ namespace Serilog.Tests.Context
         {
 #if REMOTING
             LogContext.PermitCrossAppDomainCalls = false;
-#endif
-#if !ASYNCLOCAL
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
 #endif
         }
@@ -219,10 +217,10 @@ namespace Serilog.Tests.Context
     {
         public bool IsCallable()
         {
-            var sw = new StringWriter();
+            var sw = new StringSink(outputTemplate: "{Anything}{Number}");
 
             var log = new LoggerConfiguration()
-                .WriteTo.TextWriter(sw, outputTemplate: "{Anything}{Number}")
+                .WriteTo.Sink(sw)
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
