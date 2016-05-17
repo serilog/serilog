@@ -13,7 +13,7 @@
   "frameworks": {
     "net4.5.2": {
       "buildOptions": {
-        "define": [ "REMOTING", "GETCURRENTMETHOD" ]
+        "define": [ "APPDOMAIN", "REMOTING", "GETCURRENTMETHOD" ]
       }
     },
     "netcoreapp1.0": {
