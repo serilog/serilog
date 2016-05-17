@@ -46,12 +46,7 @@ namespace Serilog.Context
     /// }
     /// </code>
     /// </example>
-    /// <remarks>The scope of the context is the current logical thread, using
-#if ASYNCLOCAL
-    /// <seealso cref="AsyncLocal{T}"/>
-#else
-    /// <seealso cref="CallContext.LogicalGetData"/>
-#endif
+    /// <remarks>The scope of the context is the current logical thread, using AsyncLocal
     /// (and so is preserved across async/await calls).</remarks>
     public static class LogContext
     {
@@ -112,7 +107,7 @@ namespace Serilog.Context
 
         /// <summary>
         /// Remove all data from the context so that
-        /// cross-<see cref="AppDomain"/> calls can be made without requiring
+        /// cross-app-domain calls can be made without requiring
         /// Serilog assemblies to be present in the remote domain.
         /// </summary>
         /// <returns>A token that will restore the suspended log context data, if any.</returns>

@@ -60,8 +60,6 @@ namespace Serilog.Tests
             Assert.False(sink.IsDisposed);
         }
 
-#if INTERNAL_TESTS
-
         [Fact]
         public void AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
@@ -80,8 +78,6 @@ namespace Serilog.Tests
             Assert.Equal(1, events.Count);
             Assert.True(events.Contains(included));
         }
-
-#endif
 
         // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
         class AB
@@ -241,7 +237,7 @@ namespace Serilog.Tests
             var enrichedPropertySeen = false;
 
             var logger = new LoggerConfiguration()
-                .WriteTo.TextWriter(new StringWriter())
+                .WriteTo.Sink(new StringSink())
                 .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
                 .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();

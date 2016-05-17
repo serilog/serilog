@@ -18,6 +18,10 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 #endif
 
+// General-purpose type; not all features are used here.
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeProtected.Global
+
 namespace Serilog.Context
 {
     // Needed because of the shallow-copying behaviour of
