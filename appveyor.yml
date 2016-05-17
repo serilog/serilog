@@ -1,9 +1,6 @@
 version: '{build}'
 image: Visual Studio 2015
 configuration: Release
-environment:
-  gitter_hook:
-    secure: rAeZD4safUjNDSt4GnHKQnqa2X8gk/HI93dKMyjfb3035yZ3pQTtMGRnreS1ezzxnJ3GMcfj0KxNrokOGbSWuQ==
 install:
   - ps: mkdir -Force ".\build\" | Out-Null
   - ps: Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" -OutFile ".\build\installcli.ps1"
@@ -24,9 +21,4 @@ deploy:
   skip_symbols: true
   on:
     branch: /^(dev|master)$/
-notifications:
-- provider: Webhook
-  url: {gitter_hook}
-  on_build_success: true
-  on_build_failure: true
-  on_build_status_changed: false
+
