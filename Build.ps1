@@ -8,6 +8,9 @@ $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BU
 
 Push-Location src/Serilog
 
+& dotnet build -c Release
+if($LASTEXITCODE -ne 0) { exit 1 }    
+
 & dotnet pack -c Release -o ..\..\.\artifacts --version-suffix=$revision
 if($LASTEXITCODE -ne 0) { exit 1 }    
 
