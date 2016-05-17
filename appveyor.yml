@@ -5,7 +5,7 @@ install:
   - ps: mkdir -Force ".\build\" | Out-Null
   - ps: Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" -OutFile ".\build\installcli.ps1"
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
-  - ps: $cliversion = (Get-Content -Path $globalJson -Raw | ConvertFrom-JSON).sdk.version
+  - ps: $cliversion = (Get-Content -Path .\global.json -Raw | ConvertFrom-JSON).sdk.version
   - ps: '& .\build\installcli.ps1 -Channel "preview" -version "$env:cliversion" -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath'
   - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
 build_script:
