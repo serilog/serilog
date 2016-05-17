@@ -1,59 +1,20 @@
 $root = $(Get-Item $($MyInvocation.MyCommand.Path)).DirectoryName
 
-function Install-Dnvm
+function Install-DotNetCli
 {
-    & where.exe dnvm 2>&1 | Out-Null
+    & where.exe dotnet 2>&1 | Out-Null
     if(($LASTEXITCODE -ne 0) -Or ((Test-Path Env:\APPVEYOR) -eq $true))
     {
-        Write-Host "DNVM not found"
-        &{$Branch='dev';iex ((New-Object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}
-
-        # Normally this happens automatically during install but AppVeyor has
-        # an issue where you may need to manually re-run setup from within this process.
-        if($env:DNX_HOME -eq $NULL)
-        {
-            Write-Host "Initial DNVM environment setup failed; running manual setup"
-            $tempDnvmPath = Join-Path $env:TEMP "dnvminstall"
-            $dnvmSetupCmdPath = Join-Path $tempDnvmPath "dnvm.ps1"
-            & $dnvmSetupCmdPath setup
-        }
+        Write-Host ".NET CLI not found, installing"
+        &{$Branch='dev';iex ((New-Object net.webclient).DownloadString('https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1'))}
     }
 }
 
-function Get-DnxVersion
+function Get-DotNetSdkVersion
 {
     $globalJson = Join-Path $PSScriptRoot "global.json"
     $jsonData = Get-Content -Path $globalJson -Raw | ConvertFrom-JSON
     return $jsonData.sdk.version
-}
-
-function Restore-Packages
-{
-    param([string] $DirectoryName)
-    & dnu restore ("""" + $DirectoryName + """")
-}
-
-function Build-Projects
-{
-    param($Directory, $pack)
-     
-    $DirectoryName = $Directory.DirectoryName
-    $artifactsFolder = join-path $root "artifacts"
-    $projectsFolder = join-path $artifactsFolder $Directory.Name 
-    $buildFolder = join-path $projectsFolder "testbin"
-    $packageFolder = join-path $projectsFolder "packages"
-     
-    & dnu build ("""" + $DirectoryName + """") --configuration Release --out $buildFolder; if($LASTEXITCODE -ne 0) { exit 1 }
-    
-    if($pack){
-        & dnu pack ("""" + $DirectoryName + """") --configuration Release --out $packageFolder; if($LASTEXITCODE -ne 0) { exit 1 }
-    }
-}
- 
-function Test-Projects
-{
-    param([string] $DirectoryName)
-    & dnx -p ("""" + $DirectoryName + """") test; if($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Remove-PathVariable
@@ -69,41 +30,33 @@ function Remove-PathVariable
 
 Push-Location $PSScriptRoot
 
-$dnxVersion = Get-DnxVersion
+$dnxVersion = Get-DotNetSdkVersion
 
 # Clean
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
-# Remove the installed DNVM from the path and force use of
-# per-user DNVM (which we can upgrade as needed without admin permissions)
-Remove-PathVariable "*Program Files\Microsoft DNX\DNVM*"
+# Remove the installed dotnet from the path and force use of
+# per-user dotnet (which we can upgrade as needed without admin permissions)
+# Remove-PathVariable "*Program Files\dotnet*"
 
-# Make sure per-user DNVM is installed
-Install-Dnvm
+Install-DotNetCli
 
-# Install DNX
-dnvm install $dnxVersion -r CoreCLR -NoNative
-dnvm install $dnxVersion -r CLR -NoNative
-dnvm use $dnxVersion -r CLR
+& dotnet restore
 
-# Package restore
-Get-ChildItem -Path . -Filter *.xproj -Recurse | ForEach-Object { Restore-Packages $_.DirectoryName }
+$revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 
-# Set build number
-$env:DNX_BUILD_VERSION = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-Write-Host "Build number: " $env:DNX_BUILD_VERSION
+Push-Location src/Serilog
 
-# Build/package
-Get-ChildItem -Path .\src -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_ $true }
-Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Build-Projects $_ $false }
+& dotnet pack -c Release -o ..\..\.\artifacts --version-suffix=$revision
+if($LASTEXITCODE -ne 0) { exit 1 }    
 
-# Test
-Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Test-Projects $_.DirectoryName }
+Pop-Location
 
-# Switch to Core CLR
-dnvm use $dnxVersion -r CoreCLR
+Push-Location test/Serilog.Tests
 
-# Test again
-Get-ChildItem -Path .\test -Filter *.xproj -Recurse | ForEach-Object { Test-Projects $_.DirectoryName }
+& dotnet test
+if($LASTEXITCODE -ne 0) { exit 2 }
+
+Pop-Location
 
 Pop-Location
