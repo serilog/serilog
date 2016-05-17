@@ -11,8 +11,7 @@ build_script:
 - ps: ./Build.ps1
 test: off
 artifacts:
-- path: Serilog.*.nupkg
-- path: artifacts/**/*.nupkg
+- path: artifacts/Serilog.*.nupkg
 deploy:
 - provider: NuGet
   api_key:
