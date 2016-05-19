@@ -1,6 +1,4 @@
-﻿#if INTERNAL_TESTS
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -179,5 +177,3 @@ namespace Serilog.Tests.Core
         }
     }
 }
-
-#endif
