@@ -46,7 +46,7 @@ namespace Serilog.Core
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
-            IEnumerable<ILogEventEnricher> enrichers,
+            ILogEventEnricher[] enrichers,
             Action dispose = null)
             : this(messageTemplateProcessor, minimumLevel, sink, enrichers, dispose, null)
         {
@@ -56,7 +56,7 @@ namespace Serilog.Core
             MessageTemplateProcessor messageTemplateProcessor,
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
-            IEnumerable<ILogEventEnricher> enrichers,
+            ILogEventEnricher[] enrichers,
             Action dispose = null)
             : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enrichers, dispose, levelSwitch)
         {
@@ -66,7 +66,7 @@ namespace Serilog.Core
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
-            IEnumerable<ILogEventEnricher> enrichers,
+            ILogEventEnricher[] enrichers,
             Action dispose = null,
             LoggingLevelSwitch levelSwitch = null)
         {
@@ -78,7 +78,7 @@ namespace Serilog.Core
             _sink = sink;
             _dispose = dispose;
             _levelSwitch = levelSwitch;
-            _enrichers = enrichers.ToArray();
+            _enrichers = enrichers;
         }
 
         /// <summary>
