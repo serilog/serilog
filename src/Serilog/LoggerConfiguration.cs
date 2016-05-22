@@ -152,8 +152,8 @@ namespace Serilog
             var processor = new MessageTemplateProcessor(converter);
 
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, _enrichers, dispose) :
-                new Logger(processor, _levelSwitch, sink, _enrichers, dispose);
+                new Logger(processor, _minimumLevel, sink, _enrichers.ToArray(), dispose) :
+                new Logger(processor, _levelSwitch, sink, _enrichers.ToArray(), dispose);
         }
     }
 }
