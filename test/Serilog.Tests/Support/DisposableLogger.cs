@@ -323,5 +323,75 @@ namespace Serilog.Tests.Support
         {
             throw new NotImplementedException();
         }
+
+        public void Write(LogEventLevel level, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(LogEventLevel level, Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

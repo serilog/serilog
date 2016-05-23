@@ -76,6 +76,14 @@ namespace Serilog
         /// </summary>
         /// <param name="level">The level of the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Write(LogEventLevel level, string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the specified level.
+        /// </summary>
+        /// <param name="level">The level of the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue);
@@ -109,6 +117,15 @@ namespace Serilog
         /// <param name="propertyValues"></param>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the specified level and associated exception.
+        /// </summary>
+        /// <param name="level">The level of the event.</param>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Write(LogEventLevel level, Exception exception, string messageTemplate);
 
         /// <summary>
         /// Write a log event with the specified level and associated exception.
@@ -165,6 +182,16 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Verbose("Staring into space, wondering if we're alone.");
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose(string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         /// <example>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
@@ -207,6 +234,17 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Verbose(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose(Exception exception, string messageTemplate);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level and associated exception.
@@ -263,6 +301,16 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Debug"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Debug(string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Debug"/> level.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         /// <example>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
@@ -305,6 +353,17 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Debug(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Debug"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Debug(ex, "Swallowing a mundane exception.");
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Debug(Exception exception, string messageTemplate);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Debug"/> level and associated exception.
@@ -361,6 +420,16 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Information"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Information(string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Information"/> level.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         /// <example>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
@@ -403,6 +472,17 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Information(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Information"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Information(Exception exception, string messageTemplate);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Information"/> level and associated exception.
@@ -459,6 +539,16 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Warning"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Warning(string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Warning"/> level.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         /// <example>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
@@ -501,6 +591,17 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Warning(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Warning"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Warning(Exception exception, string messageTemplate);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Warning"/> level and associated exception.
@@ -557,6 +658,16 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Error"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Error(string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Error"/> level.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         /// <example>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
@@ -599,6 +710,18 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Error(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Error"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Error(Exception exception, string messageTemplate);
+
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Error"/> level and associated exception.
@@ -655,6 +778,16 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Fatal("Process terminating.");
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal(string messageTemplate);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         /// <example>
         /// Log.Fatal("Process terminating.");
@@ -697,6 +830,17 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Fatal(string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception related to the event.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <example>
+        /// Log.Fatal(ex, "Process terminating.");
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal(Exception exception, string messageTemplate);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level and associated exception.

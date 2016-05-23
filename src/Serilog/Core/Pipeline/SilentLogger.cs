@@ -44,6 +44,10 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        public void Write(LogEventLevel level, string messageTemplate)
+        {
+        }
+
         public void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
         {
         }
@@ -57,6 +61,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Write(LogEventLevel level, Exception exception, string messageTemplate)
         {
         }
 
@@ -81,6 +89,10 @@ namespace Serilog.Core.Pipeline
             return false;
         }
 
+        public void Verbose(string messageTemplate)
+        {
+        }
+
         public void Verbose<T>(string messageTemplate, T propertyValue)
         {
         }
@@ -94,6 +106,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Verbose(string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Verbose(Exception exception, string messageTemplate)
         {
         }
 
@@ -113,6 +129,10 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        public void Debug(string messageTemplate)
+        {
+        }
+
         public void Debug<T>(string messageTemplate, T propertyValue)
         {
         }
@@ -126,6 +146,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Debug(string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Debug(Exception exception, string messageTemplate)
         {
         }
 
@@ -145,6 +169,10 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        public void Information(string messageTemplate)
+        {
+        }
+
         public void Information<T>(string messageTemplate, T propertyValue)
         {
         }
@@ -158,6 +186,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Information(string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Information(Exception exception, string messageTemplate)
         {
         }
 
@@ -177,6 +209,10 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        public void Warning(string messageTemplate)
+        {
+        }
+
         public void Warning<T>(string messageTemplate, T propertyValue)
         {
         }
@@ -190,6 +226,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Warning(string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Warning(Exception exception, string messageTemplate)
         {
         }
 
@@ -209,6 +249,10 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        public void Error(string messageTemplate)
+        {
+        }
+
         public void Error<T>(string messageTemplate, T propertyValue)
         {
         }
@@ -222,6 +266,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Error(string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Error(Exception exception, string messageTemplate)
         {
         }
 
@@ -241,6 +289,10 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        public void Fatal(string messageTemplate)
+        {
+        }
+
         public void Fatal<T>(string messageTemplate, T propertyValue)
         {
         }
@@ -254,6 +306,10 @@ namespace Serilog.Core.Pipeline
         }
 
         public void Fatal(string messageTemplate, params object[] propertyValues)
+        {
+        }
+
+        public void Fatal(Exception exception, string messageTemplate)
         {
         }
 
