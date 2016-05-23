@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
@@ -985,6 +986,32 @@ namespace Serilog
         public static void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             Logger.Fatal(exception, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Uses configured scalar conversion and destructuring rules to bind a set of properties to a
+        /// message template. Returns false if the template or values are invalid (<summary>ILogger</summary>
+        /// methods never throw exceptions).
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing an event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <param name="parsedTemplate">The internal representation of the template, which may be used to
+        /// render the <paramref name="boundProperties"/> as text.</param>
+        /// <param name="boundProperties">Captured properties from the template and <paramref name="propertyValues"/>.</param>
+        /// <example>
+        /// MessageTemplate template;
+        /// IEnumerable&lt;LogEventProperty&gt; properties>;
+        /// if (Log.BindMessageTemplate("Hello, {Name}!", new[] { "World" }, out template, out properties)
+        /// {
+        ///     var propsByName = properties.ToDictionary(p => p.Name, p => p.Value);
+        ///     Console.WriteLine(template.Render(propsByName, null));
+        ///     // -> "Hello, World!"
+        /// }
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        {
+            return Logger.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
         }
     }
 }
