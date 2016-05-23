@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Serilog.Core.Enrichers;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -32,7 +31,7 @@ namespace Serilog.Core
         readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly ILogEventSink _sink;
         readonly Action _dispose;
-        readonly ILogEventEnricher[] _enrichers;
+        readonly ILogEventEnricher _enricher;
 
         // It's important that checking minimum level is a very
         // quick (CPU-cacheable) read in the simple case, hence
@@ -46,9 +45,9 @@ namespace Serilog.Core
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
-            ILogEventEnricher[] enrichers,
+            ILogEventEnricher enricher,
             Action dispose = null)
-            : this(messageTemplateProcessor, minimumLevel, sink, enrichers, dispose, null)
+            : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null)
         {
         }
 
@@ -56,29 +55,47 @@ namespace Serilog.Core
             MessageTemplateProcessor messageTemplateProcessor,
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
-            ILogEventEnricher[] enrichers,
+            ILogEventEnricher enricher,
             Action dispose = null)
-            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enrichers, dispose, levelSwitch)
+            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch)
         {
         }
 
+        // The messageTemplateProcessor, sink and enricher are required. Argument checks are dropped because
+        // throwing from here breaks the logger's no-throw contract, and callers are all in this file anyway.
         Logger(
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
-            ILogEventEnricher[] enrichers,
+            ILogEventEnricher enricher,
             Action dispose = null,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (sink == null) throw new ArgumentNullException(nameof(sink));
-            if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
-
             _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
             _sink = sink;
             _dispose = dispose;
             _levelSwitch = levelSwitch;
-            _enrichers = enrichers;
+            _enricher = enricher;
+        }
+
+        /// <summary>
+        /// Create a logger that enriches log events via the provided enrichers.
+        /// </summary>
+        /// <param name="enricher">Enricher that applies in the context.</param>
+        /// <returns>A logger that will enrich log events as specified.</returns>
+        public ILogger ForContext(ILogEventEnricher enricher)
+        {
+            if (enricher == null)
+                return this; // No context here, so little point writing to SelfLog.
+
+            return new Logger(
+                        _messageTemplateProcessor,
+                        _minimumLevel,
+                        this,
+                        enricher,
+                        null,
+                        _levelSwitch);
         }
 
         /// <summary>
@@ -88,13 +105,10 @@ namespace Serilog.Core
         /// <returns>A logger that will enrich log events as specified.</returns>
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
-            return new Logger(
-                _messageTemplateProcessor,
-                _minimumLevel,
-                this,
-                (enrichers ?? new ILogEventEnricher[0]).ToArray(),
-                null,
-                _levelSwitch);
+            if (enrichers == null)
+                return this; // No context here, so little point writing to SelfLog.
+
+            return ForContext(new SafeAggregateEnricher(enrichers));
         }
 
         /// <summary>
@@ -103,9 +117,18 @@ namespace Serilog.Core
         /// <returns>A logger that will enrich log events as specified.</returns>
         public ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
         {
-            return ForContext(new[] {
-                new FixedPropertyEnricher(
-                    _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects)) });
+            if (!LogEventProperty.IsValidName(propertyName))
+            {
+                SelfLog.WriteLine("Attempt to call ForContext() with invalid property name `{0}` (value: `{1}`)", propertyName, value);
+                return this;
+            }
+
+            // It'd be nice to do the destructuring lazily, but unfortunately `value` may be mutated between
+            // now and the first log event written...
+            // A future optimization opportunity may be to implement ILogEventEnricher on LogEventProperty to
+            // remove one more allocation.
+            return ForContext(new FixedPropertyEnricher(
+                    _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects)));
         }
 
         /// <summary>
@@ -116,7 +139,9 @@ namespace Serilog.Core
         /// <returns>A logger that will enrich log events as specified.</returns>
         public ILogger ForContext(Type source)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (source == null)
+                return this; // Little point in writing to SelfLog here because we don't have any contextual information
+
             return ForContext(Constants.SourceContextPropertyName, source.FullName);
         }
 
@@ -205,16 +230,15 @@ namespace Serilog.Core
 
         void Dispatch(LogEvent logEvent)
         {
-            foreach (var enricher in _enrichers)
+            // The enricher may be a "safe" aggregate one, but is most commonly bare and so
+            // the exception handling from SafeAggregateEnricher is duplicated here.
+            try
             {
-                try
-                {
-                    enricher.Enrich(logEvent, _messageTemplateProcessor);
-                }
-                catch (Exception ex)
-                {
-                    SelfLog.WriteLine("Exception {0} caught while enriching {1} with {2}.", ex, logEvent, enricher);
-                }
+                _enricher.Enrich(logEvent, _messageTemplateProcessor);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Exception {0} caught while enriching {1} with {2}.", ex, logEvent, _enricher);
             }
 
             _sink.Emit(logEvent);

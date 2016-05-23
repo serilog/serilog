@@ -24,7 +24,7 @@ namespace Serilog
     /// </summary>
     /// <example>
     /// var log = new LoggerConfiguration()
-    ///     .WithConsoleSink()
+    ///     .WriteTo.Console()
     ///     .CreateLogger();
     ///
     /// var thing = "World";
@@ -36,6 +36,13 @@ namespace Serilog
     /// </remarks>
     public interface ILogger
     {
+        /// <summary>
+        /// Create a logger that enriches log events via the provided enrichers.
+        /// </summary>
+        /// <param name="enricher">Enricher that applies in the context.</param>
+        /// <returns>A logger that will enrich log events as specified.</returns>
+        ILogger ForContext(ILogEventEnricher enricher);
+
         /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
         /// </summary>
