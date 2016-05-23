@@ -124,11 +124,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         public static void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (Logger.IsEnabled(level))
-            {
-                Logger.Write(level, messageTemplate, new object[] { propertyValue });
-            }
+            Logger.Write(level, messageTemplate, propertyValue);
         }
 
         /// <summary>
@@ -141,11 +137,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         public static void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (Logger.IsEnabled(level))
-            {
-                Logger.Write(level, messageTemplate, new object[] { propertyValue0, propertyValue1 });
-            }
+            Logger.Write(level, messageTemplate, propertyValue0, propertyValue1);
         }
 
         /// <summary>
@@ -159,11 +151,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         public static void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (Logger.IsEnabled(level))
-            {
-                Logger.Write(level, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
-            }
+            Logger.Write(level, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
         }
 
         /// <summary>
@@ -188,11 +176,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         public static void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (Logger.IsEnabled(level))
-            {
-                Logger.Write(level, exception, messageTemplate, new object[] { propertyValue });
-            }
+            Logger.Write(level, exception, messageTemplate, propertyValue);
         }
 
         /// <summary>
@@ -206,11 +190,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         public static void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (Logger.IsEnabled(level))
-            {
-                Logger.Write(level, exception, messageTemplate, new object[] { propertyValue0, propertyValue1 });
-            }
+            Logger.Write(level, exception, messageTemplate, propertyValue0, propertyValue1);
         }
 
         /// <summary>
@@ -225,11 +205,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         public static void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (Logger.IsEnabled(level))
-            {
-                Logger.Write(level, exception, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
-            }
+            Logger.Write(level, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
         }
 
         /// <summary>
@@ -255,6 +231,7 @@ namespace Serilog
         {
             return Logger.IsEnabled(level);
         }
+
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level.
         /// </summary>
