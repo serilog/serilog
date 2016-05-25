@@ -63,6 +63,7 @@ namespace Serilog.Configuration
         /// Anything and everything you might want to know about
         /// a running block of code.
         /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Verbose()
         {
             return Is(LogEventLevel.Verbose);
@@ -72,6 +73,7 @@ namespace Serilog.Configuration
         /// Internal system events that aren't necessarily
         /// observable from the outside.
         /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Debug()
         {
             return Is(LogEventLevel.Debug);
@@ -81,6 +83,7 @@ namespace Serilog.Configuration
         /// The lifeblood of operational intelligence - things
         /// happen.
         /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Information()
         {
             return Is(LogEventLevel.Information);
@@ -89,6 +92,7 @@ namespace Serilog.Configuration
         /// <summary>
         /// Service is degraded or endangered.
         /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Warning()
         {
             return Is(LogEventLevel.Warning);
@@ -98,6 +102,7 @@ namespace Serilog.Configuration
         /// Functionality is unavailable, invariants are broken
         /// or data is lost.
         /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Error()
         {
             return Is(LogEventLevel.Error);
@@ -107,9 +112,32 @@ namespace Serilog.Configuration
         /// If you have a pager, it goes off when one of these
         /// occurs.
         /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Fatal()
         {
             return Is(LogEventLevel.Fatal);
+        }
+
+        /// <summary>
+        /// Override the minimum level for events from a specific namespace or type name.
+        /// </summary>
+        /// <param name="source">The (partial) namespace or type name to set the override for.</param>
+        /// <param name="levelSwitch">The switch controlling loggers for matching sources.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
+        {
+
+        }
+
+        /// <summary>
+        /// Override the minimum level for events from a specific namespace or type name.
+        /// </summary>
+        /// <param name="source">The (partial) namespace or type name to set the override for.</param>
+        /// <param name="minimumLevel">The minimum level applied to loggers for matching sources.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Override(string source, LogEventLevel minimumLevel)
+        {
+            return Override(source, new LoggingLevelSwitch(minimumLevel));
         }
     }
 }
