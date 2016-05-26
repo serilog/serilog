@@ -398,5 +398,15 @@ namespace Serilog.Tests.Support
         {
             throw new NotImplementedException();
         }
+
+        public bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

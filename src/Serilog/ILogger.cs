@@ -53,6 +53,10 @@ namespace Serilog
         /// <summary>
         /// Create a logger that enriches log events with the specified property.
         /// </summary>
+        /// <param name="propertyName">The name of the property. Must be non-empty.</param>
+        /// <param name="value">The property value.</param>
+        /// <param name="destructureObjects">If true, the value will be serialized as a structured
+        /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
         ILogger ForContext(string propertyName, object value, bool destructureObjects = false);
 
@@ -899,5 +903,42 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Fatal(Exception exception, string messageTemplate, params object[] propertyValues);
+
+        /// <summary>
+        /// Uses configured scalar conversion and destructuring rules to bind a set of properties to a
+        /// message template. Returns false if the template or values are invalid (<summary>ILogger</summary>
+        /// methods never throw exceptions).
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing an event.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <param name="parsedTemplate">The internal representation of the template, which may be used to
+        /// render the <paramref name="boundProperties"/> as text.</param>
+        /// <param name="boundProperties">Captured properties from the template and <paramref name="propertyValues"/>.</param>
+        /// <example>
+        /// MessageTemplate template;
+        /// IEnumerable&lt;LogEventProperty&gt; properties>;
+        /// if (Log.BindMessageTemplate("Hello, {Name}!", new[] { "World" }, out template, out properties)
+        /// {
+        ///     var propsByName = properties.ToDictionary(p => p.Name, p => p.Value);
+        ///     Console.WriteLine(template.Render(propsByName, null));
+        ///     // -> "Hello, World!"
+        /// }
+        /// </example>
+        [MessageTemplateFormatMethod("messageTemplate")]
+        bool BindMessageTemplate(string messageTemplate, object[] propertyValues,
+                                 out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties);
+
+        /// <summary>
+        /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured
+        /// representation.
+        /// </summary>
+        /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
+        /// <param name="propertyName">The name of the property. Must be non-empty.</param>
+        /// <param name="value">The property value.</param>
+        /// <param name="destructureObjects">If true, the value will be serialized as a structured
+        /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+        /// <param name="property">The resulting property.</param>
+        /// methods never throw exceptions).</returns>
+        bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property);
     }
 }

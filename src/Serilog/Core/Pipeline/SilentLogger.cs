@@ -333,5 +333,19 @@ namespace Serilog.Core.Pipeline
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
+
+        [MessageTemplateFormatMethod("messageTemplate")]
+        public bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        {
+            parsedTemplate = null;
+            boundProperties = null;
+            return false;
+        }
+
+        public bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        {
+            property = null;
+            return false;
+        }
     }
 }
