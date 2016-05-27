@@ -1,4 +1,4 @@
-language: c#
+language: csharp
 
 #dotnet cli require Ubuntu 14.04
 sudo: required
@@ -31,6 +31,7 @@ matrix:
     - env: CLI_VERSION=Latest
 
 before_install:
+  - if test "$TRAVIS_OS_NAME" == "osx"; then brew update; brew install openssl; brew link --force openssl; fi
   # Download script to install dotnet cli
   - curl -L --create-dirs https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh -o ./scripts/obtain/install.sh
   - find ./scripts -name "*.sh" -exec chmod +x {} \;
