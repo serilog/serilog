@@ -23,7 +23,7 @@ os:
 
 env:
   matrix:
-    - CLI_VERSION=1.0.0-beta-002071
+    - CLI_VERSION=1.0.0-preview1-002702
     - CLI_VERSION=Latest
 
 matrix:
