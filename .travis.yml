@@ -1,4 +1,4 @@
-language: c++
+language: c#
 
 #dotnet cli require Ubuntu 14.04
 sudo: required
