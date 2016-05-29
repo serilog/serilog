@@ -43,31 +43,69 @@ namespace Serilog.Tests.Core
                 new LogEventPropertyStructuralEqualityComparer());
         }
 
-        [Fact(Skip="Proposed behaviour")]
+        [Fact]
+        public void WillCaptureProvidedPositionalValuesEvenIfSomeAreMissing()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("0", new ScalarValue(0)),
+                    new LogEventProperty("1", new ScalarValue(1)),
+                },
+                Capture("Hello {3} {2} {1} {0} nothing more", 0, 1), // missing {2} and {3}
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
+        public void WillCaptureProvidedNamedValuesEvenIfSomeAreMissing()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("who", new ScalarValue("who")),
+                    new LogEventProperty("what", new ScalarValue("what")),
+                },
+                Capture("Hello {who} {what} {where}", "who", "what"), // missing "where"
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
         public void WillCaptureAdditionalPositionalsNotInTemplate()
         {
             Assert.Equal(new[]
                 {
                     new LogEventProperty("0", new ScalarValue(0)),
                     new LogEventProperty("1", new ScalarValue(1)),
-                    new LogEventProperty("<todo - decide naming strategy>1", new ScalarValue(2)),
-                    new LogEventProperty("<todo - decide naming strategy>2", new ScalarValue(3)),
+                    new LogEventProperty("__0", new ScalarValue("__0")),
+                    new LogEventProperty("__1", new ScalarValue("__1")),
                 },
-                Capture("Hello {1} {0} 2}", 1, 0, 2, 3),
+                Capture("Hello {0} {1} nothing more", 0, 1, "__0", "__1"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
 
-        [Fact(Skip="Proposed behaviour")]
+        [Fact]
+        public void WillCaptureAdditionalPositionalsNotInTemplatePreservingPositionsInTemplate()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("0", new ScalarValue(0)),
+                    new LogEventProperty("1", new ScalarValue(1)),
+                    new LogEventProperty("__0", new ScalarValue("__0")),
+                    new LogEventProperty("__1", new ScalarValue("__1")),
+                },
+                Capture("Hello {1} {0} nothing more", 0, 1, "__0", "__1"),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
         public void WillCaptureAdditionalNamedPropsNotInTemplate()
         {
             Assert.Equal(new[]
                 {
                     new LogEventProperty("who", new ScalarValue("who")),
                     new LogEventProperty("what", new ScalarValue("what")),
-                    new LogEventProperty("<todo - decide naming strategy>1", new ScalarValue("where")),
-                    new LogEventProperty("<todo - decide naming strategy>2", new ScalarValue("how")),
+                    new LogEventProperty("__0", new ScalarValue("__0")),
+                    new LogEventProperty("__1", new ScalarValue("__1")),
                 },
-                Capture("Hello {who} {what} where}", "who", "what", "where", "how"),
+                Capture("Hello {who} {what} where}", "who", "what", "__0", "__1"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
         

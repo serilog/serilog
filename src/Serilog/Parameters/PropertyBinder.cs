@@ -65,30 +65,32 @@ namespace Serilog.Parameters
                 SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
 
             var result = new LogEventProperty[messageTemplateParameters.Length];
-            foreach (var property in positionalProperties)
+            int nextUnmatchedPosition = 0;
+            for (int position = 0; position < messageTemplateParameters.Length; position++)
             {
-                int position;
-                if (property.TryGetPositionalValue(out position))
+                PropertyToken propertyToken = null;
+                for (int propIndex = 0; propIndex < positionalProperties.Length; propIndex++)
                 {
-                    if (position < 0 || position >= messageTemplateParameters.Length)
-                        SelfLog.WriteLine("Unassigned positional value {0} in: {1}", position, template);
-                    else
-                        result[position] = ConstructProperty(property, messageTemplateParameters[position]);
+                    int propertyTokenPosition;
+                    if (positionalProperties[propIndex].TryGetPositionalValue(out propertyTokenPosition)
+                        && propertyTokenPosition == position)
+                    {
+                        propertyToken = positionalProperties[propIndex];
+                    }
+                }
+
+                if (propertyToken == null)
+                {
+                    // found no property for this position; generate a default name
+                    result[position] = new LogEventProperty(
+                        "__" + nextUnmatchedPosition++,
+                        _valueConverter.CreatePropertyValue(messageTemplateParameters[position]));
+                }
+                else
+                {
+                    result[position] = ConstructProperty(propertyToken, messageTemplateParameters[position]);
                 }
             }
-
-            var next = 0;
-            for (var i = 0; i < result.Length; ++i)
-            {
-                if (result[i] != null)
-                {
-                    result[next] = result[i];
-                    ++next;
-                }
-            }
-
-            if (next != result.Length)
-                Array.Resize(ref result, next);
 
             return result;
         }
@@ -106,12 +108,23 @@ namespace Serilog.Parameters
                 SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
             }
 
-            var result = new LogEventProperty[matchedRun];
-            for (var i = 0; i < matchedRun; ++i)
+            int nextUnmatchedPosition = 0;
+            var result = new LogEventProperty[messageTemplateParameters.Length];
+            for (var i = 0; i < result.Length; ++i)
             {
-                var property = template.NamedProperties[i];
-                var value = messageTemplateParameters[i];
-                result[i] = ConstructProperty(property, value);
+                if (i < matchedRun)
+                {
+                    var property = template.NamedProperties[i];
+                    var value = messageTemplateParameters[i];
+                    result[i] = ConstructProperty(property, value);
+                }
+                else
+                {
+                    // found no property for this position; generate a default name
+                    result[i] = new LogEventProperty(
+                        "__" + nextUnmatchedPosition++,
+                        _valueConverter.CreatePropertyValue(messageTemplateParameters[i]));
+                }
             }
 
             return result;
