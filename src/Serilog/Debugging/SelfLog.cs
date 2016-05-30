@@ -23,6 +23,8 @@ namespace Serilog.Debugging
     /// </summary>
     public static class SelfLog
     {
+        static readonly Action<string> _output;
+
         /// <summary>
         /// The output mechanism for self-log events.
         /// </summary>
@@ -30,7 +32,29 @@ namespace Serilog.Debugging
         /// SelfLog.Out = Console.Error;
         /// </example>
         // ReSharper disable once MemberCanBePrivate.Global, UnusedAutoPropertyAccessor.Global
-        public static TextWriter Out { get; set; }
+        [Obsolete("Use SetOutput() instead")]
+        public static TextWriter Out
+        {
+            set
+            {
+                if (value == null)
+                {
+                    SetOutput(null);
+                }
+                else
+                {
+                    SetOutput(m =>
+                    {
+                        value.WriteLine(DateTime.UtcNow.ToString("o") + " " + m);
+                        value.Flush();
+                    });
+                }
+            }
+        }
+
+        public static void SetOutput(Action<string> output)
+        {
+        }
 
         /// <summary>
         /// Write a message to the self-log.
@@ -41,11 +65,10 @@ namespace Serilog.Debugging
         /// <param name="arg2">Third argument, if supplied.</param>
         public static void WriteLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
         {
-            var o = Out;
+            var o = _output;
             if (o != null)
             {
-                o.WriteLine(DateTime.Now.ToString("s") + " " + format, arg0, arg1, arg2);
-                o.Flush();
+                o(string.Format(format, arg0, arg1, arg2));
             }
         }
     }
