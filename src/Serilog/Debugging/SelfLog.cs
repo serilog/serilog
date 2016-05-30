@@ -23,7 +23,7 @@ namespace Serilog.Debugging
     /// </summary>
     public static class SelfLog
     {
-        static readonly Action<string> _output;
+        static Action<string> _output;
 
         /// <summary>
         /// The output mechanism for self-log events.
@@ -32,28 +32,53 @@ namespace Serilog.Debugging
         /// SelfLog.Out = Console.Error;
         /// </example>
         // ReSharper disable once MemberCanBePrivate.Global, UnusedAutoPropertyAccessor.Global
-        [Obsolete("Use SetOutput() instead")]
+        [Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
         public static TextWriter Out
         {
             set
             {
-                if (value == null)
-                {
-                    SetOutput(null);
-                }
+                if (value != null)
+                    Enable(value);
                 else
-                {
-                    SetOutput(m =>
-                    {
-                        value.WriteLine(DateTime.UtcNow.ToString("o") + " " + m);
-                        value.Flush();
-                    });
-                }
+                    Disable();
             }
         }
 
-        public static void SetOutput(Action<string> output)
+        /// <summary>
+        /// Set the output mechanism for self-log events.
+        /// </summary>
+        /// <param name="output">A synchronized <see cref="TextWriter"/> to which
+        /// self-log events will be written.</param>
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static void Enable(TextWriter output)
         {
+            if (output == null) throw new ArgumentNullException(nameof(output));
+
+            Enable(m =>
+            {
+                output.WriteLine(m);
+                output.Flush();
+            });
+        }
+
+        /// <summary>
+        /// Set the output mechanism for self-log events.
+        /// </summary>
+        /// <param name="output">An action to invoke with self-log messages.</param>
+        /// // ReSharper disable once MemberCanBePrivate.Global
+        public static void Enable(Action<string> output)
+        {
+            if (output == null) throw new ArgumentNullException(nameof(output));
+            _output = output;
+        }
+
+        /// <summary>
+        /// Clear the output mechanism and disable self-log events.
+        /// </summary>
+        /// // ReSharper disable once MemberCanBePrivate.Global
+        public static void Disable()
+        {
+            _output = null;
         }
 
         /// <summary>
@@ -63,13 +88,15 @@ namespace Serilog.Debugging
         /// <param name="arg0">First argument, if supplied.</param>
         /// <param name="arg1">Second argument, if supplied.</param>
         /// <param name="arg2">Third argument, if supplied.</param>
+        /// <remarks>
+        /// The name is historical; because this is used from third-party sink packages, removing the "Line"
+        /// suffix as would seem sensible isn't worth the breakage.
+        /// </remarks>
         public static void WriteLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
         {
             var o = _output;
-            if (o != null)
-            {
-                o(string.Format(format, arg0, arg1, arg2));
-            }
+
+            o?.Invoke(string.Format(DateTime.UtcNow.ToString("o") + " " + format, arg0, arg1, arg2));
         }
     }
 }
