@@ -26,7 +26,7 @@ namespace Serilog.Debugging
         static Action<string> _output;
 
         /// <summary>
-        /// The output mechanism for self-log events.
+        /// The output mechanism for self-log messages.
         /// </summary>
         /// <example>
         /// SelfLog.Out = Console.Error;
@@ -45,10 +45,10 @@ namespace Serilog.Debugging
         }
 
         /// <summary>
-        /// Set the output mechanism for self-log events.
+        /// Set the output mechanism for self-log messages.
         /// </summary>
         /// <param name="output">A synchronized <see cref="TextWriter"/> to which
-        /// self-log events will be written.</param>
+        /// self-log messages will be written.</param>
         // ReSharper disable once MemberCanBePrivate.Global
         public static void Enable(TextWriter output)
         {
@@ -62,7 +62,7 @@ namespace Serilog.Debugging
         }
 
         /// <summary>
-        /// Set the output mechanism for self-log events.
+        /// Set the output mechanism for self-log messages.
         /// </summary>
         /// <param name="output">An action to invoke with self-log messages.</param>
         /// // ReSharper disable once MemberCanBePrivate.Global
