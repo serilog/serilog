@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Core.Sinks
@@ -34,13 +35,20 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
-            foreach (var logEventFilter in _filters)
+            try
             {
-                if (!logEventFilter.IsEnabled(logEvent))
-                    return;
-            }
+                foreach (var logEventFilter in _filters)
+                {
+                    if (!logEventFilter.IsEnabled(logEvent))
+                        return;
+                }
 
-            _sink.Emit(logEvent);
+                _sink.Emit(logEvent);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Caught exception {0} while applying filters.", ex);
+            }
         }
     }
 }

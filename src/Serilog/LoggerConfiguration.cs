@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Parameters;
@@ -134,7 +135,7 @@ namespace Serilog
         public Logger CreateLogger()
         {
             if (_loggerCreated)
-                throw new InvalidOperationException("CreateLogger was previously called and can only be called once.");
+                throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
             _loggerCreated = true;
 
             Action dispose = () =>
@@ -143,17 +144,32 @@ namespace Serilog
                     disposable.Dispose();
             };
 
-            var sink = new SafeAggregateSink(_logEventSinks);
+            ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
 
             if (_filters.Any())
-                sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
+                sink = new FilteringSink(sink, _filters);
 
             var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);
 
+            ILogEventEnricher enricher;
+            switch (_enrichers.Count)
+            {
+                case 0:
+                    // Should be a rare case, so no problem making that extra interface dispatch.
+                    enricher = new EmptyEnricher();
+                    break;
+                case 1:
+                    enricher = _enrichers[0];
+                    break;
+                default:
+                    enricher = new SafeAggregateEnricher(_enrichers);
+                    break;
+            }
+
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, _enrichers.ToArray(), dispose) :
-                new Logger(processor, _levelSwitch, sink, _enrichers.ToArray(), dispose);
+                new Logger(processor, _minimumLevel, sink, enricher, dispose) :
+                new Logger(processor, _levelSwitch, sink, enricher, dispose);
         }
     }
 }
