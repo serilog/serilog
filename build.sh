@@ -1,14 +1,13 @@
 #!/bin/bash
-
 dotnet restore
+for path in src/*/project.json; do
+    dirname="$(dirname "${path}")"	
+    dotnet build ${dirname} -f netstandard1.0 -c Release
+    dotnet build ${dirname} -f netstandard1.3 -c Release
+done
 
-cd src/Serilog/
-
-dotnet build -f netstandard1.0 -c Release
-dotnet build -f netstandard1.3 -c Release
-
-cd ../..
-cd test/Serilog.Tests/ 
-
-dotnet build -f netcoreapp1.0 -c Release
-dotnet test -f netcoreapp1.0  -c Release
+for path in test/Serilog.Tests/project.json; do
+    dirname="$(dirname "${path}")"	
+    dotnet build ${dirname} -f netcoreapp1.0 -c Release
+    dotnet test ${dirname} -f netcoreapp1.0  -c Release
+done
