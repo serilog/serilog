@@ -135,7 +135,7 @@ namespace Serilog.Configuration
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
 
             var trimmed = source.Trim();
-            if (trimmed == "")
+            if (trimmed.Length == 0)
                 throw new ArgumentException("A source name must be provided.", nameof(source));
 
             _addOverride(trimmed, levelSwitch);
