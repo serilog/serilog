@@ -3,7 +3,6 @@ dotnet restore
 for path in src/*/project.json; do
     dirname="$(dirname "${path}")"
     dotnet build ${dirname} -c Release
-    dotnet build ${dirname} -c Release
 done
 
 for path in test/Serilog.Tests/project.json; do
