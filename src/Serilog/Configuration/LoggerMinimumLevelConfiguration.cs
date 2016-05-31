@@ -26,14 +26,18 @@ namespace Serilog.Configuration
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<LogEventLevel> _setMinimum;
         readonly Action<LoggingLevelSwitch> _setLevelSwitch;
+        readonly Action<string, LoggingLevelSwitch> _addOverride;
 
-        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, Action<LoggingLevelSwitch> setLevelSwitch)
+        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, 
+                                                 Action<LoggingLevelSwitch> setLevelSwitch, Action<string, LoggingLevelSwitch> addOverride)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             if (setMinimum == null) throw new ArgumentNullException(nameof(setMinimum));
+            if (addOverride == null) throw new ArgumentNullException(nameof(addOverride));
             _loggerConfiguration = loggerConfiguration;
             _setMinimum = setMinimum;
             _setLevelSwitch = setLevelSwitch;
+            _addOverride = addOverride;
         }
 
         /// <summary>
@@ -51,7 +55,8 @@ namespace Serilog.Configuration
         /// Sets the minimum level to be dynamically controlled by the provided switch.
         /// </summary>
         /// <param name="levelSwitch">The switch.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <returns>Configuration object allowing method chaining.</returns>        
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
         {
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
@@ -126,7 +131,15 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
         {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
 
+            var trimmed = source.Trim();
+            if (trimmed == "")
+                throw new ArgumentException("A source name must be provided.", nameof(source));
+
+            _addOverride(trimmed, levelSwitch);
+            return _loggerConfiguration;
         }
 
         /// <summary>

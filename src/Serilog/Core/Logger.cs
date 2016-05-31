@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,14 +42,16 @@ namespace Serilog.Core
         // to its lower limit and fall through to the secondary check.
         readonly LogEventLevel _minimumLevel;
         readonly LoggingLevelSwitch _levelSwitch;
+        readonly LevelOverrideMap _overrideMap;
 
         internal Logger(
             MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
-            Action dispose = null)
-            : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null)
+            Action dispose = null,
+            LevelOverrideMap overrideMap = null)
+            : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null, overrideMap)
         {
         }
 
@@ -58,8 +60,9 @@ namespace Serilog.Core
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
             ILogEventEnricher enricher,
-            Action dispose = null)
-            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch)
+            Action dispose = null,
+            LevelOverrideMap overrideMap = null)
+            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch, overrideMap)
         {
         }
 
@@ -71,13 +74,15 @@ namespace Serilog.Core
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch levelSwitch = null,
+            LevelOverrideMap overrideMap = null)
         {
             _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
             _sink = sink;
             _dispose = dispose;
             _levelSwitch = levelSwitch;
+            _overrideMap = overrideMap;
             _enricher = enricher;
         }
 
@@ -97,7 +102,8 @@ namespace Serilog.Core
                         this,
                         enricher,
                         null,
-                        _levelSwitch);
+                        _levelSwitch,
+                        _overrideMap);
         }
 
         /// <summary>
@@ -133,8 +139,25 @@ namespace Serilog.Core
             // now and the first log event written...
             // A future optimization opportunity may be to implement ILogEventEnricher on LogEventProperty to
             // remove one more allocation.
-            return ForContext(new FixedPropertyEnricher(
-                    _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects)));
+            var enricher = new FixedPropertyEnricher(_messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects));
+
+            var minimumLevel = _minimumLevel;
+            var levelSwitch = _levelSwitch;
+            if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
+            {
+                var context = value as string;
+                if (context != null)
+                    _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+            }
+
+            return new Logger(
+                _messageTemplateProcessor,
+                minimumLevel,
+                this,
+                enricher,
+                null,
+                levelSwitch,
+                _overrideMap);
         }
 
         /// <summary>

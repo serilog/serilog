@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace Serilog
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-
+        readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
@@ -72,7 +72,8 @@ namespace Serilog
                         _minimumLevel = l;
                         _levelSwitch = null;
                     },
-                    sw => _levelSwitch = sw);
+                    sw => _levelSwitch = sw,
+                    (s, lls) => _overrides[s] = lls);
             }
         }
 
@@ -80,24 +81,12 @@ namespace Serilog
         /// Configures enrichment of <see cref="LogEvent"/>s. Enrichers can add, remove and
         /// modify the properties associated with events.
         /// </summary>
-        public LoggerEnrichmentConfiguration Enrich
-        {
-            get
-            {
-                return new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
-            }
-        }
+        public LoggerEnrichmentConfiguration Enrich => new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
 
         /// <summary>
         /// Configures global filtering of <see cref="LogEvent"/>s.
         /// </summary>
-        public LoggerFilterConfiguration Filter
-        {
-            get
-            {
-                return new LoggerFilterConfiguration(this, f => _filters.Add(f));
-            }
-        }
+        public LoggerFilterConfiguration Filter => new LoggerFilterConfiguration(this, f => _filters.Add(f));
 
         /// <summary>
         /// Configures destructuring of message template parameters.
@@ -117,13 +106,7 @@ namespace Serilog
         /// <summary>
         /// Apply external settings to the logger configuration.
         /// </summary>
-        public LoggerSettingsConfiguration ReadFrom
-        {
-            get
-            {
-                return new LoggerSettingsConfiguration(this);
-            }
-        }
+        public LoggerSettingsConfiguration ReadFrom => new LoggerSettingsConfiguration(this);
 
         /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
@@ -167,9 +150,15 @@ namespace Serilog
                     break;
             }
 
+            LevelOverrideMap overrideMap = null;
+            if (_overrides.Count != 0)
+            {
+                overrideMap = new LevelOverrideMap(_overrides, _minimumLevel, _levelSwitch);
+            }
+
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, enricher, dispose) :
-                new Logger(processor, _levelSwitch, sink, enricher, dispose);
+                new Logger(processor, _minimumLevel, sink, enricher, dispose, overrideMap) :
+                new Logger(processor, _levelSwitch, sink, enricher, dispose, overrideMap);
         }
     }
 }
