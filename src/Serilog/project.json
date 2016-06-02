@@ -1,17 +1,21 @@
 ﻿{
   "version": "2.0.0-rc-*",
+
   "description": "Simple .NET logging with fully-structured events",
   "authors": [ "Serilog Contributors" ],
+
   "packOptions": {
     "tags": [ "serilog", "logging", "semantic", "structured" ],
     "projectUrl": "http://serilog.net",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "iconUrl": "http://serilog.net/images/serilog-nuget.png"
   },
+
   "buildOptions": {
     "keyFile": "../../assets/Serilog.snk",
     "xmlDoc": true
   },
+
   "frameworks": {
     "net4.5": {
       "buildOptions": {
