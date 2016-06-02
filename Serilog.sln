@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
 		global.json = global.json
-		NuGet.Config = NuGet.Config
+		NuGet.config = NuGet.config
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection

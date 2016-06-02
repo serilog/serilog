@@ -1,6 +1,4 @@
 ﻿{
-  "version": "1.0.0-*",
-
   "buildOptions": {
     "keyFile": "../../assets/Serilog.snk"
   },
