@@ -48,5 +48,11 @@ namespace Serilog.PerformanceTests
         {
             var context = BenchmarkRunner.Run<MinimumLevel>();
         }
+        
+        [Fact]
+        public void FromLogContextPushProperty()
+        {
+            var context = BenchmarkRunner.Run<FromLogContextPushProperty>();
+        }
     }
 }
