@@ -20,7 +20,7 @@ if($LASTEXITCODE -ne 0) { exit 2 }
 Pop-Location
 Push-Location test/Serilog.PerformanceTests
  
-& dotnet test -c Release
+& dotnet build -c Release
 if($LASTEXITCODE -ne 0) { exit 2 }
 
 Pop-Location
