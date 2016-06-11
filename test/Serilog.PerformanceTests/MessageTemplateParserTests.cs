@@ -45,7 +45,7 @@ namespace Serilog.PerformanceTests
         }  
 
         [Benchmark]
-        public void DefaultConsoleOutputTemplate()
+        public void ParseDefaultConsoleOutputTemplate()
         {
             var template = _parser.Parse(DefaultConsoleOutputTemplate);
         }  
