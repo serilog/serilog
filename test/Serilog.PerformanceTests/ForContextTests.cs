@@ -17,13 +17,15 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Serilog.Tests.Support;
 using Serilog;
-using Serilog.Context;
 using System;
 using Xunit;
 
 namespace Serilog.PerformanceTests
-{ 
-    public class FromLogContextPushProperty
+{
+    /// <summary>
+    /// From https://github.com/serilog/serilog/pull/750
+    /// </summary>
+    public class ForContextTests
     {
         private ILogger log;
         
@@ -32,68 +34,47 @@ namespace Serilog.PerformanceTests
         {
             log = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => { }))
-                .Enrich.FromLogContext()
                 .CreateLogger();
         }
         
         [Benchmark(Baseline = true)]
         public void Baseline()
         {
-            for (var i = 0; i < 1000; ++i)
+            for (var i = 0; i < 10; ++i)
             {
                 log.Information("Event!");
             }
         }  
 
         [Benchmark]
-        public void Push1Property1000()
-        { 
-            for (var i = 0; i < 1000; ++i)
+        public void ForContextInfo10()
+        {
+            for (var i = 0; i < 10; ++i)
             {
-                using (LogContext.PushProperty("A", 2))
-                {
-                    log.Information("Event!");                
-                }
+                var ctx = log.ForContext("I", i);
+                ctx.Information("Event!");
             }
-        }      
-
-        [Benchmark]
-        public void Push1Property10000()
-        { 
-            for (var i = 0; i < 10000; ++i)
-            {
-                using (LogContext.PushProperty("A", 2))
-                {
-                    log.Information("Event!");                
-                }
-            }
-        }       
+        }        
         
         [Benchmark]
-        public void Push2Properties1000()
+        public void ForContextInfo1000()
         {
             for (var i = 0; i < 1000; ++i)
             {
-                using (LogContext.PushProperty("A", 2))
-                using (LogContext.PushProperty("B", 1))                
-                {
-                    log.Information("Event!");                
-                }
+                var ctx = log.ForContext("I", i);
+                ctx.Information("Event!");
             }
-        }  
+        }
 
         [Benchmark]
-        public void Push2Properties10000()
+        public void ForContextInfo10000()
         {
             for (var i = 0; i < 10000; ++i)
             {
-                using (LogContext.PushProperty("A", 2))
-                using (LogContext.PushProperty("B", 1))                
-                {
-                    log.Information("Event!");                
-                }
+                var ctx = log.ForContext("I", i);
+                ctx.Information("Event!");
             }
-        }  
+        }
     }
 }
   

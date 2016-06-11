@@ -24,7 +24,7 @@ using Xunit;
 
 namespace Serilog.PerformanceTests
 {
-    public class MinimumLevel
+    public class MinimumLevelTests
     {
         private ILogger log;
         private LoggingLevelSwitch levelSwitch;

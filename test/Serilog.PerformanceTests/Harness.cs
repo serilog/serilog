@@ -26,13 +26,11 @@ namespace Serilog.PerformanceTests
     // TODO:
 
     // For Context
+    // MinimumLevel
+    // Push - ForContext
+    // Ctor of LogEvent
+    // Message Template parsing 
 
-    // Perf logger off
-    // Perf level off - Debug -
-   
-    // LogContext Push
-    // ctor logevent -
-    // message template parser perf
     // property binding perf (Bind message template)
 
     public class Runner
@@ -40,19 +38,31 @@ namespace Serilog.PerformanceTests
         [Fact]
         public void ForContext()
         {
-            var context = BenchmarkRunner.Run<ForContext>();
+            var context = BenchmarkRunner.Run<ForContextTests>();
         }
 
         [Fact]
         public void MinimumLevel()
         {
-            var context = BenchmarkRunner.Run<MinimumLevel>();
+            var context = BenchmarkRunner.Run<MinimumLevelTests>();
         }
         
         [Fact]
         public void FromLogContextPushProperty()
         {
-            var context = BenchmarkRunner.Run<FromLogContextPushProperty>();
+            var context = BenchmarkRunner.Run<FromLogContextPushPropertyTests>();
+        }
+
+        [Fact]
+        public void LogEvent()
+        {
+            var context = BenchmarkRunner.Run<LogEventTests>();
+        }
+
+        [Fact]
+        public void MessageTemplateParser()
+        {
+            var context = BenchmarkRunner.Run<MessageTemplateParserTests>();
         }
     }
 }
