@@ -48,13 +48,30 @@ namespace Serilog.Data
         {
             if (sequence == null) throw new ArgumentNullException(nameof(sequence));
 
-            var contents = new LogEventPropertyValue[sequence.Elements.Count];
-            for (var i = 0; i < contents.Length; ++i)
+            for (var i = 0; i < sequence.Elements.Count; ++i)
             {
-                contents[i] = Visit(state, sequence.Elements[i]);
+                var original = sequence.Elements[i];
+                if (!ReferenceEquals(original, Visit(state, original)))
+                {
+                    var contents = new LogEventPropertyValue[sequence.Elements.Count];
+
+                    // There's no need to visit any earlier elements: they all evaluated to
+                    // a reference equal with the original so just fill in the array up until `i`.
+                    for (var j = 0; j < i; ++j)
+                    {
+                        contents[j] = sequence.Elements[j];
+                    }
+
+                    for (var k = i; k < contents.Length; ++k)
+                    {
+                        contents[k] = Visit(state, sequence.Elements[k]);
+                    }
+
+                    return new SequenceValue(contents);
+                }
             }
 
-            return new SequenceValue(contents);
+            return sequence;
         }
 
         /// <summary>
@@ -67,14 +84,31 @@ namespace Serilog.Data
         {
             if (structure == null) throw new ArgumentNullException(nameof(structure));
 
-            var properties = new LogEventProperty[structure.Properties.Count];
-            for (var i = 0; i < properties.Length; ++i)
+            for (var i = 0; i < structure.Properties.Count; ++i)
             {
-                var property = structure.Properties[i];
-                properties[i] = new LogEventProperty(property.Name, Visit(state, property.Value));
+                var original = structure.Properties[i];
+                if (!ReferenceEquals(original.Value, Visit(state, original.Value)))
+                {
+                    var properties = new LogEventProperty[structure.Properties.Count];
+
+                    // There's no need to visit any earlier elements: they all evaluated to
+                    // a reference equal with the original so just fill in the array up until `i`.
+                    for (var j = 0; j < i; ++j)
+                    {
+                        properties[j] = structure.Properties[j];
+                    }
+
+                    for (var k = i; k < properties.Length; ++k)
+                    {
+                        var property = structure.Properties[k];
+                        properties[k] = new LogEventProperty(property.Name, Visit(state, property.Value));
+                    }
+
+                    return new StructureValue(properties, structure.TypeTag);
+                }
             }
 
-            return new StructureValue(properties, structure.TypeTag);
+            return structure;
         }
 
         /// <summary>
@@ -87,13 +121,21 @@ namespace Serilog.Data
         {
             if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
 
-            var elements = new Dictionary<ScalarValue, LogEventPropertyValue>(dictionary.Elements.Count);
-            foreach (var element in dictionary.Elements)
+            foreach (var original in dictionary.Elements)
             {
-                elements[element.Key] = Visit(state, element.Value);
+                if (!ReferenceEquals(original.Value, Visit(state, original.Value)))
+                {
+                    var elements = new Dictionary<ScalarValue, LogEventPropertyValue>(dictionary.Elements.Count);
+                    foreach (var element in dictionary.Elements)
+                    {
+                        elements[element.Key] = Visit(state, element.Value);
+                    }
+
+                    return new DictionaryValue(elements);
+                }
             }
 
-            return new DictionaryValue(elements);
+            return dictionary;
         }
 
         /// <summary>
