@@ -65,7 +65,6 @@ namespace Serilog.Parameters
                 SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
 
             var result = new LogEventProperty[messageTemplateParameters.Length];
-            int nextUnmatchedPosition = 0;
             for (int position = 0; position < messageTemplateParameters.Length; position++)
             {
                 PropertyToken propertyToken = null;
@@ -79,17 +78,10 @@ namespace Serilog.Parameters
                     }
                 }
 
-                if (propertyToken == null)
-                {
-                    // found no property for this position; generate a default name
-                    result[position] = new LogEventProperty(
-                        "__" + nextUnmatchedPosition++,
-                        _valueConverter.CreatePropertyValue(messageTemplateParameters[position]));
-                }
-                else
-                {
-                    result[position] = ConstructProperty(propertyToken, messageTemplateParameters[position]);
-                }
+                result[position] = propertyToken == null
+                    ? new LogEventProperty("__" + position, 
+                        _valueConverter.CreatePropertyValue(messageTemplateParameters[position]))
+                    : ConstructProperty(propertyToken, messageTemplateParameters[position]);
             }
 
             return result;
@@ -108,23 +100,12 @@ namespace Serilog.Parameters
                 SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
             }
 
-            int nextUnmatchedPosition = 0;
             var result = new LogEventProperty[messageTemplateParameters.Length];
             for (var i = 0; i < result.Length; ++i)
             {
-                if (i < matchedRun)
-                {
-                    var property = template.NamedProperties[i];
-                    var value = messageTemplateParameters[i];
-                    result[i] = ConstructProperty(property, value);
-                }
-                else
-                {
-                    // found no property for this position; generate a default name
-                    result[i] = new LogEventProperty(
-                        "__" + nextUnmatchedPosition++,
-                        _valueConverter.CreatePropertyValue(messageTemplateParameters[i]));
-                }
+                result[i] = i < matchedRun
+                    ? ConstructProperty(template.NamedProperties[i], messageTemplateParameters[i])
+                    : new LogEventProperty("__" + i, _valueConverter.CreatePropertyValue(messageTemplateParameters[i]));
             }
 
             return result;

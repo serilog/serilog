@@ -74,10 +74,10 @@ namespace Serilog.Tests.Core
                 {
                     new LogEventProperty("0", new ScalarValue(0)),
                     new LogEventProperty("1", new ScalarValue(1)),
-                    new LogEventProperty("__0", new ScalarValue("__0")),
-                    new LogEventProperty("__1", new ScalarValue("__1")),
+                    new LogEventProperty("__2", new ScalarValue("__2")),
+                    new LogEventProperty("__3", new ScalarValue("__3")),
                 },
-                Capture("Hello {0} {1} nothing more", 0, 1, "__0", "__1"),
+                Capture("Hello {0} {1} nothing more", 0, 1, "__2", "__3"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
 
@@ -88,10 +88,10 @@ namespace Serilog.Tests.Core
                 {
                     new LogEventProperty("0", new ScalarValue(0)),
                     new LogEventProperty("1", new ScalarValue(1)),
-                    new LogEventProperty("__0", new ScalarValue("__0")),
-                    new LogEventProperty("__1", new ScalarValue("__1")),
+                    new LogEventProperty("__2", new ScalarValue("__2")),
+                    new LogEventProperty("__3", new ScalarValue("__3")),
                 },
-                Capture("Hello {1} {0} nothing more", 0, 1, "__0", "__1"),
+                Capture("Hello {1} {0} nothing more", 0, 1, "__2", "__3"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
 
@@ -102,10 +102,10 @@ namespace Serilog.Tests.Core
                 {
                     new LogEventProperty("who", new ScalarValue("who")),
                     new LogEventProperty("what", new ScalarValue("what")),
-                    new LogEventProperty("__0", new ScalarValue("__0")),
-                    new LogEventProperty("__1", new ScalarValue("__1")),
+                    new LogEventProperty("__2", new ScalarValue("__2")),
+                    new LogEventProperty("__3", new ScalarValue("__3")),
                 },
-                Capture("Hello {who} {what} where}", "who", "what", "__0", "__1"),
+                Capture("Hello {who} {what} where}", "who", "what", "__2", "__3"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
         
