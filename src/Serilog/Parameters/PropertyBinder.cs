@@ -102,8 +102,10 @@ namespace Serilog.Parameters
                 int position;
                 if (!property.TryGetPositionalValue(out position))
                 {
-                    throw new Exception("should never happen here");
+                    throw new ArgumentException(
+                        "This method can only process a template with all positional properties.", nameof(template));
                 }
+
                 result[position] = ConstructProperty(property, messageTemplateParameters[position]);
             }
 
