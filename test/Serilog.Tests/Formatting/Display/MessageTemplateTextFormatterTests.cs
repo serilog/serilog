@@ -60,13 +60,13 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(LogEventLevel.Verbose, 5, "Verbo")]
         [InlineData(LogEventLevel.Verbose, 6, "Verbos")]
         [InlineData(LogEventLevel.Verbose, 7, "Verbose")]
-        [InlineData(LogEventLevel.Verbose, 8, " Verbose")]
+        [InlineData(LogEventLevel.Verbose, 8, "Verbose")]
         [InlineData(LogEventLevel.Debug, 1, "D")]
         [InlineData(LogEventLevel.Debug, 2, "De")]
         [InlineData(LogEventLevel.Debug, 3, "Dbg")]
         [InlineData(LogEventLevel.Debug, 4, "Dbug")]
         [InlineData(LogEventLevel.Debug, 5, "Debug")]
-        [InlineData(LogEventLevel.Debug, 6, " Debug")]
+        [InlineData(LogEventLevel.Debug, 6, "Debug")]
         [InlineData(LogEventLevel.Information, 1, "I")]
         [InlineData(LogEventLevel.Information, 2, "In")]
         [InlineData(LogEventLevel.Information, 3, "Inf")]
@@ -78,19 +78,19 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(LogEventLevel.Information, 9, "Informati")]
         [InlineData(LogEventLevel.Information, 10, "Informatio")]
         [InlineData(LogEventLevel.Information, 11, "Information")]
-        [InlineData(LogEventLevel.Information, 12, " Information")]
+        [InlineData(LogEventLevel.Information, 12, "Information")]
         [InlineData(LogEventLevel.Error, 1, "E")]
         [InlineData(LogEventLevel.Error, 2, "Er")]
         [InlineData(LogEventLevel.Error, 3, "Err")]
         [InlineData(LogEventLevel.Error, 4, "Eror")]
         [InlineData(LogEventLevel.Error, 5, "Error")]
-        [InlineData(LogEventLevel.Error, 6, " Error")]
+        [InlineData(LogEventLevel.Error, 6, "Error")]
         [InlineData(LogEventLevel.Fatal, 1, "F")]
         [InlineData(LogEventLevel.Fatal, 2, "Fa")]
         [InlineData(LogEventLevel.Fatal, 3, "Ftl")]
         [InlineData(LogEventLevel.Fatal, 4, "Fatl")]
         [InlineData(LogEventLevel.Fatal, 5, "Fatal")]
-        [InlineData(LogEventLevel.Fatal, 6, " Fatal")]
+        [InlineData(LogEventLevel.Fatal, 6, "Fatal")]
         [InlineData(LogEventLevel.Warning, 1, "W")]
         [InlineData(LogEventLevel.Warning, 2, "Wn")]
         [InlineData(LogEventLevel.Warning, 3, "Wrn")]
@@ -98,13 +98,13 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(LogEventLevel.Warning, 5, "Warni")]
         [InlineData(LogEventLevel.Warning, 6, "Warnin")]
         [InlineData(LogEventLevel.Warning, 7, "Warning")]
-        [InlineData(LogEventLevel.Warning, 8, " Warning")]
+        [InlineData(LogEventLevel.Warning, 8, "Warning")]
         public void FixedLengthLevelIsSupported(
             LogEventLevel level,
-            int length, 
+            int width, 
             string expected)
         {
-            var formatter = new MessageTemplateTextFormatter($"{{Level,{length}}}", CultureInfo.InvariantCulture);
+            var formatter = new MessageTemplateTextFormatter($"{{Level:t{width}}}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Write(level, "Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
@@ -114,7 +114,7 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void FixedLengthLevelSupportsUpperCasing()
         {
-            var formatter = new MessageTemplateTextFormatter("{Level,3:u}", CultureInfo.InvariantCulture);
+            var formatter = new MessageTemplateTextFormatter("{Level:u3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
@@ -124,7 +124,7 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void FixedLengthLevelSupportsLowerCasing()
         {
-            var formatter = new MessageTemplateTextFormatter("{Level,3:w}", CultureInfo.InvariantCulture);
+            var formatter = new MessageTemplateTextFormatter("{Level:w3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
@@ -139,6 +139,16 @@ namespace Serilog.Tests.Formatting.Display
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("Information", sw.ToString());
+        }
+
+        [Fact]
+        public void AligmentAndWidthCanBeCombined()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Level,5:w3}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("  inf", sw.ToString());
         }
     }
 }
