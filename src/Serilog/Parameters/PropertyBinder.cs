@@ -70,10 +70,10 @@ namespace Serilog.Parameters
             var positionalProperties = template.PositionalProperties;
 
             var result = new LogEventProperty[messageTemplateParameters.Length];
-            for (int position = 0; position < messageTemplateParameters.Length; position++)
+            for (var position = 0; position < messageTemplateParameters.Length; position++)
             {
                 PropertyToken propertyToken = null;
-                for (int propIndex = 0; propIndex < positionalProperties.Length; propIndex++)
+                for (var propIndex = 0; propIndex < positionalProperties.Length; propIndex++)
                 {
                     int propertyTokenPosition;
                     if (positionalProperties[propIndex].TryGetPositionalValue(out propertyTokenPosition)
