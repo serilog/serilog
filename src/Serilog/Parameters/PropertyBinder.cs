@@ -51,18 +51,23 @@ namespace Serilog.Parameters
                 return NoProperties;
             }
 
-            if (messageTemplate.PositionalProperties != null)
-                return ConstructPositionalProperties(messageTemplate, messageTemplateParameters);
+            if (messageTemplate.PositionalProperties == null)
+                return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
 
-            return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
+            // all are positional
+            if (messageTemplateParameters.Length == messageTemplate.PositionalProperties.Length)
+            {
+                // exactly the right number of positional parameters were provided
+                return ConstructPositionalPropertiesOptimisedAllMatching(messageTemplate, messageTemplateParameters);
+            }
+
+            SelfLog.WriteLine("Positional property count does not match parameter count: {0}", messageTemplate);
+            return ConstructPositionalPropertiesWithSomeMissing(messageTemplate, messageTemplateParameters);
         }
 
-        IEnumerable<LogEventProperty> ConstructPositionalProperties(MessageTemplate template, object[] messageTemplateParameters)
+        IEnumerable<LogEventProperty> ConstructPositionalPropertiesWithSomeMissing(MessageTemplate template, object[] messageTemplateParameters)
         {
             var positionalProperties = template.PositionalProperties;
-
-            if (positionalProperties.Length != messageTemplateParameters.Length)
-                SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
 
             var result = new LogEventProperty[messageTemplateParameters.Length];
             for (int position = 0; position < messageTemplateParameters.Length; position++)
@@ -79,9 +84,27 @@ namespace Serilog.Parameters
                 }
 
                 result[position] = propertyToken == null
-                    ? new LogEventProperty("__" + position, 
+                    ? new LogEventProperty("__" + position,
                         _valueConverter.CreatePropertyValue(messageTemplateParameters[position]))
                     : ConstructProperty(propertyToken, messageTemplateParameters[position]);
+            }
+
+            return result;
+        }
+
+        IEnumerable<LogEventProperty> ConstructPositionalPropertiesOptimisedAllMatching(MessageTemplate template, object[] messageTemplateParameters)
+        {
+            var positionalProperties = template.PositionalProperties;
+            var result = new LogEventProperty[positionalProperties.Length];
+            for (var index = 0; index < positionalProperties.Length; index++)
+            {
+                var property = positionalProperties[index];
+                int position;
+                if (!property.TryGetPositionalValue(out position))
+                {
+                    throw new Exception("should never happen here");
+                }
+                result[position] = ConstructProperty(property, messageTemplateParameters[position]);
             }
 
             return result;

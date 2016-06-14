@@ -56,6 +56,19 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
+        public void WillCaptureProvidedPositionalValuesEvenIfSomeEarlierLowerNumberedAreMissing()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("__0", new ScalarValue(0)),
+                    new LogEventProperty("1", new ScalarValue(1)),
+                    new LogEventProperty("2", new ScalarValue(2)),
+                },
+                Capture("Hello {1} {2} nothing more", 0, 1, 2), // missing {0}
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
         public void WillCaptureProvidedNamedValuesEvenIfSomeAreMissing()
         {
             Assert.Equal(new[]
@@ -108,7 +121,7 @@ namespace Serilog.Tests.Core
                 Capture("Hello {who} {what} where}", "who", "what", "__2", "__3"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
-        
+
         static IEnumerable<LogEventProperty> Capture(string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
