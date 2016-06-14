@@ -7,6 +7,15 @@ namespace Serilog.Tests.Support
     public class LogEventPropertyStructuralEqualityComparerTests
     {
         [Fact]
+        public void HandlesNullAsNotEqual()
+        {
+            var sut = new LogEventPropertyStructuralEqualityComparer();
+            Assert.False(sut.Equals(null, new LogEventProperty("a", new ScalarValue(null))));
+            Assert.False(sut.Equals(new LogEventProperty("a", new ScalarValue(null)), null));
+            Assert.False(sut.Equals(null, null));
+        }
+
+        [Fact]
         public void LogEventPropertyStructuralEqualityComparerWorksForScalars()
         {
             var scalarStringA = new LogEventProperty("a", new ScalarValue("a"));
