@@ -54,14 +54,6 @@ namespace Serilog.Parameters
             if (messageTemplate.PositionalProperties == null)
                 return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
 
-            // all are positional
-            if (messageTemplateParameters.Length == messageTemplate.PositionalProperties.Length)
-            {
-                // exactly the right number of positional parameters were provided
-                return ConstructPositionalPropertiesOptimisedAllMatching(messageTemplate, messageTemplateParameters);
-            }
-
-            SelfLog.WriteLine("Positional property count does not match parameter count: {0}", messageTemplate);
             return ConstructPositionalPropertiesWithSomeMissing(messageTemplate, messageTemplateParameters);
         }
 
@@ -87,26 +79,6 @@ namespace Serilog.Parameters
                     ? new LogEventProperty("__" + position,
                         _valueConverter.CreatePropertyValue(messageTemplateParameters[position]))
                     : ConstructProperty(propertyToken, messageTemplateParameters[position]);
-            }
-
-            return result;
-        }
-
-        IEnumerable<LogEventProperty> ConstructPositionalPropertiesOptimisedAllMatching(MessageTemplate template, object[] messageTemplateParameters)
-        {
-            var positionalProperties = template.PositionalProperties;
-            var result = new LogEventProperty[positionalProperties.Length];
-            for (var index = 0; index < positionalProperties.Length; index++)
-            {
-                var property = positionalProperties[index];
-                int position;
-                if (!property.TryGetPositionalValue(out position))
-                {
-                    throw new ArgumentException(
-                        "This method can only process a template with all positional properties.", nameof(template));
-                }
-
-                result[position] = ConstructProperty(property, messageTemplateParameters[position]);
             }
 
             return result;

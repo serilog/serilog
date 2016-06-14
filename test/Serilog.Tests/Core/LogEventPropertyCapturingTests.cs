@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-
+using System.IO;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parameters;
 using Serilog.Parsing;
@@ -40,6 +41,37 @@ namespace Serilog.Tests.Core
                     new LogEventProperty("0", new ScalarValue("worldPositional")),
                 },
                 Capture("Hello {who} {0} {0}", "worldNamed", "worldPositional"),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
+        public void CapturingMultipleSamePositionalsWithoutWarning()
+        {
+            var selfLogWriter = new StringWriter();
+            SelfLog.Enable(selfLogWriter);
+
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("0", new ScalarValue(Environment.NewLine)),
+                    new LogEventProperty("1", new ScalarValue("Adam")),
+                },
+                Capture("Hello {0}{1} {0}It's me", Environment.NewLine, "Adam"),
+                new LogEventPropertyStructuralEqualityComparer());
+
+            Assert.Equal("", selfLogWriter.ToString());
+            SelfLog.Disable();
+        }
+
+        [Fact]
+        public void CapturingMultipleSamePositionalsStillCapturesMissing()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("0", new ScalarValue(Environment.NewLine)),
+                    new LogEventProperty("1", new ScalarValue("Adam")),
+                    new LogEventProperty("__2", new ScalarValue("Missing")),
+                },
+                Capture("Hello {0}{1} {0}It's me", Environment.NewLine, "Adam", "Missing"),
                 new LogEventPropertyStructuralEqualityComparer());
         }
 
