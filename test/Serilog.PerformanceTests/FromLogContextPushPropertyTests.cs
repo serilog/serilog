@@ -25,7 +25,7 @@ namespace Serilog.PerformanceTests
 { 
     public class FromLogContextPushPropertyTests
     {
-        private ILogger log;
+        ILogger log;
         
         [Setup]
         public void Setup()

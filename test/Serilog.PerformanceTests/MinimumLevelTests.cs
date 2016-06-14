@@ -26,8 +26,8 @@ namespace Serilog.PerformanceTests
 {
     public class MinimumLevelTests
     {
-        private ILogger log;
-        private LoggingLevelSwitch levelSwitch;
+        ILogger log;
+        LoggingLevelSwitch levelSwitch;
 
         [Setup]
         public void Setup()

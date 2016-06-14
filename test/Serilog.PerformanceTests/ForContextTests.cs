@@ -27,7 +27,7 @@ namespace Serilog.PerformanceTests
     /// </summary>
     public class ForContextTests
     {
-        private ILogger log;
+        ILogger log;
         
         [Setup]
         public void Setup()

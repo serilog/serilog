@@ -19,7 +19,8 @@ if($LASTEXITCODE -ne 0) { exit 2 }
 
 Pop-Location
 Push-Location test/Serilog.PerformanceTests
- 
+
+#  Currently no running Perf Tests in CI.
 & dotnet build -c Release
 if($LASTEXITCODE -ne 0) { exit 2 }
 
