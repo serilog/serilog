@@ -25,6 +25,22 @@ namespace Serilog.Formatting.Json
     /// </summary>
     public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
+        readonly string _typeTagName;
+
+        const string DefaultTypeTagName = "_typeTag";
+
+        /// <summary>
+        /// Construct a <see cref="JsonFormatter"/>.
+        /// </summary>
+        /// <param name="typeTagName">When serializing structured (object) values,
+        /// the property name to use for the Serilog <see cref="StructureValue.TypeTag"/> field
+        /// in the resulting JSON. If null, no type tag field will be written. The default is
+        /// "_typeTag".</param>
+        public JsonValueFormatter(string typeTagName = DefaultTypeTagName)
+        {
+            _typeTagName = typeTagName;
+        }
+
         /// <summary>
         /// Format <paramref name="value"/> as JSON to <paramref name="output"/>.
         /// </summary>
@@ -94,10 +110,10 @@ namespace Serilog.Formatting.Json
                 Visit(state, prop.Value);
             }
 
-            if (structure.TypeTag != null)
+            if (_typeTagName != null && structure.TypeTag != null)
             {
                 state.Write(delim);
-                state.Write("_typeTag");
+                WriteQuotedJsonString(_typeTagName, state);
                 state.Write(':');
                 WriteQuotedJsonString(structure.TypeTag, state);
             }

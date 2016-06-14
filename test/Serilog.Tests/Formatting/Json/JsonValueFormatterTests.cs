@@ -80,9 +80,9 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void StructuresFormatAsAnObject()
         {
-            var structure = new StructureValue(new[] { new LogEventProperty("A", new ScalarValue(123)) });
+            var structure = new StructureValue(new[] { new LogEventProperty("A", new ScalarValue(123)) }, "T");
             var f = Format(structure);
-            Assert.Equal("{\"A\":123}", f);
+            Assert.Equal("{\"A\":123,\"_typeTag\":\"T\"}", f);
         }
 
         [Fact]
@@ -103,6 +103,28 @@ namespace Serilog.Tests.Formatting.Json
 
             var f = Format(s);
             Assert.Equal("[[\"Hello\"]]", f);
+        }
+
+        [Fact]
+        public void TypeTagCanBeOverridden()
+        {
+            var structure = new StructureValue(new LogEventProperty[0], "T");
+            var formatter = new JsonValueFormatter("$type");
+            var output = new StringWriter();
+            formatter.Format(structure, output);
+            var f = output.ToString();
+            Assert.Equal("{\"$type\":\"T\"}", f);
+        }
+
+        [Fact]
+        public void WhenNullNoTypeTagIsWritten()
+        {
+            var structure = new StructureValue(new LogEventProperty[0], "T");
+            var formatter = new JsonValueFormatter(null);
+            var output = new StringWriter();
+            formatter.Format(structure, output);
+            var f = output.ToString();
+            Assert.Equal("{}", f);
         }
     }
 }
