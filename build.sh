@@ -13,6 +13,5 @@ done
 
 for path in test/Serilog.PerformanceTests/project.json; do
     dirname="$(dirname "${path}")"
-    dotnet build ${dirname} -f netcoreapp1.0 -c Release
-    dotnet test ${dirname} -f netcoreapp1.0  -c Release
+    dotnet build ${dirname} -f netcoreapp1.0 -c Release 
 done
