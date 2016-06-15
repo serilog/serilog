@@ -16,26 +16,44 @@ using System;
 using System.IO;
 
 using Serilog.Events;
-using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
-    // allows for the specific handling of the {Level} element.
+    // Allows for the specific handling of the {Level} element.
     // can now have a fixed width applied to it, as well as casing rules.
+    // Width is set through formats like "u3" (uppercase three chars),
+    // "w1" (one lowercase char), or "t4" (title case four chars).
     class LogEventLevelValue : LogEventPropertyValue
     {
         readonly LogEventLevel _value;
 
-        static readonly string[][] _shortenedLevelMap 
-            = {
-                new []{ "V", "Vb", "Vrb", "Verb" },
-                new []{ "D", "De", "Dbg", "Dbug" },
-                new []{ "I", "In", "Inf", "Info" },
-                new []{ "W", "Wn", "Wrn", "Warn" },
-                new []{ "E", "Er", "Err", "Eror" },
-                new []{ "F", "Fa", "Ftl", "Fatl" }
-              };
-        
+        static readonly string[][] _titleCaseLevelMap = {
+            new []{ "V", "Vb", "Vrb", "Verb" },
+            new []{ "D", "De", "Dbg", "Dbug" },
+            new []{ "I", "In", "Inf", "Info" },
+            new []{ "W", "Wn", "Wrn", "Warn" },
+            new []{ "E", "Er", "Err", "Eror" },
+            new []{ "F", "Fa", "Ftl", "Fatl" }
+        };
+
+        static readonly string[][] _lowercaseLevelMap = {
+            new []{ "v", "vb", "vrb", "verb" },
+            new []{ "d", "de", "dbg", "dbug" },
+            new []{ "i", "in", "inf", "info" },
+            new []{ "w", "wn", "wrn", "warn" },
+            new []{ "e", "er", "err", "eror" },
+            new []{ "f", "fa", "ftl", "fatl" }
+        };
+
+        static readonly string[][] _uppercaseLevelMap = {
+            new []{ "V", "VB", "VRB", "VERB" },
+            new []{ "D", "DE", "DBG", "DBUG" },
+            new []{ "I", "IN", "INF", "INFO" },
+            new []{ "W", "WN", "WRN", "WARN" },
+            new []{ "E", "ER", "ERR", "EROR" },
+            new []{ "F", "FA", "FTL", "FATL" }
+        };
+
         public LogEventLevelValue(LogEventLevel value)
         {
             _value = value;
@@ -46,61 +64,48 @@ namespace Serilog.Formatting.Display
         /// </summary>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            ApplyFormatting(output, _value.ToString(), null, format);
-        }
-
-        /// <summary>
-        /// Will apply fixed width rules using the provided alignment
-        /// </summary>
-        public void Render(TextWriter output, Alignment? alignment, string format = null)
-        {
-            ApplyFormatting(output, AlignedValue(alignment), alignment, format);
-        }
-
-        string AlignedValue(Alignment? alignment)
-        {
-            if (!alignment.HasValue || alignment.Value.Width <= 0)
+            if (format != null && (format.Length == 2 || format.Length == 3))
             {
-                return _value.ToString();
+                // Using int.Parse() here requires allocating a string to exclude the first character prefix.
+                // Junk like "wxy" will be accepted but produce benign results.
+                var width = format[1] - '0';
+                if (format.Length == 3)
+                {
+                    width *= 10;
+                    width += format[2] - '0';
+                }
+
+                if (width < 1)
+                    return;
+
+                if (width > 4)
+                {
+                    var value = _value.ToString();
+                    if (value.Length > width)
+                        value = value.Substring(0, width);
+                    output.Write(Casing.Format(value));
+                    return;
+                }
+
+                var index = (int)_value;
+                if (index >= 0 && index <= (int) LogEventLevel.Fatal)
+                {
+                    switch (format[0])
+                    {
+                        case 'w':
+                            output.Write(_lowercaseLevelMap[index][width - 1]);
+                            return;
+                        case 'u':
+                            output.Write(_uppercaseLevelMap[index][width - 1]);
+                            return;
+                        case 't':
+                            output.Write(_titleCaseLevelMap[index][width - 1]);
+                            return;
+                    }
+                }
             }
 
-            if (IsCustomWidthSupported(alignment.Value.Width))
-            {
-                return ShortLevelFor(_value, alignment.Value.Width);
-            }
-
-            var stringValue = _value.ToString();
-
-            if (IsOutputStringTooWide(alignment.Value, stringValue))
-            {
-                return stringValue.Substring(0, alignment.Value.Width);
-            }
-
-            return stringValue;
-        }
-
-        void ApplyFormatting(TextWriter output, string value, Alignment? alignment, string format = null)
-        {
-            Padding.Apply(output, Casing.Format(value, format), alignment);
-        }
-
-        static string ShortLevelFor(LogEventLevel value, int width)
-        {
-            var index = (int)value;
-            if (index < 0 || index > (int)LogEventLevel.Fatal)
-                return string.Empty;
-
-            return _shortenedLevelMap[index][width - 1];
-        }
-
-        static bool IsOutputStringTooWide(Alignment alignmentValue, string formattedValue)
-        {
-            return alignmentValue.Width < formattedValue.Length;
-        }
-
-        static bool IsCustomWidthSupported(int width)
-        {
-            return width > 0 && width < 5;
+            output.Write(Casing.Format(_value.ToString(), format));
         }
     }
 }
