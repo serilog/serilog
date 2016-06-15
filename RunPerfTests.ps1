@@ -8,20 +8,13 @@ $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BU
 
 Push-Location src/Serilog
 
-& dotnet pack -c Release -o ..\..\.\artifacts --version-suffix=$revision
+& dotnet build -c Release -o ..\..\.\artifacts --version-suffix=$revision
 if($LASTEXITCODE -ne 0) { exit 1 }    
-
-Pop-Location
-Push-Location test/Serilog.Tests
-
-& dotnet test -c Release
-if($LASTEXITCODE -ne 0) { exit 2 }
-
+ 
 Pop-Location
 Push-Location test/Serilog.PerformanceTests
 
-#  Currently no running Perf Tests in CI.
-& dotnet build -c Release
+& dotnet test -c Release
 if($LASTEXITCODE -ne 0) { exit 2 }
 
 Pop-Location
