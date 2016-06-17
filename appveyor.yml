@@ -1,4 +1,5 @@
 version: '{build}'
+skip_tags: true
 image: Visual Studio 2015
 configuration: Release
 install:
@@ -19,4 +20,10 @@ deploy:
   skip_symbols: true
   on:
     branch: /^(dev|master)$/
-
+- provider: GitHub
+  auth_token:
+    secure: Bo3ypKpKFxinjR9ShkNekNvkob2iklHJU+UlYyfHtcFFIAa58SV2TkEd0xWxz633
+  artifact: /Serilog.*\.nupkg/
+  tag: v$(appveyor_build_version)
+  on:
+    branch: master
