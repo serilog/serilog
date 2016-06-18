@@ -86,11 +86,11 @@ namespace Serilog.Events
         /// <summary>
         /// Similar to <see cref="Enumerable.OfType{TResult}"/>, but faster.
         /// </summary>
-        private static TResult[] GetElementsOfTypeToArray<TResult>(System.Collections.IList tokens)
+        private static TResult[] GetElementsOfTypeToArray<TResult>(object[] tokens)
             where TResult: class
         {
-            var result = new List<TResult>(tokens.Count / 2);
-            for (var i = 0; i < tokens.Count; i++)
+            var result = new List<TResult>(tokens.Length / 2);
+            for (var i = 0; i < tokens.Length; i++)
             {
                 var token = tokens[i] as TResult;
                 if (token != null)
