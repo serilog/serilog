@@ -45,6 +45,38 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
+        public void CapturingIntArrayAsScalarSequenceValuesWorks()
+        {
+            const string template = "Hello {sequence}";
+            var templateArguments = new[] { 1, 2, 3, };
+            var expected = new[] {
+                new LogEventProperty("sequence",
+                    new SequenceValue(new[] {
+                        new ScalarValue(1),
+                        new ScalarValue(2),
+                        new ScalarValue(3) })) };
+
+            Assert.Equal(expected, Capture(template, templateArguments),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
+        public void CapturingDestructuredStringArrayAsScalarSequenceValuesWorks()
+        {
+            const string template = "Hello {@sequence}";
+            var templateArguments = new[] { "1", "2", "3", };
+            var expected = new[] {
+                new LogEventProperty("sequence",
+                    new SequenceValue(new[] {
+                        new ScalarValue("1"),
+                        new ScalarValue("2"),
+                        new ScalarValue("3") })) };
+
+            Assert.Equal(expected, Capture(template, new object[] { templateArguments }),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
         public void CapturingMultipleSamePositionalsWithoutWarning()
         {
             var selfLogWriter = new StringWriter();

@@ -16,6 +16,42 @@ namespace Serilog.Tests.Support
         }
 
         [Fact]
+        public void LogEventPropertyStructuralEqualityComparerWorksForSequences()
+        {
+            var intStringDoubleScalarArray =
+                new[] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.0), };
+
+            var intStringFloatScalarArray =
+                new[] { new ScalarValue("1"), new ScalarValue(2), new ScalarValue(3.0f), };
+
+            var sequenceOfScalarsIntStringDoubleA = new LogEventProperty("a", new SequenceValue(intStringDoubleScalarArray));
+
+            var sequenceOfScalarsIntStringDoubleAStructurallyEqual = new LogEventProperty("a",
+                new SequenceValue(new[] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.0), }));
+
+            var sequenceOfScalarsIntStringDoubleAStructurallyNotEqual = new LogEventProperty("a",
+                new SequenceValue(new [] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.1), }));
+
+            var sequenceOfScalarsIntStringFloatA = new LogEventProperty("a", new ScalarValue(intStringFloatScalarArray));
+
+            var sequenceOfScalarsIntStringDoubleB = new LogEventProperty("b", new SequenceValue(intStringDoubleScalarArray));
+
+            var sut = new LogEventPropertyStructuralEqualityComparer();
+
+            // Structurally equal
+            Assert.True(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringDoubleAStructurallyEqual));
+
+            // Not equal due to having a different property name (but otherwise structurally equal)
+            Assert.False(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringDoubleB));
+            
+            // Structurally not equal because element 3 has a different value
+            Assert.False(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringDoubleAStructurallyNotEqual));
+
+            // Strucrtually not equal because element 3 has a different underlying value and type
+            Assert.False(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringFloatA));
+        }
+
+        [Fact]
         public void LogEventPropertyStructuralEqualityComparerWorksForScalars()
         {
             var scalarStringA = new LogEventProperty("a", new ScalarValue("a"));

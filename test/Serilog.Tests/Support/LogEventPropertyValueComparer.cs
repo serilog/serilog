@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Tests.Support
@@ -21,9 +22,13 @@ namespace Serilog.Tests.Support
             {
                 return _objectEqualityComparer.Equals(scalarX.Value, scalarY.Value);
             }
-            else if (x is SequenceValue && y is SequenceValue)
+
+            var sequenceX = x as SequenceValue;
+            var sequenceY = y as SequenceValue;
+            if (sequenceX != null && sequenceY != null)
             {
-                throw new NotImplementedException();
+                return sequenceX.Elements
+                    .SequenceEqual(sequenceY.Elements, this);
             }
             else if (x is StructureValue && y is StructureValue)
             {
@@ -34,7 +39,7 @@ namespace Serilog.Tests.Support
                 throw new NotImplementedException();
             }
 
-            throw new NotImplementedException();
+            return false;
         }
 
         public int GetHashCode(LogEventPropertyValue obj)
