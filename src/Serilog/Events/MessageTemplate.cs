@@ -56,7 +56,7 @@ namespace Serilog.Events
             Text = text;
             _tokens = tokens.ToArray();
 
-            var propertyTokens = _tokens.OfType<PropertyToken>().ToArray();
+            var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(_tokens);
             if (propertyTokens.Length != 0)
             {
                 var allPositional = true;
@@ -81,6 +81,24 @@ namespace Serilog.Events
                     NamedProperties = propertyTokens;
                 }
             }
+        }
+
+        /// <summary>
+        /// Similar to <see cref="Enumerable.OfType{TResult}"/>, but faster.
+        /// </summary>
+        private static TResult[] GetElementsOfTypeToArray<TResult>(System.Collections.IList tokens)
+            where TResult: class
+        {
+            var result = new List<TResult>(tokens.Count / 2);
+            for (var i = 0; i < tokens.Count; i++)
+            {
+                var token = tokens[i] as TResult;
+                if (token != null)
+                {
+                    result.Add(token);
+                }
+            }
+            return result.ToArray();
         }
 
         /// <summary>
