@@ -22,6 +22,7 @@ using Serilog.Events;
 using System.Collections.Generic;
 using System.Threading;
 #elif REMOTING
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 #endif
 
@@ -53,7 +54,7 @@ namespace Serilog.Context
 #if ASYNCLOCAL
         static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
 #elif REMOTING
-        static readonly string DataSlotName = typeof(LogContext).FullName;
+        static readonly string DataSlotName = typeof(LogContext).FullName + "@AppDomain" + AppDomain.CurrentDomain.Id;
 #else // DOTNET_51
         [ThreadStatic]
         static ImmutableStack<ILogEventEnricher> Data;
@@ -101,25 +102,6 @@ namespace Serilog.Context
                 stack = stack.Push(prop);
 
             Enrichers = stack;
-
-            return bookmark;
-        }
-
-        /// <summary>
-        /// Remove all data from the context so that
-        /// cross-app-domain calls can be made without requiring
-        /// Serilog assemblies to be present in the remote domain.
-        /// </summary>
-        /// <returns>A token that will restore the suspended log context data, if any.</returns>
-        /// <remarks>The <see cref="LogContext"/> should not be manipulated further
-        /// until the return value from this method has been disposed.</remarks>
-        /// <returns></returns>
-        public static IDisposable Suspend()
-        {
-            var stack = GetOrCreateEnricherStack();
-            var bookmark = new ContextStackBookmark(stack);
-
-            Enrichers = null;
 
             return bookmark;
         }
@@ -178,51 +160,17 @@ namespace Serilog.Context
 
 #elif REMOTING
 
-        /// <summary>
-        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
-        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
-        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
-        /// should be preferred.
-        /// </summary>
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public static bool PermitCrossAppDomainCalls { get; set; }
-
-        sealed class Wrapper : MarshalByRefObject
-        {
-            public ImmutableStack<ILogEventEnricher> Value { get; set; }
-        }
-
-        static object GetContext(ImmutableStack<ILogEventEnricher> value)
-        {
-            var context = !PermitCrossAppDomainCalls ? (object)value : new Wrapper
-            {
-                Value = value
-            };
-            return context;
-        }
-
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
             get
             {
-                var data = CallContext.LogicalGetData(DataSlotName);
+                var objectHandle = CallContext.LogicalGetData(DataSlotName) as ObjectHandle;
 
-                ImmutableStack<ILogEventEnricher> context;
-                if (PermitCrossAppDomainCalls)
-                {
-                    context = ((Wrapper)data)?.Value;
-                }
-                else
-                {
-                    context = (ImmutableStack<ILogEventEnricher>)data;
-                }
-
-                return context;
+                return objectHandle?.Unwrap() as ImmutableStack<ILogEventEnricher>;
             }
             set
             {
-                var context = GetContext(value);
-                CallContext.LogicalSetData(DataSlotName, context);
+                CallContext.LogicalSetData(DataSlotName, new ObjectHandle(value));
             }
         }
 

@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using Xunit;
+﻿using Xunit;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
 #if REMOTING
+using System;
+using System.IO;
 using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
@@ -18,7 +18,6 @@ namespace Serilog.Tests.Context
         public LogContextTests()
         {
 #if REMOTING
-            LogContext.PermitCrossAppDomainCalls = false;
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
 #endif
         }
@@ -112,43 +111,10 @@ namespace Serilog.Tests.Context
             }
         }
 
-#if REMOTING
-        [Fact]
-        public async Task ContextPropertiesPersistWhenCrossAppDomainCallsAreEnabled()
-        {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            LogContext.PermitCrossAppDomainCalls = true;
-
-            using (LogContext.PushProperty("A", 1))
-            {
-                var pre = Thread.CurrentThread.ManagedThreadId;
-
-                await Task.Delay(1000);
-
-                var post = Thread.CurrentThread.ManagedThreadId;
-
-                log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
-
-                // No problem if this happens occasionally; was Assert.Inconclusive().
-                // The test was marshalled back to the same thread after awaiting.
-                Assert.NotSame(pre, post);
-            }
-        }
-#endif
-
 #if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
-        // Fails if the Serilog assemblies cannot be loaded in the
-        // remote domain. See also LogContext.Suspend()
-        [Fact(Skip="Needs to be updated for dotnet runner.")]
+        [Fact(Skip = "Needs to be updated for dotnet runner.")]
         public void DoesNotPreventCrossDomainCalls()
         {
             var projectRoot = Environment.CurrentDirectory;
@@ -169,8 +135,8 @@ namespace Serilog.Tests.Context
 
                 var domaininfo = new AppDomainSetup
                 {
-                    ApplicationBase = Path.Combine(projectRoot, @"artifacts\"),
-                    PrivateBinPath = @"src\Serilog\bin\Debug\net45;test\Serilog.Tests\bin\Debug\net452".Replace("Debug", configuration)
+                    ApplicationBase = projectRoot,
+                    PrivateBinPath = @"test\Serilog.Tests\bin\Debug\net452\win7-x64".Replace("Debug", configuration)
                 };
                 var evidence = AppDomain.CurrentDomain.Evidence;
                 domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);
@@ -187,29 +153,6 @@ namespace Serilog.Tests.Context
             }
         }
 #endif
-
-        [Fact]
-        public void WhenSuspendedAllPropertiesAreRemovedFromTheContext()
-        {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            using (LogContext.PushProperty("A1", 1))
-            {
-                using (LogContext.Suspend())
-                {
-                    log.Write(Some.InformationEvent());
-                    Assert.False(lastEvent.Properties.ContainsKey("A1"));
-                }
-
-                log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
-            }
-        }
     }
 
 #if REMOTING
@@ -217,18 +160,17 @@ namespace Serilog.Tests.Context
     {
         public bool IsCallable()
         {
-            var sw = new StringSink(outputTemplate: "{Anything}{Number}");
+            LogEvent lastEvent = null;
 
             var log = new LoggerConfiguration()
-                .WriteTo.Sink(sw)
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
             using (LogContext.PushProperty("Number", 42))
                 log.Information("Hello");
 
-            var s = sw.ToString();
-            return s == "42";
+            return 42.Equals(lastEvent.Properties["Number"].LiteralValue());
         }
     }
 #endif
