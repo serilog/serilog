@@ -54,7 +54,7 @@ namespace Serilog.Context
 #if ASYNCLOCAL
         static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
 #elif REMOTING
-        static readonly string DataSlotName = typeof(LogContext).FullName;
+        static readonly string DataSlotName = typeof(LogContext).FullName + "@AppDomain" + AppDomain.CurrentDomain.Id;
 #else // DOTNET_51
         [ThreadStatic]
         static ImmutableStack<ILogEventEnricher> Data;
