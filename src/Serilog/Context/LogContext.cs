@@ -14,7 +14,6 @@
 
 
 using System;
-using System.Runtime.Serialization;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
@@ -23,6 +22,7 @@ using Serilog.Events;
 using System.Collections.Generic;
 using System.Threading;
 #elif REMOTING
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 #endif
 
@@ -111,25 +111,6 @@ namespace Serilog.Context
             return bookmark;
         }
 
-        /// <summary>
-        /// Remove all data from the context so that
-        /// cross-<see cref="AppDomain"/> calls can be made without requiring
-        /// Serilog assemblies to be present in the remote domain.
-        /// </summary>
-        /// <returns>A token that will restore the suspended log context data, if any.</returns>
-        /// <remarks>The <see cref="LogContext"/> should not be manipulated further
-        /// until the return value from this method has been disposed.</remarks>
-        /// <returns></returns>
-        public static IDisposable Suspend()
-        {
-            var stack = GetOrCreateEnricherStack();
-            var bookmark = new ContextStackBookmark(stack);
-
-            Enrichers = null;
-
-            return bookmark;
-        }
-
         static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
         {
             var enrichers = Enrichers;
@@ -184,65 +165,17 @@ namespace Serilog.Context
 
 #elif REMOTING
 
-        /// <summary>
-        /// When calling into appdomains without Serilog loaded, e.g. via remoting or during unit testing,
-        /// it may be necesary to set this value to true so that serialization exceptions are avoided. When possible,
-        /// using the <see cref="Suspend"/> method in a using block around the call has a lower overhead and
-        /// should be preferred.
-        /// </summary>
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public static bool PermitCrossAppDomainCalls { get; set; }
-
-        [Serializable]
-        sealed class Wrapper : ISerializable
-        {
-            public Wrapper()
-            {
-            }
-
-            Wrapper(SerializationInfo info, StreamingContext context)
-            {
-            }
-
-            public ImmutableStack<ILogEventEnricher> Value { get; set; }
-
-            public void GetObjectData(SerializationInfo info, StreamingContext context)
-            {
-                // NOTE: actually instead of PermitCrossAppDomainCalls, we can analyze context.State for Remoting/CrossAppDomain flags
-                if (!PermitCrossAppDomainCalls)
-                {
-                    info.SetType(typeof(object));
-                }
-            }
-        }
-
-        static object Wrap(ImmutableStack<ILogEventEnricher> value)
-        {
-            return new Wrapper
-            {
-                Value = value
-            };
-        }
-
-        static ImmutableStack<ILogEventEnricher> Unwrap(object data)
-        {
-            var wrapper = data as Wrapper;
-
-            return wrapper?.Value;
-        }
-
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
             get
             {
-                var data = CallContext.LogicalGetData(DataSlotName);
-                var context = Unwrap(data);
+                var objectHandle = CallContext.LogicalGetData(DataSlotName) as ObjectHandle;
 
-                return context;
+                return objectHandle?.Unwrap() as ImmutableStack<ILogEventEnricher>;
             }
             set
             {
-                CallContext.LogicalSetData(DataSlotName, Wrap(value));
+                CallContext.LogicalSetData(DataSlotName, new ObjectHandle(value));
             }
         }
 

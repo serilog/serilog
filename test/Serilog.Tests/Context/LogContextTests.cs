@@ -17,9 +17,6 @@ namespace Serilog.Tests.Context
     {
         public LogContextTests()
         {
-#if REMOTING
-            LogContext.PermitCrossAppDomainCalls = false;
-#endif
 #if !ASYNCLOCAL
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
 #endif
@@ -114,37 +111,6 @@ namespace Serilog.Tests.Context
             }
         }
 
-#if REMOTING
-        [Fact]
-        public async Task ContextPropertiesPersistWhenCrossAppDomainCallsAreEnabled()
-        {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            LogContext.PermitCrossAppDomainCalls = true;
-
-            using (LogContext.PushProperty("A", 1))
-            {
-                var pre = Thread.CurrentThread.ManagedThreadId;
-
-                await Task.Delay(1000);
-
-                var post = Thread.CurrentThread.ManagedThreadId;
-
-                log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
-
-                // No problem if this happens occasionally; was Assert.Inconclusive().
-                // The test was marshalled back to the same thread after awaiting.
-                Assert.NotSame(pre, post);
-            }
-        }
-#endif
-
 #if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
@@ -189,29 +155,6 @@ namespace Serilog.Tests.Context
             }
         }
 #endif
-
-        [Fact]
-        public void WhenSuspendedAllPropertiesAreRemovedFromTheContext()
-        {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            using (LogContext.PushProperty("A1", 1))
-            {
-                using (LogContext.Suspend())
-                {
-                    log.Write(Some.InformationEvent());
-                    Assert.False(lastEvent.Properties.ContainsKey("A1"));
-                }
-
-                log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
-            }
-        }
     }
 
 #if REMOTING

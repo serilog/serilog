@@ -14,33 +14,13 @@
 
 using System;
 using System.Collections.Generic;
-#if REMOTING
-using System.Runtime.Serialization;
-#endif
 
 namespace Serilog.Context
 {
-    // Needed because of the shallow-copying behaviour of
-    // LogicalCallContext.
-#if REMOTING
-    [Serializable]
-    class ImmutableStack<T> : IEnumerable<T>, ISerializable
-#else
     class ImmutableStack<T> : IEnumerable<T>
-#endif
     {
         readonly ImmutableStack<T> _under;
         readonly T _top;
-
-#if REMOTING
-        public ImmutableStack(SerializationInfo info, StreamingContext context)
-        {
-        }
-
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-        }
-#endif
 
         ImmutableStack()
         {
