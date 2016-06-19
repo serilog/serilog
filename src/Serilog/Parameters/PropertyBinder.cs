@@ -106,12 +106,12 @@ namespace Serilog.Parameters
                 SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
             }
 
-            var result = new LogEventProperty[matchedRun];
-            for (var i = 0; i < matchedRun; ++i)
+            var result = new LogEventProperty[messageTemplateParameters.Length];
+            for (var i = 0; i < result.Length; ++i)
             {
-                var property = template.NamedProperties[i];
-                var value = messageTemplateParameters[i];
-                result[i] = ConstructProperty(property, value);
+                result[i] = i < matchedRun
+                    ? ConstructProperty(template.NamedProperties[i], messageTemplateParameters[i])
+                    : new LogEventProperty("__" + i, _valueConverter.CreatePropertyValue(messageTemplateParameters[i]));
             }
 
             return result;
