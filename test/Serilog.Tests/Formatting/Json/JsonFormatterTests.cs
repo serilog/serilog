@@ -143,44 +143,22 @@ namespace Serilog.Tests.Formatting.Json
             @event.AddOrUpdateProperty(dictProp);
 
             var formatted = FormatToJson(@event);
-            var expected = string.Format("{{\"{0}\":{1}}}", dictKey, dictValue);
+            var expected = $"{{\"{dictKey}\":{dictValue}}}";
             Assert.True(formatted.Contains(expected));
         }
 
         [Fact]
-        public void WellKnownSpecialCharactersAreEscapedAsNormal()
+        public void LegacyEscapeMethodDelegatesCorrectly()
         {
             const string s = "\\\"\t\r\n\f";
+#pragma warning disable CS0618 // Type or member is obsolete
             var escaped = JsonFormatter.Escape(s);
+#pragma warning restore CS0618 // Type or member is obsolete
             Assert.Equal("\\\\\\\"\\t\\r\\n\\f", escaped);
         }
 
         [Fact]
-        public void StringsWithoutSpecialCharactersAreUnchanged()
-        {
-            const string s = "Hello, world!";
-            var escaped = JsonFormatter.Escape(s);
-            Assert.Same(s, escaped);
-        }
-
-        [Fact]
-        public void UnprintableCharactersAreEscapedAsUnicodeSequences()
-        {
-            const string s = "\u0001";
-            var escaped = JsonFormatter.Escape(s);
-            Assert.Equal("\\u0001", escaped);
-        }
-
-        [Fact]
-        public void EmbeddedEscapesPreservePrefixAndSuffix()
-        {
-            const string s = "a\nb";
-            var escaped = JsonFormatter.Escape(s);
-            Assert.Equal("a\\nb", escaped);
-        }
-
-        [Fact]
-        public void DictionariesAreSerialisedAsObjects()
+        public void DictionariesAreDestructuredViaDictionaryValue()
         {
             var dict = new Dictionary<string, object> {
                 { "hello", "world" },

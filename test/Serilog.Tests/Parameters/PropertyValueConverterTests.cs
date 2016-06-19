@@ -1,6 +1,4 @@
-﻿#if INTERNAL_TESTS
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -167,8 +165,18 @@ namespace Serilog.Tests.Parameters
         public void SurvivesDestructuringASystemType()
         {
             var pv = _converter.CreatePropertyValue(typeof(string), Destructuring.Destructure);
-            Assert.Equal(typeof(string), pv.LiteralValue()); 
+            Assert.Equal(typeof(string), pv.LiteralValue());
         }
+
+#if GETCURRENTMETHOD
+        [Fact]
+        public void SurvivesDestructuringMethodBase()
+        {
+            var theMethod = System.Reflection.MethodBase.GetCurrentMethod();
+            var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
+            Assert.Equal(theMethod, pv.LiteralValue());
+        }
+#endif
 
         public class BaseWithProps
         {
@@ -247,4 +255,3 @@ namespace Serilog.Tests.Parameters
     }
 }
 
-#endif

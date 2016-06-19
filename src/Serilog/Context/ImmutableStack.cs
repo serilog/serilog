@@ -15,6 +15,10 @@
 using System;
 using System.Collections.Generic;
 
+// General-purpose type; not all features are used here.
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeProtected.Global
+
 namespace Serilog.Context
 {
     class ImmutableStack<T> : IEnumerable<T>

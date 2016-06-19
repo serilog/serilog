@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -10,9 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
 		global.json = global.json
-		NuGet.Config = NuGet.Config
+		NuGet.config = NuGet.config
 		README.md = README.md
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
@@ -21,7 +22,9 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog", "src\Serilog\Seri
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.xproj", "{3C2D8E01-5580-426A-BDD9-EC59CD98E618}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Settings.AppSettings", "src\Serilog.Settings.AppSettings\Serilog.Settings.AppSettings.xproj", "{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "TestDummies", "test\TestDummies\TestDummies.xproj", "{2BB12CE5-C867-43BD-AE5D-253FE3248C7F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.PerformanceTests", "test\Serilog.PerformanceTests\Serilog.PerformanceTests.xproj", "{D7A37F73-BBA3-4DAE-9648-1A753A86F968}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +40,14 @@ Global
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB12CE5-C867-43BD-AE5D-253FE3248C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB12CE5-C867-43BD-AE5D-253FE3248C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB12CE5-C867-43BD-AE5D-253FE3248C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB12CE5-C867-43BD-AE5D-253FE3248C7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7A37F73-BBA3-4DAE-9648-1A753A86F968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7A37F73-BBA3-4DAE-9648-1A753A86F968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7A37F73-BBA3-4DAE-9648-1A753A86F968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7A37F73-BBA3-4DAE-9648-1A753A86F968}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +55,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{803CD13A-D54B-4CEC-A55F-E22AE3D93B3C} = {037440DE-440B-4129-9F7A-09B42D00397E}
 		{3C2D8E01-5580-426A-BDD9-EC59CD98E618} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
-		{0D9F37E3-2CB4-4C0D-A307-32BB71DEFDD4} = {037440DE-440B-4129-9F7A-09B42D00397E}
+		{2BB12CE5-C867-43BD-AE5D-253FE3248C7F} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
+		{D7A37F73-BBA3-4DAE-9648-1A753A86F968} = {0D135C0C-A60B-454A-A2F4-CD74A30E04B0}
 	EndGlobalSection
 EndGlobal

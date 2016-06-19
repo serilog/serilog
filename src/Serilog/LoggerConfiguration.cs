@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Parameters;
@@ -33,7 +34,7 @@ namespace Serilog
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-
+        readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
@@ -71,7 +72,8 @@ namespace Serilog
                         _minimumLevel = l;
                         _levelSwitch = null;
                     },
-                    sw => _levelSwitch = sw);
+                    sw => _levelSwitch = sw,
+                    (s, lls) => _overrides[s] = lls);
             }
         }
 
@@ -79,24 +81,12 @@ namespace Serilog
         /// Configures enrichment of <see cref="LogEvent"/>s. Enrichers can add, remove and
         /// modify the properties associated with events.
         /// </summary>
-        public LoggerEnrichmentConfiguration Enrich
-        {
-            get
-            {
-                return new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
-            }
-        }
+        public LoggerEnrichmentConfiguration Enrich => new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
 
         /// <summary>
         /// Configures global filtering of <see cref="LogEvent"/>s.
         /// </summary>
-        public LoggerFilterConfiguration Filter
-        {
-            get
-            {
-                return new LoggerFilterConfiguration(this, f => _filters.Add(f));
-            }
-        }
+        public LoggerFilterConfiguration Filter => new LoggerFilterConfiguration(this, f => _filters.Add(f));
 
         /// <summary>
         /// Configures destructuring of message template parameters.
@@ -116,13 +106,7 @@ namespace Serilog
         /// <summary>
         /// Apply external settings to the logger configuration.
         /// </summary>
-        public LoggerSettingsConfiguration ReadFrom
-        {
-            get
-            {
-                return new LoggerSettingsConfiguration(this);
-            }
-        }
+        public LoggerSettingsConfiguration ReadFrom => new LoggerSettingsConfiguration(this);
 
         /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
@@ -134,7 +118,7 @@ namespace Serilog
         public Logger CreateLogger()
         {
             if (_loggerCreated)
-                throw new InvalidOperationException("CreateLogger was previously called and can only be called once.");
+                throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
             _loggerCreated = true;
 
             Action dispose = () =>
@@ -143,17 +127,38 @@ namespace Serilog
                     disposable.Dispose();
             };
 
-            var sink = new SafeAggregateSink(_logEventSinks);
+            ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
 
             if (_filters.Any())
-                sink = new SafeAggregateSink(new[] { new FilteringSink(sink, _filters) });
+                sink = new FilteringSink(sink, _filters);
 
             var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies);
             var processor = new MessageTemplateProcessor(converter);
 
+            ILogEventEnricher enricher;
+            switch (_enrichers.Count)
+            {
+                case 0:
+                    // Should be a rare case, so no problem making that extra interface dispatch.
+                    enricher = new EmptyEnricher();
+                    break;
+                case 1:
+                    enricher = _enrichers[0];
+                    break;
+                default:
+                    enricher = new SafeAggregateEnricher(_enrichers);
+                    break;
+            }
+
+            LevelOverrideMap overrideMap = null;
+            if (_overrides.Count != 0)
+            {
+                overrideMap = new LevelOverrideMap(_overrides, _minimumLevel, _levelSwitch);
+            }
+
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, _enrichers, dispose) :
-                new Logger(processor, _levelSwitch, sink, _enrichers, dispose);
+                new Logger(processor, _minimumLevel, sink, enricher, dispose, overrideMap) :
+                new Logger(processor, _levelSwitch, sink, enricher, dispose, overrideMap);
         }
     }
 }

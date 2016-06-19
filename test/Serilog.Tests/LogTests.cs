@@ -1,6 +1,4 @@
-﻿#if INTERNAL_TESTS
-
-using System;
+﻿using System;
 using Xunit;
 using Serilog.Core.Pipeline;
 using Serilog.Tests.Support;
@@ -47,5 +45,3 @@ namespace Serilog.Tests
         }
     }
 }
-
-#endif

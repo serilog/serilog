@@ -43,7 +43,7 @@ namespace Serilog.Parsing
 
         static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
         {
-            if (messageTemplate == "")
+            if (messageTemplate.Length == 0)
             {
                 yield return new TextToken("", 0);
                 yield break;
@@ -86,9 +86,8 @@ namespace Serilog.Parsing
             next = startAt + 1;
 
             var rawText = messageTemplate.Substring(first, next - first);
-            var tagContent = messageTemplate.Substring(first + 1, next - (first + 2));
-            if (tagContent.Length == 0 ||
-                !IsValidInPropertyTag(tagContent[0]))
+            var tagContent = rawText.Substring(1, next - (first + 2));
+            if (tagContent.Length == 0)
                 return new TextToken(rawText, first);
 
             string propertyNameAndDestructuring, format, alignment;
@@ -100,7 +99,7 @@ namespace Serilog.Parsing
             if (TryGetDestructuringHint(propertyName[0], out destructuring))
                 propertyName = propertyName.Substring(1);
 
-            if (propertyName == "" || !IsValidInPropertyName(propertyName[0]))
+            if (propertyName.Length == 0)
                 return new TextToken(rawText, first);
 
             for (var i = 0; i < propertyName.Length; ++i)

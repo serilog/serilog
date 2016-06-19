@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ using Serilog.Events;
 
 namespace Serilog.Policies
 {
-    class ReflectionTypesScalarConversionPolicy : IScalarConversionPolicy
+    class ReflectionTypesScalarDestructuringPolicy : IDestructuringPolicy
     {
-        public bool TryConvertToScalar(object value, ILogEventPropertyValueFactory propertyValueFactory, out ScalarValue result)
+        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
             // These types and their subclasses are property-laden and deep;
             // most sinks will convert them to strings.

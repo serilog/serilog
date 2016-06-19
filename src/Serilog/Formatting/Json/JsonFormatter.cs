@@ -19,7 +19,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Serilog.Events;
 using Serilog.Parsing;
 
@@ -36,17 +35,7 @@ namespace Serilog.Formatting.Json
         readonly bool _renderMessage;
         readonly IFormatProvider _formatProvider;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
-
-        /// <summary>
-        /// Construct a <see cref="JsonFormatter"/>. Obsolete, please use named arguments
-        /// when calling this constructor.
-        /// </summary>
-        [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
-        public JsonFormatter(bool omitEnclosingObjectObsolete)
-            : this(omitEnclosingObject: omitEnclosingObjectObsolete)
-        {
-        }
-
+        
         /// <summary>
         /// Construct a <see cref="JsonFormatter"/>.
         /// </summary>
@@ -399,10 +388,7 @@ namespace Serilog.Formatting.Json
 
         static void WriteString(string value, TextWriter output)
         {
-            var content = Escape(value);
-            output.Write("\"");
-            output.Write(content);
-            output.Write("\"");
+            JsonValueFormatter.WriteQuotedJsonString(value, output);
         }
 
         /// <summary>
@@ -410,75 +396,15 @@ namespace Serilog.Formatting.Json
         /// </summary>
         /// <param name="s">A raw string.</param>
         /// <returns>A JSON-escaped version of <paramref name="s"/>.</returns>
+        [Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead."), EditorBrowsable(EditorBrowsableState.Never)]
         public static string Escape(string s)
         {
             if (s == null) return null;
 
-            StringBuilder escapedResult = null;
-            var cleanSegmentStart = 0;
-            for (var i = 0; i < s.Length; ++i)
-            {
-                var c = s[i];
-                if (c < (char)32 || c == '\\' || c == '"')
-                {
-
-                    if (escapedResult == null)
-                        escapedResult = new StringBuilder();
-
-                    escapedResult.Append(s.Substring(cleanSegmentStart, i - cleanSegmentStart));
-                    cleanSegmentStart = i + 1;
-
-                    switch (c)
-                    {
-                        case '"':
-                            {
-                                escapedResult.Append("\\\"");
-                                break;
-                            }
-                        case '\\':
-                            {
-                                escapedResult.Append("\\\\");
-                                break;
-                            }
-                        case '\n':
-                            {
-                                escapedResult.Append("\\n");
-                                break;
-                            }
-                        case '\r':
-                            {
-                                escapedResult.Append("\\r");
-                                break;
-                            }
-                        case '\f':
-                            {
-                                escapedResult.Append("\\f");
-                                break;
-                            }
-                        case '\t':
-                            {
-                                escapedResult.Append("\\t");
-                                break;
-                            }
-                        default:
-                            {
-                                escapedResult.Append("\\u");
-                                escapedResult.Append(((int)c).ToString("X4"));
-                                break;
-                            }
-                    }
-                }
-            }
-
-            if (escapedResult != null)
-            {
-                if (cleanSegmentStart != s.Length)
-                    escapedResult.Append(s.Substring(cleanSegmentStart));
-
-                return escapedResult.ToString();
-            }
-
-            return s;
+            var escapedResult = new StringWriter();
+            JsonValueFormatter.WriteQuotedJsonString(s, escapedResult);
+            var quoted = escapedResult.ToString();
+            return quoted.Substring(1, quoted.Length - 2);
         }
     }
 }

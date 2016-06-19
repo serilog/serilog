@@ -17,7 +17,7 @@ namespace Serilog.Tests.Context
     {
         public LogContextTests()
         {
-#if !ASYNCLOCAL
+#if REMOTING
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
 #endif
         }

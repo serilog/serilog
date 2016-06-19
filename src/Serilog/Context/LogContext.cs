@@ -47,12 +47,7 @@ namespace Serilog.Context
     /// }
     /// </code>
     /// </example>
-    /// <remarks>The scope of the context is the current logical thread, using
-#if ASYNCLOCAL
-    /// <seealso cref="AsyncLocal{T}"/>
-#else
-    /// <seealso cref="CallContext.LogicalGetData"/>
-#endif
+    /// <remarks>The scope of the context is the current logical thread, using AsyncLocal
     /// (and so is preserved across async/await calls).</remarks>
     public static class LogContext
     {

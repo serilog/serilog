@@ -1,14 +1,17 @@
+#!/bin/bash
+dotnet restore
 for path in src/*/project.json; do
-  dirname="$(dirname "${path}")"
-  dnu restore ${dirname}
-  dnu build ${dirname} --framework dotnet5.4 --configuration Release --out .\artifacts\testbin;
-  dnu pack ${dirname} --framework dotnet5.4 --configuration Release --out .\artifacts\packages;
+    dirname="$(dirname "${path}")"
+    dotnet build ${dirname} -c Release
 done
 
-for path in test/*/project.json; do
-  dirname="$(dirname "${path}")"
-  dnu restore ${dirname}
-  dnu build ${dirname} --framework dotnet5.4 --configuration Release --out .\artifacts\testbin;
-  dnx -p ${dirname} test;
+for path in test/Serilog.Tests/project.json; do
+    dirname="$(dirname "${path}")"
+    dotnet build ${dirname} -f netcoreapp1.0 -c Release
+    dotnet test ${dirname} -f netcoreapp1.0  -c Release
 done
 
+for path in test/Serilog.PerformanceTests/project.json; do
+    dirname="$(dirname "${path}")"
+    dotnet build ${dirname} -f netcoreapp1.0 -c Release 
+done
