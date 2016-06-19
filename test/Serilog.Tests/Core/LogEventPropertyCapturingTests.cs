@@ -45,6 +45,81 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
+        public void WillCaptureAnonObjectsAsToStringedScalarsWhenAdditionalNamedPropsNotInTemplate()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("who", new ScalarValue("who")),
+                    new LogEventProperty("what", new ScalarValue("what")),
+                    new LogEventProperty("where", new ScalarValue("{ Num = __2 }")),
+                    new LogEventProperty("__3", new ScalarValue("{ Num = __3 }")), // because C# anon ToString() does this
+                },
+                Capture("Hello {who} {what} {where}", "who", "what", new { Num = "__2" }, new { Num = "__3" }),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
+        public void CapturingTheSameNamedPropertyMatchesValuesCorrectly()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("who", new ScalarValue("worldNamed")),
+                    new LogEventProperty("what", new ScalarValue("what1")),
+                    new LogEventProperty("what", new ScalarValue("what2")),
+                },
+                Capture("Hello {who} {what} {what}", "worldNamed", "what1", "what2"),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
+        public void ProvidingLessParametersThanNamedPropertiesInTheTemplateWorksAndSelfLogs()
+        {
+            var selfLogOutput = new List<string>();
+            SelfLog.Enable(selfLogOutput.Add);
+
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("who", new ScalarValue("who")),
+                    new LogEventProperty("what", new ScalarValue("what")),
+                },
+                Capture("Hello {who} {what} {where}", "who", "what"),
+                new LogEventPropertyStructuralEqualityComparer());
+
+            Assert.Single(selfLogOutput,
+                s => s.EndsWith("Named property count does not match parameter count: Hello {who} {what} {where}"));
+
+            SelfLog.Disable();
+        }
+
+        [Fact]
+        public void WillCaptureSequenceOfScalarsWhenAdditionalNamedPropsNotInTemplateAreArrays()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("who", new ScalarValue("who")),
+                    new LogEventProperty("what", new ScalarValue("what")),
+                    new LogEventProperty("__2", new SequenceValue(new[] { new ScalarValue("__2") })),
+                    new LogEventProperty("__3", new SequenceValue(new[] { new ScalarValue("__3") })),
+                },
+                Capture("Hello {who} {what} where}", "who", "what", new [] { "__2" }, new [] { "__3" }),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
+        public void WillCaptureAdditionalNamedPropsNotInTemplateUsingUnderscoreIndex()
+        {
+            Assert.Equal(new[]
+                {
+                    new LogEventProperty("who", new ScalarValue("who")),
+                    new LogEventProperty("what", new ScalarValue("what")),
+                    new LogEventProperty("__2", new ScalarValue("__2")),
+                    new LogEventProperty("__3", new ScalarValue("__3")),
+                },
+                Capture("Hello {who} {what} where}", "who", "what", "__2", "__3"),
+                new LogEventPropertyStructuralEqualityComparer());
+        }
+
+        [Fact]
         public void CapturingIntArrayAsScalarSequenceValuesWorks()
         {
             const string template = "Hello {sequence}";
