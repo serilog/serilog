@@ -189,10 +189,10 @@ namespace Serilog.Settings.KeyValuePairs
 
             if (toTypeInfo.IsInterface && !string.IsNullOrWhiteSpace(value))
             {
-                var type = Type.GetType(value.Trim(), throwOnError: false).GetTypeInfo();
+                var type = Type.GetType(value.Trim(), throwOnError: false);
                 if (type != null)
                 {
-                    var ctor = type.DeclaredConstructors.FirstOrDefault(ci =>
+                    var ctor = type.GetTypeInfo().DeclaredConstructors.FirstOrDefault(ci =>
                     {
                         var parameters = ci.GetParameters();
                         return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
