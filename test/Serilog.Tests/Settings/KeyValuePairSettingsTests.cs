@@ -7,6 +7,9 @@ using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using Serilog.Enrichers;
 using TestDummies;
+using Serilog.Formatting;
+using Serilog.Formatting.Json;
+using Serilog.Tests.Formatting.Json;
 
 namespace Serilog.Tests.AppSettings.Tests
 {
@@ -90,6 +93,14 @@ namespace Serilog.Tests.AppSettings.Tests
 
             Assert.NotNull(evt);
             Assert.Equal("Test", evt.Properties["App"].LiteralValue());
+        }
+
+
+        [Fact]
+        public void StringValuesConvertToDefaultInstancesIfTargetIsInterface()
+        {
+            var result = (object)KeyValuePairSettings.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
+            Assert.IsType<JsonFormatter>(result);
         }
     }
 }

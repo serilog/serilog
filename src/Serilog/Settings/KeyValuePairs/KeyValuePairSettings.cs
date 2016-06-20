@@ -14,9 +14,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -155,6 +157,12 @@ namespace Serilog.Settings.KeyValuePairs
             return configurationAssemblies.Distinct();
         }
 
+        static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new Dictionary<Type, Func<string, object>>
+            {
+                { typeof(Uri), s => new Uri(s) },
+                { typeof(TimeSpan), s => TimeSpan.Parse(s) }
+            };
+
         internal static object ConvertToType(string value, Type toType)
         {
             var toTypeInfo = toType.GetTypeInfo();
@@ -171,18 +179,34 @@ namespace Serilog.Settings.KeyValuePairs
             if (toTypeInfo.IsEnum)
                 return Enum.Parse(toType, value);
 
-            var extendedTypeConversions = new Dictionary<Type, Func<string, object>>
-            {
-                { typeof(Uri), s => new Uri(s) },
-                { typeof(TimeSpan), s => TimeSpan.Parse(s) }
-            };
-
-            var convertor = extendedTypeConversions
+            var convertor = ExtendedTypeConversions
                 .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
                 .Select(t => t.Value)
                 .FirstOrDefault();
 
-            return convertor == null ? Convert.ChangeType(value, toType) : convertor(value);
+            if (convertor != null)
+                return convertor(value);
+
+            if (toTypeInfo.IsInterface && !string.IsNullOrWhiteSpace(value))
+            {
+                var type = Type.GetType(value.Trim(), throwOnError: false);
+                if (type != null)
+                {
+                    var ctor = type.GetTypeInfo().DeclaredConstructors.FirstOrDefault(ci =>
+                    {
+                        var parameters = ci.GetParameters();
+                        return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
+                    });
+
+                    if (ctor == null)
+                        throw new InvalidOperationException($"A default constructor was not found on {type.FullName}.");
+
+                    var call = ctor.GetParameters().Select(pi => pi.DefaultValue).ToArray();
+                    return ctor.Invoke(call);
+                }
+            }
+
+            return Convert.ChangeType(value, toType);
         }
 
         internal static IList<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
