@@ -2,6 +2,7 @@
 
 Serilog combines the best features of traditional and structured diagnostic logging in an easy-to-use package.
 
+* **[2.0 Upgrade Guide](https://github.com/serilog/serilog/wiki/2.x-Upgrade-Guide)** and [Release Notes](https://github.com/serilog/serilog/blob/dev/CHANGES.md)
 * [Homepage](http://serilog.net)
 * [Documentation](https://github.com/serilog/serilog/wiki)
 
