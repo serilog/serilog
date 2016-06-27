@@ -34,7 +34,7 @@ matrix:
 before_install:
   - if test "$TRAVIS_OS_NAME" == "osx"; then brew update; brew install openssl; brew link --force openssl; fi
   # Download script to install dotnet cli
-  - if test "$CLI_OBTAIN_URL" == ""; then export CLI_OBTAIN_URL=$CLI_INSTALL_SCRIPT_URI; fi
+  - if test "$CLI_OBTAIN_URL" == ""; then export CLI_OBTAIN_URL="https://raw.githubusercontent.com/dotnet/cli/$CLI_INSTALL_SCRIPT_VERSION/scripts/obtain/dotnet-install.sh"; fi
   - echo $CLI_OBTAIN_URL
   - curl -L --create-dirs $CLI_OBTAIN_URL -o ./scripts/obtain/install.sh
   - find ./scripts -name "*.sh" -exec chmod +x {} \;
