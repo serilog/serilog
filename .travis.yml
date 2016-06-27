@@ -24,7 +24,6 @@ os:
 env:
   matrix: 
     - CLI_VERSION=1.0.0-preview2-003121 CLI_INSTALL_SCRIPT_VERSION=rel/1.0.0-preview2 CLI_INSTALL_SCRIPT_URI=https://raw.githubusercontent.com/dotnet/cli/$CLI_INSTALL_SCRIPT_VERSION/scripts/obtain/dotnet-install.sh
-    - CLI_VERSION=1.0.0-preview2-003121 CLI_INSTALL_SCRIPT_VERSION=rel/1.0.0-preview2 CLI_INSTALL_SCRIPT_URI=https://raw.githubusercontent.com/dotnet/cli/$CLI_INSTALL_SCRIPT_VERSION/scripts/obtain/dotnet-install.sh
 
 matrix:
   allow_failures:
