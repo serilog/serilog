@@ -1,0 +1,59 @@
+﻿{
+  "version": "2.0.0",
+
+  "description": "Simple .NET logging with fully-structured events",
+  "authors": [ "Serilog Contributors" ],
+
+  "packOptions": {
+    "tags": [ "serilog", "logging", "semantic", "structured" ],
+    "projectUrl": "http://serilog.net",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "iconUrl": "http://serilog.net/images/serilog-nuget.png"
+  },
+
+  "buildOptions": {
+    "keyFile": "../../assets/Serilog.snk",
+    "xmlDoc": true
+  },
+
+  "frameworks": {
+    "net4.5": {
+      "buildOptions": {
+        "define": [ "REMOTING" ]
+      }
+    },
+    "netstandard1.0": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1",
+        "System.Collections": "4.0.11",
+        "System.Dynamic.Runtime": "4.0.11",
+        "System.Globalization": "4.0.11",
+        "System.Linq": "4.1.0",
+        "System.Reflection": "4.1.0",
+        "System.Reflection.Extensions": "4.0.1",
+        "System.Runtime": "4.1.0",
+        "System.Runtime.Extensions": "4.1.0",
+        "System.Text.RegularExpressions": "4.1.0",
+        "System.Threading": "4.0.11"
+      }
+    },
+    "netstandard1.3": {
+      "buildOptions": {
+        "define": [ "ASYNCLOCAL" ]
+      },
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1",
+        "System.Collections": "4.0.11",
+        "System.Dynamic.Runtime": "4.0.11",
+        "System.Globalization": "4.0.11",
+        "System.Linq": "4.1.0",
+        "System.Reflection": "4.1.0",
+        "System.Reflection.Extensions": "4.0.1",
+        "System.Runtime": "4.1.0",
+        "System.Runtime.Extensions": "4.1.0",
+        "System.Text.RegularExpressions": "4.1.0",
+        "System.Threading": "4.0.11"
+      }
+    }
+  }
+}

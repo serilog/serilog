@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Core.Sinks
@@ -26,21 +27,28 @@ namespace Serilog.Core.Sinks
 
         public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters)
         {
-            if (sink == null) throw new ArgumentNullException("sink");
-            if (filters == null) throw new ArgumentNullException("filters");
+            if (sink == null) throw new ArgumentNullException(nameof(sink));
+            if (filters == null) throw new ArgumentNullException(nameof(filters));
             _sink = sink;
             _filters = filters.ToArray();
         }
 
         public void Emit(LogEvent logEvent)
         {
-            foreach (var logEventFilter in _filters)
+            try
             {
-                if (!logEventFilter.IsEnabled(logEvent))
-                    return;
-            }
+                foreach (var logEventFilter in _filters)
+                {
+                    if (!logEventFilter.IsEnabled(logEvent))
+                        return;
+                }
 
-            _sink.Emit(logEvent);
+                _sink.Emit(logEvent);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Caught exception {0} while applying filters.", ex);
+            }
         }
     }
 }

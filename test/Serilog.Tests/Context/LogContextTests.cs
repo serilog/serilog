@@ -1,27 +1,28 @@
-﻿using System;
-using System.IO;
-using System.Runtime.Remoting.Messaging;
-using NUnit.Framework;
+﻿using Xunit;
 using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
+#if REMOTING
+using System;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Serilog.Tests.Context
 {
-    [TestFixture]
     public class LogContextTests
     {
-        [SetUp]
-        public void Setup()
+        public LogContextTests()
         {
-            LogContext.PermitCrossAppDomainCalls = false;
+#if REMOTING
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
+#endif
         }
 
-        [Test]
+        [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
@@ -34,23 +35,23 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperty("A", 1))
             {
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 using (LogContext.PushProperty("A", 2))
                 {
                     log.Write(Some.InformationEvent());
-                    Assert.AreEqual(2, lastEvent.Properties["A"].LiteralValue());
+                    Assert.Equal(2, lastEvent.Properties["A"].LiteralValue());
                 }
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
             }
 
             log.Write(Some.InformationEvent());
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A"));
+            Assert.False(lastEvent.Properties.ContainsKey("A"));
         }
 
-        [Test]
+        [Fact]
         public void MultipleNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
@@ -63,27 +64,27 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperties(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
             {
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
-                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
                 using (LogContext.PushProperties(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
                 {
                     log.Write(Some.InformationEvent());
-                    Assert.AreEqual(10, lastEvent.Properties["A1"].LiteralValue());
-                    Assert.AreEqual(20, lastEvent.Properties["A2"].LiteralValue());
+                    Assert.Equal(10, lastEvent.Properties["A1"].LiteralValue());
+                    Assert.Equal(20, lastEvent.Properties["A2"].LiteralValue());
                 }
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
-                Assert.AreEqual(2, lastEvent.Properties["A2"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
             }
 
             log.Write(Some.InformationEvent());
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
-            Assert.IsFalse(lastEvent.Properties.ContainsKey("A2"));
+            Assert.False(lastEvent.Properties.ContainsKey("A1"));
+            Assert.False(lastEvent.Properties.ContainsKey("A2"));
         }
 
-        [Test]
+        [Fact]
         public async Task ContextPropertiesCrossAsyncCalls()
         {
             LogEvent lastEvent = null;
@@ -102,61 +103,48 @@ namespace Serilog.Tests.Context
                 var post = Thread.CurrentThread.ManagedThreadId;
 
                 log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
-                // No problem if this happens occasionally.
-                if (pre == post)
-                    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
+                // No problem if this happens occasionally; was Assert.Inconclusive().
+                // The test was marshalled back to the same thread after awaiting.
+                Assert.NotSame(pre, post);
             }
         }
 
-        [Test]
-        public async Task ContextPropertiesPersistWhenCrossAppDomainCallsAreEnabled()
-        {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            LogContext.PermitCrossAppDomainCalls = true;
-
-            using (LogContext.PushProperty("A", 1))
-            {
-                var pre = Thread.CurrentThread.ManagedThreadId;
-
-                await Task.Delay(1000);
-
-                var post = Thread.CurrentThread.ManagedThreadId;
-
-                log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A"].LiteralValue());
-
-                // No problem if this happens occasionally.
-                if (pre == post)
-                    Assert.Inconclusive("The test was marshalled back to the same thread after awaiting");
-            }
-        }
-
+#if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
-        // Fails if the Serilog assemblies cannot be loaded in the
-        // remote domain. See also LogContext.Suspend()
-        [Test]
+        [Fact(Skip = "Needs to be updated for dotnet runner.")]
         public void DoesNotPreventCrossDomainCalls()
         {
+            var projectRoot = Environment.CurrentDirectory;
+            while (!File.Exists(Path.Combine(projectRoot, "global.json")))
+            {
+                projectRoot = Directory.GetParent(projectRoot).FullName;
+            }
+
             AppDomain domain = null;
             try
             {
-                var domaininfo = new AppDomainSetup { ApplicationBase = Path.GetDirectoryName(GetType().Assembly.CodeBase.Replace("file:///", "")) };
+                const string configuration =
+#if DEBUG
+                "Debug";
+#else
+                "Release";
+#endif
+
+                var domaininfo = new AppDomainSetup
+                {
+                    ApplicationBase = projectRoot,
+                    PrivateBinPath = @"test\Serilog.Tests\bin\Debug\net452\win7-x64".Replace("Debug", configuration)
+                };
                 var evidence = AppDomain.CurrentDomain.Evidence;
                 domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);
 
                 var callable = (RemotelyCallable)domain.CreateInstanceAndUnwrap(typeof(RemotelyCallable).Assembly.FullName, typeof(RemotelyCallable).FullName);
 
                 using (LogContext.PushProperty("Anything", 1001))
-                    Assert.That(callable.IsCallable());
+                    Assert.True(callable.IsCallable());
             }
             finally
             {
@@ -164,47 +152,26 @@ namespace Serilog.Tests.Context
                     AppDomain.Unload(domain);
             }
         }
-
-        [Test]
-        public void WhenSuspendedAllPropertiesAreRemovedFromTheContext()
-        {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            using (LogContext.PushProperty("A1", 1))
-            {
-                using (LogContext.Suspend())
-                {
-                    log.Write(Some.InformationEvent());
-                    Assert.IsFalse(lastEvent.Properties.ContainsKey("A1"));
-                }
-
-                log.Write(Some.InformationEvent());
-                Assert.AreEqual(1, lastEvent.Properties["A1"].LiteralValue());
-            }
-        }
+#endif
     }
 
+#if REMOTING
     public class RemotelyCallable : MarshalByRefObject
     {
         public bool IsCallable()
         {
-            var sw = new StringWriter();
+            LogEvent lastEvent = null;
 
             var log = new LoggerConfiguration()
-                .WriteTo.TextWriter(sw, outputTemplate: "{Anything}{Number}")
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
             using (LogContext.PushProperty("Number", 42))
                 log.Information("Hello");
 
-            var s = sw.ToString();
-            return s == "42";
+            return 42.Equals(lastEvent.Properties["Number"].LiteralValue());
         }
     }
+#endif
 }

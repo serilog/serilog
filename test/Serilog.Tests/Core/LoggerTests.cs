@@ -2,65 +2,66 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Core
 {
-    [TestFixture]
     public class LoggerTests
     {
-        [Test]
+        [Fact]
         public void AnExceptionThrownByAnEnricherIsNotPropagated()
         {
             var thrown = false;
 
             var l = new LoggerConfiguration()
-                .WriteTo.TextWriter(new StringWriter())
-                .Enrich.With(new DelegatingEnricher((le, pf) => {
+                .WriteTo.Sink(new StringSink())
+                .Enrich.With(new DelegatingEnricher((le, pf) =>
+                {
                     thrown = true;
-                    throw new Exception("No go, pal."); }))
+                    throw new Exception("No go, pal.");
+                }))
                 .CreateLogger();
 
             l.Information(Some.String());
 
-            Assert.IsTrue(thrown);
+            Assert.True(thrown);
         }
 
-        [Test]
+        [Fact]
         public void AContextualLoggerAddsTheSourceTypeName()
         {
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext<LoggerTests>()
-                                        .Information(Some.String()));
+                .Information(Some.String()));
 
             var lv = evt.Properties[Constants.SourceContextPropertyName].LiteralValue();
-            Assert.AreEqual(typeof(LoggerTests).FullName, lv);
+            Assert.Equal(typeof(LoggerTests).FullName, lv);
         }
 
-        [Test]
+        [Fact]
         public void PropertiesInANestedContextOverrideParentContextValues()
         {
             var name = Some.String();
             var v1 = Some.Int();
             var v2 = Some.Int();
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext(name, v1)
-                                        .ForContext(name, v2)
-                                        .Write(Some.InformationEvent()));
+                .ForContext(name, v2)
+                .Write(Some.InformationEvent()));
 
             var pActual = evt.Properties[name];
-            Assert.AreEqual(v2, pActual.LiteralValue());
+            Assert.Equal(v2, pActual.LiteralValue());
         }
 
-        [Test]
+        [Fact]
         public void ParametersForAnEmptyTemplateAreIgnored()
         {
             var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
-            Assert.AreEqual("message", e.RenderMessage());
+            Assert.Equal("message", e.RenderMessage());
         }
 
-        [Test]
+        [Fact]
         public void LoggingLevelSwitchDynamicallyChangesLevel()
         {
             var events = new List<LogEvent>();
@@ -85,8 +86,35 @@ namespace Serilog.Tests.Core
             log.Error("Emitted");
             log.Fatal("Emitted");
 
-            Assert.AreEqual(4, events.Count);
-            Assert.That(events.All(evt => evt.RenderMessage() == "Emitted"));
+            Assert.Equal(4, events.Count);
+            Assert.True(events.All(evt => evt.RenderMessage() == "Emitted"));
+        }
+
+        [Fact]
+        public void MessageTemplatesCanBeBound()
+        {
+            var log = new LoggerConfiguration()
+                .CreateLogger();
+
+            MessageTemplate template;
+            IEnumerable<LogEventProperty> properties;
+            Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out template, out properties));
+
+            Assert.Equal("Hello, {Name}!", template.Text);
+            Assert.Equal("World", properties.Single().Value.LiteralValue());
+        }
+
+        [Fact]
+        public void PropertiesCanBeBound()
+        {
+            var log = new LoggerConfiguration()
+                .CreateLogger();
+
+            LogEventProperty property;
+            Assert.True(log.BindProperty("Name", "World", false, out property));
+
+            Assert.Equal("Name", property.Name);
+            Assert.Equal("World", property.Value.LiteralValue());
         }
     }
 }

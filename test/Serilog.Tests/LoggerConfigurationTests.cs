@@ -2,7 +2,8 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using System.Reflection;
+using Xunit;
 using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Events;
@@ -10,14 +11,15 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests
 {
-    [TestFixture]
     public class LoggerConfigurationTests
     {
         class DisposableSink : ILogEventSink, IDisposable
         {
-            public bool IsDisposed { get; set; }
+            public bool IsDisposed { get; private set; }
 
-            public void Emit(LogEvent logEvent) { }
+            public void Emit(LogEvent logEvent)
+            {
+            }
 
             public void Dispose()
             {
@@ -25,7 +27,15 @@ namespace Serilog.Tests
             }
         }
 
-        [Test]
+        [Fact]
+        public void CreateLoggerThrowsIfCalledMoreThanOnce()
+        {
+            var loggerConfiguration = new LoggerConfiguration();
+            loggerConfiguration.CreateLogger();
+            Assert.Throws<InvalidOperationException>(() => loggerConfiguration.CreateLogger());
+        }
+
+        [Fact]
         public void DisposableSinksAreDisposedAlongWithRootLogger()
         {
             var sink = new DisposableSink();
@@ -33,11 +43,11 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.Dispose(); 
-            Assert.IsTrue(sink.IsDisposed);
+            logger.Dispose();
+            Assert.True(sink.IsDisposed);
         }
 
-        [Test]
+        [Fact]
         public void DisposableSinksAreNotDisposedAlongWithContextualLoggers()
         {
             var sink = new DisposableSink();
@@ -47,10 +57,10 @@ namespace Serilog.Tests
                 .ForContext<LoggerConfigurationTests>();
 
             logger.Dispose();
-            Assert.IsFalse(sink.IsDisposed);
+            Assert.False(sink.IsDisposed);
         }
 
-        [Test]
+        [Fact]
         public void AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
             var excluded = Some.InformationEvent();
@@ -65,20 +75,25 @@ namespace Serilog.Tests
                 .CreateLogger();
             logger.Write(included);
             logger.Write(excluded);
-            Assert.AreEqual(1, events.Count);
-            Assert.That(events.Contains(included));
+            Assert.Equal(1, events.Count);
+            Assert.True(events.Contains(included));
         }
 
-// ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
-        class AB { public int A { get; set; } public int B { get; set; } }
+        // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
+        class AB
+        {
+            public int A { get; set; }
+            public int B { get; set; }
+        }
+
 // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
-        [Test]
+        [Fact]
         public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
-            
+
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .Destructure.AsScalar(typeof(AB))
@@ -88,10 +103,80 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            Assert.IsInstanceOf<ScalarValue>(prop);
+            Assert.IsType<ScalarValue>(prop);
         }
 
-        [Test]
+        [Fact]
+        public void DestructuringSystemTypeGivesScalarByDefault()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            var thisType = this.GetType();
+            logger.Information("{@thisType}", thisType);
+
+            var ev = events.Single();
+            var prop = ev.Properties["thisType"];
+            var sv = Assert.IsAssignableFrom<ScalarValue>(prop);
+            Assert.Equal(thisType, sv.LiteralValue());
+        }
+
+        class ProjectedDestructuringPolicy : IDestructuringPolicy
+        {
+            readonly Func<Type, bool> _canApply;
+            readonly Func<object, object> _projection;
+
+            public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
+            {
+                if (canApply == null) throw new ArgumentNullException(nameof(canApply));
+                if (projection == null) throw new ArgumentNullException(nameof(projection));
+                _canApply = canApply;
+                _projection = projection;
+            }
+
+            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value));
+
+                if (!_canApply(value.GetType()))
+                {
+                    result = null;
+                    return false;
+                }
+
+                var projected = _projection(value);
+                result = propertyValueFactory.CreatePropertyValue(projected, true);
+                return true;
+            }
+        }
+
+        [Fact]
+        public void DestructuringIsPossibleForSystemTypeDerivedProperties()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+            
+            var logger = new LoggerConfiguration()
+                .Destructure.With(new ProjectedDestructuringPolicy(
+                    canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
+                    projection: o => ((Type)o).AssemblyQualifiedName))
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            var thisType = this.GetType();
+            logger.Information("{@thisType}", thisType);
+
+            var ev = events.Single();
+            var prop = ev.Properties["thisType"];
+            var sv = Assert.IsAssignableFrom<ScalarValue>(prop);
+            Assert.Equal(thisType.AssemblyQualifiedName, sv.LiteralValue());
+        }
+
+        [Fact]
         public void TransformationsAreAppliedToEventProperties()
         {
             var events = new List<LogEvent>();
@@ -99,19 +184,22 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
-                .Destructure.ByTransforming<AB>(ab => new { C = ab.B })
+                .Destructure.ByTransforming<AB>(ab => new
+                {
+                    C = ab.B
+                })
                 .CreateLogger();
 
             logger.Information("{@AB}", new AB());
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            var sv = (StructureValue)prop;
+            var sv = (StructureValue) prop;
             var c = sv.Properties.Single();
-            Assert.AreEqual("C", c.Name);
+            Assert.Equal("C", c.Name);
         }
 
-        [Test]
+        [Fact]
         public void WritingToALoggerWritesToSubLogger()
         {
             var eventReceived = false;
@@ -123,10 +211,10 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.That(eventReceived);
+            Assert.True(eventReceived);
         }
 
-        [Test]
+        [Fact]
         public void SubLoggerRestrictsFilter()
         {
             var eventReceived = false;
@@ -139,30 +227,42 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.That(!eventReceived);
+            Assert.True(!eventReceived);
         }
 
-        [Test]
+        [Fact]
         public void EnrichersExecuteInConfigurationOrder()
         {
             var property = Some.LogEventProperty();
             var enrichedPropertySeen = false;
 
             var logger = new LoggerConfiguration()
-                .WriteTo.TextWriter(new StringWriter())
+                .WriteTo.Sink(new StringSink())
                 .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
                 .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
 
-            Assert.That(enrichedPropertySeen);
+            Assert.True(enrichedPropertySeen);
         }
 
-        [Test]
+        [Fact]
         public void MaximumDestructuringDepthIsEffective()
         {
-            var x = new { A = new { B = new { C = new { D = "F" } } } };
+            var x = new
+            {
+                A = new
+                {
+                    B = new
+                    {
+                        C = new
+                        {
+                            D = "F"
+                        }
+                    }
+                }
+            };
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
@@ -173,15 +273,77 @@ namespace Serilog.Tests
             log.Information("{@X}", x);
             var xs = evt.Properties["X"].ToString();
 
-            Assert.That(xs, Is.StringContaining("C"));
-            Assert.That(xs, Is.Not.StringContaining("D"));
+            Assert.Contains("C", xs);
+            Assert.DoesNotContain(xs, "D");
         }
 
-        [Test]
-        public void AnUnconfiguredLoggerShouldBeTheNullLogger()
+        [Fact]
+        public void DynamicallySwitchingSinkRestrictsOutput()
         {
-            var actual = new LoggerConfiguration().CreateLogger();
-            Assert.That(actual.GetType().Name, Is.EqualTo("SilentLogger"));
+            var eventsReceived = 0;
+            var levelSwitch = new LoggingLevelSwitch();
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(
+                    new DelegatingSink(e => eventsReceived++),
+                    levelSwitch: levelSwitch)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+            levelSwitch.MinimumLevel = LogEventLevel.Warning;
+            logger.Write(Some.InformationEvent());
+            levelSwitch.MinimumLevel = LogEventLevel.Verbose;
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(2, eventsReceived);
+        }
+
+        [Fact]
+        public void LevelSwitchTakesPrecedenceOverMinimumLevel()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink, LogEventLevel.Fatal, new LoggingLevelSwitch())
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(1, sink.Events.Count);
+        }
+
+        [Fact]
+        public void LastMinimumLevelConfigurationWins()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Fatal))
+                .MinimumLevel.Debug()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Equal(1, sink.Events.Count);
+        }
+
+        [Fact]
+        public void LevelOverridesArePropagated()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
+
+            Assert.Equal(2, sink.Events.Count);
         }
     }
 }

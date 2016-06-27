@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
+using System.Runtime.CompilerServices;
 
 namespace Serilog.Parameters
 {
@@ -36,21 +37,21 @@ namespace Serilog.Parameters
             typeof(bool),
             typeof(char),
             typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-                typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
+            typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
             typeof(Guid), typeof(Uri)
         };
 
-        readonly IDestructuringPolicy[] _destructuringPolicies; 
+        readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
 
         public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
         {
-            if (additionalScalarTypes == null) throw new ArgumentNullException("additionalScalarTypes");
-            if (additionalDestructuringPolicies == null) throw new ArgumentNullException("additionalDestructuringPolicies");
-            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException("maximumDestructuringDepth");
+            if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
+            if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
 
@@ -60,13 +61,13 @@ namespace Serilog.Parameters
                 new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
                 new ByteArrayScalarConversionPolicy(),
-                new ReflectionTypesScalarConversionPolicy()
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
-                .Concat(new []
+                .Concat(new IDestructuringPolicy []
                 {
-                    new DelegateDestructuringPolicy() 
+                    new DelegateDestructuringPolicy(),
+                    new ReflectionTypesScalarDestructuringPolicy()
                 })
                 .ToArray();
         }
@@ -106,7 +107,7 @@ namespace Serilog.Parameters
 
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
-            
+
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
                 ScalarValue converted;
@@ -147,12 +148,15 @@ namespace Serilog.Parameters
                 return new SequenceValue(
                     enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
-            
+
             if (destructuring == Destructuring.Destructure)
             {
-                var typeTag = value.GetType().Name;
-                if (typeTag.Length <= 0 || !char.IsLetter(typeTag[0]))
+                var type = value.GetType();
+                var typeTag = type.Name;
+                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+                {
                     typeTag = null;
+                }
 
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
@@ -194,6 +198,18 @@ namespace Serilog.Parameters
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool IsCompilerGeneratedType(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            var typeName = type.Name;
+
+            //C# Anonymous types always start with "<>" and VB's start with "VB$"
+            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
+                && (typeName[0] == '<'
+                    || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
     }
 }

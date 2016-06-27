@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 
 namespace Serilog.Parsing
 {
@@ -26,10 +27,6 @@ namespace Serilog.Parsing
     /// </summary>
     public class PropertyToken : MessageTemplateToken
     {
-        readonly string _propertyName;
-        readonly string _format;
-        readonly Alignment? _alignment;
-        readonly Destructuring _destructuring;
         readonly string _rawText;
         readonly int? _position;
 
@@ -60,16 +57,16 @@ namespace Serilog.Parsing
         public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
-            if (propertyName == null) throw new ArgumentNullException("propertyName");
-            if (rawText == null) throw new ArgumentNullException("rawText");
-            _propertyName = propertyName;
-            _format = format;
-            _destructuring = destructuring;
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+            if (rawText == null) throw new ArgumentNullException(nameof(rawText));
+            PropertyName = propertyName;
+            Format = format;
+            Destructuring = destructuring;
             _rawText = rawText;
-            _alignment = alignment;
+            Alignment = alignment;
 
             int position;
-            if (int.TryParse(_propertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
+            if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
                 position >= 0)
             {
                 _position = position;
@@ -79,10 +76,7 @@ namespace Serilog.Parsing
         /// <summary>
         /// The token's length.
         /// </summary>
-        public override int Length
-        {
-            get { return _rawText.Length; }
-        }
+        public override int Length => _rawText.Length;
 
         /// <summary>
         /// Render the token to the output.
@@ -92,70 +86,59 @@ namespace Serilog.Parsing
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
-            if (output == null) throw new ArgumentNullException("output");
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
+            if (output == null) throw new ArgumentNullException(nameof(output));
 
             LogEventPropertyValue propertyValue;
-            if (!properties.TryGetValue(_propertyName, out propertyValue))
+            if (!properties.TryGetValue(PropertyName, out propertyValue))
             {
                 output.Write(_rawText);
                 return;
             }
 
-            if (!_alignment.HasValue)
+            if (!Alignment.HasValue)
             {
-                propertyValue.Render(output, _format, formatProvider);
+                propertyValue.Render(output, Format, formatProvider);
                 return;
             }
 
             var valueOutput = new StringWriter();
-            propertyValue.Render(valueOutput, _format, formatProvider);
+            propertyValue.Render(valueOutput, Format, formatProvider);
             var value = valueOutput.ToString();
 
-            if (value.Length >= _alignment.Value.Width)
+            if (value.Length >= Alignment.Value.Width)
             {
                 output.Write(value);
                 return;
             }
 
-            var pad = _alignment.Value.Width - value.Length;
-
-            if (_alignment.Value.Direction == AlignmentDirection.Right)
-                output.Write(new string(' ', pad));
-
-            output.Write(value);
-
-            if (_alignment.Value.Direction == AlignmentDirection.Left)
-                output.Write(new string(' ', pad));
+            Padding.Apply(output, value, Alignment.Value);
         }
 
         /// <summary>
         /// The property name.
         /// </summary>
-        public string PropertyName { get { return _propertyName; } }
+        public string PropertyName { get; }
 
         /// <summary>
         /// Destructuring strategy applied to the property.
         /// </summary>
-        public Destructuring Destructuring { get { return _destructuring; } }
+        public Destructuring Destructuring { get; }
 
         /// <summary>
         /// Format applied to the property.
         /// </summary>
-        public string Format { get { return _format; } }
+        public string Format { get; }
 
         /// <summary>
         /// Alignment applied to the property.
         /// </summary>
-        public Alignment? Alignment { get { return _alignment; } }
-        
+        public Alignment? Alignment { get; }
+
         /// <summary>
         /// True if the property name is a positional index; otherwise, false.
         /// </summary>
-        public bool IsPositional
-        {
-            get { return _position != null; }
-        }
+        public bool IsPositional => _position.HasValue;
 
         /// <summary>
         /// Try to get the integer value represented by the property name.
@@ -185,23 +168,20 @@ namespace Serilog.Parsing
         {
             var pt = obj as PropertyToken;
             return pt != null &&
-                pt._destructuring == _destructuring &&
-                pt._format == _format &&
-                pt._propertyName == _propertyName &&
+                pt.Destructuring == Destructuring &&
+                pt.Format == Format &&
+                pt.PropertyName == PropertyName &&
                 pt._rawText == _rawText;
         }
 
         /// <summary>
-        /// Serves as a hash function for a particular type. 
+        /// Serves as a hash function for a particular type.
         /// </summary>
         /// <returns>
         /// A hash code for the current <see cref="T:System.Object"/>.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return _propertyName.GetHashCode();
-        }
+        public override int GetHashCode() => PropertyName.GetHashCode();
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -210,9 +190,6 @@ namespace Serilog.Parsing
         /// A string that represents the current object.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return _rawText;
-        }
+        public override string ToString() => _rawText;
     }
 }

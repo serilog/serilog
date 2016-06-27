@@ -1,83 +1,83 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using System.Reflection;
+using Xunit;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
-using Serilog.Sinks.RollingFile;
 using Serilog.Tests.Support;
+using Serilog.Enrichers;
+using TestDummies;
+using Serilog.Formatting;
+using Serilog.Formatting.Json;
+using Serilog.Tests.Formatting.Json;
 
-namespace Serilog.Extras.AppSettings.Tests
+namespace Serilog.Tests.AppSettings.Tests
 {
-    [TestFixture]
     public class KeyValuePairSettingsTests
     {
-        [Test]
+        [Fact]
         public void ConvertibleValuesConvertToTIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType("3", typeof(int?));
-            Assert.That(result == 3);
+            Assert.True(result == 3);
         }
 
-        [Test]
+        [Fact]
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType(null, typeof(int?));
-            Assert.That(result == null);
+            Assert.True(result == null);
         }
 
-        [Test]
+        [Fact]
         public void EmptyStringValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)KeyValuePairSettings.ConvertToType("", typeof(int?));
-            Assert.That(result == null);
+            Assert.True(result == null);
         }
 
-        [Test]
+        [Fact]
         public void ValuesConvertToNullableTimeSpan()
         {
             var result = (System.TimeSpan?)KeyValuePairSettings.ConvertToType("00:01:00", typeof(System.TimeSpan?));
-            Assert.AreEqual(System.TimeSpan.FromMinutes(1), result);
+            Assert.Equal(System.TimeSpan.FromMinutes(1), result);
         }
 
-        [Test]
+        [Fact]
         public void ValuesConvertToEnumMembers()
         {
             var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
-            Assert.AreEqual(LogEventLevel.Information, result);
+            Assert.Equal(LogEventLevel.Information, result);
         }
 
-        [Test]
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
-            var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>
-            {
-                {"using:FullNetFx", "Serilog.FullNetFx"}
-            }).ToList();
+            var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
 
             // The core Serilog assembly is always considered
-            Assert.AreEqual(2, configurationAssemblies.Count);
-        }
+            Assert.Equal(1, configurationAssemblies.Count);
+        } 
 
-        [Test]
-        public void FindsConfigurationMethodsWithinAnAssembly()
+        [Fact]
+        public void FindsEventEnrichersWithinAnAssembly()
         {
-            var configurationMethods = KeyValuePairSettings
-                .FindSinkConfigurationMethods(new[] { typeof(RollingFileSink).Assembly })
+            var eventEnrichers = KeyValuePairSettings
+                .FindEventEnricherConfigurationMethods(new[]
+                {
+                    typeof(Log).GetTypeInfo().Assembly,
+                    typeof(DummyThreadIdEnricher).GetTypeInfo().Assembly
+                })
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();
 
-            Assert.AreEqual(6, configurationMethods.Count);
-
-            Assert.That(configurationMethods.Contains("ColoredConsole"));
-            Assert.That(configurationMethods.Contains("Console"));
-            Assert.That(configurationMethods.Contains("DumpFile"));
-            Assert.That(configurationMethods.Contains("File"));
-            Assert.That(configurationMethods.Contains("RollingFile"));
-            Assert.That(configurationMethods.Contains("Trace"));
+            
+            Assert.True(eventEnrichers.Contains("FromLogContext"));
+            Assert.True(eventEnrichers.Contains("WithDummyThreadId"));
         }
 
-        [Test]
+        [Fact]
         public void PropertyEnrichmentIsApplied()
         {
             LogEvent evt = null;
@@ -91,8 +91,16 @@ namespace Serilog.Extras.AppSettings.Tests
 
             log.Information("Has a test property");
 
-            Assert.IsNotNull(evt);
-            Assert.AreEqual("Test", evt.Properties["App"].LiteralValue());
+            Assert.NotNull(evt);
+            Assert.Equal("Test", evt.Properties["App"].LiteralValue());
+        }
+
+
+        [Fact]
+        public void StringValuesConvertToDefaultInstancesIfTargetIsInterface()
+        {
+            var result = (object)KeyValuePairSettings.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
+            Assert.IsType<JsonFormatter>(result);
         }
     }
 }

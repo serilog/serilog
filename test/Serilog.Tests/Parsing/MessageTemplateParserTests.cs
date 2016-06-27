@@ -1,10 +1,9 @@
 ﻿using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Serilog.Parsing;
 
 namespace Serilog.Tests.Parsing
 {
-    [TestFixture]
     public class MessageTemplateParserTests
     {
         static MessageTemplateToken[] Parse(string messsageTemplate)
@@ -15,77 +14,77 @@ namespace Serilog.Tests.Parsing
         static void AssertParsedAs(string message, params MessageTemplateToken[] messageTemplateTokens)
         {
             var parsed = Parse(message);
-            CollectionAssert.AreEqual(
+            Assert.Equal(
                 parsed,
                 messageTemplateTokens);
         }
 
-        [Test]
+        [Fact]
         public void AnEmptyMessageIsASingleTextToken()
         {
             var t = Parse("");
-            Assert.AreEqual(1, t.Length);
-            Assert.IsInstanceOf<TextToken>(t.Single());
+            Assert.Equal(1, t.Length);
+            Assert.IsType<TextToken>(t.Single());
         }
 
-        [Test]
+        [Fact]
         public void AMessageWithoutPropertiesIsASingleTextToken()
         {
             AssertParsedAs("Hello, world!",
                 new TextToken("Hello, world!"));
         }
 
-        [Test]
+        [Fact]
         public void AMessageWithPropertyOnlyIsASinglePropertyToken()
         {
             AssertParsedAs("{Hello}",
                 new PropertyToken("Hello", "{Hello}"));
         }
 
-        [Test]
+        [Fact]
         public void DoubledLeftBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("{{ Hi! }",
                 new TextToken("{ Hi! }"));
         }
 
-        [Test]
+        [Fact]
         public void DoubledLeftBracketsAreParsedAsASingleBracketInsideText()
         {
             AssertParsedAs("Well, {{ Hi!",
                 new TextToken("Well, { Hi!"));
         }
 
-        [Test]
+        [Fact]
         public void DoubledRightBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("Nice }}-: mo",
                 new TextToken("Nice }-: mo"));
         }
 
-        [Test]
+        [Fact]
         public void AMalformedPropertyTagIsParsedAsText()
         {
             AssertParsedAs("{0 space}",
                 new TextToken("{0 space}"));
         }
 
-        [Test]
+        [Fact]
         public void AnIntegerPropertyNameIsParsedAsPositionalProperty()
         {
             var parsed = (PropertyToken) Parse("{0}").Single();
-            Assert.AreEqual("0", parsed.PropertyName);
-            Assert.IsTrue(parsed.IsPositional);
+            Assert.Equal("0", parsed.PropertyName);
+            Assert.True(parsed.IsPositional);
         }
 
-        [Test]
+        [Fact]
         public void FormatsCanContainColons()
         {
             var parsed = (PropertyToken) Parse("{Time:hh:mm}").Single();
-            Assert.AreEqual("hh:mm", parsed.Format);
+            Assert.Equal("hh:mm", parsed.Format);
         }
 
-        [Test]
+        [Fact]
         public void ZeroValuesAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,-0}",
@@ -95,7 +94,7 @@ namespace Serilog.Tests.Parsing
                 new TextToken("{Hello,0}"));
         }
 
-        [Test]
+        [Fact]
         public void NonNumberAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,-aa}",
@@ -111,7 +110,7 @@ namespace Serilog.Tests.Parsing
                 new TextToken("{Hello,10-1}"));
         }
 
-        [Test]
+        [Fact]
         public void EmptyAlignmentIsParsedAsText()
         {
             AssertParsedAs("{Hello,}",
@@ -121,7 +120,7 @@ namespace Serilog.Tests.Parsing
                 new TextToken("{Hello,:format}"));
         }
 
-        [Test]
+        [Fact]
         public void MultipleTokensHasCorrectIndexes()
         {
             AssertParsedAs("{Greeting}, {Name}!",
@@ -131,35 +130,35 @@ namespace Serilog.Tests.Parsing
                 new TextToken("!", 18));
         }
 
-        [Test]
+        [Fact]
         public void MissingRightBracketIsParsedAsText()
         {
             AssertParsedAs("{Hello",
                 new TextToken("{Hello"));
         }
 
-        [Test]
+        [Fact]
         public void DestructureHintIsParsedCorrectly()
         {
             var parsed = (PropertyToken)Parse("{@Hello}").Single();
-            Assert.AreEqual(Destructuring.Destructure, parsed.Destructuring);
+            Assert.Equal(Destructuring.Destructure, parsed.Destructuring);
         }
 
-        [Test]
+        [Fact]
         public void StringifyHintIsParsedCorrectly()
         {
             var parsed = (PropertyToken)Parse("{$Hello}").Single();
-            Assert.AreEqual(Destructuring.Stringify, parsed.Destructuring);
+            Assert.Equal(Destructuring.Stringify, parsed.Destructuring);
         }
 
-        [Test]
+        [Fact]
         public void DestructuringWithEmptyPropertyNameIsParsedAsText()
         {
             AssertParsedAs("{@}",
                 new TextToken("{@}"));
         }
 
-        [Test]
+        [Fact]
         public void UnderscoresAreValidInPropertyNames()
         {
             AssertParsedAs("{_123_Hello}", new PropertyToken("_123_Hello", "{_123_Hello}")); 

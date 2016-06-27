@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +23,6 @@ namespace Serilog.Events
     /// </summary>
     public class LogEvent
     {
-        readonly DateTimeOffset _timestamp;
-        readonly LogEventLevel _level;
-        readonly Exception _exception;
-        readonly MessageTemplate _messageTemplate;
         readonly Dictionary<string, LogEventPropertyValue> _properties;
 
         /// <summary>
@@ -39,12 +35,12 @@ namespace Serilog.Events
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
         public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
-            if (properties == null) throw new ArgumentNullException("properties");
-            _timestamp = timestamp;
-            _level = level;
-            _exception = exception;
-            _messageTemplate = messageTemplate;
+            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
+            Timestamp = timestamp;
+            Level = level;
+            Exception = exception;
+            MessageTemplate = messageTemplate;
             _properties = new Dictionary<string, LogEventPropertyValue>();
             foreach (var p in properties)
                 AddOrUpdateProperty(p);
@@ -53,26 +49,17 @@ namespace Serilog.Events
         /// <summary>
         /// The time at which the event occurred.
         /// </summary>
-        public DateTimeOffset Timestamp
-        {
-            get { return _timestamp; }
-        }
+        public DateTimeOffset Timestamp { get; }
 
         /// <summary>
         /// The level of the event.
         /// </summary>
-        public LogEventLevel Level
-        {
-            get { return _level; }
-        }
+        public LogEventLevel Level { get; }
 
         /// <summary>
         /// The message template describing the event.
         /// </summary>
-        public MessageTemplate MessageTemplate
-        {
-            get { return _messageTemplate; }
-        }
+        public MessageTemplate MessageTemplate { get; }
 
         /// <summary>
         /// Render the message template to the specified output, given the properties associated
@@ -98,38 +85,32 @@ namespace Serilog.Events
         /// <summary>
         /// Properties associated with the event, including those presented in <see cref="LogEvent.MessageTemplate"/>.
         /// </summary>
-        public IReadOnlyDictionary<string, LogEventPropertyValue> Properties
-        {
-            get { return _properties; }
-        }
+        public IReadOnlyDictionary<string, LogEventPropertyValue> Properties => _properties;
 
         /// <summary>
         /// An exception associated with the event, or null.
         /// </summary>
-        public Exception Exception
-        {
-            get { return _exception; }
-        }
+        public Exception Exception { get; }
 
         /// <summary>
-        /// Add a property to the event if not already present, otherwise, update its value. 
+        /// Add a property to the event if not already present, otherwise, update its value.
         /// </summary>
         /// <param name="property">The property to add or update.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public void AddOrUpdateProperty(LogEventProperty property)
         {
-            if (property == null) throw new ArgumentNullException("property");
+            if (property == null) throw new ArgumentNullException(nameof(property));
             _properties[property.Name] = property.Value;
         }
 
         /// <summary>
-        /// Add a property to the event if not already present. 
+        /// Add a property to the event if not already present.
         /// </summary>
         /// <param name="property">The property to add.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public void AddPropertyIfAbsent(LogEventProperty property)
         {
-            if (property == null) throw new ArgumentNullException("property");
+            if (property == null) throw new ArgumentNullException(nameof(property));
             if (!_properties.ContainsKey(property.Name))
                 _properties.Add(property.Name, property.Value);
         }

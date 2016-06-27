@@ -1,0 +1,46 @@
+language: csharp
+
+#dotnet cli require Ubuntu 14.04
+sudo: required
+dist: trusty
+
+#dotnet cli require OSX 10.10
+osx_image: xcode7.1
+
+addons:
+  apt:
+    packages:
+    - gettext
+    - libcurl4-openssl-dev
+    - libicu-dev
+    - libssl-dev
+    - libunwind8
+    - zlib1g
+
+os:
+  - osx
+  - linux
+
+env:
+  matrix: 
+    - CLI_VERSION=1.0.0-preview2-003121
+    - CLI_VERSION=Latest
+
+matrix:
+  allow_failures:
+    - env: CLI_VERSION=Latest
+
+before_install:
+  - if test "$TRAVIS_OS_NAME" == "osx"; then brew update; brew install openssl; brew link --force openssl; fi
+  # Download script to install dotnet cli
+  - if test "$CLI_OBTAIN_URL" == ""; then export CLI_OBTAIN_URL="https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview2/scripts/obtain/dotnet-install.sh"; fi
+  - curl -L --create-dirs $CLI_OBTAIN_URL -o ./scripts/obtain/install.sh
+  - find ./scripts -name "*.sh" -exec chmod +x {} \;
+  - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
+  # use bash to workaround bug https://github.com/dotnet/cli/issues/1725
+  - sudo bash ./scripts/obtain/install.sh --channel "preview" --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR" --no-path
+  # add dotnet to PATH
+  - export PATH="$DOTNET_INSTALL_DIR:$PATH"
+
+script:
+  - ./build.sh

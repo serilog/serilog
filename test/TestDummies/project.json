@@ -1,0 +1,17 @@
+﻿{
+  "buildOptions": {
+    "keyFile": "../../assets/Serilog.snk"
+  },
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Serilog": { "target": "project" }
+  },
+
+  "frameworks": {
+    "net4.5.2": { },
+    "netstandard1.2": {
+      "imports": "dnxcore50"
+    }
+  }
+}

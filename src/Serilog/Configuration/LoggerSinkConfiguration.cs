@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,13 +13,12 @@
 // limitations under the License.
 
 using System;
-using System.IO;
+using System.ComponentModel;
+
 using Serilog.Core;
 using Serilog.Core.Sinks;
+using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Formatting.Display;
-using Serilog.Sinks.IOTextWriter;
-using Serilog.Sinks.Observable;
 
 namespace Serilog.Configuration
 {
@@ -30,15 +29,18 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventSink> _addSink;
+        readonly Action<LoggerConfiguration> _applyInheritedConfiguration;
 
         const string DefaultOutputTemplate = "{Timestamp} [{Level}] {Message}{NewLine}{Exception}";
 
-        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
+        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (addSink == null) throw new ArgumentNullException("addSink");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (addSink == null) throw new ArgumentNullException(nameof(addSink));
+            if (applyInheritedConfiguration == null) throw new ArgumentNullException(nameof(applyInheritedConfiguration));
             _loggerConfiguration = loggerConfiguration;
             _addSink = addSink;
+            _applyInheritedConfiguration = applyInheritedConfiguration;
         }
 
         /// <summary>
@@ -48,13 +50,44 @@ namespace Serilog.Configuration
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>Provided for binary compatibility for earlier versions,
+        /// should be removed in 2.0. Not marked obsolete because warnings
+        /// would be syntactically annoying to avoid.</remarks>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public LoggerConfiguration Sink(
             ILogEventSink logEventSink,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            LogEventLevel restrictedToMinimumLevel)
+        {
+            return Sink(logEventSink, restrictedToMinimumLevel, null);
+        }
+
+        /// <summary>
+        /// Write log events to the specified <see cref="ILogEventSink"/>.
+        /// </summary>
+        /// <param name="logEventSink">The sink.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Sink(
+            ILogEventSink logEventSink,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            // ReSharper disable once MethodOverloadWithOptionalParameter
+            LoggingLevelSwitch levelSwitch = null)
         {
             var sink = logEventSink;
-            if (restrictedToMinimumLevel > LevelAlias.Minimum)
-                sink = new RestrictedSink(sink, restrictedToMinimumLevel);
+            if (levelSwitch != null)
+            {
+                if (restrictedToMinimumLevel != LevelAlias.Minimum)
+                    SelfLog.WriteLine("Sink {0} was configured with both a level switch and minimum level '{1}'; the minimum level will be ignored and the switch level used", sink, restrictedToMinimumLevel);
+
+                sink = new RestrictedSink(sink, levelSwitch);
+            }
+            else if (restrictedToMinimumLevel > LevelAlias.Minimum)
+            {
+                sink = new RestrictedSink(sink, new LoggingLevelSwitch(restrictedToMinimumLevel));
+            }
 
             _addSink(sink);
             return _loggerConfiguration;
@@ -65,37 +98,19 @@ namespace Serilog.Configuration
         /// </summary>
         /// <typeparam name="TSink">The sink.</typeparam>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Sink<TSink>(LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        public LoggerConfiguration Sink<TSink>(
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
             where TSink : ILogEventSink, new()
         {
-            return Sink(new TSink(), restrictedToMinimumLevel);
+            return Sink(new TSink(), restrictedToMinimumLevel, levelSwitch);
         }
 
-        /// <summary>
-        /// Write log events to the provided <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="textWriter">The text writer to write log events to.</param>
-        /// <param name="outputTemplate">Message template describing the output format.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public LoggerConfiguration TextWriter(
-            TextWriter textWriter,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = DefaultOutputTemplate,
-            IFormatProvider formatProvider = null)
-        {
-            if (textWriter == null) throw new ArgumentNullException("textWriter");
-            if (outputTemplate == null) throw new ArgumentNullException("outputTemplate");
 
-            var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
-            var sink = new TextWriterSink(textWriter, formatter);
-            return Sink(sink, restrictedToMinimumLevel);
-        }
 
         /// <summary>
         /// Write log events to a sub-logger, where further processing may occur. Events through
@@ -105,16 +120,22 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="configureLogger">An action that configures the sub-logger.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Logger(
             Action<LoggerConfiguration> configureLogger,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
         {
-            if (configureLogger == null) throw new ArgumentNullException("configureLogger");
+            if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
             var lc = new LoggerConfiguration();
+
+            _applyInheritedConfiguration(lc);
+
             configureLogger(lc);
-            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel);
+            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -132,26 +153,8 @@ namespace Serilog.Configuration
             ILogger logger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
-            if (logger == null) throw new ArgumentNullException("logger");
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
             return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
-        }
-
-        /// <summary>
-        /// Write events to Rx observers.
-        /// </summary>
-        /// <param name="configureObservers">An action that provides an observable
-        /// to which observers can subscribe.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Observers(
-            Action<IObservable<LogEvent>> configureObservers,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
-        {
-            if (configureObservers == null) throw new ArgumentNullException("configureObservers");
-            var observable = new ObservableSink();
-            configureObservers(observable);
-            return Sink(observable, restrictedToMinimumLevel);
-        }
+        } 
     }
 }

@@ -1,11 +1,11 @@
-// Copyright 2014 Serilog Contributors
-// 
+// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,13 +23,13 @@ namespace Serilog.Core.Enrichers
 
         public FixedPropertyEnricher(LogEventProperty logEventProperty)
         {
-            if (logEventProperty == null) throw new ArgumentNullException("logEventProperty");
+            if (logEventProperty == null) throw new ArgumentNullException(nameof(logEventProperty));
             _logEventProperty = logEventProperty;
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            if (logEvent == null) throw new ArgumentNullException("logEvent");
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             logEvent.AddPropertyIfAbsent(_logEventProperty);
         }
     }

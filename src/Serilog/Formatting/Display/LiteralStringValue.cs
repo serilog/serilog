@@ -1,11 +1,11 @@
-﻿// Copyright 2014 Serilog Contributors
-// 
+﻿// Copyright 2013-2015 Serilog Contributors
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,25 +26,13 @@ namespace Serilog.Formatting.Display
 
         public LiteralStringValue(string value)
         {
-            if (value == null) throw new ArgumentNullException("value");
+            if (value == null) throw new ArgumentNullException(nameof(value));
             _value = value;
         }
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            var toRender = _value;
-
-            switch (format)
-            {
-                case "u":
-                    toRender = _value.ToUpperInvariant();
-                    break;
-                case "w":
-                    toRender = _value.ToLowerInvariant();
-                    break;
-            }
-
-            output.Write(toRender);
+            output.Write(Casing.Format(_value, format));
         }
 
         public override bool Equals(object obj)

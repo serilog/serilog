@@ -41,10 +41,20 @@ namespace Serilog.Tests.Support
             return new DateTimeOffset(Instant());
         }
 
+        public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
+        {
+            return new LogEvent(timestamp ?? OffsetInstant(), level,
+                null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
+        }
+
         public static LogEvent InformationEvent(DateTimeOffset? timestamp = null)
         {
-            return new LogEvent(timestamp ?? OffsetInstant(), LogEventLevel.Information,
-                null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
+            return LogEvent(timestamp, LogEventLevel.Information);
+        }
+
+        public static LogEvent DebugEvent(DateTimeOffset? timestamp = null)
+        {
+            return LogEvent(timestamp, LogEventLevel.Debug);
         }
 
         public static LogEventProperty LogEventProperty()

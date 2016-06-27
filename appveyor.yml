@@ -1,0 +1,29 @@
+version: '{build}'
+skip_tags: true
+image: Visual Studio 2015
+configuration: Release
+install:
+  - ps: mkdir -Force ".\build\" | Out-Null
+  - ps: Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview2/scripts/obtain/dotnet-install.ps1" -OutFile ".\build\installcli.ps1"
+  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
+  - ps: '& .\build\installcli.ps1 -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath -Version 1.0.0-preview2-003121'
+  - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
+build_script:
+- ps: ./Build.ps1
+test: off
+artifacts:
+- path: artifacts/Serilog.*.nupkg
+deploy:
+- provider: NuGet
+  api_key:
+    secure: nvZ/z+pMS91b3kG4DgfES5AcmwwGoBYQxr9kp4XiJHj25SAlgdIxFx++1N0lFH2x
+  skip_symbols: true
+  on:
+    branch: /^(dev|master)$/
+- provider: GitHub
+  auth_token:
+    secure: Bo3ypKpKFxinjR9ShkNekNvkob2iklHJU+UlYyfHtcFFIAa58SV2TkEd0xWxz633
+  artifact: /Serilog.*\.nupkg/
+  tag: v$(appveyor_build_version)
+  on:
+    branch: master
