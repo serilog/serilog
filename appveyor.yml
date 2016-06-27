@@ -4,9 +4,12 @@ image: Visual Studio 2015
 configuration: Release
 install:
   - ps: mkdir -Force ".\build\" | Out-Null
-  - ps: Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview2/scripts/obtain/dotnet-install.ps1" -OutFile ".\build\installcli.ps1"
+  - ps: $env:CLI_INSTALL_SCRIPT_VERSION = "rel/1.0.0-preview2"
+  - ps: $env:CLI_VERSION = "1.0.0-preview2-003121"
+  - ps: $env:CLI_INSTALL_SCRIPT_URI = "https://raw.githubusercontent.com/dotnet/cli/{0}/scripts/obtain/dotnet-install.ps1" -f $env:CLI_INSTALL_SCRIPT_VERSION
+  - ps: Invoke-WebRequest "$env:CLI_INSTALL_SCRIPT_URI" -OutFile ".\build\installcli.ps1" 
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
-  - ps: '& .\build\installcli.ps1 -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath -Version 1.0.0-preview2-003121'
+  - ps: '& .\build\installcli.ps1 -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath -Version "$env:CLI_VERSION"'
   - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
 build_script:
 - ps: ./Build.ps1
