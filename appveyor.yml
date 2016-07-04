@@ -13,3 +13,17 @@ build_script:
 test: off
 artifacts:
 - path: artifacts/Serilog.*.nupkg
+deploy:
+- provider: NuGet
+  api_key:
+    secure: nvZ/z+pMS91b3kG4DgfES5AcmwwGoBYQxr9kp4XiJHj25SAlgdIxFx++1N0lFH2x
+  skip_symbols: true
+  on:
+    branch: /^(dev|master)$/
+- provider: GitHub
+  auth_token:
+    secure: Bo3ypKpKFxinjR9ShkNekNvkob2iklHJU+UlYyfHtcFFIAa58SV2TkEd0xWxz633
+  artifact: /Serilog.*\.nupkg/
+  tag: v$(appveyor_build_version)
+  on:
+    branch: master
