@@ -107,13 +107,18 @@ namespace Serilog.Parameters
             }
 
             var result = new LogEventProperty[messageTemplateParameters.Length];
-            for (var i = 0; i < result.Length; ++i)
+            for (var i = 0; i < matchedRun; ++i)
             {
-                result[i] = i < matchedRun
-                    ? ConstructProperty(template.NamedProperties[i], messageTemplateParameters[i])
-                    : new LogEventProperty("__" + i, _valueConverter.CreatePropertyValue(messageTemplateParameters[i]));
+                var property = template.NamedProperties[i];
+                var value = messageTemplateParameters[i];
+                result[i] = ConstructProperty(property, value); 
             }
 
+            for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)
+            {
+                var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
+                result[i] = new LogEventProperty("__" + i, value);
+            }
             return result;
         }
 
