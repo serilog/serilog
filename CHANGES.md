@@ -1,3 +1,6 @@
+2.1.0-dev-*
+ * #782 - provide `Destructure.ByTransformingWhere()`
+
 2.0.0
  * #535 - .NET Core support; split sinks, enrichers and settings providers into standalone packages; refactor to eliminate _Serilog.FullNetFx.dll_; remove .NET 4.0 support
  * #566 - `Log.CloseAndFlush()`
