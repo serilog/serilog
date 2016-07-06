@@ -102,5 +102,34 @@ namespace Serilog.Tests.AppSettings.Tests
             var result = (object)KeyValuePairSettings.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
             Assert.IsType<JsonFormatter>(result);
         }
+
+        [Fact]
+        public void CallableMethodsAreSelected()
+        {
+            var options = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().DeclaredMethods.ToList();
+            Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
+            var suppliedArguments = new[]
+            {
+                new KeyValuePairSettings.MethodArgumentValue { Method = "DummyRollingFile", Argument = "pathFormat", Value = "C:\\" },
+            };
+
+            var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);
+            Assert.Equal(typeof(string), selected.GetParameters()[1].ParameterType);
+        }
+
+        [Fact]
+        public void MethodsAreSelectedBasedOnCountOfMatchedArguments()
+        {
+            var options = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().DeclaredMethods.ToList();
+            Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
+            var suppliedArguments = new[]
+            {
+                new KeyValuePairSettings.MethodArgumentValue { Method = "DummyRollingFile", Argument = "pathFormat", Value = "C:\\" },
+                new KeyValuePairSettings.MethodArgumentValue { Method = "DummyRollingFile", Argument = "formatter", Value = "SomeFormatter, SomeAssembly" }
+            };
+
+            var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);
+            Assert.Equal(typeof(ITextFormatter), selected.GetParameters()[1].ParameterType);
+        }
     }
 }
