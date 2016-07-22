@@ -329,7 +329,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void LevelOverridesUpArePropagated()
+        public void HigherMinimumLevelOverridesArePropagated()
         {
             var sink = new CollectingSink();
 
@@ -347,7 +347,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void LevelOverridesDownArePropagated()
+        public void LowerMinimumLevelOverridesArePropagated()
         {
             var sink = new CollectingSink();
 
