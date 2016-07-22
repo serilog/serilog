@@ -19,6 +19,8 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parameters;
 
+#pragma warning disable Serilog004 // Constant MessageTemplate verifier
+
 namespace Serilog.Core
 {
     /// <summary>
@@ -388,7 +390,10 @@ namespace Serilog.Core
         void ILogEventSink.Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            Write(logEvent);
+
+            // Bypasses the level check so that child loggers
+            // using this one as a sink can increase verbosity.
+            Dispatch(logEvent);
         }
 
         void Dispatch(LogEvent logEvent)

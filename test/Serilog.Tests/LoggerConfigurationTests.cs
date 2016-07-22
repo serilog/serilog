@@ -329,7 +329,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void LevelOverridesArePropagated()
+        public void HigherMinimumLevelOverridesArePropagated()
         {
             var sink = new CollectingSink();
 
@@ -344,6 +344,24 @@ namespace Serilog.Tests
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(2, sink.Events.Count);
+        }
+
+        [Fact]
+        public void LowerMinimumLevelOverridesArePropagated()
+        {
+            var sink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Error()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
+
+            Assert.Equal(1, sink.Events.Count);
         }
     }
 }
