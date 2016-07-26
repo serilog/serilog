@@ -1,7 +1,8 @@
-2.1.0-dev-*
+2.1.0
  * #782 - provide `Destructure.ByTransformingWhere()`
  * #779 - capture additional parameters even when template is malformed
  * #798 - fix overload selection in `KeyValueSettings`
+ * #815 - allow level to be lowered by overrides, in addition to being raised
 
 2.0.0
  * #535 - .NET Core support; split sinks, enrichers and settings providers into standalone packages; refactor to eliminate _Serilog.FullNetFx.dll_; remove .NET 4.0 support
