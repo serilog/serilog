@@ -114,6 +114,28 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
+        /// When destructuring objects, transform instances of the specified type with
+        /// the provided function, if the predicate returns true. Be careful to avoid any
+        /// intensive work in the predicate, as it can slow down the pipeline significantly.
+        /// </summary>
+        /// <param name="predicate">A predicate used to determine if the transform applies to
+        /// a specific type of value</param>
+        /// <param name="transformation">Function mapping instances of <typeparamref name="TValue"/>
+        /// to an alternative representation.</param>
+        /// <typeparam name="TValue">Type of values to transform.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public LoggerConfiguration ByTransformingWhere<TValue>(
+            Func<Type, bool> predicate,
+            Func<TValue, object> transformation)
+        {
+            if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+            var policy = new ProjectedDestructuringPolicy(predicate,
+                                                          o => transformation((TValue)o));
+            return With(policy);
+        }
+
+        /// <summary>
         /// When destructuring objects, depth will be limited to 5 property traversals deep to
         /// guard against ballooning space when recursive/cyclic structures are accidentally passed. To
         /// increase this limit pass a higher value.

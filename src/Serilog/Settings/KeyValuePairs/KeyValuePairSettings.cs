@@ -121,11 +121,7 @@ namespace Serilog.Settings.KeyValuePairs
         {
             foreach (var directiveInfo in directives)
             {
-                var target = configurationMethods
-                    .Where(m => m.Name == directiveInfo.Key &&
-                        m.GetParameters().Skip(1).All(p => p.HasDefaultValue || directiveInfo.Any(s => s.Argument == p.Name)))
-                    .OrderByDescending(m => m.GetParameters().Length)
-                    .FirstOrDefault();
+                var target = SelectConfigurationMethod(configurationMethods, directiveInfo.Key, directiveInfo);
 
                 if (target != null)
                 {
@@ -139,6 +135,15 @@ namespace Serilog.Settings.KeyValuePairs
                     target.Invoke(null, call.ToArray());
                 }
             }
+        }
+
+        internal static MethodInfo SelectConfigurationMethod(IEnumerable<MethodInfo> candidateMethods, string name, IEnumerable<MethodArgumentValue> suppliedArgumentValues)
+        {
+            return candidateMethods
+                .Where(m => m.Name == name &&
+                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || suppliedArgumentValues.Any(s => s.Argument == p.Name)))
+                .OrderByDescending(m => m.GetParameters().Count(p => suppliedArgumentValues.Any(s => s.Argument == p.Name)))
+                .FirstOrDefault();
         }
 
         internal static IEnumerable<Assembly> LoadConfigurationAssemblies(Dictionary<string, string> directives)
@@ -244,7 +249,7 @@ namespace Serilog.Settings.KeyValuePairs
                 .ToList();
         }
 
-        private class MethodArgumentValue
+        internal class MethodArgumentValue
         {
             public string Method { get; set; }
             public string Argument { get; set; }
