@@ -32,7 +32,7 @@ namespace Serilog.Formatting.Json
     {
         const string ExtensionPointObsoletionMessage = "Extension of JsonFormatter by subclassing is obsolete and will " +
                                                        "be removed in a future Serilog version. Write a custom formatter " +
-                                                       "based on JsonValueFormatter instead. See <URL>.";
+                                                       "based on JsonValueFormatter instead. See https://github.com/serilog/serilog/pull/819.";
 
         // Ignore obsoletion errors
         #pragma warning disable 618
