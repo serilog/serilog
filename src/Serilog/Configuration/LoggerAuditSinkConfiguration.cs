@@ -31,7 +31,7 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// Audits log events to the specified <see cref="ILogEventSink"/>.
+        /// Audit log events to the specified <see cref="ILogEventSink"/>.
         /// </summary>
         /// <param name="logEventSink">The sink.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
@@ -49,7 +49,7 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// Write log events to the specified <see cref="ILogEventSink"/>.
+        /// Audit log events to the specified <see cref="ILogEventSink"/>.
         /// </summary>
         /// <typeparam name="TSink">The sink.</typeparam>
         /// <param name="restrictedToMinimumLevel">The minimum level for
