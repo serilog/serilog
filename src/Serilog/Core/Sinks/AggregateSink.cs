@@ -48,7 +48,7 @@ namespace Serilog.Core.Sinks
             }
 
             if (exceptions != null)
-                throw new AggregateException("Failed to emit a log event", exceptions);
+                throw new AggregateException("Failed to emit a log event.", exceptions);
         }
     }
 }
