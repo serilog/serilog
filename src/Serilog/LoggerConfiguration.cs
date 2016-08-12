@@ -52,13 +52,7 @@ namespace Serilog
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
         /// </summary>
-        public LoggerSinkConfiguration WriteTo
-        {
-            get
-            {
-                return new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
-            }
-        }
+        public LoggerSinkConfiguration WriteTo => new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
 
         /// <summary>
         /// Configures sinks for auditing, instead of regular (safe) logging. When auditing is used,
@@ -71,13 +65,7 @@ namespace Serilog
         /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
         /// method allows any sink class to be adapted for auditing. 
         /// </remarks>
-        public LoggerAuditSinkConfiguration AuditTo
-        {
-            get
-            {
-                return new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
-            }
-        }
+        public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
 
         /// <summary>
         /// Configures the minimum level at which events will be passed to sinks. If

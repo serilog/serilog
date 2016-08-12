@@ -90,7 +90,19 @@ namespace Serilog.Parameters
 
         public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
         {
-            return CreatePropertyValue(value, destructuring, 1);
+            try
+            {
+                return CreatePropertyValue(value, destructuring, 1);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Exception caught while converting property value: {0}", ex);
+
+                if (_propagateExceptions)
+                    throw;
+
+                return new ScalarValue("Capturing the property value threw an exception: " + ex.GetType().Name);
+            }
         }
 
         LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
@@ -115,7 +127,7 @@ namespace Serilog.Parameters
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
-            {
+            {            
                 ScalarValue converted;
                 if (scalarConversionPolicy.TryConvertToScalar(value, limiter, out converted))
                     return converted;
@@ -201,11 +213,12 @@ namespace Serilog.Parameters
                 }
                 catch (TargetInvocationException ex)
                 {
-                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
-                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
+                    SelfLog.WriteLine("The property accessor {0} threw exception: {1}", prop, ex);
 
                     if (_propagateExceptions)
                         throw;
+
+                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }

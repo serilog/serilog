@@ -433,5 +433,62 @@ namespace Serilog.Tests
                 .ForContext<LoggerConfigurationTests>()
                 .Write(Some.InformationEvent()));
         }
+
+        class Value { }
+
+        [Fact]
+        public void ExceptionsThrownByDestructuringPoliciesAreNotPropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(new CollectingSink())
+                .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
+                .CreateLogger();
+
+            logger.Information("{@Value}", new Value());
+
+            Assert.True(true, "No exception reached the caller");
+        }
+
+        [Fact]
+        public void ExceptionsThrownByDestructuringPoliciesArePropagatedIfAuditingEnabled()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new CollectingSink())
+                .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
+                .CreateLogger();
+
+            Assert.Throws<Exception>(() => logger.Information("{@Value}", new Value()));
+        }
+
+        class ThrowingProperty
+        {
+            // ReSharper disable once UnusedMember.Local
+            public string Property
+            {
+                get { throw new Exception("Boom!"); }
+            }
+        }
+
+        [Fact]
+        public void ExceptionsThrownByPropertyAccessorsAreNotPropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(new CollectingSink())
+                .CreateLogger();
+
+            logger.Information("{@Value}", new ThrowingProperty());
+
+            Assert.True(true, "No exception reached the caller");
+        }
+
+        [Fact]
+        public void ExceptionsThrownByPropertyAccessorsArePropagatedIfAuditingEnabled()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new CollectingSink())
+                .CreateLogger();
+
+            Assert.Throws<TargetInvocationException>(() => logger.Information("{@Value}", new ThrowingProperty()));
+        }
     }
 }
