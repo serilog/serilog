@@ -30,6 +30,7 @@ namespace Serilog
     public class LoggerConfiguration
     {
         readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
+        readonly List<ILogEventSink> _auditSinks = new List<ILogEventSink>();
         readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>();
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
@@ -40,6 +41,14 @@ namespace Serilog
         int _maximumDestructuringDepth = 10;
         bool _loggerCreated;
 
+        void ApplyInheritedConfiguration(LoggerConfiguration child)
+        {
+            if (_levelSwitch != null)
+                child.MinimumLevel.ControlledBy(_levelSwitch);
+            else
+                child.MinimumLevel.Is(_minimumLevel);
+        }
+
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
         /// </summary>
@@ -47,13 +56,26 @@ namespace Serilog
         {
             get
             {
-                return new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), child =>
-                {
-                    if (_levelSwitch != null)
-                        child.MinimumLevel.ControlledBy(_levelSwitch);
-                    else
-                        child.MinimumLevel.Is(_minimumLevel);
-                });
+                return new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+            }
+        }
+
+        /// <summary>
+        /// Configures sinks for auditing, instead of regular (safe) logging. When auditing is used,
+        /// exceptions from sinks and any intermediate filters propagate back to the caller. Most callers
+        /// should use <see cref="WriteTo"/> instead.
+        /// </summary>
+        /// <remarks>
+        /// Not all sinks are compatible with transactional auditing requirements (many will use asynchronous
+        /// batching to improve write throughput and latency). Sinks need to opt-in to auditing support by
+        /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
+        /// method allows any sink class to be adapted for auditing. 
+        /// </remarks>
+        public LoggerAuditSinkConfiguration AuditTo
+        {
+            get
+            {
+                return new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
             }
         }
 
@@ -129,10 +151,18 @@ namespace Serilog
 
             ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
 
-            if (_filters.Any())
-                sink = new FilteringSink(sink, _filters);
+            var auditing = _auditSinks.Any();
+            if (auditing)
+                sink = new AggregateSink(new[] { sink }.Concat(_auditSinks));
 
-            var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies);
+            if (_filters.Any())
+            {
+                // A throwing filter could drop an auditable event, so exceptions in filters must be propagated
+                // if auditing is used.
+                sink = new FilteringSink(sink, _filters, auditing);
+            }
+
+            var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies, auditing);
             var processor = new MessageTemplateProcessor(converter);
 
             ILogEventEnricher enricher;

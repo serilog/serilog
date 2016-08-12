@@ -46,14 +46,20 @@ namespace Serilog.Parameters
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
+        readonly bool _propagateExceptions;
 
-        public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
+        public PropertyValueConverter(
+            int maximumDestructuringDepth, 
+            IEnumerable<Type> additionalScalarTypes,
+            IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
+            bool propagateExceptions)
         {
             if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
+            _propagateExceptions = propagateExceptions;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -177,7 +183,7 @@ namespace Serilog.Parameters
                    valueType.GetTypeInfo().IsEnum;
         }
 
-        static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
+        IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
             foreach (var prop in value.GetType().GetPropertiesRecursive())
             {
@@ -188,6 +194,8 @@ namespace Serilog.Parameters
                 }
                 catch (TargetParameterCountException)
                 {
+                    // These properties would ideally be ignored; since they never produce values they're not
+                    // of concern to auditing and exceptions can be suppressed.
                     SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
                     continue;
                 }
@@ -195,6 +203,9 @@ namespace Serilog.Parameters
                 {
                     SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
                     propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
+
+                    if (_propagateExceptions)
+                        throw;
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
             }

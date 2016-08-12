@@ -363,5 +363,75 @@ namespace Serilog.Tests
 
             Assert.Equal(1, sink.Events.Count);
         }
+
+        [Fact]
+        public void ExceptionsThrownBySinksAreNotPropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.True(true, "No exception reached the caller");
+        }
+
+        [Fact]
+        public void ExceptionsThrownBySinksAreNotPropagatedEvenWhenAuditingIsPresent()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new CollectingSink())
+                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.True(true, "No exception reached the caller");
+        }
+
+        [Fact]
+        public void ExceptionsThrownByFiltersAreNotPropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.True(true, "No exception reached the caller");
+        }
+
+        [Fact]
+        public void ExceptionsThrownByAuditSinksArePropagated()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .CreateLogger();
+
+            Assert.Throws<AggregateException>(() => logger.Write(Some.InformationEvent()));
+        }
+
+        [Fact]
+        public void ExceptionsThrownByFiltersArePropagatedIfAuditingEnabled()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new DelegatingSink(e => { }))
+                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
+                .CreateLogger();
+
+            Assert.Throws<Exception>(() => logger.Write(Some.InformationEvent()));
+        }
+
+        [Fact]
+        public void ExceptionsThrownByAuditSinksArePropagatedFromChildLoggers()
+        {
+            var logger = new LoggerConfiguration()
+                .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .CreateLogger();
+
+            Assert.Throws<AggregateException>(() => logger
+                .ForContext<LoggerConfigurationTests>()
+                .Write(Some.InformationEvent()));
+        }
     }
 }

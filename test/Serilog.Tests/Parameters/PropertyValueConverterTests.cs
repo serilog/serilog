@@ -12,7 +12,8 @@ namespace Serilog.Tests.Parameters
 {
     public class PropertyValueConverterTests
     {
-        readonly PropertyValueConverter _converter = new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>());
+        readonly PropertyValueConverter _converter = 
+            new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         [Fact]
         public void UnderDestructuringAByteArrayIsAScalarValue()
