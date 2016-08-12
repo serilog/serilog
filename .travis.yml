@@ -18,7 +18,6 @@ addons:
     - zlib1g
 
 os:
-  - osx
   - linux
 
 env:
@@ -41,7 +40,6 @@ before_install:
   - sudo bash ./scripts/obtain/install.sh --channel "preview" --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR" --no-path
   # add dotnet to PATH
   - export PATH="$DOTNET_INSTALL_DIR:$PATH"
-  - if test "$TRAVIS_OS_NAME" == "osx"; then  sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib /usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0/System.Security.Cryptography.Native.dylib; fi
 
 script:
   - ./build.sh
