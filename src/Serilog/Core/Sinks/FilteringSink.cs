@@ -23,13 +23,15 @@ namespace Serilog.Core.Sinks
     class FilteringSink : ILogEventSink
     {
         readonly ILogEventSink _sink;
+        readonly bool _propagateExceptions;
         readonly ILogEventFilter[] _filters;
 
-        public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters)
+        public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters, bool propagateExceptions)
         {
             if (sink == null) throw new ArgumentNullException(nameof(sink));
             if (filters == null) throw new ArgumentNullException(nameof(filters));
             _sink = sink;
+            _propagateExceptions = propagateExceptions;
             _filters = filters.ToArray();
         }
 
@@ -47,7 +49,10 @@ namespace Serilog.Core.Sinks
             }
             catch (Exception ex)
             {
-                SelfLog.WriteLine("Caught exception {0} while applying filters.", ex);
+                SelfLog.WriteLine("Caught exception while applying filters: {0}", ex);
+
+                if (_propagateExceptions)
+                    throw;
             }
         }
     }

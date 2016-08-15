@@ -46,14 +46,20 @@ namespace Serilog.Parameters
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
+        readonly bool _propagateExceptions;
 
-        public PropertyValueConverter(int maximumDestructuringDepth, IEnumerable<Type> additionalScalarTypes, IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies)
+        public PropertyValueConverter(
+            int maximumDestructuringDepth, 
+            IEnumerable<Type> additionalScalarTypes,
+            IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
+            bool propagateExceptions)
         {
             if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
+            _propagateExceptions = propagateExceptions;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -84,7 +90,19 @@ namespace Serilog.Parameters
 
         public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
         {
-            return CreatePropertyValue(value, destructuring, 1);
+            try
+            {
+                return CreatePropertyValue(value, destructuring, 1);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Exception caught while converting property value: {0}", ex);
+
+                if (_propagateExceptions)
+                    throw;
+
+                return new ScalarValue("Capturing the property value threw an exception: " + ex.GetType().Name);
+            }
         }
 
         LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
@@ -109,7 +127,7 @@ namespace Serilog.Parameters
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
-            {
+            {            
                 ScalarValue converted;
                 if (scalarConversionPolicy.TryConvertToScalar(value, limiter, out converted))
                     return converted;
@@ -177,7 +195,7 @@ namespace Serilog.Parameters
                    valueType.GetTypeInfo().IsEnum;
         }
 
-        static IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
+        IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
         {
             foreach (var prop in value.GetType().GetPropertiesRecursive())
             {
@@ -188,12 +206,18 @@ namespace Serilog.Parameters
                 }
                 catch (TargetParameterCountException)
                 {
+                    // These properties would ideally be ignored; since they never produce values they're not
+                    // of concern to auditing and exceptions can be suppressed.
                     SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
                     continue;
                 }
                 catch (TargetInvocationException ex)
                 {
-                    SelfLog.WriteLine("The property accessor {0} threw exception {1}", prop, ex);
+                    SelfLog.WriteLine("The property accessor {0} threw exception: {1}", prop, ex);
+
+                    if (_propagateExceptions)
+                        throw;
+
                     propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
                 }
                 yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
