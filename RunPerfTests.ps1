@@ -1,21 +1,16 @@
 Push-Location $PSScriptRoot
 
-if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
+./Build.ps1
 
-& dotnet restore
+foreach ($test in ls test/*.PerformanceTests) {
+    Push-Location $test
 
-$revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+	echo "perf: Running performance test project in $test"
 
-Push-Location src/Serilog
+    & dotnet test -c Release
+    if($LASTEXITCODE -ne 0) { exit 2 }
 
-& dotnet build -c Release -o ..\..\.\artifacts --version-suffix=$revision
-if($LASTEXITCODE -ne 0) { exit 1 }    
- 
-Pop-Location
-Push-Location test/Serilog.PerformanceTests
+    Pop-Location
+}
 
-& dotnet test -c Release
-if($LASTEXITCODE -ne 0) { exit 2 }
-
-Pop-Location
 Pop-Location

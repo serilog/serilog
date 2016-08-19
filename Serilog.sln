@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{037440DE-440B-4129-9F7A-09B42D00397E}"
 EndProject
@@ -12,10 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
+		build.sh = build.sh
 		CHANGES.md = CHANGES.md
 		global.json = global.json
 		NuGet.config = NuGet.config
 		README.md = README.md
+		run_perf_tests.sh = run_perf_tests.sh
+		RunPerfTests.ps1 = RunPerfTests.ps1
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
 EndProject
