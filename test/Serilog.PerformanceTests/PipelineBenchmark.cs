@@ -15,7 +15,6 @@
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Serilog.Tests.Support;
 using Serilog;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -23,32 +22,36 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Serilog.PerformanceTests.Support;
 using Xunit;
 
 namespace Serilog.PerformanceTests
 {
-    public class MessageTemplateParserTests
-    {  
-        MessageTemplateParser _parser; 
-        const string DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
+    /// <summary>
+    /// Tests the cost of writing through the logging pipeline.
+    /// </summary>
+    public class PipelineBenchmark
+    {
+        ILogger _log;
+        Exception _exception;
         
         [Setup]
         public void Setup()
         { 
-            _parser = new MessageTemplateParser();
+            _exception = new Exception("An Error");
+            _log = new LoggerConfiguration()
+                .WriteTo.Sink(new NullSink())
+                .CreateLogger();
+
+            // Ensure template is cached
+            _log.Information(_exception, "Hello, {Name}!", "World");
         }
 
-        [Benchmark(Baseline = true)]
-        public void Baseline()
-        {
-            var template = _parser.Parse("");
-        }  
-
         [Benchmark]
-        public void ParseDefaultConsoleOutputTemplate()
+        public void EmitLogEvent()
         {
-            var template = _parser.Parse(DefaultConsoleOutputTemplate);
-        }  
+            _log.Information(_exception, "Hello, {Name}!", "World");
+        }
     }
 }
   
