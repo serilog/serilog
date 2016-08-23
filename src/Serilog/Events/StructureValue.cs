@@ -25,6 +25,7 @@ namespace Serilog.Events
     public class StructureValue : LogEventPropertyValue
     {
         readonly LogEventProperty[] _properties;
+        //private bool _ignoreTypeTag = true;
 
         /// <summary>
         /// Construct a <see cref="StructureValue"/> with the provided properties.
@@ -33,10 +34,13 @@ namespace Serilog.Events
         /// structure.</param>
         /// <param name="properties">The properties of the structure.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null)
+        public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null 
+            //, bool ignoreTypeTag = true
+            )
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             TypeTag = typeTag;
+            //_ignoreTypeTag = ignoreTypeTag;
             _properties = properties.ToArray();
         }
 
@@ -63,9 +67,21 @@ namespace Serilog.Events
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
+            Render(output, format, formatProvider, false);
+        }
+        /// <summary>
+        /// Render the value to the output.
+        /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        /// <param name="ignoreTypeTag">set true to ignore the class name in json string</param>
+        public void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null, bool ignoreTypeTag = false)
+        {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            if (TypeTag != null)
+            if (TypeTag != null && ignoreTypeTag)
             {
                 output.Write(TypeTag);
                 output.Write(' ');
@@ -75,7 +91,7 @@ namespace Serilog.Events
             for (var i = 0; i < allButLast; i++)
             {
                 var property = _properties[i];
-                Render(output, property, formatProvider);
+                Render(output, property, formatProvider, format);
                 output.Write(", ");
             }
 
@@ -88,11 +104,11 @@ namespace Serilog.Events
             output.Write(" }");
         }
 
-        static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null)
+        static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null, string format = null)
         {
             output.Write(property.Name);
             output.Write(": ");
-            property.Value.Render(output, null, formatProvider);
+            property.Value.Render(output, format, formatProvider);
         }
     }
 }

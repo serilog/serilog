@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.ComponentModel;
 using Serilog.Core;
-using Serilog.Core.Sinks;
-using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Configuration
@@ -24,42 +21,17 @@ namespace Serilog.Configuration
     /// <summary>
     /// Controls sink configuration.
     /// </summary>
-    public class LoggerSinkConfiguration
+    public class LoggerAuditSinkConfiguration
     {
-        readonly LoggerConfiguration _loggerConfiguration;
-        readonly Action<ILogEventSink> _addSink;
-        readonly Action<LoggerConfiguration> _applyInheritedConfiguration;
+        LoggerSinkConfiguration _sinkConfiguration;
 
-        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
+        internal LoggerAuditSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            if (addSink == null) throw new ArgumentNullException(nameof(addSink));
-            if (applyInheritedConfiguration == null) throw new ArgumentNullException(nameof(applyInheritedConfiguration));
-            _loggerConfiguration = loggerConfiguration;
-            _addSink = addSink;
-            _applyInheritedConfiguration = applyInheritedConfiguration;
+            _sinkConfiguration = new LoggerSinkConfiguration(loggerConfiguration, addSink, applyInheritedConfiguration);
         }
 
         /// <summary>
-        /// Write log events to the specified <see cref="ILogEventSink"/>.
-        /// </summary>
-        /// <param name="logEventSink">The sink.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum level for
-        /// events passed through the sink.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        /// <remarks>Provided for binary compatibility for earlier versions,
-        /// should be removed in 3.0. Not marked obsolete because warnings
-        /// would be syntactically annoying to avoid.</remarks>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public LoggerConfiguration Sink(
-            ILogEventSink logEventSink,
-            LogEventLevel restrictedToMinimumLevel)
-        {
-            return Sink(logEventSink, restrictedToMinimumLevel, null);
-        }
-
-        /// <summary>
-        /// Write log events to the specified <see cref="ILogEventSink"/>.
+        /// Audit log events to the specified <see cref="ILogEventSink"/>.
         /// </summary>
         /// <param name="logEventSink">The sink.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for
@@ -73,25 +45,11 @@ namespace Serilog.Configuration
             // ReSharper disable once MethodOverloadWithOptionalParameter
             LoggingLevelSwitch levelSwitch = null)
         {
-            var sink = logEventSink;
-            if (levelSwitch != null)
-            {
-                if (restrictedToMinimumLevel != LevelAlias.Minimum)
-                    SelfLog.WriteLine("Sink {0} was configured with both a level switch and minimum level '{1}'; the minimum level will be ignored and the switch level used", sink, restrictedToMinimumLevel);
-
-                sink = new RestrictedSink(sink, levelSwitch);
-            }
-            else if (restrictedToMinimumLevel > LevelAlias.Minimum)
-            {
-                sink = new RestrictedSink(sink, new LoggingLevelSwitch(restrictedToMinimumLevel));
-            }
-
-            _addSink(sink);
-            return _loggerConfiguration;
+            return _sinkConfiguration.Sink(logEventSink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
-        /// Write log events to the specified <see cref="ILogEventSink"/>.
+        /// Audit log events to the specified <see cref="ILogEventSink"/>.
         /// </summary>
         /// <typeparam name="TSink">The sink.</typeparam>
         /// <param name="restrictedToMinimumLevel">The minimum level for
@@ -104,11 +62,11 @@ namespace Serilog.Configuration
             LoggingLevelSwitch levelSwitch = null)
             where TSink : ILogEventSink, new()
         {
-            return Sink(new TSink(), restrictedToMinimumLevel, levelSwitch);
+            return _sinkConfiguration.Sink<TSink>(restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
-        /// Write log events to a sub-logger, where further processing may occur. Events through
+        /// Audit log events to a sub-logger, where further processing may occur. Events through
         /// the sub-logger will be constrained by filters and enriched by enrichers that are
         /// active in the parent. A sub-logger cannot be used to log at a more verbose level, but
         /// a less verbose level is possible.
@@ -124,17 +82,11 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
-            var lc = new LoggerConfiguration();
-
-            _applyInheritedConfiguration(lc);
-
-            configureLogger(lc);
-            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel, levelSwitch);
+            return _sinkConfiguration.Logger(configureLogger, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
-        /// Write log events to a sub-logger, where further processing may occur. Events through
+        /// Audit log events to a sub-logger, where further processing may occur. Events through
         /// the sub-logger will be constrained by filters and enriched by enrichers that are
         /// active in the parent. A sub-logger cannot be used to log at a more verbose level, but
         /// a less verbose level is possible.
@@ -148,8 +100,7 @@ namespace Serilog.Configuration
             ILogger logger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
-            if (logger == null) throw new ArgumentNullException(nameof(logger));
-            return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
+            return _sinkConfiguration.Logger(logger, restrictedToMinimumLevel);
         } 
     }
 }

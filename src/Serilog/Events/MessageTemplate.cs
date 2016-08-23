@@ -130,13 +130,15 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="properties">Properties matching template tokens.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="ignoreTypeTag">set true to ignore the class name in json string</param>
         /// <returns>The message created from the template and properties. If the
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</returns>
-        public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider formatProvider = null)
+
+        public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider formatProvider = null, bool ignoreTypeTag = false)
         {
             var writer = new StringWriter(formatProvider);
-            Render(properties, writer, formatProvider);
+            Render(properties, writer, formatProvider, ignoreTypeTag);
             return writer.ToString();
         }
 
@@ -146,14 +148,15 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="properties">Properties matching template tokens.</param>
         /// <param name="output">The message created from the template and properties. If the
+        /// <param name="ignoreTypeTag">set true to ignore the class name in json string</param>
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
+        public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null, bool ignoreTypeTag = false)
         {
             foreach (var token in _tokens)
             {
-                token.Render(properties, output, formatProvider);
+                token.Render(properties, output, formatProvider, ignoreTypeTag);
             }
         }
     }

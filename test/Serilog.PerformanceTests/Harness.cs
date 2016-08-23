@@ -15,7 +15,6 @@
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Serilog.Tests.Support;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -23,46 +22,42 @@ using Xunit;
 
 namespace Serilog.PerformanceTests
 {
-    // TODO:
-
-    // For Context
-    // MinimumLevel
-    // Push - ForContext
-    // Ctor of LogEvent
-    // Message Template parsing 
-
-    // property binding perf (Bind message template)
-
-    public class Runner
+    public class Harness
     {
         [Fact]
-        public void ForContext()
+        public void LogContextEnrichment()
         {
-            var context = BenchmarkRunner.Run<ForContextTests>();
+            BenchmarkRunner.Run<LogContextEnrichmentBenchmark>();
         }
 
         [Fact]
-        public void MinimumLevel()
+        public void MessageTemplateParsing()
         {
-            var context = BenchmarkRunner.Run<MinimumLevelTests>();
+            BenchmarkRunner.Run<MessageTemplateParsingBenchmark>();
         }
         
         [Fact]
-        public void FromLogContextPushProperty()
+        public void LevelControl()
         {
-            var context = BenchmarkRunner.Run<FromLogContextPushPropertyTests>();
+            BenchmarkRunner.Run<LevelControlBenchmark>();
         }
 
         [Fact]
-        public void LogEvent()
+        public void NestedLoggerCreation()
         {
-            var context = BenchmarkRunner.Run<LogEventTests>();
+            BenchmarkRunner.Run<NestedLoggerCreationBenchmark>();
         }
 
         [Fact]
-        public void MessageTemplateParser()
+        public void NestedLoggerLatency()
         {
-            var context = BenchmarkRunner.Run<MessageTemplateParserTests>();
+            BenchmarkRunner.Run<NestedLoggerLatencyBenchmark>();
+        }
+
+        [Fact]
+        public void Pipeline()
+        {
+            BenchmarkRunner.Run<PipelineBenchmark>();
         }
     }
 }
