@@ -19,11 +19,11 @@ using Serilog.Events;
 namespace Serilog.Configuration
 {
     /// <summary>
-    /// Controls sink configuration.
+    /// Controls audit sink configuration.
     /// </summary>
     public class LoggerAuditSinkConfiguration
     {
-        LoggerSinkConfiguration _sinkConfiguration;
+        readonly LoggerSinkConfiguration _sinkConfiguration;
 
         internal LoggerAuditSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
         {
