@@ -3,9 +3,11 @@ using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
-#if REMOTING
+#if APPDOMAIN
 using System;
 using System.IO;
+#endif
+#if REMOTING
 using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
@@ -155,7 +157,7 @@ namespace Serilog.Tests.Context
 #endif
     }
 
-#if REMOTING
+#if REMOTING || APPDOMAIN
     public class RemotelyCallable : MarshalByRefObject
     {
         public bool IsCallable()

@@ -22,6 +22,11 @@
         "define": [ "REMOTING" ]
       }
     },
+    "net4.6": {
+      "buildOptions": {
+        "define": [ "ASYNCLOCAL" ]
+      }
+    },
     "netstandard1.0": {
       "dependencies": {
         "Microsoft.CSharp": "4.0.1",
