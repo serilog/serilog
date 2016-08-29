@@ -1,5 +1,5 @@
 ﻿{
-  "version": "2.2.1-*",
+  "version": "2.2.2-*",
 
   "description": "Simple .NET logging with fully-structured events",
   "authors": [ "Serilog Contributors" ],
