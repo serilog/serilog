@@ -17,6 +17,11 @@
         "define": [ "APPDOMAIN", "REMOTING", "GETCURRENTMETHOD" ]
       }
     },
+    "net4.6": {
+      "buildOptions": {
+        "define": [ "ASYNCLOCAL", "APPDOMAIN", "GETCURRENTMETHOD" ]
+      }
+    },
     "netcoreapp1.0": {
       "define": [ "ASYNCLOCAL" ],
       "dependencies": {
