@@ -14,11 +14,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -28,6 +26,7 @@ namespace Serilog.Settings.KeyValuePairs
     class KeyValuePairSettings : ILoggerSettings
     {
         const string UsingDirective = "using";
+        const string AuditToDirective = "audit-to";
         const string WriteToDirective = "write-to";
         const string MinimumLevelDirective = "minimum-level";
         const string EnrichWithDirective = "enrich";
@@ -37,11 +36,12 @@ namespace Serilog.Settings.KeyValuePairs
         const string EnrichWithEventEnricherPrefix = "enrich:";
         const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
 
-        const string WriteToDirectiveRegex = @"^write-to:(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string AuditOrWriteToDirectiveRegex = @"^(?<directive>audit-to|write-to):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
 
         readonly string[] _supportedDirectives =
         {
             UsingDirective,
+            AuditToDirective,
             WriteToDirective,
             MinimumLevelDirective,
             EnrichWithPropertyDirective,
@@ -79,18 +79,21 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
             }
 
-            var splitWriteTo = new Regex(WriteToDirectiveRegex);
+            var splitWriteTo = new Regex(AuditOrWriteToDirectiveRegex);
 
             var sinkDirectives = (from wt in directives
                                   where splitWriteTo.IsMatch(wt.Key)
                                   let match = splitWriteTo.Match(wt.Key)
-                                  let call = new MethodArgumentValue
-                                  {
-                                      Method = match.Groups["method"].Value,
-                                      Argument = match.Groups["argument"].Value,
-                                      Value = wt.Value
-                                  }
-                                  group call by call.Method).ToList();
+                                  select new
+                                      {
+                                          Directive = match.Groups["directive"].Value,
+                                          Call = new MethodArgumentValue
+                                          {
+                                              Method = match.Groups["method"].Value,
+                                              Argument = match.Groups["argument"].Value,
+                                              Value = wt.Value
+                                          }
+                                      }).ToList(); 
 
             var eventEnricherDirectives = (from er in directives
                                            where er.Key.StartsWith(EnrichWithEventEnricherPrefix) && !er.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && er.Key.Length > EnrichWithEventEnricherPrefix.Length
@@ -105,9 +108,26 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
-                if (sinkDirectives.Any())
+                var writeToDirectives = sinkDirectives
+                    .Where(d => d.Directive == WriteToDirective)
+                    .Select(d => d.Call)
+                    .GroupBy(call => call.Method)
+                    .ToList();
+
+                if (writeToDirectives.Any())
                 {
-                    ApplyDirectives(sinkDirectives, FindSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.WriteTo);
+                    ApplyDirectives(writeToDirectives, FindWriteToSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.WriteTo);
+                }
+
+                var auditToDirectives = sinkDirectives
+                    .Where(d => d.Directive == AuditToDirective)
+                    .Select(d => d.Call)
+                    .GroupBy(call => call.Method)
+                    .ToList();
+
+                if (auditToDirectives.Any())
+                {
+                    ApplyDirectives(auditToDirectives, FindAuditToSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.AuditTo);
                 }
 
                 if (eventEnricherDirectives.Any())
@@ -214,9 +234,14 @@ namespace Serilog.Settings.KeyValuePairs
             return Convert.ChangeType(value, toType);
         }
 
-        internal static IList<MethodInfo> FindSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
+        internal static IList<MethodInfo> FindWriteToSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
         {
             return FindConfigurationMethods(configurationAssemblies, typeof(LoggerSinkConfiguration));
+        }
+
+        internal static IList<MethodInfo> FindAuditToSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
+        {
+            return FindConfigurationMethods(configurationAssemblies, typeof(LoggerAuditSinkConfiguration));
         }
 
         // Unlike the other configuration methods, FromLogContext is an instance method rather than an extension.
