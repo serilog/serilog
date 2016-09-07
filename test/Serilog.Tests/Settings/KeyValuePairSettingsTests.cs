@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xunit;
@@ -7,11 +8,12 @@ using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using Serilog.Enrichers;
 using TestDummies;
+using Serilog.Configuration;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
 using Serilog.Tests.Formatting.Json;
 
-namespace Serilog.Tests.AppSettings.Tests
+namespace Serilog.Tests.Settings
 {
     public class KeyValuePairSettingsTests
     {
@@ -106,7 +108,7 @@ namespace Serilog.Tests.AppSettings.Tests
         [Fact]
         public void CallableMethodsAreSelected()
         {
-            var options = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().DeclaredMethods.ToList();
+            var options = GetDummyRollingFileConfigurationMethods(typeof(LoggerSinkConfiguration));
             Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
             var suppliedArguments = new[]
             {
@@ -120,7 +122,7 @@ namespace Serilog.Tests.AppSettings.Tests
         [Fact]
         public void MethodsAreSelectedBasedOnCountOfMatchedArguments()
         {
-            var options = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().DeclaredMethods.ToList();
+            var options = GetDummyRollingFileConfigurationMethods(typeof(LoggerSinkConfiguration));
             Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
             var suppliedArguments = new[]
             {
@@ -130,6 +132,59 @@ namespace Serilog.Tests.AppSettings.Tests
 
             var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);
             Assert.Equal(typeof(ITextFormatter), selected.GetParameters()[1].ParameterType);
+        }
+
+        static List<MethodInfo> GetDummyRollingFileConfigurationMethods(Type receiverType)
+        {
+            return typeof(DummyLoggerConfigurationExtensions)
+                .GetTypeInfo()
+                .DeclaredMethods
+                .Where(m => m.GetParameters()[0].ParameterType == receiverType)
+                .ToList();
+        }
+
+        [Fact]
+        public void SinksAreConfigured()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyRollingFile.pathFormat"] = "C:\\"
+            };
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            DummyRollingFileSink.Emitted.Clear();
+            DummyRollingFileAuditSink.Emitted.Clear();
+
+            log.Write(Some.InformationEvent());
+
+            Assert.Equal(1, DummyRollingFileSink.Emitted.Count);
+            Assert.Equal(0, DummyRollingFileAuditSink.Emitted.Count);
+        }
+
+        [Fact]
+        public void AuditSinksAreConfigured()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["audit-to:DummyRollingFile.pathFormat"] = "C:\\"
+            };
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            DummyRollingFileSink.Emitted.Clear();
+            DummyRollingFileAuditSink.Emitted.Clear();
+
+            log.Write(Some.InformationEvent());
+
+            Assert.Equal(0, DummyRollingFileSink.Emitted.Count);
+            Assert.Equal(1, DummyRollingFileAuditSink.Emitted.Count);
         }
     }
 }
