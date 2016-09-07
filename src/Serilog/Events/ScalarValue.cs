@@ -52,36 +52,44 @@ namespace Serilog.Events
             if (Value == null)
             {
                 output.Write("null");
+                return;
             }
-            else
+
+            var s = Value as string;
+            if (s != null)
             {
-                var s = Value as string;
-                if (s != null)
+                if (format != "l")
                 {
-                    if (format != "l")
-                    {
-                        output.Write("\"");
-                        output.Write(s.Replace("\"", "\\\""));
-                        output.Write("\"");
-                    }
-                    else
-                    {
-                        output.Write(s);
-                    }
+                    output.Write("\"");
+                    output.Write(s.Replace("\"", "\\\""));
+                    output.Write("\"");
                 }
                 else
                 {
-                    var f = Value as IFormattable;
-                    if (f != null)
-                    {
-                        output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
-                    }
-                    else
-                    {
-                        output.Write(Value.ToString());
-                    }
+                    output.Write(s);
+                }
+                return;
+            }
+
+            if (formatProvider != null)
+            {
+                var custom = (ICustomFormatter)formatProvider.GetFormat(typeof(ICustomFormatter));
+                if (custom != null)
+                {
+                    output.Write(custom.Format(format, Value, formatProvider));
+                    return;
                 }
             }
+
+            var f = Value as IFormattable;
+            if (f != null)
+            {
+                output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                output.Write(Value.ToString());
+            }                        
         }
 
         /// <summary>
