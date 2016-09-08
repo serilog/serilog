@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 
 using Serilog.Events;
@@ -149,6 +150,53 @@ namespace Serilog.Tests.Formatting.Display
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("  inf", sw.ToString());
+        }
+
+        enum Size
+        {
+            Large
+        }
+
+        class SizeFormatter : IFormatProvider, ICustomFormatter
+        {
+            private readonly IFormatProvider _innerFormatProvider;
+
+            public SizeFormatter(IFormatProvider innerFormatProvider)
+            {
+                _innerFormatProvider = innerFormatProvider;
+            }
+
+            public object GetFormat(Type formatType)
+            {
+                return formatType == typeof(ICustomFormatter) ? this : _innerFormatProvider.GetFormat(formatType);
+            }
+
+            public string Format(string format, object arg, IFormatProvider formatProvider)
+            {
+                if (arg is Size)
+                {
+                    var size = (Size)arg;
+                    return size == Size.Large ? "Huge" : size.ToString();
+                }
+
+                var formattable = arg as IFormattable;
+                if (formattable != null)
+                {
+                    return formattable.ToString(format, _innerFormatProvider);
+                }
+
+                return arg.ToString();
+            }
+        }
+
+        [Fact]
+        public void AppliesCustomFormatterToEnums()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Message}", new SizeFormatter(CultureInfo.InvariantCulture));
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Size {Size}", Size.Large));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("Size Huge", sw.ToString());
         }
     }
 }
