@@ -155,28 +155,21 @@ namespace Serilog.Parameters
                 // Only actual dictionaries are supported, as arbitrary types
                 // can implement multiple IDictionary interfaces and thus introduce
                 // multiple different interpretations.
-                var valueAsList = enumerable.Cast<object>();
                 if (IsValueTypeDictionary(valueType))
                 {
-                    var values = new List<KeyValuePair<ScalarValue, LogEventPropertyValue>>();
-                    if (valueAsList.Any())
-                    {
-                        var typeInfo = valueAsList.ElementAt(0).GetType().GetTypeInfo();
-                        var keyProperty = typeInfo.GetDeclaredProperty("Key");
-                        var valueProperty = typeInfo.GetDeclaredProperty("Value");
+                    var typeInfo = typeof(KeyValuePair<,>).MakeGenericType(valueType.GenericTypeArguments).GetTypeInfo();
+                    var keyProperty = typeInfo.GetDeclaredProperty("Key");
+                    var valueProperty = typeInfo.GetDeclaredProperty("Value");
 
-                        foreach (object kvp in enumerable)
-                        {
-                            var scalar = (ScalarValue)limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring);
-                            var propValue = limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring);
-                            values.Add(new KeyValuePair<ScalarValue, LogEventPropertyValue>(scalar, propValue));
-                        }
-                    }
-                    return new DictionaryValue(values);
+                    return new DictionaryValue(enumerable.Cast<object>()
+                        .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                                           (ScalarValue)limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
+                                           limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
+                        .Where(kvp => kvp.Key.Value != null));
                 }
 
                 return new SequenceValue(
-                    valueAsList.Select(o => limiter.CreatePropertyValue(o, destructuring)));
+                    enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
 
             if (destructuring == Destructuring.Destructure)
