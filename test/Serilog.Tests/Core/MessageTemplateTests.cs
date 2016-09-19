@@ -195,8 +195,8 @@ namespace Serilog.Tests.Core
         {
             var anonymous = new { Bar = 6M, Baz = 4M };
             var dictionary = Enumerable.Repeat("MyValue", 1).ToDictionary(v => anonymous, v => v);
-            var m = Render("Dictionary with anonymous type value {dictionary}", dictionary);
-            Assert.Equal("Dictionary with anonymous type value [\"[{ Bar = 6, Baz = 4 }, MyValue]\"]", m);
+            var m = Render("Dictionary with anonymous type key {dictionary}", dictionary);
+            Assert.Equal("Dictionary with anonymous type key [\"[{ Bar = 6, Baz = 4 }, MyValue]\"]", m);
         }
     }
 }

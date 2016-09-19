@@ -23,7 +23,6 @@ using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Policies;
 using System.Runtime.CompilerServices;
-using System.ComponentModel;
 
 namespace Serilog.Parameters
 {
