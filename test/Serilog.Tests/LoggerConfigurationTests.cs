@@ -294,8 +294,8 @@ namespace Serilog.Tests
             log.Information("{@X}", x);
             var limitedText = evt.Properties["X"].ToString();
 
-            Assert.Contains("123", limitedText);
-            Assert.DoesNotContain("1234", limitedText);
+            Assert.Contains("12…", limitedText);
+            Assert.DoesNotContain("123", limitedText);
         }
 
         [Fact]

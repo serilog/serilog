@@ -133,7 +133,7 @@ namespace Serilog.Parameters
             var stringValue = value as string;
             if (stringValue != null && stringValue.Length > _maximumStringLength)
             {
-                value = stringValue.Substring(0, _maximumStringLength);
+                value = stringValue.Substring(0, _maximumStringLength-1) +"…";
             }
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
