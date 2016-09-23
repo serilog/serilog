@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using Xunit;
 using Serilog.Core;
 using Serilog.Core.Filters;
@@ -277,25 +278,26 @@ namespace Serilog.Tests
             Assert.DoesNotContain(xs, "D");
         }
 
-        [Fact]
-        public void MaximumStringLengthEffective()
+        [Theory]
+        [InlineData("1234", "12…", 3)]
+        [InlineData("123", "123", 3)]
+        public void MaximumStringLengthEffective(string text, string textAfter, int limit)
         {
             var x = new
             {
-                TooLongText = "1234"
+                TooLongText = text
             };
 
             LogEvent evt = null;
             var log = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
+                .Destructure.ToMaximumStringLength(limit)
                 .CreateLogger();
 
             log.Information("{@X}", x);
             var limitedText = evt.Properties["X"].ToString();
 
-            Assert.Contains("12…", limitedText);
-            Assert.DoesNotContain("123", limitedText);
+            Assert.Contains(textAfter, limitedText);
         }
 
         [Fact]
