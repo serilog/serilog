@@ -46,10 +46,12 @@ namespace Serilog.Parameters
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
+        readonly int _maximumStringLength;
         readonly bool _propagateExceptions;
 
         public PropertyValueConverter(
             int maximumDestructuringDepth, 
+            int maximumStringLength,
             IEnumerable<Type> additionalScalarTypes,
             IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
             bool propagateExceptions)
@@ -57,9 +59,11 @@ namespace Serilog.Parameters
             if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
+            if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
             _propagateExceptions = propagateExceptions;
+            _maximumStringLength = maximumStringLength;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -125,6 +129,12 @@ namespace Serilog.Parameters
 
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
+
+            var stringValue = value as string;
+            if (stringValue != null && stringValue.Length > _maximumStringLength)
+            {
+                value = stringValue.Substring(0, _maximumStringLength);
+            }
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {            
@@ -241,3 +251,4 @@ namespace Serilog.Parameters
         }
     }
 }
+

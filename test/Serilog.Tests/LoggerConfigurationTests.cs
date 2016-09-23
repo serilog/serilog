@@ -278,6 +278,27 @@ namespace Serilog.Tests
         }
 
         [Fact]
+        public void MaximumStringLengthEffective()
+        {
+            var x = new
+            {
+                TooLongText = "1234"
+            };
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{@X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains("123", limitedText);
+            Assert.DoesNotContain("1234", limitedText);
+        }
+
+        [Fact]
         public void DynamicallySwitchingSinkRestrictsOutput()
         {
             var eventsReceived = 0;

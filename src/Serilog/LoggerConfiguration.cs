@@ -39,6 +39,7 @@ namespace Serilog
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
+        int _maximumStringLength = 1000;
         bool _loggerCreated;
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
@@ -109,7 +110,8 @@ namespace Serilog
                     this,
                     _additionalScalarTypes.Add,
                     _additionalDestructuringPolicies.Add,
-                    depth => _maximumDestructuringDepth = depth);
+                    depth => _maximumDestructuringDepth = depth,
+                    length => _maximumStringLength = length);
             }
         }
 
@@ -150,7 +152,12 @@ namespace Serilog
                 sink = new FilteringSink(sink, _filters, auditing);
             }
 
-            var converter = new PropertyValueConverter(_maximumDestructuringDepth, _additionalScalarTypes, _additionalDestructuringPolicies, auditing);
+            var converter = new PropertyValueConverter(
+                _maximumDestructuringDepth, 
+                _maximumStringLength,
+                _additionalScalarTypes, 
+                _additionalDestructuringPolicies,
+                auditing);
             var processor = new MessageTemplateProcessor(converter);
 
             ILogEventEnricher enricher;
