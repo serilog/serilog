@@ -125,15 +125,19 @@ namespace Serilog.Parameters
                 return new ScalarValue(null);
 
             if (destructuring == Destructuring.Stringify)
-                return new ScalarValue(value.ToString());
+            {
+                var stringified = value.ToString();
+                var truncated = TruncateIfNecessary(stringified);
+                return new ScalarValue(truncated);
+            }
 
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
 
             var stringValue = value as string;
-            if (stringValue != null && stringValue.Length > _maximumStringLength)
+            if (stringValue != null)
             {
-                value = stringValue.Substring(0, _maximumStringLength-1) +"…";
+                value = TruncateIfNecessary(stringValue);
             }
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
@@ -194,6 +198,16 @@ namespace Serilog.Parameters
             }
 
             return new ScalarValue(value.ToString());
+        }
+
+        string TruncateIfNecessary(string text)
+        {
+            if (text.Length > _maximumStringLength)
+            {
+                return text.Substring(0, _maximumStringLength - 1) + "…";
+            }
+
+            return text;
         }
 
         bool IsValueTypeDictionary(Type valueType)

@@ -281,7 +281,7 @@ namespace Serilog.Tests
         [Theory]
         [InlineData("1234", "12…", 3)]
         [InlineData("123", "123", 3)]
-        public void MaximumStringLengthEffective(string text, string textAfter, int limit)
+        public void MaximumStringLengthEffectiveForCapturedObject(string text, string textAfter, int limit)
         {
             var x = new
             {
@@ -298,6 +298,38 @@ namespace Serilog.Tests
             var limitedText = evt.Properties["X"].ToString();
 
             Assert.Contains(textAfter, limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForStringifiedObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{$X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains("##…", limitedText);
+        }
+
+        class ToStringOfLength
+        {
+            private int _toStringOfLength;
+
+            public ToStringOfLength(int toStringOfLength)
+            {
+                _toStringOfLength = toStringOfLength;
+            }
+
+            public override string ToString()
+            {
+                return new string('#', _toStringOfLength);
+            }
         }
 
         [Fact]
