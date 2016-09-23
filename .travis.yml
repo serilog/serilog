@@ -21,8 +21,8 @@ os:
   - linux
 
 env:
-  matrix: 
-    - CLI_VERSION=1.0.0-preview2-003121
+  matrix:
+    - CLI_VERSION=1.0.0-preview2-003131
     - CLI_VERSION=Latest
 
 matrix:
