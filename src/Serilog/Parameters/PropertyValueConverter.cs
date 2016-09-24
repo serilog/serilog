@@ -126,9 +126,7 @@ namespace Serilog.Parameters
 
             if (destructuring == Destructuring.Stringify)
             {
-                var stringified = value.ToString();
-                var truncated = TruncateIfNecessary(stringified);
-                return new ScalarValue(truncated);
+                return Stringify(value);
             }
 
             var valueType = value.GetType();
@@ -197,7 +195,14 @@ namespace Serilog.Parameters
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
-            return new ScalarValue(value.ToString());
+            return Stringify(value);
+        }
+
+        private LogEventPropertyValue Stringify(object value)
+        {
+            var stringified = value.ToString();
+            var truncated = TruncateIfNecessary(stringified);
+            return new ScalarValue(truncated);
         }
 
         string TruncateIfNecessary(string text)
