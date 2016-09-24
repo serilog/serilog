@@ -279,6 +279,14 @@ namespace Serilog.Tests
         }
 
         [Fact]
+        public void MaximumStringLengthThrowsForLimitLowerThan2()
+        {
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(
+                () => new LoggerConfiguration().Destructure.ToMaximumStringLength(1));
+            Assert.Equal(1, ex.ActualValue);
+        }
+
+        [Fact]
         public void MaximumStringLengthEffectiveForString()
         {
             var x = "ABCD";
