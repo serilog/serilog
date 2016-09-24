@@ -289,7 +289,7 @@ namespace Serilog.Tests
                 .Destructure.ToMaximumStringLength(3)
                 .CreateLogger();
 
-            log.Information("{$X}", x);
+            log.Information("{X}", x);
             var limitedText = evt.Properties["X"].ToString();
 
             Assert.Equal("\"AB…\"", limitedText);
