@@ -278,6 +278,23 @@ namespace Serilog.Tests
             Assert.DoesNotContain(xs, "D");
         }
 
+        [Fact]
+        public void MaximumStringLengthEffectiveForString()
+        {
+            var x = "ABCD";
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{$X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Equal("\"AB…\"", limitedText);
+        }
+
         [Theory]
         [InlineData("1234", "12…", 3)]
         [InlineData("123", "123", 3)]
