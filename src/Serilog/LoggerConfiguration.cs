@@ -39,7 +39,7 @@ namespace Serilog
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
-        int _maximumStringLength = 1000;
+        int _maximumStringLength = int.MaxValue;
         bool _loggerCreated;
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
