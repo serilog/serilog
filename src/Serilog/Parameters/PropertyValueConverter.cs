@@ -132,10 +132,13 @@ namespace Serilog.Parameters
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
 
-            var stringValue = value as string;
-            if (stringValue != null)
+            if (destructuring == Destructuring.Destructure)
             {
-                value = TruncateIfNecessary(stringValue);
+                var stringValue = value as string;
+                if (stringValue != null)
+                {
+                    value = TruncateIfNecessary(stringValue);
+                }
             }
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
@@ -195,7 +198,7 @@ namespace Serilog.Parameters
                 return new StructureValue(GetProperties(value, limiter), typeTag);
             }
 
-            return Stringify(value);
+            return new ScalarValue(value.ToString());
         }
 
         private LogEventPropertyValue Stringify(object value)

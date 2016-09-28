@@ -287,7 +287,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumStringLengthEffectiveForString()
+        public void MaximumStringLengthNOTEffectiveForString()
         {
             var x = "ABCD";
 
@@ -298,6 +298,40 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             log.Information("{X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Equal("\"ABCD\"", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForCapturedString()
+        {
+            var x = "ABCD";
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{@X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Equal("\"AB…\"", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForStringifiedString()
+        {
+            var x = "ABCD";
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{$X}", x);
             var limitedText = evt.Properties["X"].ToString();
 
             Assert.Equal("\"AB…\"", limitedText);
@@ -343,7 +377,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumStringLengthEffectiveForObject()
+        public void MaximumStringLengthNOTEffectiveForObject()
         {
             var x = new ToStringOfLength(4);
 
@@ -356,7 +390,7 @@ namespace Serilog.Tests
             log.Information("{X}", x);
             var limitedText = evt.Properties["X"].ToString();
 
-            Assert.Contains("##…", limitedText);
+            Assert.Contains("####", limitedText);
         }
 
         class ToStringOfLength
