@@ -377,6 +377,23 @@ namespace Serilog.Tests
         }
 
         [Fact]
+        public void MaximumStringNOTLengthEffectiveForObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains("####", limitedText);
+        }
+
+        [Fact]
         public void MaximumStringLengthNOTEffectiveForObject()
         {
             var x = new ToStringOfLength(4);
