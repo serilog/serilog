@@ -164,7 +164,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentOutOfRangeException">When passed length is less or equal to 2</exception>
         public LoggerConfiguration ToMaximumStringLength(int maximumStringLength)
         {
-            if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength), maximumStringLength, "Maximum string length have to be greater than 1");
+            if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength), maximumStringLength, "Maximum string length must be at least two.");
             _setMaximumStringLength(maximumStringLength);
             return _loggerConfiguration;
         }
