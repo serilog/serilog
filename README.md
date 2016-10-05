@@ -1,6 +1,6 @@
 #Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master)  [![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/) [![Rager Releases](http://rager.io/badge.svg?url=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSerilog%2F)](http://rager.io/projects/search?badge=1&query=nuget.org/packages/Serilog/) [![Join the chat at https://gitter.im/serilog/serilog](https://img.shields.io/gitter/room/serilog/serilog.svg)](https://gitter.im/serilog/serilog) [![Stack Overflow](https://img.shields.io/badge/stackoverflow-serilog-orange.svg)](http://stackoverflow.com/questions/tagged/serilog)
 
-Serilog is a diagnostic logging library for .NET applications. It is easy to set up, has a clean API, and runs on all recent .NET platforms. While it's useful in even the simplest applications, Serilog's support for structured logging shines when instrumenting complex, distributed, and asynchronous applications and systems.
+Serilog is a diagnostic logging library for .NET applications. It is easy to set up, has a clean API, and runs on all recent .NET platforms. While it's useful even in the simplest applications, Serilog's support for structured logging shines when instrumenting complex, distributed, and asynchronous applications and systems.
 
 [![Serilog](https://serilog.net/images/serilog-180px.png)](https://serilog.net)
 
@@ -24,7 +24,7 @@ var elapsedMs = 34;
 log.Information("Processed {@Position} in {Elapsed} ms.", position, elapsedMs);
 ```
 
-Serilog uses [message templates](https://messagetemplates.org), a simple DSL that extends .NET format strings with named, as well as positional, parameters. Instead of formatting events immediately into text, Serilog captures the values associated with each named parameter.
+Serilog uses [message templates](https://messagetemplates.org), a simple DSL that extends .NET format strings with _named_ as well as positional parameters. Instead of formatting events immediately into text, Serilog captures the values associated with each named parameter.
 
 The example above records two properties, `Position` and `Elapsed`, in the log event. The `@` operator in front of `Position` tells Serilog to _serialize_ the object passed in, rather than convert it using `ToString()`. Serilog's deep and rich support for structured event data opens up a huge range of diagnostic possibilities not available when using traditional loggers.
 
@@ -36,7 +36,7 @@ Rendered into [JSON format](https://github.com/serilog/serilog-formatting-compac
 
 Back-ends that are capable of recording structured event data make log searches and analysis possible without log parsing or regular expressions.
 
-Supporting structured data doesn't mean giving up text: when Serilog writes events to files or the console, the template and properties are rendred into friendly human-readable text just like a traditional logging library would produce:
+Supporting structured data doesn't mean giving up text: when Serilog writes events to files or the console, the template and properties are rendered into friendly human-readable text just like a traditional logging library would produce:
 
 ```
 09:14:22 [INF] Processed { Latitude: 25, Longitude: 134 } in 34 ms.
@@ -51,7 +51,7 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
  * Discoverable C# configuration syntax and optional [XML](https://github.com/serilog/serilog-settings-appsettings) or [JSON](https://github.com/serilog/serilog-settings-configuration) configuration support
  * Efficient when enabled, extremely low overhead when a logging level is switched off
  * Best-in-class .NET Core support, including a [provider for _Microsoft.Extensions.Logging_](https://github.com/serilog/serilog-extensions-logging)
- * Support for a [huge range of sinks](https://github.com/serilog/serilog/wiki/Provided-Sinks), including files, the console, on-premises and cloud-based log servers, databases, and message queues
+ * Support for a [comprehensive range of sinks](https://github.com/serilog/serilog/wiki/Provided-Sinks), including files, the console, on-premises and cloud-based log servers, databases, and message queues
  * Sophisticated [enrichment](https://github.com/serilog/serilog/wiki/Enrichment) of log events with contextual information, including scoped (`LogContext`) properties, thread and process identifiers, and domain-specific correlation ids such as `HttpRequestId`
  * Zero-shared-state `Logger` objects, with an optional global static `Log` class
  * Format-agnostic logging pipeline that can emit events in plain text, JSON, in-memory `LogEvent` objects (including [Rx pipelines](https://github.com/serilog/serilog-sinks-observable)) and other formats
