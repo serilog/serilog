@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using Xunit;
 using Serilog.Core;
 using Serilog.Core.Filters;
@@ -275,6 +276,153 @@ namespace Serilog.Tests
 
             Assert.Contains("C", xs);
             Assert.DoesNotContain(xs, "D");
+        }
+
+        [Fact]
+        public void MaximumStringLengthThrowsForLimitLowerThan2()
+        {
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(
+                () => new LoggerConfiguration().Destructure.ToMaximumStringLength(1));
+            Assert.Equal(1, ex.ActualValue);
+        }
+
+        [Fact]
+        public void MaximumStringLengthNOTEffectiveForString()
+        {
+            var x = "ABCD";
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Equal("\"ABCD\"", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForCapturedString()
+        {
+            var x = "ABCD";
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{@X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Equal("\"AB…\"", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForStringifiedString()
+        {
+            var x = "ABCD";
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{$X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Equal("\"AB…\"", limitedText);
+        }
+
+        [Theory]
+        [InlineData("1234", "12…", 3)]
+        [InlineData("123", "123", 3)]
+        public void MaximumStringLengthEffectiveForCapturedObject(string text, string textAfter, int limit)
+        {
+            var x = new
+            {
+                TooLongText = text
+            };
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(limit)
+                .CreateLogger();
+
+            log.Information("{@X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains(textAfter, limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForStringifiedObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{$X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains("##…", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringNOTLengthEffectiveForObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains("####", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthNOTEffectiveForObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumStringLength(3)
+                .CreateLogger();
+
+            log.Information("{X}", x);
+            var limitedText = evt.Properties["X"].ToString();
+
+            Assert.Contains("####", limitedText);
+        }
+
+        class ToStringOfLength
+        {
+            private int _toStringOfLength;
+
+            public ToStringOfLength(int toStringOfLength)
+            {
+                _toStringOfLength = toStringOfLength;
+            }
+
+            public override string ToString()
+            {
+                return new string('#', _toStringOfLength);
+            }
         }
 
         [Fact]

@@ -27,20 +27,24 @@ namespace Serilog.Configuration
         readonly Action<Type> _addScalar;
         readonly Action<IDestructuringPolicy> _addPolicy;
         readonly Action<int> _setMaximumDepth;
+        readonly Action<int> _setMaximumStringLength;
 
         internal LoggerDestructuringConfiguration(
             LoggerConfiguration loggerConfiguration,
             Action<Type> addScalar,
             Action<IDestructuringPolicy> addPolicy,
-            Action<int> setMaximumDepth)
+            Action<int> setMaximumDepth,
+            Action<int> setMaximumStringLength)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             if (addScalar == null) throw new ArgumentNullException(nameof(addScalar));
             if (addPolicy == null) throw new ArgumentNullException(nameof(addPolicy));
+            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumStringLength));
             _loggerConfiguration = loggerConfiguration;
             _addScalar = addScalar;
             _addPolicy = addPolicy;
             _setMaximumDepth = setMaximumDepth;
+            _setMaximumStringLength = setMaximumStringLength;
         }
 
         /// <summary>
@@ -147,6 +151,21 @@ namespace Serilog.Configuration
         {
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
             _setMaximumDepth(maximumDestructuringDepth);
+            return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// When destructuring objects, string values can be restricted to specified length
+        /// thus avoiding bloating payload. Limit is applied to each value separately, 
+        /// sum of length of strings can exceed limit.
+        /// </summary>
+        /// <param name="maximumStringLength">The maximum string length.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">When passed length is less or equal to 2</exception>
+        public LoggerConfiguration ToMaximumStringLength(int maximumStringLength)
+        {
+            if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength), maximumStringLength, "Maximum string length must be at least two.");
+            _setMaximumStringLength(maximumStringLength);
             return _loggerConfiguration;
         }
     }
