@@ -40,6 +40,7 @@ namespace Serilog
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
+        int _maximumCollectionLength = int.MaxValue;
         bool _loggerCreated;
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
@@ -111,7 +112,8 @@ namespace Serilog
                     _additionalScalarTypes.Add,
                     _additionalDestructuringPolicies.Add,
                     depth => _maximumDestructuringDepth = depth,
-                    length => _maximumStringLength = length);
+                    length => _maximumStringLength = length,
+                    length => _maximumCollectionLength = length);
             }
         }
 
@@ -155,6 +157,7 @@ namespace Serilog
             var converter = new PropertyValueConverter(
                 _maximumDestructuringDepth, 
                 _maximumStringLength,
+                _maximumCollectionLength,
                 _additionalScalarTypes, 
                 _additionalDestructuringPolicies,
                 auditing);
