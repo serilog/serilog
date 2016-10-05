@@ -201,7 +201,7 @@ namespace Serilog.Parameters
             return new ScalarValue(value.ToString());
         }
 
-        private LogEventPropertyValue Stringify(object value)
+        LogEventPropertyValue Stringify(object value)
         {
             var stringified = value.ToString();
             var truncated = TruncateIfNecessary(stringified);
