@@ -12,16 +12,6 @@
     "keyFile": "../../assets/Serilog.snk"
   },
   "frameworks": {
-    "net4.5.2": {
-      "buildOptions": {
-        "define": [ "APPDOMAIN", "REMOTING", "GETCURRENTMETHOD" ]
-      }
-    },
-    "net4.6": {
-      "buildOptions": {
-        "define": [ "ASYNCLOCAL", "APPDOMAIN", "GETCURRENTMETHOD" ]
-      }
-    },
     "netcoreapp1.0": {
       "define": [ "ASYNCLOCAL" ],
       "dependencies": {
@@ -34,6 +24,16 @@
         "dnxcore50",
         "portable-net45+win8"
       ]
+    },
+    "net4.5.2": {
+      "buildOptions": {
+        "define": [ "APPDOMAIN", "REMOTING", "GETCURRENTMETHOD" ]
+      }
+    },
+    "net4.6": {
+      "buildOptions": {
+        "define": [ "ASYNCLOCAL", "APPDOMAIN", "GETCURRENTMETHOD" ]
+      }
     }
   }
 }

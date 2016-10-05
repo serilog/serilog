@@ -156,10 +156,14 @@ namespace Serilog.Parameters
                 // multiple different interpretations.
                 if (IsValueTypeDictionary(valueType))
                 {
-                    return new DictionaryValue(enumerable.Cast<dynamic>()
+                    var typeInfo = typeof(KeyValuePair<,>).MakeGenericType(valueType.GenericTypeArguments).GetTypeInfo();
+                    var keyProperty = typeInfo.GetDeclaredProperty("Key");
+                    var valueProperty = typeInfo.GetDeclaredProperty("Value");
+
+                    return new DictionaryValue(enumerable.Cast<object>()
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                                           (ScalarValue)limiter.CreatePropertyValue(kvp.Key, destructuring),
-                                           limiter.CreatePropertyValue(kvp.Value, destructuring)))
+                                           (ScalarValue)limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
+                                           limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
                         .Where(kvp => kvp.Key.Value != null));
                 }
 

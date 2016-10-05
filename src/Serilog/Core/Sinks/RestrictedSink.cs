@@ -17,7 +17,7 @@ using Serilog.Events;
 
 namespace Serilog.Core.Sinks
 {
-    class RestrictedSink : ILogEventSink
+    class RestrictedSink : ILogEventSink, IDisposable
     {
         readonly ILogEventSink _sink;
         readonly LoggingLevelSwitch _levelSwitch;
@@ -38,6 +38,11 @@ namespace Serilog.Core.Sinks
                 return;
 
             _sink.Emit(logEvent);
+        }
+
+        public void Dispose()
+        {
+           (_sink as IDisposable)?.Dispose();
         }
     }
 }
