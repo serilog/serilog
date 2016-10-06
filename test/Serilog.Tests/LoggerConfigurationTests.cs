@@ -377,23 +377,6 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumStringNOTLengthEffectiveForObject()
-        {
-            var x = new ToStringOfLength(4);
-
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{X}", x);
-            var limitedText = evt.Properties["X"].ToString();
-
-            Assert.Contains("####", limitedText);
-        }
-
-        [Fact]
         public void MaximumStringLengthNOTEffectiveForObject()
         {
             var x = new ToStringOfLength(4);
@@ -423,6 +406,55 @@ namespace Serilog.Tests
             {
                 return new string('#', _toStringOfLength);
             }
+        }
+
+        [Fact]
+        public void MaximumStringCollectionThrowsForLimitLowerThan1()
+        {
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(
+                () => new LoggerConfiguration().Destructure.ToMaximumCollectionLength(0));
+            Assert.Equal(0, ex.ActualValue);
+        }
+
+        [Fact]
+        public void MaximumCollectionLengthEffectiveForArray()
+        {
+            var x = new[] { 1, 2, 3, 4 };
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumCollectionLength(3)
+                .CreateLogger();
+
+            log.Information("{X}", x);
+            var limitedCollection = evt.Properties["X"].ToString();
+
+            Assert.Contains("3", limitedCollection);
+            Assert.DoesNotContain("4", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionLengthEffectiveForDictionary()
+        {
+            var x = new Dictionary<string, int>
+            {
+                {"1", 1},
+                {"2", 2},
+                {"3", 3}
+            };
+
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .Destructure.ToMaximumCollectionLength(2)
+                .CreateLogger();
+
+            log.Information("{X}", x);
+            var limitedCollection = evt.Properties["X"].ToString();
+
+            Assert.Contains("2", limitedCollection);
+            Assert.DoesNotContain("3", limitedCollection);
         }
 
         [Fact]

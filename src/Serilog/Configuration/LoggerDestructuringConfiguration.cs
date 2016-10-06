@@ -182,7 +182,7 @@ namespace Serilog.Configuration
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentOutOfRangeException">When passed length is less than 1</exception>
-        public LoggerConfiguration ToMaximumCollectionLengthLength(int maximumCollectionLength)
+        public LoggerConfiguration ToMaximumCollectionLength(int maximumCollectionLength)
         {
             if (maximumCollectionLength < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionLength), maximumCollectionLength, "Maximum collection length must be at least one.");
             _setMaximumCollectionLength(maximumCollectionLength);
