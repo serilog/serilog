@@ -367,7 +367,17 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumCollectionLengthEffectiveForArray()
+        public void MaximumCollectionLengthNotEffectiveForArrayAsLongAsLimit()
+        {
+            var x = new[] { 1, 2, 3 };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionLength(3));
+
+            Assert.Contains("3", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionLengthEffectiveForArrayThanLimit()
         {
             var x = new[] { 1, 2, 3, 4 };
 
@@ -378,7 +388,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumCollectionLengthEffectiveForDictionary()
+        public void MaximumCollectionLengthEffectiveForDictionaryWithMoreKeysThanLimit()
         {
             var x = new Dictionary<string, int>
             {
@@ -391,6 +401,20 @@ namespace Serilog.Tests
 
             Assert.Contains("2", limitedCollection);
             Assert.DoesNotContain("3", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionLengthNotEffectiveForDictionaryWithAsManyKeysAsLimit()
+        {
+            var x = new Dictionary<string, int>
+            {
+                {"1", 1},
+                {"2", 2},
+            };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionLength(2));
+
+            Assert.Contains("2", limitedCollection);
         }
 
         private string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
