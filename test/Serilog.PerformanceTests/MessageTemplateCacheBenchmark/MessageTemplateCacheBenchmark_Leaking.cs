@@ -12,12 +12,15 @@ namespace Serilog.PerformanceTests
     public class MessageTemplateCacheBenchmark_Leaking
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
-        const int MaxCacheItems = 1100;
+        const int MaxCacheItems = 1000;
 
         List<string> _templateList;
 
         [Params(10000)]
         public int Items { get; set; }
+
+        [Params(1, 10, 100, 1000)]
+        public int OverflowCount { get; set; }
 
         [Params(1, -1)]
         public int MaxDegreeOfParallelism { get; set; }
@@ -49,12 +52,13 @@ namespace Serilog.PerformanceTests
         void Run<T>(Func<T> cacheFactory) where T : IMessageTemplateParser
         {
             var cache = cacheFactory();
+            var total = MaxCacheItems + OverflowCount;
 
             Parallel.For(
                 0,
                 _templateList.Count,
                 new ParallelOptions() { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
-                idx => cache.Parse(_templateList[idx % MaxCacheItems]));
+                idx => cache.Parse(_templateList[idx % total]));
         }
     }
 }

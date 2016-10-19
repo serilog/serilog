@@ -24,7 +24,6 @@ namespace Serilog.PerformanceTests
         public void MessageTemplateCacheBenchmark()
         {
             BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Cached>();
-            BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Warmup>();
             BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Leaking>();
         }
 
