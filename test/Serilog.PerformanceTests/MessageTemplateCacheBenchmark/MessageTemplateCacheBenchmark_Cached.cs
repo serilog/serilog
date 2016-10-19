@@ -63,11 +63,13 @@ namespace Serilog.PerformanceTests
         void Run<T>(Func<T> cacheFactory) where T : IMessageTemplateParser
         {
             var cache = cacheFactory();
+            var iterations = Math.Min(10000, Items * 100);
 
-            Parallel.ForEach(
-                _templateList,
+            Parallel.For(
+                0,
+                iterations,
                 new ParallelOptions() { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
-                t => cache.Parse(t));
+                idx => cache.Parse(_templateList[idx % Items]));
         }
     }
 }
