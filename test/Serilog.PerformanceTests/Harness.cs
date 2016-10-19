@@ -13,17 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Serilog;
-using Serilog.Events;
-using System;
 using Xunit;
 
 namespace Serilog.PerformanceTests
 {
     public class Harness
     {
+        [Fact]
+        public void MessageTemplateCacheBenchmark()
+        {
+            BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Cached>();
+            BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Warmup>();
+            BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Leaking>();
+        }
+
         [Fact]
         public void LogContextEnrichment()
         {
