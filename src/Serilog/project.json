@@ -19,12 +19,12 @@
   "frameworks": {
     "net4.5": {
       "buildOptions": {
-        "define": [ "REMOTING" ]
+        "define": [ "REMOTING", "HASHTABLE" ]
       }
     },
     "net4.6": {
       "buildOptions": {
-        "define": [ "ASYNCLOCAL" ]
+        "define": [ "ASYNCLOCAL", "HASHTABLE" ]
       }
     },
     "netstandard1.0": {
@@ -44,11 +44,12 @@
     },
     "netstandard1.3": {
       "buildOptions": {
-        "define": [ "ASYNCLOCAL" ]
+        "define": [ "ASYNCLOCAL", "HASHTABLE" ]
       },
       "dependencies": {
         "Microsoft.CSharp": "4.0.1",
         "System.Collections": "4.0.11",
+        "System.Collections.NonGeneric": "4.0.1",
         "System.Dynamic.Runtime": "4.0.11",
         "System.Globalization": "4.0.11",
         "System.Linq": "4.1.0",
