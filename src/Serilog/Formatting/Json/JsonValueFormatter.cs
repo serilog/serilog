@@ -184,7 +184,14 @@ namespace Serilog.Formatting.Json
 
                 if (value is double || value is float)
                 {
-                    FormatApproximateNumericValue((IFormattable)value, output);
+					if ((value is double && (double.IsNaN((double)value) || double.IsInfinity((double)value)))
+						|| (value is float && (float.IsNaN((float)value) || float.IsInfinity((float)value))))
+					{
+						FormatStringValue(value.ToString(), output);
+						return;
+					}
+
+					FormatApproximateNumericValue((IFormattable)value, output);
                     return;
                 }
 

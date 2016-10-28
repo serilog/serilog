@@ -49,7 +49,33 @@ namespace Serilog.Tests.Formatting.Json
             JsonLiteralTypesAreFormatted(123.45, "123.45");
         }
 
-        [Fact]
+		[Fact]
+		public void DoubleSpecialsFormatAsString()
+		{
+			string format = "\"{0}\"";
+
+			JsonLiteralTypesAreFormatted(double.NaN, string.Format(format, double.NaN));
+			JsonLiteralTypesAreFormatted(double.PositiveInfinity, string.Format(format, double.PositiveInfinity));
+			JsonLiteralTypesAreFormatted(double.NegativeInfinity, string.Format(format, double.NegativeInfinity));
+		}
+
+		[Fact]
+		public void FloatFormatsAsNumber()
+		{
+			JsonLiteralTypesAreFormatted(123.45f, "123.45");
+		}
+
+		[Fact]
+		public void FloatSpecialsFormatAsString()
+		{
+			string format = "\"{0}\"";
+
+			JsonLiteralTypesAreFormatted(float.NaN, string.Format(format, float.NaN));
+			JsonLiteralTypesAreFormatted(float.PositiveInfinity, string.Format(format, float.PositiveInfinity));
+			JsonLiteralTypesAreFormatted(float.NegativeInfinity, string.Format(format, float.NegativeInfinity));
+		}
+
+		[Fact]
         public void DecimalFormatsAsNumber()
         {
             JsonLiteralTypesAreFormatted(123.45m, "123.45");
