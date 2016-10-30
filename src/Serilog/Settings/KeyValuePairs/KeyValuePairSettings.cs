@@ -35,6 +35,7 @@ namespace Serilog.Settings.KeyValuePairs
         const string UsingDirectiveFullFormPrefix = "using:";
         const string EnrichWithEventEnricherPrefix = "enrich:";
         const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
+        const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
         const string AuditOrWriteToDirectiveRegex = @"^(?<directive>audit-to|write-to):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
 
@@ -77,6 +78,16 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var name = enrichProperyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
                 loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
+            }
+
+           foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
+                dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
+            {
+                LogEventLevel overriddenLevel;
+                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel)) {
+                    var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
+                }
             }
 
             var splitWriteTo = new Regex(AuditOrWriteToDirectiveRegex);
