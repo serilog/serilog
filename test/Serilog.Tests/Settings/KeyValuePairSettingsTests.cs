@@ -186,5 +186,32 @@ namespace Serilog.Tests.Settings
             Assert.Equal(0, DummyRollingFileSink.Emitted.Count);
             Assert.Equal(1, DummyRollingFileAuditSink.Emitted.Count);
         }
+
+        [Fact]
+        public void TestMinimumLevelOverrides() {
+            var settings = new Dictionary<string, string>
+            {
+                ["minimum-level:override:Microsoft"] = "Warning",
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            var microsoftLogger = log.ForContext<Microsoft.Extensions.Testing.Abstractions.FullPdbReader>();
+            microsoftLogger.Write(Some.InformationEvent());
+
+            Assert.Null(evt);
+
+            microsoftLogger.Warning("Bad things");
+            Assert.NotNull(evt);
+
+            evt = null;
+            log.Write(Some.InformationEvent());
+            Assert.NotNull(evt);
+        }
     }
 }
