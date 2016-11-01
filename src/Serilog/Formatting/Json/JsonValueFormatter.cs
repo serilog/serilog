@@ -182,18 +182,17 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-                if (value is double || value is float)
-                {
-					if ((value is double && (double.IsNaN((double)value) || double.IsInfinity((double)value)))
-						|| (value is float && (float.IsNaN((float)value) || float.IsInfinity((float)value))))
-					{
-						FormatStringValue(value.ToString(), output);
-						return;
-					}
+				if (value is double)
+				{
+					FormatDoubleValue((double)value, output);
+					return;
+				}
 
-					FormatApproximateNumericValue((IFormattable)value, output);
-                    return;
-                }
+				if (value is float)
+				{
+					FormatFloatValue((float)value, output);
+					return;
+				}
 
                 if (value is bool)
                 {
@@ -228,10 +227,27 @@ namespace Serilog.Formatting.Json
             output.Write(value ? "true" : "false");
         }
 
-        static void FormatApproximateNumericValue(IFormattable value, TextWriter output)
-        {
-            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-        }
+		static void FormatFloatValue(float value, TextWriter output)
+		{
+			if (float.IsNaN(value) || float.IsInfinity(value))
+			{
+				FormatStringValue(value.ToString(), output);
+				return;
+			}
+
+			output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+		}
+
+		static void FormatDoubleValue(double value, TextWriter output)
+		{
+			if (double.IsNaN(value) || double.IsInfinity(value))
+			{
+				FormatStringValue(value.ToString(), output);
+				return;
+			}
+
+			output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+		}
 
         static void FormatExactNumericValue(IFormattable value, TextWriter output)
         {
