@@ -52,13 +52,11 @@ namespace Serilog.Tests.Formatting.Json
 		[Fact]
 		public void DoubleSpecialsFormatAsString()
 		{
-			string format = "\"{0}\"";
-
-			JsonLiteralTypesAreFormatted(double.NaN, string.Format(format, double.NaN));
-			JsonLiteralTypesAreFormatted(double.PositiveInfinity, string.Format(format, double.PositiveInfinity));
-			JsonLiteralTypesAreFormatted(double.NegativeInfinity, string.Format(format, double.NegativeInfinity));
+			JsonLiteralTypesAreFormatted(double.NaN, "\"NaN\"");
+			JsonLiteralTypesAreFormatted(double.PositiveInfinity, "\"Infinity\"");
+			JsonLiteralTypesAreFormatted(double.NegativeInfinity, "\"-Infinity\"");
 		}
-
+		
 		[Fact]
 		public void FloatFormatsAsNumber()
 		{
@@ -68,11 +66,9 @@ namespace Serilog.Tests.Formatting.Json
 		[Fact]
 		public void FloatSpecialsFormatAsString()
 		{
-			string format = "\"{0}\"";
-
-			JsonLiteralTypesAreFormatted(float.NaN, string.Format(format, float.NaN));
-			JsonLiteralTypesAreFormatted(float.PositiveInfinity, string.Format(format, float.PositiveInfinity));
-			JsonLiteralTypesAreFormatted(float.NegativeInfinity, string.Format(format, float.NegativeInfinity));
+			JsonLiteralTypesAreFormatted(float.NaN, "\"NaN\"");
+			JsonLiteralTypesAreFormatted(float.PositiveInfinity, "\"Infinity\"");
+			JsonLiteralTypesAreFormatted(float.NegativeInfinity, "\"-Infinity\"");
 		}
 
 		[Fact]

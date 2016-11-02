@@ -231,7 +231,7 @@ namespace Serilog.Formatting.Json
 		{
 			if (float.IsNaN(value) || float.IsInfinity(value))
 			{
-				FormatStringValue(value.ToString(), output);
+				FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
 				return;
 			}
 
@@ -242,7 +242,7 @@ namespace Serilog.Formatting.Json
 		{
 			if (double.IsNaN(value) || double.IsInfinity(value))
 			{
-				FormatStringValue(value.ToString(), output);
+				FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
 				return;
 			}
 
