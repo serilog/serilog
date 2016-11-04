@@ -6,6 +6,9 @@ using Xunit;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Tests.Support;
+using System.Reflection;
+using Xunit.Sdk;
+using System.Text.RegularExpressions;
 
 namespace Serilog.Tests.Core
 {
@@ -116,5 +119,266 @@ namespace Serilog.Tests.Core
             Assert.Equal("Name", property.Name);
             Assert.Equal("World", property.Value.LiteralValue());
         }
-    }
+
+		[Fact]
+		public void VerboseMethodsMatchConvention()
+		{
+			ValidateConventionForMethodSet("Verbose");
+		}
+
+		[Fact]
+		public void DebugMethodsMatchConvention()
+		{
+			ValidateConventionForMethodSet("Debug");
+		}
+
+		[Fact]
+		public void InformationMethodsMatchConvention()
+		{
+			ValidateConventionForMethodSet("Information");
+		}
+
+		[Fact]
+		public void WarningMethodsMatchConvention()
+		{
+			ValidateConventionForMethodSet("Warning");
+		}
+
+		[Fact]
+		public void ErrorMethodsMatchConvention()
+		{
+			ValidateConventionForMethodSet("Error");
+		}
+
+		[Fact]
+		public void FatalMethodsMatchConvention()
+		{
+			ValidateConventionForMethodSet("Fatal");
+		}
+
+		private void ValidateConventionForMethodSet(string setName)
+		{
+			var methodSet = typeof(Logger).GetMethods().Where(method => method.Name == setName);
+
+			var testMethods = typeof(LoggerTests).GetRuntimeMethods()
+				.Where(method => Regex.IsMatch(method.Name, "ValidateMethod\\d"));
+
+			foreach (var method in methodSet)
+			{
+				Assert.Equal(method.ReturnType, typeof(void));
+
+				Assert.True(method.IsPublic);
+
+				var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
+
+				Assert.NotNull(messageTemplateAttr);
+
+				Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, "messageTemplate");
+
+				var signatureMatch = false;
+
+				foreach (var test in testMethods)
+				{
+					try
+					{
+						test.Invoke(this, new object[] { method });
+
+						signatureMatch = true;
+
+						break;
+					}
+					catch (Exception e)
+					when (e is TargetInvocationException
+							&& ((TargetInvocationException)e).GetBaseException() is XunitException)
+					{
+						continue;
+					}
+				}
+
+				Assert.True(signatureMatch, $"{method} did not match any known convention");
+			}
+		}
+
+
+		// Method0 (string messageTemplate) : void
+		private void ValidateMethod0(MethodInfo method)
+		{
+			VerifyMethodSignature(method, expectedArgCount: 1);
+
+			GetLoggerAndInvoke(method, "message");
+		}
+
+		// Method1<T> (string messageTemplate, T propertyValue) : void
+		private void ValidateMethod1(MethodInfo method)
+		{
+			VerifyMethodSignature(method, isGeneric: true, expectedArgCount: 2);
+
+			GetLoggerAndInvokeGeneric(method, new Type[] { typeof(string) }, "message", "value0");
+		}
+
+		// Method2<T0, T1> (string messageTemplate, T0 propertyValue0, T1 propertyValue1) : void
+		private void ValidateMethod2(MethodInfo method)
+		{
+			VerifyMethodSignature(method, isGeneric: true, expectedArgCount: 3);
+
+			GetLoggerAndInvokeGeneric(method, new Type[] { typeof(string), typeof(string) },
+				"message", "value0", "value1");
+		}
+
+		// Method3<T0, T1, T2> (string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) : void
+		private void ValidateMethod3(MethodInfo method)
+		{
+			VerifyMethodSignature(method, isGeneric: true, expectedArgCount: 4);
+
+			GetLoggerAndInvokeGeneric(method, new Type[] { typeof(string), typeof(string), typeof(string) },
+				"message", "value0", "value1", "value2");
+		}
+
+		// Method4 (string messageTemplate, params object[] propertyValues) : void
+		private void ValidateMethod4(MethodInfo method)
+		{
+			VerifyMethodSignature(method, expectedArgCount: 2);
+
+			GetLoggerAndInvoke(method, "message", new object[] { "value0", "value1", "value2" });
+		}
+
+		// Method5 (Exception exception, string messageTemplate) : void
+		private void ValidateMethod5(MethodInfo method)
+		{
+			VerifyMethodSignature(method, hasExceptionArg: true, expectedArgCount: 2);
+
+			GetLoggerAndInvoke(method, new Exception("test"), "message");
+		}
+
+		// Method6<T> (Exception exception, string messageTemplate, T propertyValue) : void
+		private void ValidateMethod6(MethodInfo method)
+		{
+			VerifyMethodSignature(method, hasExceptionArg: true, isGeneric: true, expectedArgCount: 3);
+
+			GetLoggerAndInvokeGeneric(method, new Type[] { typeof(string) }, new Exception("test"), "message", "value0");
+		}
+
+		// Method7<T0, T1> (Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) : void
+		private void ValidateMethod7(MethodInfo method)
+		{
+			VerifyMethodSignature(method, hasExceptionArg: true, isGeneric: true, expectedArgCount: 4);
+
+			GetLoggerAndInvokeGeneric(method, new Type[] { typeof(string), typeof(string) },
+				new Exception("test"), "message", "value0", "value1");
+		}
+
+		// Method8<T0, T1, T2> (Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) : void
+		private void ValidateMethod8(MethodInfo method)
+		{
+			VerifyMethodSignature(method, hasExceptionArg: true, isGeneric: true, expectedArgCount: 5);
+
+			var typeOfString = typeof(string);
+
+			GetLoggerAndInvokeGeneric(method, new Type[] { typeof(string), typeof(string), typeof(string) },
+				new Exception("test"), "message", "value0", "value1", "value2");
+		}
+
+		// Method9 (Exception exception, string messageTemplate, params object[] propertyValues) : void
+		private void ValidateMethod9(MethodInfo method)
+		{
+			VerifyMethodSignature(method, hasExceptionArg: true, expectedArgCount: 3);
+
+			GetLoggerAndInvoke(method, new Exception("test"), "message", new object[] { "value0", "value1", "value2" });
+		}
+
+		private static void GetLoggerAndInvoke(MethodInfo method, params object[] parameters)
+		{
+			var logger = new LoggerConfiguration().CreateLogger();
+
+			method.Invoke(logger, parameters);
+		}
+
+		private static void GetLoggerAndInvokeGeneric(MethodInfo method, Type[] typeArgs, params object[] parameters)
+		{
+			var logger = new LoggerConfiguration().CreateLogger();
+
+			method.MakeGenericMethod(typeArgs).Invoke(logger, parameters);
+		}
+
+		// parameters will always be ordered so single evaluation method will work
+		private static void VerifyMethodSignature(MethodInfo method, bool hasExceptionArg = false, bool isGeneric = false, int expectedArgCount = 1)
+		{
+			var parameters = method.GetParameters();
+
+			Assert.Equal(parameters.Length, expectedArgCount);
+
+			int index = 0;
+
+			if (hasExceptionArg) //verify exception arg type and name
+			{
+				Assert.Equal(parameters[index].ParameterType, typeof(Exception));
+
+				Assert.Equal(parameters[index].Name, "exception");
+
+				index++;
+			}
+
+			//check message template argument
+			Assert.Equal(parameters[index].ParameterType, typeof(string));
+
+			Assert.Equal(parameters[index].Name, "messageTemplate");
+
+			index++;
+
+			if (isGeneric) //validate type arguments, generic parameters, and cross-reference
+			{
+				Assert.True(method.IsGenericMethod);
+
+				var genericTypeArgs = method.GetGenericArguments();
+
+				//multiple generic argument convention T0...Tx : T0 propertyValue0... Tx propertyValueX
+				if (genericTypeArgs.Length > 1)
+				{
+					for (int i = 0; i < genericTypeArgs.Length; i++, index++)
+					{
+						Assert.Equal(genericTypeArgs[i].Name, $"T{i}");
+
+						var genericConstraints = genericTypeArgs[i].GetTypeInfo().GetGenericParameterConstraints();
+
+						Assert.Empty(genericConstraints);
+
+						Assert.Equal(parameters[index].Name, $"propertyValue{i}");
+
+						Assert.Equal(parameters[index].ParameterType, genericTypeArgs[i]);
+					}
+				}
+				else //single generic argument convention T : T propertyValue
+				{
+					var genericTypeArg = genericTypeArgs[0];
+
+					Assert.Equal(genericTypeArg.Name, "T");
+
+					var genericConstraints = genericTypeArg.GetTypeInfo().GetGenericParameterConstraints();
+
+					Assert.Empty(genericConstraints);
+
+					Assert.Equal(parameters[index].Name, "propertyValue");
+
+					Assert.Equal(genericTypeArg, parameters[index].ParameterType);
+
+					index++;
+				}
+			}
+
+			//check for params argument
+			//params args currently have to be the last argument, and generics don't have params arg
+			if (!isGeneric && (parameters.Length - index) == 1)
+			{
+				var paramsArrayArg = parameters[index];
+
+				var paramsAttr = parameters[index].GetCustomAttribute(typeof(ParamArrayAttribute), inherit: false);
+
+				Assert.NotNull(paramsAttr);
+
+				Assert.Equal(paramsArrayArg.ParameterType, typeof(object[]));
+
+				Assert.Equal(paramsArrayArg.Name, "propertyValues");
+			}
+		}
+	}
 }
