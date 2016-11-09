@@ -28,28 +28,28 @@ namespace Serilog.Configuration
         readonly Action<Type> _addScalar;
         readonly Action<IDestructuringPolicy> _addPolicy;
         readonly Action<int> _setMaximumDepth;
-        readonly Action<int> _setMaximumStringLength;
-        readonly Action<int> _setMaximumCollectionLength;
+        readonly Action<int> _setMaximumStringCount;
+        readonly Action<int> _setMaximumCollectionCount;
 
         internal LoggerDestructuringConfiguration(
             LoggerConfiguration loggerConfiguration,
             Action<Type> addScalar,
             Action<IDestructuringPolicy> addPolicy,
             Action<int> setMaximumDepth,
-            Action<int> setMaximumStringLength,
-            Action<int> setMaximumCollectionLength)
+            Action<int> setMaximumStringCount,
+            Action<int> setMaximumCollectionCount)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             if (addScalar == null) throw new ArgumentNullException(nameof(addScalar));
             if (addPolicy == null) throw new ArgumentNullException(nameof(addPolicy));
-            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumStringLength));
-            if (setMaximumCollectionLength == null) throw new ArgumentNullException(nameof(setMaximumCollectionLength));
+            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumStringCount));
+            if (setMaximumCollectionCount == null) throw new ArgumentNullException(nameof(setMaximumCollectionCount));
             _loggerConfiguration = loggerConfiguration;
             _addScalar = addScalar;
             _addPolicy = addPolicy;
             _setMaximumDepth = setMaximumDepth;
-            _setMaximumStringLength = setMaximumStringLength;
-            _setMaximumCollectionLength = setMaximumCollectionLength;
+            _setMaximumStringCount = setMaximumStringCount;
+            _setMaximumCollectionCount = setMaximumCollectionCount;
         }
 
         /// <summary>
@@ -170,22 +170,22 @@ namespace Serilog.Configuration
         public LoggerConfiguration ToMaximumStringLength(int maximumStringLength)
         {
             if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength), maximumStringLength, "Maximum string length must be at least two.");
-            _setMaximumStringLength(maximumStringLength);
+            _setMaximumStringCount(maximumStringLength);
             return _loggerConfiguration;
         }
 
         /// <summary>
-        /// When destructuring objects, collections be restricted to specified length
+        /// When destructuring objects, collections be restricted to specified count
         /// thus avoiding bloating payload. Limit is applied to each collection separately, 
         /// sum of length of collection can exceed limit.
         /// Applies limit to all <see cref="IEnumerable"/> including dictionaries.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentOutOfRangeException">When passed length is less than 1</exception>
-        public LoggerConfiguration ToMaximumCollectionLength(int maximumCollectionLength)
+        public LoggerConfiguration ToMaximumCollectionCount(int maximumCollectionCount)
         {
-            if (maximumCollectionLength < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionLength), maximumCollectionLength, "Maximum collection length must be at least one.");
-            _setMaximumCollectionLength(maximumCollectionLength);
+            if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount), maximumCollectionCount, "Maximum collection length must be at least one.");
+            _setMaximumCollectionCount(maximumCollectionCount);
             return _loggerConfiguration;
         }
     }

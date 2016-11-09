@@ -47,13 +47,13 @@ namespace Serilog.Parameters
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
         readonly int _maximumStringLength;
-        readonly int _maximumCollectionLength;
+        readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
 
         public PropertyValueConverter(
             int maximumDestructuringDepth, 
             int maximumStringLength,
-            int maximumCollectionLength,
+            int maximumCollectionCount,
             IEnumerable<Type> additionalScalarTypes,
             IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
             bool propagateExceptions)
@@ -62,12 +62,12 @@ namespace Serilog.Parameters
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
             if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
-            if (maximumCollectionLength < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionLength));
+            if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
             _propagateExceptions = propagateExceptions;
             _maximumStringLength = maximumStringLength;
-            _maximumCollectionLength = maximumCollectionLength;
+            _maximumCollectionCount = maximumCollectionCount;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -179,7 +179,7 @@ namespace Serilog.Parameters
                     var keyProperty = typeInfo.GetDeclaredProperty("Key");
                     var valueProperty = typeInfo.GetDeclaredProperty("Value");
 
-                    return new DictionaryValue(enumerable.Cast<object>().Take(_maximumCollectionLength)
+                    return new DictionaryValue(enumerable.Cast<object>().Take(_maximumCollectionCount)
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                                            (ScalarValue)limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
                                            limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
@@ -187,7 +187,7 @@ namespace Serilog.Parameters
                 }
 
                 return new SequenceValue(
-                    enumerable.Cast<object>().Take(_maximumCollectionLength).Select(o => limiter.CreatePropertyValue(o, destructuring)));
+                    enumerable.Cast<object>().Take(_maximumCollectionCount).Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
 
             if (destructuring == Destructuring.Destructure)

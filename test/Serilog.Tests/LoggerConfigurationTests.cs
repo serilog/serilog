@@ -362,33 +362,33 @@ namespace Serilog.Tests
         public void MaximumStringCollectionThrowsForLimitLowerThan1()
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(
-                () => new LoggerConfiguration().Destructure.ToMaximumCollectionLength(0));
+                () => new LoggerConfiguration().Destructure.ToMaximumCollectionCount(0));
             Assert.Equal(0, ex.ActualValue);
         }
 
         [Fact]
-        public void MaximumCollectionLengthNotEffectiveForArrayAsLongAsLimit()
+        public void MaximumCollectionCountNotEffectiveForArrayAsLongAsLimit()
         {
             var x = new[] { 1, 2, 3 };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionLength(3));
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
 
             Assert.Contains("3", limitedCollection);
         }
 
         [Fact]
-        public void MaximumCollectionLengthEffectiveForArrayThanLimit()
+        public void MaximumCollectionCountEffectiveForArrayThanLimit()
         {
             var x = new[] { 1, 2, 3, 4 };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionLength(3));
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
 
             Assert.Contains("3", limitedCollection);
             Assert.DoesNotContain("4", limitedCollection);
         }
 
         [Fact]
-        public void MaximumCollectionLengthEffectiveForDictionaryWithMoreKeysThanLimit()
+        public void MaximumCollectionCountEffectiveForDictionaryWithMoreKeysThanLimit()
         {
             var x = new Dictionary<string, int>
             {
@@ -397,14 +397,14 @@ namespace Serilog.Tests
                 {"3", 3}
             };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionLength(2));
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
 
             Assert.Contains("2", limitedCollection);
             Assert.DoesNotContain("3", limitedCollection);
         }
 
         [Fact]
-        public void MaximumCollectionLengthNotEffectiveForDictionaryWithAsManyKeysAsLimit()
+        public void MaximumCollectionCountNotEffectiveForDictionaryWithAsManyKeysAsLimit()
         {
             var x = new Dictionary<string, int>
             {
@@ -412,7 +412,7 @@ namespace Serilog.Tests
                 {"2", 2},
             };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionLength(2));
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
 
             Assert.Contains("2", limitedCollection);
         }
