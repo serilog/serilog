@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using Xunit;
+using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Events;
@@ -265,14 +266,7 @@ namespace Serilog.Tests
                 }
             };
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumDepth(3)
-                .CreateLogger();
-
-            log.Information("{@X}", x);
-            var xs = evt.Properties["X"].ToString();
+            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
 
             Assert.Contains("C", xs);
             Assert.DoesNotContain(xs, "D");
@@ -290,15 +284,7 @@ namespace Serilog.Tests
         public void MaximumStringLengthNOTEffectiveForString()
         {
             var x = "ABCD";
-
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{X}", x);
-            var limitedText = evt.Properties["X"].ToString();
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
 
             Assert.Equal("\"ABCD\"", limitedText);
         }
@@ -308,14 +294,7 @@ namespace Serilog.Tests
         {
             var x = "ABCD";
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{@X}", x);
-            var limitedText = evt.Properties["X"].ToString();
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
 
             Assert.Equal("\"AB…\"", limitedText);
         }
@@ -325,14 +304,7 @@ namespace Serilog.Tests
         {
             var x = "ABCD";
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{$X}", x);
-            var limitedText = evt.Properties["X"].ToString();
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
 
             Assert.Equal("\"AB…\"", limitedText);
         }
@@ -347,14 +319,7 @@ namespace Serilog.Tests
                 TooLongText = text
             };
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(limit)
-                .CreateLogger();
-
-            log.Information("{@X}", x);
-            var limitedText = evt.Properties["X"].ToString();
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(limit), "@");
 
             Assert.Contains(textAfter, limitedText);
         }
@@ -364,33 +329,8 @@ namespace Serilog.Tests
         {
             var x = new ToStringOfLength(4);
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{$X}", x);
-            var limitedText = evt.Properties["X"].ToString();
-
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
             Assert.Contains("##…", limitedText);
-        }
-
-        [Fact]
-        public void MaximumStringNOTLengthEffectiveForObject()
-        {
-            var x = new ToStringOfLength(4);
-
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{X}", x);
-            var limitedText = evt.Properties["X"].ToString();
-
-            Assert.Contains("####", limitedText);
         }
 
         [Fact]
@@ -398,14 +338,7 @@ namespace Serilog.Tests
         {
             var x = new ToStringOfLength(4);
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumStringLength(3)
-                .CreateLogger();
-
-            log.Information("{X}", x);
-            var limitedText = evt.Properties["X"].ToString();
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
 
             Assert.Contains("####", limitedText);
         }
@@ -423,6 +356,78 @@ namespace Serilog.Tests
             {
                 return new string('#', _toStringOfLength);
             }
+        }
+
+        [Fact]
+        public void MaximumStringCollectionThrowsForLimitLowerThan1()
+        {
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(
+                () => new LoggerConfiguration().Destructure.ToMaximumCollectionCount(0));
+            Assert.Equal(0, ex.ActualValue);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountNotEffectiveForArrayAsLongAsLimit()
+        {
+            var x = new[] { 1, 2, 3 };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
+
+            Assert.Contains("3", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountEffectiveForArrayThanLimit()
+        {
+            var x = new[] { 1, 2, 3, 4 };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
+
+            Assert.Contains("3", limitedCollection);
+            Assert.DoesNotContain("4", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountEffectiveForDictionaryWithMoreKeysThanLimit()
+        {
+            var x = new Dictionary<string, int>
+            {
+                {"1", 1},
+                {"2", 2},
+                {"3", 3}
+            };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
+
+            Assert.Contains("2", limitedCollection);
+            Assert.DoesNotContain("3", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountNotEffectiveForDictionaryWithAsManyKeysAsLimit()
+        {
+            var x = new Dictionary<string, int>
+            {
+                {"1", 1},
+                {"2", 2},
+            };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
+
+            Assert.Contains("2", limitedCollection);
+        }
+
+        private string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        {
+            LogEvent evt = null;
+            var logConf = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e));
+            logConf = conf(logConf);
+            var log = logConf.CreateLogger();
+
+            log.Information($"{{{destructuringSymbol}X}}", x);
+            var result = evt.Properties["X"].ToString();
+            return result;
         }
 
         [Fact]
