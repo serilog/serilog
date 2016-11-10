@@ -42,7 +42,8 @@ namespace Serilog.Configuration
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             if (addScalar == null) throw new ArgumentNullException(nameof(addScalar));
             if (addPolicy == null) throw new ArgumentNullException(nameof(addPolicy));
-            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumStringLength));
+            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumDepth));
+            if (setMaximumStringLength == null) throw new ArgumentNullException(nameof(setMaximumStringLength));
             if (setMaximumCollectionCount == null) throw new ArgumentNullException(nameof(setMaximumCollectionCount));
             _loggerConfiguration = loggerConfiguration;
             _addScalar = addScalar;
