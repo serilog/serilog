@@ -28,7 +28,7 @@ namespace Serilog.Configuration
         readonly Action<Type> _addScalar;
         readonly Action<IDestructuringPolicy> _addPolicy;
         readonly Action<int> _setMaximumDepth;
-        readonly Action<int> _setMaximumStringCount;
+        readonly Action<int> _setMaximumStringLength;
         readonly Action<int> _setMaximumCollectionCount;
 
         internal LoggerDestructuringConfiguration(
@@ -36,19 +36,19 @@ namespace Serilog.Configuration
             Action<Type> addScalar,
             Action<IDestructuringPolicy> addPolicy,
             Action<int> setMaximumDepth,
-            Action<int> setMaximumStringCount,
+            Action<int> setMaximumStringLength,
             Action<int> setMaximumCollectionCount)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             if (addScalar == null) throw new ArgumentNullException(nameof(addScalar));
             if (addPolicy == null) throw new ArgumentNullException(nameof(addPolicy));
-            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumStringCount));
+            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumStringLength));
             if (setMaximumCollectionCount == null) throw new ArgumentNullException(nameof(setMaximumCollectionCount));
             _loggerConfiguration = loggerConfiguration;
             _addScalar = addScalar;
             _addPolicy = addPolicy;
             _setMaximumDepth = setMaximumDepth;
-            _setMaximumStringCount = setMaximumStringCount;
+            _setMaximumStringLength = setMaximumStringLength;
             _setMaximumCollectionCount = setMaximumCollectionCount;
         }
 
@@ -170,7 +170,7 @@ namespace Serilog.Configuration
         public LoggerConfiguration ToMaximumStringLength(int maximumStringLength)
         {
             if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength), maximumStringLength, "Maximum string length must be at least two.");
-            _setMaximumStringCount(maximumStringLength);
+            _setMaximumStringLength(maximumStringLength);
             return _loggerConfiguration;
         }
 
