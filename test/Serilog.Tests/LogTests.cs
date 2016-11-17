@@ -5,6 +5,7 @@ using Serilog.Tests.Support;
 
 namespace Serilog.Tests
 {
+    [Collection("LogTests")]
     public class LogTests
     {
         [Fact]
