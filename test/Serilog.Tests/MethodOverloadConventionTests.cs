@@ -13,6 +13,7 @@ using Xunit.Sdk;
 
 namespace Serilog.Tests
 {
+    [Collection("LogTests")]
     public class MethodOverloadConventionTests
     {
 		const string Write = "Write";
