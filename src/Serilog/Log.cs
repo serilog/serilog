@@ -81,7 +81,7 @@ namespace Serilog
         /// </summary>
         /// <param name="enrichers">Enrichers that apply in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(ILogEventEnricher[] enrichers)
+        public static ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
             return Logger.ForContext(enrichers);
         }
@@ -1184,6 +1184,22 @@ namespace Serilog
         public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
         {
             return Logger.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
+        }
+
+        /// <summary>
+        /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured
+        /// representation.
+        /// </summary>
+        /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
+        /// <param name="propertyName">The name of the property. Must be non-empty.</param>
+        /// <param name="value">The property value.</param>
+        /// <param name="destructureObjects">If true, the value will be serialized as a structured
+        /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+        /// <param name="property">The resulting property.</param>
+        /// methods never throw exceptions).</returns>
+        public static bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        {
+            return Logger.BindProperty(propertyName, value, destructureObjects, out property);
         }
     }
 }
