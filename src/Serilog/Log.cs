@@ -81,7 +81,7 @@ namespace Serilog
         /// </summary>
         /// <param name="enrichers">Enrichers that apply in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
+        public static ILogger ForContext(ILogEventEnricher[] enrichers)
         {
             return Logger.ForContext(enrichers);
         }
