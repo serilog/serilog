@@ -137,7 +137,7 @@ namespace Serilog
 
             Action dispose = () =>
             {
-                foreach (var disposable in _logEventSinks.OfType<IDisposable>())
+                foreach (var disposable in _logEventSinks.Concat(_auditSinks).OfType<IDisposable>())
                     disposable.Dispose();
             };
 
