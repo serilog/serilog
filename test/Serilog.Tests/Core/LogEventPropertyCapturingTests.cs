@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.IO;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;

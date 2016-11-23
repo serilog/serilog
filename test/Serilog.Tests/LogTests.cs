@@ -1,16 +1,17 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 using Serilog.Core.Pipeline;
 using Serilog.Tests.Support;
 
 namespace Serilog.Tests
 {
-    [Collection("LogTests")]
+    [Collection("Log.Logger")]
     public class LogTests
     {
         [Fact]
         public void TheUninitializedLoggerIsSilent()
         {
+            // This test depends on being ther first executed from
+            // the collection.
             Assert.IsType<SilentLogger>(Log.Logger);
         }
 
@@ -18,31 +19,17 @@ namespace Serilog.Tests
         public void DisposesTheLogger()
         {
             var disposableLogger = new DisposableLogger();
-            using (SwappedLogger(disposableLogger))
-            {
-                Log.CloseAndFlush();
-
-                Assert.True(disposableLogger.Disposed);
-            }
+            Log.Logger = disposableLogger;
+            Log.CloseAndFlush();
+            Assert.True(disposableLogger.Disposed);
         }
 
         [Fact]
         public void ResetsLoggerToSilentLogger()
         {
-            using (SwappedLogger(new DisposableLogger()))
-            {
-                Log.CloseAndFlush();
-
-                Assert.IsType<SilentLogger>(Log.Logger);
-            }
-        }
-
-        private static IDisposable SwappedLogger(ILogger logger)
-        {
-            ILogger originalLogger = Log.Logger;
-            Log.Logger = logger;
-
-            return new DelegateDisposable(() => Log.Logger = originalLogger);
+            Log.Logger = new DisposableLogger();
+            Log.CloseAndFlush();
+            Assert.IsType<SilentLogger>(Log.Logger);
         }
     }
 }

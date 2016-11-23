@@ -7,13 +7,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
 
 namespace Serilog.Tests
 {
-    [Collection("LogTests")]
+    [Collection("Log.Logger")]
     public class MethodOverloadConventionTests
     {
 		const string Write = "Write";
