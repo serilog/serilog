@@ -139,6 +139,9 @@ namespace Serilog
             {
                 foreach (var disposable in _logEventSinks.OfType<IDisposable>())
                     disposable.Dispose();
+
+                foreach (var disposable in _auditSinks.OfType<IDisposable>())
+                    disposable.Dispose();
             };
 
             ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
