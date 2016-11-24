@@ -181,6 +181,12 @@ namespace Serilog.Tests
             Assert.Equal(method.ReturnType, typeof(bool));
             Assert.True(method.IsPublic);
 
+            var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
+
+            Assert.NotNull(messageTemplateAttr);
+
+            Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, MessageTemplate);
+
             var parameters = method.GetParameters();
             int index = 0;
 
