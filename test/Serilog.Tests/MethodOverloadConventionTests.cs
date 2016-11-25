@@ -219,10 +219,17 @@ namespace Serilog.Tests
 
             Assert.IsType(typeof(bool), result);
 
+            //silentlogger is always false
             if (loggerType == typeof(SilentLogger))
-                Assert.False(result as bool?);
-            else
-                Assert.True(result as bool?);
+                return;
+            
+            Assert.True(result as bool?);
+
+            //test null arg path
+            var falseResult = InvokeMethod(method, logger, new object[] { null, null, null, null });
+
+            Assert.IsType(typeof(bool), falseResult);
+            Assert.False(falseResult as bool?);
         }
 
         [Theory]
@@ -267,10 +274,58 @@ namespace Serilog.Tests
 
             Assert.IsType(typeof(bool), result);
 
+            //silentlogger will always be false
             if (loggerType == typeof(SilentLogger))
-                Assert.False(result as bool?);
-            else
-                Assert.True(result as bool?);
+                return;
+            
+            Assert.True(result as bool?);
+
+            //test null arg path/ invalid property name
+            var falseResult = InvokeMethod(method, logger, new object[] { " ", null, false, null });
+
+            Assert.IsType(typeof(bool), falseResult);
+            Assert.False(falseResult as bool?);
+        }
+
+        [Theory]
+        [InlineData(typeof(SilentLogger))]
+        [InlineData(typeof(Logger))]
+        [InlineData(typeof(Log))]
+        [InlineData(typeof(ILogger))]
+        public void ValidateIsEnabledMethods(Type loggerType)
+        {
+            var method = loggerType.GetMethod("IsEnabled");
+
+            Assert.True(method.IsPublic);
+            Assert.Equal(method.ReturnType, typeof(bool));
+
+            var parameters = method.GetParameters();
+
+            Assert.Single(parameters);
+
+            var parameter = parameters.Single();
+
+            Assert.Equal(parameter.Name, "level");
+            Assert.Equal(parameter.ParameterType, typeof(LogEventLevel));
+
+            CollectingSink sink;
+
+            var logger = GetLogger(loggerType, out sink, LogEventLevel.Information);
+
+            var falseResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Verbose });
+
+            Assert.IsType(typeof(bool), falseResult);
+            Assert.False(falseResult as bool?);
+
+            var trueResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Warning });
+
+            Assert.IsType(typeof(bool), trueResult);
+
+            //return as silentlogger will always be false
+            if (loggerType == typeof(SilentLogger))
+                return;
+
+            Assert.True(trueResult as bool?);
         }
 
         //public ILogger ForContext(ILogEventEnricher enricher)
@@ -285,7 +340,6 @@ namespace Serilog.Tests
                 var parameter = parameters.Single();
 
                 Assert.Equal(parameter.Name, "enricher");
-
                 Assert.Equal(parameter.ParameterType, typeof(ILogEventEnricher));
             }
             catch (XunitException e)
@@ -301,9 +355,7 @@ namespace Serilog.Tests
 
             var enrichedLogger = InvokeMethod(method, logger, new object[] { logEnricher });
 
-            Assert.NotNull(enrichedLogger);
-
-            Assert.True(enrichedLogger is ILogger);
+            TestForContextResult(method, logger, normalResult: enrichedLogger);
         }
 
         //public ILogger ForContext(ILogEventEnricher[] enricher)
@@ -336,9 +388,7 @@ namespace Serilog.Tests
             var enrichedLogger = InvokeMethod(method, logger,
                 new object[] { new ILogEventEnricher[] { logEnricher, logEnricher } });
 
-            Assert.NotNull(enrichedLogger);
-
-            Assert.True(enrichedLogger is ILogger);
+            TestForContextResult(method, logger, normalResult: enrichedLogger);
         }
 
         //public ILogger ForContext(string propertyName, object value, bool destructureObjects)
@@ -439,9 +489,29 @@ namespace Serilog.Tests
 
             var enrichedLogger = InvokeMethod(method, logger, new object[] { typeof(object) });
 
-            Assert.NotNull(enrichedLogger);
+            TestForContextResult(method, logger, normalResult: enrichedLogger);
+        }
 
-            Assert.True(enrichedLogger is ILogger);
+        void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
+        {
+            Assert.NotNull(normalResult);
+
+            Assert.True(normalResult is ILogger);
+
+            if (method.DeclaringType == typeof(SilentLogger))
+                return;
+
+            Assert.NotSame(logger, normalResult);
+
+            //if invoked with null args it should return the same instance
+            var sameLogger = InvokeMethod(method, logger, new object[] { null });
+
+            Assert.NotNull(sameLogger);
+
+            if (method.DeclaringType == typeof(Log))
+                Assert.Same(Log.Logger, sameLogger);
+            else
+                Assert.Same(logger, sameLogger);
         }
 
         void ValidateConventionForMethodSet(
@@ -843,7 +913,7 @@ namespace Serilog.Tests
             return GetLogger(loggerType, out sink);
         }
 
-        static ILogger GetLogger(Type loggerType, out CollectingSink sink)
+        static ILogger GetLogger(Type loggerType, out CollectingSink sink, LogEventLevel level = LogEventLevel.Verbose)
         {
             sink = null;
 
@@ -852,7 +922,7 @@ namespace Serilog.Tests
                 sink = new CollectingSink();
 
                 return new LoggerConfiguration()
-                    .MinimumLevel.Verbose()
+                    .MinimumLevel.Is(level)
                     .WriteTo.Sink(sink)
                     .CreateLogger();
             }
@@ -863,14 +933,16 @@ namespace Serilog.Tests
                 Log.CloseAndFlush();
 
                 Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Verbose()
+                    .MinimumLevel.Is(level)
                     .WriteTo.Sink(sink)
                     .CreateLogger();
 
                 return null;
             }
-            else
+            else if (loggerType == typeof(SilentLogger))
                 return new SilentLogger();
+            else
+                throw new ArgumentException($"Logger Type of {loggerType} is not supported");
         }
     }
 }
