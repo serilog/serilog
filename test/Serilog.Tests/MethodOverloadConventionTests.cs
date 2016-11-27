@@ -95,7 +95,6 @@ namespace Serilog.Tests
             var writeMethod = methods.Single();
 
             Assert.True(writeMethod.IsPublic);
-
             Assert.Equal(writeMethod.ReturnType, typeof(void));
 
             LogEventLevel level = LogEventLevel.Information;
@@ -110,7 +109,7 @@ namespace Serilog.Tests
             if (loggerType == typeof(SilentLogger))
                 return;
             else
-                TestResults(level, sink);
+                EvaluateSingleResult(level, sink);
         }
 
         [Theory]
@@ -130,7 +129,6 @@ namespace Serilog.Tests
             foreach (var method in methodSet)
             {
                 Assert.Equal(method.ReturnType, typeof(ILogger));
-
                 Assert.True(method.IsPublic);
 
                 var signatureMatchAndInvokeSuccess = false;
@@ -184,7 +182,6 @@ namespace Serilog.Tests
             var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
             Assert.NotNull(messageTemplateAttr);
-
             Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, MessageTemplate);
 
             var parameters = method.GetParameters();
@@ -428,8 +425,24 @@ namespace Serilog.Tests
             var enrichedLogger = InvokeMethod(method, logger, new object[] { propertyName, propertyValue, false });
 
             Assert.NotNull(enrichedLogger);
-
             Assert.True(enrichedLogger is ILogger);
+
+            //silentlogger will always return itself
+            if (method.DeclaringType == typeof(SilentLogger))
+                return;
+
+            Assert.NotSame(logger, enrichedLogger);
+
+            //invalid args path
+            var sameLogger = InvokeMethod(method, logger, new object[] { null, null, false });
+
+            Assert.NotNull(sameLogger);
+            Assert.True(sameLogger is ILogger);
+
+            if (method.DeclaringType == typeof(Log))
+                Assert.Same(Log.Logger, sameLogger);
+            else
+                Assert.Same(logger, sameLogger);
         }
 
         //public ILogger ForContext<TSource>()
@@ -459,7 +472,6 @@ namespace Serilog.Tests
             var enrichedLogger = InvokeMethod(method, logger, null, new Type[] { typeof(object) });
 
             Assert.NotNull(enrichedLogger);
-
             Assert.True(enrichedLogger is ILogger);
         }
 
@@ -475,7 +487,6 @@ namespace Serilog.Tests
                 var arg = args.Single();
 
                 Assert.Equal(arg.Name, "source");
-
                 Assert.Equal(arg.ParameterType, typeof(Type));
             }
             catch (XunitException e)
@@ -495,7 +506,6 @@ namespace Serilog.Tests
         void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
         {
             Assert.NotNull(normalResult);
-
             Assert.True(normalResult is ILogger);
 
             if (method.DeclaringType == typeof(SilentLogger))
@@ -538,7 +548,6 @@ namespace Serilog.Tests
             foreach (var method in methodSet)
             {
                 Assert.Equal(method.ReturnType, typeof(void));
-
                 Assert.True(method.IsPublic);
 
                 if (checkMesgTempAttr)
@@ -546,7 +555,6 @@ namespace Serilog.Tests
                     var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
                     Assert.NotNull(messageTemplateAttr);
-
                     Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, MessageTemplate);
                 }
 
@@ -739,7 +747,7 @@ namespace Serilog.Tests
 
             if (method.Name == Write)
             {
-                level = LogEventLevel.Verbose;
+                level = LogEventLevel.Information;
 
                 var paramList = new List<object>() { level };
 
@@ -756,7 +764,6 @@ namespace Serilog.Tests
         static void InvokeConventionMethod(MethodInfo method, Type[] typeArgs, object[] parameters)
         {
             CollectingSink sink;
-
             LogEventLevel level;
 
             InvokeConventionMethod(method, typeArgs, parameters, out level, out sink);
@@ -765,12 +772,11 @@ namespace Serilog.Tests
         static void InvokeConventionMethodAndTest(MethodInfo method, Type[] typeArgs, object[] parameters)
         {
             CollectingSink sink;
-
             LogEventLevel level;
 
             InvokeConventionMethod(method, typeArgs, parameters, out level, out sink);
 
-            TestResults(level, sink);
+            EvaluateSingleResult(level, sink);
         }
 
         // parameters will always be ordered so single evaluation method will work
@@ -788,9 +794,7 @@ namespace Serilog.Tests
                     expectedArgCount++;
 
                     Assert.Equal(parameters[index].ParameterType, typeof(LogEventLevel));
-
                     Assert.Equal(parameters[index].Name, "level");
-
                     index++;
                 }
 
@@ -800,17 +804,13 @@ namespace Serilog.Tests
                 if (hasExceptionArg) //verify exception argument type and name
                 {
                     Assert.Equal(parameters[index].ParameterType, typeof(Exception));
-
                     Assert.Equal(parameters[index].Name, "exception");
-
                     index++;
                 }
 
                 //check for message template string argument
                 Assert.Equal(parameters[index].ParameterType, typeof(string));
-
                 Assert.Equal(parameters[index].Name, MessageTemplate);
-
                 index++;
 
                 if (isGeneric) //validate type arguments, generic parameters, and cross-reference
@@ -829,9 +829,7 @@ namespace Serilog.Tests
                             var genericConstraints = genericTypeArgs[i].GetTypeInfo().GetGenericParameterConstraints();
 
                             Assert.Empty(genericConstraints);
-
                             Assert.Equal(parameters[index].Name, $"propertyValue{i}");
-
                             Assert.Equal(parameters[index].ParameterType, genericTypeArgs[i]);
                         }
                     }
@@ -844,11 +842,8 @@ namespace Serilog.Tests
                         var genericConstraints = genericTypeArg.GetTypeInfo().GetGenericParameterConstraints();
 
                         Assert.Empty(genericConstraints);
-
                         Assert.Equal(parameters[index].Name, "propertyValue");
-
                         Assert.Equal(genericTypeArg, parameters[index].ParameterType);
-
                         index++;
                     }
                 }
@@ -863,9 +858,7 @@ namespace Serilog.Tests
                     var paramsAttr = parameters[index].GetCustomAttribute(typeof(ParamArrayAttribute), inherit: false);
 
                     Assert.NotNull(paramsAttr);
-
                     Assert.Equal(paramsArrayArg.ParameterType, typeof(object[]));
-
                     Assert.Equal(paramsArrayArg.Name, "propertyValues");
                 }
             }
@@ -897,8 +890,9 @@ namespace Serilog.Tests
                 return method.Invoke(instance, parameters);
         }
 
-        static void TestResults(LogEventLevel level, CollectingSink results)
+        static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
         {
+            //evaluate single log event
             Assert.Equal(1, results.Events.Count);
 
             var evt = results.Events.Single();
