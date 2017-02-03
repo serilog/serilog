@@ -1,11 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Tests.Support;
+
+#pragma warning disable Serilog004 // Constant MessageTemplate verifier
+#pragma warning disable Serilog003 // Property binding verifier
 
 namespace Serilog.Tests.Core
 {
@@ -116,5 +118,5 @@ namespace Serilog.Tests.Core
             Assert.Equal("Name", property.Name);
             Assert.Equal("World", property.Value.LiteralValue());
         }
-    }
+	}
 }

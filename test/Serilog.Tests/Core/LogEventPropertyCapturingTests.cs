@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.IO;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -179,7 +178,7 @@ namespace Serilog.Tests.Core
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
             var binder = new PropertyBinder(
-                new PropertyValueConverter(10, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
+                new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
             return binder.ConstructProperties(mt, properties);
         }
 

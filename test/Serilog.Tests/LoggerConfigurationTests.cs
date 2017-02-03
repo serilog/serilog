@@ -3,7 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using Xunit;
+using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Events;
@@ -264,17 +266,168 @@ namespace Serilog.Tests
                 }
             };
 
-            LogEvent evt = null;
-            var log = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .Destructure.ToMaximumDepth(3)
-                .CreateLogger();
-
-            log.Information("{@X}", x);
-            var xs = evt.Properties["X"].ToString();
+            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
 
             Assert.Contains("C", xs);
             Assert.DoesNotContain(xs, "D");
+        }
+
+        [Fact]
+        public void MaximumStringLengthThrowsForLimitLowerThan2()
+        {
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(
+                () => new LoggerConfiguration().Destructure.ToMaximumStringLength(1));
+            Assert.Equal(1, ex.ActualValue);
+        }
+
+        [Fact]
+        public void MaximumStringLengthNOTEffectiveForString()
+        {
+            var x = "ABCD";
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
+
+            Assert.Equal("\"ABCD\"", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForCapturedString()
+        {
+            var x = "ABCD";
+
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
+
+            Assert.Equal("\"AB…\"", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForStringifiedString()
+        {
+            var x = "ABCD";
+
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
+
+            Assert.Equal("\"AB…\"", limitedText);
+        }
+
+        [Theory]
+        [InlineData("1234", "12…", 3)]
+        [InlineData("123", "123", 3)]
+        public void MaximumStringLengthEffectiveForCapturedObject(string text, string textAfter, int limit)
+        {
+            var x = new
+            {
+                TooLongText = text
+            };
+
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(limit), "@");
+
+            Assert.Contains(textAfter, limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthEffectiveForStringifiedObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
+            Assert.Contains("##…", limitedText);
+        }
+
+        [Fact]
+        public void MaximumStringLengthNOTEffectiveForObject()
+        {
+            var x = new ToStringOfLength(4);
+
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
+
+            Assert.Contains("####", limitedText);
+        }
+
+        class ToStringOfLength
+        {
+            private int _toStringOfLength;
+
+            public ToStringOfLength(int toStringOfLength)
+            {
+                _toStringOfLength = toStringOfLength;
+            }
+
+            public override string ToString()
+            {
+                return new string('#', _toStringOfLength);
+            }
+        }
+
+        [Fact]
+        public void MaximumStringCollectionThrowsForLimitLowerThan1()
+        {
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(
+                () => new LoggerConfiguration().Destructure.ToMaximumCollectionCount(0));
+            Assert.Equal(0, ex.ActualValue);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountNotEffectiveForArrayAsLongAsLimit()
+        {
+            var x = new[] { 1, 2, 3 };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
+
+            Assert.Contains("3", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountEffectiveForArrayThanLimit()
+        {
+            var x = new[] { 1, 2, 3, 4 };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
+
+            Assert.Contains("3", limitedCollection);
+            Assert.DoesNotContain("4", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountEffectiveForDictionaryWithMoreKeysThanLimit()
+        {
+            var x = new Dictionary<string, int>
+            {
+                {"1", 1},
+                {"2", 2},
+                {"3", 3}
+            };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
+
+            Assert.Contains("2", limitedCollection);
+            Assert.DoesNotContain("3", limitedCollection);
+        }
+
+        [Fact]
+        public void MaximumCollectionCountNotEffectiveForDictionaryWithAsManyKeysAsLimit()
+        {
+            var x = new Dictionary<string, int>
+            {
+                {"1", 1},
+                {"2", 2},
+            };
+
+            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
+
+            Assert.Contains("2", limitedCollection);
+        }
+
+        private string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        {
+            LogEvent evt = null;
+            var logConf = new LoggerConfiguration()
+                .WriteTo.Sink(new DelegatingSink(e => evt = e));
+            logConf = conf(logConf);
+            var log = logConf.CreateLogger();
+
+            log.Information($"{{{destructuringSymbol}X}}", x);
+            var result = evt.Properties["X"].ToString();
+            return result;
         }
 
         [Fact]
@@ -401,39 +554,6 @@ namespace Serilog.Tests
             Assert.True(true, "No exception reached the caller");
         }
 
-        [Fact]
-        public void ExceptionsThrownByAuditSinksArePropagated()
-        {
-            var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
-                .CreateLogger();
-
-            Assert.Throws<AggregateException>(() => logger.Write(Some.InformationEvent()));
-        }
-
-        [Fact]
-        public void ExceptionsThrownByFiltersArePropagatedIfAuditingEnabled()
-        {
-            var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new DelegatingSink(e => { }))
-                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
-                .CreateLogger();
-
-            Assert.Throws<Exception>(() => logger.Write(Some.InformationEvent()));
-        }
-
-        [Fact]
-        public void ExceptionsThrownByAuditSinksArePropagatedFromChildLoggers()
-        {
-            var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
-                .CreateLogger();
-
-            Assert.Throws<AggregateException>(() => logger
-                .ForContext<LoggerConfigurationTests>()
-                .Write(Some.InformationEvent()));
-        }
-
         class Value { }
 
         [Fact]
@@ -449,17 +569,6 @@ namespace Serilog.Tests
             Assert.True(true, "No exception reached the caller");
         }
 
-        [Fact]
-        public void ExceptionsThrownByDestructuringPoliciesArePropagatedIfAuditingEnabled()
-        {
-            var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new CollectingSink())
-                .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
-                .CreateLogger();
-
-            Assert.Throws<Exception>(() => logger.Information("{@Value}", new Value()));
-        }
-
         class ThrowingProperty
         {
             // ReSharper disable once UnusedMember.Local
@@ -467,28 +576,6 @@ namespace Serilog.Tests
             {
                 get { throw new Exception("Boom!"); }
             }
-        }
-
-        [Fact]
-        public void ExceptionsThrownByPropertyAccessorsAreNotPropagated()
-        {
-            var logger = new LoggerConfiguration()
-                .WriteTo.Sink(new CollectingSink())
-                .CreateLogger();
-
-            logger.Information("{@Value}", new ThrowingProperty());
-
-            Assert.True(true, "No exception reached the caller");
-        }
-
-        [Fact]
-        public void ExceptionsThrownByPropertyAccessorsArePropagatedIfAuditingEnabled()
-        {
-            var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new CollectingSink())
-                .CreateLogger();
-
-            Assert.Throws<TargetInvocationException>(() => logger.Information("{@Value}", new ThrowingProperty()));
         }
     }
 }

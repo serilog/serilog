@@ -46,10 +46,14 @@ namespace Serilog.Parameters
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
         readonly int _maximumDestructuringDepth;
+        readonly int _maximumStringLength;
+        readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
 
         public PropertyValueConverter(
             int maximumDestructuringDepth, 
+            int maximumStringLength,
+            int maximumCollectionCount,
             IEnumerable<Type> additionalScalarTypes,
             IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
             bool propagateExceptions)
@@ -57,9 +61,13 @@ namespace Serilog.Parameters
             if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
             if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
+            if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength));
+            if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));
 
             _maximumDestructuringDepth = maximumDestructuringDepth;
             _propagateExceptions = propagateExceptions;
+            _maximumStringLength = maximumStringLength;
+            _maximumCollectionCount = maximumCollectionCount;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -121,10 +129,21 @@ namespace Serilog.Parameters
                 return new ScalarValue(null);
 
             if (destructuring == Destructuring.Stringify)
-                return new ScalarValue(value.ToString());
+            {
+                return Stringify(value);
+            }
 
             var valueType = value.GetType();
             var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
+
+            if (destructuring == Destructuring.Destructure)
+            {
+                var stringValue = value as string;
+                if (stringValue != null)
+                {
+                    value = TruncateIfNecessary(stringValue);
+                }
+            }
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {            
@@ -160,7 +179,7 @@ namespace Serilog.Parameters
                     var keyProperty = typeInfo.GetDeclaredProperty("Key");
                     var valueProperty = typeInfo.GetDeclaredProperty("Value");
 
-                    return new DictionaryValue(enumerable.Cast<object>()
+                    return new DictionaryValue(enumerable.Cast<object>().Take(_maximumCollectionCount)
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                                            (ScalarValue)limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
                                            limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
@@ -168,7 +187,7 @@ namespace Serilog.Parameters
                 }
 
                 return new SequenceValue(
-                    enumerable.Cast<object>().Select(o => limiter.CreatePropertyValue(o, destructuring)));
+                    enumerable.Cast<object>().Take(_maximumCollectionCount).Select(o => limiter.CreatePropertyValue(o, destructuring)));
             }
 
             if (destructuring == Destructuring.Destructure)
@@ -184,6 +203,23 @@ namespace Serilog.Parameters
             }
 
             return new ScalarValue(value.ToString());
+        }
+
+        LogEventPropertyValue Stringify(object value)
+        {
+            var stringified = value.ToString();
+            var truncated = TruncateIfNecessary(stringified);
+            return new ScalarValue(truncated);
+        }
+
+        string TruncateIfNecessary(string text)
+        {
+            if (text.Length > _maximumStringLength)
+            {
+                return text.Substring(0, _maximumStringLength - 1) + "…";
+            }
+
+            return text;
         }
 
         bool IsValueTypeDictionary(Type valueType)
@@ -241,3 +277,4 @@ namespace Serilog.Parameters
         }
     }
 }
+

@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -31,21 +30,39 @@ namespace Serilog.Settings.KeyValuePairs
         const string MinimumLevelDirective = "minimum-level";
         const string EnrichWithDirective = "enrich";
         const string EnrichWithPropertyDirective = "enrich:with-property";
+        const string FilterDirective = "filter";
 
         const string UsingDirectiveFullFormPrefix = "using:";
-        const string EnrichWithEventEnricherPrefix = "enrich:";
         const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
+        const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
-        const string AuditOrWriteToDirectiveRegex = @"^(?<directive>audit-to|write-to):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
 
-        readonly string[] _supportedDirectives =
+        static readonly string[] _supportedDirectives =
         {
             UsingDirective,
             AuditToDirective,
             WriteToDirective,
             MinimumLevelDirective,
             EnrichWithPropertyDirective,
-            EnrichWithDirective
+            EnrichWithDirective,
+            FilterDirective
+        };
+
+        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
+        {
+            ["audit-to"] = typeof(LoggerAuditSinkConfiguration),
+            ["write-to"] = typeof(LoggerSinkConfiguration),
+            ["enrich"] = typeof(LoggerEnrichmentConfiguration),
+            ["filter"] = typeof(LoggerFilterConfiguration)
+        };
+
+        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new Dictionary<Type, Func<LoggerConfiguration, object>>
+        {
+            [typeof(LoggerAuditSinkConfiguration)] = lc => lc.AuditTo,
+            [typeof(LoggerSinkConfiguration)] = lc => lc.WriteTo,
+            [typeof(LoggerEnrichmentConfiguration)] = lc => lc.Enrich,
+            [typeof(LoggerFilterConfiguration)] = lc => lc.Filter
         };
 
         readonly Dictionary<string, string> _settings;
@@ -79,65 +96,51 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
             }
 
-            var splitWriteTo = new Regex(AuditOrWriteToDirectiveRegex);
+           foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
+                dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
+            {
+                LogEventLevel overriddenLevel;
+                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel)) {
+                    var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
+                }
+            }
 
-            var sinkDirectives = (from wt in directives
-                                  where splitWriteTo.IsMatch(wt.Key)
-                                  let match = splitWriteTo.Match(wt.Key)
-                                  select new
+            var matchCallables = new Regex(CallableDirectiveRegex);
+
+            var callableDirectives = (from wt in directives
+                                      where matchCallables.IsMatch(wt.Key)
+                                      let match = matchCallables.Match(wt.Key)
+                                      select new
                                       {
-                                          Directive = match.Groups["directive"].Value,
-                                          Call = new MethodArgumentValue
+                                          ReceiverType = CallableDirectiveReceiverTypes[match.Groups["directive"].Value],
+                                          Call = new ConfigurationMethodCall
                                           {
-                                              Method = match.Groups["method"].Value,
-                                              Argument = match.Groups["argument"].Value,
+                                              MethodName = match.Groups["method"].Value,
+                                              ArgumentName = match.Groups["argument"].Value,
                                               Value = wt.Value
                                           }
-                                      }).ToList(); 
+                                      }).ToList();
 
-            var eventEnricherDirectives = (from er in directives
-                                           where er.Key.StartsWith(EnrichWithEventEnricherPrefix) && !er.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && er.Key.Length > EnrichWithEventEnricherPrefix.Length
-                                           let match = er.Key.Substring(EnrichWithEventEnricherPrefix.Length)
-                                           let call = new MethodArgumentValue
-                                           {
-                                               Method = match
-                                           }
-                                           group call by call.Method).ToList();
-
-            if (sinkDirectives.Any() || eventEnricherDirectives.Any())
+            if (callableDirectives.Any())
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
-                var writeToDirectives = sinkDirectives
-                    .Where(d => d.Directive == WriteToDirective)
-                    .Select(d => d.Call)
-                    .GroupBy(call => call.Method)
-                    .ToList();
-
-                if (writeToDirectives.Any())
+                foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))
                 {
-                    ApplyDirectives(writeToDirectives, FindWriteToSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.WriteTo);
-                }
+                    var methods = CallableConfigurationMethodFinder.FindConfigurationMethods(configurationAssemblies, receiverGroup.Key);
 
-                var auditToDirectives = sinkDirectives
-                    .Where(d => d.Directive == AuditToDirective)
-                    .Select(d => d.Call)
-                    .GroupBy(call => call.Method)
-                    .ToList();
+                    var calls = receiverGroup
+                        .Select(d => d.Call)
+                        .GroupBy(call => call.MethodName)
+                        .ToList();
 
-                if (auditToDirectives.Any())
-                {
-                    ApplyDirectives(auditToDirectives, FindAuditToSinkConfigurationMethods(configurationAssemblies), loggerConfiguration.AuditTo);
-                }
-
-                if (eventEnricherDirectives.Any())
-                {
-                    ApplyDirectives(eventEnricherDirectives, FindEventEnricherConfigurationMethods(configurationAssemblies), loggerConfiguration.Enrich);
+                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration));
                 }
             }
         }
 
-        static void ApplyDirectives(List<IGrouping<string, MethodArgumentValue>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
+        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
         {
             foreach (var directiveInfo in directives)
             {
@@ -147,8 +150,8 @@ namespace Serilog.Settings.KeyValuePairs
                 {
 
                     var call = (from p in target.GetParameters().Skip(1)
-                                let directive = directiveInfo.FirstOrDefault(s => s.Argument == p.Name)
-                                select directive == null ? p.DefaultValue : ConvertToType(directive.Value, p.ParameterType)).ToList();
+                                let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
+                                select directive == null ? p.DefaultValue : SettingValueConversions.ConvertToType(directive.Value, p.ParameterType)).ToList();
 
                     call.Insert(0, loggerConfigMethod);
 
@@ -157,12 +160,12 @@ namespace Serilog.Settings.KeyValuePairs
             }
         }
 
-        internal static MethodInfo SelectConfigurationMethod(IEnumerable<MethodInfo> candidateMethods, string name, IEnumerable<MethodArgumentValue> suppliedArgumentValues)
+        internal static MethodInfo SelectConfigurationMethod(IEnumerable<MethodInfo> candidateMethods, string name, IEnumerable<ConfigurationMethodCall> suppliedArgumentValues)
         {
             return candidateMethods
                 .Where(m => m.Name == name &&
-                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || suppliedArgumentValues.Any(s => s.Argument == p.Name)))
-                .OrderByDescending(m => m.GetParameters().Count(p => suppliedArgumentValues.Any(s => s.Argument == p.Name)))
+                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
+                .OrderByDescending(m => m.GetParameters().Count(p => suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
                 .FirstOrDefault();
         }
 
@@ -182,102 +185,10 @@ namespace Serilog.Settings.KeyValuePairs
             return configurationAssemblies.Distinct();
         }
 
-        static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new Dictionary<Type, Func<string, object>>
-            {
-                { typeof(Uri), s => new Uri(s) },
-                { typeof(TimeSpan), s => TimeSpan.Parse(s) }
-            };
-
-        internal static object ConvertToType(string value, Type toType)
+        internal class ConfigurationMethodCall
         {
-            var toTypeInfo = toType.GetTypeInfo();
-            if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
-            {
-                if (string.IsNullOrEmpty(value))
-                    return null;
-
-                // unwrap Nullable<> type since we're not handling null situations
-                toType = toTypeInfo.GenericTypeArguments[0];
-                toTypeInfo = toType.GetTypeInfo();
-            }
-
-            if (toTypeInfo.IsEnum)
-                return Enum.Parse(toType, value);
-
-            var convertor = ExtendedTypeConversions
-                .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
-                .Select(t => t.Value)
-                .FirstOrDefault();
-
-            if (convertor != null)
-                return convertor(value);
-
-            if (toTypeInfo.IsInterface && !string.IsNullOrWhiteSpace(value))
-            {
-                var type = Type.GetType(value.Trim(), throwOnError: false);
-                if (type != null)
-                {
-                    var ctor = type.GetTypeInfo().DeclaredConstructors.FirstOrDefault(ci =>
-                    {
-                        var parameters = ci.GetParameters();
-                        return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
-                    });
-
-                    if (ctor == null)
-                        throw new InvalidOperationException($"A default constructor was not found on {type.FullName}.");
-
-                    var call = ctor.GetParameters().Select(pi => pi.DefaultValue).ToArray();
-                    return ctor.Invoke(call);
-                }
-            }
-
-            return Convert.ChangeType(value, toType);
-        }
-
-        internal static IList<MethodInfo> FindWriteToSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
-        {
-            return FindConfigurationMethods(configurationAssemblies, typeof(LoggerSinkConfiguration));
-        }
-
-        internal static IList<MethodInfo> FindAuditToSinkConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
-        {
-            return FindConfigurationMethods(configurationAssemblies, typeof(LoggerAuditSinkConfiguration));
-        }
-
-        // Unlike the other configuration methods, FromLogContext is an instance method rather than an extension.
-
-        internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
-        {
-            return loggerEnrichmentConfiguration.FromLogContext();
-        }
-
-        static readonly MethodInfo SurrogateFromLogContextConfigurationMethod = typeof(KeyValuePairSettings).GetTypeInfo().DeclaredMethods.Single(m => m.Name == "FromLogContext");
-
-        internal static IList<MethodInfo> FindEventEnricherConfigurationMethods(IEnumerable<Assembly> configurationAssemblies)
-        {
-            var found = FindConfigurationMethods(configurationAssemblies, typeof(LoggerEnrichmentConfiguration));
-            if (configurationAssemblies.Contains(typeof(LoggerEnrichmentConfiguration).GetTypeInfo().Assembly))
-                found.Add(SurrogateFromLogContextConfigurationMethod);
-
-            return found;
-        }
-
-        internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
-        {
-            return configurationAssemblies
-                .SelectMany(a => a.ExportedTypes
-                    .Select(t => t.GetTypeInfo())
-                    .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
-                .SelectMany(t => t.DeclaredMethods)
-                .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
-                .Where(m => m.GetParameters()[0].ParameterType == configType)
-                .ToList();
-        }
-
-        internal class MethodArgumentValue
-        {
-            public string Method { get; set; }
-            public string Argument { get; set; }
+            public string MethodName { get; set; }
+            public string ArgumentName { get; set; }
             public string Value { get; set; }
         }
     }

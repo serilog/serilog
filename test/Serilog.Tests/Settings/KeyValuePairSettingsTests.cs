@@ -18,41 +18,6 @@ namespace Serilog.Tests.Settings
     public class KeyValuePairSettingsTests
     {
         [Fact]
-        public void ConvertibleValuesConvertToTIfTargetIsNullable()
-        {
-            var result = (int?)KeyValuePairSettings.ConvertToType("3", typeof(int?));
-            Assert.True(result == 3);
-        }
-
-        [Fact]
-        public void NullValuesConvertToNullIfTargetIsNullable()
-        {
-            var result = (int?)KeyValuePairSettings.ConvertToType(null, typeof(int?));
-            Assert.True(result == null);
-        }
-
-        [Fact]
-        public void EmptyStringValuesConvertToNullIfTargetIsNullable()
-        {
-            var result = (int?)KeyValuePairSettings.ConvertToType("", typeof(int?));
-            Assert.True(result == null);
-        }
-
-        [Fact]
-        public void ValuesConvertToNullableTimeSpan()
-        {
-            var result = (System.TimeSpan?)KeyValuePairSettings.ConvertToType("00:01:00", typeof(System.TimeSpan?));
-            Assert.Equal(System.TimeSpan.FromMinutes(1), result);
-        }
-
-        [Fact]
-        public void ValuesConvertToEnumMembers()
-        {
-            var result = (LogEventLevel)KeyValuePairSettings.ConvertToType("Information", typeof(LogEventLevel));
-            Assert.Equal(LogEventLevel.Information, result);
-        }
-
-        [Fact]
         public void FindsConfigurationAssemblies()
         {
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
@@ -60,24 +25,6 @@ namespace Serilog.Tests.Settings
             // The core Serilog assembly is always considered
             Assert.Equal(1, configurationAssemblies.Count);
         } 
-
-        [Fact]
-        public void FindsEventEnrichersWithinAnAssembly()
-        {
-            var eventEnrichers = KeyValuePairSettings
-                .FindEventEnricherConfigurationMethods(new[]
-                {
-                    typeof(Log).GetTypeInfo().Assembly,
-                    typeof(DummyThreadIdEnricher).GetTypeInfo().Assembly
-                })
-                .Select(m => m.Name)
-                .Distinct()
-                .ToList();
-
-            
-            Assert.True(eventEnrichers.Contains("FromLogContext"));
-            Assert.True(eventEnrichers.Contains("WithDummyThreadId"));
-        }
 
         [Fact]
         public void PropertyEnrichmentIsApplied()
@@ -97,14 +44,6 @@ namespace Serilog.Tests.Settings
             Assert.Equal("Test", evt.Properties["App"].LiteralValue());
         }
 
-
-        [Fact]
-        public void StringValuesConvertToDefaultInstancesIfTargetIsInterface()
-        {
-            var result = (object)KeyValuePairSettings.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
-            Assert.IsType<JsonFormatter>(result);
-        }
-
         [Fact]
         public void CallableMethodsAreSelected()
         {
@@ -112,7 +51,7 @@ namespace Serilog.Tests.Settings
             Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
             var suppliedArguments = new[]
             {
-                new KeyValuePairSettings.MethodArgumentValue { Method = "DummyRollingFile", Argument = "pathFormat", Value = "C:\\" },
+                new KeyValuePairSettings.ConfigurationMethodCall { MethodName = "DummyRollingFile", ArgumentName = "pathFormat", Value = "C:\\" },
             };
 
             var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);
@@ -126,8 +65,8 @@ namespace Serilog.Tests.Settings
             Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
             var suppliedArguments = new[]
             {
-                new KeyValuePairSettings.MethodArgumentValue { Method = "DummyRollingFile", Argument = "pathFormat", Value = "C:\\" },
-                new KeyValuePairSettings.MethodArgumentValue { Method = "DummyRollingFile", Argument = "formatter", Value = "SomeFormatter, SomeAssembly" }
+                new KeyValuePairSettings.ConfigurationMethodCall { MethodName = "DummyRollingFile", ArgumentName = "pathFormat", Value = "C:\\" },
+                new KeyValuePairSettings.ConfigurationMethodCall { MethodName = "DummyRollingFile", ArgumentName = "formatter", Value = "SomeFormatter, SomeAssembly" }
             };
 
             var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);
@@ -185,6 +124,33 @@ namespace Serilog.Tests.Settings
 
             Assert.Equal(0, DummyRollingFileSink.Emitted.Count);
             Assert.Equal(1, DummyRollingFileAuditSink.Emitted.Count);
+        }
+
+        [Fact]
+        public void TestMinimumLevelOverrides() {
+            var settings = new Dictionary<string, string>
+            {
+                ["minimum-level:override:Microsoft"] = "Warning",
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            var microsoftLogger = log.ForContext<Microsoft.Extensions.Testing.Abstractions.FullPdbReader>();
+            microsoftLogger.Write(Some.InformationEvent());
+
+            Assert.Null(evt);
+
+            microsoftLogger.Warning("Bad things");
+            Assert.NotNull(evt);
+
+            evt = null;
+            log.Write(Some.InformationEvent());
+            Assert.NotNull(evt);
         }
     }
 }

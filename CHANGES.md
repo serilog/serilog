@@ -1,3 +1,17 @@
+2.3.0
+ * #870 - fix dispose for level-restricted sinks
+ * #852 - fix dictionary capturing when key/value are anonymous types
+ * #835 - avoid `RemotingException` via `LogContext`
+ * #855 -  allow custom enum rendering (better `ICustomFormatter` support
+ * #841 - `audit-to` in key-value settings
+
+2.2.1
+ * #835 (fix for .NET 4.6+ only)
+
+2.2.0
+ * #826 - audit-style logging
+ * #819 - deprecate virtual extension points on JsonFormatter
+ 
 2.1.0
  * #782 - provide `Destructure.ByTransformingWhere()`
  * #779 - capture additional parameters even when template is malformed
