@@ -24,7 +24,7 @@ namespace Serilog.Tests.Settings
 
             // The core Serilog assembly is always considered
             Assert.Equal(1, configurationAssemblies.Count);
-        } 
+        }
 
         [Fact]
         public void PropertyEnrichmentIsApplied()
@@ -124,6 +124,35 @@ namespace Serilog.Tests.Settings
 
             Assert.Equal(0, DummyRollingFileSink.Emitted.Count);
             Assert.Equal(1, DummyRollingFileAuditSink.Emitted.Count);
+        }
+
+        [Fact]
+        public void TestMinimumLevelOverrides()
+        {
+            var settings = new Dictionary<string, string>
+
+            {
+                ["minimum-level:override:System"] = "Warning",
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                 .ReadFrom.KeyValuePairs(settings)
+                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                 .CreateLogger();
+
+            var systemLogger = log.ForContext<System.WeakReference>();
+            systemLogger.Write(Some.InformationEvent());
+
+            Assert.Null(evt);
+
+            systemLogger.Warning("Bad things");
+            Assert.NotNull(evt);
+
+            evt = null;
+            log.Write(Some.InformationEvent());
+            Assert.NotNull(evt);
         }
 
     }
