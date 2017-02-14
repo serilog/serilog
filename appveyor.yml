@@ -12,7 +12,7 @@ build_script:
 - ps: ./Build.ps1
 test_script:
   - nuget.exe install OpenCover -ExcludeVersion
-  - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[Serilog]*" -target:"dotnet.exe" "-targetargs:test test\Serilog.Tests" -returntargetcode -hideskipped:All -output:coverage.xml
+  - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[Serilog]*" -target:"dotnet.exe" "-targetargs:test test\Serilog.Tests\Serilog.Tests.csproj" -returntargetcode -hideskipped:All -output:coverage.xml
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
   - codecov -f "coverage.xml"
