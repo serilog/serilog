@@ -25,6 +25,14 @@ namespace Serilog.Events
     public class DictionaryValue : LogEventPropertyValue
     {
         /// <summary>
+        /// Construct an empty <see cref="DictionaryValue"/>.
+        /// </summary>
+        public DictionaryValue()
+        {
+            
+        }
+
+        /// <summary>
         /// Create a <see cref="DictionaryValue"/> with the provided <paramref name="elements"/>.
         /// </summary>
         /// <param name="elements">The key-value mappings represented in the dictionary.</param>

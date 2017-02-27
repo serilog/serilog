@@ -24,6 +24,14 @@ namespace Serilog.Events
     public class ScalarValue : LogEventPropertyValue
     {
         /// <summary>
+        /// Construct an empty <see cref="ScalarValue"/>
+        /// </summary>
+        public ScalarValue()
+        {
+            
+        }
+
+        /// <summary>
         /// Construct a <see cref="ScalarValue"/> with the specified
         /// value.
         /// </summary>

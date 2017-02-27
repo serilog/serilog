@@ -26,6 +26,11 @@ namespace Serilog.Events
         readonly Dictionary<string, LogEventPropertyValue> _properties;
 
         /// <summary>
+        /// Construct an empty <seealso cref="LogEvent"/>.
+        /// </summary>
+        public LogEvent() {}
+
+        /// <summary>
         /// Construct a new <seealso cref="LogEvent"/>.
         /// </summary>
         /// <param name="timestamp">The time at which the event occurred.</param>

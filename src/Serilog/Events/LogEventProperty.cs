@@ -22,6 +22,14 @@ namespace Serilog.Events
     public class LogEventProperty
     {
         /// <summary>
+        /// Construct an empty <see cref="LogEventProperty"/>.
+        /// </summary>
+        public LogEventProperty()
+        {
+            
+        }
+
+        /// <summary>
         /// Construct a <see cref="LogEventProperty"/> with the specified name and value.
         /// </summary>
         /// <param name="name">The name of the property.</param>
