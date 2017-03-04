@@ -9,14 +9,14 @@ dotnet --info
 dotnet restore
 
 for path in src/**/*.csproj; do
-    dotnet build -c Release ${path}
+    dotnet build -f netstandard1.0 -c Release ${path}
+    dotnet build -f netstandard1.3 -c Release ${path}
 done
 
-for path in test/**/*.csproj; do
-    dotnet build -f netcoreapp1.0 -c Release ${path}
+for path in test/Serilog.Tests/*.csproj; do
     dotnet test -f netcoreapp1.0  -c Release ${path}
 done
 
-for path in test/Serilog.PerformanceTests/Serilog.PerformanceTests.csproj; do
-    dotnet build -f netcoreapp1.0 -c Release ${path}
-done
+# for path in test/Serilog.PerformanceTests/Serilog.PerformanceTests.csproj; do
+#     dotnet test -f netcoreapp1.0 -c Release ${path}
+# done
