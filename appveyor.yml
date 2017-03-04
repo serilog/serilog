@@ -10,12 +10,6 @@ install:
   - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
 build_script:
 - ps: ./Build.ps1
-test_script:
-  - nuget.exe install OpenCover -ExcludeVersion
-  - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[Serilog]*" -target:"dotnet.exe" "-targetargs:test test\Serilog.Tests\Serilog.Tests.csproj" -returntargetcode -hideskipped:All -output:coverage.xml
-  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-  - pip install codecov
-  - codecov -f "coverage.xml"
 artifacts:
 - path: artifacts/Serilog.*.nupkg
 deploy:
