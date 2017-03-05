@@ -8,6 +8,7 @@ install:
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
   - ps: '& .\build\installcli.ps1 -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath -Version 1.0.0-rc4-004771'
   - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
+test: off
 build_script:
 - ps: ./Build.ps1
 artifacts:
