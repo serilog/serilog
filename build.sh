@@ -5,6 +5,9 @@ install_script_url=https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/script
 curl -sSL $install_script_url | bash /dev/stdin --version "$DotnetCliVersion" --install-dir "$DOTNET_INSTALL_DIR"
 export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
+# See issue https://github.com/NuGet/Home/issues/2163
+ulimit -n 2048
+
 dotnet --info
 dotnet restore
 
