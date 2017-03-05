@@ -13,10 +13,10 @@ for path in src/**/*.csproj; do
     dotnet build -f netstandard1.3 -c Release ${path}
 done
 
-for path in test/Serilog.Tests/*.csproj; do
+for path in test/*.Tests/*.csproj; do
     dotnet test -f netcoreapp1.0  -c Release ${path}
 done
 
-# for path in test/Serilog.PerformanceTests/Serilog.PerformanceTests.csproj; do
-#     dotnet test -f netcoreapp1.0 -c Release ${path}
-# done
+for path in test/*.PerformanceTests/*.PerformanceTests.csproj; do
+    dotnet test -f netcoreapp1.1 -c Release ${path}
+done
