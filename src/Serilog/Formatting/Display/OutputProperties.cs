@@ -51,6 +51,11 @@ namespace Serilog.Formatting.Display
         public const string ExceptionPropertyName = "Exception";
 
         /// <summary>
+        /// The properties of the log event.
+        /// </summary>
+        public const string PropertiesPropertyName = "Properties";
+
+        /// <summary>
         /// Create properties from the provided log event.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
@@ -67,8 +72,9 @@ namespace Serilog.Formatting.Display
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
             result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
             result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
+            result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.Properties);
 
-            var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
+            var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
             result[ExceptionPropertyName] = new LiteralStringValue(exception);
 
             return result;

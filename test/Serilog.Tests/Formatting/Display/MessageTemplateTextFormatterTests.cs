@@ -198,5 +198,15 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.Equal("Size Huge", sw.ToString());
         }
+
+        [Fact]
+        public void PropertiesAreRendered()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Answer to the {Question} is {Answer}", "Ultimate Question of Life, the Universe, and Everything", 42));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("{Question: \"Ultimate Question of Life, the Universe, and Everything\", Answer: 42}", sw.ToString());
+        }
     }
 }
