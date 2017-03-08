@@ -200,13 +200,13 @@ namespace Serilog.Tests.Formatting.Display
         }
 
         [Fact]
-        public void PropertiesAreRendered()
+        public void NonMessagePropertiesAreRendered()
         {
             var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("Answer to the {Question} is {Answer}", "Ultimate Question of Life, the Universe, and Everything", 42));
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {Bar}!", "bar"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
-            Assert.Equal("{Question: \"Ultimate Question of Life, the Universe, and Everything\", Answer: 42}", sw.ToString());
+            Assert.Equal("{Foo: 42}", sw.ToString());
         }
     }
 }

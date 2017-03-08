@@ -15,16 +15,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Display
 {
     class LogEventPropertiesValue : LogEventPropertyValue
     {
+        readonly MessageTemplate _template;
         readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
 
-        public LogEventPropertiesValue(IReadOnlyDictionary<string, LogEventPropertyValue> properties)
+        public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
         {
+            _template = template;
             _properties = properties;
         }
 
@@ -35,6 +38,11 @@ namespace Serilog.Formatting.Display
             var delim = "";
             foreach (var kvp in _properties)
             {
+                if (_template.NamedProperties.Any(x => x.PropertyName == kvp.Key))
+                {
+                    continue;
+                }
+
                 output.Write(delim);
                 delim = ", ";
                 output.Write(kvp.Key);
