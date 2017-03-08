@@ -16,8 +16,10 @@
     <PackageProjectUrl>http://serilog.net</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <!-- Don't reference the full NETStandard.Library -->
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
-
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -29,6 +31,17 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+    <PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
+    <PackageReference Include="System.Collections" Version="4.0.11" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.0.11" />
+    <PackageReference Include="System.Globalization" Version="4.0.11" />
+    <PackageReference Include="System.Linq" Version="4.1.0" />
+    <PackageReference Include="System.Reflection" Version="4.1.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.1.0" />
+    <PackageReference Include="System.Threading" Version="4.0.11" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -40,11 +53,22 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Collections.NonGeneric" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
+    <PackageReference Include="System.Collections" Version="4.0.11" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.0.11" />
+    <PackageReference Include="System.Globalization" Version="4.0.11" />
+    <PackageReference Include="System.Linq" Version="4.1.0" />
+    <PackageReference Include="System.Reflection" Version="4.1.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.1.0" />
+    <PackageReference Include="System.Threading" Version="4.0.11" />
   </ItemGroup>
 
 </Project>
