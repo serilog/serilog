@@ -20,13 +20,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{791D4267-0D6F-4FDF-80F2-11F4E793B0F2}"
 EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "Serilog", "src\Serilog\Serilog.csproj", "{AB00B377-9F1E-4D4B-B6B0-B95F53BCAEF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog", "src\Serilog\Serilog.csproj", "{AB00B377-9F1E-4D4B-B6B0-B95F53BCAEF1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{290A2775-7CA0-4F81-9DDC-32E28C3A7565}"
 EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "TestDummies", "test\TestDummies\TestDummies.csproj", "{37EF0B5E-0363-4A47-AF3E-51FA6E79E3CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestDummies", "test\TestDummies\TestDummies.csproj", "{37EF0B5E-0363-4A47-AF3E-51FA6E79E3CF}"
 EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.csproj", "{B11B911D-977A-42CE-900A-596CF59F6FFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.csproj", "{B11B911D-977A-42CE-900A-596CF59F6FFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.PerformanceTests", "test\Serilog.PerformanceTests\Serilog.PerformanceTests.csproj", "{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}"
 EndProject
