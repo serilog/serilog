@@ -7,10 +7,11 @@ matrix:
       sudo: required
       dotnet: 1.0.0-preview2-003121
       CLI_VERSION: 1.0.0
-    - os: osx # OSX 10.11
-      osx_image: xcode7.3
-      dotnet: 1.0.0-preview2-003121
-      CLI_VERSION: 1.0.0
+    # Disabled temporarily due to Travis OSX issues
+    # - os: osx # OSX 10.11
+    #   osx_image: xcode7.3
+    #   dotnet: 1.0.0-preview2-003121
+    #   CLI_VERSION: 1.0.0
 
 script:
   - ./build.sh
