@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Formatting.Display
@@ -38,7 +37,7 @@ namespace Serilog.Formatting.Display
             var delim = "";
             foreach (var kvp in _properties)
             {
-                if (_template.NamedProperties.Any(x => x.PropertyName == kvp.Key))
+                if (TemplateContainsPropertyName(_template, kvp.Key))
                 {
                     continue;
                 }
@@ -51,6 +50,19 @@ namespace Serilog.Formatting.Display
             }
 
             output.Write('}');
+        }
+
+        static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
+        {
+            foreach (var namedProperty in template.NamedProperties)
+            {
+                if (namedProperty.PropertyName == propertyName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
