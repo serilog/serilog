@@ -1,6 +1,6 @@
 #!/bin/bash
 export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
-DotnetCliVersion=${CLI_VERSION:="1.0.0"}
+DotnetCliVersion=${CLI_VERSION:="1.0.1"}
 install_script_url=https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh
 curl -sSL $install_script_url | bash /dev/stdin --version "$DotnetCliVersion" --install-dir "$DOTNET_INSTALL_DIR"
 export PATH="$DOTNET_INSTALL_DIR:$PATH"
