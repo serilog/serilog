@@ -24,19 +24,8 @@ foreach ($src in ls src/*) {
 	echo "build: Packaging project in $src"
 
     & dotnet build -c Release --version-suffix=$buildSuffix
-    & dotnet pack -c Release -o ..\..\artifacts --version-suffix=$suffix --no-build
+    & dotnet pack -c Release --include-symbols -o ..\..\artifacts --version-suffix=$suffix --no-build
     if($LASTEXITCODE -ne 0) { exit 1 }    
-
-    Pop-Location
-}
-
-foreach ($test in ls test/*.PerformanceTests) {
-    Push-Location $test
-
-	echo "build: Building performance test project in $test"
-
-    & dotnet build -c Release
-    if($LASTEXITCODE -ne 0) { exit 2 }
 
     Pop-Location
 }
@@ -48,6 +37,17 @@ foreach ($test in ls test/*.Tests) {
 
     & dotnet test -c Release
     if($LASTEXITCODE -ne 0) { exit 3 }
+
+    Pop-Location
+}
+
+foreach ($test in ls test/*.PerformanceTests) {
+    Push-Location $test
+
+	echo "build: Building performance test project in $test"
+
+    & dotnet build -c Release
+    if($LASTEXITCODE -ne 0) { exit 2 }
 
     Pop-Location
 }
