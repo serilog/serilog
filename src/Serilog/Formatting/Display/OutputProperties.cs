@@ -25,6 +25,8 @@ namespace Serilog.Formatting.Display
     /// </summary>
     public static class OutputProperties
     {
+        static readonly LiteralStringValue LiteralNewLine = new LiteralStringValue(Environment.NewLine);
+
         /// <summary>
         /// The message rendered from the log event.
         /// </summary>
@@ -66,7 +68,7 @@ namespace Serilog.Formatting.Display
             result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
             result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
-            result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
+            result[NewLinePropertyName] = LiteralNewLine;
 
             var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
             result[ExceptionPropertyName] = new LiteralStringValue(exception);
