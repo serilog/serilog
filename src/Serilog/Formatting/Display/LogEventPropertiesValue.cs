@@ -54,8 +54,9 @@ namespace Serilog.Formatting.Display
 
         static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
         {
-            foreach (var namedProperty in template.NamedProperties)
+            for (var i = 0; i < template.NamedProperties.Length; i++)
             {
+                var namedProperty = template.NamedProperties[i];
                 if (namedProperty.PropertyName == propertyName)
                 {
                     return true;
