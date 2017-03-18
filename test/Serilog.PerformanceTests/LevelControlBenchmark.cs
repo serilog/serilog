@@ -4,6 +4,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using System;
+using System.Threading.Tasks;
 using Serilog.PerformanceTests.Support;
 using Xunit;
 
@@ -39,27 +40,27 @@ namespace Serilog.PerformanceTests
         }
 
         [Benchmark(Baseline = true)]
-        public void Off()
+        public Task Off()
         {
-            _off.Write(_event);
+            return _off.Write(_event);
         }  
         
         [Benchmark]
-        public void LevelSwitchOff()
+        public Task LevelSwitchOff()
         {
-            _levelSwitchOff.Write(_event);
+            return _levelSwitchOff.Write(_event);
         } 
                 
         [Benchmark]
-        public void MinimumLevelOn()
+        public Task MinimumLevelOn()
         {
-            _minLevel.Write(_event);
+            return _minLevel.Write(_event);
         }
 
         [Benchmark]
-        public void LevelSwitchOn()
+        public Task LevelSwitchOn()
         {
-            _levelSwitch.Write(_event);
+            return _levelSwitch.Write(_event);
         }
     }
 }

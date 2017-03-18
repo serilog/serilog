@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Serilog.Tests.Support;
 using Xunit;
 using Serilog.Core;
@@ -9,7 +10,7 @@ namespace Serilog.Tests.Core
     public class SecondaryLoggerSinkTests
     {
         [Fact]
-        public void ModifyingCopiesPassedThroughTheSinkPreservesOriginal()
+        public async Task ModifyingCopiesPassedThroughTheSinkPreservesOriginal()
         {
             var secondary = new CollectingSink();
             var secondaryLogger = new LoggerConfiguration()
@@ -17,7 +18,7 @@ namespace Serilog.Tests.Core
                 .CreateLogger();
 
             var e = Some.InformationEvent();
-            new LoggerConfiguration()
+            await new LoggerConfiguration()
                 .WriteTo.Logger(secondaryLogger)
                 .CreateLogger()
                 .Write(e);
@@ -57,7 +58,7 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
-        public void ChildLoggerInheritsParentLevelByDefault()
+        public async Task ChildLoggerInheritsParentLevelByDefault()
         {
             var sink = new CollectingSink();
 
@@ -67,13 +68,13 @@ namespace Serilog.Tests.Core
                     .WriteTo.Sink(sink))
                 .CreateLogger();
 
-            logger.Write(Some.DebugEvent());
+            await logger.Write(Some.DebugEvent());
 
             Assert.Equal(1, sink.Events.Count);
         }
 
         [Fact]
-        public void ChildLoggerCanOverrideInheritedLevel()
+        public async Task ChildLoggerCanOverrideInheritedLevel()
         {
             var sink = new CollectingSink();
 
@@ -84,7 +85,7 @@ namespace Serilog.Tests.Core
                     .WriteTo.Sink(sink))
                 .CreateLogger();
 
-            logger.Write(Some.DebugEvent());
+            await logger.Write(Some.DebugEvent());
 
             Assert.Equal(0, sink.Events.Count);
         }

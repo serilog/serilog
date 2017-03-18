@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Core.Sinks
 {
@@ -30,25 +31,17 @@ namespace Serilog.Core.Sinks
             _sinks = sinks.ToArray();
         }
 
-        public void Emit(LogEvent logEvent)
+        public async Task Emit(LogEvent logEvent)
         {
-            List<Exception> exceptions = null;
-            foreach (var sink in _sinks)
+            try
             {
-                try
-                {
-                    sink.Emit(logEvent);
-                }
-                catch (Exception ex)
-                {
-                    SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                    exceptions = exceptions ?? new List<Exception>();
-                    exceptions.Add(ex);
-                }
+                await Task.WhenAll(_sinks.Select(s => s.Emit(logEvent)));
             }
-
-            if (exceptions != null)
-                throw new AggregateException("Failed to emit a log event.", exceptions);
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Caught one or more exception while emitting to sinks: {0}", ex);
+                throw;
+            }
         }
     }
 }

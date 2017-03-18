@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Serilog.Core;
 using Serilog.Events;
@@ -14,7 +15,7 @@ namespace Serilog.Tests.Core
     public class LoggerTests
     {
         [Fact]
-        public void AnExceptionThrownByAnEnricherIsNotPropagated()
+        public async Task AnExceptionThrownByAnEnricherIsNotPropagated()
         {
             var thrown = false;
 
@@ -27,15 +28,15 @@ namespace Serilog.Tests.Core
                 }))
                 .CreateLogger();
 
-            l.Information(Some.String());
+            await l.Information(Some.String());
 
             Assert.True(thrown);
         }
 
         [Fact]
-        public void AContextualLoggerAddsTheSourceTypeName()
+        public async Task AContextualLoggerAddsTheSourceTypeName()
         {
-            var evt = DelegatingSink.GetLogEvent(l => l.ForContext<LoggerTests>()
+            var evt = await DelegatingSink.GetLogEvent(l => l.ForContext<LoggerTests>()
                 .Information(Some.String()));
 
             var lv = evt.Properties[Constants.SourceContextPropertyName].LiteralValue();
@@ -43,12 +44,12 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
-        public void PropertiesInANestedContextOverrideParentContextValues()
+        public async Task PropertiesInANestedContextOverrideParentContextValues()
         {
             var name = Some.String();
             var v1 = Some.Int();
             var v2 = Some.Int();
-            var evt = DelegatingSink.GetLogEvent(l => l.ForContext(name, v1)
+            var evt = await DelegatingSink.GetLogEvent(l => l.ForContext(name, v1)
                 .ForContext(name, v2)
                 .Write(Some.InformationEvent()));
 
@@ -57,14 +58,14 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
-        public void ParametersForAnEmptyTemplateAreIgnored()
+        public async Task ParametersForAnEmptyTemplateAreIgnored()
         {
-            var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
+            var e = await DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
             Assert.Equal("message", e.RenderMessage());
         }
 
         [Fact]
-        public void LoggingLevelSwitchDynamicallyChangesLevel()
+        public async Task LoggingLevelSwitchDynamicallyChangesLevel()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
@@ -77,16 +78,16 @@ namespace Serilog.Tests.Core
                 .CreateLogger()
                 .ForContext<LoggerTests>();
 
-            log.Debug("Suppressed");
-            log.Information("Emitted");
-            log.Warning("Emitted");
+            await log.Debug("Suppressed");
+            await log.Information("Emitted");
+            await log.Warning("Emitted");
 
             // Change the level
             levelSwitch.MinimumLevel = LogEventLevel.Error;
 
-            log.Warning("Suppressed");
-            log.Error("Emitted");
-            log.Fatal("Emitted");
+            await log.Warning("Suppressed");
+            await log.Error("Emitted");
+            await log.Fatal("Emitted");
 
             Assert.Equal(4, events.Count);
             Assert.True(events.All(evt => evt.RenderMessage() == "Emitted"));

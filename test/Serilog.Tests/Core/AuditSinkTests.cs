@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using Serilog.Tests.Support;
 using Xunit;
 
@@ -8,69 +9,69 @@ namespace Serilog.Tests.Core
     public class AuditSinkTests
     {
         [Fact]
-        public void ExceptionsThrownByAuditSinksArePropagated()
+        public async Task ExceptionsThrownByAuditSinksArePropagated()
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
                 .CreateLogger();
 
-            Assert.Throws<AggregateException>(() => logger.Write(Some.InformationEvent()));
+            await Assert.ThrowsAsync<Exception>(() => logger.Write(Some.InformationEvent()));
         }
 
         [Fact]
-        public void ExceptionsThrownByFiltersArePropagatedIfAuditingEnabled()
+        public async Task ExceptionsThrownByFiltersArePropagatedIfAuditingEnabled()
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new DelegatingSink(e => { }))
                 .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
                 .CreateLogger();
 
-            Assert.Throws<Exception>(() => logger.Write(Some.InformationEvent()));
+            await Assert.ThrowsAsync<Exception>(() => logger.Write(Some.InformationEvent()));
         }
 
         [Fact]
-        public void ExceptionsThrownByAuditSinksArePropagatedFromChildLoggers()
+        public async Task ExceptionsThrownByAuditSinksArePropagatedFromChildLoggers()
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
                 .CreateLogger();
 
-            Assert.Throws<AggregateException>(() => logger
+            await Assert.ThrowsAsync<Exception>(() => logger
                 .ForContext<LoggerConfigurationTests>()
                 .Write(Some.InformationEvent()));
         }
 
         [Fact]
-        public void ExceptionsThrownByDestructuringPoliciesArePropagatedIfAuditingEnabled()
+        public async Task ExceptionsThrownByDestructuringPoliciesArePropagatedIfAuditingEnabled()
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
                 .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
                 .CreateLogger();
 
-            Assert.Throws<Exception>(() => logger.Information("{@Value}", new Value()));
+            await Assert.ThrowsAsync<Exception>(() => logger.Information("{@Value}", new Value()));
         }
 
         [Fact]
-        public void ExceptionsThrownByPropertyAccessorsAreNotPropagated()
+        public async Task ExceptionsThrownByPropertyAccessorsAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new CollectingSink())
                 .CreateLogger();
 
-            logger.Information("{@Value}", new ThrowingProperty());
+            await logger.Information("{@Value}", new ThrowingProperty());
 
             Assert.True(true, "No exception reached the caller");
         }
 
         [Fact]
-        public void ExceptionsThrownByPropertyAccessorsArePropagatedIfAuditingEnabled()
+        public async Task ExceptionsThrownByPropertyAccessorsArePropagatedIfAuditingEnabled()
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
                 .CreateLogger();
 
-            Assert.Throws<TargetInvocationException>(() => logger.Information("{@Value}", new ThrowingProperty()));
+            await Assert.ThrowsAsync<TargetInvocationException>(() => logger.Information("{@Value}", new ThrowingProperty()));
         }
 
         [Fact]

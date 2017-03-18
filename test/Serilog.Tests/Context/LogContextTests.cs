@@ -25,7 +25,7 @@ namespace Serilog.Tests.Context
         }
 
         [Fact]
-        public void MoreNestedPropertiesOverrideLessNestedOnes()
+        public async Task MoreNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
 
@@ -36,25 +36,25 @@ namespace Serilog.Tests.Context
 
             using (LogContext.PushProperty("A", 1))
             {
-                log.Write(Some.InformationEvent());
+                await log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 using (LogContext.PushProperty("A", 2))
                 {
-                    log.Write(Some.InformationEvent());
+                    await log.Write(Some.InformationEvent());
                     Assert.Equal(2, lastEvent.Properties["A"].LiteralValue());
                 }
 
-                log.Write(Some.InformationEvent());
+                await log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
             }
 
-            log.Write(Some.InformationEvent());
+            await log.Write(Some.InformationEvent());
             Assert.False(lastEvent.Properties.ContainsKey("A"));
         }
 
         [Fact]
-        public void MultipleNestedPropertiesOverrideLessNestedOnes()
+        public async Task MultipleNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
 
@@ -65,23 +65,23 @@ namespace Serilog.Tests.Context
 
             using (LogContext.PushProperties(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
             {
-                log.Write(Some.InformationEvent());
+                await log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
                 using (LogContext.PushProperties(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
                 {
-                    log.Write(Some.InformationEvent());
+                    await log.Write(Some.InformationEvent());
                     Assert.Equal(10, lastEvent.Properties["A1"].LiteralValue());
                     Assert.Equal(20, lastEvent.Properties["A2"].LiteralValue());
                 }
 
-                log.Write(Some.InformationEvent());
+                await log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
             }
 
-            log.Write(Some.InformationEvent());
+            await log.Write(Some.InformationEvent());
             Assert.False(lastEvent.Properties.ContainsKey("A1"));
             Assert.False(lastEvent.Properties.ContainsKey("A2"));
         }
@@ -104,7 +104,7 @@ namespace Serilog.Tests.Context
 
                 var post = Thread.CurrentThread.ManagedThreadId;
 
-                log.Write(Some.InformationEvent());
+                await log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                 // No problem if this happens occasionally; was Assert.Inconclusive().

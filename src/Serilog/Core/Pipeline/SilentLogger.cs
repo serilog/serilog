@@ -14,12 +14,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Serilog.Events;
 
 namespace Serilog.Core.Pipeline
 {
     class SilentLogger : ILogger
     {
+        private Task completedTask = Task.FromResult((object)null);
+
         public ILogger ForContext(ILogEventEnricher enricher)
         {
             return this;
@@ -45,48 +48,59 @@ namespace Serilog.Core.Pipeline
             return this;
         }
 
-        public void Write(LogEvent logEvent)
+        public Task Write(LogEvent logEvent)
         {
+            return completedTask;
         }
 
-        public void Write(LogEventLevel level, string messageTemplate)
+        public Task Write(LogEventLevel level, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
+        public Task Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        public Task Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Write(LogEventLevel level, Exception exception, string messageTemplate)
+        public Task Write(LogEventLevel level, Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
+        public Task Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
         public bool IsEnabled(LogEventLevel level)
@@ -94,244 +108,304 @@ namespace Serilog.Core.Pipeline
             return false;
         }
 
-        public void Verbose(string messageTemplate)
+        public Task Verbose(string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Verbose<T>(string messageTemplate, T propertyValue)
+        public Task Verbose<T>(string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Verbose(string messageTemplate, params object[] propertyValues)
+        public Task Verbose(string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Verbose(Exception exception, string messageTemplate)
+        public Task Verbose(Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Debug(string messageTemplate)
+        public Task Debug(string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Debug<T>(string messageTemplate, T propertyValue)
+        public Task Debug<T>(string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Debug(string messageTemplate, params object[] propertyValues)
+        public Task Debug(string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Debug(Exception exception, string messageTemplate)
+        public Task Debug(Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Debug<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Debug<T>(Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Information(string messageTemplate)
+        public Task Information(string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Information<T>(string messageTemplate, T propertyValue)
+        public Task Information<T>(string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Information(string messageTemplate, params object[] propertyValues)
+        public Task Information(string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Information(Exception exception, string messageTemplate)
+        public Task Information(Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Information<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Information<T>(Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Warning(string messageTemplate)
+        public Task Warning(string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Warning<T>(string messageTemplate, T propertyValue)
+        public Task Warning<T>(string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Warning(string messageTemplate, params object[] propertyValues)
+        public Task Warning(string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Warning(Exception exception, string messageTemplate)
+        public Task Warning(Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Warning<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Warning<T>(Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Error(string messageTemplate)
+        public Task Error(string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Error<T>(string messageTemplate, T propertyValue)
+        public Task Error<T>(string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Error(string messageTemplate, params object[] propertyValues)
+        public Task Error(string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Error(Exception exception, string messageTemplate)
+        public Task Error(Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Error<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Error<T>(Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Fatal(string messageTemplate)
+        public Task Fatal(string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Fatal<T>(string messageTemplate, T propertyValue)
+        public Task Fatal<T>(string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Fatal(string messageTemplate, params object[] propertyValues)
+        public Task Fatal(string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
-        public void Fatal(Exception exception, string messageTemplate)
+        public Task Fatal(Exception exception, string messageTemplate)
         {
+            return completedTask;
         }
 
-        public void Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
         {
+            return completedTask;
         }
 
-        public void Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
+            return completedTask;
         }
 
-        public void Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
+            return completedTask;
         }
 
-        public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
+            return completedTask;
         }
 
         [MessageTemplateFormatMethod("messageTemplate")]

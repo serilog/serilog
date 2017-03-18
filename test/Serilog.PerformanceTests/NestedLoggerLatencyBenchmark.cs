@@ -2,6 +2,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Serilog;
 using System;
+using System.Threading.Tasks;
 using Serilog.PerformanceTests.Support;
 using Xunit;
 using Serilog.Events;
@@ -27,15 +28,15 @@ namespace Serilog.PerformanceTests
         }
 
         [Benchmark(Baseline = true)]
-        public void RootLogger()
+        public Task RootLogger()
         {
-            _log.Write(_event);
+            return _log.Write(_event);
         }
 
         [Benchmark]
-        public void NestedLogger()
+        public Task NestedLogger()
         {
-            _nested.Write(_event);
+            return _nested.Write(_event);
         }
     }
 }

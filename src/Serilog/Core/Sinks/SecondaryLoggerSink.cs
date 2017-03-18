@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Core.Sinks
 {
@@ -37,7 +38,7 @@ namespace Serilog.Core.Sinks
             _attemptDispose = attemptDispose;
         }
 
-        public void Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
@@ -48,7 +49,7 @@ namespace Serilog.Core.Sinks
                 logEvent.MessageTemplate,
                 logEvent.Properties.Select(p => new LogEventProperty(p.Key, p.Value)));
 
-            _logger.Write(copy);
+            return _logger.Write(copy);
         }
 
         public void Dispose()

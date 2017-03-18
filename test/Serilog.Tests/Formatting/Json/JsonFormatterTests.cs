@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Newtonsoft.Json;
 using Serilog.Events;
@@ -158,14 +159,14 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Fact]
-        public void DictionariesAreDestructuredViaDictionaryValue()
+        public async Task DictionariesAreDestructuredViaDictionaryValue()
         {
             var dict = new Dictionary<string, object> {
                 { "hello", "world" },
                 { "nums", new[] { 1.2 } }
             };
 
-            var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
+            var e = await DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
             var f = FormatJson(e);
 
             Assert.Equal("world", (string)f.Properties.ADictionary["hello"]);

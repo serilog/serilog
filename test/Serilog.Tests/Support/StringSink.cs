@@ -5,6 +5,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
+using System.Threading.Tasks;
 
 namespace Serilog.Tests.Support
 {
@@ -20,9 +21,10 @@ namespace Serilog.Tests.Support
             _formatter = new MessageTemplateTextFormatter(outputTemplate, CultureInfo.InvariantCulture);
         }
 
-        public void Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
             _formatter.Format(logEvent, _sw);
+            return Task.FromResult((object)null);
         }
 
         public override string ToString()

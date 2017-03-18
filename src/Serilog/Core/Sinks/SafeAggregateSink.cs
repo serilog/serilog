@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Core.Sinks
 {
@@ -30,13 +31,13 @@ namespace Serilog.Core.Sinks
             _sinks = sinks.ToArray();
         }
 
-        public void Emit(LogEvent logEvent)
+        public async Task Emit(LogEvent logEvent)
         {
             foreach (var sink in _sinks)
             {
                 try
                 {
-                    sink.Emit(logEvent);
+                    await sink.Emit(logEvent);
                 }
                 catch (Exception ex)
                 {

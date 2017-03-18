@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Xunit;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
@@ -83,7 +84,7 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void SinksAreConfigured()
+        public async Task SinksAreConfigured()
         {
             var settings = new Dictionary<string, string>
             {
@@ -98,14 +99,14 @@ namespace Serilog.Tests.Settings
             DummyRollingFileSink.Emitted.Clear();
             DummyRollingFileAuditSink.Emitted.Clear();
 
-            log.Write(Some.InformationEvent());
+            await log.Write(Some.InformationEvent());
 
             Assert.Equal(1, DummyRollingFileSink.Emitted.Count);
             Assert.Equal(0, DummyRollingFileAuditSink.Emitted.Count);
         }
 
         [Fact]
-        public void AuditSinksAreConfigured()
+        public async Task AuditSinksAreConfigured()
         {
             var settings = new Dictionary<string, string>
             {
@@ -120,14 +121,14 @@ namespace Serilog.Tests.Settings
             DummyRollingFileSink.Emitted.Clear();
             DummyRollingFileAuditSink.Emitted.Clear();
 
-            log.Write(Some.InformationEvent());
+            await log.Write(Some.InformationEvent());
 
             Assert.Equal(0, DummyRollingFileSink.Emitted.Count);
             Assert.Equal(1, DummyRollingFileAuditSink.Emitted.Count);
         }
 
         [Fact]
-        public void TestMinimumLevelOverrides()
+        public async Task TestMinimumLevelOverrides()
         {
             var settings = new Dictionary<string, string>
 
@@ -143,15 +144,15 @@ namespace Serilog.Tests.Settings
                  .CreateLogger();
 
             var systemLogger = log.ForContext<System.WeakReference>();
-            systemLogger.Write(Some.InformationEvent());
+            await systemLogger.Write(Some.InformationEvent());
 
             Assert.Null(evt);
 
-            systemLogger.Warning("Bad things");
+            await systemLogger.Warning("Bad things");
             Assert.NotNull(evt);
 
             evt = null;
-            log.Write(Some.InformationEvent());
+            await log.Write(Some.InformationEvent());
             Assert.NotNull(evt);
         }
 

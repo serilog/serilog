@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Core.Sinks
 {
@@ -35,7 +36,7 @@ namespace Serilog.Core.Sinks
             _filters = filters.ToArray();
         }
 
-        public void Emit(LogEvent logEvent)
+        public async Task Emit(LogEvent logEvent)
         {
             try
             {
@@ -45,7 +46,7 @@ namespace Serilog.Core.Sinks
                         return;
                 }
 
-                _sink.Emit(logEvent);
+                await _sink.Emit(logEvent);
             }
             catch (Exception ex)
             {

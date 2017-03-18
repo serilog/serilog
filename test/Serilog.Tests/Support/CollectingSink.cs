@@ -2,6 +2,7 @@
 using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Tests.Support
 {
@@ -13,9 +14,10 @@ namespace Serilog.Tests.Support
 
         public LogEvent SingleEvent { get { return _events.Single(); } }
  
-        public void Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
             _events.Add(logEvent);
+            return Task.FromResult((object)null);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Serilog.Core;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Tests.Support
 {
@@ -14,12 +15,13 @@ namespace Serilog.Tests.Support
             _write = write;
         }
 
-        public void Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
             _write(logEvent);
+            return Task.FromResult((object)null);
         }
 
-        public static LogEvent GetLogEvent(Action<ILogger> writeAction)
+        public static async Task<LogEvent> GetLogEvent(Func<ILogger, Task> writeAction)
         {
             LogEvent result = null;
             var l = new LoggerConfiguration()
@@ -27,7 +29,7 @@ namespace Serilog.Tests.Support
                 .WriteTo.Sink(new DelegatingSink(le => result = le))
                 .CreateLogger();
 
-            writeAction(l);
+            await writeAction(l);
             return result;
         }
     }

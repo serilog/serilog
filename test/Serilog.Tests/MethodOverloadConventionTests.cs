@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
 
@@ -95,7 +96,7 @@ namespace Serilog.Tests
             var writeMethod = methods.Single();
 
             Assert.True(writeMethod.IsPublic);
-            Assert.Equal(writeMethod.ReturnType, typeof(void));
+            Assert.Equal(writeMethod.ReturnType, typeof(Task));
 
             LogEventLevel level = LogEventLevel.Information;
 
@@ -547,7 +548,7 @@ namespace Serilog.Tests
 
             foreach (var method in methodSet)
             {
-                Assert.Equal(method.ReturnType, typeof(void));
+                Assert.Equal(method.ReturnType, typeof(Task));
                 Assert.True(method.IsPublic);
 
                 if (checkMesgTempAttr)
