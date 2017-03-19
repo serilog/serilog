@@ -31,19 +31,33 @@ namespace Serilog.Core.Sinks
             _sinks = sinks.ToArray();
         }
 
-        public async Task Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
+            List<Task> taskList = null;
             foreach (var sink in _sinks)
             {
                 try
                 {
-                    await sink.Emit(logEvent);
+                    var sinkTask = sink.Emit(logEvent);
+
+                    if (sinkTask.Status != TaskStatus.RanToCompletion)
+                    {
+                        sinkTask = sinkTask.ContinueWith((t, s) =>
+                        {
+                            SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", s, t.Exception);
+                        }, sink, TaskContinuationOptions.OnlyOnFaulted);
+
+                        taskList = taskList ?? new List<Task>(_sinks.Length);
+                        taskList.Add(sinkTask);
+                    }
                 }
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
                 }
             }
+
+            return taskList != null ? Task.WhenAll(taskList) : CompletedTask.Instance;
         }
     }
 }

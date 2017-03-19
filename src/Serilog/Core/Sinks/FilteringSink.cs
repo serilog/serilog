@@ -36,25 +36,39 @@ namespace Serilog.Core.Sinks
             _filters = filters.ToArray();
         }
 
-        public async Task Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
+            Task innerTask = null;
             try
             {
                 foreach (var logEventFilter in _filters)
                 {
                     if (!logEventFilter.IsEnabled(logEvent))
-                        return;
+                    {
+                        return CompletedTask.Instance;
+                    }
                 }
 
-                await _sink.Emit(logEvent);
+                innerTask = _sink.Emit(logEvent);
+
+                if (innerTask.Status != TaskStatus.RanToCompletion)
+                {
+                    var innerTaskOnException = innerTask.ContinueWith(t =>
+                    {
+                        SelfLog.WriteLine("Caught exception while applying filters: {0}", t.Exception);
+                    });
+
+                    return _propagateExceptions ? innerTask : innerTaskOnException;
+                }
             }
             catch (Exception ex)
             {
                 SelfLog.WriteLine("Caught exception while applying filters: {0}", ex);
-
                 if (_propagateExceptions)
                     throw;
             }
+
+            return innerTask ?? CompletedTask.Instance;
         }
     }
 }
