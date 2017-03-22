@@ -1,3 +1,14 @@
+2.4.0
+* #866 and #877- additional event payload limiting controls
+* #833 - improve performance of message template cache lookup
+* #885 - fix JSON formatting of `NaN` and infinity values
+* #888 - allow minimum level overrides to be specified by configuration providers like _Serilog.Settings.AppSettings_
+* #903 - add further `Log` static methods to match `ILogger` methods
+* #907 - properly dispose audit sinks
+* #913 - include commit hash in `AssemblyInformationalVersion`
+* #925 - allow configuration providers to specify `filter` directives
+* Build and test coverage work in #821, #824, #896.
+
 2.3.0
  * #870 - fix dispose for level-restricted sinks
  * #852 - fix dictionary capturing when key/value are anonymous types
