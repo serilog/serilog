@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Core
 {
@@ -25,6 +26,6 @@ namespace Serilog.Core
         /// Emit the provided log event to the sink.
         /// </summary>
         /// <param name="logEvent">The log event to write.</param>
-        void Emit(LogEvent logEvent);
+        Task Emit(LogEvent logEvent);
     }
 }

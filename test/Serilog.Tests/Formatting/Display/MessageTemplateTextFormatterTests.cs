@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-
+using System.Threading.Tasks;
 using Serilog.Events;
 
 using Xunit;
@@ -13,41 +13,41 @@ namespace Serilog.Tests.Formatting.Display
     public class MessageTemplateTextFormatterTests
     {
         [Fact]
-        public void UsesFormatProvider()
+        public async Task UsesFormatProvider()
         {
             var french = new CultureInfo("fr-FR");
             var formatter = new MessageTemplateTextFormatter("{Message}", french);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{0}", 12.345));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("{0}", 12.345));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("12,345", sw.ToString());
         }
 
         [Fact]
-        public void MessageTemplatesContainingFormatStringPropertiesRenderCorrectly()
+        public async Task MessageTemplatesContainingFormatStringPropertiesRenderCorrectly()
         {
             var formatter = new MessageTemplateTextFormatter("{Message}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Message}", "Hello, world!"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("{Message}", "Hello, world!"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("\"Hello, world!\"", sw.ToString());
         }
 
         [Fact]
-        public void UppercaseFormatSpecifierIsSupportedForStrings()
+        public async Task UppercaseFormatSpecifierIsSupportedForStrings()
         {
             var formatter = new MessageTemplateTextFormatter("{Name:u}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("NICK", sw.ToString());
         }
 
         [Fact]
-        public void LowercaseFormatSpecifierIsSupportedForStrings()
+        public async Task LowercaseFormatSpecifierIsSupportedForStrings()
         {
             var formatter = new MessageTemplateTextFormatter("{Name:w}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("nick", sw.ToString());
@@ -100,53 +100,53 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(LogEventLevel.Warning, 6, "Warnin")]
         [InlineData(LogEventLevel.Warning, 7, "Warning")]
         [InlineData(LogEventLevel.Warning, 8, "Warning")]
-        public void FixedLengthLevelIsSupported(
+        public async Task FixedLengthLevelIsSupported(
             LogEventLevel level,
             int width, 
             string expected)
         {
             var formatter = new MessageTemplateTextFormatter($"{{Level:t{width}}}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Write(level, "Hello"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Write(level, "Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
 
         [Fact]
-        public void FixedLengthLevelSupportsUpperCasing()
+        public async Task FixedLengthLevelSupportsUpperCasing()
         {
             var formatter = new MessageTemplateTextFormatter("{Level:u3}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("INF", sw.ToString());
         }
 
         [Fact]
-        public void FixedLengthLevelSupportsLowerCasing()
+        public async Task FixedLengthLevelSupportsLowerCasing()
         {
             var formatter = new MessageTemplateTextFormatter("{Level:w3}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("inf", sw.ToString());
         }
 
         [Fact]
-        public void DefaultLevelLengthIsFullText()
+        public async Task DefaultLevelLengthIsFullText()
         {
             var formatter = new MessageTemplateTextFormatter("{Level}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("Information", sw.ToString());
         }
 
         [Fact]
-        public void AligmentAndWidthCanBeCombined()
+        public async Task AligmentAndWidthCanBeCombined()
         {
             var formatter = new MessageTemplateTextFormatter("{Level,5:w3}", CultureInfo.InvariantCulture);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("  inf", sw.ToString());
@@ -190,10 +190,10 @@ namespace Serilog.Tests.Formatting.Display
         }
 
         [Fact]
-        public void AppliesCustomFormatterToEnums()
+        public async Task AppliesCustomFormatterToEnums()
         {
             var formatter = new MessageTemplateTextFormatter("{Message}", new SizeFormatter(CultureInfo.InvariantCulture));
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("Size {Size}", Size.Large));
+            var evt = await DelegatingSink.GetLogEvent(l => l.Information("Size {Size}", Size.Large));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("Size Huge", sw.ToString());

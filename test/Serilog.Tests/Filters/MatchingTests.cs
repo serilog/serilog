@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Threading.Tasks;
+using Xunit;
 using Serilog.Filters;
 using Serilog.Tests.Support;
 
@@ -7,7 +8,7 @@ namespace Serilog.Tests.Filters
     public class MatchingTests
     {
         [Fact]
-        public void EventsCanBeExcludedBySource()
+        public async Task EventsCanBeExcludedBySource()
         {
             var written = false;
 
@@ -17,13 +18,13 @@ namespace Serilog.Tests.Filters
                 .CreateLogger();
 
             var sourceContext = log.ForContext<MatchingTests>();
-            sourceContext.Write(Some.InformationEvent());
+            await sourceContext.Write(Some.InformationEvent());
 
             Assert.False(written);
         }
 
         [Fact]
-        public void EventsCanBeExcludedByPredicate()
+        public async Task EventsCanBeExcludedByPredicate()
         {
             var seen = 0;
 
@@ -32,16 +33,16 @@ namespace Serilog.Tests.Filters
                 .WriteTo.Sink(new DelegatingSink(e => seen++))
                 .CreateLogger();
 
-            log.Warning("Unrelated");
-            log.Information("{Count}", 5);
-            log.Information("{Count}", "wrong type");
-            log.Information("{Count}", 15);
+            await log.Warning("Unrelated");
+            await log.Information("{Count}", 5);
+            await log.Information("{Count}", "wrong type");
+            await log.Information("{Count}", 15);
 
             Assert.Equal(3, seen);
         }
 
         [Fact]
-        public void SourceFiltersWorkOnNamespaces()
+        public async Task SourceFiltersWorkOnNamespaces()
         {
             var written = false;
             var log = new LoggerConfiguration()
@@ -50,7 +51,7 @@ namespace Serilog.Tests.Filters
                 .CreateLogger()
                 .ForContext<MatchingTests>();
 
-            log.Write(Some.InformationEvent());
+            await log.Write(Some.InformationEvent());
             Assert.False(written);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Serilog.Core;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Tests.Support
 {
@@ -8,8 +9,9 @@ namespace Serilog.Tests.Support
     {
         public bool IsDisposed { get; set; }
 
-        public void Emit(LogEvent logEvent)
-        {            
+        public Task Emit(LogEvent logEvent)
+        {
+            return Task.FromResult((object)null);
         }
 
         public void Dispose()

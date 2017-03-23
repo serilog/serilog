@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 using Serilog.Core.Sinks;
 using Serilog.Tests.Support;
@@ -8,7 +9,7 @@ namespace Serilog.Tests.Core
     public class SafeAggregateSinkTests
     {
         [Fact]
-        public void AnExceptionThrownByASinkIsNotPropagated()
+        public async Task AnExceptionThrownByASinkIsNotPropagated()
         {
             var thrown = false;
 
@@ -17,13 +18,13 @@ namespace Serilog.Tests.Core
                 throw new Exception("No go, pal.");
             }) });
 
-            s.Emit(Some.InformationEvent());
+            await s.Emit(Some.InformationEvent());
 
             Assert.True(thrown);
         }
 
         [Fact]
-        public void WhenASinkThrowsOtherSinksAreStillInvoked()
+        public async Task WhenASinkThrowsOtherSinksAreStillInvoked()
         {
             bool called1 = false, called2 = false;
 
@@ -33,7 +34,7 @@ namespace Serilog.Tests.Core
                 new DelegatingSink(le => called2 = true) 
             });
 
-            s.Emit(Some.InformationEvent());
+            await s.Emit(Some.InformationEvent());
 
             Assert.True(called1 && called2);
         }

@@ -14,6 +14,7 @@
 
 using System;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace Serilog.Core.Sinks
 {
@@ -30,14 +31,14 @@ namespace Serilog.Core.Sinks
             _levelSwitch = levelSwitch;
         }
 
-        public void Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
             if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
-                return;
+                return CompletedTask.Instance;
 
-            _sink.Emit(logEvent);
+            return _sink.Emit(logEvent);
         }
 
         public void Dispose()

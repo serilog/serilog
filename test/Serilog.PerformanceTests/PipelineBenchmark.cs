@@ -22,6 +22,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Serilog.PerformanceTests.Support;
 using Xunit;
 
@@ -44,13 +45,13 @@ namespace Serilog.PerformanceTests
                 .CreateLogger();
 
             // Ensure template is cached
-            _log.Information(_exception, "Hello, {Name}!", "World");
+            _log.Information(_exception, "Hello, {Name}!", "World").GetAwaiter().GetResult();
         }
 
         [Benchmark]
-        public void EmitLogEvent()
+        public Task EmitLogEvent()
         {
-            _log.Information(_exception, "Hello, {Name}!", "World");
+            return _log.Information(_exception, "Hello, {Name}!", "World");
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace TestDummies
 {
@@ -10,9 +11,10 @@ namespace TestDummies
         [ThreadStatic]
         public static List<LogEvent> Emitted = new List<LogEvent>();
 
-        public void Emit(LogEvent logEvent)
+        public Task Emit(LogEvent logEvent)
         {
             Emitted.Add(logEvent);
+            return Task.FromResult((object)null);
         }
     }
 }

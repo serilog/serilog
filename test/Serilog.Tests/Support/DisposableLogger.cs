@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -39,17 +40,17 @@ namespace Serilog.Tests.Support
             throw new NotImplementedException();
         }
 
-        public void Write(LogEvent logEvent)
+        public Task Write(LogEvent logEvent)
         {
             throw new NotImplementedException();
         }
 
-        public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        public Task Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
@@ -59,342 +60,342 @@ namespace Serilog.Tests.Support
             throw new NotImplementedException();
         }
 
-        public void Verbose(string messageTemplate, params object[] propertyValues)
+        public Task Verbose(string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug(string messageTemplate, params object[] propertyValues)
+        public Task Debug(string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Information(string messageTemplate, params object[] propertyValues)
+        public Task Information(string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning(string messageTemplate, params object[] propertyValues)
+        public Task Warning(string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Error(string messageTemplate, params object[] propertyValues)
+        public Task Error(string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal(string messageTemplate, params object[] propertyValues)
+        public Task Fatal(string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
             throw new NotImplementedException();
         }
 
-        public void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
+        public Task Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
+        public Task Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose<T>(string messageTemplate, T propertyValue)
+        public Task Verbose<T>(string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug<T>(string messageTemplate, T propertyValue)
+        public Task Debug<T>(string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Debug<T>(Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Information<T>(string messageTemplate, T propertyValue)
+        public Task Information<T>(string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Information<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Information<T>(Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning<T>(string messageTemplate, T propertyValue)
+        public Task Warning<T>(string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Warning<T>(Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Error<T>(string messageTemplate, T propertyValue)
+        public Task Error<T>(string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Error<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Error<T>(Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal<T>(string messageTemplate, T propertyValue)
+        public Task Fatal<T>(string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
+        public Task Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        public Task Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        public Task Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
             throw new NotImplementedException();
         }
 
-        public void Write(LogEventLevel level, string messageTemplate)
+        public Task Write(LogEventLevel level, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Write(LogEventLevel level, Exception exception, string messageTemplate)
+        public Task Write(LogEventLevel level, Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose(string messageTemplate)
+        public Task Verbose(string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Verbose(Exception exception, string messageTemplate)
+        public Task Verbose(Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug(string messageTemplate)
+        public Task Debug(string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Debug(Exception exception, string messageTemplate)
+        public Task Debug(Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Information(string messageTemplate)
+        public Task Information(string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Information(Exception exception, string messageTemplate)
+        public Task Information(Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning(string messageTemplate)
+        public Task Warning(string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Warning(Exception exception, string messageTemplate)
+        public Task Warning(Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Error(string messageTemplate)
+        public Task Error(string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Error(Exception exception, string messageTemplate)
+        public Task Error(Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal(string messageTemplate)
+        public Task Fatal(string messageTemplate)
         {
             throw new NotImplementedException();
         }
 
-        public void Fatal(Exception exception, string messageTemplate)
+        public Task Fatal(Exception exception, string messageTemplate)
         {
             throw new NotImplementedException();
         }

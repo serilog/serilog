@@ -10,6 +10,7 @@ using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Events;
 using Serilog.Tests.Support;
+using System.Threading.Tasks;
 
 namespace Serilog.Tests
 {
@@ -19,8 +20,9 @@ namespace Serilog.Tests
         {
             public bool IsDisposed { get; private set; }
 
-            public void Emit(LogEvent logEvent)
+            public Task Emit(LogEvent logEvent)
             {
+                return Task.FromResult((object)null);
             }
 
             public void Dispose()
@@ -63,7 +65,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void AFilterPreventsMatchedEventsFromPassingToTheSink()
+        public async Task AFilterPreventsMatchedEventsFromPassingToTheSink()
         {
             var excluded = Some.InformationEvent();
             var included = Some.InformationEvent();
@@ -75,8 +77,8 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .Filter.With(filter)
                 .CreateLogger();
-            logger.Write(included);
-            logger.Write(excluded);
+            await logger.Write(included);
+            await logger.Write(excluded);
             Assert.Equal(1, events.Count);
             Assert.True(events.Contains(included));
         }
@@ -91,7 +93,7 @@ namespace Serilog.Tests
 // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
         [Fact]
-        public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
+        public async Task SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
@@ -101,7 +103,7 @@ namespace Serilog.Tests
                 .Destructure.AsScalar(typeof(AB))
                 .CreateLogger();
 
-            logger.Information("{@AB}", new AB());
+            await logger.Information("{@AB}", new AB());
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
@@ -109,7 +111,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void DestructuringSystemTypeGivesScalarByDefault()
+        public async Task DestructuringSystemTypeGivesScalarByDefault()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
@@ -119,7 +121,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             var thisType = this.GetType();
-            logger.Information("{@thisType}", thisType);
+            await logger.Information("{@thisType}", thisType);
 
             var ev = events.Single();
             var prop = ev.Properties["thisType"];
@@ -157,7 +159,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void DestructuringIsPossibleForSystemTypeDerivedProperties()
+        public async Task DestructuringIsPossibleForSystemTypeDerivedProperties()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
@@ -170,7 +172,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             var thisType = this.GetType();
-            logger.Information("{@thisType}", thisType);
+            await logger.Information("{@thisType}", thisType);
 
             var ev = events.Single();
             var prop = ev.Properties["thisType"];
@@ -179,7 +181,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void TransformationsAreAppliedToEventProperties()
+        public async Task TransformationsAreAppliedToEventProperties()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
@@ -192,7 +194,7 @@ namespace Serilog.Tests
                 })
                 .CreateLogger();
 
-            logger.Information("{@AB}", new AB());
+            await logger.Information("{@AB}", new AB());
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
@@ -202,7 +204,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void WritingToALoggerWritesToSubLogger()
+        public async Task WritingToALoggerWritesToSubLogger()
         {
             var eventReceived = false;
 
@@ -211,13 +213,13 @@ namespace Serilog.Tests
                     .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.True(eventReceived);
         }
 
         [Fact]
-        public void SubLoggerRestrictsFilter()
+        public async Task SubLoggerRestrictsFilter()
         {
             var eventReceived = false;
 
@@ -227,13 +229,13 @@ namespace Serilog.Tests
                     .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.True(!eventReceived);
         }
 
         [Fact]
-        public void EnrichersExecuteInConfigurationOrder()
+        public async Task EnrichersExecuteInConfigurationOrder()
         {
             var property = Some.LogEventProperty();
             var enrichedPropertySeen = false;
@@ -244,13 +246,13 @@ namespace Serilog.Tests
                 .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.True(enrichedPropertySeen);
         }
 
         [Fact]
-        public void MaximumDestructuringDepthIsEffective()
+        public async Task MaximumDestructuringDepthIsEffective()
         {
             var x = new
             {
@@ -266,7 +268,7 @@ namespace Serilog.Tests
                 }
             };
 
-            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
+            var xs = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
 
             Assert.Contains("C", xs);
             Assert.DoesNotContain(xs, "D");
@@ -281,30 +283,30 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumStringLengthNOTEffectiveForString()
+        public async Task MaximumStringLengthNOTEffectiveForString()
         {
             var x = "ABCD";
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
+            var limitedText = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
 
             Assert.Equal("\"ABCD\"", limitedText);
         }
 
         [Fact]
-        public void MaximumStringLengthEffectiveForCapturedString()
+        public async Task MaximumStringLengthEffectiveForCapturedString()
         {
             var x = "ABCD";
 
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
+            var limitedText = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
 
             Assert.Equal("\"AB…\"", limitedText);
         }
 
         [Fact]
-        public void MaximumStringLengthEffectiveForStringifiedString()
+        public async Task MaximumStringLengthEffectiveForStringifiedString()
         {
             var x = "ABCD";
 
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
+            var limitedText = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
 
             Assert.Equal("\"AB…\"", limitedText);
         }
@@ -312,33 +314,33 @@ namespace Serilog.Tests
         [Theory]
         [InlineData("1234", "12…", 3)]
         [InlineData("123", "123", 3)]
-        public void MaximumStringLengthEffectiveForCapturedObject(string text, string textAfter, int limit)
+        public async Task MaximumStringLengthEffectiveForCapturedObject(string text, string textAfter, int limit)
         {
             var x = new
             {
                 TooLongText = text
             };
 
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(limit), "@");
+            var limitedText = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(limit), "@");
 
             Assert.Contains(textAfter, limitedText);
         }
 
         [Fact]
-        public void MaximumStringLengthEffectiveForStringifiedObject()
+        public async Task MaximumStringLengthEffectiveForStringifiedObject()
         {
             var x = new ToStringOfLength(4);
 
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
+            var limitedText = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
             Assert.Contains("##…", limitedText);
         }
 
         [Fact]
-        public void MaximumStringLengthNOTEffectiveForObject()
+        public async Task MaximumStringLengthNOTEffectiveForObject()
         {
             var x = new ToStringOfLength(4);
 
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
+            var limitedText = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
 
             Assert.Contains("####", limitedText);
         }
@@ -367,28 +369,28 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void MaximumCollectionCountNotEffectiveForArrayAsLongAsLimit()
+        public async Task MaximumCollectionCountNotEffectiveForArrayAsLongAsLimit()
         {
             var x = new[] { 1, 2, 3 };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
+            var limitedCollection = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
 
             Assert.Contains("3", limitedCollection);
         }
 
         [Fact]
-        public void MaximumCollectionCountEffectiveForArrayThanLimit()
+        public async Task MaximumCollectionCountEffectiveForArrayThanLimit()
         {
             var x = new[] { 1, 2, 3, 4 };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
+            var limitedCollection = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(3));
 
             Assert.Contains("3", limitedCollection);
             Assert.DoesNotContain("4", limitedCollection);
         }
 
         [Fact]
-        public void MaximumCollectionCountEffectiveForDictionaryWithMoreKeysThanLimit()
+        public async Task MaximumCollectionCountEffectiveForDictionaryWithMoreKeysThanLimit()
         {
             var x = new Dictionary<string, int>
             {
@@ -397,14 +399,14 @@ namespace Serilog.Tests
                 {"3", 3}
             };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
+            var limitedCollection = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
 
             Assert.Contains("2", limitedCollection);
             Assert.DoesNotContain("3", limitedCollection);
         }
 
         [Fact]
-        public void MaximumCollectionCountNotEffectiveForDictionaryWithAsManyKeysAsLimit()
+        public async Task MaximumCollectionCountNotEffectiveForDictionaryWithAsManyKeysAsLimit()
         {
             var x = new Dictionary<string, int>
             {
@@ -412,12 +414,12 @@ namespace Serilog.Tests
                 {"2", 2},
             };
 
-            var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
+            var limitedCollection = await LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
 
             Assert.Contains("2", limitedCollection);
         }
 
-        private string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        private async Task<string> LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
             LogEvent evt = null;
             var logConf = new LoggerConfiguration()
@@ -425,13 +427,13 @@ namespace Serilog.Tests
             logConf = conf(logConf);
             var log = logConf.CreateLogger();
 
-            log.Information($"{{{destructuringSymbol}X}}", x);
+            await log.Information($"{{{destructuringSymbol}X}}", x);
             var result = evt.Properties["X"].ToString();
             return result;
         }
 
         [Fact]
-        public void DynamicallySwitchingSinkRestrictsOutput()
+        public async Task DynamicallySwitchingSinkRestrictsOutput()
         {
             var eventsReceived = 0;
             var levelSwitch = new LoggingLevelSwitch();
@@ -442,17 +444,17 @@ namespace Serilog.Tests
                     levelSwitch: levelSwitch)
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
             levelSwitch.MinimumLevel = LogEventLevel.Warning;
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
             levelSwitch.MinimumLevel = LogEventLevel.Verbose;
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.Equal(2, eventsReceived);
         }
 
         [Fact]
-        public void LevelSwitchTakesPrecedenceOverMinimumLevel()
+        public async Task LevelSwitchTakesPrecedenceOverMinimumLevel()
         {
             var sink = new CollectingSink();
 
@@ -460,13 +462,13 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink, LogEventLevel.Fatal, new LoggingLevelSwitch())
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.Equal(1, sink.Events.Count);
         }
 
         [Fact]
-        public void LastMinimumLevelConfigurationWins()
+        public async Task LastMinimumLevelConfigurationWins()
         {
             var sink = new CollectingSink();
 
@@ -476,13 +478,13 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.Equal(1, sink.Events.Count);
         }
 
         [Fact]
-        public void HigherMinimumLevelOverridesArePropagated()
+        public async Task HigherMinimumLevelOverridesArePropagated()
         {
             var sink = new CollectingSink();
 
@@ -492,15 +494,15 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
-            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
-            logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
+            await logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            await logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(2, sink.Events.Count);
         }
 
         [Fact]
-        public void LowerMinimumLevelOverridesArePropagated()
+        public async Task LowerMinimumLevelOverridesArePropagated()
         {
             var sink = new CollectingSink();
 
@@ -510,46 +512,46 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
-            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
-            logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
+            await logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            await logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(1, sink.Events.Count);
         }
 
         [Fact]
-        public void ExceptionsThrownBySinksAreNotPropagated()
+        public async Task ExceptionsThrownBySinksAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.True(true, "No exception reached the caller");
         }
 
         [Fact]
-        public void ExceptionsThrownBySinksAreNotPropagatedEvenWhenAuditingIsPresent()
+        public async Task ExceptionsThrownBySinksAreNotPropagatedEvenWhenAuditingIsPresent()
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
                 .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.True(true, "No exception reached the caller");
         }
 
         [Fact]
-        public void ExceptionsThrownByFiltersAreNotPropagated()
+        public async Task ExceptionsThrownByFiltersAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
                 .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            await logger.Write(Some.InformationEvent());
 
             Assert.True(true, "No exception reached the caller");
         }
@@ -557,14 +559,14 @@ namespace Serilog.Tests
         class Value { }
 
         [Fact]
-        public void ExceptionsThrownByDestructuringPoliciesAreNotPropagated()
+        public async Task ExceptionsThrownByDestructuringPoliciesAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new CollectingSink())
                 .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
                 .CreateLogger();
 
-            logger.Information("{@Value}", new Value());
+            await logger.Information("{@Value}", new Value());
 
             Assert.True(true, "No exception reached the caller");
         }

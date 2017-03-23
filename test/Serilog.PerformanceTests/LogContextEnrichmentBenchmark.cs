@@ -3,6 +3,7 @@ using BenchmarkDotNet.Running;
 using Serilog;
 using Serilog.Context;
 using System;
+using System.Threading.Tasks;
 using Serilog.PerformanceTests.Support;
 using Xunit;
 using Serilog.Events;
@@ -28,9 +29,9 @@ namespace Serilog.PerformanceTests
         }
         
         [Benchmark(Baseline = true)]
-        public void Bare()
+        public Task Bare()
         {
-            _bare.Write(_event);
+            return _bare.Write(_event);
         }         
  
         [Benchmark]
@@ -51,11 +52,11 @@ namespace Serilog.PerformanceTests
         }
  
         [Benchmark]
-        public void PushPropertyEnriched()
+        public Task PushPropertyEnriched()
         {
             using (LogContext.PushProperty("A", "B"))
             {
-                _enriched.Write(_event);
+                return _enriched.Write(_event);
             }
         }   
     }
