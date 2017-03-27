@@ -10,6 +10,7 @@ using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Events;
 using Serilog.Tests.Support;
+using TestDummies;
 
 namespace Serilog.Tests
 {
@@ -576,6 +577,20 @@ namespace Serilog.Tests
             {
                 get { throw new Exception("Boom!"); }
             }
+        }
+
+        [Fact]
+        public void WrappedSinks()
+        {
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrapping(w => w.Sink(sink))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.NotEmpty(DummyWrappingSink.Emitted);
+            Assert.NotEmpty(sink.Events);
         }
     }
 }

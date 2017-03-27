@@ -150,6 +150,21 @@ namespace Serilog.Configuration
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
-        } 
+        }
+
+        public static LoggerConfiguration Wrap(
+            LoggerSinkConfiguration parentSinkConfiguration,
+            Func<ILogEventSink, ILogEventSink> addSink,
+            Action<LoggerSinkConfiguration> sinkConfigAction)
+        {
+            var sinkConfiguration = new LoggerSinkConfiguration(
+                parentSinkConfiguration._loggerConfiguration,
+                s => parentSinkConfiguration.Sink(addSink(s)),
+                parentSinkConfiguration._applyInheritedConfiguration);
+
+            sinkConfigAction(sinkConfiguration);
+
+            return parentSinkConfiguration._loggerConfiguration;
+        }
     }
 }
