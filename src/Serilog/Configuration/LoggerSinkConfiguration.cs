@@ -152,19 +152,27 @@ namespace Serilog.Configuration
             return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
         }
 
+        /// <summary>
+        /// Helper method for wrapping sinks.
+        /// </summary>
+        /// <param name="logggerSinkConfiguration">The parent sink configuration.</param>
+        /// <param name="sinkDecorator">A function that allows for wrapping <see cref="ILogEventSink"/>s
+        /// added in <paramref name="sinkConfigurationAction"/></param>
+        /// <param name="sinkConfigurationAction">An action that configures sinks to be wrapped in <paramref name="sinkDecorator"/></param>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Wrap(
-            LoggerSinkConfiguration parentSinkConfiguration,
-            Func<ILogEventSink, ILogEventSink> addSink,
-            Action<LoggerSinkConfiguration> sinkConfigAction)
+            LoggerSinkConfiguration logggerSinkConfiguration,
+            Func<ILogEventSink, ILogEventSink> sinkDecorator,
+            Action<LoggerSinkConfiguration> sinkConfigurationAction)
         {
-            var sinkConfiguration = new LoggerSinkConfiguration(
-                parentSinkConfiguration._loggerConfiguration,
-                s => parentSinkConfiguration.Sink(addSink(s)),
-                parentSinkConfiguration._applyInheritedConfiguration);
+            var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
+                logggerSinkConfiguration._loggerConfiguration,
+                s => logggerSinkConfiguration.Sink(sinkDecorator(s)),
+                logggerSinkConfiguration._applyInheritedConfiguration);
 
-            sinkConfigAction(sinkConfiguration);
+            sinkConfigurationAction(capturingLoggerSinkConfiguration);
 
-            return parentSinkConfiguration._loggerConfiguration;
+            return logggerSinkConfiguration._loggerConfiguration;
         }
     }
 }
