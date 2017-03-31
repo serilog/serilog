@@ -8,6 +8,7 @@ using Xunit;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Filters;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Tests.Support;
 using TestDummies;
@@ -591,6 +592,20 @@ namespace Serilog.Tests
 
             Assert.NotEmpty(DummyWrappingSink.Emitted);
             Assert.NotEmpty(sink.Events);
+        }
+
+        [Fact]
+        public void WrappingWarnsAboutNonDisposableWrapper()
+        {
+            var messages = new List<string>();
+            SelfLog.Enable(s => messages.Add(s));
+
+            new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink<DisposeTrackingSink>())
+                .CreateLogger();
+
+            SelfLog.Disable();
+            Assert.NotEmpty(messages);
         }
     }
 }

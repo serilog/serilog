@@ -169,9 +169,23 @@ namespace Serilog.Configuration
             if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
             if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
 
+            void WrapAndAddSink(ILogEventSink sink)
+            {
+                bool sinkIsDisposable = sink is IDisposable;
+
+                ILogEventSink wrappedSink = wrapSink(sink);
+
+                if (sinkIsDisposable && !(wrappedSink is IDisposable))
+                {
+                    SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable, but wrapped sink {1} does.", wrappedSink, sink);
+                }
+
+                loggerSinkConfiguration.Sink(wrappedSink);
+            }
+
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
                 loggerSinkConfiguration._loggerConfiguration,
-                s => loggerSinkConfiguration.Sink(wrapSink(s)),
+                WrapAndAddSink,
                 loggerSinkConfiguration._applyInheritedConfiguration);
 
             configureWrappedSink(capturingLoggerSinkConfiguration);
