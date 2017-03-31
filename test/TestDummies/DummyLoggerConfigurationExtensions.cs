@@ -42,7 +42,7 @@ namespace TestDummies
             return loggerSinkConfiguration.Sink(new DummyRollingFileAuditSink(), restrictedToMinimumLevel);
         }
 
-        public static LoggerConfiguration DummyWrapping(
+        public static LoggerConfiguration Dummy(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             Action<LoggerSinkConfiguration> wrappedSinkAction)
         {

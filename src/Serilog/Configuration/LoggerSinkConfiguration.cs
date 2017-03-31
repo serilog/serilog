@@ -155,24 +155,28 @@ namespace Serilog.Configuration
         /// <summary>
         /// Helper method for wrapping sinks.
         /// </summary>
-        /// <param name="logggerSinkConfiguration">The parent sink configuration.</param>
-        /// <param name="sinkDecorator">A function that allows for wrapping <see cref="ILogEventSink"/>s
-        /// added in <paramref name="sinkConfigurationAction"/></param>
-        /// <param name="sinkConfigurationAction">An action that configures sinks to be wrapped in <paramref name="sinkDecorator"/></param>
+        /// <param name="loggerSinkConfiguration">The parent sink configuration.</param>
+        /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
+        /// added in <paramref name="configureWrappedSink"/>.</param>
+        /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration Wrap(
-            LoggerSinkConfiguration logggerSinkConfiguration,
-            Func<ILogEventSink, ILogEventSink> sinkDecorator,
-            Action<LoggerSinkConfiguration> sinkConfigurationAction)
+            LoggerSinkConfiguration loggerSinkConfiguration,
+            Func<ILogEventSink, ILogEventSink> wrapSink,
+            Action<LoggerSinkConfiguration> configureWrappedSink)
         {
+            if (loggerSinkConfiguration == null) throw new ArgumentNullException(nameof(loggerSinkConfiguration));
+            if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
+            if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
+
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
-                logggerSinkConfiguration._loggerConfiguration,
-                s => logggerSinkConfiguration.Sink(sinkDecorator(s)),
-                logggerSinkConfiguration._applyInheritedConfiguration);
+                loggerSinkConfiguration._loggerConfiguration,
+                s => loggerSinkConfiguration.Sink(wrapSink(s)),
+                loggerSinkConfiguration._applyInheritedConfiguration);
 
-            sinkConfigurationAction(capturingLoggerSinkConfiguration);
+            configureWrappedSink(capturingLoggerSinkConfiguration);
 
-            return logggerSinkConfiguration._loggerConfiguration;
+            return loggerSinkConfiguration._loggerConfiguration;
         }
     }
 }

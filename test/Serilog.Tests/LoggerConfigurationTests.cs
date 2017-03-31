@@ -580,11 +580,11 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void WrappedSinks()
+        public void WrappingDecoratesTheConfiguredSink()
         {
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
-                .WriteTo.DummyWrapping(w => w.Sink(sink))
+                .WriteTo.Dummy(w => w.Sink(sink))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
