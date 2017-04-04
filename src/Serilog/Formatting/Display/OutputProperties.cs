@@ -72,7 +72,7 @@ namespace Serilog.Formatting.Display
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
             result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
             result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
-            result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties);
+            result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties, result);
 
             var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
             result[ExceptionPropertyName] = new LiteralStringValue(exception);

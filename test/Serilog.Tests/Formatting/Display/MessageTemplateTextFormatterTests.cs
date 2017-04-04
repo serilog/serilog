@@ -208,5 +208,15 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.Equal("{Foo: 42}", sw.ToString());
         }
+
+        [Fact]
+        public void DoNotDuplicatePropertiesAlreadyRenderedInMessageTemplate()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Foo} {Properties}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from bar!"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("42 {}", sw.ToString());
+        }
     }
 }

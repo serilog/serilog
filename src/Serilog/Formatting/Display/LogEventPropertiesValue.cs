@@ -23,11 +23,13 @@ namespace Serilog.Formatting.Display
     {
         readonly MessageTemplate _template;
         readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
+        readonly IReadOnlyDictionary<string, LogEventPropertyValue> _outputProperties;
 
-        public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
+        public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, IReadOnlyDictionary<string, LogEventPropertyValue> outputProperties)
         {
             _template = template;
             _properties = properties;
+            _outputProperties = outputProperties;
         }
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
@@ -37,6 +39,11 @@ namespace Serilog.Formatting.Display
             var delim = "";
             foreach (var kvp in _properties)
             {
+                if (_outputProperties.ContainsKey(kvp.Key))
+                {
+                    continue;
+                }
+
                 if (TemplateContainsPropertyName(_template, kvp.Key))
                 {
                     continue;
