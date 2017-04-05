@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -41,6 +40,16 @@ namespace TestDummies
             IFormatProvider formatProvider = null)
         {
             return loggerSinkConfiguration.Sink(new DummyRollingFileAuditSink(), restrictedToMinimumLevel);
+        }
+
+        public static LoggerConfiguration Dummy(
+            this LoggerSinkConfiguration loggerSinkConfiguration,
+            Action<LoggerSinkConfiguration> wrappedSinkAction)
+        {
+            return LoggerSinkConfiguration.Wrap(
+                loggerSinkConfiguration,
+                s => new DummyWrappingSink(s),
+                wrappedSinkAction);
         }
     }
 }

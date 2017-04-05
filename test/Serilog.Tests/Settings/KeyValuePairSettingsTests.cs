@@ -24,7 +24,7 @@ namespace Serilog.Tests.Settings
 
             // The core Serilog assembly is always considered
             Assert.Equal(1, configurationAssemblies.Count);
-        } 
+        }
 
         [Fact]
         public void PropertyEnrichmentIsApplied()
@@ -127,30 +127,33 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void TestMinimumLevelOverrides() {
+        public void TestMinimumLevelOverrides()
+        {
             var settings = new Dictionary<string, string>
+
             {
-                ["minimum-level:override:Microsoft"] = "Warning",
+                ["minimum-level:override:System"] = "Warning",
             };
 
             LogEvent evt = null;
 
             var log = new LoggerConfiguration()
-                .ReadFrom.KeyValuePairs(settings)
-                .WriteTo.Sink(new DelegatingSink(e => evt = e))
-                .CreateLogger();
+                 .ReadFrom.KeyValuePairs(settings)
+                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                 .CreateLogger();
 
-            var microsoftLogger = log.ForContext<Microsoft.Extensions.Testing.Abstractions.FullPdbReader>();
-            microsoftLogger.Write(Some.InformationEvent());
+            var systemLogger = log.ForContext<System.WeakReference>();
+            systemLogger.Write(Some.InformationEvent());
 
             Assert.Null(evt);
 
-            microsoftLogger.Warning("Bad things");
+            systemLogger.Warning("Bad things");
             Assert.NotNull(evt);
 
             evt = null;
             log.Write(Some.InformationEvent());
             Assert.NotNull(evt);
         }
+
     }
 }
