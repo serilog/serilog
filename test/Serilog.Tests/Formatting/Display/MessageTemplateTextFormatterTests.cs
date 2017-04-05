@@ -198,5 +198,25 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.Equal("Size Huge", sw.ToString());
         }
+
+        [Fact]
+        public void NonMessagePropertiesAreRendered()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {Bar}!", "bar"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("{Foo: 42}", sw.ToString());
+        }
+
+        [Fact]
+        public void DoNotDuplicatePropertiesAlreadyRenderedInOutputTemplate()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Foo} {Properties}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).ForContext("Bar", 42).Information("Hello from bar!"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("42 {Bar: 42}", sw.ToString());
+        }
     }
 }

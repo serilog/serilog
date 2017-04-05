@@ -53,11 +53,28 @@ namespace Serilog.Formatting.Display
         public const string ExceptionPropertyName = "Exception";
 
         /// <summary>
+        /// The properties of the log event.
+        /// </summary>
+        public const string PropertiesPropertyName = "Properties";
+
+        /// <summary>
         /// Create properties from the provided log event.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
+        [Obsolete("Pass the full output template using the other overload.")]
         public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
+        {
+            return GetOutputProperties(logEvent, MessageTemplate.Empty);
+        }
+
+        /// <summary>
+        /// Create properties from the provided log event.
+        /// </summary>
+        /// <param name="logEvent">The log event.</param>
+        /// <param name="outputTemplate">The output template.</param>
+        /// <returns>A dictionary with properties representing the log event.</returns>
+        public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
@@ -69,8 +86,9 @@ namespace Serilog.Formatting.Display
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
             result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
             result[NewLinePropertyName] = LiteralNewLine;
+            result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties, outputTemplate);
 
-            var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
+            var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
             result[ExceptionPropertyName] = new LiteralStringValue(exception);
 
             return result;
