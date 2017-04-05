@@ -61,8 +61,8 @@ namespace Serilog.Formatting.Display
             // This could be lazier: the output properties include
             // everything from the log event, but often we won't need any more than
             // just the standard timestamp/message etc.
-            var outputProperties = OutputProperties.GetOutputProperties(logEvent);
-            
+            var outputProperties = OutputProperties.GetOutputProperties(logEvent, _outputTemplate);
+
             foreach (var token in _outputTemplate.Tokens)
             {
                 var pt = token as PropertyToken;

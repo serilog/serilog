@@ -23,13 +23,13 @@ namespace Serilog.Formatting.Display
     {
         readonly MessageTemplate _template;
         readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
-        readonly IReadOnlyDictionary<string, LogEventPropertyValue> _outputProperties;
+        readonly MessageTemplate _outputTemplate;
 
-        public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, IReadOnlyDictionary<string, LogEventPropertyValue> outputProperties)
+        public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate)
         {
             _template = template;
             _properties = properties;
-            _outputProperties = outputProperties;
+            _outputTemplate = outputTemplate;
         }
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
@@ -39,12 +39,12 @@ namespace Serilog.Formatting.Display
             var delim = "";
             foreach (var kvp in _properties)
             {
-                if (_outputProperties.ContainsKey(kvp.Key))
+                if (TemplateContainsPropertyName(_template, kvp.Key))
                 {
                     continue;
                 }
 
-                if (TemplateContainsPropertyName(_template, kvp.Key))
+                if (TemplateContainsPropertyName(_outputTemplate, kvp.Key))
                 {
                     continue;
                 }
@@ -61,6 +61,11 @@ namespace Serilog.Formatting.Display
 
         static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
         {
+            if (template.NamedProperties == null)
+            {
+                return false;
+            }
+
             for (var i = 0; i < template.NamedProperties.Length; i++)
             {
                 var namedProperty = template.NamedProperties[i];
