@@ -59,6 +59,17 @@ namespace Serilog.Formatting.Display
         /// Create properties from the provided log event.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
+        /// <returns>A dictionary with properties representing the log event.</returns>
+        [Obsolete("Pass the full output template using the other overload.")]
+        public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
+        {
+            return GetOutputProperties(logEvent, MessageTemplate.Empty);
+        }
+
+        /// <summary>
+        /// Create properties from the provided log event.
+        /// </summary>
+        /// <param name="logEvent">The log event.</param>
         /// <param name="outputTemplate">The output template.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
         public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
