@@ -95,8 +95,8 @@ namespace Serilog.Parsing
                 return new TextToken(rawText, first);
 
             var propertyName = propertyNameAndDestructuring;
-            Destructuring destructuring;
-            if (TryGetDestructuringHint(propertyName[0], out destructuring))
+            var destructuring = Destructuring.Default;
+            if (propertyName.Length != 0 && TryGetDestructuringHint(propertyName[0], out destructuring))
                 propertyName = propertyName.Substring(1);
 
             if (propertyName.Length == 0)
