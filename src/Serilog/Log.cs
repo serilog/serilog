@@ -55,6 +55,14 @@ namespace Serilog
                 _logger = value;
             }
         }
+        
+        /// <summary>
+        /// Returns true if the current <see cref="Logger"/> is the silent (unconfigured) logger
+        /// </summary>
+        public static bool IsSilentLogger()
+        {
+            return _logger is SilentLogger;
+        }
 
         /// <summary>
         /// Resets <see cref="Logger"/> to the default and disposes the original if possible
