@@ -67,9 +67,10 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="output">The output.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public void RenderMessage(TextWriter output, IFormatProvider formatProvider = null)
+        /// <param name="ignoreTypeTag">set true to ignore the class name in json string</param>
+        public void RenderMessage(TextWriter output, IFormatProvider formatProvider = null, bool ignoreTypeTag = false)
         {
-            MessageTemplate.Render(Properties, output, formatProvider);
+            MessageTemplate.Render(Properties, output, formatProvider, ignoreTypeTag);
         }
 
         /// <summary>
@@ -77,9 +78,10 @@ namespace Serilog.Events
         /// with the event, and return the result.
         /// </summary>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public string RenderMessage(IFormatProvider formatProvider = null)
+        /// <param name="ignoreTypeTag">set true to ignore the class name in json string</param>
+        public string RenderMessage(IFormatProvider formatProvider = null, bool ignoreTypeTag = false)
         {
-            return MessageTemplate.Render(Properties, formatProvider);
+            return MessageTemplate.Render(Properties, formatProvider, ignoreTypeTag);
         }
 
         /// <summary>
