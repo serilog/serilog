@@ -139,6 +139,17 @@ namespace Serilog.Context
             return Push(properties);
         }
 
+        /// <summary>
+        /// Obtain an enricher that represents the current contents of the <see cref="LogContext"/>. This
+        /// can be pushed back onto the context in a different location/thread when required.
+        /// </summary>
+        /// <returns>An enricher that represents the current contents of the <see cref="LogContext"/>.</returns>
+        public static ILogEventEnricher Clone()
+        {
+            var stack = GetOrCreateEnricherStack();
+            return new SafeAggregateEnricher(stack);
+        }
+
         static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
         {
             var enrichers = Enrichers;
@@ -181,14 +192,8 @@ namespace Serilog.Context
 
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
-            get
-            {
-                return Data.Value;
-            }
-            set
-            {
-                Data.Value = value;
-            }
+            get => Data.Value;
+            set => Data.Value = value;
         }
 
 #elif REMOTING
@@ -211,14 +216,8 @@ namespace Serilog.Context
 
         static ImmutableStack<ILogEventEnricher> Enrichers
         {
-            get
-            {
-                return Data;
-            }
-            set
-            {
-                Data = value;
-            }
+            get => Data;
+            set => Data = value;
         }
 #endif
     }

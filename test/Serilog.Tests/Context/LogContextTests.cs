@@ -12,6 +12,7 @@ using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog.Core;
 
 namespace Serilog.Tests.Context
 {
@@ -43,6 +44,29 @@ namespace Serilog.Tests.Context
                 Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
                 Assert.Equal(3, lastEvent.Properties["C"].LiteralValue());
                 Assert.Equal(4, lastEvent.Properties["D"].LiteralValue());
+            }
+        }
+
+        [Fact]
+        public void LogContextCanBeCloned()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            ILogEventEnricher clonedContext;
+            using (LogContext.PushProperty("A", 1))
+            {
+                clonedContext = LogContext.Clone();
+            }
+
+            using (LogContext.Push(clonedContext))
+            {
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
             }
         }
 
