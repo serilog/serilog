@@ -25,6 +25,28 @@ namespace Serilog.Tests.Context
         }
 
         [Fact]
+        public void PushedPropertiesAreAvailableToLoggers()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.PushProperty("A", 1))
+            using (LogContext.Push(new PropertyEnricher("B", 2)))
+            using (LogContext.Push(new PropertyEnricher("C", 3), new PropertyEnricher("D", 4))) // Different overload
+            {
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
+                Assert.Equal(3, lastEvent.Properties["C"].LiteralValue());
+                Assert.Equal(4, lastEvent.Properties["D"].LiteralValue());
+            }
+        }
+
+        [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;
@@ -63,13 +85,13 @@ namespace Serilog.Tests.Context
                 .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
                 .CreateLogger();
 
-            using (LogContext.PushProperties(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
+            using (LogContext.Push(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
             {
                 log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
-                using (LogContext.PushProperties(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
+                using (LogContext.Push(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
                 {
                     log.Write(Some.InformationEvent());
                     Assert.Equal(10, lastEvent.Properties["A1"].LiteralValue());

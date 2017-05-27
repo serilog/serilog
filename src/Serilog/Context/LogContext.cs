@@ -14,6 +14,7 @@
 
 
 using System;
+using System.ComponentModel;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
@@ -62,7 +63,7 @@ namespace Serilog.Context
 
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
-        /// that can later be used to remove the property, along with any others that
+        /// that must later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
         /// </summary>
@@ -75,35 +76,67 @@ namespace Serilog.Context
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         public static IDisposable PushProperty(string name, object value, bool destructureObjects = false)
         {
+            return Push(new PropertyEnricher(name, value, destructureObjects));
+        }
+
+        /// <summary>
+        /// Push an enricher onto context, returning an <see cref="IDisposable"/>
+        /// that must later be used to remove the property, along with any others that
+        /// may have been pushed on top of it and not yet popped. The property must
+        /// be popped from the same thread/logical call context.
+        /// </summary>
+        /// <param name="enricher">Log Properties to push onto the log context</param>
+        /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IDisposable Push(ILogEventEnricher enricher)
+        {
+            if (enricher == null) throw new ArgumentNullException(nameof(enricher));
+
             var stack = GetOrCreateEnricherStack();
             var bookmark = new ContextStackBookmark(stack);
 
-            Enrichers = stack.Push(new PropertyEnricher(name, value, destructureObjects));
+            Enrichers = stack.Push(enricher);
 
             return bookmark;
         }
 
         /// <summary>
-        /// Push multiple properties onto the context, returning an <see cref="IDisposable"/>
-        /// that can later be used to remove the properties. The properties must
+        /// Push multiple enrichers onto the context, returning an <see cref="IDisposable"/>
+        /// that must later be used to remove the property, along with any others that
+        /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
         /// </summary>
-        /// <param name="properties">Log Properties to push onto the log context</param>
+        /// <seealso cref="PropertyEnricher"/>.
+        /// <param name="enrichers">Log Properties to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IDisposable PushProperties(params ILogEventEnricher[] properties)
+        public static IDisposable Push(params ILogEventEnricher[] enrichers)
         {
-            if (properties == null) throw new ArgumentNullException(nameof(properties));
+            if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
 
             var stack = GetOrCreateEnricherStack();
             var bookmark = new ContextStackBookmark(stack);
 
-            foreach (var prop in properties)
-                stack = stack.Push(prop);
+            for (var i = 0; i < enrichers.Length; ++i)
+                stack = stack.Push(enrichers[i]);
 
             Enrichers = stack;
 
             return bookmark;
+        }
+
+        /// <summary>
+        /// Push enrichers onto the log context. This method is obsolete, please
+        /// use <see cref="Push(Serilog.Core.ILogEventEnricher[])"/> instead.
+        /// </summary>
+        /// <param name="properties">Log Properties to push onto the log context</param>
+        /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        [Obsolete("Please use `LogContext.Push(properties)` instead.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IDisposable PushProperties(params ILogEventEnricher[] properties)
+        {
+            return Push(properties);
         }
 
         static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
