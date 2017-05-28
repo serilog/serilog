@@ -71,6 +71,36 @@ namespace Serilog.Tests.Context
         }
 
         [Fact]
+        public void ClonedLogContextCanSharedAcrossThreads()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            ILogEventEnricher clonedContext;
+            using (LogContext.PushProperty("A", 1))
+            {
+                clonedContext = LogContext.Clone();
+            }
+
+            var t = new Thread(() =>
+            {
+                using (LogContext.Push(clonedContext))
+                {
+                    log.Write(Some.InformationEvent());
+                }
+            });
+
+            t.Start();
+            t.Join();
+
+            Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+        }
+
+        [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
             LogEvent lastEvent = null;

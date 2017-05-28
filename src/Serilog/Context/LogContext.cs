@@ -80,12 +80,12 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Push an enricher onto context, returning an <see cref="IDisposable"/>
+        /// Push an enricher onto the context, returning an <see cref="IDisposable"/>
         /// that must later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
         /// be popped from the same thread/logical call context.
         /// </summary>
-        /// <param name="enricher">Log Properties to push onto the log context</param>
+        /// <param name="enricher">An enricher to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static IDisposable Push(ILogEventEnricher enricher)
@@ -107,7 +107,7 @@ namespace Serilog.Context
         /// be popped from the same thread/logical call context.
         /// </summary>
         /// <seealso cref="PropertyEnricher"/>.
-        /// <param name="enrichers">Log Properties to push onto the log context</param>
+        /// <param name="enrichers">Enrichers to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static IDisposable Push(params ILogEventEnricher[] enrichers)
@@ -129,7 +129,7 @@ namespace Serilog.Context
         /// Push enrichers onto the log context. This method is obsolete, please
         /// use <see cref="Push(Serilog.Core.ILogEventEnricher[])"/> instead.
         /// </summary>
-        /// <param name="properties">Log Properties to push onto the log context</param>
+        /// <param name="properties">Enrichers to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         [Obsolete("Please use `LogContext.Push(properties)` instead.")]
