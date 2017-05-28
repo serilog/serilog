@@ -12,6 +12,7 @@ using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog.Core;
 
 namespace Serilog.Tests.Context
 {
@@ -22,6 +23,81 @@ namespace Serilog.Tests.Context
 #if REMOTING
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
 #endif
+        }
+
+        [Fact]
+        public void PushedPropertiesAreAvailableToLoggers()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.PushProperty("A", 1))
+            using (LogContext.Push(new PropertyEnricher("B", 2)))
+            using (LogContext.Push(new PropertyEnricher("C", 3), new PropertyEnricher("D", 4))) // Different overload
+            {
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
+                Assert.Equal(3, lastEvent.Properties["C"].LiteralValue());
+                Assert.Equal(4, lastEvent.Properties["D"].LiteralValue());
+            }
+        }
+
+        [Fact]
+        public void LogContextCanBeCloned()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            ILogEventEnricher clonedContext;
+            using (LogContext.PushProperty("A", 1))
+            {
+                clonedContext = LogContext.Clone();
+            }
+
+            using (LogContext.Push(clonedContext))
+            {
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            }
+        }
+
+        [Fact]
+        public void ClonedLogContextCanSharedAcrossThreads()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            ILogEventEnricher clonedContext;
+            using (LogContext.PushProperty("A", 1))
+            {
+                clonedContext = LogContext.Clone();
+            }
+
+            var t = new Thread(() =>
+            {
+                using (LogContext.Push(clonedContext))
+                {
+                    log.Write(Some.InformationEvent());
+                }
+            });
+
+            t.Start();
+            t.Join();
+
+            Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
         }
 
         [Fact]
@@ -63,13 +139,13 @@ namespace Serilog.Tests.Context
                 .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
                 .CreateLogger();
 
-            using (LogContext.PushProperties(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
+            using (LogContext.Push(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
             {
                 log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
-                using (LogContext.PushProperties(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
+                using (LogContext.Push(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
                 {
                     log.Write(Some.InformationEvent());
                     Assert.Equal(10, lastEvent.Properties["A1"].LiteralValue());
