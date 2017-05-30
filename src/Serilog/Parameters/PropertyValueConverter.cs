@@ -74,7 +74,7 @@ namespace Serilog.Parameters
                 new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
                 new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
-                new ByteArrayScalarConversionPolicy(),
+                new ByteArrayScalarConversionPolicy()
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
@@ -188,6 +188,33 @@ namespace Serilog.Parameters
 
                 return new SequenceValue(
                     enumerable.Cast<object>().Take(_maximumCollectionCount).Select(o => limiter.CreatePropertyValue(o, destructuring)));
+            }
+
+            if (value is IStructuralEquatable)
+            {
+                var type = value.GetType();
+                if (type.IsConstructedGenericType)
+                {
+                    var definition = type.GetGenericTypeDefinition();
+                    if (definition == typeof(ValueTuple<>) || definition == typeof(ValueTuple<,>) ||
+                        definition == typeof(ValueTuple<,,>) || definition == typeof(ValueTuple<,,,>) ||
+                        definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||
+                        definition == typeof(ValueTuple<,,,,,,>)) // Ignore the 8+ value case for now.
+                    {
+                        var elements = new List<LogEventPropertyValue>();
+                        foreach (var field in type.GetTypeInfo().DeclaredFields)
+                        {
+                            if (field.IsPublic && !field.IsStatic)
+                            {
+                                var fieldValue = field.GetValue(value);
+                                var propertyValue = limiter.CreatePropertyValue(fieldValue, destructuring);
+                                elements.Add(propertyValue);
+                            }
+                        }
+
+                        return new SequenceValue(elements);
+                    }
+                }
             }
 
             if (destructuring == Destructuring.Destructure)
