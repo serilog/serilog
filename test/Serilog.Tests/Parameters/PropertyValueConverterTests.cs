@@ -271,6 +271,39 @@ namespace Serilog.Tests.Parameters
             Assert.Equal(1, nested.Elements.Count);
             Assert.Equal(new ScalarValue("B"), nested.Elements[0]);
         }
+
+        [Fact]
+        public void AllTupleLengthsUpToSevenAreSupported()
+        {
+            var tuples = new object[]
+            {
+                ValueTuple.Create(1),
+                (1, 2),
+                (1, 2, 3),
+                (1, 2, 3, 4),
+                (1, 2, 3, 4, 5),
+                (1, 2, 3, 4, 5, 6),
+                (1, 2, 3, 4, 5, 6, 7)
+            };
+
+            foreach (var t in tuples)
+                Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
+        }
+
+        [Fact]
+        public void EightPlusValueTupleElementsAreIgnored()
+        {
+            var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+            Assert.IsType<ScalarValue>(scalar);
+        }
+
+        [Fact]
+        public void DestructuringIsTransitivelyApplied()
+        {
+            var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new {A = 1}), true);
+            var sequence = Assert.IsType<SequenceValue>(tuple);
+            Assert.IsType<StructureValue>(sequence.Elements[0]);
+        }
     }
 }
 
