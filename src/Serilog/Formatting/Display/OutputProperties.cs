@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
 
+#pragma warning disable 618
+
 namespace Serilog.Formatting.Display
 {
     /// <summary>
@@ -62,7 +64,7 @@ namespace Serilog.Formatting.Display
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
-        [Obsolete("Pass the full output template using the other overload.")]
+        [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
         public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
         {
             return GetOutputProperties(logEvent, MessageTemplate.Empty);
@@ -74,7 +76,7 @@ namespace Serilog.Formatting.Display
         /// <param name="logEvent">The log event.</param>
         /// <param name="outputTemplate">The output template.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
-        public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
+        internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 

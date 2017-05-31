@@ -35,6 +35,8 @@ namespace Serilog.Formatting.Display
         readonly IFormatProvider _formatProvider;
         readonly MessageTemplate _outputTemplate;
 
+        static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new Dictionary<string, LogEventPropertyValue>();
+
         /// <summary>
         /// Construct a <see cref="MessageTemplateTextFormatter"/>.
         /// </summary>
@@ -58,42 +60,90 @@ namespace Serilog.Formatting.Display
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            // This could be lazier: the output properties include
-            // everything from the log event, but often we won't need any more than
-            // just the standard timestamp/message etc.
-            var outputProperties = OutputProperties.GetOutputProperties(logEvent, _outputTemplate);
-
             foreach (var token in _outputTemplate.Tokens)
             {
-                var pt = token as PropertyToken;
-                if (pt == null)
+                if (token is TextToken tt)
                 {
-                    token.Render(outputProperties, output, _formatProvider);
+                    tt.Render(NoProperties, output, _formatProvider);
                     continue;
                 }
 
-                // First variation from normal rendering - if a property is missing,
-                // don't render anything (message templates render the raw token here).
-                LogEventPropertyValue propertyValue;
-                if (!outputProperties.TryGetValue(pt.PropertyName, out propertyValue))
-                    continue;
+                var pt = (PropertyToken)token;
 
-                // Second variation; if the value is a scalar string, use literal
-                // rendering and support some additional formats: 'u' for uppercase
-                // and 'w' for lowercase.
-                var sv = propertyValue as ScalarValue;
-                if (sv != null && sv.Value is string)
+                if (pt.PropertyName == OutputProperties.MessagePropertyName)
                 {
-                    var overridden = new Dictionary<string, LogEventPropertyValue>
+                    if (pt.Alignment.HasValue)
                     {
-                        { pt.PropertyName, new LiteralStringValue((string) sv.Value) }
-                    };
-
-                    token.Render(overridden, output, _formatProvider);
+                        var sw = new StringWriter();
+                        logEvent.MessageTemplate.Render(logEvent.Properties, sw, _formatProvider);
+                        Padding.Apply(output, sw.ToString(), pt.Alignment);
+                    }
+                    else
+                    {
+                        logEvent.MessageTemplate.Render(logEvent.Properties, output, _formatProvider);
+                    }
+                }
+                else if (pt.PropertyName == OutputProperties.TimestampPropertyName)
+                {
+                    if (pt.Alignment.HasValue)
+                    {
+                        var sw = new StringWriter();
+                        ScalarValue.Render(logEvent.Timestamp, sw, pt.Format, _formatProvider);
+                        Padding.Apply(output, sw.ToString(), pt.Alignment);
+                    }
+                    else
+                    {
+                        ScalarValue.Render(logEvent.Timestamp, output, pt.Format, _formatProvider);
+                    }
+                }
+                else if (pt.PropertyName == OutputProperties.LevelPropertyName)
+                {
+                    var moniker = LogEventLevelValue.GetLevelMoniker(logEvent.Level, pt.Format);
+                    Padding.Apply(output, moniker, pt.Alignment);
+                }
+                else if (pt.PropertyName == OutputProperties.NewLinePropertyName)
+                {
+                    Padding.Apply(output, Environment.NewLine, pt.Alignment);
+                }
+                else if (pt.PropertyName == OutputProperties.ExceptionPropertyName)
+                {
+                    var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
+                    Padding.Apply(output, exception, pt.Alignment);
+                }
+                else if (pt.PropertyName == OutputProperties.PropertiesPropertyName)
+                {
+                    if (pt.Alignment.HasValue)
+                    {
+                        var sw = new StringWriter();
+                        LogEventPropertiesValue.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, sw, _formatProvider);
+                        Padding.Apply(output, sw.ToString(), pt.Alignment);
+                    }
+                    else
+                    {
+                        LogEventPropertiesValue.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, output, _formatProvider);
+                    }
                 }
                 else
                 {
-                    token.Render(outputProperties, output, _formatProvider);
+                    // First variation from normal rendering - if a property is missing,
+                    // don't render anything (message templates render the raw token here).
+                    LogEventPropertyValue propertyValue;
+                    if (!logEvent.Properties.TryGetValue(pt.PropertyName, out propertyValue))
+                        continue;
+
+                    // Second variation; if the value is a scalar string, use literal
+                    // rendering and support some additional formats: 'u' for uppercase
+                    // and 'w' for lowercase.
+                    var sv = propertyValue as ScalarValue;
+                    if (sv?.Value is string literalString)
+                    {
+                        var cased = Casing.Format(literalString, pt.Format);
+                        Padding.Apply(output, cased, pt.Alignment);
+                    }
+                    else
+                    {
+                        token.Render(logEvent.Properties, output, _formatProvider);
+                    }
                 }
             }
         }

@@ -57,12 +57,10 @@ namespace Serilog.Parsing
         public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
-            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
-            if (rawText == null) throw new ArgumentNullException(nameof(rawText));
-            PropertyName = propertyName;
+            PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
             Format = format;
             Destructuring = destructuring;
-            _rawText = rawText;
+            _rawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
             Alignment = alignment;
 
             int position;

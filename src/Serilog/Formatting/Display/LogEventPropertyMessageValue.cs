@@ -19,6 +19,7 @@ using Serilog.Events;
 
 namespace Serilog.Formatting.Display
 {
+    [Obsolete("Not used by the current output formatting implementation.")]
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {
         readonly MessageTemplate _template;

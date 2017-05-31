@@ -54,6 +54,7 @@ namespace Serilog.Formatting.Display
             new []{ "F", "FA", "FTL", "FATL" }
         };
 
+        [Obsolete("Not used by the current output formatting implementation.")]
         public LogEventLevelValue(LogEventLevel value)
         {
             _value = value;
@@ -64,48 +65,49 @@ namespace Serilog.Formatting.Display
         /// </summary>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            if (format != null && (format.Length == 2 || format.Length == 3))
+            output.Write(GetLevelMoniker(_value, format));
+        }
+
+        public static string GetLevelMoniker(LogEventLevel value, string format = null)
+        {
+            if (format == null || format.Length != 2 && format.Length != 3)
+                return Casing.Format(value.ToString(), format);
+
+            // Using int.Parse() here requires allocating a string to exclude the first character prefix.
+            // Junk like "wxy" will be accepted but produce benign results.
+            var width = format[1] - '0';
+            if (format.Length == 3)
             {
-                // Using int.Parse() here requires allocating a string to exclude the first character prefix.
-                // Junk like "wxy" will be accepted but produce benign results.
-                var width = format[1] - '0';
-                if (format.Length == 3)
-                {
-                    width *= 10;
-                    width += format[2] - '0';
-                }
+                width *= 10;
+                width += format[2] - '0';
+            }
 
-                if (width < 1)
-                    return;
+            if (width < 1)
+                return string.Empty;
 
-                if (width > 4)
-                {
-                    var value = _value.ToString();
-                    if (value.Length > width)
-                        value = value.Substring(0, width);
-                    output.Write(Casing.Format(value));
-                    return;
-                }
+            if (width > 4)
+            {
+                var stringValue = value.ToString();
+                if (stringValue.Length > width)
+                    stringValue = stringValue.Substring(0, width);
+                return Casing.Format(stringValue);
+            }
 
-                var index = (int)_value;
-                if (index >= 0 && index <= (int) LogEventLevel.Fatal)
+            var index = (int)value;
+            if (index >= 0 && index <= (int) LogEventLevel.Fatal)
+            {
+                switch (format[0])
                 {
-                    switch (format[0])
-                    {
-                        case 'w':
-                            output.Write(_lowercaseLevelMap[index][width - 1]);
-                            return;
-                        case 'u':
-                            output.Write(_uppercaseLevelMap[index][width - 1]);
-                            return;
-                        case 't':
-                            output.Write(_titleCaseLevelMap[index][width - 1]);
-                            return;
-                    }
+                    case 'w':
+                        return _lowercaseLevelMap[index][width - 1];
+                    case 'u':
+                        return _uppercaseLevelMap[index][width - 1];
+                    case 't':
+                        return _titleCaseLevelMap[index][width - 1];
                 }
             }
 
-            output.Write(Casing.Format(_value.ToString(), format));
+            return Casing.Format(value.ToString(), format);
         }
     }
 }

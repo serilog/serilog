@@ -25,6 +25,7 @@ namespace Serilog.Formatting.Display
         readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
         readonly MessageTemplate _outputTemplate;
 
+        [Obsolete("Not used by the current output formatting implementation.")]
         public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate)
         {
             _template = template;
@@ -34,17 +35,22 @@ namespace Serilog.Formatting.Display
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
+            Render(_template, _properties, _outputTemplate, output, formatProvider);
+        }
+
+        public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, IFormatProvider formatProvider = null)
+        {
             output.Write('{');
 
             var delim = "";
-            foreach (var kvp in _properties)
+            foreach (var kvp in properties)
             {
-                if (TemplateContainsPropertyName(_template, kvp.Key))
+                if (TemplateContainsPropertyName(template, kvp.Key))
                 {
                     continue;
                 }
 
-                if (TemplateContainsPropertyName(_outputTemplate, kvp.Key))
+                if (TemplateContainsPropertyName(outputTemplate, kvp.Key))
                 {
                     continue;
                 }

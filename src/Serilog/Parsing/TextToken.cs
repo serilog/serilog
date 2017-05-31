@@ -32,8 +32,7 @@ namespace Serilog.Parsing
         /// <exception cref="ArgumentNullException"></exception>
         public TextToken(string text, int startIndex = -1) : base(startIndex)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
-            Text = text;
+            Text = text ?? throw new ArgumentNullException(nameof(text));
         }
 
         /// <summary>

@@ -20,14 +20,14 @@ namespace Serilog.Formatting.Display
 {
     // A special case (non-null) string value for use in output
     // templates. Does not apply "quoted" formatting by default.
+    [Obsolete("Not used by the current output formatting implementation.")]
     class LiteralStringValue : LogEventPropertyValue
     {
         readonly string _value;
 
         public LiteralStringValue(string value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            _value = value;
+            _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
