@@ -68,5 +68,11 @@ namespace Serilog.PerformanceTests
         {
             BenchmarkRunner.Run<OutputTemplateRenderingBenchmark>();
         }
+
+        [Fact]
+        public void MessageTemplateRenderingBenchmark()
+        {
+            BenchmarkRunner.Run<MessageTemplateRenderingBenchmark>();
+        }
     }
 }
