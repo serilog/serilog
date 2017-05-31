@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ namespace Serilog.Formatting.Display
                 }
                 else if (pt.PropertyName == OutputProperties.LevelPropertyName)
                 {
-                    var moniker = LogEventLevelValue.GetLevelMoniker(logEvent.Level, pt.Format);
+                    var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, pt.Format);
                     Padding.Apply(output, moniker, pt.Alignment);
                 }
                 else if (pt.PropertyName == OutputProperties.NewLinePropertyName)
@@ -115,12 +115,12 @@ namespace Serilog.Formatting.Display
                     if (pt.Alignment.HasValue)
                     {
                         var sw = new StringWriter();
-                        LogEventPropertiesValue.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, sw, _formatProvider);
+                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, sw, _formatProvider);
                         Padding.Apply(output, sw.ToString(), pt.Alignment);
                     }
                     else
                     {
-                        LogEventPropertiesValue.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, output, _formatProvider);
+                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, output, _formatProvider);
                     }
                 }
                 else

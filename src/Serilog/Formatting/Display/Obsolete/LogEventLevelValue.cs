@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,36 +14,27 @@
 
 using System;
 using System.IO;
+
 using Serilog.Events;
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Formatting.Display.Obsolete
 {
-    // A special case (non-null) string value for use in output
-    // templates. Does not apply "quoted" formatting by default.
     [Obsolete("Not used by the current output formatting implementation.")]
-    class LiteralStringValue : LogEventPropertyValue
+    class LogEventLevelValue : LogEventPropertyValue
     {
-        readonly string _value;
+        readonly LogEventLevel _value;
 
-        public LiteralStringValue(string value)
+        public LogEventLevelValue(LogEventLevel value)
         {
-            _value = value ?? throw new ArgumentNullException(nameof(value));
+            _value = value;
         }
 
+        /// <summary>
+        /// This method will apply only upper or lower case formatting, not fixed width
+        /// </summary>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            output.Write(Casing.Format(_value, format));
-        }
-
-        public override bool Equals(object obj)
-        {
-            var sv = obj as LiteralStringValue;
-            return sv != null && Equals(_value, sv._value);
-        }
-
-        public override int GetHashCode()
-        {
-            return _value.GetHashCode();
+            output.Write(LevelOutputFormat.GetLevelMoniker(_value, format));
         }
     }
 }

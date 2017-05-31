@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Serilog Contributors
+// Copyright 2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,25 +19,8 @@ using Serilog.Events;
 
 namespace Serilog.Formatting.Display
 {
-    class LogEventPropertiesValue : LogEventPropertyValue
+    static class PropertiesOutputFormat
     {
-        readonly MessageTemplate _template;
-        readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
-        readonly MessageTemplate _outputTemplate;
-
-        [Obsolete("Not used by the current output formatting implementation.")]
-        public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate)
-        {
-            _template = template;
-            _properties = properties;
-            _outputTemplate = outputTemplate;
-        }
-
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
-        {
-            Render(_template, _properties, _outputTemplate, output, formatProvider);
-        }
-
         public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, IFormatProvider formatProvider = null)
         {
             output.Write('{');

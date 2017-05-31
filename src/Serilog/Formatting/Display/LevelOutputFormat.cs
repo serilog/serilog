@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Serilog Contributors
+// Copyright 2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-
 using Serilog.Events;
 
 namespace Serilog.Formatting.Display
 {
-    // Allows for the specific handling of the {Level} element.
-    // can now have a fixed width applied to it, as well as casing rules.
-    // Width is set through formats like "u3" (uppercase three chars),
-    // "w1" (one lowercase char), or "t4" (title case four chars).
-    class LogEventLevelValue : LogEventPropertyValue
+    /// <summary>
+    /// Implements the {Level} element.
+    /// can now have a fixed width applied to it, as well as casing rules.
+    /// Width is set through formats like "u3" (uppercase three chars),
+    /// "w1" (one lowercase char), or "t4" (title case four chars).
+    /// </summary>
+    static class LevelOutputFormat
     {
-        readonly LogEventLevel _value;
-
         static readonly string[][] _titleCaseLevelMap = {
             new []{ "V", "Vb", "Vrb", "Verb" },
             new []{ "D", "De", "Dbg", "Dbug" },
@@ -53,20 +50,6 @@ namespace Serilog.Formatting.Display
             new []{ "E", "ER", "ERR", "EROR" },
             new []{ "F", "FA", "FTL", "FATL" }
         };
-
-        [Obsolete("Not used by the current output formatting implementation.")]
-        public LogEventLevelValue(LogEventLevel value)
-        {
-            _value = value;
-        }
-
-        /// <summary>
-        /// This method will apply only upper or lower case formatting, not fixed width
-        /// </summary>
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
-        {
-            output.Write(GetLevelMoniker(_value, format));
-        }
 
         public static string GetLevelMoniker(LogEventLevel value, string format = null)
         {
