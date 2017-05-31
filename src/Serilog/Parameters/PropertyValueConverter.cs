@@ -202,21 +202,22 @@ namespace Serilog.Parameters
                     var keyProperty = typeInfo.GetDeclaredProperty("Key");
                     var valueProperty = typeInfo.GetDeclaredProperty("Value");
 
-                    {
-                        result = new DictionaryValue(enumerable.Cast<object>().Take(_maximumCollectionCount)
-                            .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                                (ScalarValue) limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
-                                limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
-                            .Where(kvp => kvp.Key.Value != null));
-                        return true;
-                    }
-                }
-
-                {
-                    result = new SequenceValue(
-                        enumerable.Cast<object>().Take(_maximumCollectionCount).Select(o => limiter.CreatePropertyValue(o, destructuring)));
+                    result = new DictionaryValue(enumerable
+                        .Cast<object>()
+                        .Take(_maximumCollectionCount)
+                        .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                            (ScalarValue) limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
+                            limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
+                        .Where(kvp => kvp.Key.Value != null));
                     return true;
                 }
+
+                result = new SequenceValue(enumerable
+                    .Cast<object>()
+                    .Take(_maximumCollectionCount)
+                    .Select(o => limiter.CreatePropertyValue(o, destructuring)));
+
+                return true;
             }
 
             result = null;
@@ -248,10 +249,8 @@ namespace Serilog.Parameters
                     }
                 }
 
-                {
-                    result = new SequenceValue(elements);
-                    return true;
-                }
+                result = new SequenceValue(elements);
+                return true;
             }
 
             result = null;
