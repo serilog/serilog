@@ -15,6 +15,8 @@
 using System;
 using Serilog.Events;
 
+// ReSharper disable VirtualMemberNeverOverridden.Global
+
 namespace Serilog.Data
 {
     /// <summary>
@@ -40,7 +42,6 @@ namespace Serilog.Data
         /// <param name="state">Operation state.</param>
         /// <param name="value">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="value"/>.</returns>
-        // ReSharper disable once VirtualMemberNeverOverriden.Global
         protected virtual TResult Visit(TState state, LogEventPropertyValue value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
@@ -103,7 +104,6 @@ namespace Serilog.Data
         /// <param name="value">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="value"/>.</returns>
         // ReSharper disable once UnusedParameter.Global
-        // ReSharper disable once VirtualMemberNeverOverriden.Global
         protected virtual TResult VisitUnsupportedValue(TState state, LogEventPropertyValue value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));

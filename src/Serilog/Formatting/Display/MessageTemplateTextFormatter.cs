@@ -75,12 +75,12 @@ namespace Serilog.Formatting.Display
                     if (pt.Alignment.HasValue)
                     {
                         var sw = new StringWriter();
-                        logEvent.MessageTemplate.Render(logEvent.Properties, sw, _formatProvider);
+                        MessageTemplateRenderer.Render(logEvent.MessageTemplate, logEvent.Properties, sw, pt.Format, _formatProvider);
                         Padding.Apply(output, sw.ToString(), pt.Alignment);
                     }
                     else
                     {
-                        logEvent.MessageTemplate.Render(logEvent.Properties, output, _formatProvider);
+                        MessageTemplateRenderer.Render(logEvent.MessageTemplate, logEvent.Properties, output, pt.Format, _formatProvider);
                     }
                 }
                 else if (pt.PropertyName == OutputProperties.TimestampPropertyName)

@@ -87,30 +87,7 @@ namespace Serilog.Parsing
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            LogEventPropertyValue propertyValue;
-            if (!properties.TryGetValue(PropertyName, out propertyValue))
-            {
-                output.Write(_rawText);
-                return;
-            }
-
-            if (!Alignment.HasValue)
-            {
-                propertyValue.Render(output, Format, formatProvider);
-                return;
-            }
-
-            var valueOutput = new StringWriter();
-            propertyValue.Render(valueOutput, Format, formatProvider);
-            var value = valueOutput.ToString();
-
-            if (value.Length >= Alignment.Value.Width)
-            {
-                output.Write(value);
-                return;
-            }
-
-            Padding.Apply(output, value, Alignment.Value);
+            MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, false, false);
         }
 
         /// <summary>
@@ -137,6 +114,8 @@ namespace Serilog.Parsing
         /// True if the property name is a positional index; otherwise, false.
         /// </summary>
         public bool IsPositional => _position.HasValue;
+
+        internal string RawText => _rawText;
 
         /// <summary>
         /// Try to get the integer value represented by the property name.
