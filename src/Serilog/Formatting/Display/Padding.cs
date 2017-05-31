@@ -13,7 +13,7 @@ namespace Serilog.Formatting.Display
         /// </summary>
         public static void Apply(TextWriter output, string value, Alignment? alignment)
         {
-            if (!alignment.HasValue || value.Length <= alignment.Value.Width)
+            if (!alignment.HasValue || value.Length >= alignment.Value.Width)
             {
                 output.Write(value);
                 return;
