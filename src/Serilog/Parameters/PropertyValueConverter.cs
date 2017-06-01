@@ -233,10 +233,20 @@ namespace Serilog.Parameters
             }
 
             var definition = valueType.GetGenericTypeDefinition();
+
+            // Ignore the 8+ value case for now.
+#if VALUETUPLE
             if (definition == typeof(ValueTuple<>) || definition == typeof(ValueTuple<,>) ||
                 definition == typeof(ValueTuple<,,>) || definition == typeof(ValueTuple<,,,>) ||
                 definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||
-                definition == typeof(ValueTuple<,,,,,,>)) // Ignore the 8+ value case for now.
+                definition == typeof(ValueTuple<,,,,,,>))
+#else
+            var defn = definition.FullName;
+            if (defn == "System.ValueTuple`1" || defn == "System.ValueTuple`2" ||
+                defn == "System.ValueTuple`3" || defn == "System.ValueTuple`4" ||
+                defn == "System.ValueTuple`5" || defn == "System.ValueTuple`6" ||
+                defn == "System.ValueTuple`7")
+#endif
             {
                 var elements = new List<LogEventPropertyValue>();
                 foreach (var field in valueType.GetTypeInfo().DeclaredFields)
