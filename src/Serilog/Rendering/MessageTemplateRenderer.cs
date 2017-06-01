@@ -33,14 +33,20 @@ namespace Serilog.Rendering
 
             bool isLiteral = false, isJson = false;
 
-            if (format != null && (format.Length == 1 || format.Length == 2))
+            if (format != null)
             {
-                isLiteral = format[0] == 'l' || format[1] == 'l';
-                isJson = format[0] == 'j' || format[1] == 'j';
+                for (var i = 0; i < format.Length; ++i)
+                {
+                    if (format[i] == 'l')
+                        isLiteral = true;
+                    else if (format[i] == 'j')
+                        isJson = true;
+                }
             }
 
-            foreach (var token in messageTemplate.TokenArray)
+            for (var ti = 0; ti < messageTemplate.TokenArray.Length; ++ti)
             {
+                var token = messageTemplate.TokenArray[ti];
                 if (token is TextToken tt)
                 {
                     RenderTextToken(tt, output);

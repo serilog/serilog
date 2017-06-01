@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Capturing;
-using Xunit;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Tests.Support;
+using Xunit;
 
-namespace Serilog.Tests.Parameters
+namespace Serilog.Tests.Capturing
 {
     public class PropertyValueConverterTests
     {
