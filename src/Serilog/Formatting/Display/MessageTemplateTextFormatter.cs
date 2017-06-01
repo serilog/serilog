@@ -70,34 +70,7 @@ namespace Serilog.Formatting.Display
                 }
 
                 var pt = (PropertyToken)token;
-
-                if (pt.PropertyName == OutputProperties.MessagePropertyName)
-                {
-                    if (pt.Alignment.HasValue)
-                    {
-                        var sw = new StringWriter();
-                        MessageTemplateRenderer.Render(logEvent.MessageTemplate, logEvent.Properties, sw, pt.Format, _formatProvider);
-                        Padding.Apply(output, sw.ToString(), pt.Alignment);
-                    }
-                    else
-                    {
-                        MessageTemplateRenderer.Render(logEvent.MessageTemplate, logEvent.Properties, output, pt.Format, _formatProvider);
-                    }
-                }
-                else if (pt.PropertyName == OutputProperties.TimestampPropertyName)
-                {
-                    if (pt.Alignment.HasValue)
-                    {
-                        var sw = new StringWriter();
-                        ScalarValue.Render(logEvent.Timestamp, sw, pt.Format, _formatProvider);
-                        Padding.Apply(output, sw.ToString(), pt.Alignment);
-                    }
-                    else
-                    {
-                        ScalarValue.Render(logEvent.Timestamp, output, pt.Format, _formatProvider);
-                    }
-                }
-                else if (pt.PropertyName == OutputProperties.LevelPropertyName)
+                if (pt.PropertyName == OutputProperties.LevelPropertyName)
                 {
                     var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, pt.Format);
                     Padding.Apply(output, moniker, pt.Alignment);
@@ -111,40 +84,47 @@ namespace Serilog.Formatting.Display
                     var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
                     Padding.Apply(output, exception, pt.Alignment);
                 }
-                else if (pt.PropertyName == OutputProperties.PropertiesPropertyName)
-                {
-                    if (pt.Alignment.HasValue)
-                    {
-                        var sw = new StringWriter();
-                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, sw, _formatProvider);
-                        Padding.Apply(output, sw.ToString(), pt.Alignment);
-                    }
-                    else
-                    {
-                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, output, _formatProvider);
-                    }
-                }
                 else
                 {
-                    // First variation from normal rendering - if a property is missing,
-                    // don't render anything (message templates render the raw token here).
-                    LogEventPropertyValue propertyValue;
-                    if (!logEvent.Properties.TryGetValue(pt.PropertyName, out propertyValue))
-                        continue;
+                    // In this block, `writer` may be used to buffer output so that
+                    // padding can be applied.
+                    var writer = pt.Alignment.HasValue ? new StringWriter() : output;
 
-                    // Second variation; if the value is a scalar string, use literal
-                    // rendering and support some additional formats: 'u' for uppercase
-                    // and 'w' for lowercase.
-                    var sv = propertyValue as ScalarValue;
-                    if (sv?.Value is string literalString)
+                    if (pt.PropertyName == OutputProperties.MessagePropertyName)
                     {
-                        var cased = Casing.Format(literalString, pt.Format);
-                        Padding.Apply(output, cased, pt.Alignment);
+                        MessageTemplateRenderer.Render(logEvent.MessageTemplate, logEvent.Properties, writer, pt.Format, _formatProvider);
+                    }
+                    else if (pt.PropertyName == OutputProperties.TimestampPropertyName)
+                    {
+                        ScalarValue.Render(logEvent.Timestamp, writer, pt.Format, _formatProvider);
+                    }
+                    else if (pt.PropertyName == OutputProperties.PropertiesPropertyName)
+                    {
+                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, writer, _formatProvider);
                     }
                     else
                     {
-                        token.Render(logEvent.Properties, output, _formatProvider);
+                        // If a property is missing, don't render anything (message templates render the raw token here).
+                        LogEventPropertyValue propertyValue;
+                        if (!logEvent.Properties.TryGetValue(pt.PropertyName, out propertyValue))
+                            continue;
+
+                        // If the value is a scalar string, support some additional formats: 'u' for uppercase
+                        // and 'w' for lowercase.
+                        var sv = propertyValue as ScalarValue;
+                        if (sv?.Value is string literalString)
+                        {
+                            var cased = Casing.Format(literalString, pt.Format);
+                            writer.Write(cased);
+                        }
+                        else
+                        {
+                            propertyValue.Render(output, pt.Format, _formatProvider);
+                        }
                     }
+
+                    if (pt.Alignment.HasValue)
+                        Padding.Apply(output, ((StringWriter)writer).ToString(), pt.Alignment);
                 }
             }
         }

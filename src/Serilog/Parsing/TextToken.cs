@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
+using Serilog.Rendering;
 
 namespace Serilog.Parsing
 {
@@ -49,7 +50,7 @@ namespace Serilog.Parsing
         public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
-            output.Write(Text);
+            MessageTemplateRenderer.RenderTextToken(this, output);
         }
 
         /// <summary>

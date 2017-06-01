@@ -15,6 +15,7 @@
 using System;
 using System.IO;
 using Serilog.Events;
+using Serilog.Rendering;
 
 namespace Serilog.Formatting.Display.Obsolete
 {

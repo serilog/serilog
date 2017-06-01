@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Serilog.Events;
+using Serilog.Rendering;
 
 namespace Serilog.Formatting.Display
 {

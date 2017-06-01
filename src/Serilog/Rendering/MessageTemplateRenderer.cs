@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
-using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
 
@@ -44,7 +43,7 @@ namespace Serilog.Rendering
             {
                 if (token is TextToken tt)
                 {
-                    output.Write(tt.Text);
+                    RenderTextToken(tt, output);
                 }
                 else
                 {
@@ -52,6 +51,11 @@ namespace Serilog.Rendering
                     RenderPropertyToken(pt, properties, output, formatProvider, isLiteral, isJson);
                 }
             }
+        }
+
+        public static void RenderTextToken(TextToken tt, TextWriter output)
+        {
+            output.Write(tt.Text);
         }
 
         public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider, bool isLiteral, bool isJson)

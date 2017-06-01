@@ -13,10 +13,9 @@
 // limitations under the License.
 
 using System.IO;
-
 using Serilog.Parsing;
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Rendering
 {
     static class Padding
     {
