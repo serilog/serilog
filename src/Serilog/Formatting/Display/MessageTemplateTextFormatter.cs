@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -35,8 +34,6 @@ namespace Serilog.Formatting.Display
     {
         readonly IFormatProvider _formatProvider;
         readonly MessageTemplate _outputTemplate;
-
-        static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new Dictionary<string, LogEventPropertyValue>();
 
         /// <summary>
         /// Construct a <see cref="MessageTemplateTextFormatter"/>.
@@ -65,7 +62,7 @@ namespace Serilog.Formatting.Display
             {
                 if (token is TextToken tt)
                 {
-                    tt.Render(NoProperties, output, _formatProvider);
+                    MessageTemplateRenderer.RenderTextToken(tt, output);
                     continue;
                 }
 
