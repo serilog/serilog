@@ -16,10 +16,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
+using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Rendering
 {
     static class MessageTemplateRenderer
     {

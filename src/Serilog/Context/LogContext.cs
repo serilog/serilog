@@ -20,7 +20,6 @@ using Serilog.Core.Enrichers;
 using Serilog.Events;
 
 #if ASYNCLOCAL
-using System.Collections.Generic;
 using System.Threading;
 #elif REMOTING
 using System.Runtime.Remoting;

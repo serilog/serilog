@@ -13,9 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using Serilog.Events;
+
+#if HASHTABLE
 using System.Collections;
+#else
+using System.Collections.Generic;
+#endif
 
 namespace Serilog.Core.Pipeline
 {

@@ -20,8 +20,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Serilog.Events;
-using Serilog.Formatting.Display;
 using Serilog.Parsing;
+using Serilog.Rendering;
 
 namespace Serilog.Formatting.Json
 {

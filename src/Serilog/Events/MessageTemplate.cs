@@ -17,8 +17,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Serilog.Debugging;
-using Serilog.Formatting.Display;
 using Serilog.Parsing;
+using Serilog.Rendering;
 
 namespace Serilog.Events
 {

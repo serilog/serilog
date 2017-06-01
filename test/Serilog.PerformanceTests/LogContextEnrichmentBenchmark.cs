@@ -1,10 +1,6 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
-using Serilog;
 using Serilog.Context;
-using System;
 using Serilog.PerformanceTests.Support;
-using Xunit;
 using Serilog.Events;
 
 namespace Serilog.PerformanceTests

@@ -18,7 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
-using Serilog.Formatting.Display;
+using Serilog.Rendering;
 
 namespace Serilog.Parsing
 {

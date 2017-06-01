@@ -15,12 +15,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Capturing;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Core.Sinks;
 using Serilog.Events;
-using Serilog.Parameters;
 
 namespace Serilog
 {

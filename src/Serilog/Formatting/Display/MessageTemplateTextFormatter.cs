@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Rendering;
 
 namespace Serilog.Formatting.Display
 {

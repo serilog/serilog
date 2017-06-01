@@ -11,7 +11,7 @@ namespace Serilog.Tests.Support
 
         public LogEventPropertyValueComparer(IEqualityComparer<object> objectEqualityComparer = null)
         {
-            this._objectEqualityComparer = objectEqualityComparer ?? EqualityComparer<object>.Default;
+            _objectEqualityComparer = objectEqualityComparer ?? EqualityComparer<object>.Default;
         }
 
         public bool Equals(LogEventPropertyValue x, LogEventPropertyValue y)

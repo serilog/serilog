@@ -17,7 +17,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Parameters
+namespace Serilog.Capturing
 {
     partial class PropertyValueConverter
     {

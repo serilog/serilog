@@ -10,6 +10,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xunit;
 using Xunit.Sdk;
+// ReSharper disable PossibleMultipleEnumeration
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace Serilog.Tests
 {
@@ -97,10 +101,9 @@ namespace Serilog.Tests
             Assert.True(writeMethod.IsPublic);
             Assert.Equal(writeMethod.ReturnType, typeof(void));
 
-            LogEventLevel level = LogEventLevel.Information;
+            var level = LogEventLevel.Information;
 
             CollectingSink sink;
-
             var logger = GetLogger(loggerType, out sink);
 
             InvokeMethod(writeMethod, logger, new object[] { Some.LogEvent(DateTimeOffset.Now, level) });
@@ -108,8 +111,8 @@ namespace Serilog.Tests
             //handle silent logger special case i.e. no result validation
             if (loggerType == typeof(SilentLogger))
                 return;
-            else
-                EvaluateSingleResult(level, sink);
+            
+            EvaluateSingleResult(level, sink);
         }
 
         [Theory]
@@ -158,12 +161,10 @@ namespace Serilog.Tests
                         {
                             report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.UserMessage}");
                         }
-
-                        continue;
                     }
                 }
 
-                Assert.True(signatureMatchAndInvokeSuccess, $"{method} did not match any known method or failed invoke\n" + report.ToString());
+                Assert.True(signatureMatchAndInvokeSuccess, $"{method} did not match any known method or failed invoke\n" + report);
             }
         }
 
@@ -185,7 +186,7 @@ namespace Serilog.Tests
             Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, MessageTemplate);
 
             var parameters = method.GetParameters();
-            int index = 0;
+            var index = 0;
 
             Assert.Equal(parameters[index].Name, "messageTemplate");
             Assert.Equal(parameters[index].ParameterType, typeof(string));
@@ -203,7 +204,6 @@ namespace Serilog.Tests
             Assert.Equal(parameters[index].Name, "boundProperties");
             Assert.Equal(parameters[index].ParameterType, typeof(IEnumerable<LogEventProperty>).MakeByRefType());
             Assert.True(parameters[index].IsOut);
-            index++;
 
             var logger = GetLogger(loggerType);
 
@@ -242,7 +242,7 @@ namespace Serilog.Tests
             Assert.True(method.IsPublic);
 
             var parameters = method.GetParameters();
-            int index = 0;
+            var index = 0;
 
             Assert.Equal(parameters[index].Name, "propertyName");
             Assert.Equal(parameters[index].ParameterType, typeof(string));
@@ -343,7 +343,7 @@ namespace Serilog.Tests
             {
                 e.Data.Add("IsSignatureAssertionFailure", true);
 
-                throw e;
+                throw;
             }
 
             var logger = GetLogger(method.DeclaringType);
@@ -375,7 +375,7 @@ namespace Serilog.Tests
             {
                 e.Data.Add("IsSignatureAssertionFailure", true);
 
-                throw e;
+                throw;
             }
 
             var logger = GetLogger(method.DeclaringType);
@@ -396,7 +396,7 @@ namespace Serilog.Tests
                 var parameters = method.GetParameters();
                 Assert.Equal(parameters.Length, 3);
 
-                int index = 0;
+                var index = 0;
 
                 Assert.Equal(parameters[index].Name, "propertyName");
                 Assert.Equal(parameters[index].ParameterType, typeof(string));
@@ -414,7 +414,7 @@ namespace Serilog.Tests
             {
                 e.Data.Add("IsSignatureAssertionFailure", true);
 
-                throw e;
+                throw;
             }
 
             var logger = GetLogger(method.DeclaringType);
@@ -464,12 +464,12 @@ namespace Serilog.Tests
             {
                 e.Data.Add("IsSignatureAssertionFailure", true);
 
-                throw e;
+                throw;
             }
 
             var logger = GetLogger(method.DeclaringType);
 
-            var enrichedLogger = InvokeMethod(method, logger, null, new Type[] { typeof(object) });
+            var enrichedLogger = InvokeMethod(method, logger, null, new[] { typeof(object) });
 
             Assert.NotNull(enrichedLogger);
             Assert.True(enrichedLogger is ILogger);
@@ -493,7 +493,7 @@ namespace Serilog.Tests
             {
                 e.Data.Add("IsSignatureAssertionFailure", true);
 
-                throw e;
+                throw;
             }
 
             var logger = GetLogger(method.DeclaringType);
@@ -566,7 +566,7 @@ namespace Serilog.Tests
                 {
                     try
                     {
-                        Action<MethodInfo, Type[], object[]> invokeTestMethod = null;
+                        Action<MethodInfo, Type[], object[]> invokeTestMethod;
 
                         if (testInvokeResults)
                             invokeTestMethod = InvokeConventionMethodAndTest;
@@ -592,19 +592,17 @@ namespace Serilog.Tests
                         {
                             report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.UserMessage}");
                         }
-
-                        continue;
                     }
                 }
 
-                Assert.True(signatureMatchAndInvokeSuccess, $"{method} did not match any known convention or failed invoke\n" + report.ToString());
+                Assert.True(signatureMatchAndInvokeSuccess, $"{method} did not match any known convention or failed invoke\n" + report);
             }
         }
 
         // Method0 (string messageTemplate) : void
         void ValidateMethod0(MethodInfo method, Action<MethodInfo, Type[], object[]> invokeMethod)
         {
-            VerifyMethodSignature(method, expectedArgCount: 1);
+            VerifyMethodSignature(method);
 
             var parameters = new object[] { "message" };
 
@@ -616,7 +614,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, isGeneric: true, expectedArgCount: 2);
 
-            var typeArgs = new Type[] { typeof(string) };
+            var typeArgs = new[] { typeof(string) };
 
             var parameters = new object[] { "message", "value0" };
 
@@ -628,7 +626,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, isGeneric: true, expectedArgCount: 3);
 
-            var typeArgs = new Type[] { typeof(string), typeof(string) };
+            var typeArgs = new[] { typeof(string), typeof(string) };
 
             var parameters = new object[]
             {
@@ -643,7 +641,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, isGeneric: true, expectedArgCount: 4);
 
-            var typeArgs = new Type[] { typeof(string), typeof(string), typeof(string) };
+            var typeArgs = new[] { typeof(string), typeof(string), typeof(string) };
 
             var parameters = new object[]
             {
@@ -681,7 +679,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, hasExceptionArg: true, isGeneric: true, expectedArgCount: 3);
 
-            var typeArgs = new Type[] { typeof(string) };
+            var typeArgs = new[] { typeof(string) };
 
             var parameters = new object[]
             {
@@ -696,7 +694,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, hasExceptionArg: true, isGeneric: true, expectedArgCount: 4);
 
-            var typeArgs = new Type[] { typeof(string), typeof(string) };
+            var typeArgs = new[] { typeof(string), typeof(string) };
 
             var parameters = new object[]
             {
@@ -711,7 +709,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, hasExceptionArg: true, isGeneric: true, expectedArgCount: 5);
 
-            var typeArgs = new Type[] { typeof(string), typeof(string), typeof(string) };
+            var typeArgs = new[] { typeof(string), typeof(string), typeof(string) };
 
             var parameters = new object[]
             {
@@ -726,7 +724,7 @@ namespace Serilog.Tests
         {
             VerifyMethodSignature(method, hasExceptionArg: true, expectedArgCount: 3);
 
-            object[] parameters = new object[]
+            var parameters = new object[]
             {
                 new Exception("test"), "Processed {value0}, {value1}, {value2}",
                 new object[] { "value0", "value1", "value2" }
@@ -786,7 +784,7 @@ namespace Serilog.Tests
             {
                 var parameters = method.GetParameters();
 
-                int index = 0;
+                var index = 0;
 
                 if (method.Name == Write)
                 {
@@ -822,7 +820,7 @@ namespace Serilog.Tests
                     //multiple generic argument convention T0...Tx : T0 propertyValue0... Tx propertyValueX
                     if (genericTypeArgs.Length > 1)
                     {
-                        for (int i = 0; i < genericTypeArgs.Length; i++, index++)
+                        for (var i = 0; i < genericTypeArgs.Length; i++, index++)
                         {
                             Assert.Equal(genericTypeArgs[i].Name, $"T{i}");
 
@@ -867,7 +865,7 @@ namespace Serilog.Tests
                 // mark xunit assertion failures
                 e.Data.Add("IsSignatureAssertionFailure", true);
 
-                throw e;
+                throw;
             }
         }
 
@@ -881,13 +879,14 @@ namespace Serilog.Tests
             {
                 if (method.IsGenericMethod)
                     return method.MakeGenericMethod(typeArgs).Invoke(null, parameters);
-                else
-                    return method.Invoke(null, parameters);
+
+                return method.Invoke(null, parameters);
             }
-            else if (method.IsGenericMethod)
+
+            if (method.IsGenericMethod)
                 return method.MakeGenericMethod(typeArgs).Invoke(instance, parameters);
-            else
-                return method.Invoke(instance, parameters);
+
+            return method.Invoke(instance, parameters);
         }
 
         static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
@@ -920,7 +919,8 @@ namespace Serilog.Tests
                     .WriteTo.Sink(sink)
                     .CreateLogger();
             }
-            else if (loggerType == typeof(Log))
+
+            if (loggerType == typeof(Log))
             {
                 sink = new CollectingSink();
 
@@ -933,10 +933,11 @@ namespace Serilog.Tests
 
                 return null;
             }
-            else if (loggerType == typeof(SilentLogger))
+
+            if (loggerType == typeof(SilentLogger))
                 return new SilentLogger();
-            else
-                throw new ArgumentException($"Logger Type of {loggerType} is not supported");
+
+            throw new ArgumentException($"Logger Type of {loggerType} is not supported");
         }
     }
 }
