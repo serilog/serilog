@@ -273,7 +273,7 @@ namespace Serilog.Tests.Parameters
         }
 
         [Fact]
-        public void AllTupleLengthsUpToSevenAreSupported()
+        public void AllTupleLengthsUpToSevenAreSupportedForCapturing()
         {
             var tuples = new object[]
             {
@@ -291,14 +291,14 @@ namespace Serilog.Tests.Parameters
         }
 
         [Fact]
-        public void EightPlusValueTupleElementsAreIgnored()
+        public void EightPlusValueTupleElementsAreIgnoredByCapturing()
         {
             var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
             Assert.IsType<ScalarValue>(scalar);
         }
 
         [Fact]
-        public void DestructuringIsTransitivelyApplied()
+        public void ValueTupleDestructuringIsTransitivelyApplied()
         {
             var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new {A = 1}), true);
             var sequence = Assert.IsType<SequenceValue>(tuple);
