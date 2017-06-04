@@ -1,0 +1,7 @@
+version: '{build}'
+skip_tags: true
+image: Visual Studio 2017
+configuration: Release
+test: off
+build_script:
+- ps: ./RunPerfTests.ps1
