@@ -74,7 +74,7 @@ namespace Serilog.Capturing
                 new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
                 new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
-                new ByteArrayScalarConversionPolicy(),
+                new ByteArrayScalarConversionPolicy()
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
@@ -162,6 +162,29 @@ namespace Serilog.Capturing
                 }
             }
 
+            if (TryConvertEnumerable(value, destructuring, valueType, limiter, out var enumerableResult))
+                return enumerableResult;
+
+            if (TryConvertValueTuple(value, destructuring, valueType, limiter, out var tupleResult))
+                return tupleResult;
+
+            if (destructuring == Destructuring.Destructure)
+            {
+                var type = value.GetType();
+                var typeTag = type.Name;
+                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+                {
+                    typeTag = null;
+                }
+
+                return new StructureValue(GetProperties(value, limiter), typeTag);
+            }
+
+            return new ScalarValue(value.ToString());
+        }
+
+        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
+        {
             var enumerable = value as IEnumerable;
             if (enumerable != null)
             {
@@ -179,30 +202,69 @@ namespace Serilog.Capturing
                     var keyProperty = typeInfo.GetDeclaredProperty("Key");
                     var valueProperty = typeInfo.GetDeclaredProperty("Value");
 
-                    return new DictionaryValue(enumerable.Cast<object>().Take(_maximumCollectionCount)
+                    result = new DictionaryValue(enumerable
+                        .Cast<object>()
+                        .Take(_maximumCollectionCount)
                         .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                                           (ScalarValue)limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
-                                           limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
+                            (ScalarValue) limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
+                            limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
                         .Where(kvp => kvp.Key.Value != null));
+                    return true;
                 }
 
-                return new SequenceValue(
-                    enumerable.Cast<object>().Take(_maximumCollectionCount).Select(o => limiter.CreatePropertyValue(o, destructuring)));
+                result = new SequenceValue(enumerable
+                    .Cast<object>()
+                    .Take(_maximumCollectionCount)
+                    .Select(o => limiter.CreatePropertyValue(o, destructuring)));
+
+                return true;
             }
 
-            if (destructuring == Destructuring.Destructure)
+            result = null;
+            return false;
+        }
+
+        static bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
+        {
+            if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
             {
-                var type = value.GetType();
-                var typeTag = type.Name;
-                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
-                {
-                    typeTag = null;
-                }
-
-                return new StructureValue(GetProperties(value, limiter), typeTag);
+                result = null;
+                return false;
             }
 
-            return new ScalarValue(value.ToString());
+            var definition = valueType.GetGenericTypeDefinition();
+
+            // Ignore the 8+ value case for now.
+#if VALUETUPLE
+            if (definition == typeof(ValueTuple<>) || definition == typeof(ValueTuple<,>) ||
+                definition == typeof(ValueTuple<,,>) || definition == typeof(ValueTuple<,,,>) ||
+                definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||
+                definition == typeof(ValueTuple<,,,,,,>))
+#else
+            var defn = definition.FullName;
+            if (defn == "System.ValueTuple`1" || defn == "System.ValueTuple`2" ||
+                defn == "System.ValueTuple`3" || defn == "System.ValueTuple`4" ||
+                defn == "System.ValueTuple`5" || defn == "System.ValueTuple`6" ||
+                defn == "System.ValueTuple`7")
+#endif
+            {
+                var elements = new List<LogEventPropertyValue>();
+                foreach (var field in valueType.GetTypeInfo().DeclaredFields)
+                {
+                    if (field.IsPublic && !field.IsStatic)
+                    {
+                        var fieldValue = field.GetValue(value);
+                        var propertyValue = limiter.CreatePropertyValue(fieldValue, destructuring);
+                        elements.Add(propertyValue);
+                    }
+                }
+
+                result = new SequenceValue(elements);
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
         LogEventPropertyValue Stringify(object value)

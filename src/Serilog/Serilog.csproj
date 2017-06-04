@@ -46,18 +46,6 @@
     <PackageReference Include="System.Threading" Version="4.0.11" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);REMOTING;HASHTABLE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Collections.NonGeneric" Version="4.0.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
@@ -72,5 +60,17 @@
     <PackageReference Include="System.Text.RegularExpressions" Version="4.1.0" />
     <PackageReference Include="System.Threading" Version="4.0.11" />
   </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);REMOTING;HASHTABLE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
+  </PropertyGroup>
 
 </Project>
