@@ -17,14 +17,7 @@ namespace Serilog.PerformanceTests
             Some.InformationEvent("Processed {@Position} for {Task} in {Elapsed:000} ms",
                 new { Latitude = 25, Longitude = 134 }, "Benchmark", 34);
 
-        readonly StringWriter _output = new StringWriter();
-
-        [Setup]
-        public void Setup()
-        {
-            _output.GetStringBuilder().Length = 0;
-            _output.GetStringBuilder().Capacity = 1024; // Only a few dozen chars actually needed here.
-        }
+        readonly TextWriter _output = new NullTextWriter();
 
         [Benchmark]
         public void TemplateWithNoProperties()

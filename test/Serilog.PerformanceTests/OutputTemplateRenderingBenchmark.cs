@@ -17,14 +17,7 @@ namespace Serilog.PerformanceTests
         static readonly LogEvent HelloWorldEvent = Some.InformationEvent("Hello, {Name}", "World");
         static readonly MessageTemplateTextFormatter Formatter = new MessageTemplateTextFormatter(DefaultFileOutputTemplate, CultureInfo.InvariantCulture);
 
-        readonly StringWriter _output = new StringWriter();
-
-        [Setup]
-        public void Setup()
-        {
-            _output.GetStringBuilder().Length = 0;
-            _output.GetStringBuilder().Capacity = 1024; // Only a few dozen chars actually needed here.
-        }
+        readonly TextWriter _output = new NullTextWriter();
 
         [Benchmark]
         public void FormatToOutput()
