@@ -30,7 +30,7 @@
     <DefineConstants>$(DefineConstants);APPDOMAIN;REMOTING;GETCURRENTMETHOD</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;GETCURRENTMETHOD</DefineConstants>
+    <DefineConstants>$(DefineConstants);APPDOMAIN;ASYNCLOCAL;GETCURRENTMETHOD</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <Reference Include="System" />

@@ -192,32 +192,13 @@ namespace Serilog.Tests.Context
 #if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
-        [Fact(Skip = "Needs to be updated for dotnet runner.")]
+        [Fact]
         public void DoesNotPreventCrossDomainCalls()
         {
-            var projectRoot = Environment.CurrentDirectory;
-            while (!File.Exists(Path.Combine(projectRoot, "global.json")))
-            {
-                projectRoot = Directory.GetParent(projectRoot).FullName;
-            }
-
             AppDomain domain = null;
             try
             {
-                const string configuration =
-#if DEBUG
-                "Debug";
-#else
-                "Release";
-#endif
-
-                var domaininfo = new AppDomainSetup
-                {
-                    ApplicationBase = projectRoot,
-                    PrivateBinPath = @"test\Serilog.Tests\bin\Debug\net452\win7-x64".Replace("Debug", configuration)
-                };
-                var evidence = AppDomain.CurrentDomain.Evidence;
-                domain = AppDomain.CreateDomain("LogContextTest", evidence, domaininfo);
+                domain = AppDomain.CreateDomain("LogContextTests", null, AppDomain.CurrentDomain.SetupInformation);
 
                 var callable = (RemotelyCallable)domain.CreateInstanceAndUnwrap(typeof(RemotelyCallable).Assembly.FullName, typeof(RemotelyCallable).FullName);
 

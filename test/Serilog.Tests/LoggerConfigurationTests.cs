@@ -268,10 +268,10 @@ namespace Serilog.Tests
                 }
             };
 
-            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
+            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumDepth(3), "@");
 
             Assert.Contains("C", xs);
-            Assert.DoesNotContain(xs, "D");
+            Assert.DoesNotContain("D", xs);
         }
 
         [Fact]

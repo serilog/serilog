@@ -1,5 +1,5 @@
 
-// Copyright 2013-2016 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,13 @@ namespace Serilog.PerformanceTests
 {
     public class Harness
     {
+        // dotnet test -c Release -f net46 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.AllocationsBenchmark"
+        [Fact]
+        public void AllocationsBenchmark()
+        {
+            BenchmarkRunner.Run<AllocationsBenchmark>();
+        }
+
         [Fact]
         public void MessageTemplateCacheBenchmark()
         {
