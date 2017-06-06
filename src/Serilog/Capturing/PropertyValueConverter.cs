@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ namespace Serilog.Capturing
 
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
-        readonly int _maximumDestructuringDepth;
+        readonly DepthLimiter _depthLimiter;
         readonly int _maximumStringLength;
         readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
@@ -63,8 +63,7 @@ namespace Serilog.Capturing
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
             if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength));
             if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));
-
-            _maximumDestructuringDepth = maximumDestructuringDepth;
+            
             _propagateExceptions = propagateExceptions;
             _maximumStringLength = maximumStringLength;
             _maximumCollectionCount = maximumCollectionCount;
@@ -72,7 +71,6 @@ namespace Serilog.Capturing
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
                 new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
-                new NullableScalarConversionPolicy(),
                 new EnumScalarConversionPolicy(),
                 new ByteArrayScalarConversionPolicy()
             };
@@ -84,6 +82,8 @@ namespace Serilog.Capturing
                     new ReflectionTypesScalarDestructuringPolicy()
                 })
                 .ToArray();
+
+            _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
@@ -134,21 +134,19 @@ namespace Serilog.Capturing
             }
 
             var valueType = value.GetType();
-            var limiter = new DepthLimiter(depth, _maximumDestructuringDepth, this);
+            _depthLimiter.SetCurrentDepth(depth);
 
             if (destructuring == Destructuring.Destructure)
             {
-                var stringValue = value as string;
-                if (stringValue != null)
+                if (value is string stringValue)
                 {
                     value = TruncateIfNecessary(stringValue);
                 }
             }
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
-            {            
-                ScalarValue converted;
-                if (scalarConversionPolicy.TryConvertToScalar(value, limiter, out converted))
+            {
+                if (scalarConversionPolicy.TryConvertToScalar(value, out var converted))
                     return converted;
             }
 
@@ -156,37 +154,26 @@ namespace Serilog.Capturing
             {
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {
-                    LogEventPropertyValue result;
-                    if (destructuringPolicy.TryDestructure(value, limiter, out result))
+                    if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
                         return result;
                 }
             }
 
-            if (TryConvertEnumerable(value, destructuring, valueType, limiter, out var enumerableResult))
+            if (TryConvertEnumerable(value, destructuring, valueType, out var enumerableResult))
                 return enumerableResult;
 
-            if (TryConvertValueTuple(value, destructuring, valueType, limiter, out var tupleResult))
+            if (TryConvertValueTuple(value, destructuring, valueType, out var tupleResult))
                 return tupleResult;
 
-            if (destructuring == Destructuring.Destructure)
-            {
-                var type = value.GetType();
-                var typeTag = type.Name;
-                if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
-                {
-                    typeTag = null;
-                }
-
-                return new StructureValue(GetProperties(value, limiter), typeTag);
-            }
+            if (TryConvertCompilerGeneratedType(value, destructuring, valueType, out var compilerGeneratedResult))
+                return compilerGeneratedResult;
 
             return new ScalarValue(value.ToString());
-        }
+        }        
 
-        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
+        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
         {
-            var enumerable = value as IEnumerable;
-            if (enumerable != null)
+            if (value is IEnumerable enumerable)
             {
                 // Only dictionaries with 'scalar' keys are permitted, as
                 // more complex keys may not serialize to unique values for
@@ -196,35 +183,54 @@ namespace Serilog.Capturing
                 // Only actual dictionaries are supported, as arbitrary types
                 // can implement multiple IDictionary interfaces and thus introduce
                 // multiple different interpretations.
-                if (IsValueTypeDictionary(valueType))
+                if (TryGetDictionary(value, valueType, out var dictionary))
                 {
-                    var typeInfo = typeof(KeyValuePair<,>).MakeGenericType(valueType.GenericTypeArguments).GetTypeInfo();
-                    var keyProperty = typeInfo.GetDeclaredProperty("Key");
-                    var valueProperty = typeInfo.GetDeclaredProperty("Value");
-
-                    result = new DictionaryValue(enumerable
-                        .Cast<object>()
-                        .Take(_maximumCollectionCount)
-                        .Select(kvp => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                            (ScalarValue) limiter.CreatePropertyValue(keyProperty.GetValue(kvp), destructuring),
-                            limiter.CreatePropertyValue(valueProperty.GetValue(kvp), destructuring)))
-                        .Where(kvp => kvp.Key.Value != null));
+                    result = new DictionaryValue(MapToDictionaryElements(dictionary, destructuring));
                     return true;
+
+                    IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> MapToDictionaryElements(IDictionary dictionaryEntries, Destructuring destructure)
+                    {
+                        var count = 0;
+                        foreach (DictionaryEntry entry in dictionaryEntries)
+                        {
+                            if (++count > _maximumCollectionCount)
+                            {
+                                yield break;
+                            }
+
+                            var pair = new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                                (ScalarValue)_depthLimiter.CreatePropertyValue(entry.Key, destructure),
+                                _depthLimiter.CreatePropertyValue(entry.Value, destructure));
+
+                            if (pair.Key.Value != null)
+                                yield return pair;
+                        }
+                    }
                 }
 
-                result = new SequenceValue(enumerable
-                    .Cast<object>()
-                    .Take(_maximumCollectionCount)
-                    .Select(o => limiter.CreatePropertyValue(o, destructuring)));
-
+                result = new SequenceValue(MapToSequenceElements(enumerable, destructuring));
                 return true;
+
+                IEnumerable<LogEventPropertyValue> MapToSequenceElements(IEnumerable sequence, Destructuring destructure)
+                {
+                    var count = 0;
+                    foreach (var element in sequence)
+                    {
+                        if (++count > _maximumCollectionCount)
+                        {
+                            yield break;
+                        }
+
+                        yield return _depthLimiter.CreatePropertyValue(element, destructure);
+                    }
+                }
             }
 
             result = null;
             return false;
         }
 
-        static bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
+        bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
         {
             if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
             {
@@ -254,12 +260,30 @@ namespace Serilog.Capturing
                     if (field.IsPublic && !field.IsStatic)
                     {
                         var fieldValue = field.GetValue(value);
-                        var propertyValue = limiter.CreatePropertyValue(fieldValue, destructuring);
+                        var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
                         elements.Add(propertyValue);
                     }
                 }
 
                 result = new SequenceValue(elements);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        {
+            if (destructuring == Destructuring.Destructure)
+            {
+                var typeTag = valueType.Name;
+                if (typeTag.Length <= 0 || IsCompilerGeneratedType(valueType))
+                {
+                    typeTag = null;
+                }
+
+                result = new StructureValue(GetProperties(value), typeTag);
                 return true;
             }
 
@@ -284,11 +308,18 @@ namespace Serilog.Capturing
             return text;
         }
 
-        bool IsValueTypeDictionary(Type valueType)
+        bool TryGetDictionary(object value, Type valueType, out IDictionary dictionary)
         {
-            return valueType.IsConstructedGenericType &&
-                   valueType.GetGenericTypeDefinition() == typeof (Dictionary<,>) &&
-                   IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]);
+            if (valueType.IsConstructedGenericType &&
+                valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
+                IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+            {
+                dictionary = (IDictionary)value;
+                return true;
+            }
+
+            dictionary = null;
+            return false;
         }
 
         bool IsValidDictionaryKeyType(Type valueType)
@@ -297,7 +328,7 @@ namespace Serilog.Capturing
                    valueType.GetTypeInfo().IsEnum;
         }
 
-        IEnumerable<LogEventProperty> GetProperties(object value, ILogEventPropertyValueFactory recursive)
+        IEnumerable<LogEventProperty> GetProperties(object value)
         {
             foreach (var prop in value.GetType().GetPropertiesRecursive())
             {
@@ -322,7 +353,7 @@ namespace Serilog.Capturing
 
                     propValue = "The property accessor threw an exception: " + ex.InnerException?.GetType().Name;
                 }
-                yield return new LogEventProperty(prop.Name, recursive.CreatePropertyValue(propValue, true));
+                yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
             }
         }
 

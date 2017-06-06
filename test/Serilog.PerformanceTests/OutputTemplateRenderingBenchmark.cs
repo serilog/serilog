@@ -11,6 +11,7 @@ namespace Serilog.PerformanceTests
     /// Determines the cost of rendering an event out to one of the typical text targets,
     /// like the console or a text file.
     /// </summary>
+    [MemoryDiagnoser]
     public class OutputTemplateRenderingBenchmark
     {
         const string DefaultFileOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";

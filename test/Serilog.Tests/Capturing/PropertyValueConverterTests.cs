@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Capturing;
+using System.Threading.Tasks;
+using System.Threading;
+
+
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -16,6 +20,59 @@ namespace Serilog.Tests.Capturing
     {
         readonly PropertyValueConverter _converter = 
             new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+
+        [Fact]
+        public async Task MaximumDepthIsEffectiveAndThreadSafe()
+        {
+            var _converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+
+            var barrier = new Barrier(participantCount: 3);
+
+            var t1 =
+                Task.Run(() => DoThreadTest(new { Root = new { B = new { C = new { D = new { E = "F" } } } } },
+                    result =>
+                    {
+                        Assert.Contains("B", result);
+                        Assert.Contains("C", result);
+                        Assert.DoesNotContain("D", result);
+                        Assert.DoesNotContain("E", result);
+                    }));
+
+            var t2 =
+                Task.Run(() => DoThreadTest(new { Root = new { Y = new { Z = "5" } } },
+                    result =>
+                    {
+                        Assert.Contains("Y", result);
+                        Assert.Contains("Z", result);
+                    }));
+
+            var t3 =
+                Task.Run(() => DoThreadTest(new { Root = new { M = new { N = new { V = 8 } } } },
+                    result =>
+                    {
+                        Assert.Contains("M", result);
+                        Assert.Contains("N", result);
+                        Assert.DoesNotContain("V", result);
+                    }));
+
+            await Task.WhenAll(t1, t2, t3);
+
+            void DoThreadTest(object logObject, Action<string> assertAction)
+            {
+                for (var i = 0; i < 100; ++i)
+                {
+                    barrier.SignalAndWait();
+
+                    var propValue = _converter.CreatePropertyValue(logObject, true);
+
+                    Assert.IsType<StructureValue>(propValue);
+
+                    var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value?.ToString();
+
+                    assertAction.Invoke(result);
+                }
+            }
+        }
 
         [Fact]
         public void UnderDestructuringAByteArrayIsAScalarValue()
