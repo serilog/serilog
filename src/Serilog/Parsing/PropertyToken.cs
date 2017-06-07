@@ -25,7 +25,7 @@ namespace Serilog.Parsing
     /// <summary>
     /// A message template token representing a log event property.
     /// </summary>
-    public class PropertyToken : MessageTemplateToken
+    public sealed class PropertyToken : MessageTemplateToken
     {
         readonly string _rawText;
         readonly int? _position;

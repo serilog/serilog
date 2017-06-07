@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
@@ -25,12 +26,9 @@ namespace Serilog.Rendering
     {
         static JsonValueFormatter JsonValueFormatter = new JsonValueFormatter("$type");
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Render(MessageTemplate messageTemplate, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
-            if (properties == null) throw new ArgumentNullException(nameof(properties));
-            if (output == null) throw new ArgumentNullException(nameof(output));
-
             bool isLiteral = false, isJson = false;
 
             if (format != null)
