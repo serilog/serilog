@@ -18,11 +18,11 @@ using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Parameters
+namespace Serilog.Capturing
 {
     class MessageTemplateProcessor : ILogEventPropertyFactory
     {
-        readonly IMessageTemplateParser _parser = new MessageTemplateCache(new MessageTemplateParser());
+        readonly MessageTemplateCache _parser = new MessageTemplateCache(new MessageTemplateParser());
         readonly PropertyBinder _propertyBinder;
         readonly PropertyValueConverter _propertyValueConverter;
 

@@ -5,7 +5,7 @@ using Serilog.Events;
 
 namespace Serilog.Tests.Support
 {
-    public class DisposableLogger : Serilog.ILogger, IDisposable
+    public class DisposableLogger : ILogger, IDisposable
     {
         public bool Disposed { get; set; }
 

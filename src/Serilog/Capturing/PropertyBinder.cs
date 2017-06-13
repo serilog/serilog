@@ -19,7 +19,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Parameters
+namespace Serilog.Capturing
 {
     // Performance relevant - on the hot path when creating log events from existing templates.
     class PropertyBinder

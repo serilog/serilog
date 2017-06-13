@@ -3,9 +3,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Serilog.Capturing;
 using Xunit;
 using Serilog.Core;
-using Serilog.Parameters;
 using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
 namespace Serilog.Tests.Core

@@ -218,5 +218,34 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.Equal("42 {Bar: 42}", sw.ToString());
         }
+
+        [Theory]
+        [InlineData("", "Hello, \"World\"!")]
+        [InlineData(":j", "Hello, \"World\"!")]
+        [InlineData(":l", "Hello, World!")]
+        [InlineData(":lj", "Hello, World!")]
+        [InlineData(":jl", "Hello, World!")]
+        public void AppliesLiteralFormattingToMessageStringsWhenSpecified(string format, string expected)
+        {
+            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", null);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello, {Name}!", "World"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
+        }
+
+        [Theory]
+        [InlineData("", "{ Name: \"World\" }")]
+        [InlineData(":j", "{\"Name\":\"World\"}")]
+        [InlineData(":lj", "{\"Name\":\"World\"}")]
+        [InlineData(":jl", "{\"Name\":\"World\"}")]
+        public void AppliesJsonFormattingToMessageStructuresWhenSpecified(string format, string expected)
+        {
+            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", null);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new {Name = "World"}));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
+        }
     }
 }

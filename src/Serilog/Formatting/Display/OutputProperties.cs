@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
+using Serilog.Formatting.Display.Obsolete;
+
+#pragma warning disable 618
 
 namespace Serilog.Formatting.Display
 {
@@ -62,7 +65,7 @@ namespace Serilog.Formatting.Display
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
-        [Obsolete("Pass the full output template using the other overload.")]
+        [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
         public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
         {
             return GetOutputProperties(logEvent, MessageTemplate.Empty);
@@ -74,7 +77,7 @@ namespace Serilog.Formatting.Display
         /// <param name="logEvent">The log event.</param>
         /// <param name="outputTemplate">The output template.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
-        public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
+        internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 

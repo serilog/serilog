@@ -6,12 +6,9 @@ using Xunit;
 using Serilog.Events;
 using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
-using Serilog.Enrichers;
 using TestDummies;
 using Serilog.Configuration;
 using Serilog.Formatting;
-using Serilog.Formatting.Json;
-using Serilog.Tests.Formatting.Json;
 
 namespace Serilog.Tests.Settings
 {
@@ -142,7 +139,7 @@ namespace Serilog.Tests.Settings
                  .WriteTo.Sink(new DelegatingSink(e => evt = e))
                  .CreateLogger();
 
-            var systemLogger = log.ForContext<System.WeakReference>();
+            var systemLogger = log.ForContext<WeakReference>();
             systemLogger.Write(Some.InformationEvent());
 
             Assert.Null(evt);

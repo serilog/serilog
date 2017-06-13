@@ -24,7 +24,7 @@ using Serilog.Parsing;
 using Serilog.Policies;
 using System.Runtime.CompilerServices;
 
-namespace Serilog.Parameters
+namespace Serilog.Capturing
 {
     // Values in Serilog are simplified down into a lowest-common-denominator internal
     // type system so that there is a better chance of code written with one sink in
@@ -351,7 +351,7 @@ namespace Serilog.Parameters
                     if (_propagateExceptions)
                         throw;
 
-                    propValue = "The property accessor threw an exception: " + ex.InnerException.GetType().Name;
+                    propValue = "The property accessor threw an exception: " + ex.InnerException?.GetType().Name;
                 }
                 yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
             }

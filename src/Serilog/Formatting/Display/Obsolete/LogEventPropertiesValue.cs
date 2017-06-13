@@ -17,8 +17,9 @@ using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Formatting.Display.Obsolete
 {
+    [Obsolete("Not used by the current output formatting implementation.")]
     class LogEventPropertiesValue : LogEventPropertyValue
     {
         readonly MessageTemplate _template;
@@ -34,48 +35,7 @@ namespace Serilog.Formatting.Display
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            output.Write('{');
-
-            var delim = "";
-            foreach (var kvp in _properties)
-            {
-                if (TemplateContainsPropertyName(_template, kvp.Key))
-                {
-                    continue;
-                }
-
-                if (TemplateContainsPropertyName(_outputTemplate, kvp.Key))
-                {
-                    continue;
-                }
-
-                output.Write(delim);
-                delim = ", ";
-                output.Write(kvp.Key);
-                output.Write(": ");
-                kvp.Value.Render(output, null, formatProvider);
-            }
-
-            output.Write('}');
-        }
-
-        static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
-        {
-            if (template.NamedProperties == null)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < template.NamedProperties.Length; i++)
-            {
-                var namedProperty = template.NamedProperties[i];
-                if (namedProperty.PropertyName == propertyName)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            PropertiesOutputFormat.Render(_template, _properties, _outputTemplate, output, formatProvider);
         }
     }
 }

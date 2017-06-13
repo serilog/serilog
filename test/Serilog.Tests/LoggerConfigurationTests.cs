@@ -1,11 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using Xunit;
-using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Debugging;
@@ -120,7 +117,7 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            var thisType = this.GetType();
+            var thisType = GetType();
             logger.Information("{@thisType}", thisType);
 
             var ev = events.Single();
@@ -171,7 +168,7 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            var thisType = this.GetType();
+            var thisType = GetType();
             logger.Information("{@thisType}", thisType);
 
             var ev = events.Single();
@@ -495,7 +492,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
-            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            logger.ForContext(Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(2, sink.Events.Count);
@@ -513,7 +510,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
-            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            logger.ForContext(Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(1, sink.Events.Count);
@@ -523,7 +520,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownBySinksAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());

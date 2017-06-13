@@ -14,10 +14,10 @@
 
 using System;
 using System.Collections.Generic;
+using Serilog.Capturing;
 using Serilog.Core.Enrichers;
 using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Parameters;
 
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 

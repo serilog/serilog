@@ -1,5 +1,4 @@
-﻿using System;
-using Serilog.Tests.Support;
+﻿using Serilog.Tests.Support;
 using Xunit;
 using Serilog.Core;
 using Serilog.Events;
@@ -37,9 +36,10 @@ namespace Serilog.Tests.Core
                 .WriteTo.Sink(secondary)
                 .CreateLogger();
 
-            ((IDisposable)new LoggerConfiguration()
+            new LoggerConfiguration()
                 .WriteTo.Logger(secondaryLogger)
-                .CreateLogger()).Dispose();
+                .CreateLogger()
+                .Dispose();
 
             Assert.False(secondary.IsDisposed);
         }
@@ -49,9 +49,10 @@ namespace Serilog.Tests.Core
         {
             var secondary = new DisposeTrackingSink();
 
-            ((IDisposable)new LoggerConfiguration()
+            new LoggerConfiguration()
                 .WriteTo.Logger(lc => lc.WriteTo.Sink(secondary))
-                .CreateLogger()).Dispose();
+                .CreateLogger()
+                .Dispose();
 
             Assert.True(secondary.IsDisposed);
         }

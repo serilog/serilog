@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Serilog.Events;
 using Serilog.Formatting.Json;
-using Serilog.Tests.Events;
-using Serilog.Tests.Support;
 using Xunit;
 
 namespace Serilog.Tests.Formatting.Json

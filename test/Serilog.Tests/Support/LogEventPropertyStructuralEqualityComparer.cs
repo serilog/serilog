@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Serilog.Events;
 
@@ -11,7 +10,7 @@ namespace Serilog.Tests.Support
         public LogEventPropertyStructuralEqualityComparer(
             IEqualityComparer<LogEventPropertyValue> valueEqualityComparer = null)
         {
-            this._valueEqualityComparer =
+            _valueEqualityComparer =
                 valueEqualityComparer ?? new LogEventPropertyValueComparer(EqualityComparer<object>.Default);
         }
 

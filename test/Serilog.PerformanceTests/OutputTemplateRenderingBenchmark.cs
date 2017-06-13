@@ -11,20 +11,14 @@ namespace Serilog.PerformanceTests
     /// Determines the cost of rendering an event out to one of the typical text targets,
     /// like the console or a text file.
     /// </summary>
+    [MemoryDiagnoser]
     public class OutputTemplateRenderingBenchmark
     {
         const string DefaultFileOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
         static readonly LogEvent HelloWorldEvent = Some.InformationEvent("Hello, {Name}", "World");
         static readonly MessageTemplateTextFormatter Formatter = new MessageTemplateTextFormatter(DefaultFileOutputTemplate, CultureInfo.InvariantCulture);
 
-        readonly StringWriter _output = new StringWriter();
-
-        [Setup]
-        public void Setup()
-        {
-            _output.GetStringBuilder().Length = 0;
-            _output.GetStringBuilder().Capacity = 1024; // Only a few dozen chars actually needed here.
-        }
+        readonly TextWriter _output = new NullTextWriter();
 
         [Benchmark]
         public void FormatToOutput()
