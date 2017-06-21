@@ -2,14 +2,10 @@ language: csharp
 
 matrix:
   include:
-    - os: linux # Ubuntu 14.04
+    - os: linux
       dist: trusty
       sudo: required
       dotnet: 1.0.4
-    # Disabled temporarily due to Travis OSX issues
-    # - os: osx # OSX 10.11
-    #   osx_image: xcode7.3
-    #   dotnet: 1.0.1
-
+      group: edge
 script:
   - ./build.sh
