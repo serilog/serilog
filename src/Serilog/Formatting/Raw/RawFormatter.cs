@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.IO;
 using Serilog.Events;
 
@@ -20,6 +21,7 @@ namespace Serilog.Formatting.Raw
     /// <summary>
     /// Formats log events as a raw dump of the message template and properties.
     /// </summary>
+    [Obsolete("A JSON-based formatter such as `Serilog.Formatting.Compact.CompactJsonFormatter` is recommended for this task.")]
     public class RawFormatter : ITextFormatter
     {
         /// <summary>

@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Parsing;
+using Serilog.Rendering;
 
 namespace Serilog.Events
 {
@@ -28,17 +29,21 @@ namespace Serilog.Events
     /// </summary>
     public class MessageTemplate
     {
-        readonly MessageTemplateToken[] _tokens;
+        /// <summary>
+        /// Represents the empty message template.
+        /// </summary>
+        public static MessageTemplate Empty { get; } = new MessageTemplate(Enumerable.Empty<MessageTemplateToken>());
 
-        // Optimisation for when the template is bound to
-        // property values.
+        readonly MessageTemplateToken[] _tokens;
 
         /// <summary>
         /// Construct a message template using manually-defined text and property tokens.
         /// </summary>
         /// <param name="tokens">The text and property tokens defining the template.</param>
         public MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
+            // ReSharper disable PossibleMultipleEnumeration
             : this(string.Join("", tokens), tokens)
+            // ReSharper enable PossibleMultipleEnumeration
         {
         }
 
@@ -86,7 +91,7 @@ namespace Serilog.Events
         /// <summary>
         /// Similar to <see cref="Enumerable.OfType{TResult}"/>, but faster.
         /// </summary>
-        static TResult[] GetElementsOfTypeToArray<TResult>(object[] tokens)
+        static TResult[] GetElementsOfTypeToArray<TResult>(MessageTemplateToken[] tokens)
             where TResult: class
         {
             var result = new List<TResult>(tokens.Length / 2);
@@ -120,6 +125,8 @@ namespace Serilog.Events
         /// </summary>
         public IEnumerable<MessageTemplateToken> Tokens => _tokens;
 
+        internal MessageTemplateToken[] TokenArray => _tokens;
+
         internal PropertyToken[] NamedProperties { get; }
 
         internal PropertyToken[] PositionalProperties { get; }
@@ -151,10 +158,9 @@ namespace Serilog.Events
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
-            foreach (var token in _tokens)
-            {
-                token.Render(properties, output, formatProvider);
-            }
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
+            if (output == null) throw new ArgumentNullException(nameof(output));
+            MessageTemplateRenderer.Render(this, properties, output, null, formatProvider);
         }
     }
 }

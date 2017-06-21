@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Parameters;
 using Serilog.Parsing;
 using Serilog.Tests.Support;
 using Xunit;

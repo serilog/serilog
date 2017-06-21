@@ -18,14 +18,14 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
-using Serilog.Formatting.Display;
+using Serilog.Rendering;
 
 namespace Serilog.Parsing
 {
     /// <summary>
     /// A message template token representing a log event property.
     /// </summary>
-    public class PropertyToken : MessageTemplateToken
+    public sealed class PropertyToken : MessageTemplateToken
     {
         readonly string _rawText;
         readonly int? _position;
@@ -57,12 +57,10 @@ namespace Serilog.Parsing
         public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
-            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
-            if (rawText == null) throw new ArgumentNullException(nameof(rawText));
-            PropertyName = propertyName;
+            PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
             Format = format;
             Destructuring = destructuring;
-            _rawText = rawText;
+            _rawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
             Alignment = alignment;
 
             int position;
@@ -89,30 +87,7 @@ namespace Serilog.Parsing
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            LogEventPropertyValue propertyValue;
-            if (!properties.TryGetValue(PropertyName, out propertyValue))
-            {
-                output.Write(_rawText);
-                return;
-            }
-
-            if (!Alignment.HasValue)
-            {
-                propertyValue.Render(output, Format, formatProvider);
-                return;
-            }
-
-            var valueOutput = new StringWriter();
-            propertyValue.Render(valueOutput, Format, formatProvider);
-            var value = valueOutput.ToString();
-
-            if (value.Length >= Alignment.Value.Width)
-            {
-                output.Write(value);
-                return;
-            }
-
-            Padding.Apply(output, value, Alignment.Value);
+            MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, false, false);
         }
 
         /// <summary>
@@ -139,6 +114,8 @@ namespace Serilog.Parsing
         /// True if the property name is a positional index; otherwise, false.
         /// </summary>
         public bool IsPositional => _position.HasValue;
+
+        internal string RawText => _rawText;
 
         /// <summary>
         /// Try to get the integer value represented by the property name.

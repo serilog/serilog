@@ -1,19 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
+using Serilog.Capturing;
+using System.Threading.Tasks;
+using System.Threading;
+
+
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Parameters;
 using Serilog.Parsing;
 using Serilog.Tests.Support;
+using Xunit;
 
-namespace Serilog.Tests.Parameters
+// ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local
+
+namespace Serilog.Tests.Capturing
 {
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter = 
             new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+
+        [Fact]
+        public async Task MaximumDepthIsEffectiveAndThreadSafe()
+        {
+            var _converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+
+            var barrier = new Barrier(participantCount: 3);
+
+            var t1 =
+                Task.Run(() => DoThreadTest(new { Root = new { B = new { C = new { D = new { E = "F" } } } } },
+                    result =>
+                    {
+                        Assert.Contains("B", result);
+                        Assert.Contains("C", result);
+                        Assert.DoesNotContain("D", result);
+                        Assert.DoesNotContain("E", result);
+                    }));
+
+            var t2 =
+                Task.Run(() => DoThreadTest(new { Root = new { Y = new { Z = "5" } } },
+                    result =>
+                    {
+                        Assert.Contains("Y", result);
+                        Assert.Contains("Z", result);
+                    }));
+
+            var t3 =
+                Task.Run(() => DoThreadTest(new { Root = new { M = new { N = new { V = 8 } } } },
+                    result =>
+                    {
+                        Assert.Contains("M", result);
+                        Assert.Contains("N", result);
+                        Assert.DoesNotContain("V", result);
+                    }));
+
+            await Task.WhenAll(t1, t2, t3);
+
+            void DoThreadTest(object logObject, Action<string> assertAction)
+            {
+                for (var i = 0; i < 100; ++i)
+                {
+                    barrier.SignalAndWait();
+
+                    var propValue = _converter.CreatePropertyValue(logObject, true);
+
+                    Assert.IsType<StructureValue>(propValue);
+
+                    var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value?.ToString();
+
+                    assertAction.Invoke(result);
+                }
+            }
+        }
 
         [Fact]
         public void UnderDestructuringAByteArrayIsAScalarValue()
@@ -188,7 +247,7 @@ namespace Serilog.Tests.Parameters
 
         public class DerivedWithOverrides : BaseWithProps
         {
-            new public string PropA { get; set; }
+            public new string PropA { get; set; }
             public override string PropB { get; set; }
             public string PropD { get; set; }
         }
@@ -216,7 +275,7 @@ namespace Serilog.Tests.Parameters
 
         class HasIndexer
         {
-            public string this[int index] { get { return "Indexer"; } }
+            public string this[int index] => "Indexer";
         }
 
         [Fact]
@@ -231,7 +290,7 @@ namespace Serilog.Tests.Parameters
         // (reducing garbage).
         class HasItem
         {
-            public string Item { get { return "Item"; } }
+            public string Item => "Item";
         }
 
         [Fact]
@@ -252,6 +311,55 @@ namespace Serilog.Tests.Parameters
             Assert.Equal(typeof(StructureValue), result.GetType());
             var structuredValue = (StructureValue)result;
             Assert.Equal(null, structuredValue.TypeTag);
+        }
+
+        [Fact]
+        public void ValueTuplesAreRecognizedWhenDestructuring()
+        {
+            var o = (1, "A", new[] { "B" });
+            var result = _converter.CreatePropertyValue(o);
+
+            var sequenceValue = Assert.IsType<SequenceValue>(result);
+
+            Assert.Equal(3, sequenceValue.Elements.Count);
+            Assert.Equal(new ScalarValue(1), sequenceValue.Elements[0]);
+            Assert.Equal(new ScalarValue("A"), sequenceValue.Elements[1]);
+            var nested = Assert.IsType<SequenceValue>(sequenceValue.Elements[2]);
+            Assert.Equal(1, nested.Elements.Count);
+            Assert.Equal(new ScalarValue("B"), nested.Elements[0]);
+        }
+
+        [Fact]
+        public void AllTupleLengthsUpToSevenAreSupportedForCapturing()
+        {
+            var tuples = new object[]
+            {
+                ValueTuple.Create(1),
+                (1, 2),
+                (1, 2, 3),
+                (1, 2, 3, 4),
+                (1, 2, 3, 4, 5),
+                (1, 2, 3, 4, 5, 6),
+                (1, 2, 3, 4, 5, 6, 7)
+            };
+
+            foreach (var t in tuples)
+                Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
+        }
+
+        [Fact]
+        public void EightPlusValueTupleElementsAreIgnoredByCapturing()
+        {
+            var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+            Assert.IsType<ScalarValue>(scalar);
+        }
+
+        [Fact]
+        public void ValueTupleDestructuringIsTransitivelyApplied()
+        {
+            var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new {A = 1}), true);
+            var sequence = Assert.IsType<SequenceValue>(tuple);
+            Assert.IsType<StructureValue>(sequence.Elements[0]);
         }
     }
 }

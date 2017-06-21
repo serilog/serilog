@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Rendering;
 
 namespace Serilog.Formatting.Json
 {
@@ -207,7 +208,7 @@ namespace Serilog.Formatting.Json
                     WriteJsonProperty("Format", format.Format, ref eldelim, output);
 
                     var sw = new StringWriter();
-                    format.Render(properties, sw);
+                    MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, true, false);
                     WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
 
                     output.Write("}");

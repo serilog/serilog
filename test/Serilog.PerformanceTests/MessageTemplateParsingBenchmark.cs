@@ -1,19 +1,12 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
-using Serilog;
-using Serilog.Events;
 using Serilog.Parsing;
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Serilog.PerformanceTests
 {
     /// <summary>
     /// Tests the cost of parsing various message templates.
     /// </summary>
+    [MemoryDiagnoser]
     public class MessageTemplateParsingBenchmark
     {  
         MessageTemplateParser _parser; 

@@ -17,8 +17,9 @@ using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Formatting.Display.Obsolete
 {
+    [Obsolete("Not used by the current output formatting implementation.")]
     class LogEventPropertyMessageValue : LogEventPropertyValue
     {
         readonly MessageTemplate _template;

@@ -14,22 +14,15 @@
 // limitations under the License.
 
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
-using Serilog;
-using Serilog.Events;
-using Serilog.Parsing;
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using Serilog.PerformanceTests.Support;
-using Xunit;
 
 namespace Serilog.PerformanceTests
 {
     /// <summary>
     /// Tests the cost of writing through the logging pipeline.
     /// </summary>
+    [MemoryDiagnoser]
     public class PipelineBenchmark
     {
         ILogger _log;

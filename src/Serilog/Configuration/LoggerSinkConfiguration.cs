@@ -150,6 +150,47 @@ namespace Serilog.Configuration
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
-        } 
+        }
+
+        /// <summary>
+        /// Helper method for wrapping sinks.
+        /// </summary>
+        /// <param name="loggerSinkConfiguration">The parent sink configuration.</param>
+        /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
+        /// added in <paramref name="configureWrappedSink"/>.</param>
+        /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration Wrap(
+            LoggerSinkConfiguration loggerSinkConfiguration,
+            Func<ILogEventSink, ILogEventSink> wrapSink,
+            Action<LoggerSinkConfiguration> configureWrappedSink)
+        {
+            if (loggerSinkConfiguration == null) throw new ArgumentNullException(nameof(loggerSinkConfiguration));
+            if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
+            if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
+
+            void WrapAndAddSink(ILogEventSink sink)
+            {
+                bool sinkIsDisposable = sink is IDisposable;
+
+                ILogEventSink wrappedSink = wrapSink(sink);
+
+                if (sinkIsDisposable && !(wrappedSink is IDisposable))
+                {
+                    SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable, but wrapped sink {1} does.", wrappedSink, sink);
+                }
+
+                loggerSinkConfiguration.Sink(wrappedSink);
+            }
+
+            var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
+                loggerSinkConfiguration._loggerConfiguration,
+                WrapAndAddSink,
+                loggerSinkConfiguration._applyInheritedConfiguration);
+
+            configureWrappedSink(capturingLoggerSinkConfiguration);
+
+            return loggerSinkConfiguration._loggerConfiguration;
+        }
     }
 }

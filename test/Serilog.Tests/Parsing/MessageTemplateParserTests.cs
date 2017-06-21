@@ -164,5 +164,11 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("{_123_Hello}", new PropertyToken("_123_Hello", "{_123_Hello}")); 
         }
 
+        [Fact]
+        public void IndexOutOfRangeExceptionBugHasNotRegressed()
+        {
+            var parser = new MessageTemplateParser();
+            parser.Parse("{,,}");
+        }
     }
 }

@@ -47,15 +47,20 @@ namespace Serilog.Events
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
+            Render(Value, output, format, formatProvider);
+        }
+
+        internal static void Render(object value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            if (Value == null)
+            if (value == null)
             {
                 output.Write("null");
                 return;
             }
 
-            var s = Value as string;
+            var s = value as string;
             if (s != null)
             {
                 if (format != "l")
@@ -76,19 +81,19 @@ namespace Serilog.Events
                 var custom = (ICustomFormatter)formatProvider.GetFormat(typeof(ICustomFormatter));
                 if (custom != null)
                 {
-                    output.Write(custom.Format(format, Value, formatProvider));
+                    output.Write(custom.Format(format, value, formatProvider));
                     return;
                 }
             }
 
-            var f = Value as IFormattable;
+            var f = value as IFormattable;
             if (f != null)
             {
                 output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
             }
             else
             {
-                output.Write(Value.ToString());
+                output.Write(value.ToString());
             }                        
         }
 

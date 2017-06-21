@@ -46,7 +46,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void StringValuesConvertToDefaultInstancesIfTargetIsInterface()
         {
-            var result = (object)SettingValueConversions.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
+            var result = SettingValueConversions.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
             Assert.IsType<JsonFormatter>(result);
         }
     }

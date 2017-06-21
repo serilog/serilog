@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
+using Serilog.Formatting.Display.Obsolete;
+
+#pragma warning disable 618
 
 namespace Serilog.Formatting.Display
 {
@@ -25,6 +28,8 @@ namespace Serilog.Formatting.Display
     /// </summary>
     public static class OutputProperties
     {
+        static readonly LiteralStringValue LiteralNewLine = new LiteralStringValue(Environment.NewLine);
+
         /// <summary>
         /// The message rendered from the log event.
         /// </summary>
@@ -51,11 +56,28 @@ namespace Serilog.Formatting.Display
         public const string ExceptionPropertyName = "Exception";
 
         /// <summary>
+        /// The properties of the log event.
+        /// </summary>
+        public const string PropertiesPropertyName = "Properties";
+
+        /// <summary>
         /// Create properties from the provided log event.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>A dictionary with properties representing the log event.</returns>
+        [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
         public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
+        {
+            return GetOutputProperties(logEvent, MessageTemplate.Empty);
+        }
+
+        /// <summary>
+        /// Create properties from the provided log event.
+        /// </summary>
+        /// <param name="logEvent">The log event.</param>
+        /// <param name="outputTemplate">The output template.</param>
+        /// <returns>A dictionary with properties representing the log event.</returns>
+        internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
         {
             var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
@@ -66,9 +88,10 @@ namespace Serilog.Formatting.Display
             result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
             result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
             result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
-            result[NewLinePropertyName] = new LiteralStringValue(Environment.NewLine);
+            result[NewLinePropertyName] = LiteralNewLine;
+            result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties, outputTemplate);
 
-            var exception = logEvent.Exception == null ? "" : (logEvent.Exception + Environment.NewLine);
+            var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
             result[ExceptionPropertyName] = new LiteralStringValue(exception);
 
             return result;

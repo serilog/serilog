@@ -1,15 +1,14 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using Xunit;
-using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Filters;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Tests.Support;
+using TestDummies;
 
 namespace Serilog.Tests
 {
@@ -118,7 +117,7 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            var thisType = this.GetType();
+            var thisType = GetType();
             logger.Information("{@thisType}", thisType);
 
             var ev = events.Single();
@@ -169,7 +168,7 @@ namespace Serilog.Tests
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            var thisType = this.GetType();
+            var thisType = GetType();
             logger.Information("{@thisType}", thisType);
 
             var ev = events.Single();
@@ -266,10 +265,10 @@ namespace Serilog.Tests
                 }
             };
 
-            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "@");
+            var xs = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumDepth(3), "@");
 
             Assert.Contains("C", xs);
-            Assert.DoesNotContain(xs, "D");
+            Assert.DoesNotContain("D", xs);
         }
 
         [Fact]
@@ -493,7 +492,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
-            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            logger.ForContext(Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(2, sink.Events.Count);
@@ -511,7 +510,7 @@ namespace Serilog.Tests
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
-            logger.ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
+            logger.ForContext(Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
             Assert.Equal(1, sink.Events.Count);
@@ -521,7 +520,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownBySinksAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -576,6 +575,34 @@ namespace Serilog.Tests
             {
                 get { throw new Exception("Boom!"); }
             }
+        }
+
+        [Fact]
+        public void WrappingDecoratesTheConfiguredSink()
+        {
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink(sink))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.NotEmpty(DummyWrappingSink.Emitted);
+            Assert.NotEmpty(sink.Events);
+        }
+
+        [Fact]
+        public void WrappingWarnsAboutNonDisposableWrapper()
+        {
+            var messages = new List<string>();
+            SelfLog.Enable(s => messages.Add(s));
+
+            new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink<DisposeTrackingSink>())
+                .CreateLogger();
+
+            SelfLog.Disable();
+            Assert.NotEmpty(messages);
         }
     }
 }

@@ -1,21 +1,10 @@
 version: '{build}'
 skip_tags: true
-image: Visual Studio 2015
+image: Visual Studio 2017
 configuration: Release
-install:
-  - ps: mkdir -Force ".\build\" | Out-Null
-  - ps: Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview2/scripts/obtain/dotnet-install.ps1" -OutFile ".\build\installcli.ps1"
-  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
-  - ps: '& .\build\installcli.ps1 -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath -Version 1.0.0-preview2-003121'
-  - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
+test: off
 build_script:
 - ps: ./Build.ps1
-test_script:
-  - nuget.exe install OpenCover -ExcludeVersion
-  - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[Serilog]*" -target:"dotnet.exe" "-targetargs:test test\Serilog.Tests" -returntargetcode -hideskipped:All -output:coverage.xml
-  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-  - pip install codecov
-  - codecov -f "coverage.xml"
 artifacts:
 - path: artifacts/Serilog.*.nupkg
 deploy:
