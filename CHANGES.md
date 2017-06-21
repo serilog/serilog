@@ -1,4 +1,14 @@
-2.4.0
+2.5.0
+ * #939, #946, #972 - RTM .NET Standard/Core tooling
+ * #955 - `LoggerSinkConfiguration.Wrap()`
+ * #944 - `{Properties}` in output templates
+ * #961 - fix parser exeception when property tokens with zero-length names are encountered
+ * #773 - `LogContext.Clone()` and `LogContext.Push(ILogEventEnricher)`
+ * #976 - support for logging C# 7 `ValueTuple<>` values
+ * #977 - output formatting performance improvements, `{Message:l}` (unquoted string) and `{Message:j}` (JSON structure) support in output templates
+ * #981 - reduced allocations required for structured data capturing
+
+Plus multiple build/test/configuration improvements.2.4.0
 * #866 and #877- additional event payload limiting controls
 * #833 - improve performance of message template cache lookup
 * #885 - fix JSON formatting of `NaN` and infinity values
