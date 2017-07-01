@@ -23,6 +23,7 @@ using Serilog.Events;
 using System.Threading;
 #elif REMOTING
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
 #endif
 
@@ -207,7 +208,36 @@ namespace Serilog.Context
             }
             set
             {
-                CallContext.LogicalSetData(DataSlotName, new ObjectHandle(value));
+                if (CallContext.LogicalGetData(DataSlotName) is IDisposable oldHandle)
+                {
+                    oldHandle.Dispose();
+                }
+                
+                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
+            }
+        }
+
+        sealed class DisposableObjectHandle : ObjectHandle, IDisposable
+        {
+            static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
+
+            public DisposableObjectHandle(object o) : base(o)
+            {
+            }
+
+            public override object InitializeLifetimeService()
+            {
+                var lease = (ILease)base.InitializeLifetimeService();
+                lease.Register(LifeTimeSponsor);
+                return lease;
+            }
+
+            public void Dispose()
+            {
+                if (GetLifetimeService() is ILease lease)
+                {
+                    lease.Unregister(LifeTimeSponsor);
+                }
             }
         }
 
