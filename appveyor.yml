@@ -5,6 +5,7 @@ configuration: Release
 test: off
 build_script:
 - ps: ./Build.ps1
+- ps: ./BuildNativeUWP.ps1
 artifacts:
 - path: artifacts/Serilog.*.nupkg
 deploy:
