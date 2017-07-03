@@ -15,3 +15,5 @@ else {
     & $msbuild $proj /verbosity:minimal /t:Restore 
     & $msbuild $proj /verbosity:minimal /t:Build /p:Configuration=Release
 }
+
+if ($LASTEXITCODE -ne 0) { exit 4 }
