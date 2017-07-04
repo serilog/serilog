@@ -1,0 +1,4 @@
+<Project>
+  <!-- Workaround for https://github.com/dotnet/sdk/pull/908 -->
+  <Target Name="GetPackagingOutputs" />
+</Project>

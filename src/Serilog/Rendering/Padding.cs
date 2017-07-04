@@ -13,13 +13,14 @@
 // limitations under the License.
 
 using System.IO;
+using System.Linq;
 using Serilog.Parsing;
 
 namespace Serilog.Rendering
 {
     static class Padding
     {
-        static readonly char[] PaddingChars = new string(' ', 80).ToCharArray();
+        static readonly char[] PaddingChars = Enumerable.Repeat(' ', 80).ToArray();
 
         /// <summary>
         /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
