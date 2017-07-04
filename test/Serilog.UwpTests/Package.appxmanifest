@@ -1,20 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   IgnorableNamespaces="uap mp">
 
-  <Identity
-    Name="603564a6-ceb5-491d-99ed-cc6edc7f949d"
-    Publisher="CN=User"
-    Version="1.0.0.0" />
+  <Identity Name="87ea80a0-d6f0-4b89-beeb-900b848f1b7c"
+            Publisher="CN=User"
+            Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="603564a6-ceb5-491d-99ed-cc6edc7f949d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="87ea80a0-d6f0-4b89-beeb-900b848f1b7c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Serilog.UWP</DisplayName>
+    <DisplayName>Serilog.UwpTests</DisplayName>
     <PublisherDisplayName>User</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -24,26 +22,24 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
-
   <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="Serilog.UWP.App">
+    <Application Id="vstest.executionengine.universal.App"
+        Executable="$targetnametoken$.exe"
+        EntryPoint="Serilog.UwpTests.App">
       <uap:VisualElements
-        DisplayName="Serilog.UWP"
+        DisplayName="Serilog.UwpTests"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Serilog.UWP"
+        Description="Serilog.UwpTests"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
   </Applications>
-
   <Capabilities>
-    <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
   </Capabilities>
 </Package>

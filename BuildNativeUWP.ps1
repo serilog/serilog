@@ -1,6 +1,6 @@
 param(
     [String] $customLogger = "C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll",
-    [String] $proj = "test/Serilog.UWP"
+    [String] $proj = "test/Serilog.UwpTests"
 )
 
 echo "build: running .NET Native toolchain for UWP test project"
