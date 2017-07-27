@@ -199,6 +199,62 @@ namespace Serilog.Tests.Context
             }
         }
 
+        [Fact]
+        public async Task ContextEnrichersInAsyncScopeCanBeCleared()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.Push(new PropertyEnricher("A", 1)))
+            {
+                await Task.Run(() =>
+                {
+                    LogContext.Reset();
+                    log.Write(Some.InformationEvent());
+                });
+
+                Assert.Empty(lastEvent.Properties);
+
+                // Reset should only work for current async scope, outside of it previous Context 
+                // instance should be available again.
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            }
+        }
+
+        [Fact]
+        public async Task ContextEnrichersCanBeTemporarilyCleared()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.Push(new PropertyEnricher("A", 1)))
+            {
+                using (LogContext.Suspend())
+                {
+                    await Task.Run(() =>
+                    {
+                        log.Write(Some.InformationEvent());
+                    });
+
+                    Assert.Empty(lastEvent.Properties);
+                }
+
+                // Suspend should only work for scope of using. After calling Dispose all enrichers
+                // should be restored.
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            }
+        }
+
 #if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.

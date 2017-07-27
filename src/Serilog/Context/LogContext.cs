@@ -150,6 +150,34 @@ namespace Serilog.Context
             return new SafeAggregateEnricher(stack);
         }
 
+        /// <summary>
+        /// Remove all enrichers from <see cref="LogContext"/>, returning <see cref="IDisposable"/>
+        /// that must later be used to restore enrichers that were on the stack before <see cref="Suspend"/> was called.
+        /// </summary>
+        /// <returns>A token that must be disposed, in order, to restore properties back to the stack.</returns>
+        public static IDisposable Suspend()
+        {
+            var stack = GetOrCreateEnricherStack();
+            var bookmark = new ContextStackBookmark(stack);
+
+            Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+
+            return bookmark;
+        }
+
+        /// <summary>
+        /// Remove all enrichers from <see cref="LogContext"/> for current async scope. 
+        /// </summary>
+        public static void Reset()
+        {
+            var enrichers = GetOrCreateEnricherStack();
+            if (!enrichers.IsEmpty)
+            {
+                enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+                Enrichers = enrichers;
+            }
+        }
+
         static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
         {
             var enrichers = Enrichers;
