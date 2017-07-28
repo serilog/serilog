@@ -170,11 +170,9 @@ namespace Serilog.Context
         /// </summary>
         public static void Reset()
         {
-            var enrichers = GetOrCreateEnricherStack();
-            if (!enrichers.IsEmpty)
+            if (Enrichers != null && Enrichers != ImmutableStack<ILogEventEnricher>.Empty)
             {
-                enrichers = ImmutableStack<ILogEventEnricher>.Empty;
-                Enrichers = enrichers;
+                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
             }
         }
 
