@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Remove all enrichers from <see cref="LogContext"/>, returning <see cref="IDisposable"/>
+        /// Remove all enrichers from the <see cref="LogContext"/>, returning an <see cref="IDisposable"/>
         /// that must later be used to restore enrichers that were on the stack before <see cref="Suspend"/> was called.
         /// </summary>
         /// <returns>A token that must be disposed, in order, to restore properties back to the stack.</returns>
@@ -166,7 +166,7 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Remove all enrichers from <see cref="LogContext"/> for current async scope. 
+        /// Remove all enrichers from <see cref="LogContext"/> for the current async scope. 
         /// </summary>
         public static void Reset()
         {
