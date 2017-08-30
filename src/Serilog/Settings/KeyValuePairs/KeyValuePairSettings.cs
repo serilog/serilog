@@ -30,6 +30,7 @@ namespace Serilog.Settings.KeyValuePairs
         const string AuditToDirective = "audit-to";
         const string WriteToDirective = "write-to";
         const string MinimumLevelDirective = "minimum-level";
+        const string MinimumLevelControlledByDirective = "minimum-level:controlled-by";
         const string EnrichWithDirective = "enrich";
         const string EnrichWithPropertyDirective = "enrich:with-property";
         const string FilterDirective = "filter";
@@ -48,6 +49,7 @@ namespace Serilog.Settings.KeyValuePairs
             AuditToDirective,
             WriteToDirective,
             MinimumLevelDirective,
+            MinimumLevelControlledByDirective,
             EnrichWithPropertyDirective,
             EnrichWithDirective,
             FilterDirective
@@ -118,14 +120,38 @@ namespace Serilog.Settings.KeyValuePairs
             var matchObjectInstantiations = new Regex(ObjectInstantiationDirectiveRegex);
 
             var objectInstantiationDirectives = (from wt in directives
-                                                where matchObjectInstantiations.IsMatch(wt.Key)
-                                                let match = matchObjectInstantiations.Match(wt.Key)
-                                                select new
-                                                {
-                                                    ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
-                                                    VariableName = match.Groups["variableName"].Value,
-                                                    ConstructorParamValue = wt.Value
-                                                }).ToList();
+                                                 where matchObjectInstantiations.IsMatch(wt.Key)
+                                                 let match = matchObjectInstantiations.Match(wt.Key)
+                                                 select new
+                                                 {
+                                                     ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
+                                                     VariableName = match.Groups["variableName"].Value,
+                                                     ConstructorParamValue = wt.Value
+                                                 }).ToList();
+
+            var variablesInScope = new Dictionary<string, object>();
+            foreach (var objectInstantiationDirective in objectInstantiationDirectives)
+            {
+                if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
+                {
+                    variablesInScope[objectInstantiationDirective.VariableName] = paramValue;
+                }
+            }
+
+            string minimumLevelControlledByLevelSwitchName;
+            if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
+            {
+                var levelSwitch = variablesInScope
+                    .Where(kvp => kvp.Key == minimumLevelControlledByLevelSwitchName)
+                    .Select(kvp => kvp.Value)
+                    .OfType<LoggingLevelSwitch>()
+                    .FirstOrDefault();
+
+                if (levelSwitch != null)
+                {
+                    loggerConfiguration.MinimumLevel.ControlledBy(levelSwitch);
+                }
+            }
 
             var matchCallables = new Regex(CallableDirectiveRegex);
 
@@ -147,14 +173,7 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
-                var variablesInScope = new Dictionary<string, object>();
-                foreach (var objectInstantiationDirective in objectInstantiationDirectives)
-                {
-                    if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
-                    {
-                        variablesInScope[objectInstantiationDirective.VariableName] = paramValue;
-                    }
-                }
+
 
 
                 foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))

@@ -164,5 +164,44 @@ namespace Serilog.Tests.Settings
             Assert.Equal(LogEventLevel.Warning, ((LoggingLevelSwitch) actual).MinimumLevel);
         }
 
+        [Fact]
+        public void LoggingLevelSwitchIsConfigured()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:Switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "Switch1",
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            // TODO : maybe add Logger.LevelSwitch as an internal readonly property to avoid reflection here ? 
+            var privateSwitch = GetPrivateField<Logger, LoggingLevelSwitch>(log, "_levelSwitch");
+            Assert.NotNull(privateSwitch);
+
+            log.Write(Some.DebugEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
+
+            privateSwitch.MinimumLevel = LogEventLevel.Debug;
+
+            log.Write(Some.DebugEvent());
+            Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
+        }
+
+        static TField GetPrivateField<T, TField>(T item, string fieldName) where T:class
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            var fieldInfo = typeof(T).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if(fieldInfo == null) throw new InvalidOperationException($"Could not find private instance field {fieldName} for type {typeof(T)}");
+
+            var fieldValue = fieldInfo.GetValue(item);
+            return (TField) fieldValue;
+        }
+
     }
 }
