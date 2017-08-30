@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Settings.KeyValuePairs
@@ -25,6 +26,7 @@ namespace Serilog.Settings.KeyValuePairs
     class KeyValuePairSettings : ILoggerSettings
     {
         const string UsingDirective = "using";
+        const string LevelSwitchDirective = "level-switch";
         const string AuditToDirective = "audit-to";
         const string WriteToDirective = "write-to";
         const string MinimumLevelDirective = "minimum-level";
@@ -37,16 +39,23 @@ namespace Serilog.Settings.KeyValuePairs
         const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
         const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string ObjectInstantiationDirectiveRegex = @"^(?<objectTypeAlias>level-switch):(?<variableName>[A-Za-z0-9]+)$";
 
         static readonly string[] _supportedDirectives =
         {
             UsingDirective,
+            LevelSwitchDirective,
             AuditToDirective,
             WriteToDirective,
             MinimumLevelDirective,
             EnrichWithPropertyDirective,
             EnrichWithDirective,
             FilterDirective
+        };
+
+        static readonly Dictionary<string, Type> InstantiableObjectTypes = new Dictionary<string, Type>
+        {
+            ["level-switch"] = typeof(LoggingLevelSwitch),
         };
 
         static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
@@ -106,6 +115,18 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
 
+            var matchObjectInstantiations = new Regex(ObjectInstantiationDirectiveRegex);
+
+            var objectInstantiationDirectives = (from wt in directives
+                                                where matchObjectInstantiations.IsMatch(wt.Key)
+                                                let match = matchObjectInstantiations.Match(wt.Key)
+                                                select new
+                                                {
+                                                    ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
+                                                    VariableName = match.Groups["variableName"].Value,
+                                                    ConstructorParamValue = wt.Value
+                                                }).ToList();
+
             var matchCallables = new Regex(CallableDirectiveRegex);
 
             var callableDirectives = (from wt in directives
@@ -126,6 +147,16 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
+                var variablesInScope = new Dictionary<string, object>();
+                foreach (var objectInstantiationDirective in objectInstantiationDirectives)
+                {
+                    if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
+                    {
+                        variablesInScope[objectInstantiationDirective.VariableName] = paramValue;
+                    }
+                }
+
+
                 foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))
                 {
                     var methods = CallableConfigurationMethodFinder.FindConfigurationMethods(configurationAssemblies, receiverGroup.Key);
@@ -139,6 +170,8 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
         }
+
+        
 
         static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
         {
@@ -183,6 +216,28 @@ namespace Serilog.Settings.KeyValuePairs
             }
 
             return configurationAssemblies.Distinct();
+        }
+
+        internal static bool TryInstantiate(Type type, string constructorParamAsString, out object createdInstance)
+        {
+            var oneParamPublicConstructors = type.GetTypeInfo().DeclaredConstructors
+                .Where(ctor => ctor.GetParameters().Length == 1);
+
+            var firstOneParamConstructors = oneParamPublicConstructors.FirstOrDefault();
+
+            if (firstOneParamConstructors == null)
+            {
+                createdInstance = null;
+                return false;
+            }
+
+            var targetConstructorParamType = firstOneParamConstructors.GetParameters()[0].ParameterType;
+            var constructorParam = SettingValueConversions.ConvertToType(constructorParamAsString, targetConstructorParamType);
+
+            createdInstance = firstOneParamConstructors.Invoke(new[] { constructorParam });
+            return true;
+
+
         }
 
         internal class ConfigurationMethodCall

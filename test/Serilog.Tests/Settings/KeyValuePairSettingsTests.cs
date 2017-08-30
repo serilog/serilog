@@ -8,6 +8,7 @@ using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using TestDummies;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Formatting;
 
 namespace Serilog.Tests.Settings
@@ -150,6 +151,17 @@ namespace Serilog.Tests.Settings
             evt = null;
             log.Write(Some.InformationEvent());
             Assert.NotNull(evt);
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchIsInstantiatedFromLogLevelAsString()
+        {
+            var didSucceed = KeyValuePairSettings.TryInstantiate(typeof(LoggingLevelSwitch), LogEventLevel.Warning.ToString(), out var actual);
+
+            Assert.True(didSucceed, "TryInstantiate should successfully instantiate a LoggingLevelSwitch");
+            Assert.NotNull(actual);
+            Assert.IsType<LoggingLevelSwitch>(actual);
+            Assert.Equal(LogEventLevel.Warning, ((LoggingLevelSwitch) actual).MinimumLevel);
         }
 
     }
