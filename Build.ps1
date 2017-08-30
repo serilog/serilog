@@ -23,10 +23,12 @@ foreach ($src in ls src/*) {
 
 	echo "build: Packaging project in $src"
 
+    & dotnet build -c Release --version-suffix=$buildSuffix
+
     if($suffix) {
-        & dotnet pack -c Release --include-source -o ..\..\artifacts --version-suffix=$suffix
+        & dotnet pack -c Release --include-source --no-build -o ..\..\artifacts --version-suffix=$suffix
     } else {
-        & dotnet pack -c Release --include-source -o ..\..\artifacts
+        & dotnet pack -c Release --include-source --no-build -o ..\..\artifacts
     }
     if($LASTEXITCODE -ne 0) { exit 1 }    
 
