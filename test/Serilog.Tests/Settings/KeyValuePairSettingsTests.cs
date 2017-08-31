@@ -161,7 +161,7 @@ namespace Serilog.Tests.Settings
             Assert.True(didSucceed, "TryInstantiate should successfully instantiate a LoggingLevelSwitch");
             Assert.NotNull(actual);
             Assert.IsType<LoggingLevelSwitch>(actual);
-            Assert.Equal(LogEventLevel.Warning, ((LoggingLevelSwitch) actual).MinimumLevel);
+            Assert.Equal(LogEventLevel.Warning, ((LoggingLevelSwitch)actual).MinimumLevel);
         }
 
         [Fact]
@@ -193,14 +193,44 @@ namespace Serilog.Tests.Settings
             Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
         }
 
-        static TField GetPrivateField<T, TField>(T item, string fieldName) where T:class
+        static TField GetPrivateField<T, TField>(T item, string fieldName) where T : class
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             var fieldInfo = typeof(T).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-            if(fieldInfo == null) throw new InvalidOperationException($"Could not find private instance field {fieldName} for type {typeof(T)}");
+            if (fieldInfo == null) throw new InvalidOperationException($"Could not find private instance field {fieldName} for type {typeof(T)}");
 
             var fieldValue = fieldInfo.GetValue(item);
-            return (TField) fieldValue;
+            return (TField)fieldValue;
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchIsPassedToSinks()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:Switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "Switch1",
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "Switch1"
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            Assert.False(DummyWithLevelSwitchSink.ControlLevelSwitch == null, "Sink ControlLevelSwitch should have been initialized");
+
+            var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+            log.Write(Some.DebugEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
+
+            controlSwitch.MinimumLevel = LogEventLevel.Debug;
+            
+            log.Write(Some.DebugEvent());
+            Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
         }
 
     }
