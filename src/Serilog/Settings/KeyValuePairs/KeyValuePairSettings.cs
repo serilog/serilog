@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -117,36 +118,12 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
 
-            var matchObjectInstantiations = new Regex(ObjectInstantiationDirectiveRegex);
-
-            var objectInstantiationDirectives = (from wt in directives
-                                                 where matchObjectInstantiations.IsMatch(wt.Key)
-                                                 let match = matchObjectInstantiations.Match(wt.Key)
-                                                 select new
-                                                 {
-                                                     ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
-                                                     VariableName = match.Groups["variableName"].Value,
-                                                     ConstructorParamValue = wt.Value
-                                                 }).ToList();
-
-            var variablesInScope = new Dictionary<string, object>();
-            foreach (var objectInstantiationDirective in objectInstantiationDirectives)
-            {
-                if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
-                {
-                    variablesInScope[objectInstantiationDirective.VariableName] = paramValue;
-                }
-            }
+            var variablesInScope = ParseVariableDeclarationDirectives(directives);
 
             string minimumLevelControlledByLevelSwitchName;
             if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
             {
-                var levelSwitch = variablesInScope
-                    .Where(kvp => kvp.Key == minimumLevelControlledByLevelSwitchName)
-                    .Select(kvp => kvp.Value)
-                    .OfType<LoggingLevelSwitch>()
-                    .FirstOrDefault();
-
+                var levelSwitch = LookUpVariable<LoggingLevelSwitch>(variablesInScope, minimumLevelControlledByLevelSwitchName);
                 if (levelSwitch != null)
                 {
                     loggerConfiguration.MinimumLevel.ControlledBy(levelSwitch);
@@ -173,9 +150,6 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var configurationAssemblies = LoadConfigurationAssemblies(directives);
 
-
-
-
                 foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))
                 {
                     var methods = CallableConfigurationMethodFinder.FindConfigurationMethods(configurationAssemblies, receiverGroup.Key);
@@ -189,8 +163,42 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
         }
-
         
+
+        static IReadOnlyDictionary<string, object> ParseVariableDeclarationDirectives(Dictionary<string, string> directives)
+        {
+            var matchObjectInstantiations = new Regex(ObjectInstantiationDirectiveRegex);
+
+            var objectInstantiationDirectives = (from wt in directives
+                where matchObjectInstantiations.IsMatch(wt.Key)
+                let match = matchObjectInstantiations.Match(wt.Key)
+                select new
+                {
+                    ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
+                    VariableName = match.Groups["variableName"].Value,
+                    ConstructorParamValue = wt.Value
+                }).ToList();
+
+            var variablesInScope = new Dictionary<string, object>();
+            foreach (var objectInstantiationDirective in objectInstantiationDirectives)
+            {
+                if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
+                {
+                    variablesInScope[objectInstantiationDirective.VariableName] = paramValue;
+                }
+            }
+            return new ReadOnlyDictionary<string, object>(variablesInScope);
+        }
+
+        static TVariableType LookUpVariable<TVariableType>(IReadOnlyDictionary<string, object> variablesInScope, string variableName)
+        {
+            var variableWithMatchingNameAndType = variablesInScope
+                .Where(kvp => kvp.Key == variableName)
+                .Select(kvp => kvp.Value)
+                .OfType<TVariableType>()
+                .FirstOrDefault();
+            return variableWithMatchingNameAndType;
+        }
 
         static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
         {
