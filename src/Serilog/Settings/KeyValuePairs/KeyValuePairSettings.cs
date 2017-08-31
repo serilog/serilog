@@ -118,12 +118,13 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
 
-            var variablesInScope = ParseVariableDeclarationDirectives(directives);
+            var declaredVariables = ParseVariableDeclarationDirectives(directives);
 
             string minimumLevelControlledByLevelSwitchName;
             if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
             {
-                var levelSwitch = LookUpVariable<LoggingLevelSwitch>(variablesInScope, minimumLevelControlledByLevelSwitchName);
+                var levelSwitch = LookUpVariable(minimumLevelControlledByLevelSwitchName, typeof(LoggingLevelSwitch), declaredVariables) as LoggingLevelSwitch;
+                // TODO : maybe throw an exception to notify missing variable declaration ?
                 if (levelSwitch != null)
                 {
                     loggerConfiguration.MinimumLevel.ControlledBy(levelSwitch);
@@ -159,48 +160,54 @@ namespace Serilog.Settings.KeyValuePairs
                         .GroupBy(call => call.MethodName)
                         .ToList();
 
-                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration));
+                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredVariables);
                 }
             }
         }
-        
+
 
         static IReadOnlyDictionary<string, object> ParseVariableDeclarationDirectives(Dictionary<string, string> directives)
         {
             var matchObjectInstantiations = new Regex(ObjectInstantiationDirectiveRegex);
 
             var objectInstantiationDirectives = (from wt in directives
-                where matchObjectInstantiations.IsMatch(wt.Key)
-                let match = matchObjectInstantiations.Match(wt.Key)
-                select new
-                {
-                    ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
-                    VariableName = match.Groups["variableName"].Value,
-                    ConstructorParamValue = wt.Value
-                }).ToList();
+                                                 where matchObjectInstantiations.IsMatch(wt.Key)
+                                                 let match = matchObjectInstantiations.Match(wt.Key)
+                                                 select new
+                                                 {
+                                                     ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
+                                                     VariableName = match.Groups["variableName"].Value,
+                                                     ConstructorParamValue = wt.Value
+                                                 }).ToList();
 
-            var variablesInScope = new Dictionary<string, object>();
+            var variables = new Dictionary<string, object>();
             foreach (var objectInstantiationDirective in objectInstantiationDirectives)
             {
                 if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
                 {
-                    variablesInScope[objectInstantiationDirective.VariableName] = paramValue;
+                    variables[objectInstantiationDirective.VariableName] = paramValue;
                 }
             }
-            return new ReadOnlyDictionary<string, object>(variablesInScope);
+            return new ReadOnlyDictionary<string, object>(variables);
         }
 
-        static TVariableType LookUpVariable<TVariableType>(IReadOnlyDictionary<string, object> variablesInScope, string variableName)
+        static object LookUpVariable(string variableName, Type variableType, IReadOnlyDictionary<string, object> declaredVariables)
         {
-            var variableWithMatchingNameAndType = variablesInScope
+            var variableWithMatchingNameAndType = declaredVariables
                 .Where(kvp => kvp.Key == variableName)
                 .Select(kvp => kvp.Value)
-                .OfType<TVariableType>()
+                .Where(v=> v.GetType().GetTypeInfo().IsAssignableFrom(variableType.GetTypeInfo()))
                 .FirstOrDefault();
             return variableWithMatchingNameAndType;
         }
 
-        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
+        static object LookUpVariableWithFallBackToConversion(string variableNameOrValueAsString, Type variableType, IReadOnlyDictionary<string, object> declaredVariables)
+        {
+            var possiblyExistingInstance = LookUpVariable(variableNameOrValueAsString, variableType, declaredVariables);
+            return possiblyExistingInstance ?? SettingValueConversions.ConvertToType(variableNameOrValueAsString, variableType);
+        }
+
+        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, object> declaredVariables)
         {
             foreach (var directiveInfo in directives)
             {
@@ -211,7 +218,7 @@ namespace Serilog.Settings.KeyValuePairs
 
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
-                                select directive == null ? p.DefaultValue : SettingValueConversions.ConvertToType(directive.Value, p.ParameterType)).ToList();
+                                select directive == null ? p.DefaultValue : LookUpVariableWithFallBackToConversion(directive.Value, p.ParameterType, declaredVariables)).ToList();
 
                     call.Insert(0, loggerConfigMethod);
 
@@ -263,8 +270,6 @@ namespace Serilog.Settings.KeyValuePairs
 
             createdInstance = firstOneParamConstructors.Invoke(new[] { constructorParam });
             return true;
-
-
         }
 
         internal class ConfigurationMethodCall
