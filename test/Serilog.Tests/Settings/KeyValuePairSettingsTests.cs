@@ -153,15 +153,19 @@ namespace Serilog.Tests.Settings
             Assert.NotNull(evt);
         }
 
-        [Fact]
-        public void LoggingLevelSwitchIsInstantiatedFromLogLevelAsString()
+        [Theory]
+        [InlineData("Debug", LogEventLevel.Debug, "proper parsing")]
+        [InlineData("Information", LogEventLevel.Information, "proper parsing")]
+        [InlineData("", LogEventLevel.Information, "default value")]
+        public void LoggingLevelSwitchIsInstantiatedFromLogLevelAsString3(string paramValue, LogEventLevel expectedSwitchInitialLevel, string reason)
         {
-            var didSucceed = KeyValuePairSettings.TryInstantiate(typeof(LoggingLevelSwitch), LogEventLevel.Warning.ToString(), out var actual);
+            object actual = null;
+            var didSucceed = KeyValuePairSettings.TryInstantiate(typeof(LoggingLevelSwitch), paramValue, out actual);
 
             Assert.True(didSucceed, "TryInstantiate should successfully instantiate a LoggingLevelSwitch");
             Assert.NotNull(actual);
             Assert.IsType<LoggingLevelSwitch>(actual);
-            Assert.Equal(LogEventLevel.Warning, ((LoggingLevelSwitch)actual).MinimumLevel);
+            Assert.Equal(expectedSwitchInitialLevel, ((LoggingLevelSwitch)actual).MinimumLevel);
         }
 
         [Fact]
@@ -228,7 +232,7 @@ namespace Serilog.Tests.Settings
             Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
 
             controlSwitch.MinimumLevel = LogEventLevel.Debug;
-            
+
             log.Write(Some.DebugEvent());
             Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
         }

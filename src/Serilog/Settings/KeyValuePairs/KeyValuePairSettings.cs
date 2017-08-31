@@ -196,7 +196,7 @@ namespace Serilog.Settings.KeyValuePairs
             var variableWithMatchingNameAndType = declaredVariables
                 .Where(kvp => kvp.Key == variableName)
                 .Select(kvp => kvp.Value)
-                .Where(v=> v.GetType().GetTypeInfo().IsAssignableFrom(variableType.GetTypeInfo()))
+                .Where(v => v.GetType().GetTypeInfo().IsAssignableFrom(variableType.GetTypeInfo()))
                 .FirstOrDefault();
             return variableWithMatchingNameAndType;
         }
@@ -265,10 +265,20 @@ namespace Serilog.Settings.KeyValuePairs
                 return false;
             }
 
-            var targetConstructorParamType = firstOneParamConstructors.GetParameters()[0].ParameterType;
-            var constructorParam = SettingValueConversions.ConvertToType(constructorParamAsString, targetConstructorParamType);
+            var constructorParameter = firstOneParamConstructors.GetParameters()[0];
+            var constructorParamType = constructorParameter.ParameterType;
 
-            createdInstance = firstOneParamConstructors.Invoke(new[] { constructorParam });
+            object constructorParamValue;
+            if (constructorParameter.HasDefaultValue && String.IsNullOrEmpty(constructorParamAsString))
+            {
+                constructorParamValue = constructorParameter.DefaultValue;
+            }
+            else
+            {
+                constructorParamValue = SettingValueConversions.ConvertToType(constructorParamAsString, constructorParamType);
+            }
+
+            createdInstance = firstOneParamConstructors.Invoke(new[] { constructorParamValue });
             return true;
         }
 
