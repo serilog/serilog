@@ -157,7 +157,7 @@ namespace Serilog.Tests.Settings
         [InlineData("Debug", LogEventLevel.Debug, "proper parsing")]
         [InlineData("Information", LogEventLevel.Information, "proper parsing")]
         [InlineData("", LogEventLevel.Information, "default value")]
-        public void LoggingLevelSwitchIsInstantiatedFromLogLevelAsString3(string paramValue, LogEventLevel expectedSwitchInitialLevel, string reason)
+        public void LoggingLevelSwitchIsInstantiatedFromLogLevelAsString(string paramValue, LogEventLevel expectedSwitchInitialLevel, string reason)
         {
             object actual = null;
             var didSucceed = KeyValuePairSettings.TryInstantiate(typeof(LoggingLevelSwitch), paramValue, out actual);
@@ -228,11 +228,12 @@ namespace Serilog.Tests.Settings
             Assert.False(DummyWithLevelSwitchSink.ControlLevelSwitch == null, "Sink ControlLevelSwitch should have been initialized");
 
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+            Assert.NotNull(controlSwitch);
+
             log.Write(Some.DebugEvent());
             Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
 
             controlSwitch.MinimumLevel = LogEventLevel.Debug;
-
             log.Write(Some.DebugEvent());
             Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
         }
