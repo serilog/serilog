@@ -57,6 +57,11 @@ namespace Serilog.Tests.Support
             return LogEvent(timestamp, LogEventLevel.Debug);
         }
 
+        public static LogEvent WarningEvent(DateTimeOffset? timestamp = null)
+        {
+            return LogEvent(timestamp, LogEventLevel.Warning);
+        }
+
         public static LogEventProperty LogEventProperty()
         {
             return new LogEventProperty(String(), new ScalarValue(Int()));

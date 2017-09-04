@@ -173,7 +173,7 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["level-switch:Switch1"] = "Information",
+                ["level-switch:Switch1"] = "Warning",
                 ["minimum-level:controlled-by"] = "Switch1",
             };
 
@@ -184,29 +184,14 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            // TODO : maybe add Logger.LevelSwitch as an internal readonly property to avoid reflection here ? 
-            var privateSwitch = GetPrivateField<Logger, LoggingLevelSwitch>(log, "_levelSwitch");
-            Assert.NotNull(privateSwitch);
-
             log.Write(Some.DebugEvent());
-            Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
-
-            privateSwitch.MinimumLevel = LogEventLevel.Debug;
-
-            log.Write(Some.DebugEvent());
-            Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning. It should not log Debug messages");
+            log.Write(Some.InformationEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning. It should not log Information messages");
+            log.Write(Some.WarningEvent());
+            Assert.True(evt != null, "LoggingLevelSwitch initial level was Warning. It should log Warning messages");
         }
-
-        static TField GetPrivateField<T, TField>(T item, string fieldName) where T : class
-        {
-            if (item == null) throw new ArgumentNullException(nameof(item));
-            var fieldInfo = typeof(T).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-            if (fieldInfo == null) throw new InvalidOperationException($"Could not find private instance field {fieldName} for type {typeof(T)}");
-
-            var fieldValue = fieldInfo.GetValue(item);
-            return (TField)fieldValue;
-        }
-
+        
         [Fact]
         public void LoggingLevelSwitchIsPassedToSinks()
         {
