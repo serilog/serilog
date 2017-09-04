@@ -82,7 +82,6 @@ public class Program
 }
 ```
 
-
 Find more, including a runnable example application, under the [Getting Started topic](https://github.com/serilog/serilog/wiki/Getting-Started) in the [documentation](https://github.com/serilog/serilog/wiki/).
 
 ### Getting help
@@ -98,7 +97,9 @@ Serilog has an active and helpful community who are happy to help point you in t
 
 ### Contributing
 
-Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/serilog/serilog/issues?labels=up-for-grabs&state=open) label. Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts.
+Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/serilog/serilog/issues?labels=up-for-grabs&state=open) label. Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts.  For more details check out our [contributing guide](CONTRIBUTING.md).
+
+When contributing please keep in mind our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Detailed build status
 
