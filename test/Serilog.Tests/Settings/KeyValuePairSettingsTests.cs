@@ -152,22 +152,7 @@ namespace Serilog.Tests.Settings
             log.Write(Some.InformationEvent());
             Assert.NotNull(evt);
         }
-
-        [Theory]
-        [InlineData("Debug", LogEventLevel.Debug, "proper parsing")]
-        [InlineData("Information", LogEventLevel.Information, "proper parsing")]
-        [InlineData("", LogEventLevel.Information, "default value")]
-        public void LoggingLevelSwitchIsInstantiatedFromLogLevelAsString(string paramValue, LogEventLevel expectedSwitchInitialLevel, string reason)
-        {
-            object actual = null;
-            var didSucceed = KeyValuePairSettings.TryInstantiate(typeof(LoggingLevelSwitch), paramValue, out actual);
-
-            Assert.True(didSucceed, "TryInstantiate should successfully instantiate a LoggingLevelSwitch");
-            Assert.NotNull(actual);
-            Assert.IsType<LoggingLevelSwitch>(actual);
-            Assert.Equal(expectedSwitchInitialLevel, ((LoggingLevelSwitch)actual).MinimumLevel);
-        }
-
+        
         [Fact]
         public void LoggingLevelSwitchIsConfigured()
         {
@@ -191,7 +176,24 @@ namespace Serilog.Tests.Settings
             log.Write(Some.WarningEvent());
             Assert.True(evt != null, "LoggingLevelSwitch initial level was Warning. It should log Warning messages");
         }
-        
+
+        [Fact]
+        public void SettingMimiumLevelControlledByToAnUndeclaredSwitchThrows()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:Switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "Switch2",
+            };
+
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                new LoggerConfiguration()
+                    .ReadFrom.KeyValuePairs(settings)
+                    .CreateLogger());
+            Assert.Contains("Switch2", ex.Message);
+            Assert.Contains("level-switch:", ex.Message);
+        }
+
         [Fact]
         public void LoggingLevelSwitchIsPassedToSinks()
         {
@@ -221,6 +223,25 @@ namespace Serilog.Tests.Settings
             controlSwitch.MinimumLevel = LogEventLevel.Debug;
             log.Write(Some.DebugEvent());
             Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
+        }
+
+        [Fact]
+        public void ReferencingAnUndeclaredSwitchInSinkThrows()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:Switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "Switch1",
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "Switch2"
+            };
+
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                new LoggerConfiguration()
+                    .ReadFrom.KeyValuePairs(settings)
+                    .CreateLogger());
+            Assert.Contains("Switch2", ex.Message);
+            Assert.Contains("level-switch:", ex.Message);
         }
 
     }

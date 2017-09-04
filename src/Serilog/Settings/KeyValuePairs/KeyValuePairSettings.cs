@@ -41,7 +41,7 @@ namespace Serilog.Settings.KeyValuePairs
         const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
         const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
-        const string ObjectInstantiationDirectiveRegex = @"^(?<objectTypeAlias>level-switch):(?<variableName>[A-Za-z0-9]+)$";
+        const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>[A-Za-z0-9]+)$";
 
         static readonly string[] _supportedDirectives =
         {
@@ -54,11 +54,6 @@ namespace Serilog.Settings.KeyValuePairs
             EnrichWithPropertyDirective,
             EnrichWithDirective,
             FilterDirective
-        };
-
-        static readonly Dictionary<string, Type> InstantiableObjectTypes = new Dictionary<string, Type>
-        {
-            ["level-switch"] = typeof(LoggingLevelSwitch),
         };
 
         static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
@@ -118,17 +113,13 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
 
-            var declaredVariables = ParseVariableDeclarationDirectives(directives);
+            var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
             string minimumLevelControlledByLevelSwitchName;
             if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
             {
-                var levelSwitch = LookUpVariable(minimumLevelControlledByLevelSwitchName, typeof(LoggingLevelSwitch), declaredVariables) as LoggingLevelSwitch;
-                // TODO : maybe throw an exception to notify missing variable declaration ?
-                if (levelSwitch != null)
-                {
-                    loggerConfiguration.MinimumLevel.ControlledBy(levelSwitch);
-                }
+                var levelSwitch = LookUpSwitchByNameOrThrow(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
+                loggerConfiguration.MinimumLevel.ControlledBy(levelSwitch);
             }
 
             var matchCallables = new Regex(CallableDirectiveRegex);
@@ -160,54 +151,63 @@ namespace Serilog.Settings.KeyValuePairs
                         .GroupBy(call => call.MethodName)
                         .ToList();
 
-                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredVariables);
+                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredLevelSwitches);
                 }
             }
         }
 
-
-        static IReadOnlyDictionary<string, object> ParseVariableDeclarationDirectives(Dictionary<string, string> directives)
+        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(Dictionary<string, string> directives)
         {
-            var matchObjectInstantiations = new Regex(ObjectInstantiationDirectiveRegex);
+            var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
 
-            var objectInstantiationDirectives = (from wt in directives
-                                                 where matchObjectInstantiations.IsMatch(wt.Key)
-                                                 let match = matchObjectInstantiations.Match(wt.Key)
-                                                 select new
-                                                 {
-                                                     ObjectType = InstantiableObjectTypes[match.Groups["objectTypeAlias"].Value],
-                                                     VariableName = match.Groups["variableName"].Value,
-                                                     ConstructorParamValue = wt.Value
-                                                 }).ToList();
+            var switchDeclarationDirectives = (from wt in directives
+                                               where matchLevelSwitchDeclarations.IsMatch(wt.Key)
+                                               let match = matchLevelSwitchDeclarations.Match(wt.Key)
+                                               select new
+                                               {
+                                                   SwitchName = match.Groups["switchName"].Value,
+                                                   InitialSwitchLevel = wt.Value
+                                               }).ToList();
 
-            var variables = new Dictionary<string, object>();
-            foreach (var objectInstantiationDirective in objectInstantiationDirectives)
+            var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
+            foreach (var switchDeclarationDirective in switchDeclarationDirectives)
             {
-                if (TryInstantiate(objectInstantiationDirective.ObjectType, objectInstantiationDirective.ConstructorParamValue, out var paramValue))
+                LoggingLevelSwitch newSwitch;
+                if (string.IsNullOrEmpty(switchDeclarationDirective.InitialSwitchLevel))
                 {
-                    variables[objectInstantiationDirective.VariableName] = paramValue;
+                    newSwitch = new LoggingLevelSwitch();
                 }
+                else
+                {
+                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchDeclarationDirective.InitialSwitchLevel, typeof(LogEventLevel));
+                    newSwitch = new LoggingLevelSwitch(initialLevel);
+                }
+                namedSwitches[switchDeclarationDirective.SwitchName] = newSwitch;
+
             }
-            return new ReadOnlyDictionary<string, object>(variables);
+            return new ReadOnlyDictionary<string, LoggingLevelSwitch>(namedSwitches);
         }
 
-        static object LookUpVariable(string variableName, Type variableType, IReadOnlyDictionary<string, object> declaredVariables)
+        static LoggingLevelSwitch LookUpSwitchByNameOrThrow(string minimumLevelControlledByLevelSwitchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
         {
-            var variableWithMatchingNameAndType = declaredVariables
-                .Where(kvp => kvp.Key == variableName)
-                .Select(kvp => kvp.Value)
-                .Where(v => v.GetType().GetTypeInfo().IsAssignableFrom(variableType.GetTypeInfo()))
-                .FirstOrDefault();
-            return variableWithMatchingNameAndType;
+            if (!declaredLevelSwitches.ContainsKey(minimumLevelControlledByLevelSwitchName))
+            {
+                throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{minimumLevelControlledByLevelSwitchName}\". You might be missing a key \"{LevelSwitchDirective}:{{switchName}}\"");
+            }
+            var levelSwitch = declaredLevelSwitches[minimumLevelControlledByLevelSwitchName];
+            return levelSwitch;
         }
 
-        static object LookUpVariableWithFallBackToConversion(string variableNameOrValueAsString, Type variableType, IReadOnlyDictionary<string, object> declaredVariables)
+        static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
         {
-            var possiblyExistingInstance = LookUpVariable(variableNameOrValueAsString, variableType, declaredVariables);
-            return possiblyExistingInstance ?? SettingValueConversions.ConvertToType(variableNameOrValueAsString, variableType);
+            if (type == typeof(LoggingLevelSwitch))
+            {
+                return LookUpSwitchByNameOrThrow(valueOrSwitchName, declaredSwitches);
+            }
+            return SettingValueConversions.ConvertToType(valueOrSwitchName, type);
         }
 
-        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, object> declaredVariables)
+        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
         {
             foreach (var directiveInfo in directives)
             {
@@ -218,7 +218,7 @@ namespace Serilog.Settings.KeyValuePairs
 
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
-                                select directive == null ? p.DefaultValue : LookUpVariableWithFallBackToConversion(directive.Value, p.ParameterType, declaredVariables)).ToList();
+                                select directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
 
                     call.Insert(0, loggerConfigMethod);
 
@@ -251,37 +251,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             return configurationAssemblies.Distinct();
         }
-
-        internal static bool TryInstantiate(Type type, string constructorParamAsString, out object createdInstance)
-        {
-            var oneParamPublicConstructors = type.GetTypeInfo().DeclaredConstructors
-                .Where(ctor => ctor.GetParameters().Length == 1);
-
-            var firstOneParamConstructors = oneParamPublicConstructors.FirstOrDefault();
-
-            if (firstOneParamConstructors == null)
-            {
-                createdInstance = null;
-                return false;
-            }
-
-            var constructorParameter = firstOneParamConstructors.GetParameters()[0];
-            var constructorParamType = constructorParameter.ParameterType;
-
-            object constructorParamValue;
-            if (constructorParameter.HasDefaultValue && String.IsNullOrEmpty(constructorParamAsString))
-            {
-                constructorParamValue = constructorParameter.DefaultValue;
-            }
-            else
-            {
-                constructorParamValue = SettingValueConversions.ConvertToType(constructorParamAsString, constructorParamType);
-            }
-
-            createdInstance = firstOneParamConstructors.Invoke(new[] { constructorParamValue });
-            return true;
-        }
-
+        
         internal class ConfigurationMethodCall
         {
             public string MethodName { get; set; }
