@@ -88,6 +88,9 @@ namespace Serilog.Settings.KeyValuePairs
                 .Where(k => _supportedDirectives.Any(k.StartsWith))
                 .ToDictionary(k => k, k => _settings[k]);
 
+            var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
+
+
             string minimumLevelDirective;
             LogEventLevel minimumLevel;
             if (directives.TryGetValue(MinimumLevelDirective, out minimumLevelDirective) &&
@@ -103,23 +106,28 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
             }
 
-           foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
-                dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
-            {
-                LogEventLevel overriddenLevel;
-                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel)) {
-                    var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
-                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
-                }
-            }
-
-            var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
-
             string minimumLevelControlledByLevelSwitchName;
             if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
             {
-                var levelSwitch = LookUpSwitchByNameOrThrow(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
-                loggerConfiguration.MinimumLevel.ControlledBy(levelSwitch);
+                var globalMinimumLevelSwitch = LookUpSwitchByNameOrThrow(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
+                loggerConfiguration.MinimumLevel.ControlledBy(globalMinimumLevelSwitch);
+            }
+            
+            foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
+                dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
+            {
+                var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
+
+                LogEventLevel overriddenLevel;
+                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel))
+                {
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
+                }
+                else
+                {
+                    var overrideSwitch = LookUpSwitchByNameOrThrow(minimumLevelOverrideDirective.Value, declaredLevelSwitches);
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, overrideSwitch);
+                }
             }
 
             var matchCallables = new Regex(CallableDirectiveRegex);

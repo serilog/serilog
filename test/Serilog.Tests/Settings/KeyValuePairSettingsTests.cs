@@ -244,5 +244,46 @@ namespace Serilog.Tests.Settings
             Assert.Contains("level-switch:", ex.Message);
         }
 
+
+        [Fact]
+        public void LoggingLevelSwitchCanBeUsedForMinimumLevelOverrides()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["minimum-level"] = "Debug",
+                ["level-switch:specificSwitch"] = "Warning",
+                ["minimum-level:override:System"] = "specificSwitch",
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "specificSwitch"
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            var systemLogger = log.ForContext(Constants.SourceContextPropertyName, "System.Bar");
+            
+            log.Write(Some.InformationEvent());
+            Assert.False(evt is null, "Minimul level is Debug. It should log Information messages");
+
+            evt = null;
+
+            systemLogger.Write(Some.InformationEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should not log Information messages for SourceContext System.Bar");
+
+            systemLogger.Write(Some.WarningEvent());
+            Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
+
+            evt = null;
+            var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+
+            controlSwitch.MinimumLevel = LogEventLevel.Information;
+            systemLogger.Write(Some.InformationEvent());
+            Assert.False(evt is null, "LoggingLevelSwitch level was changed to Information for logger System.*. It should now log Information events for SourceContext System.Bar.");
+        }
+
     }
 }
