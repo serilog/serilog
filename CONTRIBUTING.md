@@ -7,7 +7,7 @@ The following are a set of guidelines for contributing to [Serilog](https://seri
 
 ## Where to start?
 
-The [Serilog repository][serilog] is the location for enhancements and fixes to the core library.  Generally we try to keep the core library lean and performant which attempting to deliver the features of a first class logging library.  
+The [Serilog repository][serilog] is the location for enhancements and fixes to the core library.  Generally we try to keep the core library lean and performant while attempting to deliver the features of a first class logging library.  
 
 If you are interested in contributing to a [sink][sinks] or one of the other [community projects][community_projects] then please create a PR in the respective repository.
 
