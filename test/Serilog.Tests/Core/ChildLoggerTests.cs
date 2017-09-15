@@ -199,6 +199,10 @@ namespace Serilog.Tests.Core
         [InlineData("xx", +1, null, +0, true)]
         [InlineData("Root.xx", +1, null, +0, true)]
         [InlineData("Root.N1.xx", +1, null, +0, true)]
+        // - child overrides on irrelevant namespaces
+        [InlineData(null, +0, "xx", +1, true)]
+        [InlineData(null, +0, "Root.xx", +1, true)]
+        [InlineData(null, +1, "Root.N1.xx", +1, true)]
         // - root overrides prevent all processing from children
         // even though children would happily accept it
         [InlineData("Root", +1, null, +0, false)]
