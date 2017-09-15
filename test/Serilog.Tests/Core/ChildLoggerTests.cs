@@ -1,5 +1,4 @@
 ﻿using Serilog.Core;
-using Serilog.Core.Sinks;
 using Serilog.Events;
 using Serilog.Tests.Support;
 using Xunit;
@@ -211,6 +210,20 @@ namespace Serilog.Tests.Core
         [InlineData("Root.N1", +1, "Root.N1", +0, false)]
         [InlineData("Root.N1.N2", +1, null, +0, false)]
         [InlineData("Root.N1.N2", +1, "Root.N1.N2", +0, false)]
+        // - no root overrides but children has its own
+        [InlineData(null, +0, "Root", +1, false)]
+        [InlineData(null, +0, "Root.N1", +1, false)]
+        [InlineData(null, +0, "Root.N1.N2", +1, false)]
+        // - root overrides let it through but child rejects it
+        [InlineData("Root", +0, "Root", +1, false)]
+        [InlineData("Root.N1", +0, "Root", +1, false)]
+        [InlineData("Root.N1.N2", +0, "Root", +1, false)]
+        [InlineData("Root", +0, "Root.N1", +1, false)]
+        [InlineData("Root.N1", +0, "Root.N1", +1, false)]
+        [InlineData("Root.N1.N2", +0, "Root.N1", +1, false)]
+        [InlineData("Root", +0, "Root.N1.N2", +1, false)]
+        [InlineData("Root.N1", +0, "Root.N1.N2", +1, false)]
+        [InlineData("Root.N1.N2", +0, "Root.N1.N2", +1, false)]
         public void WriteToLoggerWithConfigCallbackMinimumLevelOverrideInheritanceScenarios(
             string rootOverrideSource,
             int rootOverrideLevelIncrement,
