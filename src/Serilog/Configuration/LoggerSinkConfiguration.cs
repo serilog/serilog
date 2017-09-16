@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Serilog.Core;
 using Serilog.Core.Sinks;
@@ -125,12 +126,21 @@ namespace Serilog.Configuration
             LoggingLevelSwitch levelSwitch = null)
         {
             if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
-            var lc = new LoggerConfiguration();
+            var subLoggerOverrides = new Dictionary<string, LoggingLevelSwitch>();
+            var lc = new LoggerConfiguration((s, lls) => subLoggerOverrides[s] = lls);
 
             _applyInheritedConfiguration(lc);
 
             configureLogger(lc);
-            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel, levelSwitch);
+
+            ILogEventSink secondaryLoggerSink = new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true);
+            // by now, subLoggerOverrides contain the overrides defined for this sublogger
+            if (subLoggerOverrides.Count > 0)
+            {
+                secondaryLoggerSink = new OverrideRestrictingSink(secondaryLoggerSink, subLoggerOverrides);
+            }
+
+            return Sink(secondaryLoggerSink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
