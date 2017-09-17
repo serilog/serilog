@@ -285,5 +285,108 @@ namespace Serilog.Tests.Core
                 Assert.Null(evt);
             }
         }
+
+
+        [Theory]
+        // Visualizing the pipeline from left to right ....
+        //
+        //   Event  --> Root Logger --> Child Logger -> YES or
+        //    lvl       override/lvl    override/levl     NO ?
+        //
+        // numbers are relative to incoming event level
+        // Information + 1 = Warning
+        // Information - 1 = Debug
+        //
+        // Incoming event is Information
+        // with SourceContext Root.N1.N2
+        //
+        // - default case - no overrides
+        [InlineData(null, 0, null, 0, true)]
+        // - root overrides with level lower or equal to event
+        // ... and child logger is out of the way
+        [InlineData("Root", +0, null, +0, true)]
+        [InlineData("Root", -1, null, +0, true)]
+        [InlineData("Root.N1", +0, null, +0, true)]
+        [InlineData("Root.N1", -1, null, +0, true)]
+        [InlineData("Root.N1.N2", +0, null, +0, true)]
+        [InlineData("Root.N1.N2", -1, null, +0, true)]
+        // - root overrides on irrelevant namespaces
+        [InlineData("xx", +1, null, +0, true)]
+        [InlineData("Root.xx", +1, null, +0, true)]
+        [InlineData("Root.N1.xx", +1, null, +0, true)]
+        // - child overrides on irrelevant namespaces
+        [InlineData(null, +0, "xx", +1, true)]
+        [InlineData(null, +0, "Root.xx", +1, true)]
+        [InlineData(null, +1, "Root.N1.xx", +1, true)]
+        // - root overrides prevent all processing from children
+        // even though children would happily accept it
+        [InlineData("Root", +1, null, +0, false)]
+        [InlineData("Root", +1, "Root", +0, false)]
+        [InlineData("Root.N1", +1, null, +0, false)]
+        [InlineData("Root.N1", +1, "Root.N1", +0, false)]
+        [InlineData("Root.N1.N2", +1, null, +0, false)]
+        [InlineData("Root.N1.N2", +1, "Root.N1.N2", +0, false)]
+        // - no root overrides but children has its own
+        [InlineData(null, +0, "Root", +1, false)]
+        [InlineData(null, +0, "Root.N1", +1, false)]
+        [InlineData(null, +0, "Root.N1.N2", +1, false)]
+        // - root overrides let it through but child rejects it
+        [InlineData("Root", +0, "Root", +1, false)]
+        [InlineData("Root.N1", +0, "Root", +1, false)]
+        [InlineData("Root.N1.N2", +0, "Root", +1, false)]
+        [InlineData("Root", +0, "Root.N1", +1, false)]
+        [InlineData("Root.N1", +0, "Root.N1", +1, false)]
+        [InlineData("Root.N1.N2", +0, "Root.N1", +1, false)]
+        [InlineData("Root", +0, "Root.N1.N2", +1, false)]
+        [InlineData("Root.N1", +0, "Root.N1.N2", +1, false)]
+        [InlineData("Root.N1.N2", +0, "Root.N1.N2", +1, false)]
+        public void WriteToLoggerMinimumLevelOverrideInheritanceScenarios(
+            string rootOverrideSource,
+            int rootOverrideLevelIncrement,
+            string childOverrideSource,
+            int childOverrideLevelIncrement,
+            bool eventShouldGetToChild)
+        {
+            var incomingEventLevel = Information;
+            var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
+            var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
+
+            LogEvent evt = null;
+            var sink = new DelegatingSink(e => evt = e);
+
+            var childLoggerConfig = new LoggerConfiguration()
+                .MinimumLevel.Is(LevelAlias.Minimum);
+            if (childOverrideSource != null)
+            {
+                childLoggerConfig.MinimumLevel.Override(childOverrideSource, childOverrideLevel);
+            }
+            childLoggerConfig.WriteTo.Sink(sink);
+            var childLogger = childLoggerConfig.CreateLogger();
+
+            var rootLoggerConfig = new LoggerConfiguration()
+                .MinimumLevel.Is(LevelAlias.Minimum);
+
+            if (rootOverrideSource != null)
+            {
+                rootLoggerConfig.MinimumLevel.Override(rootOverrideSource, rootOverrideLevel);
+            }
+
+            var logger = rootLoggerConfig
+                .WriteTo.Logger(childLogger)
+                .CreateLogger();
+
+            logger
+                .ForContext(Constants.SourceContextPropertyName, "Root.N1.N2")
+                .Write(Some.LogEvent(level: incomingEventLevel));
+
+            if (eventShouldGetToChild)
+            {
+                Assert.NotNull(evt);
+            }
+            else
+            {
+                Assert.Null(evt);
+            }
+        }
     }
 }
