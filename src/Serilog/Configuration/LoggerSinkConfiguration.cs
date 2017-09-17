@@ -159,7 +159,17 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
+            ILogEventSink secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
+
+            if (logger is Logger concreteLogger)
+            {
+                // Loggers can have their own overrides
+                if (concreteLogger.HasOverrides)
+                {
+                    secondarySink = new OverrideRestrictingSink(secondarySink, concreteLogger.OverrideMap);
+                }
+            }
+            return Sink(secondarySink, restrictedToMinimumLevel);
         }
 
         /// <summary>

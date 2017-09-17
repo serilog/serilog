@@ -88,6 +88,9 @@ namespace Serilog.Core
             _enricher = enricher;
         }
 
+        internal bool HasOverrides => _overrideMap != null;
+        internal LevelOverrideMap OverrideMap => _overrideMap;
+
         /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
         /// </summary>
@@ -105,7 +108,7 @@ namespace Serilog.Core
                         enricher,
                         null,
                         _levelSwitch,
-                        _overrideMap);
+                        OverrideMap);
         }
 
         /// <summary>
@@ -145,11 +148,11 @@ namespace Serilog.Core
 
             var minimumLevel = _minimumLevel;
             var levelSwitch = _levelSwitch;
-            if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
+            if (OverrideMap != null && propertyName == Constants.SourceContextPropertyName)
             {
                 var context = value as string;
                 if (context != null)
-                    _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+                    OverrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
             }
 
             return new Logger(
@@ -159,7 +162,7 @@ namespace Serilog.Core
                 enricher,
                 null,
                 levelSwitch,
-                _overrideMap);
+                OverrideMap);
         }
 
         /// <summary>
@@ -273,11 +276,11 @@ namespace Serilog.Core
         /// <returns>True if the level is enabled; otherwise, false.</returns>
         public bool IsEnabled(LogEventLevel level)
         {
-            if ((int) level < (int) _minimumLevel)
+            if ((int)level < (int)_minimumLevel)
                 return false;
 
             return _levelSwitch == null ||
-                   (int) level >= (int) _levelSwitch.MinimumLevel;
+                   (int)level >= (int)_levelSwitch.MinimumLevel;
         }
 
         /// <summary>
@@ -1359,7 +1362,7 @@ namespace Serilog.Core
                 return false;
             }
 
-            property =_messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects);
+            property = _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects);
             return true;
         }
 

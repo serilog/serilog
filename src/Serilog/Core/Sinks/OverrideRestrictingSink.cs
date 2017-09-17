@@ -32,6 +32,14 @@ namespace Serilog.Core.Sinks
 
         }
 
+        public OverrideRestrictingSink(ILogEventSink sink, LevelOverrideMap overrideMap)
+        {
+            if (sink == null) throw new ArgumentNullException(nameof(sink));
+            if (overrideMap == null) throw new ArgumentNullException(nameof(overrideMap));
+            _sink = sink;
+            _overrideMap = overrideMap;
+        }
+
         public void Emit(LogEvent logEvent)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
