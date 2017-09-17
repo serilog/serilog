@@ -85,7 +85,14 @@ namespace Serilog.Tests.Core
 
             logger.Write(Some.LogEvent(level: eventLevel));
 
-            Assert.Equal(eventShouldGetToChild, evt!=null);
+            if (eventShouldGetToChild)
+            {
+                Assert.NotNull(evt);
+            }
+            else
+            {
+                Assert.Null(evt);
+            }
         }
 
         [Theory]
@@ -166,7 +173,14 @@ namespace Serilog.Tests.Core
 
             logger.Write(Some.LogEvent(level: eventLevel));
 
-            Assert.Equal(eventShouldGetToChild, evt != null);
+            if (eventShouldGetToChild)
+            {
+                Assert.NotNull(evt);
+            }
+            else
+            {
+                Assert.Null(evt);
+            }
         }
 
 
@@ -262,7 +276,14 @@ namespace Serilog.Tests.Core
                 .ForContext(Constants.SourceContextPropertyName, "Root.N1.N2")
                 .Write(Some.LogEvent(level: incomingEventLevel));
 
-            Assert.Equal(eventShouldGetToChild, evt != null);
+            if (eventShouldGetToChild)
+            {
+                Assert.NotNull(evt);
+            }
+            else
+            {
+                Assert.Null(evt);
+            }
         }
     }
 }
