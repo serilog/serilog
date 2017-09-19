@@ -108,7 +108,7 @@ namespace Serilog.Core
                         enricher,
                         null,
                         _levelSwitch,
-                        OverrideMap);
+                        _overrideMap);
         }
 
         /// <summary>
@@ -148,11 +148,11 @@ namespace Serilog.Core
 
             var minimumLevel = _minimumLevel;
             var levelSwitch = _levelSwitch;
-            if (OverrideMap != null && propertyName == Constants.SourceContextPropertyName)
+            if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
             {
                 var context = value as string;
                 if (context != null)
-                    OverrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+                    _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
             }
 
             return new Logger(
@@ -162,7 +162,7 @@ namespace Serilog.Core
                 enricher,
                 null,
                 levelSwitch,
-                OverrideMap);
+                _overrideMap);
         }
 
         /// <summary>
