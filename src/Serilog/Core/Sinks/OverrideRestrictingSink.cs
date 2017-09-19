@@ -21,7 +21,7 @@ namespace Serilog.Core.Sinks
     class OverrideRestrictingSink : ILogEventSink
     {
         readonly ILogEventSink _sink;
-        LevelOverrideMap _overrideMap;
+        readonly LevelOverrideMap _overrideMap;
 
         public OverrideRestrictingSink(ILogEventSink sink, Dictionary<string, LoggingLevelSwitch> overrides)
         {
@@ -29,7 +29,6 @@ namespace Serilog.Core.Sinks
             if (overrides == null) throw new ArgumentNullException(nameof(overrides));
             _sink = sink;
             _overrideMap = new LevelOverrideMap(overrides, LevelAlias.Minimum, null);
-
         }
 
         public OverrideRestrictingSink(ILogEventSink sink, LevelOverrideMap overrideMap)
