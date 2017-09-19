@@ -41,7 +41,7 @@ namespace Serilog.Settings.KeyValuePairs
         const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
         const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
-        const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>[A-Za-z0-9]+)$";
+        const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>\$[A-Za-z0-9]+)$";
 
         static readonly string[] _supportedDirectives =
         {
@@ -200,7 +200,7 @@ namespace Serilog.Settings.KeyValuePairs
         {
             if (!declaredLevelSwitches.ContainsKey(minimumLevelControlledByLevelSwitchName))
             {
-                throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{minimumLevelControlledByLevelSwitchName}\". You might be missing a key \"{LevelSwitchDirective}:{{switchName}}\"");
+                throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{minimumLevelControlledByLevelSwitchName}\". You might be missing a key \"{LevelSwitchDirective}:$switchName\"");
             }
             var levelSwitch = declaredLevelSwitches[minimumLevelControlledByLevelSwitchName];
             return levelSwitch;

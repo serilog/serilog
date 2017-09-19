@@ -158,8 +158,8 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["level-switch:Switch1"] = "Warning",
-                ["minimum-level:controlled-by"] = "Switch1",
+                ["level-switch:$switch1"] = "Warning",
+                ["minimum-level:controlled-by"] = "$switch1",
             };
 
             LogEvent evt = null;
@@ -178,19 +178,19 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void SettingMimiumLevelControlledByToAnUndeclaredSwitchThrows()
+        public void SettingMinimumLevelControlledByToAnUndeclaredSwitchThrows()
         {
             var settings = new Dictionary<string, string>
             {
-                ["level-switch:Switch1"] = "Information",
-                ["minimum-level:controlled-by"] = "Switch2",
+                ["level-switch:$switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "$switch2",
             };
 
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 new LoggerConfiguration()
                     .ReadFrom.KeyValuePairs(settings)
                     .CreateLogger());
-            Assert.Contains("Switch2", ex.Message);
+            Assert.Contains("$switch2", ex.Message);
             Assert.Contains("level-switch:", ex.Message);
         }
 
@@ -199,10 +199,10 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["level-switch:Switch1"] = "Information",
-                ["minimum-level:controlled-by"] = "Switch1",
+                ["level-switch:$switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "$switch1",
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "Switch1"
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$switch1"
             };
 
             LogEvent evt = null;
@@ -230,17 +230,17 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["level-switch:Switch1"] = "Information",
-                ["minimum-level:controlled-by"] = "Switch1",
+                ["level-switch:$switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "$switch1",
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "Switch2"
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$switch2"
             };
 
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 new LoggerConfiguration()
                     .ReadFrom.KeyValuePairs(settings)
                     .CreateLogger());
-            Assert.Contains("Switch2", ex.Message);
+            Assert.Contains("$switch2", ex.Message);
             Assert.Contains("level-switch:", ex.Message);
         }
 
@@ -251,10 +251,10 @@ namespace Serilog.Tests.Settings
             var settings = new Dictionary<string, string>
             {
                 ["minimum-level"] = "Debug",
-                ["level-switch:specificSwitch"] = "Warning",
-                ["minimum-level:override:System"] = "specificSwitch",
+                ["level-switch:$specificSwitch"] = "Warning",
+                ["minimum-level:override:System"] = "$specificSwitch",
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "specificSwitch"
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$specificSwitch"
             };
 
             LogEvent evt = null;
