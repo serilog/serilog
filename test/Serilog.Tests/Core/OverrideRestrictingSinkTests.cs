@@ -24,7 +24,7 @@ namespace Serilog.Tests.Core
         [InlineData("Fatal.Error.Sub", Warning, false)]
         public void OverridesAreTakenIntoAccount(string context, LogEventLevel level, bool shouldBeEmitted)
         {
-            var overides = new Dictionary<string, LoggingLevelSwitch>
+            var overrides = new Dictionary<string, LoggingLevelSwitch>
             {
                 ["Fatal"] = new LoggingLevelSwitch(Fatal),
                 ["Fatal.Error"] = new LoggingLevelSwitch(Error),
@@ -32,7 +32,7 @@ namespace Serilog.Tests.Core
             LogEvent emitted = null;
             var sut = new OverrideRestrictingSink(
                 new DelegatingSink(e => emitted = e),
-                overrides: overides);
+                overrides: overrides);
 
             var evt = Some.LogEvent(context, level: level);
 
