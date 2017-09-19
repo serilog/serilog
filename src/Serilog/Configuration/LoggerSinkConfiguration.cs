@@ -134,7 +134,10 @@ namespace Serilog.Configuration
             configureLogger(lc);
 
             ILogEventSink secondaryLoggerSink = new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true);
-            // by now, subLoggerOverrides contain the overrides defined for this sublogger
+
+            // Action<LoggerConfiguration> may have set minimum level overrides.
+            // Normally overrides are checked when calling Log.ForContext(), but this cannot
+            // happen for child loggers. For those, we need to check at *Emit* time.
             if (subLoggerOverrides.Count > 0)
             {
                 secondaryLoggerSink = new OverrideRestrictingSink(secondaryLoggerSink, subLoggerOverrides);
@@ -163,7 +166,9 @@ namespace Serilog.Configuration
 
             if (logger is Logger concreteLogger)
             {
-                // Loggers can have their own overrides
+                // Loggers can have their own overrides.
+                // Normally overrides are checked when calling Log.ForContext(), but this cannot
+                // happen for child loggers. For those, we need to check at *Emit* time
                 if (concreteLogger.HasOverrides)
                 {
                     secondarySink = new OverrideRestrictingSink(secondarySink, concreteLogger.OverrideMap);
