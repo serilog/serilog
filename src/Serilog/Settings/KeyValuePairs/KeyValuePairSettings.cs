@@ -112,7 +112,7 @@ namespace Serilog.Settings.KeyValuePairs
                 var globalMinimumLevelSwitch = LookUpSwitchByNameOrThrow(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
                 loggerConfiguration.MinimumLevel.ControlledBy(globalMinimumLevelSwitch);
             }
-            
+
             foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
                 dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
             {
@@ -172,7 +172,7 @@ namespace Serilog.Settings.KeyValuePairs
         static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(Dictionary<string, string> directives)
         {
             var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
-            
+
             var switchDeclarationDirectives = (from wt in directives
                                                where matchLevelSwitchDeclarations.IsMatch(wt.Key)
                                                let match = matchLevelSwitchDeclarations.Match(wt.Key)
@@ -185,23 +185,24 @@ namespace Serilog.Settings.KeyValuePairs
             var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
             foreach (var switchDeclarationDirective in switchDeclarationDirectives)
             {
+                var switchName = switchDeclarationDirective.SwitchName;
+                var switchInitialLevel = switchDeclarationDirective.InitialSwitchLevel;
                 // switchName must be something like $switch to avoid ambiguities
-                if (!IsValidSwitchName(switchDeclarationDirective.SwitchName))
+                if (!IsValidSwitchName(switchName))
                 {
-                    throw new FormatException($"\"{switchDeclarationDirective.SwitchName}\" is not a valid name for a Level Switch declaration. Level switch must be declared with a '$' sign, like \"level-switch:$switchName\"");
+                    throw new FormatException($"\"{switchName}\" is not a valid name for a Level Switch declaration. Level switch must be declared with a '$' sign, like \"level-switch:$switchName\"");
                 }
                 LoggingLevelSwitch newSwitch;
-                if (string.IsNullOrEmpty(switchDeclarationDirective.InitialSwitchLevel))
+                if (string.IsNullOrEmpty(switchInitialLevel))
                 {
                     newSwitch = new LoggingLevelSwitch();
                 }
                 else
                 {
-                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchDeclarationDirective.InitialSwitchLevel, typeof(LogEventLevel));
+                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
                     newSwitch = new LoggingLevelSwitch(initialLevel);
                 }
-                namedSwitches[switchDeclarationDirective.SwitchName] = newSwitch;
-
+                namedSwitches.Add(switchName, newSwitch);
             }
             return new ReadOnlyDictionary<string, LoggingLevelSwitch>(namedSwitches);
         }
@@ -269,7 +270,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             return configurationAssemblies.Distinct();
         }
-        
+
         internal class ConfigurationMethodCall
         {
             public string MethodName { get; set; }
