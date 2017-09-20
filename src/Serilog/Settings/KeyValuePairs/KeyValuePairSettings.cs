@@ -14,10 +14,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Settings.KeyValuePairs
@@ -25,9 +27,11 @@ namespace Serilog.Settings.KeyValuePairs
     class KeyValuePairSettings : ILoggerSettings
     {
         const string UsingDirective = "using";
+        const string LevelSwitchDirective = "level-switch";
         const string AuditToDirective = "audit-to";
         const string WriteToDirective = "write-to";
         const string MinimumLevelDirective = "minimum-level";
+        const string MinimumLevelControlledByDirective = "minimum-level:controlled-by";
         const string EnrichWithDirective = "enrich";
         const string EnrichWithPropertyDirective = "enrich:with-property";
         const string FilterDirective = "filter";
@@ -37,13 +41,17 @@ namespace Serilog.Settings.KeyValuePairs
         const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
         const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>.*)$";
+        const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
         static readonly string[] _supportedDirectives =
         {
             UsingDirective,
+            LevelSwitchDirective,
             AuditToDirective,
             WriteToDirective,
             MinimumLevelDirective,
+            MinimumLevelControlledByDirective,
             EnrichWithPropertyDirective,
             EnrichWithDirective,
             FilterDirective
@@ -81,6 +89,8 @@ namespace Serilog.Settings.KeyValuePairs
                 .Where(k => _supportedDirectives.Any(k.StartsWith))
                 .ToDictionary(k => k, k => _settings[k]);
 
+            var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
+
             string minimumLevelDirective;
             LogEventLevel minimumLevel;
             if (directives.TryGetValue(MinimumLevelDirective, out minimumLevelDirective) &&
@@ -96,13 +106,27 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
             }
 
-           foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
+            string minimumLevelControlledByLevelSwitchName;
+            if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
+            {
+                var globalMinimumLevelSwitch = LookUpSwitchByName(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
+                loggerConfiguration.MinimumLevel.ControlledBy(globalMinimumLevelSwitch);
+            }
+
+            foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
                 dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
             {
+                var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
+
                 LogEventLevel overriddenLevel;
-                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel)) {
-                    var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
+                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel))
+                {
                     loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
+                }
+                else
+                {
+                    var overrideSwitch = LookUpSwitchByName(minimumLevelOverrideDirective.Value, declaredLevelSwitches);
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, overrideSwitch);
                 }
             }
 
@@ -135,12 +159,74 @@ namespace Serilog.Settings.KeyValuePairs
                         .GroupBy(call => call.MethodName)
                         .ToList();
 
-                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration));
+                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredLevelSwitches);
                 }
             }
         }
 
-        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod)
+        internal static bool IsValidSwitchName(string input)
+        {
+            return Regex.IsMatch(input, LevelSwitchNameRegex);
+        }
+
+        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(Dictionary<string, string> directives)
+        {
+            var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
+
+            var switchDeclarationDirectives = (from wt in directives
+                                               where matchLevelSwitchDeclarations.IsMatch(wt.Key)
+                                               let match = matchLevelSwitchDeclarations.Match(wt.Key)
+                                               select new
+                                               {
+                                                   SwitchName = match.Groups["switchName"].Value,
+                                                   InitialSwitchLevel = wt.Value
+                                               }).ToList();
+
+            var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
+            foreach (var switchDeclarationDirective in switchDeclarationDirectives)
+            {
+                var switchName = switchDeclarationDirective.SwitchName;
+                var switchInitialLevel = switchDeclarationDirective.InitialSwitchLevel;
+                // switchName must be something like $switch to avoid ambiguities
+                if (!IsValidSwitchName(switchName))
+                {
+                    throw new FormatException($"\"{switchName}\" is not a valid name for a Level Switch declaration. Level switch must be declared with a '$' sign, like \"level-switch:$switchName\"");
+                }
+                LoggingLevelSwitch newSwitch;
+                if (string.IsNullOrEmpty(switchInitialLevel))
+                {
+                    newSwitch = new LoggingLevelSwitch();
+                }
+                else
+                {
+                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
+                    newSwitch = new LoggingLevelSwitch(initialLevel);
+                }
+                namedSwitches.Add(switchName, newSwitch);
+            }
+            return new ReadOnlyDictionary<string, LoggingLevelSwitch>(namedSwitches);
+        }
+
+        static LoggingLevelSwitch LookUpSwitchByName(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
+        {
+            if (declaredLevelSwitches.TryGetValue(switchName, out var levelSwitch))
+            {
+                return levelSwitch;
+            }
+
+            throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
+        }
+
+        static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
+        {
+            if (type == typeof(LoggingLevelSwitch))
+            {
+                return LookUpSwitchByName(valueOrSwitchName, declaredSwitches);
+            }
+            return SettingValueConversions.ConvertToType(valueOrSwitchName, type);
+        }
+
+        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
         {
             foreach (var directiveInfo in directives)
             {
@@ -151,7 +237,7 @@ namespace Serilog.Settings.KeyValuePairs
 
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
-                                select directive == null ? p.DefaultValue : SettingValueConversions.ConvertToType(directive.Value, p.ParameterType)).ToList();
+                                select directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
 
                     call.Insert(0, loggerConfigMethod);
 
