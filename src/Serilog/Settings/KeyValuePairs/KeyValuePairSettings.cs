@@ -109,7 +109,7 @@ namespace Serilog.Settings.KeyValuePairs
             string minimumLevelControlledByLevelSwitchName;
             if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
             {
-                var globalMinimumLevelSwitch = LookUpSwitchByNameOrThrow(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
+                var globalMinimumLevelSwitch = LookUpSwitchByName(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
                 loggerConfiguration.MinimumLevel.ControlledBy(globalMinimumLevelSwitch);
             }
 
@@ -125,7 +125,7 @@ namespace Serilog.Settings.KeyValuePairs
                 }
                 else
                 {
-                    var overrideSwitch = LookUpSwitchByNameOrThrow(minimumLevelOverrideDirective.Value, declaredLevelSwitches);
+                    var overrideSwitch = LookUpSwitchByName(minimumLevelOverrideDirective.Value, declaredLevelSwitches);
                     loggerConfiguration.MinimumLevel.Override(namespacePrefix, overrideSwitch);
                 }
             }
@@ -207,7 +207,7 @@ namespace Serilog.Settings.KeyValuePairs
             return new ReadOnlyDictionary<string, LoggingLevelSwitch>(namedSwitches);
         }
 
-        static LoggingLevelSwitch LookUpSwitchByNameOrThrow(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
+        static LoggingLevelSwitch LookUpSwitchByName(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
         {
             if (declaredLevelSwitches.TryGetValue(switchName, out var levelSwitch))
             {
@@ -221,7 +221,7 @@ namespace Serilog.Settings.KeyValuePairs
         {
             if (type == typeof(LoggingLevelSwitch))
             {
-                return LookUpSwitchByNameOrThrow(valueOrSwitchName, declaredSwitches);
+                return LookUpSwitchByName(valueOrSwitchName, declaredSwitches);
             }
             return SettingValueConversions.ConvertToType(valueOrSwitchName, type);
         }

@@ -227,7 +227,7 @@ namespace Serilog.Tests.Settings
                     .ReadFrom.KeyValuePairs(settings)
                     .CreateLogger());
             Assert.Contains("$switch2", ex.Message);
-            Assert.Contains("level-switch:", ex.Message);
+            Assert.Contains("level-switch:$switch2", ex.Message);
         }
 
         [Fact]
