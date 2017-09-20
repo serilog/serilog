@@ -209,12 +209,12 @@ namespace Serilog.Settings.KeyValuePairs
 
         static LoggingLevelSwitch LookUpSwitchByNameOrThrow(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
         {
-            if (!declaredLevelSwitches.ContainsKey(switchName))
+            if (declaredLevelSwitches.TryGetValue(switchName, out var levelSwitch))
             {
-                throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:$switchName\"");
+                return levelSwitch;
             }
-            var levelSwitch = declaredLevelSwitches[switchName];
-            return levelSwitch;
+
+            throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
         }
 
         static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
