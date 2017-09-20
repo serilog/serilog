@@ -90,7 +90,6 @@ namespace Serilog.Settings.KeyValuePairs
 
             var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
-
             string minimumLevelDirective;
             LogEventLevel minimumLevel;
             if (directives.TryGetValue(MinimumLevelDirective, out minimumLevelDirective) &&
@@ -196,13 +195,13 @@ namespace Serilog.Settings.KeyValuePairs
             return new ReadOnlyDictionary<string, LoggingLevelSwitch>(namedSwitches);
         }
 
-        static LoggingLevelSwitch LookUpSwitchByNameOrThrow(string minimumLevelControlledByLevelSwitchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
+        static LoggingLevelSwitch LookUpSwitchByNameOrThrow(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
         {
-            if (!declaredLevelSwitches.ContainsKey(minimumLevelControlledByLevelSwitchName))
+            if (!declaredLevelSwitches.ContainsKey(switchName))
             {
-                throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{minimumLevelControlledByLevelSwitchName}\". You might be missing a key \"{LevelSwitchDirective}:$switchName\"");
+                throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:$switchName\"");
             }
-            var levelSwitch = declaredLevelSwitches[minimumLevelControlledByLevelSwitchName];
+            var levelSwitch = declaredLevelSwitches[switchName];
             return levelSwitch;
         }
 
