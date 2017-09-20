@@ -152,7 +152,43 @@ namespace Serilog.Tests.Settings
             log.Write(Some.InformationEvent());
             Assert.NotNull(evt);
         }
-        
+
+        [Theory]
+        [InlineData("$switchName", true)]
+        [InlineData("$SwitchName", true)]
+        [InlineData("$switch1", true)]
+        [InlineData("$sw1tch0", true)]
+        [InlineData("$SWITCHNAME", true)]
+        [InlineData("$$switchname", false)]
+        [InlineData("$switchname$", false)]
+        [InlineData("switch$name", false)]
+        [InlineData("$", false)]
+        [InlineData("", false)]
+        [InlineData(" ", false)]
+        [InlineData("$1switch", false)]
+        [InlineData("$switch_name", false)]
+        public void LoggingLevelSwitchNameValidityScenarios(string switchName, bool expectedValid)
+        {
+            Assert.True(KeyValuePairSettings.IsValidSwitchName(switchName) == expectedValid,
+                $"expected IsValidSwitchName({switchName}) to return {expectedValid} ");
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchWithInvalidNameThrowsFormatException()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:switchNameNotStartingWithDollar"] = "Warning",
+            };
+
+            var ex = Assert.Throws<FormatException>(() =>  new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings));
+
+            Assert.Contains("\"switchNameNotStartingWithDollar\"", ex.Message);
+            Assert.Contains("'$' sign", ex.Message);
+            Assert.Contains("\"level-switch:$switchName\"", ex.Message);
+        }
+
         [Fact]
         public void LoggingLevelSwitchIsConfigured()
         {

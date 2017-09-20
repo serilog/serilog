@@ -41,7 +41,8 @@ namespace Serilog.Settings.KeyValuePairs
         const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
         const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
-        const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>\$[A-Za-z0-9]+)$";
+        const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>.*)$";
+        const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
         static readonly string[] _supportedDirectives =
         {
@@ -163,10 +164,15 @@ namespace Serilog.Settings.KeyValuePairs
             }
         }
 
+        internal static bool IsValidSwitchName(string input)
+        {
+            return Regex.IsMatch(input, LevelSwitchNameRegex);
+        }
+
         static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(Dictionary<string, string> directives)
         {
             var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
-
+            
             var switchDeclarationDirectives = (from wt in directives
                                                where matchLevelSwitchDeclarations.IsMatch(wt.Key)
                                                let match = matchLevelSwitchDeclarations.Match(wt.Key)
@@ -179,6 +185,11 @@ namespace Serilog.Settings.KeyValuePairs
             var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
             foreach (var switchDeclarationDirective in switchDeclarationDirectives)
             {
+                // switchName must be something like $switch to avoid ambiguities
+                if (!IsValidSwitchName(switchDeclarationDirective.SwitchName))
+                {
+                    throw new FormatException($"\"{switchDeclarationDirective.SwitchName}\" is not a valid name for a Level Switch declaration. Level switch must be declared with a '$' sign, like \"level-switch:$switchName\"");
+                }
                 LoggingLevelSwitch newSwitch;
                 if (string.IsNullOrEmpty(switchDeclarationDirective.InitialSwitchLevel))
                 {
