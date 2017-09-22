@@ -1,4 +1,5 @@
-﻿using Serilog.Events;
+﻿using System;
+using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
 using Serilog.Settings.KeyValuePairs;
@@ -48,6 +49,22 @@ namespace Serilog.Tests.Settings
         {
             var result = SettingValueConversions.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
             Assert.IsType<JsonFormatter>(result);
+        }
+
+        [Theory]
+        [InlineData("3.14:21:18.986", 3 /*days*/, 14 /*hours*/, 21 /*min*/, 18 /*sec*/, 986 /*ms*/)]
+        [InlineData("4", 4, 0, 0, 0, 0)] // minimal : days
+        [InlineData("2:0", 0, 2, 0, 0, 0)] // minimal hours
+        [InlineData("0:5", 0, 0, 5, 0, 0)] // minimal minutes
+        [InlineData("0:0:7", 0, 0, 0, 7, 0)] // minimal seconds
+        [InlineData("0:0:0.2", 0, 0, 0, 0, 200)] // minimal milliseconds
+        public void TimeSpanValuesCanBeParsed(string input, int expDays, int expHours, int expMin, int expSec, int expMs)
+        {
+            var expectedTimeSpan = new TimeSpan(expDays, expHours, expMin, expSec, expMs);
+            var actual = SettingValueConversions.ConvertToType(input, typeof(TimeSpan));
+
+            Assert.IsType<TimeSpan>(actual);
+            Assert.Equal(expectedTimeSpan, actual);
         }
     }
 }
