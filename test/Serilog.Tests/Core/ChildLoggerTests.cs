@@ -303,5 +303,88 @@ namespace Serilog.Tests.Core
                 Assert.Null(evt);
             }
         }
+
+        [Fact]
+        public void WriteToLoggerWithConfigCallbackMinimumLevelOverridesWorkRecursively()
+        {
+            var sink = new CollectingSink();
+            var subSink = new CollectingSink();
+            var subSubSink = new CollectingSink();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .MinimumLevel.Override("Foo.Bar", Debug)
+                .WriteTo.Logger(lc1 => lc1
+                    .MinimumLevel.Override("Foo.Bar", Information)
+                    .WriteTo.Logger(lc2 =>
+                        lc2.MinimumLevel.Override("Foo.Bar", Warning)
+                        .WriteTo.Sink(subSubSink)
+                    )
+                    .WriteTo.Sink(subSink)
+                )
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.LogEvent(level:Verbose));
+            var contextLogger = logger.ForContext(Constants.SourceContextPropertyName, "Foo.Bar");
+            contextLogger.Write(Some.LogEvent(level:Verbose));
+            contextLogger.Write(Some.LogEvent(level:Debug));
+            contextLogger.Write(Some.LogEvent(level:Information));
+            contextLogger.Write(Some.LogEvent(level:Warning));
+
+            // root : all events without context and Debug+ events
+            Assert.Equal(4, sink.Events.Count);
+
+            // sub-Logger : all events without context and Info+ events
+            Assert.Equal(3, subSink.Events.Count);
+            
+            // sub-sub-Logger : all events without context and Warning+ events
+            Assert.Equal(2, subSubSink.Events.Count);
+        }
+
+
+        [Fact]
+        public void WriteToLoggerMinimumLevelOverridesWorkRecursively()
+        {
+            var sink = new CollectingSink();
+            var subSink = new CollectingSink();
+            var subSubSink = new CollectingSink();
+            
+            var subSubLogger = new LoggerConfiguration()
+                .MinimumLevel.Verbose() // take minimum level out of the equation
+                .MinimumLevel.Override("Foo.Bar", Warning)
+                .WriteTo.Sink(subSubSink)
+                .CreateLogger();
+
+            var subLogger = new LoggerConfiguration()
+                .MinimumLevel.Verbose() // take minimum level out of the equation
+                .MinimumLevel.Override("Foo.Bar", Information)
+                .WriteTo.Logger(subSubLogger)
+                .WriteTo.Sink(subSink)
+                .CreateLogger();
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .MinimumLevel.Override("Foo.Bar", Debug)
+                .WriteTo.Logger(subLogger)
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Write(Some.LogEvent(level: Verbose));
+            var contextLogger = logger.ForContext(Constants.SourceContextPropertyName, "Foo.Bar");
+            contextLogger.Write(Some.LogEvent(level: Verbose));
+            contextLogger.Write(Some.LogEvent(level: Debug));
+            contextLogger.Write(Some.LogEvent(level: Information));
+            contextLogger.Write(Some.LogEvent(level: Warning));
+
+            // root : all events without context and Debug+ events
+            Assert.Equal(4, sink.Events.Count);
+
+            // sub-Logger : all events without context and Info+ events
+            Assert.Equal(3, subSink.Events.Count);
+
+            // sub-sub-Logger : all events without context and Warning+ events
+            Assert.Equal(2, subSubSink.Events.Count);
+        }
     }
 }
