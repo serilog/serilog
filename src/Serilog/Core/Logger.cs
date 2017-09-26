@@ -88,8 +88,11 @@ namespace Serilog.Core
             _enricher = enricher;
         }
 
-        internal bool HasOverrides => _overrideMap != null;
-        internal LevelOverrideMap OverrideMap => _overrideMap;
+        internal bool TryGetOverrideMap(out LevelOverrideMap overrideMap)
+        {
+            overrideMap = _overrideMap;
+            return _overrideMap != null;
+        }
 
         /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.

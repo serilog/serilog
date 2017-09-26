@@ -169,9 +169,9 @@ namespace Serilog.Configuration
                 // Loggers can have their own overrides.
                 // Normally overrides are checked when calling Log.ForContext(), but this cannot
                 // happen for child loggers. For those, we need to check at *Emit* time
-                if (concreteLogger.HasOverrides)
+                if (concreteLogger.TryGetOverrideMap(out var overrideMap))
                 {
-                    secondarySink = new OverrideRestrictingSink(secondarySink, concreteLogger.OverrideMap);
+                    secondarySink = new OverrideRestrictingSink(secondarySink, overrideMap);
                 }
             }
             return Sink(secondarySink, restrictedToMinimumLevel);
