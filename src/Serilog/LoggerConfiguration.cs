@@ -44,12 +44,12 @@ namespace Serilog
         int _maximumCollectionCount = int.MaxValue;
         bool _loggerCreated;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        /// <summary>
+        /// Configuration object for creating <see cref="ILogger"/> instances.
+        /// </summary>
         public LoggerConfiguration()
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
             : this(null)
         {
-            
         }
 
         internal LoggerConfiguration(Action<string, LoggingLevelSwitch> addOverrideCallback)

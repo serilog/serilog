@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,18 +25,15 @@ namespace Serilog.Core.Sinks
 
         public OverrideRestrictingSink(ILogEventSink sink, Dictionary<string, LoggingLevelSwitch> overrides)
         {
-            if (sink == null) throw new ArgumentNullException(nameof(sink));
             if (overrides == null) throw new ArgumentNullException(nameof(overrides));
-            _sink = sink;
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
             _overrideMap = new LevelOverrideMap(overrides, LevelAlias.Minimum, null);
         }
 
         public OverrideRestrictingSink(ILogEventSink sink, LevelOverrideMap overrideMap)
         {
-            if (sink == null) throw new ArgumentNullException(nameof(sink));
-            if (overrideMap == null) throw new ArgumentNullException(nameof(overrideMap));
-            _sink = sink;
-            _overrideMap = overrideMap;
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+            _overrideMap = overrideMap ?? throw new ArgumentNullException(nameof(overrideMap));
         }
 
         public void Emit(LogEvent logEvent)
