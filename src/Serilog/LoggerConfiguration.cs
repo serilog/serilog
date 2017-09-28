@@ -36,12 +36,33 @@ namespace Serilog
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
         readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
+        readonly Action<string, LoggingLevelSwitch> _addOverrideCallback;
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
         bool _loggerCreated;
+
+        /// <summary>
+        /// Configuration object for creating <see cref="ILogger"/> instances.
+        /// </summary>
+        public LoggerConfiguration()
+            : this(null)
+        {
+        }
+
+        internal LoggerConfiguration(Action<string, LoggingLevelSwitch> addOverrideCallback)
+        {
+            if (addOverrideCallback == null)
+            {
+                _addOverrideCallback = (s, lls) => { };
+            }
+            else
+            {
+                _addOverrideCallback = addOverrideCallback;
+            }
+        }
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
         {
@@ -69,6 +90,12 @@ namespace Serilog
         /// </remarks>
         public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
 
+        void AddOverride(string source, LoggingLevelSwitch levelSwitch)
+        {
+            _overrides[source] = levelSwitch;
+            _addOverrideCallback(source, levelSwitch);
+        }
+
         /// <summary>
         /// Configures the minimum level at which events will be passed to sinks. If
         /// not specified, only events at the <see cref="LogEventLevel.Information"/>
@@ -85,7 +112,7 @@ namespace Serilog
                         _levelSwitch = null;
                     },
                     sw => _levelSwitch = sw,
-                    (s, lls) => _overrides[s] = lls);
+                    AddOverride);
             }
         }
 

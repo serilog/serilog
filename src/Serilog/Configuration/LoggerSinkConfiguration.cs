@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Serilog.Core;
 using Serilog.Core.Sinks;
@@ -125,12 +126,28 @@ namespace Serilog.Configuration
             LoggingLevelSwitch levelSwitch = null)
         {
             if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
-            var lc = new LoggerConfiguration();
+            var subLoggerOverrides = new Dictionary<string, LoggingLevelSwitch>();
+            var lc = new LoggerConfiguration((s, lls) => subLoggerOverrides[s] = lls);
 
             _applyInheritedConfiguration(lc);
 
             configureLogger(lc);
-            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel, levelSwitch);
+
+            ILogEventSink secondaryLoggerSink = new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true);
+
+            // Action<LoggerConfiguration> may have set minimum level overrides.
+            // Normally overrides are checked when calling Log.ForContext(), but this cannot
+            // happen for child loggers. For those, we need to check at *Emit* time.
+            if (subLoggerOverrides.Count > 0)
+            {
+                SelfLog.WriteLine("We have detected that you are using .MinimumLevel.Override() from a sub-logger (.WriteTo.Logger(Action<LoggerConfiguration>)). " +
+                                  "Overrides in a sub-logger cannot decrease the level set by the parent logger. Because of this limitation and possible performance impact, " +
+                                  "we recommend using .Filter instead in your sub-loggers. " +
+                                  "Note that support for sub-loggers' minimum level overrides may be removed in the next major version.");
+                secondaryLoggerSink = new OverrideRestrictingSink(secondaryLoggerSink, subLoggerOverrides);
+            }
+
+            return Sink(secondaryLoggerSink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -149,7 +166,23 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
+            ILogEventSink secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
+
+            if (logger is Logger concreteLogger)
+            {
+                // Loggers can have their own overrides.
+                // Normally overrides are checked when calling Log.ForContext(), but this cannot
+                // happen for child loggers. For those, we need to check at *Emit* time
+                if (concreteLogger.TryGetOverrideMap(out var overrideMap))
+                {
+                    SelfLog.WriteLine("We have detected that you are using .MinimumLevel.Override() from a sub-logger (.WriteTo.Logger(Logger)). " +
+                                      "Overrides in a sub-logger cannot decrease the level set by the parent logger. Because of this limitation and possible performance impact, " +
+                                      "we recommend using .Filter instead in your sub-loggers. " +
+                                      "Note that support for sub-loggers' minimum level overrides may be removed in the next major version.");
+                    secondarySink = new OverrideRestrictingSink(secondarySink, overrideMap);
+                }
+            }
+            return Sink(secondarySink, restrictedToMinimumLevel);
         }
 
         /// <summary>
