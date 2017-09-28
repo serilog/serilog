@@ -140,6 +140,10 @@ namespace Serilog.Configuration
             // happen for child loggers. For those, we need to check at *Emit* time.
             if (subLoggerOverrides.Count > 0)
             {
+                SelfLog.WriteLine("We have detected that you are using .MinimumLevel.Override() from a sub-logger (.WriteTo.Logger(Action<LoggerConfiguration>)). " +
+                                  "Overrides in a sub-logger cannot decrease the level set by the parent logger. Because of this limitation and possible performance impact, " +
+                                  "we recommend using .Filter instead in your sub-loggers. " +
+                                  "Note that support for sub-loggers' minimum level overrides may be removed in the next major version.");
                 secondaryLoggerSink = new OverrideRestrictingSink(secondaryLoggerSink, subLoggerOverrides);
             }
 
@@ -171,6 +175,10 @@ namespace Serilog.Configuration
                 // happen for child loggers. For those, we need to check at *Emit* time
                 if (concreteLogger.TryGetOverrideMap(out var overrideMap))
                 {
+                    SelfLog.WriteLine("We have detected that you are using .MinimumLevel.Override() from a sub-logger (.WriteTo.Logger(Logger)). " +
+                                      "Overrides in a sub-logger cannot decrease the level set by the parent logger. Because of this limitation and possible performance impact, " +
+                                      "we recommend using .Filter instead in your sub-loggers. " +
+                                      "Note that support for sub-loggers' minimum level overrides may be removed in the next major version.");
                     secondarySink = new OverrideRestrictingSink(secondarySink, overrideMap);
                 }
             }
