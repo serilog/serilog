@@ -1,4 +1,5 @@
-﻿using Serilog.Events;
+﻿using System;
+using Serilog.Events;
 
 namespace Serilog
 {
@@ -26,6 +27,9 @@ namespace Serilog
             TValue value,
             bool destructureObjects = false)
         {
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             return !logger.IsEnabled(level)
                 ? logger
                 : logger.ForContext(propertyName, value, destructureObjects);
