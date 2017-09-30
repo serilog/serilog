@@ -30,9 +30,9 @@ namespace Serilog
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
 
-            return !logger.IsEnabled(level)
-                ? logger
-                : logger.ForContext(propertyName, value, destructureObjects);
+            return logger.IsEnabled(level)
+                ? logger.ForContext(propertyName, value, destructureObjects)
+                : logger;
         }
     }
 }
