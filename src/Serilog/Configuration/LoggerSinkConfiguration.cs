@@ -32,12 +32,9 @@ namespace Serilog.Configuration
 
         internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            if (addSink == null) throw new ArgumentNullException(nameof(addSink));
-            if (applyInheritedConfiguration == null) throw new ArgumentNullException(nameof(applyInheritedConfiguration));
-            _loggerConfiguration = loggerConfiguration;
-            _addSink = addSink;
-            _applyInheritedConfiguration = applyInheritedConfiguration;
+            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+            _addSink = addSink ?? throw new ArgumentNullException(nameof(addSink));
+            _applyInheritedConfiguration = applyInheritedConfiguration ?? throw new ArgumentNullException(nameof(applyInheritedConfiguration));
         }
 
         /// <summary>
@@ -128,9 +125,17 @@ namespace Serilog.Configuration
             var lc = new LoggerConfiguration();
 
             _applyInheritedConfiguration(lc);
-
             configureLogger(lc);
-            return Sink(new SecondaryLoggerSink(lc.CreateLogger(), attemptDispose: true), restrictedToMinimumLevel, levelSwitch);
+
+            var subLogger = lc.CreateLogger();
+            if (subLogger.HasOverrideMap)
+            {
+                SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
+                                  "and may be removed completely in a future version.");
+            }
+
+            var secondarySink = new SecondaryLoggerSink(subLogger, attemptDispose: true);
+            return Sink(secondarySink, restrictedToMinimumLevel, levelSwitch);
         }
 
         /// <summary>
@@ -149,7 +154,15 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            return Sink(new SecondaryLoggerSink(logger, attemptDispose: false), restrictedToMinimumLevel);
+
+            if (logger is Logger concreteLogger && concreteLogger.HasOverrideMap)
+            {
+                SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
+                                  "and may be removed completely in a future version.");
+            }
+
+            var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
+            return Sink(secondarySink, restrictedToMinimumLevel);
         }
 
         /// <summary>
