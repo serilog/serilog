@@ -88,6 +88,8 @@ namespace Serilog.Core
             _enricher = enricher;
         }
 
+        internal bool HasOverrideMap => _overrideMap != null;
+
         /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
         /// </summary>
@@ -273,11 +275,11 @@ namespace Serilog.Core
         /// <returns>True if the level is enabled; otherwise, false.</returns>
         public bool IsEnabled(LogEventLevel level)
         {
-            if ((int) level < (int) _minimumLevel)
+            if ((int)level < (int)_minimumLevel)
                 return false;
 
             return _levelSwitch == null ||
-                   (int) level >= (int) _levelSwitch.MinimumLevel;
+                   (int)level >= (int)_levelSwitch.MinimumLevel;
         }
 
         /// <summary>
@@ -1359,7 +1361,7 @@ namespace Serilog.Core
                 return false;
             }
 
-            property =_messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects);
+            property = _messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects);
             return true;
         }
 
