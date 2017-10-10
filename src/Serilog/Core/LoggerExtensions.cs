@@ -4,15 +4,15 @@ using Serilog.Events;
 namespace Serilog
 {
     /// <summary>
-    /// Extension method 'ForContext' for ILogger.
+    /// Extends <see cref="ILogger" /> with additional methods.
     /// </summary>
-    public static class ForContextExtension
+    public static class LoggerExtensions
     {
         /// <summary>
-        /// Create a logger that enriches log events with the specified property based on log event level.
+        /// Create a logger that enriches log events when the specified level is enabled.
         /// </summary>
         /// <typeparam name="TValue"> The type of the property value. </typeparam>
-        /// <param name="logger">The logger</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="level">The log event level used to determine if log is enriched with property.</param>
         /// <param name="propertyName">The name of the property. Must be non-empty.</param>
         /// <param name="value">The property value.</param>

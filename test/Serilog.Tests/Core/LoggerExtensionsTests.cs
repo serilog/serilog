@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Serilog.Tests.Core
 {
-    public class ForContextExtensionsTests
+    public class LoggerExtensionsTests
     {
         [Theory]
         [InlineData(LogEventLevel.Debug, LogEventLevel.Debug)]
@@ -15,7 +15,6 @@ namespace Serilog.Tests.Core
         [InlineData(LogEventLevel.Debug, LogEventLevel.Warning)]
         public void ShouldEnrichLogEventWhenLevelIsSameOrHigherThanMinLevel(LogEventLevel logMinLevel, LogEventLevel propertLogLevel)
         {
-            // Arrange
             var propValue = Guid.NewGuid();
             var propKey = Some.String();
             var sink = new CollectingSink();
@@ -24,11 +23,9 @@ namespace Serilog.Tests.Core
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            // Act
             logger.ForContext(propertLogLevel, propKey, propValue)
                 .Write(logMinLevel, string.Empty);
 
-            // Assert
             Assert.True(sink.SingleEvent.Properties.ContainsKey(propKey));
             Assert.Equal(sink.SingleEvent.Properties[propKey].LiteralValue(), propValue);
         }
@@ -41,7 +38,6 @@ namespace Serilog.Tests.Core
         [InlineData(LogEventLevel.Fatal, LogEventLevel.Error)]
         public void ShouldNotEnrichLogEventsWhenMinLevelIsHigherThanProvidedLogLevel(LogEventLevel logMinLevel, LogEventLevel propertLogLevel)
         {
-            // Arrange
             var propValue = Guid.NewGuid();
             var propKey = Some.String();
             var sink = new CollectingSink();
@@ -50,11 +46,9 @@ namespace Serilog.Tests.Core
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            // Act
             logger.ForContext(propertLogLevel, propKey, propValue)
                 .Write(logMinLevel, string.Empty);
 
-            // Assert
             Assert.True(!sink.SingleEvent.Properties.ContainsKey(propKey));
         }
     }
