@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using Serilog.Settings;
 using Serilog.Settings.KeyValuePairs;
 
 namespace Serilog.Configuration
@@ -52,7 +53,42 @@ namespace Serilog.Configuration
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
-            return Settings(new KeyValuePairSettings(settings));
+            return Source(new ConstantSettingsSource(settings));
+        }
+
+        /// <summary>
+        /// Apply settings specified in the Serilog key-value setting format to the logger configuration.
+        /// </summary>
+        /// <param name="source">A source of key-value settings.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Source(ISettingsSource source)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            return Settings(new KeyValuePairSettings(source));
+        }
+
+        /// <summary>
+        /// Apply settings specified from multiple source and combine them keeping the last defined value for each key.
+        /// </summary>
+        /// <param name="builder">a callback that allows to add Sources of settings to the configuration</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Combined(Func<ISettingsSourceBuilder, ISettingsSourceBuilder> builder)
+        {
+            var empty = new CombinedSettingsSource();
+            var full = (CombinedSettingsSource)builder(empty);
+
+            return Source(full);
+        }
+
+        /// <summary>
+        /// Apply settings specified from multiple source and combine them keeping the last defined value for each key.
+        /// </summary>
+        /// <param name="sources">the sources of Settings to combine</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Sources(params ISettingsSource[] sources)
+        {
+            var combinedSources = new CombinedSettingsSource(sources);
+            return Source(combinedSources);
         }
     }
 }
