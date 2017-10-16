@@ -305,9 +305,7 @@ namespace Serilog.Tests
             Assert.Equal(parameter.Name, "level");
             Assert.Equal(parameter.ParameterType, typeof(LogEventLevel));
 
-            CollectingSink sink;
-
-            var logger = GetLogger(loggerType, out sink, LogEventLevel.Information);
+            var logger = GetLogger(loggerType, out _, LogEventLevel.Information);
 
             var falseResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Verbose });
 
@@ -761,10 +759,7 @@ namespace Serilog.Tests
 
         static void InvokeConventionMethod(MethodInfo method, Type[] typeArgs, object[] parameters)
         {
-            CollectingSink sink;
-            LogEventLevel level;
-
-            InvokeConventionMethod(method, typeArgs, parameters, out level, out sink);
+            InvokeConventionMethod(method, typeArgs, parameters, out _, out _);
         }
 
         static void InvokeConventionMethodAndTest(MethodInfo method, Type[] typeArgs, object[] parameters)
@@ -901,9 +896,7 @@ namespace Serilog.Tests
 
         static ILogger GetLogger(Type loggerType)
         {
-            CollectingSink sink;
-
-            return GetLogger(loggerType, out sink);
+            return GetLogger(loggerType, out _);
         }
 
         static ILogger GetLogger(Type loggerType, out CollectingSink sink, LogEventLevel level = LogEventLevel.Verbose)
