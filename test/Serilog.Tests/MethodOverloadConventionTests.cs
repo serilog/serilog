@@ -501,6 +501,7 @@ namespace Serilog.Tests
             TestForContextResult(method, logger, normalResult: enrichedLogger);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
         {
             Assert.NotNull(normalResult);
@@ -884,6 +885,7 @@ namespace Serilog.Tests
             return method.Invoke(instance, parameters);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
         {
             //evaluate single log event
