@@ -313,12 +313,14 @@ namespace Serilog.Tests.Settings
             systemLogger.Write(Some.WarningEvent());
             Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
 
+            // ReSharper disable HeuristicUnreachableCode
             evt = null;
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
 
             controlSwitch.MinimumLevel = LogEventLevel.Information;
             systemLogger.Write(Some.InformationEvent());
             Assert.False(evt is null, "LoggingLevelSwitch level was changed to Information for logger System.*. It should now log Information events for SourceContext System.Bar.");
+            // ReSharper restore HeuristicUnreachableCode
         }
 
     }
