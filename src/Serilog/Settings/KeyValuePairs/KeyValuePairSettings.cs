@@ -77,8 +77,7 @@ namespace Serilog.Settings.KeyValuePairs
 
         public KeyValuePairSettings(ISettingsSource settingsSource)
         {
-            if (settingsSource == null) throw new ArgumentNullException(nameof(settingsSource));
-            _settingsSource = settingsSource;
+            _settingsSource = settingsSource ?? throw new ArgumentNullException(nameof(settingsSource));
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)

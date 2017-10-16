@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using Serilog.Settings;
 using Serilog.Settings.KeyValuePairs;
 
 namespace Serilog.Configuration
@@ -61,7 +60,7 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="builder">a callback that allows to add Sources of settings to the configuration</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Combined(Func<ISettingsSourceBuilder, ISettingsSourceBuilder> builder)
+        public LoggerConfiguration KeyValuePairs(Func<ISettingsSourceBuilder, ISettingsSourceBuilder> builder)
         {
             var empty = new CombinedSettingsSource();
             var full = (CombinedSettingsSource)builder(empty);

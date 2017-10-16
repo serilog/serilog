@@ -23,8 +23,7 @@ namespace Serilog.Settings.KeyValuePairs
 
         public ConstantSettingsSource(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
-            if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
-            _keyValuePairs = keyValuePairs;
+            _keyValuePairs = keyValuePairs ?? throw new ArgumentNullException(nameof(keyValuePairs));
         }
 
         public IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()

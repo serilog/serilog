@@ -12,10 +12,10 @@ namespace Serilog.Tests.Settings
         public void BuilderCombinesDifferentSources()
         {
             var source1 = new ConstantSettingsSource(new Dictionary<string, string>
-                {
-                    { "minimum-level", "Error"},
-                    { "enrich:with-property:Enriched1", "Enrichement1"}
-                });
+            {
+                { "minimum-level", "Error"},
+                { "enrich:with-property:Enriched1", "Enrichement1"}
+            });
 
             var source2 = new ConstantSettingsSource(new Dictionary<string, string>
             {
