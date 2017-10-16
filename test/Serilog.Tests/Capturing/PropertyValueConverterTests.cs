@@ -24,7 +24,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public async Task MaximumDepthIsEffectiveAndThreadSafe()
         {
-            var _converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
             var barrier = new Barrier(participantCount: 3);
 
@@ -63,7 +63,7 @@ namespace Serilog.Tests.Capturing
                 {
                     barrier.SignalAndWait();
 
-                    var propValue = _converter.CreatePropertyValue(logObject, true);
+                    var propValue = converter.CreatePropertyValue(logObject, true);
 
                     Assert.IsType<StructureValue>(propValue);
 
