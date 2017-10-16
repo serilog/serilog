@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Serilog.Events;
-using Serilog.Settings;
+using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using Xunit;
 
@@ -9,11 +9,11 @@ namespace Serilog.Tests.Settings
     public class SettingsSourceTests
     {
         [Fact]
-        public void SourceCanProcessKeyValuePairsFromSource()
+        public void KeyValuePairsCanReadKeyValuePairsFromASingleSource()
         {
             LogEvent evt = null;
             var log = new LoggerConfiguration()
-                .ReadFrom.Source(new ConstantSettingsSource(
+                .ReadFrom.KeyValuePairs(new ConstantSettingsSource(
                     new Dictionary<string, string>
                     {
                         {"enrich:with-property:SomeProp", "initialValue"},
@@ -28,7 +28,7 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void SourcesCanCombineKeyValuePairsFromMulltipleSources()
+        public void KeyValuePairsCanReadKeyValuePairsFromFromMultipleSources()
         {
             LogEvent evt = null;
             var source1 = new ConstantSettingsSource(
@@ -44,7 +44,7 @@ namespace Serilog.Tests.Settings
                     {"enrich:with-property:NewProp", "value"},
                 });
             var log = new LoggerConfiguration()
-                .ReadFrom.Sources(source1, source2)
+                .ReadFrom.KeyValuePairs(source1, source2)
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 

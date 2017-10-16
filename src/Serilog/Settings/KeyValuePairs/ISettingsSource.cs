@@ -12,24 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 
-namespace Serilog.Settings
+namespace Serilog.Settings.KeyValuePairs
 {
-    class ConstantSettingsSource : ISettingsSource
+    /// <summary>
+    /// The core interface for a source of key-value settings to define a <see cref="LoggerConfiguration"/>
+    /// </summary>
+    public interface ISettingsSource
     {
-        IEnumerable<KeyValuePair<string, string>> _keyValuePairs;
-
-        public ConstantSettingsSource(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
-        {
-            if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
-            _keyValuePairs = keyValuePairs;
-        }
-
-        public IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
-        {
-            return _keyValuePairs;
-        }
+        /// <summary>
+        /// Retrieves the key-value settings defined by this source.
+        /// </summary>
+        /// <returns>A sequence of key-value settings</returns>
+        IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs();
     }
 }

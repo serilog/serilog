@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Serilog.Settings;
+using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using Xunit;
 

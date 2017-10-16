@@ -15,20 +15,21 @@
 using System;
 using System.Collections.Generic;
 
-namespace Serilog.Settings
+namespace Serilog.Settings.KeyValuePairs
 {
-    class DelegatingSettingsSource : ISettingsSource
+    class ConstantSettingsSource : ISettingsSource
     {
-        readonly Func<IEnumerable<KeyValuePair<string, string>>> _source;
+        IEnumerable<KeyValuePair<string, string>> _keyValuePairs;
 
-        public DelegatingSettingsSource(Func<IEnumerable<KeyValuePair<string, string>>> source)
+        public ConstantSettingsSource(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
-            _source = source ?? throw new ArgumentNullException(nameof(source));
+            if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
+            _keyValuePairs = keyValuePairs;
         }
 
         public IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
         {
-            return _source();
+            return _keyValuePairs;
         }
     }
 }

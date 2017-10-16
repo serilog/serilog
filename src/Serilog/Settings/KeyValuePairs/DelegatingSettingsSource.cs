@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 
-namespace Serilog.Settings
+namespace Serilog.Settings.KeyValuePairs
 {
-    /// <summary>
-    /// The core interface for a source of key-value settings to define a <see cref="LoggerConfiguration"/>
-    /// </summary>
-    public interface ISettingsSource
+    class DelegatingSettingsSource : ISettingsSource
     {
-        /// <summary>
-        /// Retrieves the key-value settings defined by this source.
-        /// </summary>
-        /// <returns>A sequence of key-value settings</returns>
-        IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs();
+        readonly Func<IEnumerable<KeyValuePair<string, string>>> _source;
+
+        public DelegatingSettingsSource(Func<IEnumerable<KeyValuePair<string, string>>> source)
+        {
+            _source = source ?? throw new ArgumentNullException(nameof(source));
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
+        {
+            return _source();
+        }
     }
 }

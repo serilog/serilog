@@ -14,7 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using Serilog.Settings;
+using Serilog.Settings.KeyValuePairs;
 
 // in this namespace so they appear when using LoggerConfiguration extension methods
 namespace Serilog

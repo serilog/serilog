@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 // Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-
-namespace Serilog.Settings
+namespace Serilog.Settings.KeyValuePairs
 {
     /// <summary>
     /// A basic implementation of ISettingsSource that can be use as a starting point for other implementations.

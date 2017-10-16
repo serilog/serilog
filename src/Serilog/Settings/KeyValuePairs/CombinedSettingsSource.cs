@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Serilog.Settings
+namespace Serilog.Settings.KeyValuePairs
 {
     class CombinedSettingsSource : ISettingsSource, ISettingsSourceBuilder
     {

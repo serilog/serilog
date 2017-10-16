@@ -53,18 +53,7 @@ namespace Serilog.Configuration
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
-            return Source(new ConstantSettingsSource(settings));
-        }
-
-        /// <summary>
-        /// Apply settings specified in the Serilog key-value setting format to the logger configuration.
-        /// </summary>
-        /// <param name="source">A source of key-value settings.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Source(ISettingsSource source)
-        {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            return Settings(new KeyValuePairSettings(source));
+            return KeyValuePairs(new ConstantSettingsSource(settings));
         }
 
         /// <summary>
@@ -77,7 +66,7 @@ namespace Serilog.Configuration
             var empty = new CombinedSettingsSource();
             var full = (CombinedSettingsSource)builder(empty);
 
-            return Source(full);
+            return KeyValuePairs(full);
         }
 
         /// <summary>
@@ -85,10 +74,15 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="sources">the sources of Settings to combine</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Sources(params ISettingsSource[] sources)
+        public LoggerConfiguration KeyValuePairs(params ISettingsSource[] sources)
         {
+            if (sources == null) throw new ArgumentNullException(nameof(sources));
+            if (sources.Length == 1)
+            {
+                return Settings(new KeyValuePairSettings(sources[0]));
+            }
             var combinedSources = new CombinedSettingsSource(sources);
-            return Source(combinedSources);
+            return Settings(new KeyValuePairSettings(combinedSources));
         }
     }
 }
