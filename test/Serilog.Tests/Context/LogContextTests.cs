@@ -31,7 +31,9 @@ namespace Serilog.Tests.Context
         public LogContextTests()
         {
 #if REMOTING
+            // ReSharper disable AssignNullToNotNullAttribute
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
+            // ReSharper restore AssignNullToNotNullAttribute
 #endif
         }
 
@@ -266,7 +268,9 @@ namespace Serilog.Tests.Context
             {
                 domain = AppDomain.CreateDomain("LogContextTests", null, AppDomain.CurrentDomain.SetupInformation);
 
+                // ReSharper disable AssignNullToNotNullAttribute
                 var callable = (RemotelyCallable)domain.CreateInstanceAndUnwrap(typeof(RemotelyCallable).Assembly.FullName, typeof(RemotelyCallable).FullName);
+                // ReSharper restore AssignNullToNotNullAttribute
 
                 using (LogContext.PushProperty("Anything", 1001))
                     Assert.True(callable.IsCallable());
