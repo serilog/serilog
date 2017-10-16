@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Serilog.Settings;
 using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using Xunit;
@@ -28,8 +27,8 @@ namespace Serilog.Tests.Settings
                 { "enrich:with-property:Enriched2", "Enrichement2"}
             });
 
-            ISettingsSource combinedSource = new CombinedSettingsSource(new [] {source1, source2, source3});
-            
+            ISettingsSource combinedSource = new CombinedSettingsSource(new[] { source1, source2, source3 });
+
             var keyValuePairs = combinedSource.GetKeyValuePairs().ToList();
 
             var expected = new Dictionary<string, string>()

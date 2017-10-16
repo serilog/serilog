@@ -67,20 +67,5 @@ namespace Serilog
             var source = new ConstantSettingsSource(new[] { new KeyValuePair<string, string>(key, value) });
             return self.AddSource(source);
         }
-
-        /// <summary>
-        /// Adds a source of settings defined as a function to be called later on
-        /// </summary>
-        /// <param name="self">the builder</param>
-        /// <param name="keyValuePairSource">a function that can provided key-value pairs</param>
-        /// <returns>the builder object to allow chaining</returns>
-        public static ISettingsSourceBuilder AddFunc(this ISettingsSourceBuilder self,
-            Func<IEnumerable<KeyValuePair<string, string>>> keyValuePairSource)
-        {
-            if (self == null) throw new ArgumentNullException(nameof(self));
-            if (keyValuePairSource == null) throw new ArgumentNullException(nameof(keyValuePairSource));
-            var source = new DelegatingSettingsSource(keyValuePairSource);
-            return self.AddSource(source);
-        }
     }
 }
