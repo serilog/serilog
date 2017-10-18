@@ -83,11 +83,8 @@ namespace Serilog.Settings.KeyValuePairs
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-
-            var settings = _settings.ToDictionary(s => s.Key, s => s.Value);
-            var directives = settings.Keys
-                .Where(k => _supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => settings[k]);
+            
+            var directives = ExtractDirectives(_settings);
 
             var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
@@ -162,6 +159,16 @@ namespace Serilog.Settings.KeyValuePairs
                     ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredLevelSwitches);
                 }
             }
+        }
+
+        internal static Dictionary<string, string> ExtractDirectives(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
+        {
+            var settings = keyValuePairs.ToDictionary(s => s.Key, s => s.Value);
+            var directives = settings.Keys
+                .Where(k => _supportedDirectives.Any(k.StartsWith))
+                .ToDictionary(k => k, k => settings[k]);
+
+            return directives;
         }
 
         internal static bool IsValidSwitchName(string input)

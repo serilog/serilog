@@ -37,17 +37,29 @@ namespace Serilog.Tests.Settings
         {
             IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
             {
-                yield return new KeyValuePair<string, string>("prop1", "initialValue");
-                yield return new KeyValuePair<string, string>("prop2", "initialValue");
-                yield return new KeyValuePair<string, string>("prop1", "overridenValue");
+                yield return new KeyValuePair<string, string>("minimum-level", "Debug");
+                yield return new KeyValuePair<string, string>("minimum-level:override:System", "Warning");
+                yield return new KeyValuePair<string, string>("minimum-level", "Information");
             }
 
-            var settings = new KeyValuePairSettings(GetKeyValuePairs());
-
-            Action action = () => settings.Configure(new LoggerConfiguration());
+            Action action = () => KeyValuePairSettings.ExtractDirectives(GetKeyValuePairs());
             var ex = Assert.ThrowsAny<Exception>(action);
             Assert.NotNull(ex);
             Assert.Contains("An item with the same key has already been added.", ex.Message);
+        }
+
+        [Fact]
+        public void IrrelevantKeysAreIgnored()
+        {
+            IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
+            {
+                yield return new KeyValuePair<string, string>("whatever:foo:bar", "willBeIgnored");
+                yield return new KeyValuePair<string, string>("irrelevant", "willBeIgnored");
+            }
+
+            var directives = KeyValuePairSettings.ExtractDirectives(GetKeyValuePairs());
+
+            Assert.False(directives.Any());
         }
 
         [Fact]
