@@ -16,6 +16,41 @@ namespace Serilog.Tests.Settings
     public class KeyValuePairSettingsTests
     {
         [Fact]
+        public void KeyValuePairsEnumerableAreNotConsumedUntilConfigureIsCalled()
+        {
+            int enumerableConsumeCount = 0;
+            IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
+            {
+                enumerableConsumeCount++;
+                yield return new KeyValuePair<string, string>("foo", "bar");
+            }
+
+            var settings = new KeyValuePairSettings(GetKeyValuePairs());
+            Assert.Equal(0, enumerableConsumeCount);
+
+            settings.Configure(new LoggerConfiguration());
+            Assert.Equal(1, enumerableConsumeCount);
+        }
+
+        [Fact]
+        public void DuplicateKeysCauseException()
+        {
+            IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
+            {
+                yield return new KeyValuePair<string, string>("prop1", "initialValue");
+                yield return new KeyValuePair<string, string>("prop2", "initialValue");
+                yield return new KeyValuePair<string, string>("prop1", "overridenValue");
+            }
+
+            var settings = new KeyValuePairSettings(GetKeyValuePairs());
+
+            Action action = () => settings.Configure(new LoggerConfiguration());
+            var ex = Assert.ThrowsAny<Exception>(action);
+            Assert.NotNull(ex);
+            Assert.Contains("An item with the same key has already been added.", ex.Message);
+        }
+
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
@@ -181,7 +216,7 @@ namespace Serilog.Tests.Settings
                 ["level-switch:switchNameNotStartingWithDollar"] = "Warning",
             };
 
-            var ex = Assert.Throws<FormatException>(() =>  new LoggerConfiguration()
+            var ex = Assert.Throws<FormatException>(() => new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(settings));
 
             Assert.Contains("\"switchNameNotStartingWithDollar\"", ex.Message);
@@ -301,7 +336,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             var systemLogger = log.ForContext(Constants.SourceContextPropertyName, "System.Bar");
-            
+
             log.Write(Some.InformationEvent());
             Assert.False(evt is null, "Minimul level is Debug. It should log Information messages");
 

@@ -73,21 +73,21 @@ namespace Serilog.Settings.KeyValuePairs
             [typeof(LoggerFilterConfiguration)] = lc => lc.Filter
         };
 
-        readonly Dictionary<string, string> _settings;
+        readonly IEnumerable<KeyValuePair<string, string>> _settings;
 
         public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-            _settings = settings.ToDictionary(s => s.Key, s => s.Value);
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
 
-            var directives = _settings.Keys
+            var settings = _settings.ToDictionary(s => s.Key, s => s.Value);
+            var directives = settings.Keys
                 .Where(k => _supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => _settings[k]);
+                .ToDictionary(k => k, k => settings[k]);
 
             var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
