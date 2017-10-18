@@ -163,10 +163,9 @@ namespace Serilog.Settings.KeyValuePairs
 
         internal static Dictionary<string, string> ExtractDirectives(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
-            var settings = keyValuePairs.ToDictionary(s => s.Key, s => s.Value);
-            var directives = settings.Keys
-                .Where(k => _supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => settings[k]);
+            var directives = keyValuePairs
+                .Where(kvp => _supportedDirectives.Any(kvp.Key.StartsWith))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             return directives;
         }
