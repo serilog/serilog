@@ -164,6 +164,7 @@ namespace Serilog.Settings.KeyValuePairs
         internal static IReadOnlyDictionary<string, string> ExtractDirectives(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
             var directives = keyValuePairs
+                .Where(kvp => kvp.Key != null)
                 .Where(kvp => _supportedDirectives.Any(kvp.Key.StartsWith))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 

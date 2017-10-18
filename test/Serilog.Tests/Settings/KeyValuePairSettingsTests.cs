@@ -63,6 +63,19 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
+        public void NullKeysAreIgnored()
+        {
+            IEnumerable<KeyValuePair<string, string>> GetKeyValuePairs()
+            {
+                yield return new KeyValuePair<string, string>(null, "willBeIgnored");
+            }
+
+            var directives = KeyValuePairSettings.ExtractDirectives(GetKeyValuePairs());
+
+            Assert.False(directives.Any());
+        }
+
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
