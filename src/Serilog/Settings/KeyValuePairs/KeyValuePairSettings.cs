@@ -161,13 +161,13 @@ namespace Serilog.Settings.KeyValuePairs
             }
         }
 
-        internal static Dictionary<string, string> ExtractDirectives(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
+        internal static IReadOnlyDictionary<string, string> ExtractDirectives(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
         {
             var directives = keyValuePairs
                 .Where(kvp => _supportedDirectives.Any(kvp.Key.StartsWith))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            return directives;
+            return new ReadOnlyDictionary<string, string>(directives);
         }
 
         internal static bool IsValidSwitchName(string input)
@@ -175,7 +175,7 @@ namespace Serilog.Settings.KeyValuePairs
             return Regex.IsMatch(input, LevelSwitchNameRegex);
         }
 
-        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(Dictionary<string, string> directives)
+        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
         {
             var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
 
@@ -261,7 +261,7 @@ namespace Serilog.Settings.KeyValuePairs
                 .FirstOrDefault();
         }
 
-        internal static IEnumerable<Assembly> LoadConfigurationAssemblies(Dictionary<string, string> directives)
+        internal static IEnumerable<Assembly> LoadConfigurationAssemblies(IReadOnlyDictionary<string, string> directives)
         {
             var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
 
