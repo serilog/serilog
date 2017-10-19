@@ -52,7 +52,36 @@ namespace Serilog.Configuration
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
-            return Settings(new KeyValuePairSettings(settings));
+            return KeyValuePairs(new ConstantSettingsSource(settings));
+        }
+
+        /// <summary>
+        /// Apply settings specified from multiple source and combine them keeping the last defined value for each key.
+        /// </summary>
+        /// <param name="builder">a callback that allows to add Sources of settings to the configuration</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration KeyValuePairs(Func<ISettingsSourceBuilder, ISettingsSourceBuilder> builder)
+        {
+            var empty = new CombinedSettingsSource();
+            var full = (CombinedSettingsSource)builder(empty);
+
+            return KeyValuePairs(full);
+        }
+
+        /// <summary>
+        /// Apply settings specified from multiple source and combine them keeping the last defined value for each key.
+        /// </summary>
+        /// <param name="sources">the sources of Settings to combine</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration KeyValuePairs(params ISettingsSource[] sources)
+        {
+            if (sources == null) throw new ArgumentNullException(nameof(sources));
+            if (sources.Length == 1)
+            {
+                return Settings(new KeyValuePairSettings(sources[0]));
+            }
+            var combinedSources = new CombinedSettingsSource(sources);
+            return Settings(new KeyValuePairSettings(combinedSources));
         }
     }
 }
