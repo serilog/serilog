@@ -8,7 +8,9 @@ namespace TestDummies
     public class DummyWrappingSink : ILogEventSink
     {
         [ThreadStatic]
+        // ReSharper disable ThreadStaticFieldHasInitializer
         public static List<LogEvent> Emitted = new List<LogEvent>();
+        // ReSharper restore ThreadStaticFieldHasInitializer
 
         private readonly ILogEventSink _sink;
 

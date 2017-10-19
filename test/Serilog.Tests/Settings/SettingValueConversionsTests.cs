@@ -33,8 +33,8 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToNullableTimeSpan()
         {
-            var result = (System.TimeSpan?)SettingValueConversions.ConvertToType("00:01:00", typeof(System.TimeSpan?));
-            Assert.Equal(System.TimeSpan.FromMinutes(1), result);
+            var result = (TimeSpan?)SettingValueConversions.ConvertToType("00:01:00", typeof(TimeSpan?));
+            Assert.Equal(TimeSpan.FromMinutes(1), result);
         }
 
         [Fact]

@@ -148,7 +148,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             if (callableDirectives.Any())
             {
-                var configurationAssemblies = LoadConfigurationAssemblies(directives);
+                var configurationAssemblies = LoadConfigurationAssemblies(directives).ToList();
 
                 foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))
                 {

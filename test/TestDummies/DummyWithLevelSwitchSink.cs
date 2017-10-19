@@ -16,7 +16,9 @@ namespace TestDummies
         public static LoggingLevelSwitch ControlLevelSwitch;
 
         [ThreadStatic]
+        // ReSharper disable ThreadStaticFieldHasInitializer
         public static List<LogEvent> Emitted = new List<LogEvent>();
+        // ReSharper restore ThreadStaticFieldHasInitializer
 
         public void Emit(LogEvent logEvent)
         {

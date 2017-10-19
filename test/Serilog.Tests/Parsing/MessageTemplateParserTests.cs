@@ -11,6 +11,7 @@ namespace Serilog.Tests.Parsing
             return new MessageTemplateParser().Parse(messsageTemplate).Tokens.ToArray();
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         static void AssertParsedAs(string message, params MessageTemplateToken[] messageTemplateTokens)
         {
             var parsed = Parse(message);
