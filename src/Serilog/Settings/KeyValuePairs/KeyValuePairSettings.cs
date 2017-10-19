@@ -73,21 +73,18 @@ namespace Serilog.Settings.KeyValuePairs
             [typeof(LoggerFilterConfiguration)] = lc => lc.Filter
         };
 
-        readonly Dictionary<string, string> _settings;
+        readonly IEnumerable<KeyValuePair<string, string>> _settings;
 
         public KeyValuePairSettings(IEnumerable<KeyValuePair<string, string>> settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-            _settings = settings.ToDictionary(s => s.Key, s => s.Value);
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-
-            var directives = _settings.Keys
-                .Where(k => _supportedDirectives.Any(k.StartsWith))
-                .ToDictionary(k => k, k => _settings[k]);
+            
+            var directives = ExtractDirectives(_settings);
 
             var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
@@ -164,12 +161,22 @@ namespace Serilog.Settings.KeyValuePairs
             }
         }
 
+        internal static IReadOnlyDictionary<string, string> ExtractDirectives(IEnumerable<KeyValuePair<string, string>> keyValuePairs)
+        {
+            var directives = keyValuePairs
+                .Where(kvp => kvp.Key != null)
+                .Where(kvp => _supportedDirectives.Any(kvp.Key.StartsWith))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            return new ReadOnlyDictionary<string, string>(directives);
+        }
+
         internal static bool IsValidSwitchName(string input)
         {
             return Regex.IsMatch(input, LevelSwitchNameRegex);
         }
 
-        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(Dictionary<string, string> directives)
+        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
         {
             var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
 
@@ -255,7 +262,7 @@ namespace Serilog.Settings.KeyValuePairs
                 .FirstOrDefault();
         }
 
-        internal static IEnumerable<Assembly> LoadConfigurationAssemblies(Dictionary<string, string> directives)
+        internal static IEnumerable<Assembly> LoadConfigurationAssemblies(IReadOnlyDictionary<string, string> directives)
         {
             var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
 
