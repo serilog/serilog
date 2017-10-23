@@ -253,10 +253,8 @@ namespace Serilog.Context
 
             public override object InitializeLifetimeService()
             {
-                var lease = (ILease)base.InitializeLifetimeService();
-                // ReSharper disable once PossibleNullReferenceException
-                // not 100% sure this will never occur ...
-                lease.Register(LifeTimeSponsor);
+                var lease = base.InitializeLifetimeService() as ILease;
+                lease?.Register(LifeTimeSponsor);
                 return lease;
             }
 
