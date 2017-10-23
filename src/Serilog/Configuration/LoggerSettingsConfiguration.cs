@@ -14,6 +14,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Serilog.Settings.KeyValuePairs;
 
 namespace Serilog.Configuration
@@ -52,7 +54,9 @@ namespace Serilog.Configuration
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
-            return Settings(new KeyValuePairSettings(settings));
+
+            var settingsDictionary = new ReadOnlyDictionary<string, string>(settings.ToDictionary(x => x.Key, x => x.Value));
+            return Settings(new KeyValuePairSettings(settingsDictionary));
         }
     }
 }

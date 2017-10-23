@@ -16,6 +16,35 @@ namespace Serilog.Tests.Settings
     public class KeyValuePairSettingsTests
     {
         [Fact]
+        public void DuplicateKeysCauseArgumentException()
+        {
+            Action action = () => new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("setting", "Value"),
+                    new KeyValuePair<string, string>("setting", "SameSettingOtherValue"),
+                });
+
+            var ex = Assert.ThrowsAny<ArgumentException>(action);
+            Assert.NotNull(ex);
+            Assert.Contains("An item with the same key has already been added.", ex.Message);
+        }
+
+        [Fact]
+        public void IrrelevantKeysAreIgnored()
+        {
+            var irrelevantSettings = new Dictionary<string, string>()
+            {
+                ["whatever:foo:bar"] = "willBeIgnored",
+                ["irrelevant"] = "willBeIgnored",
+            };
+
+            var directives = KeyValuePairSettings.ExtractDirectives(irrelevantSettings);
+
+            Assert.False(directives.Any());
+        }
+
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
@@ -181,7 +210,7 @@ namespace Serilog.Tests.Settings
                 ["level-switch:switchNameNotStartingWithDollar"] = "Warning",
             };
 
-            var ex = Assert.Throws<FormatException>(() =>  new LoggerConfiguration()
+            var ex = Assert.Throws<FormatException>(() => new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(settings));
 
             Assert.Contains("\"switchNameNotStartingWithDollar\"", ex.Message);
@@ -301,7 +330,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             var systemLogger = log.ForContext(Constants.SourceContextPropertyName, "System.Bar");
-            
+
             log.Write(Some.InformationEvent());
             Assert.False(evt is null, "Minimul level is Debug. It should log Information messages");
 
