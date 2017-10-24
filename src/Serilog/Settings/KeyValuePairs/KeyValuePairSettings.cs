@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -203,7 +202,7 @@ namespace Serilog.Settings.KeyValuePairs
                 }
                 namedSwitches.Add(switchName, newSwitch);
             }
-            return new ReadOnlyDictionary<string, LoggingLevelSwitch>(namedSwitches);
+            return namedSwitches;
         }
 
         static LoggingLevelSwitch LookUpSwitchByName(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
