@@ -28,21 +28,7 @@ namespace Serilog.Tests.Settings
             var ex = Assert.ThrowsAny<ArgumentException>(action);
             Assert.NotNull(ex);
             Assert.Contains("An item with the same key has already been added.", ex.Message);
-        }
-
-        [Fact]
-        public void IrrelevantKeysAreIgnored()
-        {
-            var irrelevantSettings = new Dictionary<string, string>()
-            {
-                ["whatever:foo:bar"] = "willBeIgnored",
-                ["irrelevant"] = "willBeIgnored",
-            };
-
-            var directives = KeyValuePairSettings.ExtractDirectives(irrelevantSettings);
-
-            Assert.False(directives.Any());
-        }
+        }        
 
         [Fact]
         public void FindsConfigurationAssemblies()
