@@ -55,8 +55,7 @@ namespace Serilog.Configuration
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            var settingsDictionary = new ReadOnlyDictionary<string, string>(settings.ToDictionary(x => x.Key, x => x.Value));
-            return Settings(new KeyValuePairSettings(settingsDictionary));
+            return Settings(new KeyValuePairSettings(settings.ToDictionary(x => x.Key, x => x.Value)));
         }
     }
 }
