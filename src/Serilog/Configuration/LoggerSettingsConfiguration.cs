@@ -50,11 +50,21 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="settings">A list of key-value pairs describing logger settings.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>In case of duplicate keys, the last value for the key is kept and the previous ones are ignored.</remarks>
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
+            var uniqueSettings = new Dictionary<string, string>();
+            foreach (var kvp in settings)
+            {
+                uniqueSettings[kvp.Key] = kvp.Value;
+            }
+            return KeyValuePairs(uniqueSettings);
+        }
 
-            return Settings(new KeyValuePairSettings(settings.ToDictionary(x => x.Key, x => x.Value)));
+        LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
+        {
+            return Settings(new KeyValuePairSettings(settings));
         }
     }
 }

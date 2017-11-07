@@ -16,19 +16,24 @@ namespace Serilog.Tests.Settings
     public class KeyValuePairSettingsTests
     {
         [Fact]
-        public void DuplicateKeysCauseArgumentException()
+        public void LastValueIsTakenWhenKeysAreDuplicate()
         {
-            Action action = () => new LoggerConfiguration()
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>("setting", "Value"),
-                    new KeyValuePair<string, string>("setting", "SameSettingOtherValue"),
-                });
+                    new KeyValuePair<string, string>("enrich:with-property:App", "InitialValue"),
+                    new KeyValuePair<string, string>("enrich:with-property:App", "OverridenValue"),
+                    new KeyValuePair<string, string>("enrich:with-property:App", "FinalValue")
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
 
-            var ex = Assert.ThrowsAny<ArgumentException>(action);
-            Assert.NotNull(ex);
-            Assert.Contains("An item with the same key has already been added.", ex.Message);
-        }        
+            log.Information("Has a test property");
+
+            Assert.NotNull(evt);
+            Assert.Equal("FinalValue", evt.Properties["App"].LiteralValue());
+        }
 
         [Fact]
         public void FindsConfigurationAssemblies()
@@ -328,7 +333,7 @@ namespace Serilog.Tests.Settings
             systemLogger.Write(Some.WarningEvent());
             Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
 
-            
+
             evt = null;
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
 
