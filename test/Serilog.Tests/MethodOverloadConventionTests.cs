@@ -111,7 +111,7 @@ namespace Serilog.Tests
             //handle silent logger special case i.e. no result validation
             if (loggerType == typeof(SilentLogger))
                 return;
-            
+
             EvaluateSingleResult(level, sink);
         }
 
@@ -177,6 +177,7 @@ namespace Serilog.Tests
         {
             var method = loggerType.GetMethod("BindMessageTemplate");
 
+            Assert.NotNull(method);
             Assert.Equal(method.ReturnType, typeof(bool));
             Assert.True(method.IsPublic);
 
@@ -219,7 +220,7 @@ namespace Serilog.Tests
             //silentlogger is always false
             if (loggerType == typeof(SilentLogger))
                 return;
-            
+
             Assert.True(result as bool?);
 
             //test null arg path
@@ -238,6 +239,7 @@ namespace Serilog.Tests
         {
             var method = loggerType.GetMethod("BindProperty");
 
+            Assert.NotNull(method);
             Assert.Equal(method.ReturnType, typeof(bool));
             Assert.True(method.IsPublic);
 
@@ -274,7 +276,7 @@ namespace Serilog.Tests
             //silentlogger will always be false
             if (loggerType == typeof(SilentLogger))
                 return;
-            
+
             Assert.True(result as bool?);
 
             //test null arg path/ invalid property name
@@ -293,6 +295,7 @@ namespace Serilog.Tests
         {
             var method = loggerType.GetMethod("IsEnabled");
 
+            Assert.NotNull(method);
             Assert.True(method.IsPublic);
             Assert.Equal(method.ReturnType, typeof(bool));
 
