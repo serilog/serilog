@@ -3,6 +3,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
 using Serilog.Settings.KeyValuePairs;
+using Serilog.Tests.Support;
 using Xunit;
 
 namespace Serilog.Tests.Settings
@@ -49,6 +50,21 @@ namespace Serilog.Tests.Settings
         {
             var result = SettingValueConversions.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
             Assert.IsType<JsonFormatter>(result);
+        }
+
+        [Fact]
+        public void StringValuesConvertToDefaultInstancesIfTargetIsAbstractClass()
+        {
+            var result = SettingValueConversions.ConvertToType("Serilog.Tests.Support.DummyConcreteClassWithDefaultConstructor, Serilog.Tests", typeof(DummyAbstractClass));
+            Assert.IsType<DummyConcreteClassWithDefaultConstructor>(result);
+        }
+
+        [Fact]
+        public void StringValuesThrowsWhenMissingDefaultConstructorIfTargetIsAbstractClass()
+        {
+            var value = "Serilog.Tests.Support.DummyConcreteClassWithoutDefaultConstructor, Serilog.Tests";
+            Assert.Throws<InvalidOperationException>(() =>
+                SettingValueConversions.ConvertToType(value, typeof(DummyAbstractClass)));
         }
 
         [Theory]
