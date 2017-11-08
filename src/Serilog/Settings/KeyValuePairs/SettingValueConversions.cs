@@ -51,7 +51,7 @@ namespace Serilog.Settings.KeyValuePairs
             if (convertor != null)
                 return convertor(value);
 
-            if (toTypeInfo.IsInterface && !string.IsNullOrWhiteSpace(value))
+            if ((toTypeInfo.IsInterface || toTypeInfo.IsAbstract) && !string.IsNullOrWhiteSpace(value))
             {
                 var type = Type.GetType(value.Trim(), throwOnError: false);
                 if (type != null)
