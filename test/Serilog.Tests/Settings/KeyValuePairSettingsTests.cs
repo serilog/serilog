@@ -16,6 +16,26 @@ namespace Serilog.Tests.Settings
     public class KeyValuePairSettingsTests
     {
         [Fact]
+        public void LastValueIsTakenWhenKeysAreDuplicate()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("enrich:with-property:App", "InitialValue"),
+                    new KeyValuePair<string, string>("enrich:with-property:App", "OverridenValue"),
+                    new KeyValuePair<string, string>("enrich:with-property:App", "FinalValue")
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Has a test property");
+
+            Assert.NotNull(evt);
+            Assert.Equal("FinalValue", evt.Properties["App"].LiteralValue());
+        }
+
+        [Fact]
         public void FindsConfigurationAssemblies()
         {
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
@@ -181,7 +201,7 @@ namespace Serilog.Tests.Settings
                 ["level-switch:switchNameNotStartingWithDollar"] = "Warning",
             };
 
-            var ex = Assert.Throws<FormatException>(() =>  new LoggerConfiguration()
+            var ex = Assert.Throws<FormatException>(() => new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(settings));
 
             Assert.Contains("\"switchNameNotStartingWithDollar\"", ex.Message);
@@ -301,19 +321,19 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             var systemLogger = log.ForContext(Constants.SourceContextPropertyName, "System.Bar");
-            
+
             log.Write(Some.InformationEvent());
             Assert.False(evt is null, "Minimul level is Debug. It should log Information messages");
 
             evt = null;
-
+            // ReSharper disable HeuristicUnreachableCode
             systemLogger.Write(Some.InformationEvent());
             Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should not log Information messages for SourceContext System.Bar");
 
             systemLogger.Write(Some.WarningEvent());
             Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
 
-            // ReSharper disable HeuristicUnreachableCode
+
             evt = null;
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
 
