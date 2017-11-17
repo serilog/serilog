@@ -82,5 +82,100 @@ namespace Serilog.Tests.Settings
             Assert.IsType<TimeSpan>(actual);
             Assert.Equal(expectedTimeSpan, actual);
         }
+
+        [Theory]
+        [InlineData("My.NameSpace.Class+InnerClass::Member",
+                    "My.NameSpace.Class+InnerClass", "Member")]
+        [InlineData("  TrimMe.NameSpace.Class::NeedsTrimming  ",
+                    "TrimMe.NameSpace.Class", "NeedsTrimming")]
+        [InlineData("My.NameSpace.Class::Member",
+                    "My.NameSpace.Class", "Member")]
+        [InlineData("My.NameSpace.Class::Member, MyAssembly",
+                    "My.NameSpace.Class, MyAssembly", "Member")]
+        [InlineData("My.NameSpace.Class::Member, MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+                    "My.NameSpace.Class, MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", "Member")]
+        [InlineData("Just a random string with :: in it",
+                    null, null)]
+        [InlineData("Its::a::trapWithColonsAppearingTwice",
+                    null, null)]
+        [InlineData("ThereIsNoMemberHere::",
+            null, null)]
+        [InlineData(null,
+            null, null)]
+        [InlineData(" " ,
+            null, null)]
+        public void TryParseStaticMemberAccessorReturnsExpectedResults(string input, string expectedAccessorType, string expectedPropertyName)
+        {
+            var actual = SettingValueConversions.TryParseStaticMemberAccessor(input,
+                out var actualAccessorType,
+                out var actualMemberName);
+
+            if (expectedAccessorType == null)
+            {
+                Assert.False(actual, $"Should not parse {input}");
+            }
+            else
+            {
+                Assert.True(actual, $"should successfully parse {input}");
+                Assert.Equal(expectedAccessorType, actualAccessorType);
+                Assert.Equal(expectedPropertyName, actualMemberName);
+            }
+        }
+
+        [Theory]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringProperty, Serilog.Tests", typeof(string), "StringProperty")]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::IntProperty, Serilog.Tests", typeof(int), 42)]
+        public void StaticMembersAccessorsCanBeUsedForSImpleTypes(string input, Type targetType, object expectedValue)
+        {
+            var actual = SettingValueConversions.ConvertToType(input, targetType);
+
+            Assert.IsAssignableFrom(targetType, actual);
+            Assert.Equal(expectedValue, actual);
+        }
+
+        [Theory]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::InterfaceProperty, Serilog.Tests", typeof(IAmAnInterface))]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::AbstractProperty, Serilog.Tests", typeof(AnAbstractClass))]
+        public void StaticMembersAccessorsCanBeUsedForReferenceTypes(string input, Type targetType)
+        {
+            var actual = SettingValueConversions.ConvertToType(input, targetType);
+
+            Assert.IsAssignableFrom(targetType, actual);
+            Assert.Equal(ConcreteImpl.Instance, actual);
+        }
+
+        [Theory]
+        // unknown type
+        [InlineData("Namespace.ThisIsNotAKnownType::StringProperty, Serilog.Tests", typeof(string))]
+        // good type name, but wrong namespace
+        [InlineData("Random.Namespace.ClassWithStaticAccessors::StringProperty, Serilog.Tests", typeof(string))]
+        // good full type name, but missing or wrong assembly
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringProperty", typeof(string))]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringProperty, TestDummies", typeof(string))]
+        public void StaticAccessorOnUnknownTypeThrowsTypeLoadException(string input, Type targetType)
+        {
+            Assert.Throws<TypeLoadException>(() =>
+                SettingValueConversions.ConvertToType(input, targetType)
+            );
+        }
+
+        [Theory]
+        // unknown member
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::UnknownMember, Serilog.Tests", typeof(string))]
+        // static property exists but it's private
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::PrivateStringProperty, Serilog.Tests", typeof(string))]
+        // public member exists but it's a field
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringField, Serilog.Tests", typeof(string))]
+        // public property exists but it's not static
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::InstanceStringProperty, Serilog.Tests", typeof(string))]
+        public void StaticAccessorWithInvalidMemberThrowsInvalidOperationException(string input, Type targetType)
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                SettingValueConversions.ConvertToType(input, targetType)
+            );
+
+            Assert.Contains("Could not find public static property ", exception.Message);
+            Assert.Contains("on type `Serilog.Tests.Support.ClassWithStaticAccessors, Serilog.Tests`", exception.Message);
+        }
     }
 }

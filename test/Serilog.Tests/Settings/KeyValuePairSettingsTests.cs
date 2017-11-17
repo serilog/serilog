@@ -10,6 +10,8 @@ using TestDummies;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Formatting;
+using TestDummies.Console;
+using TestDummies.Console.Themes;
 
 namespace Serilog.Tests.Settings
 {
@@ -343,5 +345,41 @@ namespace Serilog.Tests.Settings
             // ReSharper restore HeuristicUnreachableCode
         }
 
+        [Fact]
+        public void SinksWithAbstractParamsAreConfiguredWithTypeName()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyConsole.theme"] = "Serilog.Tests.Support.CustomConsoleTheme, Serilog.Tests"
+            };
+
+            DummyConsoleSink.Theme = null;
+
+            new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            Assert.NotNull(DummyConsoleSink.Theme);
+            Assert.IsType<CustomConsoleTheme>(DummyConsoleSink.Theme);
+        }
+
+        [Fact]
+        public void SinksAreConfiguredWithStaticMember()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyConsole.theme"] = "TestDummies.Console.Themes.ConsoleThemes::Theme1, TestDummies"
+            };
+
+            DummyConsoleSink.Theme = null;
+
+            new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            Assert.Equal(ConsoleThemes.Theme1, DummyConsoleSink.Theme);
+        }
     }
 }

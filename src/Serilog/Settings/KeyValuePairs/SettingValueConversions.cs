@@ -16,11 +16,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Serilog.Settings.KeyValuePairs
 {
     class SettingValueConversions
     {
+        // should match "The.NameSpace.TypeName::MemberName" optionnally followed by
+        // usual assembly qualifiers like : 
+        // ", MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        static Regex StaticMemberAccessorRegex = new Regex("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
+
         static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new Dictionary<Type, Func<string, object>>
             {
                 { typeof(Uri), s => new Uri(s) },
@@ -29,6 +35,22 @@ namespace Serilog.Settings.KeyValuePairs
 
         public static object ConvertToType(string value, Type toType)
         {
+            if (TryParseStaticMemberAccessor(value, out var accessorTypeName, out var memberName))
+            {
+                var accessorType = Type.GetType(accessorTypeName, throwOnError: true);
+                var publicStaticPropertyInfo = accessorType.GetTypeInfo().DeclaredProperties
+                    .Where(x => x.Name == memberName)
+                    .Where(x => x.GetMethod != null)
+                    .Where(x => x.GetMethod.IsPublic)
+                    .FirstOrDefault(x => x.GetMethod.IsStatic);
+
+                if (publicStaticPropertyInfo == null)
+                {
+                    throw new InvalidOperationException($"Could not find public static property `{memberName}` on type `{accessorTypeName}`");
+                }
+                return publicStaticPropertyInfo.GetValue(null); // static property, no instance to pass
+            }
+
             var toTypeInfo = toType.GetTypeInfo();
             if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
@@ -71,6 +93,30 @@ namespace Serilog.Settings.KeyValuePairs
             }
 
             return Convert.ChangeType(value, toType);
+        }
+
+        internal static bool TryParseStaticMemberAccessor(string input, out string accessorTypeName, out string memberName)
+        {
+            if (input == null)
+            {
+                accessorTypeName = null;
+                memberName = null;
+                return false;
+            }
+            if (StaticMemberAccessorRegex.IsMatch(input))
+            {
+                var match = StaticMemberAccessorRegex.Match(input);
+                var shortAccessorTypeName = match.Groups["shortTypeName"].Value;
+                var rawMemberName = match.Groups["memberName"].Value;
+                var extraQualifiers = match.Groups["typeNameExtraQualifiers"].Value;
+
+                memberName = rawMemberName.Trim();
+                accessorTypeName = shortAccessorTypeName.Trim() + extraQualifiers.TrimEnd();
+                return true;
+            }
+            accessorTypeName = null;
+            memberName = null;
+            return false;
         }
     }
 }

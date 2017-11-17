@@ -4,6 +4,8 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Configuration;
 using Serilog.Core;
+using TestDummies.Console;
+using TestDummies.Console.Themes;
 
 namespace TestDummies
 {
@@ -49,6 +51,14 @@ namespace TestDummies
             LoggingLevelSwitch controlLevelSwitch = null)
         {
             return loggerSinkConfiguration.Sink(new DummyWithLevelSwitchSink(controlLevelSwitch), restrictedToMinimumLevel);
+        }
+
+        public static LoggerConfiguration DummyConsole(
+            this LoggerSinkConfiguration loggerSinkConfiguration,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            ConsoleTheme theme = null)
+        {
+            return loggerSinkConfiguration.Sink(new DummyConsoleSink(theme), restrictedToMinimumLevel);
         }
 
         public static LoggerConfiguration Dummy(

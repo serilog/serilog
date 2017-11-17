@@ -1,6 +1,5 @@
 ﻿namespace Serilog.Tests.Support
 {
-
     public abstract class DummyAbstractClass
     {
     }
