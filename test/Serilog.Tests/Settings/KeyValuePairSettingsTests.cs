@@ -325,7 +325,7 @@ namespace Serilog.Tests.Settings
             var systemLogger = log.ForContext(Constants.SourceContextPropertyName, "System.Bar");
 
             log.Write(Some.InformationEvent());
-            Assert.False(evt is null, "Minimul level is Debug. It should log Information messages");
+            Assert.False(evt is null, "Minimum level is Debug. It should log Information messages");
 
             evt = null;
             // ReSharper disable HeuristicUnreachableCode

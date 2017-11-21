@@ -125,6 +125,8 @@ namespace Serilog.Tests.Settings
         [Theory]
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringProperty, Serilog.Tests", typeof(string), "StringProperty")]
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::IntProperty, Serilog.Tests", typeof(int), 42)]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringField, Serilog.Tests", typeof(string), "StringField")]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::IntField, Serilog.Tests", typeof(int), 666)]
         public void StaticMembersAccessorsCanBeUsedForSImpleTypes(string input, Type targetType, object expectedValue)
         {
             var actual = SettingValueConversions.ConvertToType(input, targetType);
@@ -136,6 +138,8 @@ namespace Serilog.Tests.Settings
         [Theory]
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::InterfaceProperty, Serilog.Tests", typeof(IAmAnInterface))]
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::AbstractProperty, Serilog.Tests", typeof(AnAbstractClass))]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::InterfaceField, Serilog.Tests", typeof(IAmAnInterface))]
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::AbstractField, Serilog.Tests", typeof(AnAbstractClass))]
         public void StaticMembersAccessorsCanBeUsedForReferenceTypes(string input, Type targetType)
         {
             var actual = SettingValueConversions.ConvertToType(input, targetType);
@@ -164,17 +168,19 @@ namespace Serilog.Tests.Settings
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::UnknownMember, Serilog.Tests", typeof(string))]
         // static property exists but it's private
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::PrivateStringProperty, Serilog.Tests", typeof(string))]
-        // public member exists but it's a field
-        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::StringField, Serilog.Tests", typeof(string))]
+        // static field exists but it's private
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::PrivateStringField, Serilog.Tests", typeof(string))]
         // public property exists but it's not static
         [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::InstanceStringProperty, Serilog.Tests", typeof(string))]
+        // public field exists but it's not static
+        [InlineData("Serilog.Tests.Support.ClassWithStaticAccessors::InstanceStringField, Serilog.Tests", typeof(string))]
         public void StaticAccessorWithInvalidMemberThrowsInvalidOperationException(string input, Type targetType)
         {
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 SettingValueConversions.ConvertToType(input, targetType)
             );
 
-            Assert.Contains("Could not find public static property ", exception.Message);
+            Assert.Contains("Could not find a public static property or field ", exception.Message);
             Assert.Contains("on type `Serilog.Tests.Support.ClassWithStaticAccessors, Serilog.Tests`", exception.Message);
         }
     }

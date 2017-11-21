@@ -44,11 +44,23 @@ namespace Serilog.Settings.KeyValuePairs
                     .Where(x => x.GetMethod.IsPublic)
                     .FirstOrDefault(x => x.GetMethod.IsStatic);
 
-                if (publicStaticPropertyInfo == null)
+                if (publicStaticPropertyInfo != null)
                 {
-                    throw new InvalidOperationException($"Could not find public static property `{memberName}` on type `{accessorTypeName}`");
+                    return publicStaticPropertyInfo.GetValue(null); // static property, no instance to pass
                 }
-                return publicStaticPropertyInfo.GetValue(null); // static property, no instance to pass
+
+                // no property ? look for a field
+                var publicStaticFieldInfo = accessorType.GetTypeInfo().DeclaredFields
+                    .Where(x => x.Name == memberName)
+                    .Where(x => x.IsPublic)
+                    .FirstOrDefault(x => x.IsStatic);
+
+                if (publicStaticFieldInfo != null)
+                {
+                    return publicStaticFieldInfo.GetValue(null); // static field, no instance to pass
+                }
+
+                throw new InvalidOperationException($"Could not find a public static property or field with name `{memberName}` on type `{accessorTypeName}`");
             }
 
             var toTypeInfo = toType.GetTypeInfo();
