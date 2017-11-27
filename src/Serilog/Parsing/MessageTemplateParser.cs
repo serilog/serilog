@@ -133,11 +133,8 @@ namespace Serilog.Parsing
                 if (lastDash > 0)
                     return new TextToken(rawText, first);
 
-                var width = lastDash == -1 ?
-                    int.Parse(alignment) :
-                    int.Parse(alignment.Substring(1));
-
-                if (width == 0)
+                var width = 0;
+                if (!int.TryParse(lastDash == -1 ? alignment : alignment.Substring(1), out width) || width == 0)
                     return new TextToken(rawText, first);
 
                 var direction = lastDash == -1 ?
