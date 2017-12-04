@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>2.6.0</VersionPrefix>
+    <VersionPrefix>2.6.1</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
     <TargetFrameworks>net45;net46;netstandard1.0;netstandard1.3</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
