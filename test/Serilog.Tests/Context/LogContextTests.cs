@@ -5,9 +5,11 @@ using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
 #if APPDOMAIN
 using System;
-using System.IO;
 #endif
 #if REMOTING
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Lifetime;
+using System.Runtime.Remoting.Services;
 using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
@@ -18,10 +20,20 @@ namespace Serilog.Tests.Context
 {
     public class LogContextTests
     {
+        static LogContextTests()
+        {
+#if REMOTING
+            LifetimeServices.LeaseTime = TimeSpan.FromMilliseconds(100);
+            LifetimeServices.LeaseManagerPollTime = TimeSpan.FromMilliseconds(10);
+#endif
+        }
+
         public LogContextTests()
         {
 #if REMOTING
+            // ReSharper disable AssignNullToNotNullAttribute
             CallContext.LogicalSetData(typeof(LogContext).FullName, null);
+            // ReSharper restore AssignNullToNotNullAttribute
 #endif
         }
 
@@ -189,6 +201,62 @@ namespace Serilog.Tests.Context
             }
         }
 
+        [Fact]
+        public async Task ContextEnrichersInAsyncScopeCanBeCleared()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.Push(new PropertyEnricher("A", 1)))
+            {
+                await Task.Run(() =>
+                {
+                    LogContext.Reset();
+                    log.Write(Some.InformationEvent());
+                });
+
+                Assert.Empty(lastEvent.Properties);
+
+                // Reset should only work for current async scope, outside of it previous Context 
+                // instance should be available again.
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            }
+        }
+
+        [Fact]
+        public async Task ContextEnrichersCanBeTemporarilyCleared()
+        {
+            LogEvent lastEvent = null;
+
+            var log = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                .CreateLogger();
+
+            using (LogContext.Push(new PropertyEnricher("A", 1)))
+            {
+                using (LogContext.Suspend())
+                {
+                    await Task.Run(() =>
+                    {
+                        log.Write(Some.InformationEvent());
+                    });
+
+                    Assert.Empty(lastEvent.Properties);
+                }
+
+                // Suspend should only work for scope of using. After calling Dispose all enrichers
+                // should be restored.
+                log.Write(Some.InformationEvent());
+                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            }
+        }
+
 #if APPDOMAIN
         // Must not actually try to pass context across domains,
         // since user property types may not be serializable.
@@ -200,7 +268,9 @@ namespace Serilog.Tests.Context
             {
                 domain = AppDomain.CreateDomain("LogContextTests", null, AppDomain.CurrentDomain.SetupInformation);
 
+                // ReSharper disable AssignNullToNotNullAttribute
                 var callable = (RemotelyCallable)domain.CreateInstanceAndUnwrap(typeof(RemotelyCallable).Assembly.FullName, typeof(RemotelyCallable).FullName);
+                // ReSharper restore AssignNullToNotNullAttribute
 
                 using (LogContext.PushProperty("Anything", 1001))
                     Assert.True(callable.IsCallable());
@@ -212,9 +282,91 @@ namespace Serilog.Tests.Context
             }
         }
 #endif
+
+#if APPDOMAIN && REMOTING
+        [Fact]
+        public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
+        {
+            // Arrange
+            RemotingException remotingException = null;
+
+            AppDomain.CurrentDomain.FirstChanceException +=
+                (_, e) => remotingException = e.Exception is RemotingException re ? re : remotingException;
+
+            var logger = new LoggerConfiguration().Enrich.FromLogContext().CreateLogger();
+            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
+
+            // Act
+            try
+            {
+                using (LogContext.PushProperty("Prop", 42))
+                {
+                    remote.DoCallBack(CallFromRemote);
+                    logger.Information("Prop = {Prop}");
+                }
+            }
+            finally
+            {
+                AppDomain.Unload(remote);
+            }
+
+            // Assert
+            Assert.Null(remotingException);
+
+            void CallFromRemote() => Thread.Sleep(200);
+        }
+
+        [Fact]
+        public async Task DisconnectRemoteObjectsAfterCrossDomainCallsOnDispose()
+        {
+            // Arrange
+            var tracker = new InMemoryRemoteObjectTracker();
+            TrackingServices.RegisterTrackingHandler(tracker);
+
+            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
+
+            // Act
+            try
+            {
+                using (LogContext.PushProperty("Prop1", 42))
+                {
+                    remote.DoCallBack(CallFromRemote);
+
+                    using (LogContext.PushProperty("Prop2", 24))
+                    {
+                        remote.DoCallBack(CallFromRemote);
+                    }
+                }
+            }
+            finally
+            {
+                AppDomain.Unload(remote);
+            }
+
+            await Task.Delay(200);
+
+            // Assert
+            Assert.Equal(2, tracker.DisconnectCount);
+
+            void CallFromRemote() { }
+        }
+#endif
     }
 
-#if REMOTING || APPDOMAIN
+#if REMOTING
+    class InMemoryRemoteObjectTracker : ITrackingHandler
+    {
+        public int DisconnectCount { get; set; }
+
+        public void DisconnectedObject(object obj) => DisconnectCount++;
+
+        public void MarshaledObject(object obj, ObjRef or) { }
+
+        public void UnmarshaledObject(object obj, ObjRef or) { }
+    }
+#endif
+
+#if APPDOMAIN
     public class RemotelyCallable : MarshalByRefObject
     {
         public bool IsCallable()

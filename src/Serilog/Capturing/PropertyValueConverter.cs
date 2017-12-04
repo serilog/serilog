@@ -247,6 +247,7 @@ namespace Serilog.Capturing
                 definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||
                 definition == typeof(ValueTuple<,,,,,,>))
 #else
+            // ReSharper disable once PossibleNullReferenceException
             var defn = definition.FullName;
             if (defn == "System.ValueTuple`1" || defn == "System.ValueTuple`2" ||
                 defn == "System.ValueTuple`3" || defn == "System.ValueTuple`4" ||

@@ -8,12 +8,35 @@ using Serilog.Settings.KeyValuePairs;
 using Serilog.Tests.Support;
 using TestDummies;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Formatting;
+using TestDummies.Console;
+using TestDummies.Console.Themes;
 
 namespace Serilog.Tests.Settings
 {
     public class KeyValuePairSettingsTests
     {
+        [Fact]
+        public void LastValueIsTakenWhenKeysAreDuplicate()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("enrich:with-property:App", "InitialValue"),
+                    new KeyValuePair<string, string>("enrich:with-property:App", "OverridenValue"),
+                    new KeyValuePair<string, string>("enrich:with-property:App", "FinalValue")
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Has a test property");
+
+            Assert.NotNull(evt);
+            Assert.Equal("FinalValue", evt.Properties["App"].LiteralValue());
+        }
+
         [Fact]
         public void FindsConfigurationAssemblies()
         {
@@ -152,5 +175,211 @@ namespace Serilog.Tests.Settings
             Assert.NotNull(evt);
         }
 
+        [Theory]
+        [InlineData("$switchName", true)]
+        [InlineData("$SwitchName", true)]
+        [InlineData("$switch1", true)]
+        [InlineData("$sw1tch0", true)]
+        [InlineData("$SWITCHNAME", true)]
+        [InlineData("$$switchname", false)]
+        [InlineData("$switchname$", false)]
+        [InlineData("switch$name", false)]
+        [InlineData("$", false)]
+        [InlineData("", false)]
+        [InlineData(" ", false)]
+        [InlineData("$1switch", false)]
+        [InlineData("$switch_name", false)]
+        public void LoggingLevelSwitchNameValidityScenarios(string switchName, bool expectedValid)
+        {
+            Assert.True(KeyValuePairSettings.IsValidSwitchName(switchName) == expectedValid,
+                $"expected IsValidSwitchName({switchName}) to return {expectedValid} ");
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchWithInvalidNameThrowsFormatException()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:switchNameNotStartingWithDollar"] = "Warning",
+            };
+
+            var ex = Assert.Throws<FormatException>(() => new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings));
+
+            Assert.Contains("\"switchNameNotStartingWithDollar\"", ex.Message);
+            Assert.Contains("'$' sign", ex.Message);
+            Assert.Contains("\"level-switch:$switchName\"", ex.Message);
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchIsConfigured()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:$switch1"] = "Warning",
+                ["minimum-level:controlled-by"] = "$switch1",
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Write(Some.DebugEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning. It should not log Debug messages");
+            log.Write(Some.InformationEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning. It should not log Information messages");
+            log.Write(Some.WarningEvent());
+            Assert.True(evt != null, "LoggingLevelSwitch initial level was Warning. It should log Warning messages");
+        }
+
+        [Fact]
+        public void SettingMinimumLevelControlledByToAnUndeclaredSwitchThrows()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:$switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "$switch2",
+            };
+
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                new LoggerConfiguration()
+                    .ReadFrom.KeyValuePairs(settings)
+                    .CreateLogger());
+            Assert.Contains("$switch2", ex.Message);
+            Assert.Contains("level-switch:$switch2", ex.Message);
+        }
+
+        [Fact]
+        public void LoggingLevelSwitchIsPassedToSinks()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:$switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "$switch1",
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$switch1"
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            Assert.False(DummyWithLevelSwitchSink.ControlLevelSwitch == null, "Sink ControlLevelSwitch should have been initialized");
+
+            var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+            Assert.NotNull(controlSwitch);
+
+            log.Write(Some.DebugEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
+
+            controlSwitch.MinimumLevel = LogEventLevel.Debug;
+            log.Write(Some.DebugEvent());
+            Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
+        }
+
+        [Fact]
+        public void ReferencingAnUndeclaredSwitchInSinkThrows()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["level-switch:$switch1"] = "Information",
+                ["minimum-level:controlled-by"] = "$switch1",
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$switch2"
+            };
+
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                new LoggerConfiguration()
+                    .ReadFrom.KeyValuePairs(settings)
+                    .CreateLogger());
+            Assert.Contains("$switch2", ex.Message);
+            Assert.Contains("level-switch:", ex.Message);
+        }
+
+
+        [Fact]
+        public void LoggingLevelSwitchCanBeUsedForMinimumLevelOverrides()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["minimum-level"] = "Debug",
+                ["level-switch:$specificSwitch"] = "Warning",
+                ["minimum-level:override:System"] = "$specificSwitch",
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$specificSwitch"
+            };
+
+            LogEvent evt = null;
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            var systemLogger = log.ForContext(Constants.SourceContextPropertyName, "System.Bar");
+
+            log.Write(Some.InformationEvent());
+            Assert.False(evt is null, "Minimum level is Debug. It should log Information messages");
+
+            evt = null;
+            // ReSharper disable HeuristicUnreachableCode
+            systemLogger.Write(Some.InformationEvent());
+            Assert.True(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should not log Information messages for SourceContext System.Bar");
+
+            systemLogger.Write(Some.WarningEvent());
+            Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
+
+
+            evt = null;
+            var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+
+            controlSwitch.MinimumLevel = LogEventLevel.Information;
+            systemLogger.Write(Some.InformationEvent());
+            Assert.False(evt is null, "LoggingLevelSwitch level was changed to Information for logger System.*. It should now log Information events for SourceContext System.Bar.");
+            // ReSharper restore HeuristicUnreachableCode
+        }
+
+        [Fact]
+        public void SinksWithAbstractParamsAreConfiguredWithTypeName()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyConsole.theme"] = "Serilog.Tests.Support.CustomConsoleTheme, Serilog.Tests"
+            };
+
+            DummyConsoleSink.Theme = null;
+
+            new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            Assert.NotNull(DummyConsoleSink.Theme);
+            Assert.IsType<CustomConsoleTheme>(DummyConsoleSink.Theme);
+        }
+
+        [Fact]
+        public void SinksAreConfiguredWithStaticMember()
+        {
+            var settings = new Dictionary<string, string>
+            {
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["write-to:DummyConsole.theme"] = "TestDummies.Console.Themes.ConsoleThemes::Theme1, TestDummies"
+            };
+
+            DummyConsoleSink.Theme = null;
+
+            new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            Assert.Equal(ConsoleThemes.Theme1, DummyConsoleSink.Theme);
+        }
     }
 }

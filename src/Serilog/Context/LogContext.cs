@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using Serilog.Events;
 using System.Threading;
 #elif REMOTING
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
 #endif
 
@@ -149,6 +150,32 @@ namespace Serilog.Context
             return new SafeAggregateEnricher(stack);
         }
 
+        /// <summary>
+        /// Remove all enrichers from the <see cref="LogContext"/>, returning an <see cref="IDisposable"/>
+        /// that must later be used to restore enrichers that were on the stack before <see cref="Suspend"/> was called.
+        /// </summary>
+        /// <returns>A token that must be disposed, in order, to restore properties back to the stack.</returns>
+        public static IDisposable Suspend()
+        {
+            var stack = GetOrCreateEnricherStack();
+            var bookmark = new ContextStackBookmark(stack);
+
+            Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+
+            return bookmark;
+        }
+
+        /// <summary>
+        /// Remove all enrichers from <see cref="LogContext"/> for the current async scope. 
+        /// </summary>
+        public static void Reset()
+        {
+            if (Enrichers != null && Enrichers != ImmutableStack<ILogEventEnricher>.Empty)
+            {
+                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+            }
+        }
+
         static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
         {
             var enrichers = Enrichers;
@@ -207,7 +234,36 @@ namespace Serilog.Context
             }
             set
             {
-                CallContext.LogicalSetData(DataSlotName, new ObjectHandle(value));
+                if (CallContext.LogicalGetData(DataSlotName) is IDisposable oldHandle)
+                {
+                    oldHandle.Dispose();
+                }
+                
+                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
+            }
+        }
+
+        sealed class DisposableObjectHandle : ObjectHandle, IDisposable
+        {
+            static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
+
+            public DisposableObjectHandle(object o) : base(o)
+            {
+            }
+
+            public override object InitializeLifetimeService()
+            {
+                var lease = base.InitializeLifetimeService() as ILease;
+                lease?.Register(LifeTimeSponsor);
+                return lease;
+            }
+
+            public void Dispose()
+            {
+                if (GetLifetimeService() is ILease lease)
+                {
+                    lease.Unregister(LifeTimeSponsor);
+                }
             }
         }
 

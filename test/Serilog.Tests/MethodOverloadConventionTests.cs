@@ -111,7 +111,7 @@ namespace Serilog.Tests
             //handle silent logger special case i.e. no result validation
             if (loggerType == typeof(SilentLogger))
                 return;
-            
+
             EvaluateSingleResult(level, sink);
         }
 
@@ -177,6 +177,7 @@ namespace Serilog.Tests
         {
             var method = loggerType.GetMethod("BindMessageTemplate");
 
+            Assert.NotNull(method);
             Assert.Equal(method.ReturnType, typeof(bool));
             Assert.True(method.IsPublic);
 
@@ -219,7 +220,7 @@ namespace Serilog.Tests
             //silentlogger is always false
             if (loggerType == typeof(SilentLogger))
                 return;
-            
+
             Assert.True(result as bool?);
 
             //test null arg path
@@ -238,6 +239,7 @@ namespace Serilog.Tests
         {
             var method = loggerType.GetMethod("BindProperty");
 
+            Assert.NotNull(method);
             Assert.Equal(method.ReturnType, typeof(bool));
             Assert.True(method.IsPublic);
 
@@ -274,7 +276,7 @@ namespace Serilog.Tests
             //silentlogger will always be false
             if (loggerType == typeof(SilentLogger))
                 return;
-            
+
             Assert.True(result as bool?);
 
             //test null arg path/ invalid property name
@@ -293,6 +295,7 @@ namespace Serilog.Tests
         {
             var method = loggerType.GetMethod("IsEnabled");
 
+            Assert.NotNull(method);
             Assert.True(method.IsPublic);
             Assert.Equal(method.ReturnType, typeof(bool));
 
@@ -305,9 +308,7 @@ namespace Serilog.Tests
             Assert.Equal(parameter.Name, "level");
             Assert.Equal(parameter.ParameterType, typeof(LogEventLevel));
 
-            CollectingSink sink;
-
-            var logger = GetLogger(loggerType, out sink, LogEventLevel.Information);
+            var logger = GetLogger(loggerType, out _, LogEventLevel.Information);
 
             var falseResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Verbose });
 
@@ -503,6 +504,7 @@ namespace Serilog.Tests
             TestForContextResult(method, logger, normalResult: enrichedLogger);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
         {
             Assert.NotNull(normalResult);
@@ -761,10 +763,7 @@ namespace Serilog.Tests
 
         static void InvokeConventionMethod(MethodInfo method, Type[] typeArgs, object[] parameters)
         {
-            CollectingSink sink;
-            LogEventLevel level;
-
-            InvokeConventionMethod(method, typeArgs, parameters, out level, out sink);
+            InvokeConventionMethod(method, typeArgs, parameters, out _, out _);
         }
 
         static void InvokeConventionMethodAndTest(MethodInfo method, Type[] typeArgs, object[] parameters)
@@ -889,6 +888,7 @@ namespace Serilog.Tests
             return method.Invoke(instance, parameters);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
         {
             //evaluate single log event
@@ -901,9 +901,7 @@ namespace Serilog.Tests
 
         static ILogger GetLogger(Type loggerType)
         {
-            CollectingSink sink;
-
-            return GetLogger(loggerType, out sink);
+            return GetLogger(loggerType, out _);
         }
 
         static ILogger GetLogger(Type loggerType, out CollectingSink sink, LogEventLevel level = LogEventLevel.Verbose)

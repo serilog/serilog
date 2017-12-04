@@ -80,7 +80,8 @@ namespace Serilog
             get
             {
                 return new LoggerMinimumLevelConfiguration(this,
-                    l => {
+                    l =>
+                    {
                         _minimumLevel = l;
                         _levelSwitch = null;
                     },
@@ -155,10 +156,10 @@ namespace Serilog
             }
 
             var converter = new PropertyValueConverter(
-                _maximumDestructuringDepth, 
+                _maximumDestructuringDepth,
                 _maximumStringLength,
                 _maximumCollectionCount,
-                _additionalScalarTypes, 
+                _additionalScalarTypes,
                 _additionalDestructuringPolicies,
                 auditing);
             var processor = new MessageTemplateProcessor(converter);

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
 
@@ -41,6 +43,13 @@ namespace Serilog.Tests.Support
             return new DateTimeOffset(Instant());
         }
 
+        public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
+        {
+            return new LogEvent(timestamp ?? OffsetInstant(), level,
+                null, MessageTemplate(),
+                new List<LogEventProperty> { new LogEventProperty(Constants.SourceContextPropertyName, new ScalarValue(sourceContext)) });
+        }
+
         public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
         {
             return new LogEvent(timestamp ?? OffsetInstant(), level,
@@ -55,6 +64,11 @@ namespace Serilog.Tests.Support
         public static LogEvent DebugEvent(DateTimeOffset? timestamp = null)
         {
             return LogEvent(timestamp, LogEventLevel.Debug);
+        }
+
+        public static LogEvent WarningEvent(DateTimeOffset? timestamp = null)
+        {
+            return LogEvent(timestamp, LogEventLevel.Warning);
         }
 
         public static LogEventProperty LogEventProperty()
