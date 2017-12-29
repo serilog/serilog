@@ -173,10 +173,33 @@ namespace Serilog.Configuration
         /// added in <paramref name="configureWrappedSink"/>.</param>
         /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        [Obsolete("Please use `LoggerConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, restrictedToMinimumLevel, levelSwitch)` instead.")]
         public static LoggerConfiguration Wrap(
             LoggerSinkConfiguration loggerSinkConfiguration,
             Func<ILogEventSink, ILogEventSink> wrapSink,
             Action<LoggerSinkConfiguration> configureWrappedSink)
+        {
+            return LoggerSinkConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LogEventLevel.Verbose, null);
+        }
+
+        /// <summary>
+        /// Helper method for wrapping sinks.
+        /// </summary>
+        /// <param name="loggerSinkConfiguration">The parent sink configuration.</param>
+        /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
+        /// added in <paramref name="configureWrappedSink"/>.</param>
+        /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration Wrap(
+            LoggerSinkConfiguration loggerSinkConfiguration,
+            Func<ILogEventSink, ILogEventSink> wrapSink,
+            Action<LoggerSinkConfiguration> configureWrappedSink,
+            LogEventLevel restrictedToMinimumLevel,
+            LoggingLevelSwitch levelSwitch)
         {
             if (loggerSinkConfiguration == null) throw new ArgumentNullException(nameof(loggerSinkConfiguration));
             if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
@@ -192,8 +215,7 @@ namespace Serilog.Configuration
                 {
                     SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable, but wrapped sink {1} does.", wrappedSink, sink);
                 }
-
-                loggerSinkConfiguration.Sink(wrappedSink);
+                loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
             }
 
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(

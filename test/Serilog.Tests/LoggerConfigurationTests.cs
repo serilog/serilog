@@ -580,6 +580,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingDecoratesTheConfiguredSink()
         {
+            DummyWrappingSink.Emitted.Clear();
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w => w.Sink(sink))
@@ -603,6 +604,55 @@ namespace Serilog.Tests
 
             SelfLog.Disable();
             Assert.NotEmpty(messages);
+        }
+
+        [Fact]
+        public void WrappingSinkRespectsLogEventLevelSetting()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrap(w => w.Sink(sink), LogEventLevel.Error, null)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Empty(DummyWrappingSink.Emitted);
+            Assert.Empty(sink.Events);
+        }
+
+        [Fact]
+        public void WrappingSinkRespectsLevelSwitchSetting()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrap(
+                    w => w.Sink(sink), LogEventLevel.Verbose,
+                    new LoggingLevelSwitch(LogEventLevel.Error))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Empty(DummyWrappingSink.Emitted);
+            Assert.Empty(sink.Events);
+        }
+
+        [Fact]
+        public void WrappingSinkRespectsSetting()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrap(
+                    w => w.Sink(sink), LogEventLevel.Error,
+                    new LoggingLevelSwitch(LogEventLevel.Verbose))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.NotEmpty(DummyWrappingSink.Emitted);
+            Assert.NotEmpty(sink.Events);
         }
     }
 }
