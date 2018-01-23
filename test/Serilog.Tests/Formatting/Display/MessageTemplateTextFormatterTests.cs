@@ -199,7 +199,7 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {Bar}!", "bar"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
-            Assert.Equal("{Foo: 42}", sw.ToString());
+            Assert.Equal("{ Foo: 42 }", sw.ToString());
         }
 
         [Fact]
@@ -209,7 +209,7 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {0}!", "bar"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
-            Assert.Equal("{Foo: 42}", sw.ToString());
+            Assert.Equal("{ Foo: 42 }", sw.ToString());
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).ForContext("Bar", 42).Information("Hello from bar!"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
-            Assert.Equal("42 {Bar: 42}", sw.ToString());
+            Assert.Equal("42 { Bar: 42 }", sw.ToString());
         }
 
         [Theory]

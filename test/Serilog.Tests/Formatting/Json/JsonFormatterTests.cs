@@ -144,7 +144,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var formatted = FormatToJson(@event);
             var expected = $"{{\"{dictKey}\":{dictValue}}}";
-            Assert.True(formatted.Contains(expected));
+            Assert.Contains(expected, formatted);
         }
 
         [Fact]
