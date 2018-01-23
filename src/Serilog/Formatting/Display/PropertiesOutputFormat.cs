@@ -37,7 +37,7 @@ namespace Serilog.Formatting.Display
                 return;
             }
 
-            output.Write('{');
+            output.Write("{ ");
 
             var delim = "";
             foreach (var kvp in properties)
@@ -55,10 +55,7 @@ namespace Serilog.Formatting.Display
                 kvp.Value.Render(output, null, formatProvider);
             }
 
-            if (delim == "")        // No elements
-                output.Write("  "); // Matches default `StructureValue` formatting
-
-            output.Write('}');
+            output.Write(" }");
         }
 
         static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
