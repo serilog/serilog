@@ -247,5 +247,19 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
+
+        [Theory]
+        [InlineData("", "{ Name: \"World\" }")]
+        [InlineData(":j", "{\"Name\":\"World\"}")]
+        [InlineData(":lj", "{\"Name\":\"World\"}")]
+        [InlineData(":jl", "{\"Name\":\"World\"}")]
+        public void AppliesJsonFormattingToTopLevelStructuresWhenSpecified(string format, string expected)
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties" + format + "}", null);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "World"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
+        }
     }
 }

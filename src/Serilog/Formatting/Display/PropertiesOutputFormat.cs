@@ -15,14 +15,31 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 
 namespace Serilog.Formatting.Display
 {
     static class PropertiesOutputFormat
     {
-        public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, IFormatProvider formatProvider = null)
+        static readonly JsonValueFormatter JsonValueFormatter = new JsonValueFormatter("$type");
+
+        public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string format, IFormatProvider formatProvider = null)
         {
+            if (format?.Contains("j") == true)
+            {
+                for (var i = 0; i < format.Length; ++i)
+                {
+                    if (format[i] == 'j')
+                    {
+                        var sv = new StructureValue(properties.Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
+                        JsonValueFormatter.Format(sv, output);
+                        return;
+                    }
+                }
+            }
+
             output.Write('{');
 
             var delim = "";
