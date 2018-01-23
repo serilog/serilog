@@ -76,8 +76,8 @@ namespace Serilog.Tests
                 .CreateLogger();
             logger.Write(included);
             logger.Write(excluded);
-            Assert.Equal(1, events.Count);
-            Assert.True(events.Contains(included));
+            Assert.Single(events);
+            Assert.Contains(included, events);
         }
 
         // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
@@ -461,7 +461,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]
@@ -477,7 +477,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]
@@ -513,7 +513,7 @@ namespace Serilog.Tests
             logger.ForContext(Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]

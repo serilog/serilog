@@ -99,7 +99,7 @@ namespace Serilog.Tests
             var writeMethod = methods.Single();
 
             Assert.True(writeMethod.IsPublic);
-            Assert.Equal(writeMethod.ReturnType, typeof(void));
+            Assert.Equal(typeof(void), writeMethod.ReturnType);
 
             var level = LogEventLevel.Information;
 
@@ -131,7 +131,7 @@ namespace Serilog.Tests
 
             foreach (var method in methodSet)
             {
-                Assert.Equal(method.ReturnType, typeof(ILogger));
+                Assert.Equal(typeof(ILogger), method.ReturnType);
                 Assert.True(method.IsPublic);
 
                 var signatureMatchAndInvokeSuccess = false;
@@ -178,7 +178,7 @@ namespace Serilog.Tests
             var method = loggerType.GetMethod("BindMessageTemplate");
 
             Assert.NotNull(method);
-            Assert.Equal(method.ReturnType, typeof(bool));
+            Assert.Equal(typeof(bool), method.ReturnType);
             Assert.True(method.IsPublic);
 
             var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
@@ -189,20 +189,20 @@ namespace Serilog.Tests
             var parameters = method.GetParameters();
             var index = 0;
 
-            Assert.Equal(parameters[index].Name, "messageTemplate");
-            Assert.Equal(parameters[index].ParameterType, typeof(string));
+            Assert.Equal("messageTemplate", parameters[index].Name);
+            Assert.Equal(typeof(string), parameters[index].ParameterType);
             index++;
 
-            Assert.Equal(parameters[index].Name, "propertyValues");
-            Assert.Equal(parameters[index].ParameterType, typeof(object[]));
+            Assert.Equal("propertyValues", parameters[index].Name);
+            Assert.Equal(typeof(object[]), parameters[index].ParameterType);
             index++;
 
-            Assert.Equal(parameters[index].Name, "parsedTemplate");
+            Assert.Equal("parsedTemplate", parameters[index].Name);
             Assert.Equal(parameters[index].ParameterType, typeof(MessageTemplate).MakeByRefType());
             Assert.True(parameters[index].IsOut);
             index++;
 
-            Assert.Equal(parameters[index].Name, "boundProperties");
+            Assert.Equal("boundProperties", parameters[index].Name);
             Assert.Equal(parameters[index].ParameterType, typeof(IEnumerable<LogEventProperty>).MakeByRefType());
             Assert.True(parameters[index].IsOut);
 
@@ -215,7 +215,7 @@ namespace Serilog.Tests
 
             var result = InvokeMethod(method, logger, args);
 
-            Assert.IsType(typeof(bool), result);
+            Assert.IsType<bool>(result);
 
             //silentlogger is always false
             if (loggerType == typeof(SilentLogger))
@@ -226,7 +226,7 @@ namespace Serilog.Tests
             //test null arg path
             var falseResult = InvokeMethod(method, logger, new object[] { null, null, null, null });
 
-            Assert.IsType(typeof(bool), falseResult);
+            Assert.IsType<bool>(falseResult);
             Assert.False(falseResult as bool?);
         }
 
@@ -240,25 +240,25 @@ namespace Serilog.Tests
             var method = loggerType.GetMethod("BindProperty");
 
             Assert.NotNull(method);
-            Assert.Equal(method.ReturnType, typeof(bool));
+            Assert.Equal(typeof(bool), method.ReturnType);
             Assert.True(method.IsPublic);
 
             var parameters = method.GetParameters();
             var index = 0;
 
-            Assert.Equal(parameters[index].Name, "propertyName");
-            Assert.Equal(parameters[index].ParameterType, typeof(string));
+            Assert.Equal("propertyName", parameters[index].Name);
+            Assert.Equal(typeof(string), parameters[index].ParameterType);
             index++;
 
-            Assert.Equal(parameters[index].Name, "value");
-            Assert.Equal(parameters[index].ParameterType, typeof(object));
+            Assert.Equal("value", parameters[index].Name);
+            Assert.Equal(typeof(object), parameters[index].ParameterType);
             index++;
 
-            Assert.Equal(parameters[index].Name, "destructureObjects");
-            Assert.Equal(parameters[index].ParameterType, typeof(bool));
+            Assert.Equal("destructureObjects", parameters[index].Name);
+            Assert.Equal(typeof(bool), parameters[index].ParameterType);
             index++;
 
-            Assert.Equal(parameters[index].Name, "property");
+            Assert.Equal("property", parameters[index].Name);
             Assert.Equal(parameters[index].ParameterType, typeof(LogEventProperty).MakeByRefType());
             Assert.True(parameters[index].IsOut);
 
@@ -271,7 +271,7 @@ namespace Serilog.Tests
 
             var result = InvokeMethod(method, logger, args);
 
-            Assert.IsType(typeof(bool), result);
+            Assert.IsType<bool>(result);
 
             //silentlogger will always be false
             if (loggerType == typeof(SilentLogger))
@@ -282,7 +282,7 @@ namespace Serilog.Tests
             //test null arg path/ invalid property name
             var falseResult = InvokeMethod(method, logger, new object[] { " ", null, false, null });
 
-            Assert.IsType(typeof(bool), falseResult);
+            Assert.IsType<bool>(falseResult);
             Assert.False(falseResult as bool?);
         }
 
@@ -297,7 +297,7 @@ namespace Serilog.Tests
 
             Assert.NotNull(method);
             Assert.True(method.IsPublic);
-            Assert.Equal(method.ReturnType, typeof(bool));
+            Assert.Equal(typeof(bool), method.ReturnType);
 
             var parameters = method.GetParameters();
 
@@ -305,19 +305,19 @@ namespace Serilog.Tests
 
             var parameter = parameters.Single();
 
-            Assert.Equal(parameter.Name, "level");
-            Assert.Equal(parameter.ParameterType, typeof(LogEventLevel));
+            Assert.Equal("level", parameter.Name);
+            Assert.Equal(typeof(LogEventLevel), parameter.ParameterType);
 
             var logger = GetLogger(loggerType, out _, LogEventLevel.Information);
 
             var falseResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Verbose });
 
-            Assert.IsType(typeof(bool), falseResult);
+            Assert.IsType<bool>(falseResult);
             Assert.False(falseResult as bool?);
 
             var trueResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Warning });
 
-            Assert.IsType(typeof(bool), trueResult);
+            Assert.IsType<bool>(trueResult);
 
             //return as silentlogger will always be false
             if (loggerType == typeof(SilentLogger))
@@ -337,8 +337,8 @@ namespace Serilog.Tests
 
                 var parameter = parameters.Single();
 
-                Assert.Equal(parameter.Name, "enricher");
-                Assert.Equal(parameter.ParameterType, typeof(ILogEventEnricher));
+                Assert.Equal("enricher", parameter.Name);
+                Assert.Equal(typeof(ILogEventEnricher), parameter.ParameterType);
             }
             catch (XunitException e)
             {
@@ -367,7 +367,7 @@ namespace Serilog.Tests
 
                 var parameter = parameters.Single();
 
-                Assert.Equal(parameter.Name, "enrichers");
+                Assert.Equal("enrichers", parameter.Name);
 
                 Assert.True(parameter.ParameterType == typeof(IEnumerable<ILogEventEnricher>)
                     || parameter.ParameterType == typeof(ILogEventEnricher[]));
@@ -395,20 +395,20 @@ namespace Serilog.Tests
             try
             {
                 var parameters = method.GetParameters();
-                Assert.Equal(parameters.Length, 3);
+                Assert.Equal(3, parameters.Length);
 
                 var index = 0;
 
-                Assert.Equal(parameters[index].Name, "propertyName");
-                Assert.Equal(parameters[index].ParameterType, typeof(string));
+                Assert.Equal("propertyName", parameters[index].Name);
+                Assert.Equal(typeof(string), parameters[index].ParameterType);
                 index++;
 
-                Assert.Equal(parameters[index].Name, "value");
-                Assert.Equal(parameters[index].ParameterType, typeof(object));
+                Assert.Equal("value", parameters[index].Name);
+                Assert.Equal(typeof(object), parameters[index].ParameterType);
                 index++;
 
-                Assert.Equal(parameters[index].Name, "destructureObjects");
-                Assert.Equal(parameters[index].ParameterType, typeof(bool));
+                Assert.Equal("destructureObjects", parameters[index].Name);
+                Assert.Equal(typeof(bool), parameters[index].ParameterType);
                 Assert.True(parameters[index].IsOptional);
             }
             catch (XunitException e)
@@ -459,7 +459,7 @@ namespace Serilog.Tests
 
                 var genericArg = genericArgs.Single();
 
-                Assert.Equal(genericArg.Name, "TSource");
+                Assert.Equal("TSource", genericArg.Name);
             }
             catch (XunitException e)
             {
@@ -487,8 +487,8 @@ namespace Serilog.Tests
 
                 var arg = args.Single();
 
-                Assert.Equal(arg.Name, "source");
-                Assert.Equal(arg.ParameterType, typeof(Type));
+                Assert.Equal("source", arg.Name);
+                Assert.Equal(typeof(Type), arg.ParameterType);
             }
             catch (XunitException e)
             {
@@ -549,7 +549,7 @@ namespace Serilog.Tests
 
             foreach (var method in methodSet)
             {
-                Assert.Equal(method.ReturnType, typeof(void));
+                Assert.Equal(typeof(void), method.ReturnType);
                 Assert.True(method.IsPublic);
 
                 if (checkMesgTempAttr)
@@ -790,8 +790,8 @@ namespace Serilog.Tests
                     //write convention methods always have one more parameter, LogEventLevel Arg
                     expectedArgCount++;
 
-                    Assert.Equal(parameters[index].ParameterType, typeof(LogEventLevel));
-                    Assert.Equal(parameters[index].Name, "level");
+                    Assert.Equal(typeof(LogEventLevel), parameters[index].ParameterType);
+                    Assert.Equal("level", parameters[index].Name);
                     index++;
                 }
 
@@ -800,13 +800,13 @@ namespace Serilog.Tests
                 // exceptions always come before messageTemplate string
                 if (hasExceptionArg) //verify exception argument type and name
                 {
-                    Assert.Equal(parameters[index].ParameterType, typeof(Exception));
-                    Assert.Equal(parameters[index].Name, "exception");
+                    Assert.Equal(typeof(Exception), parameters[index].ParameterType);
+                    Assert.Equal("exception", parameters[index].Name);
                     index++;
                 }
 
                 //check for message template string argument
-                Assert.Equal(parameters[index].ParameterType, typeof(string));
+                Assert.Equal(typeof(string), parameters[index].ParameterType);
                 Assert.Equal(parameters[index].Name, MessageTemplate);
                 index++;
 
@@ -834,12 +834,12 @@ namespace Serilog.Tests
                     {
                         var genericTypeArg = genericTypeArgs[0];
 
-                        Assert.Equal(genericTypeArg.Name, "T");
+                        Assert.Equal("T", genericTypeArg.Name);
 
                         var genericConstraints = genericTypeArg.GetTypeInfo().GetGenericParameterConstraints();
 
                         Assert.Empty(genericConstraints);
-                        Assert.Equal(parameters[index].Name, "propertyValue");
+                        Assert.Equal("propertyValue", parameters[index].Name);
                         Assert.Equal(genericTypeArg, parameters[index].ParameterType);
                         index++;
                     }
@@ -855,8 +855,8 @@ namespace Serilog.Tests
                     var paramsAttr = parameters[index].GetCustomAttribute(typeof(ParamArrayAttribute), inherit: false);
 
                     Assert.NotNull(paramsAttr);
-                    Assert.Equal(paramsArrayArg.ParameterType, typeof(object[]));
-                    Assert.Equal(paramsArrayArg.Name, "propertyValues");
+                    Assert.Equal(typeof(object[]), paramsArrayArg.ParameterType);
+                    Assert.Equal("propertyValues", paramsArrayArg.Name);
                 }
             }
             catch (XunitException e)
@@ -892,7 +892,7 @@ namespace Serilog.Tests
         static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
         {
             //evaluate single log event
-            Assert.Equal(1, results.Events.Count);
+            Assert.Single(results.Events);
 
             var evt = results.Events.Single();
 

@@ -23,8 +23,8 @@ namespace Serilog.Tests.Settings
                 .ToList();
 
 
-            Assert.True(eventEnrichers.Contains("FromLogContext"));
-            Assert.True(eventEnrichers.Contains("WithDummyThreadId"));
+            Assert.Contains("FromLogContext", eventEnrichers);
+            Assert.Contains("WithDummyThreadId", eventEnrichers);
         }
     }
 }

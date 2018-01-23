@@ -24,7 +24,7 @@ namespace Serilog.Tests.Parsing
         public void AnEmptyMessageIsASingleTextToken()
         {
             var t = Parse("");
-            Assert.Equal(1, t.Length);
+            Assert.Single(t);
             Assert.IsType<TextToken>(t.Single());
         }
 

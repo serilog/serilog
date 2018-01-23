@@ -197,7 +197,7 @@ namespace Serilog.Tests.Context
 
                 // No problem if this happens occasionally; was Assert.Inconclusive().
                 // The test was marshalled back to the same thread after awaiting.
-                Assert.NotSame(pre, post);
+                Assert.NotEqual(pre, post);
             }
         }
 
@@ -302,7 +302,9 @@ namespace Serilog.Tests.Context
                 using (LogContext.PushProperty("Prop", 42))
                 {
                     remote.DoCallBack(CallFromRemote);
+#pragma warning disable Serilog003
                     logger.Information("Prop = {Prop}");
+#pragma warning restore Serilog003
                 }
             }
             finally

@@ -43,7 +43,7 @@ namespace Serilog.Tests.Settings
             var configurationAssemblies = KeyValuePairSettings.LoadConfigurationAssemblies(new Dictionary<string, string>()).ToList();
 
             // The core Serilog assembly is always considered
-            Assert.Equal(1, configurationAssemblies.Count);
+            Assert.Single(configurationAssemblies);
         }
 
         [Fact]
@@ -120,8 +120,8 @@ namespace Serilog.Tests.Settings
 
             log.Write(Some.InformationEvent());
 
-            Assert.Equal(1, DummyRollingFileSink.Emitted.Count);
-            Assert.Equal(0, DummyRollingFileAuditSink.Emitted.Count);
+            Assert.Single(DummyRollingFileSink.Emitted);
+            Assert.Empty(DummyRollingFileAuditSink.Emitted);
         }
 
         [Fact]
@@ -142,8 +142,8 @@ namespace Serilog.Tests.Settings
 
             log.Write(Some.InformationEvent());
 
-            Assert.Equal(0, DummyRollingFileSink.Emitted.Count);
-            Assert.Equal(1, DummyRollingFileAuditSink.Emitted.Count);
+            Assert.Empty(DummyRollingFileSink.Emitted);
+            Assert.Single(DummyRollingFileAuditSink.Emitted);
         }
 
         [Fact]

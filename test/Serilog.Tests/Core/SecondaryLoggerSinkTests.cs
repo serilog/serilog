@@ -70,7 +70,7 @@ namespace Serilog.Tests.Core
 
             logger.Write(Some.DebugEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Serilog.Tests.Core
 
             logger.Write(Some.DebugEvent());
 
-            Assert.Equal(0, sink.Events.Count);
+            Assert.Empty(sink.Events);
         }
     }
 }

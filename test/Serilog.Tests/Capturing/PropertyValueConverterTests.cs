@@ -200,13 +200,13 @@ namespace Serilog.Tests.Capturing
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (string)pv.LiteralValue();
-            Assert.True(lv.EndsWith("(1025 bytes)"));
+            Assert.EndsWith("(1025 bytes)", lv);
         }
 
         public class Thrower
         {
-            public string Throws { get { throw new NotSupportedException(); } }
-            public string Doesnt { get { return "Hello"; } }
+            public string Throws => throw new NotSupportedException();
+            public string Doesnt => "Hello";
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace Serilog.Tests.Capturing
             var result = _converter.CreatePropertyValue(o, true);
             Assert.Equal(typeof(StructureValue), result.GetType());
             var structuredValue = (StructureValue)result;
-            Assert.Equal(null, structuredValue.TypeTag);
+            Assert.Null(structuredValue.TypeTag);
         }
 
         [Fact]

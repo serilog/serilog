@@ -182,10 +182,10 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var rs = ((IEnumerable)d.Renderings).Cast<dynamic>().ToArray();
-            Assert.Equal(1, rs.Count());
+            Assert.Single(rs);
             var ap = d.Renderings.AProperty;
             var fs = ((IEnumerable)ap).Cast<dynamic>().ToArray();
-            Assert.Equal(1, fs.Count());
+            Assert.Single(fs);
             Assert.Equal("000", (string)fs.Single().Format);
             Assert.Equal("012", (string)fs.Single().Rendering);
         }

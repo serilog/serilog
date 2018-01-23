@@ -257,10 +257,10 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":j", "{\"Name\":\"World\"}")]
         [InlineData(":lj", "{\"Name\":\"World\"}")]
         [InlineData(":jl", "{\"Name\":\"World\"}")]
-        public void AppliesJsonFormattingToTopLevelStructuresWhenSpecified(string format, string expected)
+        public void AppliesJsonFormattingToPropertiesTokenWhenSpecified(string format, string expected)
         {
             var formatter = new MessageTemplateTextFormatter("{Properties" + format + "}", null);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "World"));
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Name", "World").Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
