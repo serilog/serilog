@@ -33,7 +33,10 @@ namespace Serilog.Formatting.Display
                 {
                     if (format[i] == 'j')
                     {
-                        var sv = new StructureValue(properties.Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
+                        var sv = new StructureValue(properties
+                            .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
+                                            TemplateContainsPropertyName(outputTemplate, kvp.Key)))
+                            .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
                         JsonValueFormatter.Format(sv, output);
                         return;
                     }
@@ -45,12 +48,8 @@ namespace Serilog.Formatting.Display
             var delim = "";
             foreach (var kvp in properties)
             {
-                if (TemplateContainsPropertyName(template, kvp.Key))
-                {
-                    continue;
-                }
-
-                if (TemplateContainsPropertyName(outputTemplate, kvp.Key))
+                if (TemplateContainsPropertyName(template, kvp.Key) ||
+                    TemplateContainsPropertyName(outputTemplate, kvp.Key))
                 {
                     continue;
                 }
@@ -67,8 +66,17 @@ namespace Serilog.Formatting.Display
 
         static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
         {
-            if (template.NamedProperties == null)
+            if (template.PositionalProperties != null)
             {
+                for (var i = 0; i < template.PositionalProperties.Length; i++)
+                {
+                    var token = template.PositionalProperties[i];
+                    if (token.PropertyName == propertyName)
+                    {
+                        return true;
+                    }
+                }
+
                 return false;
             }
 

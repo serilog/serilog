@@ -159,7 +159,7 @@ namespace Serilog.Tests.Formatting.Display
 
         class SizeFormatter : IFormatProvider, ICustomFormatter
         {
-            private readonly IFormatProvider _innerFormatProvider;
+            readonly IFormatProvider _innerFormatProvider;
 
             public SizeFormatter(IFormatProvider innerFormatProvider)
             {
@@ -173,17 +173,11 @@ namespace Serilog.Tests.Formatting.Display
 
             public string Format(string format, object arg, IFormatProvider formatProvider)
             {
-                if (arg is Size)
-                {
-                    var size = (Size)arg;
+                if (arg is Size size)
                     return size == Size.Large ? "Huge" : size.ToString();
-                }
 
-                var formattable = arg as IFormattable;
-                if (formattable != null)
-                {
+                if (arg is IFormattable formattable)
                     return formattable.ToString(format, _innerFormatProvider);
-                }
 
                 return arg.ToString();
             }
@@ -204,6 +198,16 @@ namespace Serilog.Tests.Formatting.Display
         {
             var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {Bar}!", "bar"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("{Foo: 42}", sw.ToString());
+        }
+
+        [Fact]
+        public void NonMessagePositionalPropertiesAreRendered()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {0}!", "bar"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal("{Foo: 42}", sw.ToString());
