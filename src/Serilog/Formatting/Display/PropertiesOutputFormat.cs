@@ -29,18 +29,12 @@ namespace Serilog.Formatting.Display
         {
             if (format?.Contains("j") == true)
             {
-                for (var i = 0; i < format.Length; ++i)
-                {
-                    if (format[i] == 'j')
-                    {
-                        var sv = new StructureValue(properties
-                            .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
-                                            TemplateContainsPropertyName(outputTemplate, kvp.Key)))
-                            .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
-                        JsonValueFormatter.Format(sv, output);
-                        return;
-                    }
-                }
+                var sv = new StructureValue(properties
+                    .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
+                                    TemplateContainsPropertyName(outputTemplate, kvp.Key)))
+                    .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
+                JsonValueFormatter.Format(sv, output);
+                return;
             }
 
             output.Write('{');
@@ -80,12 +74,15 @@ namespace Serilog.Formatting.Display
                 return false;
             }
 
-            for (var i = 0; i < template.NamedProperties.Length; i++)
+            if (template.NamedProperties != null)
             {
-                var namedProperty = template.NamedProperties[i];
-                if (namedProperty.PropertyName == propertyName)
+                for (var i = 0; i < template.NamedProperties.Length; i++)
                 {
-                    return true;
+                    var namedProperty = template.NamedProperties[i];
+                    if (namedProperty.PropertyName == propertyName)
+                    {
+                        return true;
+                    }
                 }
             }
 
