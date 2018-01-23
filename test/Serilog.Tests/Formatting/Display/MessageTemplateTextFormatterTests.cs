@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-
+using System.Linq;
 using Serilog.Events;
-
 using Xunit;
 using Serilog.Tests.Support;
 using Serilog.Formatting.Display;
@@ -263,6 +262,18 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Name", "World").Information("Hello"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
+        }
+
+        [Fact]
+        public void AnEmptyPropertiesTokenIsAnEmptyStructureValueWithDefaultFormatting()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties}", null);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+
+            var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
             Assert.Equal(expected, sw.ToString());
         }
     }

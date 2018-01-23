@@ -55,6 +55,9 @@ namespace Serilog.Formatting.Display
                 kvp.Value.Render(output, null, formatProvider);
             }
 
+            if (delim == "")        // No elements
+                output.Write("  "); // Matches default `StructureValue` formatting
+
             output.Write('}');
         }
 
