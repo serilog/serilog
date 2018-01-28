@@ -1,1 +1,0 @@
-@powershell .\Build.ps1 %*

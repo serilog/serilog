@@ -68,7 +68,9 @@ namespace TestDummies
             return LoggerSinkConfiguration.Wrap(
                 loggerSinkConfiguration,
                 s => new DummyWrappingSink(s),
-                wrappedSinkAction);
+                wrappedSinkAction,
+                LevelAlias.Minimum,
+                null);
         }
 
         public static LoggerConfiguration DummyWrap(

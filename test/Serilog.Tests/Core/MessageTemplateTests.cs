@@ -15,8 +15,8 @@ namespace Serilog.Tests.Core
         class Chair
         {
             // ReSharper disable UnusedMember.Local
-            public string Back { get { return "straight"; } }
-            public int[] Legs { get { return new[] { 1, 2, 3, 4 }; } }
+            public string Back => "straight";
+            public int[] Legs => new[] { 1, 2, 3, 4 };
             // ReSharper restore UnusedMember.Local
             public override string ToString()
             {
@@ -27,8 +27,8 @@ namespace Serilog.Tests.Core
         class Receipt
         {
             // ReSharper disable UnusedMember.Local
-            public decimal Sum { get { return 12.345m; } }
-            public DateTime When { get { return new DateTime(2013, 5, 20, 16, 39, 0); } }
+            public decimal Sum => 12.345m;
+            public DateTime When => new DateTime(2013, 5, 20, 16, 39, 0);
             // ReSharper restore UnusedMember.Local
             public override string ToString()
             {

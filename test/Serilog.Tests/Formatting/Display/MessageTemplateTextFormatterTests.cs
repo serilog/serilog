@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-
+using System.Linq;
 using Serilog.Events;
-
 using Xunit;
 using Serilog.Tests.Support;
 using Serilog.Formatting.Display;
@@ -159,7 +158,7 @@ namespace Serilog.Tests.Formatting.Display
 
         class SizeFormatter : IFormatProvider, ICustomFormatter
         {
-            private readonly IFormatProvider _innerFormatProvider;
+            readonly IFormatProvider _innerFormatProvider;
 
             public SizeFormatter(IFormatProvider innerFormatProvider)
             {
@@ -173,17 +172,11 @@ namespace Serilog.Tests.Formatting.Display
 
             public string Format(string format, object arg, IFormatProvider formatProvider)
             {
-                if (arg is Size)
-                {
-                    var size = (Size)arg;
+                if (arg is Size size)
                     return size == Size.Large ? "Huge" : size.ToString();
-                }
 
-                var formattable = arg as IFormattable;
-                if (formattable != null)
-                {
+                if (arg is IFormattable formattable)
                     return formattable.ToString(format, _innerFormatProvider);
-                }
 
                 return arg.ToString();
             }
@@ -206,7 +199,17 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {Bar}!", "bar"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
-            Assert.Equal("{Foo: 42}", sw.ToString());
+            Assert.Equal("{ Foo: 42 }", sw.ToString());
+        }
+
+        [Fact]
+        public void NonMessagePositionalPropertiesAreRendered()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {0}!", "bar"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal("{ Foo: 42 }", sw.ToString());
         }
 
         [Fact]
@@ -216,7 +219,7 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).ForContext("Bar", 42).Information("Hello from bar!"));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
-            Assert.Equal("42 {Bar: 42}", sw.ToString());
+            Assert.Equal("42 { Bar: 42 }", sw.ToString());
         }
 
         [Theory]
@@ -245,6 +248,32 @@ namespace Serilog.Tests.Formatting.Display
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new {Name = "World"}));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
+        }
+
+        [Theory]
+        [InlineData("", "{ Name: \"World\" }")]
+        [InlineData(":j", "{\"Name\":\"World\"}")]
+        [InlineData(":lj", "{\"Name\":\"World\"}")]
+        [InlineData(":jl", "{\"Name\":\"World\"}")]
+        public void AppliesJsonFormattingToPropertiesTokenWhenSpecified(string format, string expected)
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties" + format + "}", null);
+            var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Name", "World").Information("Hello"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
+        }
+
+        [Fact]
+        public void AnEmptyPropertiesTokenIsAnEmptyStructureValueWithDefaultFormatting()
+        {
+            var formatter = new MessageTemplateTextFormatter("{Properties}", null);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+
+            var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
             Assert.Equal(expected, sw.ToString());
         }
     }

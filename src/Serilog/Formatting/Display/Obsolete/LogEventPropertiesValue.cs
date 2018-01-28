@@ -35,7 +35,7 @@ namespace Serilog.Formatting.Display.Obsolete
 
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            PropertiesOutputFormat.Render(_template, _properties, _outputTemplate, output, formatProvider);
+            PropertiesOutputFormat.Render(_template, _properties, _outputTemplate, output, format, formatProvider);
         }
     }
 }
