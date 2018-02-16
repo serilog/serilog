@@ -4,12 +4,12 @@ Serilog is a diagnostic logging library for .NET applications. It is easy to set
 
 [![Serilog](https://serilog.net/images/serilog-180px.png)](https://serilog.net)
 
-Like many other libraries for .NET, Serilog provides diagnostic logging to [files](https://github.com/serilog/serilog-sinks-rollingfile), the [console](https://github.com/serilog/serilog-sinks-literate), and [many other outputs](https://github.com/serilog/serilog/wiki/Provided-Sinks).
+Like many other libraries for .NET, Serilog provides diagnostic logging to [files](https://github.com/serilog/serilog-sinks-file), the [console](https://github.com/serilog/serilog-sinks-console), and [many other outputs](https://github.com/serilog/serilog/wiki/Provided-Sinks).
 
 ```csharp
 var log = new LoggerConfiguration()
-    .WriteTo.LiterateConsole()
-    .WriteTo.RollingFile("log-{Date}.txt")
+    .WriteTo.Console()
+    .WriteTo.File("log.txt")
     .CreateLogger();
 
 log.Information("Hello, Serilog!");
@@ -58,26 +58,34 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
 
 ### Getting started
 
-Serilog is installed from NuGet. To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing "literate" console sink, and a rolling file set:
+Serilog is installed from NuGet. To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing console sink, and a rolling file set:
 
 ```
 Install-Package Serilog
-Install-Package Serilog.Sinks.Literate
-Install-Package Serilog.Sinks.RollingFile
+Install-Package Serilog.Sinks.Console
+Install-Package Serilog.Sinks.File
 ```
 
 The simplest way to set up Serilog is using the static `Log` class. A `LoggerConfiguration` is used to create and assign the default logger.
 
 ```csharp
+using Serilog;
+
 public class Program
 {
     public static void Main()
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
-            .WriteTo.LiterateConsole()
-            .WriteTo.RollingFile("log-{Date}.txt")
+            .WriteTo.Console()
+            .WriteTo.File("log.txt",
+                rollingInterval: RollingInterval.Day,
+                rollOnFileSizeLimit: true)
             .CreateLogger();
+            
+        Log.Information("Hello, Serilog!");
+        
+        Log.CloseAndFlush();
     }
 }
 ```
