@@ -14,6 +14,20 @@ namespace Serilog.Tests
             // the collection.
             Assert.IsType<SilentLogger>(Log.Logger);
         }
+        
+        [Fact]
+        public void NonePropertyIsNotAffectedByLoggerInitialization()
+        {
+            Log.Logger = new DisposableLogger();
+            Assert.IsType<SilentLogger>(Log.None);
+            Log.CloseAndFlush();
+        }
+
+        [Fact]
+        public void TheNonePropertyIsSilent()
+        {
+            Assert.IsType<SilentLogger>(Log.None);
+        }
 
         [Fact]
         public void DisposesTheLogger()
@@ -31,5 +45,15 @@ namespace Serilog.Tests
             Log.CloseAndFlush();
             Assert.IsType<SilentLogger>(Log.Logger);
         }
+
+        [Fact]
+        public void NonePropertyIsNotAffectedByReset()
+        {
+            Log.Logger = new DisposableLogger();
+            Log.CloseAndFlush();
+            Assert.IsType<SilentLogger>(Log.None);
+            Log.None.Information("Should not throw");
+        }
+
     }
 }
