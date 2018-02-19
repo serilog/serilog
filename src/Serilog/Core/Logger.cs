@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using Serilog.Capturing;
 using Serilog.Core.Enrichers;
+using Serilog.Core.Pipeline;
 using Serilog.Debugging;
 using Serilog.Events;
 
@@ -1371,6 +1372,22 @@ namespace Serilog.Core
         public void Dispose()
         {
             _dispose?.Invoke();
+        }
+
+        /// <summary>
+        /// Backing property for the exposed None property
+        /// </summary>
+        static readonly ILogger _noneLogger = new SilentLogger();
+
+        /// <summary>
+        /// An <see cref="ILogger"/> instance that efficiently ignores all method calls
+        /// </summary>
+        public static ILogger None
+        {
+            get
+            {
+                return _noneLogger;
+            }
         }
     }
 }
