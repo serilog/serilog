@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Serilog.Core;
+using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Tests.Support;
 
@@ -117,6 +118,20 @@ namespace Serilog.Tests.Core
 
             Assert.Equal("Name", property.Name);
             Assert.Equal("World", property.Value.LiteralValue());
+        }
+
+        [Fact]
+        public void TheNoneLoggerIsSilent()
+        {
+            Assert.IsType<SilentLogger>(Logger.None);
+        }
+
+        [Fact]
+        public void TheNoneLoggerIsAConstant()
+        {
+            var firstCall = Logger.None;
+            var secondCall = Logger.None;
+            Assert.Equal(firstCall, secondCall);
         }
 	}
 }
