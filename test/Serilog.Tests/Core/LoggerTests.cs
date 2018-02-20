@@ -125,5 +125,13 @@ namespace Serilog.Tests.Core
         {
             Assert.IsType<SilentLogger>(Logger.None);
         }
+
+        [Fact]
+        public void TheNoneLoggerIsAConstant()
+        {
+            var firstCall = Logger.None;
+            var secondCall = Logger.None;
+            Assert.Equal(firstCall, secondCall);
+        }
 	}
 }
