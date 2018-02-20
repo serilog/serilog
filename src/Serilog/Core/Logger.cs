@@ -1373,21 +1373,10 @@ namespace Serilog.Core
         {
             _dispose?.Invoke();
         }
-
+        
         /// <summary>
-        /// Backing property for the exposed None property
+        /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
         /// </summary>
-        static readonly ILogger _noneLogger = new SilentLogger();
-
-        /// <summary>
-        /// An <see cref="ILogger"/> instance that efficiently ignores all method calls
-        /// </summary>
-        public static ILogger None
-        {
-            get
-            {
-                return _noneLogger;
-            }
-        }
+        public static ILogger None { get; } = new SilentLogger();
     }
 }
