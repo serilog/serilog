@@ -354,16 +354,18 @@ namespace Serilog.Tests.Context
         {
             var prevCtx = SynchronizationContext.Current;
             SynchronizationContext.SetSynchronizationContext(syncContext);
+
+            Task t;
             try
             {
-                var t = testAction();
-                SynchronizationContext.SetSynchronizationContext(prevCtx);
-                await t;
+                t = testAction();
             }
             finally
             {
                 SynchronizationContext.SetSynchronizationContext(prevCtx);
             }
+
+            await t;
         }
     }
 
