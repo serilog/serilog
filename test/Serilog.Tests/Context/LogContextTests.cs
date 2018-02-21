@@ -3,15 +3,13 @@ using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
-#if APPDOMAIN
-using System;
-#endif
 #if REMOTING
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Services;
 using System.Runtime.Remoting.Messaging;
 #endif
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
@@ -177,28 +175,30 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task ContextPropertiesCrossAsyncCalls()
         {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            using (LogContext.PushProperty("A", 1))
+            await TestWithSyncContext(async () =>
             {
-                var pre = Thread.CurrentThread.ManagedThreadId;
+                LogEvent lastEvent = null;
 
-                await Task.Delay(1000);
+                var log = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                    .CreateLogger();
 
-                var post = Thread.CurrentThread.ManagedThreadId;
+                using (LogContext.PushProperty("A", 1))
+                {
+                    var pre = Thread.CurrentThread.ManagedThreadId;
 
-                log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                    await Task.Delay(1000);
 
-                // No problem if this happens occasionally; was Assert.Inconclusive().
-                // The test was marshalled back to the same thread after awaiting.
-                Assert.NotEqual(pre, post);
-            }
+                    var post = Thread.CurrentThread.ManagedThreadId;
+
+                    log.Write(Some.InformationEvent());
+                    Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                    
+                    Assert.NotEqual(pre, post);
+                }
+            },
+            new ForceNewThreadSyncContext());
         }
 
         [Fact]
@@ -349,6 +349,24 @@ namespace Serilog.Tests.Context
             void CallFromRemote() { }
         }
 #endif
+
+        static async Task TestWithSyncContext(Func<Task> testAction, SynchronizationContext syncContext)
+        {
+            var prevCtx = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(syncContext);
+
+            Task t;
+            try
+            {
+                t = testAction();
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(prevCtx);
+            }
+
+            await t;
+        }
     }
 
 #if REMOTING
@@ -383,4 +401,9 @@ namespace Serilog.Tests.Context
         }
     }
 #endif
+
+    class ForceNewThreadSyncContext : SynchronizationContext
+    {
+        public override void Post(SendOrPostCallback d, object state) => new Thread(x => d(x)).Start(state);
+    }
 }
