@@ -1,4 +1,6 @@
 #!/bin/bash
+
+set -e 
 dotnet --info
 dotnet restore
 
