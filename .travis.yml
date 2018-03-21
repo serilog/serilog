@@ -5,7 +5,7 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      dotnet: 1.0.4
+      dotnet: 2.1.4
       group: edge
 script:
   - ./build.sh

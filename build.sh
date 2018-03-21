@@ -1,4 +1,6 @@
 #!/bin/bash
+
+set -e 
 dotnet --info
 dotnet restore
 
@@ -8,7 +10,7 @@ for path in src/**/*.csproj; do
 done
 
 for path in test/*.Tests/*.csproj; do
-    dotnet test -f netcoreapp1.0  -c Release ${path}
+    dotnet test -f netcoreapp2.0  -c Release ${path}
 done
 
 for path in test/*.PerformanceTests/*.PerformanceTests.csproj; do
