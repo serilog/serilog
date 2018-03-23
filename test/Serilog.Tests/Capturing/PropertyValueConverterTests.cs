@@ -79,7 +79,7 @@ namespace Serilog.Tests.Capturing
         {
             var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
             Assert.IsType<ScalarValue>(pv);
-            Assert.IsType<byte[]>(((ScalarValue)pv).Value);
+            Assert.IsType<string>(((ScalarValue)pv).Value);
         }
 
         [Fact]
@@ -185,17 +185,16 @@ namespace Serilog.Tests.Capturing
         }
 
         [Fact]
-        public void WhenByteArraysAreConvertedTheyAreCopiedToArrayScalars()
+        public void ByteArraysAreConvertedToStrings()
         {
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (byte[])pv.LiteralValue();
-            Assert.Equal(bytes.Length, lv.Length);
-            Assert.NotSame(bytes, lv);
+            var lv = (string)pv.LiteralValue();
+            Assert.Equal("00010203040506070809", lv);
         }
 
         [Fact]
-        public void ByteArraysLargerThan1kAreConvertedToStrings()
+        public void ByteArraysLargerThan1kAreLimitedAndConvertedToStrings()
         {
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
