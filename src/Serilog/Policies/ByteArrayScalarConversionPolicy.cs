@@ -42,7 +42,7 @@ namespace Serilog.Policies
             }
             else
             {
-                result = new ScalarValue(bytes.ToArray());
+                result = new ScalarValue(string.Concat(bytes.Select(b => b.ToString("X2"))));
             }
 
             return true;
