@@ -311,8 +311,16 @@ namespace Serilog.Capturing
 
         bool TryGetDictionary(object value, Type valueType, out IDictionary dictionary)
         {
+#if NETSTANDARD1_0 || NETSTANDARD1_3
+        var implementedInterfaces = valueType.GetTypeInfo().ImplementedInterfaces;
+#else
+        var implementedInterfaces = valueType.GetInterfaces();
+#endif
+
+
             if (valueType.IsConstructedGenericType &&
-                valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
+                implementedInterfaces.Any(
+                    interfaceType => interfaceType.GetTypeInfo().IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>)) &&
                 IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
             {
                 dictionary = (IDictionary)value;
