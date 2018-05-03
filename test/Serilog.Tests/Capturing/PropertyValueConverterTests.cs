@@ -166,6 +166,20 @@ namespace Serilog.Tests.Capturing
             Assert.Equal(1, dv.Elements.Count);
         }
 
+        public class CustomDictionary<K, V> : Dictionary<K, V>
+        {
+
+        }
+
+        [Fact]
+        public void ByDefaultAScalarCustomDictionaryIsADictionaryValue()
+        {
+            var pv = _converter.CreatePropertyValue(new CustomDictionary<int, string> { { 1, "hello" } }, Destructuring.Default);
+            Assert.IsType<DictionaryValue>(pv);
+            var dv = (DictionaryValue)pv;
+            Assert.Equal(1, dv.Elements.Count);
+        }
+
         [Fact]
         public void ByDefaultANonScalarDictionaryIsASequenceValue()
         {
