@@ -1,11 +1,13 @@
 language: csharp
+dotnet: 2.1.4
 
 matrix:
   include:
+    - os: osx # osx_image: xcode8.3 Default	Xcode 8.3.3	OS X 10.12	1.8.0_112-b16
+      osx_image: xcode9.2
     - os: linux
       dist: trusty
       sudo: required
-      dotnet: 2.1.4
       group: edge
 script:
   - ./build.sh
