@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		Build.ps1 = Build.ps1
 		build.sh = build.sh
 		CHANGES.md = CHANGES.md
+		Directory.Build.props = Directory.Build.props
 		global.json = global.json
 		NuGet.config = NuGet.config
 		README.md = README.md
@@ -97,5 +98,8 @@ Global
 		{37EF0B5E-0363-4A47-AF3E-51FA6E79E3CF} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{B11B911D-977A-42CE-900A-596CF59F6FFA} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {268F5761-DAC2-4ECA-9AEC-59663B84854C}
 	EndGlobalSection
 EndGlobal
