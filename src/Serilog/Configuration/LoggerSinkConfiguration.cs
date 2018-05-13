@@ -221,7 +221,7 @@ namespace Serilog.Configuration
 
             configureWrappedSink(capturingLoggerSinkConfiguration);
 
-            if (!sinksToWrap.Any())
+            if (sinksToWrap.Count == 0)
                 return loggerSinkConfiguration._loggerConfiguration;
 
             var enclosed = sinksToWrap.Count == 1 ?
