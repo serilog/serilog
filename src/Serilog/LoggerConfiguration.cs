@@ -179,7 +179,7 @@ namespace Serilog
                 overrideMap = new LevelOverrideMap(_overrides, _minimumLevel, _levelSwitch);
             }
 
-            var disposableSinks = _logEventSinks.Concat(_auditSinks).OfType<IDisposable>().ToList();
+            var disposableSinks = _logEventSinks.Concat(_auditSinks).OfType<IDisposable>().ToArray();
             void Dispose()
             {
                 foreach (var disposable in disposableSinks)
