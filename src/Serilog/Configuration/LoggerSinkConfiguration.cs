@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Serilog.Core;
 using Serilog.Core.Sinks;
 using Serilog.Debugging;
@@ -179,7 +181,7 @@ namespace Serilog.Configuration
             Func<ILogEventSink, ILogEventSink> wrapSink,
             Action<LoggerSinkConfiguration> configureWrappedSink)
         {
-            return LoggerSinkConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LogEventLevel.Verbose, null);
+            return Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LogEventLevel.Verbose, null);
         }
 
         /// <summary>
@@ -205,27 +207,37 @@ namespace Serilog.Configuration
             if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
             if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
 
-            void WrapAndAddSink(ILogEventSink sink)
-            {
-                bool sinkIsDisposable = sink is IDisposable;
+            var sinksToWrap = new List<ILogEventSink>();
 
-                ILogEventSink wrappedSink = wrapSink(sink);
-
-                if (sinkIsDisposable && !(wrappedSink is IDisposable))
-                {
-                    SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable, but wrapped sink {1} does.", wrappedSink, sink);
-                }
-                loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
-            }
-
+            var capturingConfiguration = new LoggerConfiguration();
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
-                loggerSinkConfiguration._loggerConfiguration,
-                WrapAndAddSink,
+                capturingConfiguration,
+                sinksToWrap.Add,
                 loggerSinkConfiguration._applyInheritedConfiguration);
+
+            // `WriteTo.Sink()` will return the capturing configuration; this ensures chained `WriteTo` gets back
+            // to the capturing sink configuration, enabling `WriteTo.X().WriteTo.Y()`.
+            capturingConfiguration.WriteTo = capturingLoggerSinkConfiguration;
 
             configureWrappedSink(capturingLoggerSinkConfiguration);
 
-            return loggerSinkConfiguration._loggerConfiguration;
+            if (!sinksToWrap.Any())
+                return loggerSinkConfiguration._loggerConfiguration;
+
+            var enclosed = sinksToWrap.Count == 1 ?
+                sinksToWrap.Single() :
+                new SafeAggregateSink(sinksToWrap);
+
+            var wrappedSink = wrapSink(enclosed);
+
+            if (!(wrappedSink is IDisposable))
+            {
+                SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable; to ensure " +
+                                  "wrapped sinks are properly flushed, wrappers should dispose " +
+                                  "their wrapped contents", wrappedSink);
+            }
+
+            return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
         }
     }
 }

@@ -533,7 +533,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
-                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -545,7 +545,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownByFiltersAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
+                .Filter.ByExcluding(e => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -560,7 +560,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new CollectingSink())
-                .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
+                .Destructure.ByTransforming<Value>(v => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Information("{@Value}", new Value());
@@ -571,10 +571,7 @@ namespace Serilog.Tests
         class ThrowingProperty
         {
             // ReSharper disable once UnusedMember.Local
-            public string Property
-            {
-                get { throw new Exception("Boom!"); }
-            }
+            public string Property => throw new Exception("Boom!");
         }
 
         [Fact]
@@ -586,10 +583,69 @@ namespace Serilog.Tests
                 .WriteTo.Dummy(w => w.Sink(sink))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
 
-            Assert.NotEmpty(DummyWrappingSink.Emitted);
-            Assert.NotEmpty(sink.Events);
+            Assert.Same(evt, DummyWrappingSink.Emitted.Single());
+            Assert.Same(evt, sink.SingleEvent);
+        }
+
+        [Fact]
+        public void WrappingDoesNotPermitEnrichment()
+        {
+            var sink = new CollectingSink();
+            var propertyName = Some.String();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink(sink)
+                    .Enrich.WithProperty(propertyName, 1))
+                .CreateLogger();
+
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
+
+            Assert.Same(evt, sink.SingleEvent);
+            Assert.False(evt.Properties.ContainsKey(propertyName));
+        }
+
+        [Fact]
+        public void WrappingIsAppliedWhenChaining()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink1 = new CollectingSink();
+            var sink2 = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink(sink1)
+                    .WriteTo.Sink(sink2))
+                .CreateLogger();
+
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
+
+            Assert.Same(evt, DummyWrappingSink.Emitted.Single());
+            Assert.Same(evt, sink1.SingleEvent);
+            Assert.Same(evt, sink2.SingleEvent);
+        }
+
+        [Fact]
+        public void WrappingIsAppliedWhenCallingMultipleTimes()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink1 = new CollectingSink();
+            var sink2 = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w =>
+                {
+                    w.Sink(sink1);
+                    w.Sink(sink2);
+                })
+                .CreateLogger();
+
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
+
+            Assert.Same(evt, DummyWrappingSink.Emitted.Single());
+            Assert.Same(evt, sink1.SingleEvent);
+            Assert.Same(evt, sink2.SingleEvent);
         }
 
         [Fact]
