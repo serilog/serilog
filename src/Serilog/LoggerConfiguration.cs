@@ -43,6 +43,14 @@ namespace Serilog
         int _maximumCollectionCount = int.MaxValue;
         bool _loggerCreated;
 
+        /// <summary>
+        /// Construct a <see cref="LoggerConfiguration"/>.
+        /// </summary>
+        public LoggerConfiguration()
+        {
+            WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+        }
+
         void ApplyInheritedConfiguration(LoggerConfiguration child)
         {
             if (_levelSwitch != null)
@@ -54,7 +62,7 @@ namespace Serilog
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
         /// </summary>
-        public LoggerSinkConfiguration WriteTo => new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+        public LoggerSinkConfiguration WriteTo { get; internal set; }
 
         /// <summary>
         /// Configures sinks for auditing, instead of regular (safe) logging. When auditing is used,
