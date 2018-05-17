@@ -2,5 +2,5 @@
 dotnet restore
 
 for path in test/*.PerformanceTests/*.csproj; do
-    dotnet test -f netcoreapp1.1 -c Release ${path}
+    dotnet test -f netcoreapp2.0 -c Release ${path}
 done
