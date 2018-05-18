@@ -43,6 +43,14 @@ namespace Serilog
         int _maximumCollectionCount = int.MaxValue;
         bool _loggerCreated;
 
+        /// <summary>
+        /// Construct a <see cref="LoggerConfiguration"/>.
+        /// </summary>
+        public LoggerConfiguration()
+        {
+            WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+        }
+
         void ApplyInheritedConfiguration(LoggerConfiguration child)
         {
             if (_levelSwitch != null)
@@ -54,7 +62,7 @@ namespace Serilog
         /// <summary>
         /// Configures the sinks that log events will be emitted to.
         /// </summary>
-        public LoggerSinkConfiguration WriteTo => new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+        public LoggerSinkConfiguration WriteTo { get; internal set; }
 
         /// <summary>
         /// Configures sinks for auditing, instead of regular (safe) logging. When auditing is used,
@@ -136,12 +144,6 @@ namespace Serilog
                 throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
             _loggerCreated = true;
 
-            Action dispose = () =>
-            {
-                foreach (var disposable in _logEventSinks.Concat(_auditSinks).OfType<IDisposable>())
-                    disposable.Dispose();
-            };
-
             ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
 
             var auditing = _auditSinks.Any();
@@ -185,9 +187,18 @@ namespace Serilog
                 overrideMap = new LevelOverrideMap(_overrides, _minimumLevel, _levelSwitch);
             }
 
+            var disposableSinks = _logEventSinks.Concat(_auditSinks).OfType<IDisposable>().ToArray();
+            void Dispose()
+            {
+                foreach (var disposable in disposableSinks)
+                {
+                    disposable.Dispose();
+                }
+            }
+
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, enricher, dispose, overrideMap) :
-                new Logger(processor, _levelSwitch, sink, enricher, dispose, overrideMap);
+                new Logger(processor, _minimumLevel, sink, enricher, Dispose, overrideMap) :
+                new Logger(processor, _levelSwitch, sink, enricher, Dispose, overrideMap);
         }
     }
 }

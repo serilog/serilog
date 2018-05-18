@@ -1,15 +1,15 @@
-# Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master)  [![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/) [![Join the chat at https://gitter.im/serilog/serilog](https://img.shields.io/gitter/room/serilog/serilog.svg)](https://gitter.im/serilog/serilog) [![Stack Overflow](https://img.shields.io/badge/stack%20overflow-serilog-orange.svg)](http://stackoverflow.com/questions/tagged/serilog)
+# Serilog [![Build status](https://img.shields.io/appveyor/ci/serilog/serilog.svg)](https://ci.appveyor.com/project/serilog/serilog/branch/master) [![Test status](https://img.shields.io/appveyor/tests/serilog/serilog.svg)](https://ci.appveyor.com/project/serilog/serilog/branch/master) [![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/) [![NuGet Downloads](https://img.shields.io/nuget/dt/serilog.svg)](https://www.nuget.org/packages/Serilog/) [![Join the chat at https://gitter.im/serilog/serilog](https://img.shields.io/gitter/room/serilog/serilog.svg)](https://gitter.im/serilog/serilog) [![Stack Overflow](https://img.shields.io/badge/stack%20overflow-serilog-orange.svg)](http://stackoverflow.com/questions/tagged/serilog)
 
 Serilog is a diagnostic logging library for .NET applications. It is easy to set up, has a clean API, and runs on all recent .NET platforms. While it's useful even in the simplest applications, Serilog's support for structured logging shines when instrumenting complex, distributed, and asynchronous applications and systems.
 
 [![Serilog](https://serilog.net/images/serilog-180px.png)](https://serilog.net)
 
-Like many other libraries for .NET, Serilog provides diagnostic logging to [files](https://github.com/serilog/serilog-sinks-rollingfile), the [console](https://github.com/serilog/serilog-sinks-literate), and [many other outputs](https://github.com/serilog/serilog/wiki/Provided-Sinks).
+Like many other libraries for .NET, Serilog provides diagnostic logging to [files](https://github.com/serilog/serilog-sinks-file), the [console](https://github.com/serilog/serilog-sinks-console), and [many other outputs](https://github.com/serilog/serilog/wiki/Provided-Sinks).
 
 ```csharp
 var log = new LoggerConfiguration()
-    .WriteTo.LiterateConsole()
-    .WriteTo.RollingFile("log-{Date}.txt")
+    .WriteTo.Console()
+    .WriteTo.File("log.txt")
     .CreateLogger();
 
 log.Information("Hello, Serilog!");
@@ -58,26 +58,34 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
 
 ### Getting started
 
-Serilog is installed from NuGet. To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing "literate" console sink, and a rolling file set:
+Serilog is installed from NuGet. To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing console sink, and a rolling file set:
 
 ```
 Install-Package Serilog
-Install-Package Serilog.Sinks.Literate
-Install-Package Serilog.Sinks.RollingFile
+Install-Package Serilog.Sinks.Console
+Install-Package Serilog.Sinks.File
 ```
 
 The simplest way to set up Serilog is using the static `Log` class. A `LoggerConfiguration` is used to create and assign the default logger.
 
 ```csharp
+using Serilog;
+
 public class Program
 {
     public static void Main()
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
-            .WriteTo.LiterateConsole()
-            .WriteTo.RollingFile("log-{Date}.txt")
+            .WriteTo.Console()
+            .WriteTo.File("log.txt",
+                rollingInterval: RollingInterval.Day,
+                rollOnFileSizeLimit: true)
             .CreateLogger();
+            
+        Log.Information("Hello, Serilog!");
+        
+        Log.CloseAndFlush();
     }
 }
 ```
@@ -108,4 +116,4 @@ Branch  | AppVeyor | Travis
 dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev)  | [![Build Status](https://travis-ci.org/serilog/serilog.svg?branch=dev)](https://travis-ci.org/serilog/serilog) 
 master | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master) | [![Build Status](https://travis-ci.org/serilog/serilog.svg?branch=master)](https://travis-ci.org/serilog/serilog) 
 
-_Serilog is copyright &copy; 2013-2017 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/)._
+_Serilog is copyright &copy; 2013-2018 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/)._

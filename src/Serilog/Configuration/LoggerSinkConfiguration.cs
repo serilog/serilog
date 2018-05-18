@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Serilog.Core;
 using Serilog.Core.Sinks;
 using Serilog.Debugging;
@@ -173,37 +175,69 @@ namespace Serilog.Configuration
         /// added in <paramref name="configureWrappedSink"/>.</param>
         /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        [Obsolete("Please use `LoggerConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, restrictedToMinimumLevel, levelSwitch)` instead.")]
         public static LoggerConfiguration Wrap(
             LoggerSinkConfiguration loggerSinkConfiguration,
             Func<ILogEventSink, ILogEventSink> wrapSink,
             Action<LoggerSinkConfiguration> configureWrappedSink)
         {
+            return Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LogEventLevel.Verbose, null);
+        }
+
+        /// <summary>
+        /// Helper method for wrapping sinks.
+        /// </summary>
+        /// <param name="loggerSinkConfiguration">The parent sink configuration.</param>
+        /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
+        /// added in <paramref name="configureWrappedSink"/>.</param>
+        /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum level for
+        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+        /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+        /// to be changed at runtime.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration Wrap(
+            LoggerSinkConfiguration loggerSinkConfiguration,
+            Func<ILogEventSink, ILogEventSink> wrapSink,
+            Action<LoggerSinkConfiguration> configureWrappedSink,
+            LogEventLevel restrictedToMinimumLevel,
+            LoggingLevelSwitch levelSwitch)
+        {
             if (loggerSinkConfiguration == null) throw new ArgumentNullException(nameof(loggerSinkConfiguration));
             if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
             if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
 
-            void WrapAndAddSink(ILogEventSink sink)
-            {
-                bool sinkIsDisposable = sink is IDisposable;
+            var sinksToWrap = new List<ILogEventSink>();
 
-                ILogEventSink wrappedSink = wrapSink(sink);
-
-                if (sinkIsDisposable && !(wrappedSink is IDisposable))
-                {
-                    SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable, but wrapped sink {1} does.", wrappedSink, sink);
-                }
-
-                loggerSinkConfiguration.Sink(wrappedSink);
-            }
-
+            var capturingConfiguration = new LoggerConfiguration();
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
-                loggerSinkConfiguration._loggerConfiguration,
-                WrapAndAddSink,
+                capturingConfiguration,
+                sinksToWrap.Add,
                 loggerSinkConfiguration._applyInheritedConfiguration);
+
+            // `WriteTo.Sink()` will return the capturing configuration; this ensures chained `WriteTo` gets back
+            // to the capturing sink configuration, enabling `WriteTo.X().WriteTo.Y()`.
+            capturingConfiguration.WriteTo = capturingLoggerSinkConfiguration;
 
             configureWrappedSink(capturingLoggerSinkConfiguration);
 
-            return loggerSinkConfiguration._loggerConfiguration;
+            if (sinksToWrap.Count == 0)
+                return loggerSinkConfiguration._loggerConfiguration;
+
+            var enclosed = sinksToWrap.Count == 1 ?
+                sinksToWrap.Single() :
+                new SafeAggregateSink(sinksToWrap);
+
+            var wrappedSink = wrapSink(enclosed);
+
+            if (!(wrappedSink is IDisposable))
+            {
+                SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable; to ensure " +
+                                  "wrapped sinks are properly flushed, wrappers should dispose " +
+                                  "their wrapped contents", wrappedSink);
+            }
+
+            return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Serilog.Formatting.Display
                     }
                     else if (pt.PropertyName == OutputProperties.PropertiesPropertyName)
                     {
-                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, writer, _formatProvider);
+                        PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, writer, pt.Format, _formatProvider);
                     }
                     else
                     {

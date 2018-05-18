@@ -79,7 +79,7 @@ namespace Serilog.Tests.Capturing
         {
             var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
             Assert.IsType<ScalarValue>(pv);
-            Assert.IsType<byte[]>(((ScalarValue)pv).Value);
+            Assert.IsType<string>(((ScalarValue)pv).Value);
         }
 
         [Fact]
@@ -185,28 +185,27 @@ namespace Serilog.Tests.Capturing
         }
 
         [Fact]
-        public void WhenByteArraysAreConvertedTheyAreCopiedToArrayScalars()
+        public void ByteArraysAreConvertedToStrings()
         {
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (byte[])pv.LiteralValue();
-            Assert.Equal(bytes.Length, lv.Length);
-            Assert.NotSame(bytes, lv);
+            var lv = (string)pv.LiteralValue();
+            Assert.Equal("00010203040506070809", lv);
         }
 
         [Fact]
-        public void ByteArraysLargerThan1kAreConvertedToStrings()
+        public void ByteArraysLargerThan1kAreLimitedAndConvertedToStrings()
         {
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (string)pv.LiteralValue();
-            Assert.True(lv.EndsWith("(1025 bytes)"));
+            Assert.EndsWith("(1025 bytes)", lv);
         }
 
         public class Thrower
         {
-            public string Throws { get { throw new NotSupportedException(); } }
-            public string Doesnt { get { return "Hello"; } }
+            public string Throws => throw new NotSupportedException();
+            public string Doesnt => "Hello";
         }
 
         [Fact]
@@ -310,7 +309,7 @@ namespace Serilog.Tests.Capturing
             var result = _converter.CreatePropertyValue(o, true);
             Assert.Equal(typeof(StructureValue), result.GetType());
             var structuredValue = (StructureValue)result;
-            Assert.Equal(null, structuredValue.TypeTag);
+            Assert.Null(structuredValue.TypeTag);
         }
 
         [Fact]

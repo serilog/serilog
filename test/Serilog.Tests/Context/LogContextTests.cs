@@ -3,15 +3,13 @@ using Serilog.Context;
 using Serilog.Events;
 using Serilog.Core.Enrichers;
 using Serilog.Tests.Support;
-#if APPDOMAIN
-using System;
-#endif
 #if REMOTING
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Services;
 using System.Runtime.Remoting.Messaging;
 #endif
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
@@ -177,28 +175,30 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task ContextPropertiesCrossAsyncCalls()
         {
-            LogEvent lastEvent = null;
-
-            var log = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
-                .CreateLogger();
-
-            using (LogContext.PushProperty("A", 1))
+            await TestWithSyncContext(async () =>
             {
-                var pre = Thread.CurrentThread.ManagedThreadId;
+                LogEvent lastEvent = null;
 
-                await Task.Delay(1000);
+                var log = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+                    .CreateLogger();
 
-                var post = Thread.CurrentThread.ManagedThreadId;
+                using (LogContext.PushProperty("A", 1))
+                {
+                    var pre = Thread.CurrentThread.ManagedThreadId;
 
-                log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                    await Task.Delay(1000);
 
-                // No problem if this happens occasionally; was Assert.Inconclusive().
-                // The test was marshalled back to the same thread after awaiting.
-                Assert.NotSame(pre, post);
-            }
+                    var post = Thread.CurrentThread.ManagedThreadId;
+
+                    log.Write(Some.InformationEvent());
+                    Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                    
+                    Assert.NotEqual(pre, post);
+                }
+            },
+            new ForceNewThreadSyncContext());
         }
 
         [Fact]
@@ -287,7 +287,6 @@ namespace Serilog.Tests.Context
         [Fact]
         public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
         {
-            // Arrange
             RemotingException remotingException = null;
 
             AppDomain.CurrentDomain.FirstChanceException +=
@@ -296,13 +295,14 @@ namespace Serilog.Tests.Context
             var logger = new LoggerConfiguration().Enrich.FromLogContext().CreateLogger();
             var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
 
-            // Act
             try
             {
                 using (LogContext.PushProperty("Prop", 42))
                 {
                     remote.DoCallBack(CallFromRemote);
+#pragma warning disable Serilog003
                     logger.Information("Prop = {Prop}");
+#pragma warning restore Serilog003
                 }
             }
             finally
@@ -310,7 +310,6 @@ namespace Serilog.Tests.Context
                 AppDomain.Unload(remote);
             }
 
-            // Assert
             Assert.Null(remotingException);
 
             void CallFromRemote() => Thread.Sleep(200);
@@ -319,13 +318,11 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task DisconnectRemoteObjectsAfterCrossDomainCallsOnDispose()
         {
-            // Arrange
             var tracker = new InMemoryRemoteObjectTracker();
             TrackingServices.RegisterTrackingHandler(tracker);
 
             var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
 
-            // Act
             try
             {
                 using (LogContext.PushProperty("Prop1", 42))
@@ -345,12 +342,31 @@ namespace Serilog.Tests.Context
 
             await Task.Delay(200);
 
-            // Assert
-            Assert.Equal(2, tracker.DisconnectCount);
+            // This is intermittently 2 or 3, depending on the moods of the test runner;
+            // I think "at least two" is what we're concerned about, here.
+            Assert.InRange(tracker.DisconnectCount, 2, 3);
 
             void CallFromRemote() { }
         }
 #endif
+
+        static async Task TestWithSyncContext(Func<Task> testAction, SynchronizationContext syncContext)
+        {
+            var prevCtx = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(syncContext);
+
+            Task t;
+            try
+            {
+                t = testAction();
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(prevCtx);
+            }
+
+            await t;
+        }
     }
 
 #if REMOTING
@@ -385,4 +401,9 @@ namespace Serilog.Tests.Context
         }
     }
 #endif
+
+    class ForceNewThreadSyncContext : SynchronizationContext
+    {
+        public override void Post(SendOrPostCallback d, object state) => new Thread(x => d(x)).Start(state);
+    }
 }

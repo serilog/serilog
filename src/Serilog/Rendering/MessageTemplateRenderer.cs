@@ -24,7 +24,7 @@ namespace Serilog.Rendering
 {
     static class MessageTemplateRenderer
     {
-        static JsonValueFormatter JsonValueFormatter = new JsonValueFormatter("$type");
+        static readonly JsonValueFormatter JsonValueFormatter = new JsonValueFormatter("$type");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Render(MessageTemplate messageTemplate, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, string format = null, IFormatProvider formatProvider = null)

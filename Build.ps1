@@ -26,11 +26,11 @@ foreach ($src in ls src/*) {
     & dotnet build -c Release --version-suffix=$buildSuffix
 
     if($suffix) {
-        & dotnet pack -c Release --include-source --no-build -o ..\..\artifacts --version-suffix=$suffix
+        & dotnet pack -c Release --no-build -o ..\..\artifacts --version-suffix=$suffix
     } else {
-        & dotnet pack -c Release --include-source --no-build -o ..\..\artifacts
+        & dotnet pack -c Release --no-build -o ..\..\artifacts
     }
-    if($LASTEXITCODE -ne 0) { exit 1 }    
+    if($LASTEXITCODE -ne 0) { exit 1 }
 
     Pop-Location
 }

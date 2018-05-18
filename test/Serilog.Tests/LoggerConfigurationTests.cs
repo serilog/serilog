@@ -29,6 +29,19 @@ namespace Serilog.Tests
         }
 
         [Fact]
+        public void LoggerShouldNotReferenceToItsConfigurationAfterBeingCreated()
+        {
+            var loggerConfiguration = new LoggerConfiguration();
+            var wr = new WeakReference(loggerConfiguration);
+            var logger = loggerConfiguration.CreateLogger();
+
+            GC.Collect();
+
+            Assert.False(wr.IsAlive);
+            GC.KeepAlive(logger);
+        }
+
+        [Fact]
         public void CreateLoggerThrowsIfCalledMoreThanOnce()
         {
             var loggerConfiguration = new LoggerConfiguration();
@@ -76,8 +89,8 @@ namespace Serilog.Tests
                 .CreateLogger();
             logger.Write(included);
             logger.Write(excluded);
-            Assert.Equal(1, events.Count);
-            Assert.True(events.Contains(included));
+            Assert.Single(events);
+            Assert.Contains(included, events);
         }
 
         // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
@@ -461,7 +474,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]
@@ -477,7 +490,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]
@@ -513,7 +526,7 @@ namespace Serilog.Tests
             logger.ForContext(Constants.SourceContextPropertyName, "Microsoft.AspNet.Something").Write(Some.InformationEvent());
             logger.ForContext<LoggerConfigurationTests>().Write(Some.InformationEvent());
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
         }
 
         [Fact]
@@ -533,7 +546,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
-                .WriteTo.Sink(new DelegatingSink(e => { throw new Exception("Boom!"); }))
+                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -545,7 +558,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownByFiltersAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .Filter.ByExcluding(e => { throw new Exception("Boom!"); })
+                .Filter.ByExcluding(e => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -560,7 +573,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new CollectingSink())
-                .Destructure.ByTransforming<Value>(v => { throw new Exception("Boom!"); })
+                .Destructure.ByTransforming<Value>(v => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Information("{@Value}", new Value());
@@ -571,24 +584,81 @@ namespace Serilog.Tests
         class ThrowingProperty
         {
             // ReSharper disable once UnusedMember.Local
-            public string Property
-            {
-                get { throw new Exception("Boom!"); }
-            }
+            public string Property => throw new Exception("Boom!");
         }
 
         [Fact]
         public void WrappingDecoratesTheConfiguredSink()
         {
+            DummyWrappingSink.Emitted.Clear();
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w => w.Sink(sink))
                 .CreateLogger();
 
-            logger.Write(Some.InformationEvent());
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
 
-            Assert.NotEmpty(DummyWrappingSink.Emitted);
-            Assert.NotEmpty(sink.Events);
+            Assert.Same(evt, DummyWrappingSink.Emitted.Single());
+            Assert.Same(evt, sink.SingleEvent);
+        }
+
+        [Fact]
+        public void WrappingDoesNotPermitEnrichment()
+        {
+            var sink = new CollectingSink();
+            var propertyName = Some.String();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink(sink)
+                    .Enrich.WithProperty(propertyName, 1))
+                .CreateLogger();
+
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
+
+            Assert.Same(evt, sink.SingleEvent);
+            Assert.False(evt.Properties.ContainsKey(propertyName));
+        }
+
+        [Fact]
+        public void WrappingIsAppliedWhenChaining()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink1 = new CollectingSink();
+            var sink2 = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w => w.Sink(sink1)
+                    .WriteTo.Sink(sink2))
+                .CreateLogger();
+
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
+
+            Assert.Same(evt, DummyWrappingSink.Emitted.Single());
+            Assert.Same(evt, sink1.SingleEvent);
+            Assert.Same(evt, sink2.SingleEvent);
+        }
+
+        [Fact]
+        public void WrappingIsAppliedWhenCallingMultipleTimes()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink1 = new CollectingSink();
+            var sink2 = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Dummy(w =>
+                {
+                    w.Sink(sink1);
+                    w.Sink(sink2);
+                })
+                .CreateLogger();
+
+            var evt = Some.InformationEvent();
+            logger.Write(evt);
+
+            Assert.Same(evt, DummyWrappingSink.Emitted.Single());
+            Assert.Same(evt, sink1.SingleEvent);
+            Assert.Same(evt, sink2.SingleEvent);
         }
 
         [Fact]
@@ -603,6 +673,55 @@ namespace Serilog.Tests
 
             SelfLog.Disable();
             Assert.NotEmpty(messages);
+        }
+
+        [Fact]
+        public void WrappingSinkRespectsLogEventLevelSetting()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrap(w => w.Sink(sink), LogEventLevel.Error, null)
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Empty(DummyWrappingSink.Emitted);
+            Assert.Empty(sink.Events);
+        }
+
+        [Fact]
+        public void WrappingSinkRespectsLevelSwitchSetting()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrap(
+                    w => w.Sink(sink), LogEventLevel.Verbose,
+                    new LoggingLevelSwitch(LogEventLevel.Error))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.Empty(DummyWrappingSink.Emitted);
+            Assert.Empty(sink.Events);
+        }
+
+        [Fact]
+        public void WrappingSinkRespectsSetting()
+        {
+            DummyWrappingSink.Emitted.Clear();
+            var sink = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.DummyWrap(
+                    w => w.Sink(sink), LogEventLevel.Error,
+                    new LoggingLevelSwitch(LogEventLevel.Verbose))
+                .CreateLogger();
+
+            logger.Write(Some.InformationEvent());
+
+            Assert.NotEmpty(DummyWrappingSink.Emitted);
+            Assert.NotEmpty(sink.Events);
         }
     }
 }
