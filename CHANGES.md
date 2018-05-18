@@ -1,3 +1,33 @@
+2.7.1
+ * #1075 - overload of `LoggerSinkConfiguration.Wrap()` accepting `LoggingLevelSwitch`
+ * #1083 - update package metadata, including `https://` project and icon URLs
+ * #1091 - make `{Properties:j}` work consistently with the console sink
+ * #1110 - expose an efficient `Logger.None`
+ * #1113 - (tooling) improve tests for `LogContext`
+ * #1136 - (tooling) fix `build.sh` exit code
+ * #1141 - fix logging of `byte[]` smaller than 1 KB
+ * #1157 - (tooling) update _.gitignore_
+ * #1158 - (tooling) re-enable macOS builds
+ * #1163 - SourceLink v2 support
+ * #1165 - fix a number of issues with `LoggerSinkConfiguration.Wrap()` affecting `WriteTo.Async()`
+ * #1134 - (tooling) add README badges for downloads/stats
+ * #1166 - allow `LoggerConfiguration` to be garbage collected after logger is created
+ * #1160 - (tooling) update NuGet.org API key
+ * (tooling) Update to use the latest .NET SDK
+
+2.6.0
+ * #992 - fix `LogContext` remoting issue on .NET Framework 4.5
+ * #1007 - `LogContext.Suspend()` and `LogContext.Reset()` to pass or drop context from child tasks
+ * #1018 - include source in NUPKGs
+ * #1020 - support for `LoggingLevelSwitch` in key-value/`<appSettings>` settings
+ * #1033 - warn when `MinimumLevel.Override()` is used in a sub-logger
+ * #1034 - more efficient levelled `ILogger.ForContext()`/`Log.ForContext()`
+ * #1051 - handle duplicate keys in key-value/`<appSettings>` settings (last-in wins)
+ * #1064 - support static member references as key-value/`<appSettings>` values
+ * #1059 - support for abstract class parameters in settings
+ * #1068 - handle parsing of token width more robustly
+ * Plus build/documentation items #988, #994, #996, #1019, #842, #1042, #1050, #1055, #1063.
+
 2.5.0
  * #939, #946, #972 - RTM .NET Standard/Core tooling
  * #955 - `LoggerSinkConfiguration.Wrap()`
