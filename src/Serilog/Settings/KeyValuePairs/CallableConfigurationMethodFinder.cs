@@ -27,8 +27,29 @@ namespace Serilog.Settings.KeyValuePairs
         {
             return loggerEnrichmentConfiguration.FromLogContext();
         }
-
         static readonly MethodInfo SurrogateFromLogContextConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(FromLogContext));
+
+        internal static LoggerConfiguration ToMaximumCollectionCount(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+            int maximumCollectionCount)
+        {
+            return loggerDestructuringConfiguration.ToMaximumCollectionCount(maximumCollectionCount);
+        }
+        static readonly MethodInfo SurrogateFromDestructureToMaximumCollectionCountConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumCollectionCount));
+
+        internal static LoggerConfiguration ToMaximumDepth(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+            int maximumDestructuringDepth)
+        {
+            return loggerDestructuringConfiguration.ToMaximumDepth(maximumDestructuringDepth);
+        }
+        static readonly MethodInfo SurrogateFromDestructureToMaximumDepthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumDepth));
+
+        internal static LoggerConfiguration ToMaximumStringLength(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+            int maximumStringLength)
+        {
+            return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
+        }
+        static readonly MethodInfo SurrogateFromDestructureToMaximumStringLengthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumStringLength));
+
 
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
         {
@@ -45,6 +66,14 @@ namespace Serilog.Settings.KeyValuePairs
             // hack ensures we find it.
             if (configType == typeof(LoggerEnrichmentConfiguration))
                 methods.Add(SurrogateFromLogContextConfigurationMethod);
+
+            // Some of the useful Destructure configuration methods are defined as methods rather than extension methods
+            if (configType == typeof(LoggerDestructuringConfiguration))
+            {
+                methods.Add(SurrogateFromDestructureToMaximumCollectionCountConfigurationMethod);
+                methods.Add(SurrogateFromDestructureToMaximumDepthConfigurationMethod);
+                methods.Add(SurrogateFromDestructureToMaximumStringLengthConfigurationMethod);
+            }
 
             return methods;
         }

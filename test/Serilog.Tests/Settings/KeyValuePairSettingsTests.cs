@@ -381,5 +381,96 @@ namespace Serilog.Tests.Settings
 
             Assert.Equal(ConsoleThemes.Theme1, DummyConsoleSink.Theme);
         }
+
+        [Fact]
+        public void DestructuringToMaximumDepthIsApplied()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["destructure:ToMaximumDepth.maximumDestructuringDepth"] = "3"
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            var nestedObject = new
+            {
+                A = new
+                {
+                    B = new
+                    {
+                        C = new
+                        {
+                            D = "F"
+                        }
+                    }
+                }
+            };
+
+            log.Information("Destructuring a big graph {@DeeplyNested}", nestedObject);
+            var formattedProperty = evt.Properties["DeeplyNested"].ToString();
+
+            Assert.Contains("C", formattedProperty);
+            Assert.DoesNotContain("D", formattedProperty);
+        }
+
+        [Fact]
+        public void DestructuringToMaximumStringLengthIsApplied()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["destructure:ToMaximumStringLength.maximumStringLength"] = "3"
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Destructuring a long string {@LongString}", "ABCDEFGH");
+            var formattedProperty = evt.Properties["LongString"].ToString();
+
+            Assert.Equal("\"AB…\"", formattedProperty);
+        }
+
+        [Fact]
+        public void DestructuringToMaximumCollectionCountIsApplied()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["destructure:ToMaximumCollectionCount.maximumCollectionCount"] = "3"
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            var collection = new[] { 1, 2, 3, 4, 5, 6 };
+            log.Information("Destructuring a big collection {@BigCollection}", collection);
+            var formattedProperty = evt.Properties["BigCollection"].ToString();
+
+            Assert.Contains("3", formattedProperty);
+            Assert.DoesNotContain("4", formattedProperty);
+        }
+
+        [Fact]
+        public void DestructuringWithCustomExtensionMethodIsApplied()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["destructure:WithDummyHardCodedString.hardCodedString"] = "hardcoded"
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Destructuring a big collection {@Input}", new { Foo = "Bar" });
+            var formattedProperty = evt.Properties["Input"].ToString();
+
+            Assert.Equal("\"hardcoded\"", formattedProperty);
+        }
+
     }
 }
