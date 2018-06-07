@@ -133,5 +133,32 @@ namespace Serilog.Tests.Core
             var secondCall = Logger.None;
             Assert.Equal(firstCall, secondCall);
         }
-	}
+
+    
+        [Fact]
+        public void SinkDecorationHandleAndPass()
+        {
+            var decorated = new CollectingSink();
+            // decoration is useful pattern when you try to do AOP
+            // you can use it to
+            // - send metric like duration of sink execution
+            // - filter or routing at sink level
+            // - and more
+            DecorateSink decorator = null;
+            var logger = new LoggerConfiguration(s =>
+                        {
+                            decorator = new DecorateSink(s);
+                            return decorator;
+                        })
+                .WriteTo.Sink(decorated)
+                .CreateLogger();
+
+            var e = Some.InformationEvent();
+            logger.Write(e);
+
+            Assert.Same(e, decorated.SingleEvent);
+            Assert.NotNull(decorator);
+            Assert.Same(decorator.SingleEvent, decorated.SingleEvent);
+        }
+    }
 }
