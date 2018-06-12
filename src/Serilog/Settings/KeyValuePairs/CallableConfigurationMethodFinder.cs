@@ -27,28 +27,32 @@ namespace Serilog.Settings.KeyValuePairs
         {
             return loggerEnrichmentConfiguration.FromLogContext();
         }
-        static readonly MethodInfo SurrogateFromLogContextConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(FromLogContext));
+
+        static readonly MethodInfo SurrogateEnrichFromLogContextConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(FromLogContext));
 
         internal static LoggerConfiguration ToMaximumCollectionCount(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
             int maximumCollectionCount)
         {
             return loggerDestructuringConfiguration.ToMaximumCollectionCount(maximumCollectionCount);
         }
-        static readonly MethodInfo SurrogateFromDestructureToMaximumCollectionCountConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumCollectionCount));
+
+        static readonly MethodInfo SurrogateDestructureToMaximumCollectionCountConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumCollectionCount));
 
         internal static LoggerConfiguration ToMaximumDepth(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
             int maximumDestructuringDepth)
         {
             return loggerDestructuringConfiguration.ToMaximumDepth(maximumDestructuringDepth);
         }
-        static readonly MethodInfo SurrogateFromDestructureToMaximumDepthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumDepth));
+
+        static readonly MethodInfo SurrogateDestructureToMaximumDepthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumDepth));
 
         internal static LoggerConfiguration ToMaximumStringLength(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
             int maximumStringLength)
         {
             return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
         }
-        static readonly MethodInfo SurrogateFromDestructureToMaximumStringLengthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumStringLength));
+
+        static readonly MethodInfo SurrogateDestructureToMaximumStringLengthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumStringLength));
 
 
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
@@ -65,14 +69,14 @@ namespace Serilog.Settings.KeyValuePairs
             // Unlike the other configuration methods, FromLogContext is an instance method rather than an extension. This
             // hack ensures we find it.
             if (configType == typeof(LoggerEnrichmentConfiguration))
-                methods.Add(SurrogateFromLogContextConfigurationMethod);
+                methods.Add(SurrogateEnrichFromLogContextConfigurationMethod);
 
             // Some of the useful Destructure configuration methods are defined as methods rather than extension methods
             if (configType == typeof(LoggerDestructuringConfiguration))
             {
-                methods.Add(SurrogateFromDestructureToMaximumCollectionCountConfigurationMethod);
-                methods.Add(SurrogateFromDestructureToMaximumDepthConfigurationMethod);
-                methods.Add(SurrogateFromDestructureToMaximumStringLengthConfigurationMethod);
+                methods.Add(SurrogateDestructureToMaximumCollectionCountConfigurationMethod);
+                methods.Add(SurrogateDestructureToMaximumDepthConfigurationMethod);
+                methods.Add(SurrogateDestructureToMaximumStringLengthConfigurationMethod);
             }
 
             return methods;
