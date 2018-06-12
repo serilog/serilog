@@ -23,37 +23,11 @@ namespace Serilog.Settings.KeyValuePairs
 {
     static class CallableConfigurationMethodFinder
     {
-        internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
-        {
-            return loggerEnrichmentConfiguration.FromLogContext();
-        }
-
-        static readonly MethodInfo SurrogateEnrichFromLogContextConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(FromLogContext));
-
-        internal static LoggerConfiguration ToMaximumCollectionCount(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            int maximumCollectionCount)
-        {
-            return loggerDestructuringConfiguration.ToMaximumCollectionCount(maximumCollectionCount);
-        }
-
-        static readonly MethodInfo SurrogateDestructureToMaximumCollectionCountConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumCollectionCount));
-
-        internal static LoggerConfiguration ToMaximumDepth(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            int maximumDestructuringDepth)
-        {
-            return loggerDestructuringConfiguration.ToMaximumDepth(maximumDestructuringDepth);
-        }
-
-        static readonly MethodInfo SurrogateDestructureToMaximumDepthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumDepth));
-
-        internal static LoggerConfiguration ToMaximumStringLength(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            int maximumStringLength)
-        {
-            return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
-        }
-
-        static readonly MethodInfo SurrogateDestructureToMaximumStringLengthConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(ToMaximumStringLength));
-
+        static readonly MethodInfo[] SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods).GetTypeInfo().DeclaredMethods.ToArray();
+        static readonly MethodInfo SurrogateEnrichFromLogContextConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.FromLogContext));
+        static readonly MethodInfo SurrogateDestructureToMaximumCollectionCountConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumCollectionCount));
+        static readonly MethodInfo SurrogateDestructureToMaximumDepthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumDepth));
+        static readonly MethodInfo SurrogateDestructureToMaximumStringLengthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumStringLength));
 
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
         {
