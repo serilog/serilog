@@ -44,11 +44,17 @@ namespace Serilog
         bool _loggerCreated;
 
         /// <summary>
-        /// Construct a <see cref="LoggerConfiguration"/>.
+        /// Construct a <see cref="LoggerConfiguration" />.
         /// </summary>
-        public LoggerConfiguration()
+        /// <param name="sinkMap">The sink map.</param>
+        public LoggerConfiguration(Func<ILogEventSink, ILogEventSink> sinkMap = null)
         {
-            WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+            Action<ILogEventSink> action = s =>
+                {
+                    s = sinkMap?.Invoke(s) ?? s;
+                    _logEventSinks.Add(s);
+                };
+            WriteTo = new LoggerSinkConfiguration(this, action, ApplyInheritedConfiguration);
         }
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
