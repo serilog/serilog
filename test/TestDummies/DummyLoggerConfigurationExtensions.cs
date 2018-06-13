@@ -86,5 +86,13 @@ namespace TestDummies
                 logEventLevel,
                 levelSwitch);
         }
+
+        public static LoggerConfiguration WithDummyHardCodedString(
+            this LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+            string hardCodedString
+        )
+        {
+            return loggerDestructuringConfiguration.With(new DummyHardCodedStringDestructuringPolicy(hardCodedString));
+        }
     }
 }

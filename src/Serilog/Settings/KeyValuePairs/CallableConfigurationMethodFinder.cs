@@ -23,12 +23,11 @@ namespace Serilog.Settings.KeyValuePairs
 {
     static class CallableConfigurationMethodFinder
     {
-        internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
-        {
-            return loggerEnrichmentConfiguration.FromLogContext();
-        }
-
-        static readonly MethodInfo SurrogateFromLogContextConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(FromLogContext));
+        static readonly MethodInfo[] SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods).GetTypeInfo().DeclaredMethods.ToArray();
+        static readonly MethodInfo SurrogateEnrichFromLogContextConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.FromLogContext));
+        static readonly MethodInfo SurrogateDestructureToMaximumCollectionCountConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumCollectionCount));
+        static readonly MethodInfo SurrogateDestructureToMaximumDepthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumDepth));
+        static readonly MethodInfo SurrogateDestructureToMaximumStringLengthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumStringLength));
 
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
         {
@@ -44,7 +43,15 @@ namespace Serilog.Settings.KeyValuePairs
             // Unlike the other configuration methods, FromLogContext is an instance method rather than an extension. This
             // hack ensures we find it.
             if (configType == typeof(LoggerEnrichmentConfiguration))
-                methods.Add(SurrogateFromLogContextConfigurationMethod);
+                methods.Add(SurrogateEnrichFromLogContextConfigurationMethod);
+
+            // Some of the useful Destructure configuration methods are defined as methods rather than extension methods
+            if (configType == typeof(LoggerDestructuringConfiguration))
+            {
+                methods.Add(SurrogateDestructureToMaximumCollectionCountConfigurationMethod);
+                methods.Add(SurrogateDestructureToMaximumDepthConfigurationMethod);
+                methods.Add(SurrogateDestructureToMaximumStringLengthConfigurationMethod);
+            }
 
             return methods;
         }

@@ -34,12 +34,13 @@ namespace Serilog.Settings.KeyValuePairs
         const string EnrichWithDirective = "enrich";
         const string EnrichWithPropertyDirective = "enrich:with-property";
         const string FilterDirective = "filter";
+        const string DestructureDirective = "destructure";
 
         const string UsingDirectiveFullFormPrefix = "using:";
         const string EnrichWithPropertyDirectivePrefix = "enrich:with-property:";
         const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
-        const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
+        const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter|destructure):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
         const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>.*)$";
         const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
@@ -53,7 +54,8 @@ namespace Serilog.Settings.KeyValuePairs
             MinimumLevelControlledByDirective,
             EnrichWithPropertyDirective,
             EnrichWithDirective,
-            FilterDirective
+            FilterDirective,
+            DestructureDirective
         };
 
         static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
@@ -61,7 +63,8 @@ namespace Serilog.Settings.KeyValuePairs
             ["audit-to"] = typeof(LoggerAuditSinkConfiguration),
             ["write-to"] = typeof(LoggerSinkConfiguration),
             ["enrich"] = typeof(LoggerEnrichmentConfiguration),
-            ["filter"] = typeof(LoggerFilterConfiguration)
+            ["filter"] = typeof(LoggerFilterConfiguration),
+            ["destructure"] = typeof(LoggerDestructuringConfiguration),
         };
 
         static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new Dictionary<Type, Func<LoggerConfiguration, object>>
@@ -69,7 +72,8 @@ namespace Serilog.Settings.KeyValuePairs
             [typeof(LoggerAuditSinkConfiguration)] = lc => lc.AuditTo,
             [typeof(LoggerSinkConfiguration)] = lc => lc.WriteTo,
             [typeof(LoggerEnrichmentConfiguration)] = lc => lc.Enrich,
-            [typeof(LoggerFilterConfiguration)] = lc => lc.Filter
+            [typeof(LoggerFilterConfiguration)] = lc => lc.Filter,
+            [typeof(LoggerDestructuringConfiguration)] = lc => lc.Destructure,
         };
 
         readonly IReadOnlyDictionary<string, string> _settings;
