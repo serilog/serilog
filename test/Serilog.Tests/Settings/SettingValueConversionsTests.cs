@@ -46,6 +46,20 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
+        public void ValuesConvertToTypeFromQualifiedName()
+        {
+            var result = (Type)SettingValueConversions.ConvertToType("System.Version", typeof(Type));
+            Assert.Equal(typeof(Version), result);
+        }
+
+        [Fact]
+        public void ValuesConvertToTypeFromAssemblyQualifiedName()
+        {
+            var result = (Type)SettingValueConversions.ConvertToType("System.Version, System.Runtime, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(Type));
+            Assert.Equal(typeof(Version), result);
+        }
+
+        [Fact]
         public void StringValuesConvertToDefaultInstancesIfTargetIsInterface()
         {
             var result = SettingValueConversions.ConvertToType("Serilog.Formatting.Json.JsonFormatter", typeof(ITextFormatter));
@@ -102,7 +116,7 @@ namespace Serilog.Tests.Settings
                     null, null)]
         [InlineData(null,
                     null, null)]
-        [InlineData(" " ,
+        [InlineData(" ",
                     null, null)]
         // a full-qualified type name should not be considered a static member accessor
         [InlineData("My.NameSpace.Class, MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",

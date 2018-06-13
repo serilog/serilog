@@ -466,10 +466,30 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            log.Information("Destructuring a big collection {@Input}", new { Foo = "Bar" });
+            log.Information("Destructuring with hard-coded policy {@Input}", new { Foo = "Bar" });
             var formattedProperty = evt.Properties["Input"].ToString();
 
             Assert.Equal("\"hardcoded\"", formattedProperty);
+        }
+
+        [Theory]
+        [InlineData("System.Version")]
+        [InlineData("System.Version, System.Runtime, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+        public void DestructuringAsScalarIsApplied(string typeName)
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["destructure:AsScalar.scalarType"] = typeName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Destructuring as scalar {@Scalarized}", new Version(2,3));
+            var prop = evt.Properties["Scalarized"];
+
+            Assert.IsType<ScalarValue>(prop);
         }
 
     }

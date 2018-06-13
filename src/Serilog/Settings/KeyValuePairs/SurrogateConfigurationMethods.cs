@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Serilog.Configuration;
 
 namespace Serilog.Settings.KeyValuePairs
@@ -32,6 +33,13 @@ namespace Serilog.Settings.KeyValuePairs
             return loggerEnrichmentConfiguration.FromLogContext();
         }
 
+
+        internal static LoggerConfiguration AsScalar(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+            Type scalarType)
+        {
+            return loggerDestructuringConfiguration.AsScalar(scalarType);
+        }
+
         internal static LoggerConfiguration ToMaximumCollectionCount(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
             int maximumCollectionCount)
         {
@@ -50,7 +58,7 @@ namespace Serilog.Settings.KeyValuePairs
             return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
         }
 
-        
+
 
     }
 }

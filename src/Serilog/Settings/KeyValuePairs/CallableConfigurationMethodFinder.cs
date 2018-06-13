@@ -25,6 +25,7 @@ namespace Serilog.Settings.KeyValuePairs
     {
         static readonly MethodInfo[] SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods).GetTypeInfo().DeclaredMethods.ToArray();
         static readonly MethodInfo SurrogateEnrichFromLogContextConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.FromLogContext));
+        static readonly MethodInfo SurrogateDestructureAsScalarConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.AsScalar));
         static readonly MethodInfo SurrogateDestructureToMaximumCollectionCountConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumCollectionCount));
         static readonly MethodInfo SurrogateDestructureToMaximumDepthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumDepth));
         static readonly MethodInfo SurrogateDestructureToMaximumStringLengthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumStringLength));
@@ -48,6 +49,7 @@ namespace Serilog.Settings.KeyValuePairs
             // Some of the useful Destructure configuration methods are defined as methods rather than extension methods
             if (configType == typeof(LoggerDestructuringConfiguration))
             {
+                methods.Add(SurrogateDestructureAsScalarConfigurationMethod);
                 methods.Add(SurrogateDestructureToMaximumCollectionCountConfigurationMethod);
                 methods.Add(SurrogateDestructureToMaximumDepthConfigurationMethod);
                 methods.Add(SurrogateDestructureToMaximumStringLengthConfigurationMethod);
