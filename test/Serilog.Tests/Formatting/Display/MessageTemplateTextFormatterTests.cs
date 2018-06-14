@@ -101,7 +101,7 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(LogEventLevel.Warning, 8, "Warning")]
         public void FixedLengthLevelIsSupported(
             LogEventLevel level,
-            int width, 
+            int width,
             string expected)
         {
             var formatter = new MessageTemplateTextFormatter($"{{Level:t{width}}}", CultureInfo.InvariantCulture);
@@ -245,7 +245,7 @@ namespace Serilog.Tests.Formatting.Display
         public void AppliesJsonFormattingToMessageStructuresWhenSpecified(string format, string expected)
         {
             var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", null);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new {Name = "World"}));
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new { Name = "World" }));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
@@ -275,6 +275,48 @@ namespace Serilog.Tests.Formatting.Display
 
             var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
             Assert.Equal(expected, sw.ToString());
+        }
+
+        [Fact]
+        [Trait("Bugfix", "#1115")]
+        public void CustomDateFormatProviderCanBeUsed()
+        {
+            // relying on the example from wiki : https://github.com/serilog/serilog/wiki/Formatting-Output
+            // using 5 digits for year on purpose, so it is visible !
+            var customDateFormatProvider = new CustomDateFormatter("yyyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            var formatter = new MessageTemplateTextFormatter("{Message}", customDateFormatProvider);
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Item}", new
+            {
+                CreatedOn = new DateTime(2018, 01, 01)
+            }));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+
+            Assert.Contains( "02018-01-01 00:00:00", sw.ToString());
+        }
+
+        class CustomDateFormatter : IFormatProvider
+        {
+            // sample taken from wiki : https://github.com/serilog/serilog/wiki/Formatting-Output
+            readonly IFormatProvider basedOn;
+            readonly string shortDatePattern;
+            public CustomDateFormatter(string shortDatePattern, IFormatProvider basedOn)
+            {
+                this.shortDatePattern = shortDatePattern;
+                this.basedOn = basedOn;
+            }
+            public object GetFormat(Type formatType)
+            {
+                if (formatType == typeof(DateTimeFormatInfo))
+                {
+                    var basedOnFormatInfo = (DateTimeFormatInfo)basedOn.GetFormat(formatType);
+                    var dateFormatInfo = (DateTimeFormatInfo)basedOnFormatInfo.Clone();
+                    dateFormatInfo.ShortDatePattern = this.shortDatePattern;
+                    return dateFormatInfo;
+                }
+                return this.basedOn.GetFormat(formatType);
+            }
         }
     }
 }
