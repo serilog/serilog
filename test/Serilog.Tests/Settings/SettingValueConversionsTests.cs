@@ -55,7 +55,8 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToTypeFromAssemblyQualifiedName()
         {
-            var result = (Type)SettingValueConversions.ConvertToType("System.Version, System.Runtime, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(Type));
+            var assemblyQualifiedName = typeof(Version).AssemblyQualifiedName;
+            var result = (Type)SettingValueConversions.ConvertToType(assemblyQualifiedName, typeof(Type));
             Assert.Equal(typeof(Version), result);
         }
 
