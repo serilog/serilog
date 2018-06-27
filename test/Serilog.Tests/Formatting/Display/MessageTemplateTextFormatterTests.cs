@@ -276,6 +276,35 @@ namespace Serilog.Tests.Formatting.Display
             var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
             Assert.Equal(expected, sw.ToString());
         }
+        
+        [Theory]
+        [Trait("Bugfix", "#1115")]
+        [InlineData("", true)]
+        [InlineData(":lj", true)]
+        [InlineData(":j", false)]
+        [InlineData(":l", true)]
+        public void FormatProviderIsUsedForNonNonJsonFormatWithScalar(string format, bool shouldUseCustomFormatter)
+        {
+            var frenchFormatProvider = new CultureInfo("fr-FR");
+            var defaultFormatProvider = CultureInfo.InvariantCulture;
+
+            var date = new DateTime(2018, 01, 01);
+            var number = 12.345;
+            
+            var expectedFormattedDate = shouldUseCustomFormatter ? date.ToString(frenchFormatProvider) : date.ToString("O", defaultFormatProvider);
+            var expectedFormattedNumber = shouldUseCustomFormatter ? number.ToString(frenchFormatProvider) : number.ToString(defaultFormatProvider);
+
+            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", frenchFormatProvider);
+            var evt = DelegatingSink.GetLogEvent(l =>
+            {
+                l.Information("{MyDate}{MyNumber}", date, number);
+            });
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+
+            Assert.Contains(expectedFormattedDate, sw.ToString());
+            Assert.Contains(expectedFormattedNumber, sw.ToString());
+        }
 
         [Theory]
         [Trait("Bugfix", "#1115")]
@@ -283,77 +312,31 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":lj", true)]
         [InlineData(":j", false)]
         [InlineData(":l", true)]
-        public void CustomDateFormatProviderCanBeUsedInNonJsonFormatWithStructure(string format, bool shouldUseCustomFormatter)
+        public void FormatProviderIsUsedForNonJsonFormatWithStructure(string format, bool shouldUseCustomFormatter)
         {
-            // relying on the example from wiki : https://github.com/serilog/serilog/wiki/Formatting-Output
+            var frenchFormatProvider = new CultureInfo("fr-FR");
+            var defaultFormatProvider = CultureInfo.InvariantCulture;
+
             var date = new DateTime(2018, 01, 01);
+            var number = 12.345;
+            
+            var expectedFormattedDate = shouldUseCustomFormatter ? date.ToString(frenchFormatProvider) : date.ToString("O", defaultFormatProvider);
+            var expectedFormattedNumber = shouldUseCustomFormatter ? number.ToString(frenchFormatProvider) : number.ToString(defaultFormatProvider);
 
-            // using 5 digits for year on purpose, so it is visible !
-            var customDateFormatProvider = new CustomShortDateFormatProvider("yyyyy", CultureInfo.InvariantCulture);
-            var expectedFormattedDate = shouldUseCustomFormatter ? date.ToString(customDateFormatProvider) : date.ToString("O");
-
-            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", customDateFormatProvider);
+            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", frenchFormatProvider);
             var evt = DelegatingSink.GetLogEvent(l =>
             {
                 l.Information("{@Item}", new
                 {
-                    CreatedOn = date
+                    CreatedOn = date,
+                    Number = number
                 });
             });
             var sw = new StringWriter();
             formatter.Format(evt, sw);
 
             Assert.Contains(expectedFormattedDate, sw.ToString());
-        }
-
-        [Theory]
-        [Trait("Bugfix", "#1115")]
-        [InlineData("", true)]
-        [InlineData(":lj", true)]
-        [InlineData(":j", false)]
-        [InlineData(":l", true)]
-        public void CustomDateFormatProviderCanBeUsedInNonJsonFormatWithScalar(string format, bool shouldUseCustomFormatter)
-        {
-            // relying on the example from wiki : https://github.com/serilog/serilog/wiki/Formatting-Output
-            var date = new DateTime(2018, 01, 01);
-
-            // using 5 digits for year on purpose, so it is visible !
-            var customDateFormatProvider = new CustomShortDateFormatProvider("yyyyy", CultureInfo.InvariantCulture);
-            var expectedFormattedDate = shouldUseCustomFormatter ? date.ToString(customDateFormatProvider) : date.ToString("O");
-
-            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", customDateFormatProvider);
-            var evt = DelegatingSink.GetLogEvent(l =>
-            {
-                l.Information("{MyDate}", date);
-            });
-            var sw = new StringWriter();
-            formatter.Format(evt, sw);
-
-            Assert.Contains(expectedFormattedDate, sw.ToString());
-        }
-
-
-        class CustomShortDateFormatProvider : IFormatProvider
-        {
-            // sample taken from wiki : https://github.com/serilog/serilog/wiki/Formatting-Output
-            readonly IFormatProvider basedOn;
-            readonly string shortDatePattern;
-            public CustomShortDateFormatProvider(string shortDatePattern, IFormatProvider basedOn)
-            {
-                this.shortDatePattern = shortDatePattern;
-                this.basedOn = basedOn;
-            }
-            public object GetFormat(Type formatType)
-            {
-                if (formatType == typeof(DateTimeFormatInfo))
-                {
-                    var basedOnFormatInfo = (DateTimeFormatInfo)basedOn.GetFormat(formatType);
-                    var dateFormatInfo = (DateTimeFormatInfo)basedOnFormatInfo.Clone();
-                    dateFormatInfo.ShortDatePattern = this.shortDatePattern;
-                    return dateFormatInfo;
-                }
-                return this.basedOn.GetFormat(formatType);
-            }
+            Assert.Contains(expectedFormattedNumber, sw.ToString());
         }
     }
 }
