@@ -40,6 +40,7 @@ namespace Serilog.Tests.Settings
                 .Distinct()
                 .ToList();
             
+            Assert.Contains(nameof(LoggerDestructuringConfiguration.AsScalar), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumCollectionCount), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumDepth), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumStringLength), destructuringMethods);

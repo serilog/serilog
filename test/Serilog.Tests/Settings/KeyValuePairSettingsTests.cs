@@ -466,10 +466,46 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            log.Information("Destructuring a big collection {@Input}", new { Foo = "Bar" });
+            log.Information("Destructuring with hard-coded policy {@Input}", new { Foo = "Bar" });
             var formattedProperty = evt.Properties["Input"].ToString();
 
             Assert.Equal("\"hardcoded\"", formattedProperty);
+        }
+
+        [Fact]
+        public void DestructuringAsScalarIsAppliedWithShortTypeName()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["destructure:AsScalar.scalarType"] = "System.Version"
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Destructuring as scalar {@Scalarized}", new Version(2,3));
+            var prop = evt.Properties["Scalarized"];
+
+            Assert.IsType<ScalarValue>(prop);
+        }
+
+        [Fact]
+        public void DestructuringAsScalarIsAppliedWithAssemblyQualifiedName()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["destructure:AsScalar.scalarType"] = typeof(Version).AssemblyQualifiedName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Destructuring as scalar {@Scalarized}", new Version(2,3));
+            var prop = evt.Properties["Scalarized"];
+
+            Assert.IsType<ScalarValue>(prop);
         }
 
     }
