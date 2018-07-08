@@ -309,7 +309,7 @@ namespace Serilog.Tests.Formatting.Display
         [Theory]
         [Trait("Bugfix", "#1115")]
         [InlineData("", true)]
-        [InlineData(":lj", true)]
+        [InlineData(":lj", false)]
         [InlineData(":j", false)]
         [InlineData(":l", true)]
         public void FormatProviderIsUsedForNonJsonFormatWithStructure(string format, bool shouldUseCustomFormatter)
