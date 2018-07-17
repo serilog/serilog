@@ -508,5 +508,24 @@ namespace Serilog.Tests.Settings
             Assert.IsType<ScalarValue>(prop);
         }
 
+        [Fact]
+        public void DestructuringWithIsAppliedWithCustomDestructuringPolicy()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["destructure:With.policy"] = typeof(DummyReduceVersionToMajorPolicy).AssemblyQualifiedName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Information("Destructuring with policy {@Version}", new Version(2,3));
+            var prop = evt.Properties["Version"];
+
+            Assert.IsType<ScalarValue>(prop);
+            Assert.Equal(2, (prop as ScalarValue)?.Value);
+        }
     }
 }

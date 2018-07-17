@@ -45,6 +45,7 @@ namespace Serilog.Tests.Settings
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumDepth), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumStringLength), destructuringMethods);
             Assert.Contains(nameof(DummyLoggerConfigurationExtensions.WithDummyHardCodedString), destructuringMethods);
+            Assert.Contains(nameof(LoggerDestructuringConfiguration.With), destructuringMethods);
         }
     }
 }

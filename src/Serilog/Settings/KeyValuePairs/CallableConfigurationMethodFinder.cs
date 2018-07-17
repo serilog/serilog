@@ -29,6 +29,7 @@ namespace Serilog.Settings.KeyValuePairs
         static readonly MethodInfo SurrogateDestructureToMaximumCollectionCountConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumCollectionCount));
         static readonly MethodInfo SurrogateDestructureToMaximumDepthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumDepth));
         static readonly MethodInfo SurrogateDestructureToMaximumStringLengthConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.ToMaximumStringLength));
+        static readonly MethodInfo SurrogateDestructureWithConfigurationMethod = SurrogateMethodCandidates.Single(m => m.Name == nameof(SurrogateConfigurationMethods.With));
 
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
         {
@@ -53,6 +54,7 @@ namespace Serilog.Settings.KeyValuePairs
                 methods.Add(SurrogateDestructureToMaximumCollectionCountConfigurationMethod);
                 methods.Add(SurrogateDestructureToMaximumDepthConfigurationMethod);
                 methods.Add(SurrogateDestructureToMaximumStringLengthConfigurationMethod);
+                methods.Add(SurrogateDestructureWithConfigurationMethod);
             }
 
             return methods;
