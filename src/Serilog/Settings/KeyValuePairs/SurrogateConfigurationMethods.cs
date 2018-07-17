@@ -14,6 +14,7 @@
 
 using System;
 using Serilog.Configuration;
+using Serilog.Core;
 
 namespace Serilog.Settings.KeyValuePairs
 {
@@ -33,6 +34,11 @@ namespace Serilog.Settings.KeyValuePairs
             return loggerEnrichmentConfiguration.FromLogContext();
         }
 
+        internal static LoggerConfiguration With(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+            IDestructuringPolicy policy)
+        {
+            return loggerDestructuringConfiguration.With(policy);
+        }
 
         internal static LoggerConfiguration AsScalar(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
             Type scalarType)
