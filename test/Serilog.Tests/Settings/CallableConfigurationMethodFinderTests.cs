@@ -10,6 +10,22 @@ namespace Serilog.Tests.Settings
     public class CallableConfigurationMethodFinderTests
     {
         [Fact]
+        public void FindsSinkSpecificConfigurationMethods()
+        {
+            var eventEnrichers = CallableConfigurationMethodFinder
+                .FindConfigurationMethods(new[]
+                {
+                    typeof(Log).GetTypeInfo().Assembly,
+                    typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly
+                }, typeof(LoggerSinkConfiguration))
+                .Select(m => m.Name)
+                .Distinct()
+                .ToList();
+
+            Assert.Contains("Sink", eventEnrichers);
+        }
+
+        [Fact]
         public void FindsEnricherSpecificConfigurationMethods()
         {
             var eventEnrichers = CallableConfigurationMethodFinder
@@ -22,7 +38,6 @@ namespace Serilog.Tests.Settings
                 .Distinct()
                 .ToList();
 
-
             Assert.Contains("FromLogContext", eventEnrichers);
             Assert.Contains("WithDummyThreadId", eventEnrichers);
         }
@@ -34,7 +49,7 @@ namespace Serilog.Tests.Settings
                 .FindConfigurationMethods(new[]
                 {
                     typeof(Log).GetTypeInfo().Assembly,
-                    typeof(DummyThreadIdEnricher).GetTypeInfo().Assembly,
+                    typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly,
                 }, typeof(LoggerDestructuringConfiguration))
                 .Select(m => m.Name)
                 .Distinct()

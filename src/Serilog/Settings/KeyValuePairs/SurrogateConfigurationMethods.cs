@@ -15,6 +15,7 @@
 using System;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Events;
 
 namespace Serilog.Settings.KeyValuePairs
 {
@@ -29,6 +30,15 @@ namespace Serilog.Settings.KeyValuePairs
     /// </summary>
     static class SurrogateConfigurationMethods
     {
+        internal static LoggerConfiguration Sink(
+            LoggerSinkConfiguration loggerSinkConfiguration,
+            ILogEventSink sink,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
+        {
+            return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
+        }
+
         internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
         {
             return loggerEnrichmentConfiguration.FromLogContext();
