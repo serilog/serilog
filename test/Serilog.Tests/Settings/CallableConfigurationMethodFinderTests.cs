@@ -82,5 +82,21 @@ namespace Serilog.Tests.Settings
             Assert.Contains(nameof(DummyLoggerConfigurationExtensions.WithDummyHardCodedString), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.With), destructuringMethods);
         }
+
+        [Fact]
+        public void FindsFilterSpecificConfigurationMethods()
+        {
+            var searchInAssemblies = new[] { SerilogAssembly, TestDummiesAssembly };
+
+            var filterMethods = CallableConfigurationMethodFinder
+                .FindConfigurationMethods(
+                    searchInAssemblies,
+                    typeof(LoggerFilterConfiguration))
+                .Select(m => m.Name)
+                .Distinct()
+                .ToList();
+
+            Assert.Contains(nameof(LoggerFilterConfiguration.With), filterMethods);
+        }
     }
 }

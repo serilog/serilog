@@ -42,6 +42,7 @@ namespace Serilog.Settings.KeyValuePairs
         internal static readonly MethodInfo[] AuditTo = SurrogateMethodCandidates[typeof(LoggerAuditSinkConfiguration)];
         internal static readonly MethodInfo[] Enrich = SurrogateMethodCandidates[typeof(LoggerEnrichmentConfiguration)];
         internal static readonly MethodInfo[] Destructure = SurrogateMethodCandidates[typeof(LoggerDestructuringConfiguration)];
+        internal static readonly MethodInfo[] Filter = SurrogateMethodCandidates[typeof(LoggerFilterConfiguration)];
 
         internal static LoggerConfiguration Sink(
             LoggerSinkConfiguration loggerSinkConfiguration,
@@ -99,6 +100,12 @@ namespace Serilog.Settings.KeyValuePairs
             int maximumStringLength)
         {
             return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
+        }
+
+        internal static LoggerConfiguration With(LoggerFilterConfiguration loggerFilterConfiguration,
+            ILogEventFilter filter)
+        {
+            return loggerFilterConfiguration.With(filter);
         }
     }
 }

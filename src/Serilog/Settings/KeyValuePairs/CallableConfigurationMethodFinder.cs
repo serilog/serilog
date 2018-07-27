@@ -36,7 +36,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             // some configuration methods are not extension methods. They are added manually
             // so they can be discovered
-            
+
             // WriteTo.Sink(params ILogEventSink[]) is not an extension method
             // and we want to expose WriteTo.Sink(ILogEventSink sink) to the config system
             if (configType == typeof(LoggerSinkConfiguration))
@@ -54,6 +54,10 @@ namespace Serilog.Settings.KeyValuePairs
             // Some of the useful Destructure configuration methods are defined as methods rather than extension methods
             if (configType == typeof(LoggerDestructuringConfiguration))
                 methods.AddRange(SurrogateConfigurationMethods.Destructure);
+
+            // Some of the useful Filter configuration methods are defined as methods rather than extension methods
+            if (configType == typeof(LoggerFilterConfiguration))
+                methods.AddRange(SurrogateConfigurationMethods.Filter);
 
             return methods;
         }

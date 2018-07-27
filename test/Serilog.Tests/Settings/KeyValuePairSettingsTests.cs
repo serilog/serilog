@@ -658,5 +658,24 @@ namespace Serilog.Tests.Settings
             Assert.NotNull(evt);
             Assert.True(evt.Properties.ContainsKey("ThreadId"), "Event should have enriched property ThreadId");
         }
+
+        [Fact]
+        public void FilterWithIsAppliedWithCustomFilter()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["filter:With.filter"] = typeof(DummyAnonymousUserFilter).AssemblyQualifiedName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.ForContext("User", "anonymous").Write(Some.InformationEvent());
+            Assert.Null(evt);
+            log.ForContext("User", "the user").Write(Some.InformationEvent());
+            Assert.NotNull(evt);
+        }
     }
 }
