@@ -639,5 +639,24 @@ namespace Serilog.Tests.Settings
 
             Assert.Single(DummyRollingFileSink.Emitted);
         }
+
+        [Fact]
+        public void EnrichWithIsAppliedWithCustomEnricher()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["enrich:With.enricher"] = typeof(DummyThreadIdEnricher).AssemblyQualifiedName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Write(Some.InformationEvent());
+
+            Assert.NotNull(evt);
+            Assert.True(evt.Properties.ContainsKey("ThreadId"), "Event should have enriched property ThreadId");
+        }
     }
 }

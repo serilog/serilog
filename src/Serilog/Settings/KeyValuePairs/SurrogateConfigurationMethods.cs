@@ -61,6 +61,11 @@ namespace Serilog.Settings.KeyValuePairs
             return auditSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
         }
 
+        internal static LoggerConfiguration With(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, ILogEventEnricher enricher)
+        {
+            return loggerEnrichmentConfiguration.With(enricher);
+        }
+
         internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
         {
             return loggerEnrichmentConfiguration.FromLogContext();

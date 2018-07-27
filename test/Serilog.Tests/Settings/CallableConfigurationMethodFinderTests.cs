@@ -9,68 +9,72 @@ namespace Serilog.Tests.Settings
 {
     public class CallableConfigurationMethodFinderTests
     {
+        static readonly Assembly SerilogAssembly = typeof(Log).GetTypeInfo().Assembly;
+        static readonly Assembly TestDummiesAssembly = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly;
+
         [Fact]
         public void FindsSinkSpecificConfigurationMethods()
         {
+            var searchInAssemblies = new[] { SerilogAssembly, TestDummiesAssembly };
+
             var sinkMethods = CallableConfigurationMethodFinder
-                .FindConfigurationMethods(new[]
-                {
-                    typeof(Log).GetTypeInfo().Assembly,
-                    typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly
-                }, typeof(LoggerSinkConfiguration))
+                .FindConfigurationMethods(
+                    searchInAssemblies,
+                    typeof(LoggerSinkConfiguration))
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();
 
-            Assert.Contains("Sink", sinkMethods);
+            Assert.Contains(nameof(LoggerSinkConfiguration.Sink), sinkMethods);
         }
 
         [Fact]
         public void FindsAuditSinkSpecificConfigurationMethods()
         {
+            var searchInAssemblies = new[] { SerilogAssembly, TestDummiesAssembly };
+
             var auditSinkMethods = CallableConfigurationMethodFinder
-                .FindConfigurationMethods(new[]
-                {
-                    typeof(Log).GetTypeInfo().Assembly,
-                    typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly
-                }, typeof(LoggerAuditSinkConfiguration))
+                .FindConfigurationMethods(
+                    searchInAssemblies,
+                    typeof(LoggerAuditSinkConfiguration))
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();
 
-            Assert.Contains("Sink", auditSinkMethods);
+            Assert.Contains(nameof(LoggerAuditSinkConfiguration.Sink), auditSinkMethods);
         }
 
         [Fact]
         public void FindsEnricherSpecificConfigurationMethods()
         {
+            var searchInAssemblies = new[] { SerilogAssembly, TestDummiesAssembly };
+
             var enricherMethods = CallableConfigurationMethodFinder
-                .FindConfigurationMethods(new[]
-                {
-                    typeof(Log).GetTypeInfo().Assembly,
-                    typeof(DummyThreadIdEnricher).GetTypeInfo().Assembly
-                }, typeof(LoggerEnrichmentConfiguration))
+                .FindConfigurationMethods(
+                    searchInAssemblies,
+                    typeof(LoggerEnrichmentConfiguration))
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();
 
-            Assert.Contains("FromLogContext", enricherMethods);
-            Assert.Contains("WithDummyThreadId", enricherMethods);
+            Assert.Contains(nameof(LoggerEnrichmentConfiguration.With), enricherMethods);
+            Assert.Contains(nameof(LoggerEnrichmentConfiguration.FromLogContext), enricherMethods);
+            Assert.Contains(nameof(DummyLoggerConfigurationExtensions.WithDummyThreadId), enricherMethods);
         }
 
         [Fact]
         public void FindsDestructureSpecificConfigurationMethods()
         {
+            var searchInAssemblies = new[] { SerilogAssembly, TestDummiesAssembly };
+
             var destructuringMethods = CallableConfigurationMethodFinder
-                .FindConfigurationMethods(new[]
-                {
-                    typeof(Log).GetTypeInfo().Assembly,
-                    typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly,
-                }, typeof(LoggerDestructuringConfiguration))
+                .FindConfigurationMethods(
+                    searchInAssemblies,
+                    typeof(LoggerDestructuringConfiguration))
                 .Select(m => m.Name)
                 .Distinct()
                 .ToList();
-            
+
             Assert.Contains(nameof(LoggerDestructuringConfiguration.AsScalar), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumCollectionCount), destructuringMethods);
             Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumDepth), destructuringMethods);
