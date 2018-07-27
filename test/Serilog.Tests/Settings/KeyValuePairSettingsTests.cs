@@ -583,5 +583,61 @@ namespace Serilog.Tests.Settings
 
             Assert.Single(DummyRollingFileSink.Emitted);
         }
+
+        [Fact]
+        public void AuditToSinkIsAppliedWithCustomSink()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void AuditToSinkIsAppliedWithCustomSinkAndMinimumLevel()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["audit-to:Sink.restrictedToMinimumLevel"] = "Warning"
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+            log.Write(Some.WarningEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void AuditToSinkIsAppliedWithCustomSinkAndLevelSwitch()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["level-switch:$switch1"] = "Warning",
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["audit-to:Sink.levelSwitch"] = "$switch1"
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+            log.Write(Some.WarningEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
     }
 }
