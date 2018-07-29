@@ -1377,6 +1377,6 @@ namespace Serilog.Core
         /// <summary>
         /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
         /// </summary>
-        public static ILogger None { get; } = SilentLogger.None;
+        public static ILogger None { get; } = SilentLogger.Instance;
     }
 }

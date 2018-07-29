@@ -40,7 +40,7 @@ namespace Serilog
     /// </remarks>
     public static class Log
     {
-        static ILogger _logger = SilentLogger.None;
+        static ILogger _logger = SilentLogger.Instance;
 
         /// <summary>
         /// The globally-shared logger.
