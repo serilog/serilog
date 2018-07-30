@@ -26,30 +26,30 @@ namespace Serilog.Formatting.Display
     static class LevelOutputFormat
     {
         static readonly string[][] _titleCaseLevelMap = {
-            new []{ "V", "Vb", "Vrb", "Verb" },
-            new []{ "D", "De", "Dbg", "Dbug" },
-            new []{ "I", "In", "Inf", "Info" },
-            new []{ "W", "Wn", "Wrn", "Warn" },
-            new []{ "E", "Er", "Err", "Eror" },
-            new []{ "F", "Fa", "Ftl", "Fatl" }
+            new []{ "V", "Vb", "Vrb", "Verb", "Verbo" },
+            new []{ "D", "De", "Dbg", "Dbug", "Debug" },
+            new []{ "I", "In", "Inf", "Info", "Info" },
+            new []{ "W", "Wn", "Wrn", "Warn", "Warn" },
+            new []{ "E", "Er", "Err", "Eror", "Error" },
+            new []{ "F", "Fa", "Ftl", "Fatl", "Fatal" }
         };
 
         static readonly string[][] _lowercaseLevelMap = {
-            new []{ "v", "vb", "vrb", "verb" },
-            new []{ "d", "de", "dbg", "dbug" },
-            new []{ "i", "in", "inf", "info" },
-            new []{ "w", "wn", "wrn", "warn" },
-            new []{ "e", "er", "err", "eror" },
-            new []{ "f", "fa", "ftl", "fatl" }
+            new []{ "v", "vb", "vrb", "verb", "verbo" },
+            new []{ "d", "de", "dbg", "dbug", "debug" },
+            new []{ "i", "in", "inf", "info", "info" },
+            new []{ "w", "wn", "wrn", "warn", "warn" },
+            new []{ "e", "er", "err", "eror", "error" },
+            new []{ "f", "fa", "ftl", "fatl", "fatal" }
         };
 
         static readonly string[][] _uppercaseLevelMap = {
-            new []{ "V", "VB", "VRB", "VERB" },
-            new []{ "D", "DE", "DBG", "DBUG" },
-            new []{ "I", "IN", "INF", "INFO" },
-            new []{ "W", "WN", "WRN", "WARN" },
-            new []{ "E", "ER", "ERR", "EROR" },
-            new []{ "F", "FA", "FTL", "FATL" }
+            new []{ "V", "VB", "VRB", "VERB", "VERBO" },
+            new []{ "D", "DE", "DBG", "DBUG", "DEBUG" },
+            new []{ "I", "IN", "INF", "INFO", "INFO" },
+            new []{ "W", "WN", "WRN", "WARN", "WARN" },
+            new []{ "E", "ER", "ERR", "EROR", "ERROR" },
+            new []{ "F", "FA", "FTL", "FATL", "FATAL" }
         };
 
         public static string GetLevelMoniker(LogEventLevel value, string format = null)
@@ -69,7 +69,7 @@ namespace Serilog.Formatting.Display
             if (width < 1)
                 return string.Empty;
 
-            if (width > 4)
+            if (width > 5)
             {
                 var stringValue = value.ToString();
                 if (stringValue.Length > width)
