@@ -137,7 +137,11 @@ namespace Serilog.Tests.Core
         [Fact]
         public void TheNoneLoggerIsSingleton()
         {
-            Assert.Same(Log.Logger, Logger.None);
+            lock (new object())
+            {
+                Log.CloseAndFlush();
+                Assert.Same(Log.Logger, Logger.None);
+            }
         }
     }
 }
