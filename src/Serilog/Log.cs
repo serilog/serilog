@@ -40,7 +40,7 @@ namespace Serilog
     /// </remarks>
     public static class Log
     {
-        static ILogger _logger = new SilentLogger();
+        static ILogger _logger = SilentLogger.Instance;
 
         /// <summary>
         /// The globally-shared logger.
@@ -61,7 +61,7 @@ namespace Serilog
         /// </summary>
         public static void CloseAndFlush()
         {
-            ILogger logger = Interlocked.Exchange(ref _logger, new SilentLogger());
+            ILogger logger = Interlocked.Exchange(ref _logger, SilentLogger.Instance);
 
             (logger as IDisposable)?.Dispose();
         }

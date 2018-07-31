@@ -20,6 +20,12 @@ namespace Serilog.Core.Pipeline
 {
     class SilentLogger : ILogger
     {
+        public static readonly ILogger Instance = new SilentLogger();
+
+        private SilentLogger()
+        {
+        }
+
         public ILogger ForContext(ILogEventEnricher enricher)
         {
             return this;
