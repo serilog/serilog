@@ -590,7 +590,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingDecoratesTheConfiguredSink()
         {
-            DummyWrappingSink.Emitted.Clear();
+            DummyWrappingSink.Reset();
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w => w.Sink(sink))
@@ -623,7 +623,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingIsAppliedWhenChaining()
         {
-            DummyWrappingSink.Emitted.Clear();
+            DummyWrappingSink.Reset();
             var sink1 = new CollectingSink();
             var sink2 = new CollectingSink();
             var logger = new LoggerConfiguration()
@@ -642,7 +642,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingIsAppliedWhenCallingMultipleTimes()
         {
-            DummyWrappingSink.Emitted.Clear();
+            DummyWrappingSink.Reset();
             var sink1 = new CollectingSink();
             var sink2 = new CollectingSink();
             var logger = new LoggerConfiguration()
@@ -678,7 +678,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingSinkRespectsLogEventLevelSetting()
         {
-            DummyWrappingSink.Emitted.Clear();
+            DummyWrappingSink.Reset();
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
                 .WriteTo.DummyWrap(w => w.Sink(sink), LogEventLevel.Error, null)
@@ -693,7 +693,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingSinkRespectsLevelSwitchSetting()
         {
-            DummyWrappingSink.Emitted.Clear();
+            DummyWrappingSink.Reset();
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
                 .WriteTo.DummyWrap(
@@ -710,7 +710,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingSinkRespectsSetting()
         {
-            DummyWrappingSink.Emitted.Clear();
+            DummyWrappingSink.Reset();
             var sink = new CollectingSink();
             var logger = new LoggerConfiguration()
                 .WriteTo.DummyWrap(

@@ -13,8 +13,12 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Events;
 
 namespace Serilog.Settings.KeyValuePairs
 {
@@ -29,6 +33,40 @@ namespace Serilog.Settings.KeyValuePairs
     /// </summary>
     static class SurrogateConfigurationMethods
     {
+        static readonly Dictionary<Type, MethodInfo[]> SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods)
+            .GetTypeInfo().DeclaredMethods
+            .GroupBy(m => m.GetParameters().First().ParameterType)
+            .ToDictionary(g => g.Key, g => g.ToArray());
+
+        internal static readonly MethodInfo[] WriteTo = SurrogateMethodCandidates[typeof(LoggerSinkConfiguration)];
+        internal static readonly MethodInfo[] AuditTo = SurrogateMethodCandidates[typeof(LoggerAuditSinkConfiguration)];
+        internal static readonly MethodInfo[] Enrich = SurrogateMethodCandidates[typeof(LoggerEnrichmentConfiguration)];
+        internal static readonly MethodInfo[] Destructure = SurrogateMethodCandidates[typeof(LoggerDestructuringConfiguration)];
+        internal static readonly MethodInfo[] Filter = SurrogateMethodCandidates[typeof(LoggerFilterConfiguration)];
+
+        internal static LoggerConfiguration Sink(
+            LoggerSinkConfiguration loggerSinkConfiguration,
+            ILogEventSink sink,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
+        {
+            return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
+        }
+
+        internal static LoggerConfiguration Sink(
+            LoggerAuditSinkConfiguration auditSinkConfiguration,
+            ILogEventSink sink,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            LoggingLevelSwitch levelSwitch = null)
+        {
+            return auditSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
+        }
+
+        internal static LoggerConfiguration With(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, ILogEventEnricher enricher)
+        {
+            return loggerEnrichmentConfiguration.With(enricher);
+        }
+
         internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
         {
             return loggerEnrichmentConfiguration.FromLogContext();
@@ -64,7 +102,10 @@ namespace Serilog.Settings.KeyValuePairs
             return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
         }
 
-
-
+        internal static LoggerConfiguration With(LoggerFilterConfiguration loggerFilterConfiguration,
+            ILogEventFilter filter)
+        {
+            return loggerFilterConfiguration.With(filter);
+        }
     }
 }

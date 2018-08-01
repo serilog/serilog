@@ -8,13 +8,18 @@ namespace TestDummies
     public class DummyRollingFileAuditSink : ILogEventSink
     {
         [ThreadStatic]
-        // ReSharper disable ThreadStaticFieldHasInitializer
-        public static List<LogEvent> Emitted = new List<LogEvent>();
-        // ReSharper restore ThreadStaticFieldHasInitializer
+        static List<LogEvent> _emitted;
+
+        public static List<LogEvent> Emitted => _emitted ?? (_emitted = new List<LogEvent>());
 
         public void Emit(LogEvent logEvent)
         {
             Emitted.Add(logEvent);
+        }
+
+        public static void Reset()
+        {
+            _emitted = null;
         }
     }
 }

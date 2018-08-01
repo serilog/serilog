@@ -115,8 +115,8 @@ namespace Serilog.Tests.Settings
                 .ReadFrom.KeyValuePairs(settings)
                 .CreateLogger();
 
-            DummyRollingFileSink.Emitted.Clear();
-            DummyRollingFileAuditSink.Emitted.Clear();
+            DummyRollingFileSink.Reset();
+            DummyRollingFileAuditSink.Reset();
 
             log.Write(Some.InformationEvent());
 
@@ -137,8 +137,8 @@ namespace Serilog.Tests.Settings
                 .ReadFrom.KeyValuePairs(settings)
                 .CreateLogger();
 
-            DummyRollingFileSink.Emitted.Clear();
-            DummyRollingFileAuditSink.Emitted.Clear();
+            DummyRollingFileSink.Reset();
+            DummyRollingFileAuditSink.Reset();
 
             log.Write(Some.InformationEvent());
 
@@ -484,7 +484,7 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            log.Information("Destructuring as scalar {@Scalarized}", new Version(2,3));
+            log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
             var prop = evt.Properties["Scalarized"];
 
             Assert.IsType<ScalarValue>(prop);
@@ -502,7 +502,7 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            log.Information("Destructuring as scalar {@Scalarized}", new Version(2,3));
+            log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
             var prop = evt.Properties["Scalarized"];
 
             Assert.IsType<ScalarValue>(prop);
@@ -521,11 +521,161 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            log.Information("Destructuring with policy {@Version}", new Version(2,3));
+            log.Information("Destructuring with policy {@Version}", new Version(2, 3));
             var prop = evt.Properties["Version"];
 
             Assert.IsType<ScalarValue>(prop);
             Assert.Equal(2, (prop as ScalarValue)?.Value);
+        }
+
+        [Fact]
+        public void WriteToSinkIsAppliedWithCustomSink()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void WriteToSinkIsAppliedWithCustomSinkAndMinimumLevel()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["write-to:Sink.restrictedToMinimumLevel"] = "Warning"
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+            log.Write(Some.WarningEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void WriteToSinkIsAppliedWithCustomSinkAndLevelSwitch()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["level-switch:$switch1"] = "Warning",
+                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["write-to:Sink.levelSwitch"] = "$switch1"
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+            log.Write(Some.WarningEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void AuditToSinkIsAppliedWithCustomSink()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void AuditToSinkIsAppliedWithCustomSinkAndMinimumLevel()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["audit-to:Sink.restrictedToMinimumLevel"] = "Warning"
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+            log.Write(Some.WarningEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void AuditToSinkIsAppliedWithCustomSinkAndLevelSwitch()
+        {
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["level-switch:$switch1"] = "Warning",
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["audit-to:Sink.levelSwitch"] = "$switch1"
+                })
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            log.Write(Some.InformationEvent());
+            log.Write(Some.WarningEvent());
+
+            Assert.Single(DummyRollingFileSink.Emitted);
+        }
+
+        [Fact]
+        public void EnrichWithIsAppliedWithCustomEnricher()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["enrich:With.enricher"] = typeof(DummyThreadIdEnricher).AssemblyQualifiedName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.Write(Some.InformationEvent());
+
+            Assert.NotNull(evt);
+            Assert.True(evt.Properties.ContainsKey("ThreadId"), "Event should have enriched property ThreadId");
+        }
+
+        [Fact]
+        public void FilterWithIsAppliedWithCustomFilter()
+        {
+            LogEvent evt = null;
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(new Dictionary<string, string>
+                {
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["filter:With.filter"] = typeof(DummyAnonymousUserFilter).AssemblyQualifiedName
+                })
+                .WriteTo.Sink(new DelegatingSink(e => evt = e))
+                .CreateLogger();
+
+            log.ForContext("User", "anonymous").Write(Some.InformationEvent());
+            Assert.Null(evt);
+            log.ForContext("User", "the user").Write(Some.InformationEvent());
+            Assert.NotNull(evt);
         }
     }
 }
