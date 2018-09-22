@@ -51,7 +51,7 @@ namespace Serilog.Rendering
                 }
                 else
                 {
-                    var pt = (PropertyToken) token;
+                    var pt = (PropertyToken)token;
                     RenderPropertyToken(pt, properties, output, formatProvider, isLiteral, isJson);
                 }
             }
@@ -92,9 +92,12 @@ namespace Serilog.Rendering
 
         static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string format, IFormatProvider formatProvider)
         {
-            if (literal && propertyValue is ScalarValue sv && sv.Value is string str)
+            // _literal_ means scalar values are not wrapped in "quotes"
+            // _json_ means ... json
+            // _literal_ AND _json_ means scalar values without quotes and structured values as json
+            if (literal && propertyValue is ScalarValue sv)
             {
-                output.Write(str);
+                RenderLiteralScalar(sv, output, format, formatProvider);
             }
             else if (json)
             {
@@ -104,6 +107,18 @@ namespace Serilog.Rendering
             {
                 propertyValue.Render(output, format, formatProvider);
             }
+        }
+
+        static void RenderLiteralScalar(ScalarValue scalarValue, TextWriter output, string format, IFormatProvider formatProvider)
+        {
+            if (scalarValue.Value is string str)
+            {
+                // render without double quotes. _format_ makes no sense for strings
+                output.Write(str);
+                return;
+            }
+
+            scalarValue.Render(output, format, formatProvider);
         }
     }
 }
