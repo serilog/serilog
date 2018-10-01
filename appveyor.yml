@@ -8,6 +8,15 @@ build_script:
 - ps: ./BuildNativeUWP.ps1
 artifacts:
 - path: artifacts/Serilog.*.nupkg
+only_commits:
+  files:
+    - Serilog.sln
+    - src/Serilog/
+    - NuGet.config
+    - global.json
+    - Directory.Build.props
+    - Build.ps1
+    - assets/
 deploy:
 - provider: NuGet
   api_key:
