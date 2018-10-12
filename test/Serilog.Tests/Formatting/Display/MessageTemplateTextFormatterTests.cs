@@ -101,7 +101,7 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(LogEventLevel.Warning, 8, "Warning")]
         public void FixedLengthLevelIsSupported(
             LogEventLevel level,
-            int width, 
+            int width,
             string expected)
         {
             var formatter = new MessageTemplateTextFormatter($"{{Level:t{width}}}", CultureInfo.InvariantCulture);
@@ -274,6 +274,20 @@ namespace Serilog.Tests.Formatting.Display
             formatter.Format(evt, sw);
 
             var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
+            Assert.Equal(expected, sw.ToString());
+        }
+
+        [Theory]
+        [InlineData(15, "", "15")]
+        [InlineData(15, ",5", "   15")]
+        [InlineData(15, ",-5", "15   ")]
+        public void PaddingIsApplied(int n, string format, string expected)
+        {
+            var formatter = new MessageTemplateTextFormatter("{ThreadId" + format + "}", null);
+            var evt = Some.InformationEvent();
+            evt.AddOrUpdateProperty(new LogEventProperty("ThreadId", new ScalarValue(n)));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
     }
