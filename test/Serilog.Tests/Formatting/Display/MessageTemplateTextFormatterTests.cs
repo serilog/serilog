@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -345,6 +345,20 @@ namespace Serilog.Tests.Formatting.Display
 
             Assert.Contains(expectedFormattedDate, sw.ToString());
             Assert.Contains(expectedFormattedNumber, sw.ToString());
+        }
+
+        [Theory]
+        [InlineData(15, "", "15")]
+        [InlineData(15, ",5", "   15")]
+        [InlineData(15, ",-5", "15   ")]
+        public void PaddingIsApplied(int n, string format, string expected)
+        {
+            var formatter = new MessageTemplateTextFormatter("{ThreadId" + format + "}", null);
+            var evt = Some.InformationEvent();
+            evt.AddOrUpdateProperty(new LogEventProperty("ThreadId", new ScalarValue(n)));
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+            Assert.Equal(expected, sw.ToString());
         }
     }
 }
