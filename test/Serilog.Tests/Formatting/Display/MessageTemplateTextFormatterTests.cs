@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -245,7 +245,7 @@ namespace Serilog.Tests.Formatting.Display
         public void AppliesJsonFormattingToMessageStructuresWhenSpecified(string format, string expected)
         {
             var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", null);
-            var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new {Name = "World"}));
+            var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new { Name = "World" }));
             var sw = new StringWriter();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
@@ -275,6 +275,76 @@ namespace Serilog.Tests.Formatting.Display
 
             var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
             Assert.Equal(expected, sw.ToString());
+        }
+
+        [Theory]
+        [InlineData("", true)]
+        [InlineData(":lj", false)]
+        [InlineData(":jl", false)]
+        [InlineData(":j", false)]
+        [InlineData(":l", true)]
+        public void FormatProviderWithScalarProperties(string format, bool shouldUseCustomFormatter)
+        {
+            var frenchFormatProvider = new CultureInfo("fr-FR");
+            var defaultFormatProvider = CultureInfo.InvariantCulture;
+
+            var date = new DateTime(2018, 01, 01);
+            var number = 12.345;
+
+            var expectedFormattedDate = shouldUseCustomFormatter
+                ? date.ToString(frenchFormatProvider)
+                : date.ToString("O", defaultFormatProvider);
+            var expectedFormattedNumber = shouldUseCustomFormatter
+                ? number.ToString(frenchFormatProvider)
+                : number.ToString(defaultFormatProvider);
+
+            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", frenchFormatProvider);
+            var evt = DelegatingSink.GetLogEvent(l =>
+            {
+                l.Information("{MyDate}{MyNumber}", date, number);
+            });
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+
+            Assert.Contains(expectedFormattedDate, sw.ToString());
+            Assert.Contains(expectedFormattedNumber, sw.ToString());
+        }
+
+        [Theory]
+        [InlineData("", true)]
+        [InlineData(":lj", false)]
+        [InlineData(":jl", false)]
+        [InlineData(":j", false)]
+        [InlineData(":l", true)]
+        public void FormatProviderWithDestructuredProperties(string format, bool shouldUseCustomFormatter)
+        {
+            var frenchFormatProvider = new CultureInfo("fr-FR");
+            var defaultFormatProvider = CultureInfo.InvariantCulture;
+
+            var date = new DateTime(2018, 01, 01);
+            var number = 12.345;
+
+            var expectedFormattedDate = shouldUseCustomFormatter
+                ? date.ToString(frenchFormatProvider)
+                : date.ToString("O", defaultFormatProvider);
+            var expectedFormattedNumber = shouldUseCustomFormatter
+                ? number.ToString(frenchFormatProvider)
+                : number.ToString(defaultFormatProvider);
+
+            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", frenchFormatProvider);
+            var evt = DelegatingSink.GetLogEvent(l =>
+            {
+                l.Information("{@Item}", new
+                {
+                    MyDate = date,
+                    MyNumber = number
+                });
+            });
+            var sw = new StringWriter();
+            formatter.Format(evt, sw);
+
+            Assert.Contains(expectedFormattedDate, sw.ToString());
+            Assert.Contains(expectedFormattedNumber, sw.ToString());
         }
 
         [Theory]
