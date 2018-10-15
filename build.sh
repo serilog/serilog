@@ -14,6 +14,5 @@ for path in test/*.Tests/*.csproj; do
 done
 
 for path in test/*.PerformanceTests/*.PerformanceTests.csproj; do
-    dotnet build -f netcoreapp1.1 -c Release ${path}
-    # dotnet test -f netcoreapp1.1 -c Release ${path}
+    dotnet build -f netcoreapp2.0  -c Release ${path}
 done
