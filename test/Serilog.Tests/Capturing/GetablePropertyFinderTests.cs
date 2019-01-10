@@ -1,8 +1,5 @@
 ﻿using Serilog.Capturing;
-using System;
 using Xunit;
-using System.Reflection;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Serilog.Tests.Capturing
@@ -45,7 +42,8 @@ namespace Serilog.Tests.Capturing
         }
 
         [Fact]
-        public void GetPropertiesRecursiveBaseTypeNullYieldBreak()
+        // https://github.com/serilog/serilog/issues/1235
+        public void GetPropertiesRecursiveBaseTypeSucceedsOnWcfProxyType()
         {
             var remoteAddress = new System.ServiceModel.EndpointAddress("http://localhost");
             var binding = new System.ServiceModel.BasicHttpBinding();
@@ -54,6 +52,7 @@ namespace Serilog.Tests.Capturing
             var channel = myFactory.CreateChannel();
 
             var result = channel.GetType().GetPropertiesRecursive().ToList();
+            Assert.NotEmpty(result);
         }
 
         [System.ServiceModel.ServiceContract]
