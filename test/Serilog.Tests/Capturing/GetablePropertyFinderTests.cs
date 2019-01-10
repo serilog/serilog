@@ -51,8 +51,7 @@ namespace Serilog.Tests.Capturing
             var myFactory = new System.ServiceModel.ChannelFactory<IMyChannel>(binding, remoteAddress);
             var channel = myFactory.CreateChannel();
 
-            var result = channel.GetType().GetPropertiesRecursive().ToList();
-            Assert.NotEmpty(result);
+            var _ = channel.GetType().GetPropertiesRecursive().ToList();
         }
 
         [System.ServiceModel.ServiceContract]
