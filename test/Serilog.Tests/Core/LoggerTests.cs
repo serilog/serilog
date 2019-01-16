@@ -133,5 +133,15 @@ namespace Serilog.Tests.Core
             var secondCall = Logger.None;
             Assert.Equal(firstCall, secondCall);
         }
-	}
+
+        [Fact]
+        public void TheNoneLoggerIsSingleton()
+        {
+            lock (new object())
+            {
+                Log.CloseAndFlush();
+                Assert.Same(Log.Logger, Logger.None);
+            }
+        }
+    }
 }

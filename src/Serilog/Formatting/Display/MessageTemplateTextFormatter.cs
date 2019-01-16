@@ -116,7 +116,7 @@ namespace Serilog.Formatting.Display
                         }
                         else
                         {
-                            propertyValue.Render(output, pt.Format, _formatProvider);
+                            propertyValue.Render(writer, pt.Format, _formatProvider);
                         }
                     }
 

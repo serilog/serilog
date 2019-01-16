@@ -23,13 +23,6 @@ namespace Serilog.Settings.KeyValuePairs
 {
     static class CallableConfigurationMethodFinder
     {
-        internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
-        {
-            return loggerEnrichmentConfiguration.FromLogContext();
-        }
-
-        static readonly MethodInfo SurrogateFromLogContextConfigurationMethod = typeof(CallableConfigurationMethodFinder).GetTypeInfo().DeclaredMethods.Single(m => m.Name == nameof(FromLogContext));
-
         internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
         {
             var methods = configurationAssemblies
@@ -41,10 +34,30 @@ namespace Serilog.Settings.KeyValuePairs
                 .Where(m => m.GetParameters()[0].ParameterType == configType)
                 .ToList();
 
-            // Unlike the other configuration methods, FromLogContext is an instance method rather than an extension. This
-            // hack ensures we find it.
+            // some configuration methods are not extension methods. They are added manually
+            // so they can be discovered
+
+            // WriteTo.Sink(params ILogEventSink[]) is not an extension method
+            // and we want to expose WriteTo.Sink(ILogEventSink sink) to the config system
+            if (configType == typeof(LoggerSinkConfiguration))
+                methods.AddRange(SurrogateConfigurationMethods.WriteTo);
+
+            // AuditTo.Sink(params ILogEventSink[]) is not an extension method
+            // and we want to expose WriteTo.Sink(ILogEventSink sink) to the config system
+            if (configType == typeof(LoggerAuditSinkConfiguration))
+                methods.AddRange(SurrogateConfigurationMethods.AuditTo);
+
+            // FromLogContext is an instance method rather than an extension. 
             if (configType == typeof(LoggerEnrichmentConfiguration))
-                methods.Add(SurrogateFromLogContextConfigurationMethod);
+                methods.AddRange(SurrogateConfigurationMethods.Enrich);
+
+            // Some of the useful Destructure configuration methods are defined as methods rather than extension methods
+            if (configType == typeof(LoggerDestructuringConfiguration))
+                methods.AddRange(SurrogateConfigurationMethods.Destructure);
+
+            // Some of the useful Filter configuration methods are defined as methods rather than extension methods
+            if (configType == typeof(LoggerFilterConfiguration))
+                methods.AddRange(SurrogateConfigurationMethods.Filter);
 
             return methods;
         }

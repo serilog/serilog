@@ -30,7 +30,8 @@ namespace Serilog.Settings.KeyValuePairs
         static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new Dictionary<Type, Func<string, object>>
             {
                 { typeof(Uri), s => new Uri(s) },
-                { typeof(TimeSpan), s => TimeSpan.Parse(s) }
+                { typeof(TimeSpan), s => TimeSpan.Parse(s) },
+                { typeof(Type), s => Type.GetType(s, throwOnError:true) },
             };
 
         public static object ConvertToType(string value, Type toType)

@@ -933,7 +933,7 @@ namespace Serilog.Tests
             }
 
             if (loggerType == typeof(SilentLogger))
-                return new SilentLogger();
+                return SilentLogger.Instance;
 
             throw new ArgumentException($"Logger Type of {loggerType} is not supported");
         }
