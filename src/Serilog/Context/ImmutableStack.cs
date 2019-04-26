@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 // General-purpose type; not all features are used here.
@@ -38,19 +39,19 @@ namespace Serilog.Context
             _top = top;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public Enumerator GetEnumerator()
         {
-            var next = this;
-            while (!next.IsEmpty)
-            {
-                yield return next.Top;
-                next = next._under;
-            }
+            return new Enumerator(this);
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            return GetEnumerator();
+            return new Enumerator(this);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return new Enumerator(this);
         }
 
         public int Count { get; }
@@ -63,5 +64,41 @@ namespace Serilog.Context
 
         public T Top => _top;
 
+        internal struct Enumerator : IEnumerator<T>
+        {
+            readonly ImmutableStack<T> _stack;
+            ImmutableStack<T> _top;
+            T _current;
+
+            public Enumerator(ImmutableStack<T> stack)
+            {
+                _stack = stack;
+                _top = stack;
+                _current = default(T);
+            }
+
+            public bool MoveNext()
+            {
+                if (_top.IsEmpty)
+                    return false;
+                _current = _top.Top;
+                _top = _top._under;
+                return true;
+            }
+
+            public void Reset()
+            {
+                _top = _stack;
+                _current = default(T);
+            }
+
+            public T Current => _current;
+
+            object IEnumerator.Current => _current;
+
+            public void Dispose()
+            {
+            }
+        }
     }
 }
