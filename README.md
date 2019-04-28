@@ -102,6 +102,7 @@ Serilog has an active and helpful community who are happy to help point you in t
  * Our [issue tracker](https://github.com/serilog/serilog/issues) here on GitHub
  * [Gitter chat](https://gitter.im/serilog/serilog)
  * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
+ * [Serilog-related courses on Pluralsight](https://app.pluralsight.com/search/?q=serilog)
 
 ### Contributing
 
