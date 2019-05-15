@@ -150,8 +150,7 @@ namespace Serilog.Core
             var levelSwitch = _levelSwitch;
             if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
             {
-                var context = value as string;
-                if (context != null)
+                if (value is string context)
                     _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
             }
 

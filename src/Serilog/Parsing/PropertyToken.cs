@@ -142,8 +142,7 @@ namespace Serilog.Parsing
         /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
         public override bool Equals(object obj)
         {
-            var pt = obj as PropertyToken;
-            return pt != null &&
+            return obj is PropertyToken pt &&
                 pt.Destructuring == Destructuring &&
                 pt.Format == Format &&
                 pt.PropertyName == PropertyName &&

@@ -97,8 +97,7 @@ namespace Serilog.Events
             var result = new List<TResult>(tokens.Length / 2);
             for (var i = 0; i < tokens.Length; i++)
             {
-                var token = tokens[i] as TResult;
-                if (token != null)
+                if (tokens[i] is TResult token)
                 {
                     result.Add(token);
                 }

@@ -387,8 +387,7 @@ namespace Serilog.Formatting.Json
         {
             if (quote) output.Write('"');
 
-            var fmt = number as IFormattable;
-            if (fmt != null)
+            if (number is IFormattable fmt)
                 output.Write(fmt.ToString(null, CultureInfo.InvariantCulture));
             else
                 output.Write(number.ToString());

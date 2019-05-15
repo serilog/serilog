@@ -38,8 +38,7 @@ namespace Serilog.Formatting.Display.Obsolete
 
         public override bool Equals(object obj)
         {
-            var sv = obj as LiteralStringValue;
-            return sv != null && Equals(_value, sv._value);
+            return obj is LiteralStringValue sv && Equals(_value, sv._value);
         }
 
         public override int GetHashCode()

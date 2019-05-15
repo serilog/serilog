@@ -166,8 +166,7 @@ namespace Serilog.Formatting.Json
             // numeric (a handful) or an object (two comparisons) the real-world performance of the code
             // as written is as fast or faster.
 
-            var str = value as string;
-            if (str != null)
+            if (value is string str)
             {
                 FormatStringValue(str, output);
                 return;
