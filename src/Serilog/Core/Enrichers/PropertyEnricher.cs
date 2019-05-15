@@ -18,7 +18,7 @@ using Serilog.Events;
 namespace Serilog.Core.Enrichers
 {
     /// <summary>
-    /// Adds a new property encricher to the log event.
+    /// Adds a new property enricher to the log event.
     /// </summary>
     public class PropertyEnricher : ILogEventEnricher
     {

@@ -163,7 +163,7 @@ namespace Serilog.Formatting.Json
             // Although the linear switch-on-type has apparently worse algorithmic performance than the O(1)
             // dictionary lookup alternative, in practice, it's much to make a few equality comparisons
             // than the hash/bucket dictionary lookup, and since most data will be string (one comparison),
-            // numeric (a handful) or an object (two comparsions) the real-world performance of the code
+            // numeric (a handful) or an object (two comparisons) the real-world performance of the code
             // as written is as fast or faster.
 
             var str = value as string;

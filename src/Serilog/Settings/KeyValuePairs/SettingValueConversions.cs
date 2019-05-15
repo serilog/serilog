@@ -22,7 +22,7 @@ namespace Serilog.Settings.KeyValuePairs
 {
     class SettingValueConversions
     {
-        // should match "The.NameSpace.TypeName::MemberName" optionnally followed by
+        // should match "The.NameSpace.TypeName::MemberName" optionally followed by
         // usual assembly qualifiers like : 
         // ", MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
         static Regex StaticMemberAccessorRegex = new Regex("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
