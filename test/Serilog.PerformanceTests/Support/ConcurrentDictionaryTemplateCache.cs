@@ -27,8 +27,7 @@ namespace Serilog.PerformanceTests.Support
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);
 
-            MessageTemplate result;
-            if (_templates.TryGetValue(messageTemplate, out result))
+            if (_templates.TryGetValue(messageTemplate, out MessageTemplate result))
                 return result;
 
             result = _innerParser.Parse(messageTemplate);

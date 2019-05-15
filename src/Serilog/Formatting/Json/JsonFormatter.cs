@@ -374,8 +374,7 @@ namespace Serilog.Formatting.Json
                 return;
             }
 
-            Action<object, bool, TextWriter> writer;
-            if (_literalWriters.TryGetValue(value.GetType(), out writer))
+            if (_literalWriters.TryGetValue(value.GetType(), out Action<object, bool, TextWriter> writer))
             {
                 writer(value, forceQuotation, output);
                 return;

@@ -103,8 +103,7 @@ namespace Serilog.Tests
 
             var level = LogEventLevel.Information;
 
-            CollectingSink sink;
-            var logger = GetLogger(loggerType, out sink);
+            var logger = GetLogger(loggerType, out CollectingSink sink);
 
             InvokeMethod(writeMethod, logger, new object[] { Some.LogEvent(DateTimeOffset.Now, level) });
 
@@ -768,10 +767,7 @@ namespace Serilog.Tests
 
         static void InvokeConventionMethodAndTest(MethodInfo method, Type[] typeArgs, object[] parameters)
         {
-            CollectingSink sink;
-            LogEventLevel level;
-
-            InvokeConventionMethod(method, typeArgs, parameters, out level, out sink);
+            InvokeConventionMethod(method, typeArgs, parameters, out LogEventLevel level, out CollectingSink sink);
 
             EvaluateSingleResult(level, sink);
         }

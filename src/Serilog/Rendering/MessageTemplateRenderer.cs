@@ -64,8 +64,7 @@ namespace Serilog.Rendering
 
         public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider, bool isLiteral, bool isJson)
         {
-            LogEventPropertyValue propertyValue;
-            if (!properties.TryGetValue(pt.PropertyName, out propertyValue))
+            if (!properties.TryGetValue(pt.PropertyName, out LogEventPropertyValue propertyValue))
             {
                 output.Write(pt.RawText);
                 return;
