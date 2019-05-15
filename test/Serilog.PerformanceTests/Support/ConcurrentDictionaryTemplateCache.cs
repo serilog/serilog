@@ -16,8 +16,7 @@ namespace Serilog.PerformanceTests.Support
 
         public ConcurrentDictionaryMessageTemplateCache(IMessageTemplateParser innerParser)
         {
-            if (innerParser == null) throw new ArgumentNullException(nameof(innerParser));
-            _innerParser = innerParser;
+            _innerParser = innerParser ?? throw new ArgumentNullException(nameof(innerParser));
         }
 
         public MessageTemplate Parse(string messageTemplate)

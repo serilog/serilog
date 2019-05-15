@@ -31,13 +31,10 @@ namespace Serilog.Configuration
         internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, 
                                                  Action<LoggingLevelSwitch> setLevelSwitch, Action<string, LoggingLevelSwitch> addOverride)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            if (setMinimum == null) throw new ArgumentNullException(nameof(setMinimum));
-            if (addOverride == null) throw new ArgumentNullException(nameof(addOverride));
-            _loggerConfiguration = loggerConfiguration;
-            _setMinimum = setMinimum;
+            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+            _setMinimum = setMinimum ?? throw new ArgumentNullException(nameof(setMinimum));
             _setLevelSwitch = setLevelSwitch;
-            _addOverride = addOverride;
+            _addOverride = addOverride ?? throw new ArgumentNullException(nameof(addOverride));
         }
 
         /// <summary>

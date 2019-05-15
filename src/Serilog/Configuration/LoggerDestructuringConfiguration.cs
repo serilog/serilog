@@ -39,18 +39,12 @@ namespace Serilog.Configuration
             Action<int> setMaximumStringLength,
             Action<int> setMaximumCollectionCount)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            if (addScalar == null) throw new ArgumentNullException(nameof(addScalar));
-            if (addPolicy == null) throw new ArgumentNullException(nameof(addPolicy));
-            if (setMaximumDepth == null) throw new ArgumentNullException(nameof(setMaximumDepth));
-            if (setMaximumStringLength == null) throw new ArgumentNullException(nameof(setMaximumStringLength));
-            if (setMaximumCollectionCount == null) throw new ArgumentNullException(nameof(setMaximumCollectionCount));
-            _loggerConfiguration = loggerConfiguration;
-            _addScalar = addScalar;
-            _addPolicy = addPolicy;
-            _setMaximumDepth = setMaximumDepth;
-            _setMaximumStringLength = setMaximumStringLength;
-            _setMaximumCollectionCount = setMaximumCollectionCount;
+            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+            _addScalar = addScalar ?? throw new ArgumentNullException(nameof(addScalar));
+            _addPolicy = addPolicy ?? throw new ArgumentNullException(nameof(addPolicy));
+            _setMaximumDepth = setMaximumDepth ?? throw new ArgumentNullException(nameof(setMaximumDepth));
+            _setMaximumStringLength = setMaximumStringLength ?? throw new ArgumentNullException(nameof(setMaximumStringLength));
+            _setMaximumCollectionCount = setMaximumCollectionCount ?? throw new ArgumentNullException(nameof(setMaximumCollectionCount));
         }
 
         /// <summary>

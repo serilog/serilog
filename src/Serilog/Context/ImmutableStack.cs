@@ -33,8 +33,7 @@ namespace Serilog.Context
 
         ImmutableStack(ImmutableStack<T> under, T top)
         {
-            if (under == null) throw new ArgumentNullException(nameof(under));
-            _under = under;
+            _under = under ?? throw new ArgumentNullException(nameof(under));
             Count = under.Count + 1;
             _top = top;
         }

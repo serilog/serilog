@@ -31,10 +31,8 @@ namespace Serilog.Configuration
             LoggerConfiguration loggerConfiguration,
             Action<ILogEventEnricher> addEnricher)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            if (addEnricher == null) throw new ArgumentNullException(nameof(addEnricher));
-            _loggerConfiguration = loggerConfiguration;
-            _addEnricher = addEnricher;
+            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+            _addEnricher = addEnricher ?? throw new ArgumentNullException(nameof(addEnricher));
         }
 
         /// <summary>
