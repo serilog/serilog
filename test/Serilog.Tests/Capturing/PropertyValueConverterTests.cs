@@ -185,7 +185,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void ByteArraysAreConvertedToStrings()
         {
-            var bytes = Enumerable.Range(0, 10).Cast<byte>().ToArray();
+            var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (string)pv.LiteralValue();
             Assert.Equal("00010203040506070809", lv);
@@ -194,7 +194,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void ByteArraysLargerThan1kAreLimitedAndConvertedToStrings()
         {
-            var bytes = Enumerable.Range(0, 1025).Cast<byte>().ToArray();
+            var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
             var lv = (string)pv.LiteralValue();
             Assert.EndsWith("(1025 bytes)", lv);
