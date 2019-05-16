@@ -181,17 +181,17 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-				if (value is double)
-				{
-					FormatDoubleValue((double)value, output);
-					return;
-				}
+                if (value is double)
+                {
+                    FormatDoubleValue((double)value, output);
+                    return;
+                }
 
-				if (value is float)
-				{
-					FormatFloatValue((float)value, output);
-					return;
-				}
+                if (value is float)
+                {
+                    FormatFloatValue((float)value, output);
+                    return;
+                }
 
                 if (value is bool)
                 {
@@ -226,27 +226,27 @@ namespace Serilog.Formatting.Json
             output.Write(value ? "true" : "false");
         }
 
-		static void FormatFloatValue(float value, TextWriter output)
-		{
-			if (float.IsNaN(value) || float.IsInfinity(value))
-			{
-				FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
-				return;
-			}
+        static void FormatFloatValue(float value, TextWriter output)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value))
+            {
+                FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
+                return;
+            }
 
-			output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-		}
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+        }
 
-		static void FormatDoubleValue(double value, TextWriter output)
-		{
-			if (double.IsNaN(value) || double.IsInfinity(value))
-			{
-				FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
-				return;
-			}
+        static void FormatDoubleValue(double value, TextWriter output)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
+                return;
+            }
 
-			output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-		}
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+        }
 
         static void FormatExactNumericValue(IFormattable value, TextWriter output)
         {

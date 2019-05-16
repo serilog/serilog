@@ -48,11 +48,8 @@ namespace Serilog
         /// <exception cref="ArgumentNullException"></exception>
         public static ILogger Logger
         {
-            get { return _logger; }
-            set
-            {
-                _logger = value ?? throw new ArgumentNullException(nameof(value));
-            }
+            get => _logger;
+            set => _logger = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>
@@ -60,7 +57,7 @@ namespace Serilog
         /// </summary>
         public static void CloseAndFlush()
         {
-            ILogger logger = Interlocked.Exchange(ref _logger, SilentLogger.Instance);
+            var logger = Interlocked.Exchange(ref _logger, SilentLogger.Instance);
 
             (logger as IDisposable)?.Dispose();
         }
@@ -100,10 +97,7 @@ namespace Serilog
         /// </summary>
         /// <typeparam name="TSource">Type generating log messages in the context.</typeparam>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext<TSource>()
-        {
-            return Logger.ForContext<TSource>();
-        }
+        public static ILogger ForContext<TSource>() => Logger.ForContext<TSource>();
 
         /// <summary>
         /// Create a logger that marks log events as being from the specified
@@ -111,10 +105,7 @@ namespace Serilog
         /// </summary>
         /// <param name="source">Type generating log messages in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(Type source)
-        {
-            return Logger.ForContext(source);
-        }
+        public static ILogger ForContext(Type source) => Logger.ForContext(source);
 
         /// <summary>
         /// Write an event to the log.
@@ -260,10 +251,7 @@ namespace Serilog
         /// </summary>
         /// <param name="level">Level to check.</param>
         /// <returns>True if the level is enabled; otherwise, false.</returns>
-        public static bool IsEnabled(LogEventLevel level)
-        {
-            return Logger.IsEnabled(level);
-        }
+        public static bool IsEnabled(LogEventLevel level) => Logger.IsEnabled(level);
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level.
@@ -738,7 +726,7 @@ namespace Serilog
         {
             Write(LogEventLevel.Warning, messageTemplate, propertyValue);
         }
-        
+
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Warning"/> level.
         /// </summary>

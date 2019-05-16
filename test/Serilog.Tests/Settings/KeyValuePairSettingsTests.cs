@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Serilog.Configuration;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Formatting;
+using Serilog.Settings.KeyValuePairs;
+using Serilog.Tests.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Xunit;
-using Serilog.Events;
-using Serilog.Settings.KeyValuePairs;
-using Serilog.Tests.Support;
 using TestDummies;
-using Serilog.Configuration;
-using Serilog.Core;
-using Serilog.Formatting;
 using TestDummies.Console;
 using TestDummies.Console.Themes;
+using Xunit;
 
 namespace Serilog.Tests.Settings
 {
@@ -53,7 +53,7 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    {"enrich:with-property:App", "Test"}
+                    { "enrich:with-property:App", "Test" }
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
@@ -150,7 +150,6 @@ namespace Serilog.Tests.Settings
         public void TestMinimumLevelOverrides()
         {
             var settings = new Dictionary<string, string>
-
             {
                 ["minimum-level:override:System"] = "Warning",
             };
@@ -302,7 +301,6 @@ namespace Serilog.Tests.Settings
             Assert.Contains("level-switch:", ex.Message);
         }
 
-
         [Fact]
         public void LoggingLevelSwitchCanBeUsedForMinimumLevelOverrides()
         {
@@ -334,7 +332,6 @@ namespace Serilog.Tests.Settings
 
             systemLogger.Write(Some.WarningEvent());
             Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
-
 
             evt = null;
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;

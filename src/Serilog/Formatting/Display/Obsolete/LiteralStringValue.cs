@@ -41,9 +41,6 @@ namespace Serilog.Formatting.Display.Obsolete
             return obj is LiteralStringValue sv && Equals(_value, sv._value);
         }
 
-        public override int GetHashCode()
-        {
-            return _value.GetHashCode();
-        }
+        public override int GetHashCode() => _value.GetHashCode();
     }
 }

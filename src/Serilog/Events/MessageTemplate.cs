@@ -42,7 +42,7 @@ namespace Serilog.Events
         /// <param name="tokens">The text and property tokens defining the template.</param>
         public MessageTemplate(IEnumerable<MessageTemplateToken> tokens)
             // ReSharper disable PossibleMultipleEnumeration
-            : this(string.Join("", tokens), tokens)
+            : this(string.Concat(tokens), tokens)
             // ReSharper enable PossibleMultipleEnumeration
         {
         }
@@ -89,7 +89,7 @@ namespace Serilog.Events
         /// Similar to <see cref="Enumerable.OfType{TResult}"/>, but faster.
         /// </summary>
         static TResult[] GetElementsOfTypeToArray<TResult>(MessageTemplateToken[] tokens)
-            where TResult: class
+            where TResult : class
         {
             var result = new List<TResult>(tokens.Length / 2);
             for (var i = 0; i < tokens.Length; i++)
@@ -111,10 +111,7 @@ namespace Serilog.Events
         /// Render the template as a string.
         /// </summary>
         /// <returns>The string representation of the template.</returns>
-        public override string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
 
         /// <summary>
         /// The tokens parsed from the template.

@@ -66,10 +66,7 @@ namespace Serilog.Configuration
         /// </summary>
         /// <typeparam name="TScalar">Type to treat as scalar.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration AsScalar<TScalar>()
-        {
-            return AsScalar(typeof(TScalar));
-        }
+        public LoggerConfiguration AsScalar<TScalar>() => AsScalar(typeof(TScalar));
 
         /// <summary>
         /// When destructuring objects, transform instances with the provided policies.
@@ -156,7 +153,7 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// When destructuring objects, string values can be restricted to specified length
-        /// thus avoiding bloating payload. Limit is applied to each value separately, 
+        /// thus avoiding bloating payload. Limit is applied to each value separately,
         /// sum of length of strings can exceed limit.
         /// </summary>
         /// <param name="maximumStringLength">The maximum string length.</param>
@@ -171,7 +168,7 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// When destructuring objects, collections be restricted to specified count
-        /// thus avoiding bloating payload. Limit is applied to each collection separately, 
+        /// thus avoiding bloating payload. Limit is applied to each collection separately,
         /// sum of length of collection can exceed limit.
         /// Applies limit to all <see cref="IEnumerable"/> including dictionaries.
         /// </summary>
@@ -185,4 +182,3 @@ namespace Serilog.Configuration
         }
     }
 }
-

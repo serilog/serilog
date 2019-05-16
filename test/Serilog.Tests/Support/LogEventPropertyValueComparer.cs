@@ -40,9 +40,6 @@ namespace Serilog.Tests.Support
             return false;
         }
 
-        public int GetHashCode(LogEventPropertyValue obj)
-        {
-            return 0;
-        }
+        public int GetHashCode(LogEventPropertyValue obj) => 0;
     }
 }

@@ -110,7 +110,7 @@ namespace Serilog.Capturing
             {
                 var property = template.NamedProperties[i];
                 var value = messageTemplateParameters[i];
-                result[i] = ConstructProperty(property, value); 
+                result[i] = ConstructProperty(property, value);
             }
 
             for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)

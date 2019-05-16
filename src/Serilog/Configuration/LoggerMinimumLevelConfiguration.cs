@@ -28,7 +28,7 @@ namespace Serilog.Configuration
         readonly Action<LoggingLevelSwitch> _setLevelSwitch;
         readonly Action<string, LoggingLevelSwitch> _addOverride;
 
-        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum, 
+        internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum,
                                                  Action<LoggingLevelSwitch> setLevelSwitch, Action<string, LoggingLevelSwitch> addOverride)
         {
             _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
@@ -52,7 +52,7 @@ namespace Serilog.Configuration
         /// Sets the minimum level to be dynamically controlled by the provided switch.
         /// </summary>
         /// <param name="levelSwitch">The switch.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>        
+        /// <returns>Configuration object allowing method chaining.</returns>
         // ReSharper disable once UnusedMethodReturnValue.Global
         public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
         {
@@ -66,59 +66,41 @@ namespace Serilog.Configuration
         /// a running block of code.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Verbose()
-        {
-            return Is(LogEventLevel.Verbose);
-        }
+        public LoggerConfiguration Verbose() => Is(LogEventLevel.Verbose);
 
         /// <summary>
         /// Internal system events that aren't necessarily
         /// observable from the outside.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Debug()
-        {
-            return Is(LogEventLevel.Debug);
-        }
+        public LoggerConfiguration Debug() => Is(LogEventLevel.Debug);
 
         /// <summary>
         /// The lifeblood of operational intelligence - things
         /// happen.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Information()
-        {
-            return Is(LogEventLevel.Information);
-        }
+        public LoggerConfiguration Information() => Is(LogEventLevel.Information);
 
         /// <summary>
         /// Service is degraded or endangered.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Warning()
-        {
-            return Is(LogEventLevel.Warning);
-        }
+        public LoggerConfiguration Warning() => Is(LogEventLevel.Warning);
 
         /// <summary>
         /// Functionality is unavailable, invariants are broken
         /// or data is lost.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Error()
-        {
-            return Is(LogEventLevel.Error);
-        }
+        public LoggerConfiguration Error() => Is(LogEventLevel.Error);
 
         /// <summary>
         /// If you have a pager, it goes off when one of these
         /// occurs.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        public LoggerConfiguration Fatal()
-        {
-            return Is(LogEventLevel.Fatal);
-        }
+        public LoggerConfiguration Fatal() => Is(LogEventLevel.Fatal);
 
         /// <summary>
         /// Override the minimum level for events from a specific namespace or type name.

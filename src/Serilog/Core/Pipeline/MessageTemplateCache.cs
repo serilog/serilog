@@ -57,7 +57,7 @@ namespace Serilog.Core.Pipeline
                 return result;
 #else
             MessageTemplate result;
-            lock(_templatesLock)
+            lock (_templatesLock)
                 if (_templates.TryGetValue(messageTemplate, out result))
                     return result;
 #endif

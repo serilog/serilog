@@ -39,7 +39,7 @@ namespace Serilog.Formatting.Display
             new []{ "v", "vb", "vrb", "verb", "verbo", "verbos", "verbose" },
             new []{ "d", "de", "dbg", "dbug", "debug" },
             new []{ "i", "in", "inf", "info", "infor", "inform", "informa", "informat", "informati", "informatio", "information" },
-            new []{ "w", "wn", "wrn", "warn", "warni", "warnin", "warning"  },
+            new []{ "w", "wn", "wrn", "warn", "warni", "warnin", "warning" },
             new []{ "e", "er", "err", "eror", "error" },
             new []{ "f", "fa", "ftl", "fatl", "fatal" }
         };
@@ -47,7 +47,7 @@ namespace Serilog.Formatting.Display
         static readonly string[][] _upperCaseLevelMap = {
             new []{ "V", "VB", "VRB", "VERB", "VERBO", "VERBOS", "VERBOSE" },
             new []{ "D", "DE", "DBG", "DBUG", "DEBUG" },
-            new []{ "I", "IN", "INF", "INFO", "INFOR", "INFORM", "INFORMA", "INFORMAT", "INFORMATI", "INFORMATIO", "INFORMATION"  },
+            new []{ "I", "IN", "INF", "INFO", "INFOR", "INFORM", "INFORMA", "INFORMAT", "INFORMATI", "INFORMATIO", "INFORMATION" },
             new []{ "W", "WN", "WRN", "WARN", "WARNI", "WARNIN", "WARNING" },
             new []{ "E", "ER", "ERR", "EROR", "ERROR" },
             new []{ "F", "FA", "FTL", "FATL", "FATAL" }
@@ -56,7 +56,7 @@ namespace Serilog.Formatting.Display
         public static string GetLevelMoniker(LogEventLevel value, string format = null)
         {
             var index = (int)value;
-            if (index < 0 || index > (int) LogEventLevel.Fatal)
+            if (index < 0 || index > (int)LogEventLevel.Fatal)
                 return Casing.Format(value.ToString(), format);
 
             if (format == null || format.Length != 2 && format.Length != 3)
@@ -82,9 +82,9 @@ namespace Serilog.Formatting.Display
                     return GetLevelMoniker(_upperCaseLevelMap, index, width);
                 case 't':
                     return GetLevelMoniker(_titleCaseLevelMap, index, width);
+                default:
+                    return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format);
             }
-
-            return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format);
         }
 
         static string GetLevelMoniker(string[][] caseLevelMap, int index, int width)

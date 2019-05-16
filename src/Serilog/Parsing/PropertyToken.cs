@@ -86,7 +86,7 @@ namespace Serilog.Parsing
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, false, false);
+            MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, isLiteral: false, isJson: false);
         }
 
         /// <summary>

@@ -184,10 +184,7 @@ namespace Serilog.Core
         /// </summary>
         /// <typeparam name="TSource">Type generating log messages in the context.</typeparam>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public ILogger ForContext<TSource>()
-        {
-            return ForContext(typeof(TSource));
-        }
+        public ILogger ForContext<TSource>() => ForContext(typeof(TSource));
 
         /// <summary>
         /// Write a log event with the specified level.
@@ -1370,7 +1367,7 @@ namespace Serilog.Core
         {
             _dispose?.Invoke();
         }
-        
+
         /// <summary>
         /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
         /// </summary>

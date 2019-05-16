@@ -76,10 +76,7 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override string ToString()
-        {
-            return String.Empty;
-        }
+        public override string ToString() => string.Empty;
 
         public override void Flush()
         {

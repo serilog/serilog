@@ -35,7 +35,6 @@ namespace Serilog.Configuration
             _addFilter = addFilter ?? throw new ArgumentNullException(nameof(addFilter));
         }
 
-
         /// <summary>
         /// Filter out log events from the stream based on the provided filter.
         /// </summary>
@@ -87,4 +86,3 @@ namespace Serilog.Configuration
         }
     }
 }
-

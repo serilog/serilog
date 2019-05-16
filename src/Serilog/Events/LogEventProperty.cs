@@ -53,9 +53,6 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="name">The name to check.</param>
         /// <returns>True if the name is valid; otherwise, false.</returns>
-        public static bool IsValidName(string name)
-        {
-            return !string.IsNullOrWhiteSpace(name);
-        }
+        public static bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name);
     }
 }

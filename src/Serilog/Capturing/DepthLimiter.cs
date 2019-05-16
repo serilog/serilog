@@ -27,7 +27,7 @@ namespace Serilog.Capturing
         {
             [ThreadStatic]
             static int _currentDepth;
-            
+
             readonly int _maximumDestructuringDepth;
             readonly PropertyValueConverter _propertyValueConverter;
 

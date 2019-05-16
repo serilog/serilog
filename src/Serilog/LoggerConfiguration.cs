@@ -73,7 +73,7 @@ namespace Serilog
         /// Not all sinks are compatible with transactional auditing requirements (many will use asynchronous
         /// batching to improve write throughput and latency). Sinks need to opt-in to auditing support by
         /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
-        /// method allows any sink class to be adapted for auditing. 
+        /// method allows any sink class to be adapted for auditing.
         /// </remarks>
         public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
 

@@ -18,8 +18,6 @@ using System.Linq;
 using Serilog.Events;
 using Serilog.Formatting.Display.Obsolete;
 
-#pragma warning disable 618
-
 namespace Serilog.Formatting.Display
 {
     /// <summary>

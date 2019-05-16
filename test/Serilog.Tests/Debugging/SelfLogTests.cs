@@ -9,7 +9,7 @@ namespace Serilog.Tests.Debugging
     {
         [ThreadStatic]
         static List<string> Messages;
-        
+
         [Fact]
         public void MessagesAreWrittenWhenOutputIsSet()
         {

@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using Serilog.Parsing;
+using System.Linq;
 using Xunit;
-using Serilog.Parsing;
 
 namespace Serilog.Tests.Parsing
 {
@@ -73,7 +73,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void AnIntegerPropertyNameIsParsedAsPositionalProperty()
         {
-            var parsed = (PropertyToken) Parse("{0}").Single();
+            var parsed = (PropertyToken)Parse("{0}").Single();
             Assert.Equal("0", parsed.PropertyName);
             Assert.True(parsed.IsPositional);
         }
@@ -81,7 +81,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void FormatsCanContainColons()
         {
-            var parsed = (PropertyToken) Parse("{Time:hh:mm}").Single();
+            var parsed = (PropertyToken)Parse("{Time:hh:mm}").Single();
             Assert.Equal("hh:mm", parsed.Format);
         }
 
@@ -162,7 +162,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void UnderscoresAreValidInPropertyNames()
         {
-            AssertParsedAs("{_123_Hello}", new PropertyToken("_123_Hello", "{_123_Hello}")); 
+            AssertParsedAs("{_123_Hello}", new PropertyToken("_123_Hello", "{_123_Hello}"));
         }
 
         [Fact]

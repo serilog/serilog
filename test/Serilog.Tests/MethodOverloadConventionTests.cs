@@ -1,7 +1,7 @@
 ﻿using Serilog.Core;
+using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Tests.Support;
-using Serilog.Core.Pipeline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -748,14 +748,16 @@ namespace Serilog.Tests
             {
                 level = LogEventLevel.Information;
 
-                var paramList = new List<object>() { level };
+                var paramList = new List<object> { level };
 
                 paramList.AddRange(parameters);
 
                 parameters = paramList.ToArray();
             }
             else
+            {
                 Assert.True(Enum.TryParse(method.Name, out level));
+            }
 
             InvokeMethod(method, logger, parameters, typeArgs);
         }
@@ -895,10 +897,7 @@ namespace Serilog.Tests
             Assert.Equal(level, evt.Level);
         }
 
-        static ILogger GetLogger(Type loggerType)
-        {
-            return GetLogger(loggerType, out _);
-        }
+        static ILogger GetLogger(Type loggerType) => GetLogger(loggerType, out _);
 
         static ILogger GetLogger(Type loggerType, out CollectingSink sink, LogEventLevel level = LogEventLevel.Verbose)
         {

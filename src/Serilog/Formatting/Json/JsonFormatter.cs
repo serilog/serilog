@@ -56,7 +56,7 @@ namespace Serilog.Formatting.Json
             string closingDelimiter = null,
             bool renderMessage = false,
             IFormatProvider formatProvider = null)
-            :this(false, closingDelimiter, renderMessage, formatProvider)
+            : this(false, closingDelimiter, renderMessage, formatProvider)
         {
         }
 
@@ -208,7 +208,7 @@ namespace Serilog.Formatting.Json
                     WriteJsonProperty("Format", format.Format, ref eldelim, output);
 
                     var sw = new StringWriter();
-                    MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, true, false);
+                    MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
                     WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
 
                     output.Write("}");
@@ -330,13 +330,13 @@ namespace Serilog.Formatting.Json
         {
             output.Write("{");
             var delim = "";
-            foreach (var e in elements)
+            foreach (var element in elements)
             {
                 output.Write(delim);
                 delim = ",";
-                WriteLiteral(e.Key, output, true);
+                WriteLiteral(element.Key, output, forceQuotation: true);
                 output.Write(":");
-                WriteLiteral(e.Value, output);
+                WriteLiteral(element.Value, output);
             }
             output.Write("}");
         }

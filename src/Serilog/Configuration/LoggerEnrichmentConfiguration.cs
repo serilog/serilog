@@ -72,7 +72,7 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="name">The name of the property to add.</param>
         /// <param name="value">The property value to add.</param>
-        /// <param name="destructureObjects">If true, objects of unknown type will be logged as structures; otherwise they will be converted using <see cref="Object.ToString"/>.</param>
+        /// <param name="destructureObjects">If true, objects of unknown type will be logged as structures; otherwise they will be converted using <see cref="object.ToString"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false)
         {
@@ -84,9 +84,6 @@ namespace Serilog.Configuration
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public LoggerConfiguration FromLogContext()
-        {
-            return With<LogContextEnricher>();
-        }
+        public LoggerConfiguration FromLogContext() => With<LogContextEnricher>();
     }
 }

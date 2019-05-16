@@ -51,7 +51,7 @@ namespace Serilog.Rendering
                 }
                 else
                 {
-                    var pt = (PropertyToken) token;
+                    var pt = (PropertyToken)token;
                     RenderPropertyToken(pt, properties, output, formatProvider, isLiteral, isJson);
                 }
             }

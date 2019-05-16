@@ -31,7 +31,8 @@ namespace Serilog.Parsing
         /// <param name="text">The text of the token.</param>
         /// <param name="startIndex">The token's start index in the template.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public TextToken(string text, int startIndex = -1) : base(startIndex)
+        public TextToken(string text, int startIndex = -1)
+            : base(startIndex)
         {
             Text = text ?? throw new ArgumentNullException(nameof(text));
         }

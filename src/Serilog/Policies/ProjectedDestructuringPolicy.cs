@@ -40,7 +40,7 @@ namespace Serilog.Policies
             }
 
             var projected = _projection(value);
-            result = propertyValueFactory.CreatePropertyValue(projected, true);
+            result = propertyValueFactory.CreatePropertyValue(projected, destructureObjects: true);
             return true;
         }
     }

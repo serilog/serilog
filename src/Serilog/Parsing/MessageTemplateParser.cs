@@ -212,10 +212,7 @@ namespace Serilog.Parsing
                 c == ':';
         }
 
-        static bool IsValidInPropertyName(char c)
-        {
-            return char.IsLetterOrDigit(c) || c == '_';
-        }
+        static bool IsValidInPropertyName(char c) => char.IsLetterOrDigit(c) || c == '_';
 
         static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
         {

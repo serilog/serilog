@@ -232,7 +232,6 @@ namespace Serilog.Settings.KeyValuePairs
 
                 if (target != null)
                 {
-
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
                                 select directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
@@ -272,7 +271,9 @@ namespace Serilog.Settings.KeyValuePairs
         internal class ConfigurationMethodCall
         {
             public string MethodName { get; set; }
+
             public string ArgumentName { get; set; }
+
             public string Value { get; set; }
         }
     }
