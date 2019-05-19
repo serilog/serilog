@@ -55,7 +55,7 @@ namespace Serilog.Events
 
             output.Write('[');
             var allButLast = _elements.Length - 1;
-            for (var i = 0; i < allButLast; ++i )
+            for (var i = 0; i < allButLast; ++i)
             {
                 _elements[i].Render(output, format, formatProvider);
                 output.Write(", ");

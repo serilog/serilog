@@ -51,7 +51,7 @@ namespace Serilog.Capturing
         readonly bool _propagateExceptions;
 
         public PropertyValueConverter(
-            int maximumDestructuringDepth, 
+            int maximumDestructuringDepth,
             int maximumStringLength,
             int maximumCollectionCount,
             IEnumerable<Type> additionalScalarTypes,
@@ -63,7 +63,7 @@ namespace Serilog.Capturing
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
             if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength));
             if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));
-            
+
             _propagateExceptions = propagateExceptions;
             _maximumStringLength = maximumStringLength;
             _maximumCollectionCount = maximumCollectionCount;
@@ -76,7 +76,7 @@ namespace Serilog.Capturing
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
-                .Concat(new IDestructuringPolicy []
+                .Concat(new IDestructuringPolicy[]
                 {
                     new DelegateDestructuringPolicy(),
                     new ReflectionTypesScalarDestructuringPolicy()
@@ -169,7 +169,7 @@ namespace Serilog.Capturing
                 return compilerGeneratedResult;
 
             return new ScalarValue(value.ToString());
-        }        
+        }
 
         bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
         {
@@ -364,11 +364,10 @@ namespace Serilog.Capturing
             var typeInfo = type.GetTypeInfo();
             var typeName = type.Name;
 
-            //C# Anonymous types always start with "<>" and VB's start with "VB$"
+            // C# Anonymous types always start with "<>" and VB's start with "VB$"
             return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
                 && (typeName[0] == '<'
                     || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
     }
 }
-

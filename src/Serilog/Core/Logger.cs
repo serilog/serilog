@@ -150,8 +150,7 @@ namespace Serilog.Core
             var levelSwitch = _levelSwitch;
             if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
             {
-                var context = value as string;
-                if (context != null)
+                if (value is string context)
                     _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
             }
 
@@ -185,10 +184,7 @@ namespace Serilog.Core
         /// </summary>
         /// <typeparam name="TSource">Type generating log messages in the context.</typeparam>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public ILogger ForContext<TSource>()
-        {
-            return ForContext(typeof(TSource));
-        }
+        public ILogger ForContext<TSource>() => ForContext(typeof(TSource));
 
         /// <summary>
         /// Write a log event with the specified level.
@@ -371,9 +367,7 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            MessageTemplate parsedTemplate;
-            IEnumerable<LogEventProperty> boundProperties;
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties);
 
             var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
@@ -1373,7 +1367,7 @@ namespace Serilog.Core
         {
             _dispose?.Invoke();
         }
-        
+
         /// <summary>
         /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
         /// </summary>

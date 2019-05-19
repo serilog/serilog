@@ -1,5 +1,5 @@
-﻿using Serilog.Events;
-using Serilog.Core;
+﻿using Serilog.Core;
+using Serilog.Events;
 
 namespace Serilog.PerformanceTests.Support
 {

@@ -38,14 +38,14 @@ namespace Serilog.PerformanceTests
         public void Off()
         {
             _off.Write(_event);
-        }  
-        
+        }
+
         [Benchmark]
         public void LevelSwitchOff()
         {
             _levelSwitchOff.Write(_event);
-        } 
-                
+        }
+
         [Benchmark]
         public void MinimumLevelOn()
         {
@@ -59,4 +59,3 @@ namespace Serilog.PerformanceTests
         }
     }
 }
-  

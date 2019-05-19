@@ -733,7 +733,6 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Error(Exception exception, string messageTemplate);
 
-
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Error"/> level and associated exception.
         /// </summary>

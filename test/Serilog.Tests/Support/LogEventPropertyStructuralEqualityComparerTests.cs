@@ -43,11 +43,11 @@ namespace Serilog.Tests.Support
 
             // Not equal due to having a different property name (but otherwise structurally equal)
             Assert.False(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringDoubleB));
-            
+
             // Structurally not equal because element 3 has a different value
             Assert.False(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringDoubleAStructurallyNotEqual));
 
-            // Strucrtually not equal because element 3 has a different underlying value and type
+            // Structurally not equal because element 3 has a different underlying value and type
             Assert.False(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringFloatA));
         }
 

@@ -67,8 +67,7 @@ namespace Serilog.Capturing
             var result = new LogEventProperty[messageTemplateParameters.Length];
             foreach (var property in positionalProperties)
             {
-                int position;
-                if (property.TryGetPositionalValue(out position))
+                if (property.TryGetPositionalValue(out int position))
                 {
                     if (position < 0 || position >= messageTemplateParameters.Length)
                         SelfLog.WriteLine("Unassigned positional value {0} in: {1}", position, template);
@@ -111,7 +110,7 @@ namespace Serilog.Capturing
             {
                 var property = template.NamedProperties[i];
                 var value = messageTemplateParameters[i];
-                result[i] = ConstructProperty(property, value); 
+                result[i] = ConstructProperty(property, value);
             }
 
             for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)

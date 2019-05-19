@@ -163,11 +163,10 @@ namespace Serilog.Formatting.Json
             // Although the linear switch-on-type has apparently worse algorithmic performance than the O(1)
             // dictionary lookup alternative, in practice, it's much to make a few equality comparisons
             // than the hash/bucket dictionary lookup, and since most data will be string (one comparison),
-            // numeric (a handful) or an object (two comparsions) the real-world performance of the code
+            // numeric (a handful) or an object (two comparisons) the real-world performance of the code
             // as written is as fast or faster.
 
-            var str = value as string;
-            if (str != null)
+            if (value is string str)
             {
                 FormatStringValue(str, output);
                 return;
@@ -182,17 +181,17 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-				if (value is double)
-				{
-					FormatDoubleValue((double)value, output);
-					return;
-				}
+                if (value is double)
+                {
+                    FormatDoubleValue((double)value, output);
+                    return;
+                }
 
-				if (value is float)
-				{
-					FormatFloatValue((float)value, output);
-					return;
-				}
+                if (value is float)
+                {
+                    FormatFloatValue((float)value, output);
+                    return;
+                }
 
                 if (value is bool)
                 {
@@ -227,27 +226,27 @@ namespace Serilog.Formatting.Json
             output.Write(value ? "true" : "false");
         }
 
-		static void FormatFloatValue(float value, TextWriter output)
-		{
-			if (float.IsNaN(value) || float.IsInfinity(value))
-			{
-				FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
-				return;
-			}
+        static void FormatFloatValue(float value, TextWriter output)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value))
+            {
+                FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
+                return;
+            }
 
-			output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-		}
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+        }
 
-		static void FormatDoubleValue(double value, TextWriter output)
-		{
-			if (double.IsNaN(value) || double.IsInfinity(value))
-			{
-				FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
-				return;
-			}
+        static void FormatDoubleValue(double value, TextWriter output)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
+                return;
+            }
 
-			output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-		}
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+        }
 
         static void FormatExactNumericValue(IFormattable value, TextWriter output)
         {
