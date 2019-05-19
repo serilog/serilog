@@ -1,11 +1,11 @@
+using Serilog.Events;
+using Serilog.Formatting.Display;
+using Serilog.Tests.Support;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Serilog.Events;
 using Xunit;
-using Serilog.Tests.Support;
-using Serilog.Formatting.Display;
 
 namespace Serilog.Tests.Formatting.Display
 {

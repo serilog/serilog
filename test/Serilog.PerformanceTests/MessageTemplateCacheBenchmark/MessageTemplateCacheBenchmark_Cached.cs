@@ -60,7 +60,8 @@ namespace Serilog.PerformanceTests
             Run(() => _concurrentCache);
         }
 
-        void Run<T>(Func<T> cacheFactory) where T : IMessageTemplateParser
+        void Run<T>(Func<T> cacheFactory)
+            where T : IMessageTemplateParser
         {
             var cache = cacheFactory();
             var iterations = Math.Min(10000, Items * 100);
@@ -68,7 +69,7 @@ namespace Serilog.PerformanceTests
             Parallel.For(
                 0,
                 iterations,
-                new ParallelOptions() { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
+                new ParallelOptions { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
                 idx => cache.Parse(_templateList[idx % Items]));
         }
     }

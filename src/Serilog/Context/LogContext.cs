@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using System;
 using System.ComponentModel;
 using Serilog.Core;
@@ -166,7 +165,7 @@ namespace Serilog.Context
         }
 
         /// <summary>
-        /// Remove all enrichers from <see cref="LogContext"/> for the current async scope. 
+        /// Remove all enrichers from <see cref="LogContext"/> for the current async scope.
         /// </summary>
         public static void Reset()
         {
@@ -238,7 +237,7 @@ namespace Serilog.Context
                 {
                     oldHandle.Dispose();
                 }
-                
+
                 CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
             }
         }
@@ -247,7 +246,8 @@ namespace Serilog.Context
         {
             static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
 
-            public DisposableObjectHandle(object o) : base(o)
+            public DisposableObjectHandle(object o)
+                : base(o)
             {
             }
 

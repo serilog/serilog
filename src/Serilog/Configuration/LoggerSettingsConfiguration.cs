@@ -27,8 +27,7 @@ namespace Serilog.Configuration
 
         internal LoggerSettingsConfiguration(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            _loggerConfiguration = loggerConfiguration;
+            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
         }
 
         /// <summary>

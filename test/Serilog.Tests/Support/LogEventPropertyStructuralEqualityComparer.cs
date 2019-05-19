@@ -23,9 +23,6 @@ namespace Serilog.Tests.Support
                    && _valueEqualityComparer.Equals(x.Value, y.Value);
         }
 
-        public int GetHashCode(LogEventProperty obj)
-        {
-            return 0;
-        }
+        public int GetHashCode(LogEventProperty obj) => 0;
     }
 }

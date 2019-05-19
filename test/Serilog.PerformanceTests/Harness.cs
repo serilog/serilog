@@ -1,4 +1,3 @@
-
 // Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +44,7 @@ namespace Serilog.PerformanceTests
         {
             BenchmarkRunner.Run<MessageTemplateParsingBenchmark>();
         }
-        
+
         [Fact]
         public void LevelControl()
         {

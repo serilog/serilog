@@ -34,7 +34,9 @@ namespace Serilog.Core
             }
 
             public string Context { get; }
+
             public string ContextPrefix { get; }
+
             public LoggingLevelSwitch LevelSwitch { get; }
         }
 

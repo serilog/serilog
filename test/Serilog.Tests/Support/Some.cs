@@ -13,35 +13,17 @@ namespace Serilog.Tests.Support
     {
         static int Counter;
 
-        public static int Int()
-        {
-            return Interlocked.Increment(ref Counter);
-        }
+        public static int Int() => Interlocked.Increment(ref Counter);
 
-        public static decimal Decimal()
-        {
-            return Int() + 0.123m;
-        }
+        public static decimal Decimal() => Int() + 0.123m;
 
-        public static string String(string tag = null)
-        {
-            return (tag ?? "") + "__" + Int();
-        }
+        public static string String(string tag = null) => (tag ?? "") + "__" + Int();
 
-        public static TimeSpan TimeSpan()
-        {
-            return System.TimeSpan.FromMinutes(Int());
-        }
+        public static TimeSpan TimeSpan() => System.TimeSpan.FromMinutes(Int());
 
-        public static DateTime Instant()
-        {
-            return new DateTime(2012, 10, 28) + TimeSpan();
-        }
+        public static DateTime Instant() => new DateTime(2012, 10, 28) + TimeSpan();
 
-        public static DateTimeOffset OffsetInstant()
-        {
-            return new DateTimeOffset(Instant());
-        }
+        public static DateTimeOffset OffsetInstant() => new DateTimeOffset(Instant());
 
         public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
         {
@@ -81,10 +63,7 @@ namespace Serilog.Tests.Support
             return Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".txt");
         }
 
-        public static string TempFilePath()
-        {
-            return Path.GetTempFileName();
-        }
+        public static string TempFilePath() => Path.GetTempFileName();
 
         public static string TempFolderPath()
         {

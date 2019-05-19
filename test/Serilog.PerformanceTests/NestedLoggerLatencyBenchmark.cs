@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
-using Serilog.PerformanceTests.Support;
 using Serilog.Events;
+using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
@@ -35,4 +35,3 @@ namespace Serilog.PerformanceTests
         }
     }
 }
-  

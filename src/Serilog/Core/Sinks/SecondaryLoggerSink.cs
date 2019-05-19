@@ -32,8 +32,7 @@ namespace Serilog.Core.Sinks
 
         public SecondaryLoggerSink(ILogger logger, bool attemptDispose = false)
         {
-            if (logger == null) throw new ArgumentNullException(nameof(logger));
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _attemptDispose = attemptDispose;
         }
 

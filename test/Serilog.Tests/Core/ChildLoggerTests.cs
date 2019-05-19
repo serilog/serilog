@@ -9,7 +9,6 @@ namespace Serilog.Tests.Core
 {
     public class ChildLoggerTests
     {
-
         public static IEnumerable<object[]> GetMinimumLevelInheritanceTestCases()
         {
             // Visualizing the pipeline from left to right ....
@@ -34,7 +33,7 @@ namespace Serilog.Tests.Core
             yield return T(Warning,     null, null, null, true);
             yield return T(Error,       null, null, null, true);
             yield return T(Fatal,       null, null, null, true);
-                                    
+
             // - cases where event level is high enough all along the pipeline
             //                  e       -->  --> -->  = OK
             yield return T(Verbose,     +0, +0, +0, true);
@@ -89,8 +88,8 @@ namespace Serilog.Tests.Core
                 .MinimumLevel.Is(rootMinimumLevel)
                 .WriteTo.Logger(lc => lc
                                 .MinimumLevel.Is(childMinimumLevel)
-                                .WriteTo.Sink(sink)
-                                , restrictedToMinimumLevel: sinkRestrictedToMinimumLevel)
+                                .WriteTo.Sink(sink),
+                                restrictedToMinimumLevel: sinkRestrictedToMinimumLevel)
                 .CreateLogger();
 
             logger.Write(Some.LogEvent(level: eventLevel));
@@ -238,7 +237,7 @@ namespace Serilog.Tests.Core
                 Assert.Null(evt);
             }
         }
-        
+
         [Theory]
         [MemberData(nameof(GetMinimumLevelOverrideInheritanceTestCases))]
         public void WriteToLoggerMinimumLevelOverrideInheritanceScenarios(

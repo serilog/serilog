@@ -49,7 +49,8 @@ namespace Serilog.PerformanceTests
             Run(() => new ConcurrentDictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance));
         }
 
-        void Run<T>(Func<T> cacheFactory) where T : IMessageTemplateParser
+        void Run<T>(Func<T> cacheFactory)
+            where T : IMessageTemplateParser
         {
             var cache = cacheFactory();
             var total = MaxCacheItems + OverflowCount;
@@ -57,7 +58,7 @@ namespace Serilog.PerformanceTests
             Parallel.For(
                 0,
                 _templateList.Count,
-                new ParallelOptions() { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
+                new ParallelOptions { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
                 idx => cache.Parse(_templateList[idx % total]));
         }
     }

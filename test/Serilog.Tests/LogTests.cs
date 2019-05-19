@@ -1,6 +1,6 @@
-﻿using Xunit;
-using Serilog.Core.Pipeline;
+﻿using Serilog.Core.Pipeline;
 using Serilog.Tests.Support;
+using Xunit;
 
 namespace Serilog.Tests
 {

@@ -1,4 +1,3 @@
-
 // Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,10 +26,10 @@ namespace Serilog.PerformanceTests
     {
         ILogger _log;
         Exception _exception;
-        
+
         [Setup]
         public void Setup()
-        { 
+        {
             _exception = new Exception("An Error");
             _log = new LoggerConfiguration()
                 .WriteTo.Sink(new NullSink())
@@ -47,4 +46,3 @@ namespace Serilog.PerformanceTests
         }
     }
 }
-  

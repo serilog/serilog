@@ -33,26 +33,16 @@ namespace Serilog.Context
 
         ImmutableStack(ImmutableStack<T> under, T top)
         {
-            if (under == null) throw new ArgumentNullException(nameof(under));
-            _under = under;
+            _under = under ?? throw new ArgumentNullException(nameof(under));
             Count = under.Count + 1;
             _top = top;
         }
 
-        public Enumerator GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        public Enumerator GetEnumerator() => new Enumerator(this);
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
         public int Count { get; }
 
@@ -74,7 +64,7 @@ namespace Serilog.Context
             {
                 _stack = stack;
                 _top = stack;
-                _current = default(T);
+                _current = default;
             }
 
             public bool MoveNext()
@@ -89,7 +79,7 @@ namespace Serilog.Context
             public void Reset()
             {
                 _top = _stack;
-                _current = default(T);
+                _current = default;
             }
 
             public T Current => _current;

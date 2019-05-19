@@ -16,16 +16,12 @@ namespace Serilog.Tests.Support
 
         public bool Equals(LogEventPropertyValue x, LogEventPropertyValue y)
         {
-            var scalarX = x as ScalarValue;
-            var scalarY = y as ScalarValue;
-            if (scalarX != null && scalarY != null)
+            if (x is ScalarValue scalarX && y is ScalarValue scalarY)
             {
                 return _objectEqualityComparer.Equals(scalarX.Value, scalarY.Value);
             }
 
-            var sequenceX = x as SequenceValue;
-            var sequenceY = y as SequenceValue;
-            if (sequenceX != null && sequenceY != null)
+            if (x is SequenceValue sequenceX && y is SequenceValue sequenceY)
             {
                 return sequenceX.Elements
                     .SequenceEqual(sequenceY.Elements, this);
@@ -44,9 +40,6 @@ namespace Serilog.Tests.Support
             return false;
         }
 
-        public int GetHashCode(LogEventPropertyValue obj)
-        {
-            return 0;
-        }
+        public int GetHashCode(LogEventPropertyValue obj) => 0;
     }
 }
