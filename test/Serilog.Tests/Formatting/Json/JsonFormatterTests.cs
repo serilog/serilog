@@ -197,7 +197,7 @@ namespace Serilog.Tests.Formatting.Json
             var f = new StringWriter();
             j.Format(e, f);
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(f.ToString());
+            return JsonConvert.DeserializeObject<dynamic>(f.ToString());
         }
 
         [Fact]
