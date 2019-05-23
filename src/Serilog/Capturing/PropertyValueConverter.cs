@@ -134,7 +134,7 @@ namespace Serilog.Capturing
             }
 
             var valueType = value.GetType();
-            _depthLimiter.SetCurrentDepth(depth);
+            DepthLimiter.SetCurrentDepth(depth);
 
             if (destructuring == Destructuring.Destructure)
             {
@@ -309,7 +309,7 @@ namespace Serilog.Capturing
             return text;
         }
 
-        bool TryGetDictionary(object value, Type valueType, out IDictionary dictionary)
+        static bool TryGetDictionary(object value, Type valueType, out IDictionary dictionary)
         {
             if (valueType.IsConstructedGenericType &&
                 valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
@@ -323,7 +323,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        bool IsValidDictionaryKeyType(Type valueType)
+        static bool IsValidDictionaryKeyType(Type valueType)
         {
             return BuiltInScalarTypes.Contains(valueType) ||
                    valueType.GetTypeInfo().IsEnum;
