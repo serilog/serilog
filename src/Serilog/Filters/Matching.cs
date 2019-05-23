@@ -92,9 +92,9 @@ namespace Serilog.Filters
             {
                 if (!e.Properties.TryGetValue(propertyName, out LogEventPropertyValue propertyValue)) return false;
 
-                return propertyValue is ScalarValue s
-                    ? (s.Value is TScalar) && predicate((TScalar)s.Value)
-                    : false;
+                return propertyValue is ScalarValue s &&
+                       ((s.Value is TScalar value) &&
+                        predicate(value));
             };
         }
     }
