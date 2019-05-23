@@ -142,7 +142,7 @@ namespace Serilog.Tests.Formatting.Display
         }
 
         [Fact]
-        public void AligmentAndWidthCanBeCombined()
+        public void AlignmentAndWidthCanBeCombined()
         {
             var formatter = new MessageTemplateTextFormatter("{Level,5:w3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
