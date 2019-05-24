@@ -37,7 +37,7 @@ namespace Serilog.Capturing
                 _propertyValueConverter = propertyValueConverter;
             }
 
-            public void SetCurrentDepth(int depth)
+            public static void SetCurrentDepth(int depth)
             {
                 _currentDepth = depth;
             }

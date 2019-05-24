@@ -181,21 +181,21 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-                if (value is double)
+                if (value is double d)
                 {
-                    FormatDoubleValue((double)value, output);
+                    FormatDoubleValue(d, output);
                     return;
                 }
 
-                if (value is float)
+                if (value is float f)
                 {
-                    FormatFloatValue((float)value, output);
+                    FormatFloatValue(f, output);
                     return;
                 }
 
-                if (value is bool)
+                if (value is bool b)
                 {
-                    FormatBooleanValue((bool)value, output);
+                    FormatBooleanValue(b, output);
                     return;
                 }
 
@@ -211,9 +211,9 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-                if (value is TimeSpan)
+                if (value is TimeSpan timeSpan)
                 {
-                    FormatTimeSpanValue((TimeSpan)value, output);
+                    FormatTimeSpanValue(timeSpan, output);
                     return;
                 }
             }

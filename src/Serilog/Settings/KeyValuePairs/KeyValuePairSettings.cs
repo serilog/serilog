@@ -99,11 +99,11 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.MinimumLevel.Is(minimumLevel);
             }
 
-            foreach (var enrichProperyDirective in directives.Where(dir =>
+            foreach (var enrichPropertyDirective in directives.Where(dir =>
                 dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
             {
-                var name = enrichProperyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
-                loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
+                var name = enrichPropertyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
+                loggerConfiguration.Enrich.WithProperty(name, enrichPropertyDirective.Value);
             }
 
             if (directives.TryGetValue(MinimumLevelControlledByDirective, out string minimumLevelControlledByLevelSwitchName))

@@ -6,9 +6,9 @@ namespace Serilog.Tests.Parsing
 {
     public class MessageTemplateParserTests
     {
-        static MessageTemplateToken[] Parse(string messsageTemplate)
+        static MessageTemplateToken[] Parse(string messageTemplate)
         {
-            return new MessageTemplateParser().Parse(messsageTemplate).Tokens.ToArray();
+            return new MessageTemplateParser().Parse(messageTemplate).Tokens.ToArray();
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local

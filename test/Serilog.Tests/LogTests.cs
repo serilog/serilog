@@ -10,7 +10,7 @@ namespace Serilog.Tests
         [Fact]
         public void TheUninitializedLoggerIsSilent()
         {
-            // This test depends on being ther first executed from
+            // This test depends on being there first executed from
             // the collection.
             Assert.IsType<SilentLogger>(Log.Logger);
         }
