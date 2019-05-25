@@ -10,8 +10,7 @@ namespace Serilog.PerformanceTests
         ILogger _bare, _enriched;
         readonly LogEvent _event = Some.InformationEvent();
 
-        [Setup]
-        public void Setup()
+        public LogContextEnrichmentBenchmark()
         {
             _bare = new LoggerConfiguration()
                 .WriteTo.Sink(new NullSink())
