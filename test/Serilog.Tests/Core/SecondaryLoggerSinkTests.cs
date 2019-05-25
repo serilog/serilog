@@ -1,7 +1,7 @@
-﻿using Serilog.Tests.Support;
-using Xunit;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Events;
+using Serilog.Tests.Support;
+using Xunit;
 
 namespace Serilog.Tests.Core
 {
@@ -20,7 +20,7 @@ namespace Serilog.Tests.Core
                 .WriteTo.Logger(secondaryLogger)
                 .CreateLogger()
                 .Write(e);
-            
+
             Assert.NotSame(e, secondary.SingleEvent);
             var p = Some.LogEventProperty();
             secondary.SingleEvent.AddPropertyIfAbsent(p);

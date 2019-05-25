@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Serilog.Capturing;
+using Serilog.Core;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Serilog.Capturing;
 using Xunit;
-using Serilog.Core;
 using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
 namespace Serilog.Tests.Core
@@ -18,10 +18,7 @@ namespace Serilog.Tests.Core
             public string Back => "straight";
             public int[] Legs => new[] { 1, 2, 3, 4 };
             // ReSharper restore UnusedMember.Local
-            public override string ToString()
-            {
-                return "a chair";
-            }
+            public override string ToString() => "a chair";
         }
 
         class Receipt
@@ -30,10 +27,7 @@ namespace Serilog.Tests.Core
             public decimal Sum => 12.345m;
             public DateTime When => new DateTime(2013, 5, 20, 16, 39, 0);
             // ReSharper restore UnusedMember.Local
-            public override string ToString()
-            {
-                return "a receipt";
-            }
+            public override string ToString() => "a receipt";
         }
 
         [Fact]

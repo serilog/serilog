@@ -101,6 +101,6 @@ namespace Serilog.Configuration
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             return _sinkConfiguration.Logger(logger, restrictedToMinimumLevel);
-        } 
+        }
     }
 }

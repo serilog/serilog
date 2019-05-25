@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using Serilog.Data;
 using Serilog.Events;
-using Serilog.Data;
+using System.Linq;
 using Xunit;
 
 namespace Serilog.Tests.Data

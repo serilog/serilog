@@ -1,17 +1,26 @@
 version: '{build}'
 skip_tags: true
-image: Visual Studio 2017
+image:
+  - Visual Studio 2017
+  - Ubuntu
 configuration: Release
 test: off
 build_script:
-- ps: ./Build.ps1
-- ps: ./BuildNativeUWP.ps1
+  - ps: ./Build.ps1
+  - ps: ./BuildNativeUWP.ps1
+for:
+-
+  matrix:
+    only:
+      - image: Ubuntu
+  build_script:
+  - sh build.sh
 artifacts:
-- path: artifacts/Serilog.*.nupkg
+  - path: artifacts/Serilog.*.nupkg
 deploy:
 - provider: NuGet
   api_key:
-    secure: bd9z4P73oltOXudAjPehwp9iDKsPtC+HbgshOrSgoyQKr5xVK+bxJQngrDJkHdY8
+    secure: N59tiJECUYpip6tEn0xvdmDAEiP9SIzyLEFLpwiigm/8WhJvBNs13QxzT1/3/JW/
   skip_symbols: true
   on:
     branch: /^(master|dev)$/

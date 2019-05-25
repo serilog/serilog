@@ -24,9 +24,6 @@ namespace Serilog.Tests.Support
             _formatter.Format(logEvent, _sw);
         }
 
-        public override string ToString()
-        {
-            return _sw.ToString();
-        }
+        public override string ToString() => _sw.ToString();
     }
 }

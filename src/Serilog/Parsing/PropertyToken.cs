@@ -63,8 +63,7 @@ namespace Serilog.Parsing
             _rawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
             Alignment = alignment;
 
-            int position;
-            if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out position) &&
+            if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out int position) &&
                 position >= 0)
             {
                 _position = position;
@@ -87,7 +86,7 @@ namespace Serilog.Parsing
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, false, false);
+            MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, isLiteral: false, isJson: false);
         }
 
         /// <summary>
@@ -143,8 +142,7 @@ namespace Serilog.Parsing
         /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
         public override bool Equals(object obj)
         {
-            var pt = obj as PropertyToken;
-            return pt != null &&
+            return obj is PropertyToken pt &&
                 pt.Destructuring == Destructuring &&
                 pt.Format == Format &&
                 pt.PropertyName == PropertyName &&

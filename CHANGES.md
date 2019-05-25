@@ -32,7 +32,7 @@
  * #939, #946, #972 - RTM .NET Standard/Core tooling
  * #955 - `LoggerSinkConfiguration.Wrap()`
  * #944 - `{Properties}` in output templates
- * #961 - fix parser exeception when property tokens with zero-length names are encountered
+ * #961 - fix parser exception when property tokens with zero-length names are encountered
  * #773 - `LogContext.Clone()` and `LogContext.Push(ILogEventEnricher)`
  * #976 - support for logging C# 7 `ValueTuple<>` values
  * #977 - output formatting performance improvements, `{Message:l}` (unquoted string) and `{Message:j}` (JSON structure) support in output templates
@@ -138,7 +138,7 @@ Plus multiple build/test/configuration improvements.2.4.0
  * #402 - `<appSettings>` configuration support now in the Serilog package
 
 1.4.214
- * #344 - Moved "Extras" including Web, Owin, F#, destructuring to new organisations
+ * #344 - Moved "Extras" including Web, Owin, F#, destructuring to new organizations
 
 1.4.204
  * #344 (partial) - Moved remaining sinks to individual repositories
@@ -249,7 +249,7 @@ Plus multiple build/test/configuration improvements.2.4.0
  * #229 - Created net40 version of Extras Topshelf
  * #236 - Ensure dictionary keys are quoted in JSON even when they're numeric
  * #237 - When `JsonFormatter` formats a dictionary of `<int, object>`, the key should be double quoted
- * #235 - Fixed serialization of dicationary keys in ES and similar sinks
+ * #235 - Fixed serialization of dictionary keys in ES and similar sinks
 
 1.4.11
  * #238 - Dynamic level switching

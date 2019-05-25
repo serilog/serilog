@@ -1,11 +1,11 @@
+using Serilog.Events;
+using Serilog.Formatting.Display;
+using Serilog.Tests.Support;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Serilog.Events;
 using Xunit;
-using Serilog.Tests.Support;
-using Serilog.Formatting.Display;
 
 namespace Serilog.Tests.Formatting.Display
 {
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Formatting.Display
         }
 
         [Fact]
-        public void AligmentAndWidthCanBeCombined()
+        public void AlignmentAndWidthCanBeCombined()
         {
             var formatter = new MessageTemplateTextFormatter("{Level,5:w3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));

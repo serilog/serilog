@@ -23,8 +23,7 @@ namespace Serilog.Core.Filters
 
         public DelegateFilter(Func<LogEvent, bool> isEnabled)
         {
-            if (isEnabled == null) throw new ArgumentNullException(nameof(isEnabled));
-            _isEnabled = isEnabled;
+            _isEnabled = isEnabled ?? throw new ArgumentNullException(nameof(isEnabled));
         }
 
         public bool IsEnabled(LogEvent logEvent)

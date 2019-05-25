@@ -68,8 +68,7 @@ namespace Serilog.Debugging
         /// // ReSharper disable once MemberCanBePrivate.Global
         public static void Enable(Action<string> output)
         {
-            if (output == null) throw new ArgumentNullException(nameof(output));
-            _output = output;
+            _output = output ?? throw new ArgumentNullException(nameof(output));
         }
 
         /// <summary>

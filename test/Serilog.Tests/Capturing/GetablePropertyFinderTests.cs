@@ -9,35 +9,35 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void GetPropertiesRecursiveIntegerTypeYieldNoResult()
         {
-            var result = (default(int)).GetType().GetPropertiesRecursive();
+            var result = default(int).GetType().GetPropertiesRecursive();
             Assert.Empty(result);
         }
 
         [Fact]
         public void GetPropertiesRecursiveBooleanTypeYieldNoResult()
         {
-            var result = (default(bool)).GetType().GetPropertiesRecursive();
+            var result = default(bool).GetType().GetPropertiesRecursive();
             Assert.Empty(result);
         }
 
         [Fact]
         public void GetPropertiesRecursiveCharTypeYieldNoResult()
         {
-            var result = (default(char)).GetType().GetPropertiesRecursive();
+            var result = default(char).GetType().GetPropertiesRecursive();
             Assert.Empty(result);
         }
 
         [Fact]
         public void GetPropertiesRecursiveObjectTypeYieldNoResult()
         {
-            var result = (new object()).GetType().GetPropertiesRecursive();
+            var result = new object().GetType().GetPropertiesRecursive();
             Assert.Empty(result);
         }
 
         [Fact]
         public void GetPropertiesRecursiveStringTypeYieldResult()
         {
-            var result = (string.Empty).GetType().GetPropertiesRecursive();
+            var result = string.Empty.GetType().GetPropertiesRecursive();
             Assert.NotEmpty(result);
         }
 

@@ -46,20 +46,16 @@ namespace Serilog.Data
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            var sv = value as ScalarValue;
-            if (sv != null)
+            if (value is ScalarValue sv)
                 return VisitScalarValue(state, sv);
 
-            var seqv = value as SequenceValue;
-            if (seqv != null)
+            if (value is SequenceValue seqv)
                 return VisitSequenceValue(state, seqv);
 
-            var strv = value as StructureValue;
-            if (strv != null)
+            if (value is StructureValue strv)
                 return VisitStructureValue(state, strv);
-            
-            var dictv = value as DictionaryValue;
-            if (dictv != null)
+
+            if (value is DictionaryValue dictv)
                 return VisitDictionaryValue(state, dictv);
 
             return VisitUnsupportedValue(state, value);

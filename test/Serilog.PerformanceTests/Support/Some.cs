@@ -13,6 +13,5 @@ namespace Serilog.PerformanceTests.Support
 #pragma warning restore Serilog004 // Constant MessageTemplate verifier
             return new LogEvent(DateTime.Now, LogEventLevel.Information, null, parsedTemplate, boundProperties);
         }
-        
     }
 }

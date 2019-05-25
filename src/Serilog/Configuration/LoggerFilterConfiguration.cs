@@ -31,12 +31,9 @@ namespace Serilog.Configuration
             LoggerConfiguration loggerConfiguration,
             Action<ILogEventFilter> addFilter)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            if (addFilter == null) throw new ArgumentNullException(nameof(addFilter));
-            _loggerConfiguration = loggerConfiguration;
-            _addFilter = addFilter;
+            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+            _addFilter = addFilter ?? throw new ArgumentNullException(nameof(addFilter));
         }
-
 
         /// <summary>
         /// Filter out log events from the stream based on the provided filter.
@@ -89,4 +86,3 @@ namespace Serilog.Configuration
         }
     }
 }
-

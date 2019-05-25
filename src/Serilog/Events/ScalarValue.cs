@@ -60,8 +60,7 @@ namespace Serilog.Events
                 return;
             }
 
-            var s = value as string;
-            if (s != null)
+            if (value is string s)
             {
                 if (format != "l")
                 {
@@ -86,15 +85,14 @@ namespace Serilog.Events
                 }
             }
 
-            var f = value as IFormattable;
-            if (f != null)
+            if (value is IFormattable f)
             {
                 output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
             }
             else
             {
                 output.Write(value.ToString());
-            }                        
+            }
         }
 
         /// <summary>
@@ -104,9 +102,7 @@ namespace Serilog.Events
         /// <returns>True if the instances are equal; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            var sv = obj as ScalarValue;
-            if (sv == null) return false;
-            return Equals(Value, sv.Value);
+            return obj is ScalarValue sv ? Equals(Value, sv.Value) : false;
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace Serilog.Tests.Core
         [InlineData(LogEventLevel.Debug, LogEventLevel.Error)]
         [InlineData(LogEventLevel.Debug, LogEventLevel.Fatal)]
         [InlineData(LogEventLevel.Debug, LogEventLevel.Warning)]
-        public void ShouldEnrichLogEventWhenLevelIsSameOrHigherThanMinLevel(LogEventLevel logMinLevel, LogEventLevel propertLogLevel)
+        public void ShouldEnrichLogEventWhenLevelIsSameOrHigherThanMinLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
         {
             var propValue = Guid.NewGuid();
             var propKey = Some.String();
@@ -23,7 +23,7 @@ namespace Serilog.Tests.Core
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.ForContext(propertLogLevel, propKey, propValue)
+            logger.ForContext(propertyLogLevel, propKey, propValue)
                 .Write(logMinLevel, string.Empty);
 
             Assert.True(sink.SingleEvent.Properties.ContainsKey(propKey));
@@ -36,7 +36,7 @@ namespace Serilog.Tests.Core
         [InlineData(LogEventLevel.Warning, LogEventLevel.Information)]
         [InlineData(LogEventLevel.Error, LogEventLevel.Warning)]
         [InlineData(LogEventLevel.Fatal, LogEventLevel.Error)]
-        public void ShouldNotEnrichLogEventsWhenMinLevelIsHigherThanProvidedLogLevel(LogEventLevel logMinLevel, LogEventLevel propertLogLevel)
+        public void ShouldNotEnrichLogEventsWhenMinLevelIsHigherThanProvidedLogLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
         {
             var propValue = Guid.NewGuid();
             var propKey = Some.String();
@@ -46,7 +46,7 @@ namespace Serilog.Tests.Core
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
-            logger.ForContext(propertLogLevel, propKey, propValue)
+            logger.ForContext(propertyLogLevel, propKey, propValue)
                 .Write(logMinLevel, string.Empty);
 
             Assert.True(!sink.SingleEvent.Properties.ContainsKey(propKey));

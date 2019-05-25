@@ -93,23 +93,20 @@ namespace Serilog.Settings.KeyValuePairs
 
             var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
-            string minimumLevelDirective;
-            LogEventLevel minimumLevel;
-            if (directives.TryGetValue(MinimumLevelDirective, out minimumLevelDirective) &&
-                Enum.TryParse(minimumLevelDirective, out minimumLevel))
+            if (directives.TryGetValue(MinimumLevelDirective, out string minimumLevelDirective) &&
+                Enum.TryParse(minimumLevelDirective, out LogEventLevel minimumLevel))
             {
                 loggerConfiguration.MinimumLevel.Is(minimumLevel);
             }
 
-            foreach (var enrichProperyDirective in directives.Where(dir =>
+            foreach (var enrichPropertyDirective in directives.Where(dir =>
                 dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
             {
-                var name = enrichProperyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
-                loggerConfiguration.Enrich.WithProperty(name, enrichProperyDirective.Value);
+                var name = enrichPropertyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
+                loggerConfiguration.Enrich.WithProperty(name, enrichPropertyDirective.Value);
             }
 
-            string minimumLevelControlledByLevelSwitchName;
-            if (directives.TryGetValue(MinimumLevelControlledByDirective, out minimumLevelControlledByLevelSwitchName))
+            if (directives.TryGetValue(MinimumLevelControlledByDirective, out string minimumLevelControlledByLevelSwitchName))
             {
                 var globalMinimumLevelSwitch = LookUpSwitchByName(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
                 loggerConfiguration.MinimumLevel.ControlledBy(globalMinimumLevelSwitch);
@@ -120,8 +117,7 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
 
-                LogEventLevel overriddenLevel;
-                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out overriddenLevel))
+                if (Enum.TryParse(minimumLevelOverrideDirective.Value, out LogEventLevel overriddenLevel))
                 {
                     loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
                 }
@@ -236,7 +232,6 @@ namespace Serilog.Settings.KeyValuePairs
 
                 if (target != null)
                 {
-
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
                                 select directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
@@ -276,7 +271,9 @@ namespace Serilog.Settings.KeyValuePairs
         internal class ConfigurationMethodCall
         {
             public string MethodName { get; set; }
+
             public string ArgumentName { get; set; }
+
             public string Value { get; set; }
         }
     }

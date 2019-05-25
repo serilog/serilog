@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Xunit;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Tests.Support;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using TestDummies;
+using Xunit;
 
 namespace Serilog.Tests
 {
@@ -53,7 +53,7 @@ namespace Serilog.Tests
         public void DisposableSinksAreDisposedAlongWithRootLogger()
         {
             var sink = new DisposableSink();
-            var logger = (IDisposable) new LoggerConfiguration()
+            var logger = (IDisposable)new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
@@ -65,7 +65,7 @@ namespace Serilog.Tests
         public void DisposableSinksAreNotDisposedAlongWithContextualLoggers()
         {
             var sink = new DisposableSink();
-            var logger = (IDisposable) new LoggerConfiguration()
+            var logger = (IDisposable)new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger()
                 .ForContext<LoggerConfigurationTests>();
@@ -146,10 +146,8 @@ namespace Serilog.Tests
 
             public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
             {
-                if (canApply == null) throw new ArgumentNullException(nameof(canApply));
-                if (projection == null) throw new ArgumentNullException(nameof(projection));
-                _canApply = canApply;
-                _projection = projection;
+                _canApply = canApply ?? throw new ArgumentNullException(nameof(canApply));
+                _projection = projection ?? throw new ArgumentNullException(nameof(projection));
             }
 
             public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
@@ -173,7 +171,7 @@ namespace Serilog.Tests
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
-            
+
             var logger = new LoggerConfiguration()
                 .Destructure.With(new ProjectedDestructuringPolicy(
                     canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
@@ -208,7 +206,7 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            var sv = (StructureValue) prop;
+            var sv = (StructureValue)prop;
             var c = sv.Properties.Single();
             Assert.Equal("C", c.Name);
         }
@@ -357,7 +355,7 @@ namespace Serilog.Tests
 
         class ToStringOfLength
         {
-            private int _toStringOfLength;
+            private readonly int _toStringOfLength;
 
             public ToStringOfLength(int toStringOfLength)
             {
@@ -404,9 +402,9 @@ namespace Serilog.Tests
         {
             var x = new Dictionary<string, int>
             {
-                {"1", 1},
-                {"2", 2},
-                {"3", 3}
+                { "1", 1 },
+                { "2", 2 },
+                { "3", 3 }
             };
 
             var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
@@ -420,8 +418,8 @@ namespace Serilog.Tests
         {
             var x = new Dictionary<string, int>
             {
-                {"1", 1},
-                {"2", 2},
+                { "1", 1 },
+                { "2", 2 },
             };
 
             var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
@@ -429,7 +427,7 @@ namespace Serilog.Tests
             Assert.Contains("2", limitedCollection);
         }
 
-        private string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        private static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
             LogEvent evt = null;
             var logConf = new LoggerConfiguration()
@@ -438,8 +436,7 @@ namespace Serilog.Tests
             var log = logConf.CreateLogger();
 
             log.Information($"{{{destructuringSymbol}X}}", x);
-            var result = evt.Properties["X"].ToString();
-            return result;
+            return evt.Properties["X"].ToString();
         }
 
         [Fact]

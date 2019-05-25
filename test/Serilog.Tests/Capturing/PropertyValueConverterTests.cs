@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Capturing;
-using System.Threading.Tasks;
-using System.Threading;
-
-
+﻿using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Tests.Support;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local
@@ -18,7 +16,7 @@ namespace Serilog.Tests.Capturing
 {
     public class PropertyValueConverterTests
     {
-        readonly PropertyValueConverter _converter = 
+        readonly PropertyValueConverter _converter =
             new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         [Fact]
@@ -100,7 +98,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void ByDefaultADestructuredNullNullableIsAScalarNull()
         {
-            var pv = _converter.CreatePropertyValue(new int?(), Destructuring.Destructure);
+            var pv = _converter.CreatePropertyValue(default(int?), Destructuring.Destructure);
             Assert.Null(((ScalarValue)pv).Value);
         }
 
@@ -144,7 +142,7 @@ namespace Serilog.Tests.Capturing
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public IList<C?> C { get; set; } 
+            public IList<C?> C { get; set; }
         }
 
         [Fact]
@@ -265,7 +263,7 @@ namespace Serilog.Tests.Capturing
             var valAsBase = (BaseWithProps)valAsDerived;
             valAsBase.PropA = "BA";
 
-            var pv = (StructureValue) _converter.CreatePropertyValue(valAsDerived, true);
+            var pv = (StructureValue)_converter.CreatePropertyValue(valAsDerived, true);
 
             Assert.Equal(4, pv.Properties.Count);
             Assert.Equal("A", pv.Properties.Single(pp => pp.Name == "PropA").Value.LiteralValue());
@@ -356,10 +354,9 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void ValueTupleDestructuringIsTransitivelyApplied()
         {
-            var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new {A = 1}), true);
+            var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new { A = 1 }), true);
             var sequence = Assert.IsType<SequenceValue>(tuple);
             Assert.IsType<StructureValue>(sequence.Elements[0]);
         }
     }
 }
-

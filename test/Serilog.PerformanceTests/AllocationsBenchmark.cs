@@ -1,12 +1,10 @@
-﻿using Serilog.Events;
-using Serilog.Parsing;
+﻿using BenchmarkDotNet.Attributes;
 using Serilog.Core.Enrichers;
-
+using Serilog.Events;
+using Serilog.Parsing;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-
-using BenchmarkDotNet.Attributes;
+using System.Linq;
 
 namespace Serilog.PerformanceTests
 {
@@ -27,9 +25,9 @@ namespace Serilog.PerformanceTests
             _enrichedLogger = _logger.ForContext(new PropertyEnricher("Prop", "Value"));
 
             _emptyEvent = new LogEvent(
-                DateTimeOffset.Now, 
-                LogEventLevel.Information, 
-                null, 
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
                 new MessageTemplate(Enumerable.Empty<MessageTemplateToken>()),
                 Enumerable.Empty<LogEventProperty>());
 
@@ -54,9 +52,9 @@ namespace Serilog.PerformanceTests
 
             _dictionaryValue = new Dictionary<string, object> {
                 { "Level11", "Val1" },
-                { "Level12", new Dictionary<string, object>() {
+                { "Level12", new Dictionary<string, object> {
                         { "Level21", (int?)42 },
-                        { "Level22", new Dictionary<string, object>() {
+                        { "Level22", new Dictionary<string, object> {
                                 { "Level31", System.Reflection.BindingFlags.FlattenHierarchy },
                                 { "Level32", new { X = 3, Y = "4", Z = (short?)5 } }
                             }
