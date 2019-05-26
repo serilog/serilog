@@ -142,10 +142,9 @@ namespace Serilog.Core
             }
 
             // It'd be nice to do the destructuring lazily, but unfortunately `value` may be mutated between
-            // now and the first log event written...
-            // A future optimization opportunity may be to implement ILogEventEnricher on LogEventProperty to
-            // remove one more allocation.
-            var enricher = new FixedPropertyEnricher(_messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects));
+            // now and the first log event written.
+            var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
+            var enricher = new FixedPropertyEnricher(new EventProperty(propertyName, propertyValue));
 
             var minimumLevel = _minimumLevel;
             var levelSwitch = _levelSwitch;

@@ -41,5 +41,10 @@ namespace Serilog.Capturing
         {
             return _propertyValueConverter.CreateProperty(name, value, destructureObjects);
         }
+
+        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        {
+            return _propertyValueConverter.CreatePropertyValue(value, destructureObjects);
+        }
     }
 }

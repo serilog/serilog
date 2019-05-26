@@ -21,10 +21,10 @@ namespace Serilog.Core.Enrichers
     {
         readonly EventProperty _eventProperty;
 
-        public FixedPropertyEnricher(LogEventProperty eventProperty)
+        public FixedPropertyEnricher(in EventProperty eventProperty)
         {
-            if (eventProperty == null) throw new ArgumentNullException(nameof(eventProperty));
-            _eventProperty = new EventProperty(eventProperty.Name, eventProperty.Value);
+            if (eventProperty.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(eventProperty));
+            _eventProperty = eventProperty;
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
