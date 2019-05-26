@@ -150,7 +150,7 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="property">The property to add.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal void AddPropertyIfAbsent(EventProperty property)
+        internal void AddPropertyIfAbsent(in EventProperty property)
         {
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
             if (!_properties.ContainsKey(property.Name))
