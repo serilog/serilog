@@ -12,7 +12,7 @@ namespace Serilog.PerformanceTests
         ILogger _log, _nested;
         readonly LogEvent _event = Some.InformationEvent();
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _log = new LoggerConfiguration()

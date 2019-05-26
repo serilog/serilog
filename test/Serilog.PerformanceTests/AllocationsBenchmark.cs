@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Serilog.PerformanceTests
 {
+    [ClrJob(baseline: true), CoreJob]
     [MemoryDiagnoser]
     public class AllocationsBenchmark
     {

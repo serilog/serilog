@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;
@@ -32,7 +31,7 @@ namespace Serilog.Capturing
             _propertyBinder = new PropertyBinder(_propertyValueConverter);
         }
 
-        public void Process(string messageTemplate, object[] messageTemplateParameters, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> properties)
+        public void Process(string messageTemplate, object[] messageTemplateParameters, out MessageTemplate parsedTemplate, out EventProperty[] properties)
         {
             parsedTemplate = _parser.Parse(messageTemplate);
             properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters);

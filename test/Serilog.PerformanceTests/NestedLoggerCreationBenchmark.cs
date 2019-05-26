@@ -10,7 +10,7 @@ namespace Serilog.PerformanceTests
     {
         ILogger log;
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             log = new LoggerConfiguration()

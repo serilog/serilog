@@ -19,15 +19,15 @@ namespace Serilog.PerformanceTests
 {
     public class Harness
     {
-        // dotnet test -c Release -f net46 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.AllocationsBenchmark"
+        // dotnet test -c Release -f netcoreapp2.2 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"
         [Fact]
-        public void AllocationsBenchmark()
+        public void Allocations()
         {
             BenchmarkRunner.Run<AllocationsBenchmark>();
         }
 
         [Fact]
-        public void MessageTemplateCacheBenchmark()
+        public void MessageTemplateCache()
         {
             BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Cached>();
             BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Leaking>();
@@ -76,7 +76,7 @@ namespace Serilog.PerformanceTests
         }
 
         [Fact]
-        public void MessageTemplateRenderingBenchmark()
+        public void MessageTemplateRendering()
         {
             BenchmarkRunner.Run<MessageTemplateRenderingBenchmark>();
         }

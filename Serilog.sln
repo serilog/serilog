@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		build.sh = build.sh
 		CHANGES.md = CHANGES.md
 		Directory.Build.props = Directory.Build.props
+		global.json = global.json
 		NuGet.config = NuGet.config
 		README.md = README.md
 		run_perf_tests.sh = run_perf_tests.sh

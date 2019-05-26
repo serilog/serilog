@@ -19,17 +19,18 @@ namespace Serilog.Core.Enrichers
 {
     class FixedPropertyEnricher : ILogEventEnricher
     {
-        readonly LogEventProperty _logEventProperty;
+        readonly EventProperty _eventProperty;
 
-        public FixedPropertyEnricher(LogEventProperty logEventProperty)
+        public FixedPropertyEnricher(LogEventProperty eventProperty)
         {
-            _logEventProperty = logEventProperty ?? throw new ArgumentNullException(nameof(logEventProperty));
+            if (eventProperty == null) throw new ArgumentNullException(nameof(eventProperty));
+            _eventProperty = new EventProperty(eventProperty.Name, eventProperty.Value);
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            logEvent.AddPropertyIfAbsent(_logEventProperty);
+            logEvent.AddPropertyIfAbsent(_eventProperty);
         }
     }
 }
