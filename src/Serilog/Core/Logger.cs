@@ -1334,7 +1334,7 @@ namespace Serilog.Core
             }
 
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
-            boundProperties = boundEventProperties.Select(p => new LogEventProperty(p.Name, p.Value));
+            boundProperties = boundEventProperties.Select(p => new LogEventProperty(p));
             return true;
         }
 
