@@ -33,6 +33,7 @@ namespace Serilog.Core
     public sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         static readonly object[] NoPropertyValues = new object[0];
+        static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
 
         readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly ILogEventSink _sink;
@@ -1334,7 +1335,10 @@ namespace Serilog.Core
             }
 
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
-            boundProperties = boundEventProperties.Select(p => new LogEventProperty(p));
+            boundProperties = boundEventProperties.Length == 0 ?
+                NoProperties :
+                boundEventProperties.Select(p => new LogEventProperty(p));
+
             return true;
         }
 

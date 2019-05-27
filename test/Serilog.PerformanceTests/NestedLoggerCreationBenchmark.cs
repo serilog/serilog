@@ -6,6 +6,7 @@ namespace Serilog.PerformanceTests
     /// <summary>
     /// Tests the cost creating a nested logger.
     /// </summary>
+    [MemoryDiagnoser]
     public class NestedLoggerCreationBenchmark
     {
         ILogger log;
