@@ -20,6 +20,12 @@ namespace Serilog.PerformanceTests
         }
 
         [Benchmark]
+        public void ForContextInt()
+        {
+            log.ForContext("Number", 1);
+        }
+
+        [Benchmark]
         public void ForContextString()
         {
             log.ForContext("SourceContext", "Serilog.PerformanceTests");
