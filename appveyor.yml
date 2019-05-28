@@ -5,7 +5,7 @@ image:
   - Ubuntu
 configuration: Release
 test: off
-install_script:
+install:
   - ps: ./Setup.ps1
 build_script:
   - ps: ./Build.ps1
@@ -15,7 +15,7 @@ for:
   matrix:
     only:
       - image: Ubuntu
-  install_script:
+  install:
   - sh setup.sh
   build_script:
   - sh build.sh
