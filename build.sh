@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e 
+
+export PATH=$HOME/.dotnetcli:$PATH
+
 dotnet --info
 dotnet --list-sdks
 dotnet restore
