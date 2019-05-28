@@ -1,8 +1,8 @@
 version: '{build}'
 skip_tags: true
 image:
-  - Visual Studio 2017
-  - Ubuntu
+  - Visual Studio 2019 Preview
+  - Ubuntu1804
 configuration: Release
 test: off
 install:
@@ -14,7 +14,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu
+      - image: Ubuntu1804
   install:
   - sh setup.sh
   build_script:
