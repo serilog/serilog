@@ -178,6 +178,7 @@ namespace Serilog
                     enricher = _enrichers[0];
                     break;
                 default:
+                    // Enrichment failures are not considered blocking for auditing purposes.
                     enricher = new SafeAggregateEnricher(_enrichers);
                     break;
             }

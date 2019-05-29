@@ -15,11 +15,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Context;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
-using Serilog.Core.Sinks;
 using Serilog.Debugging;
-using Serilog.Enrichers;
+using Serilog.Events;
 
 namespace Serilog.Configuration
 {
@@ -88,7 +88,38 @@ namespace Serilog.Configuration
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration FromLogContext() => With<LogContextEnricher>();
+
+        /// <summary>
+        /// Apply an enricher only when <paramref name="condition"/> evaluates to <c>true</c>.
+        /// </summary>
+        /// <param name="condition">A predicate that evaluates to <c>true</c> when the supplied <see cref="LogEvent"/>
+        /// should be enriched.</param>
+        /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration When(Func<LogEvent, bool> condition, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        {
+            if (condition == null) throw new ArgumentNullException(nameof(condition));
+            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+
+            return Wrap(this, e => new ConditionalEnricher(e, condition), configureEnricher);
+        }
+
+        /// <summary>
+        /// Apply an enricher only to events with a <see cref="LogEventLevel"/> greater than or equal to <paramref name="enrichFromLevel"/>.
+        /// </summary>
+        /// <param name="enrichFromLevel">The level from which the enricher will be applied.</param>
+        /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
+        /// to collect or store at lower levels.</remarks>
+        public LoggerConfiguration AtLevel(LogEventLevel enrichFromLevel, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        {
+            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+
+            return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= enrichFromLevel), configureEnricher);
+        }
 
         /// <summary>
         /// Helper method for wrapping sinks.
@@ -125,6 +156,7 @@ namespace Serilog.Configuration
 
             var enclosed = enrichersToWrap.Count == 1 ?
                 enrichersToWrap.Single() :
+                // Enrichment failures are not considered blocking for auditing purposes.
                 new SafeAggregateEnricher(enrichersToWrap);
 
             var wrappedEnricher = wrapEnricher(enclosed);
@@ -133,7 +165,7 @@ namespace Serilog.Configuration
             if (!(wrappedEnricher is IDisposable))
             {
                 SelfLog.WriteLine("Wrapping enricher {0} does not implement IDisposable; to ensure " +
-                                  "wrapped sinks are properly flushed, wrappers should dispose " +
+                                  "wrapped enrichers are properly disposed, wrappers should dispose " +
                                   "their wrapped contents", wrappedEnricher);
             }
 

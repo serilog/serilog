@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Serilog.Configuration;
+using Serilog.Core.Enrichers;
 using TestDummies;
 using Xunit;
 
@@ -740,6 +741,40 @@ namespace Serilog.Tests
 
             var evt = Assert.Single(enricher.Events);
             Assert.Equal(LogEventLevel.Warning, evt.Level);
+        }
+
+        [Fact]
+        public void ConditionalEnrichersCheckConditions()
+        {
+            var enricher = new CollectingEnricher();
+
+            var logger = new LoggerConfiguration()
+                .Enrich.When(le => le.Level == LogEventLevel.Warning, enrich => enrich.With(enricher))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var evt = Assert.Single(enricher.Events);
+            Assert.Equal(LogEventLevel.Warning, evt.Level);
+        }
+
+        [Fact]
+        public void LeveledEnrichersCheckLevels()
+        {
+            var enricher = new CollectingEnricher();
+
+            var logger = new LoggerConfiguration()
+                .Enrich.AtLevel(LogEventLevel.Warning, enrich => enrich.With(enricher))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            Assert.Equal(2, enricher.Events.Count);
+            Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
         }
     }
 }
