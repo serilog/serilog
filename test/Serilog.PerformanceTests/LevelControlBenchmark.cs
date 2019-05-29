@@ -13,7 +13,7 @@ namespace Serilog.PerformanceTests
         ILogger _off, _levelSwitchOff, _minLevel, _levelSwitch;
         readonly LogEvent _event = Some.InformationEvent();
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _off = new LoggerConfiguration()

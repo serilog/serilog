@@ -17,17 +17,22 @@ using Xunit;
 
 namespace Serilog.PerformanceTests
 {
+    /// <summary>
+    /// Wrappers that make it easy to run benchmark suites through the <c>dotnet test</c> runner.
+    /// </summary>
+    /// <example>
+    /// <code>dotnet test -c Release -f netcoreapp2.2 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"</code>
+    /// </example>
     public class Harness
     {
-        // dotnet test -c Release -f net46 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.AllocationsBenchmark"
         [Fact]
-        public void AllocationsBenchmark()
+        public void Allocations()
         {
             BenchmarkRunner.Run<AllocationsBenchmark>();
         }
 
         [Fact]
-        public void MessageTemplateCacheBenchmark()
+        public void MessageTemplateCache()
         {
             BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Cached>();
             BenchmarkRunner.Run<MessageTemplateCacheBenchmark_Leaking>();
@@ -74,11 +79,17 @@ namespace Serilog.PerformanceTests
         {
             BenchmarkRunner.Run<OutputTemplateRenderingBenchmark>();
         }
-
+        
         [Fact]
-        public void MessageTemplateRenderingBenchmark()
+        public void MessageTemplateRendering()
         {
             BenchmarkRunner.Run<MessageTemplateRenderingBenchmark>();
+        }
+
+        [Fact]
+        public void Binding()
+        {
+            BenchmarkRunner.Run<BindingBenchmark>();
         }
     }
 }

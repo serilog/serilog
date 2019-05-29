@@ -25,7 +25,7 @@ namespace Serilog.PerformanceTests
         [Params(1, -1)]
         public int MaxDegreeOfParallelism { get; set; }
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();

@@ -10,7 +10,7 @@ namespace Serilog.PerformanceTests
         ILogger _bare, _enriched;
         readonly LogEvent _event = Some.InformationEvent();
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _bare = new LoggerConfiguration()
