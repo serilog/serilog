@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Serilog.Configuration;
 using TestDummies;
 using Xunit;
 
@@ -355,7 +356,7 @@ namespace Serilog.Tests
 
         class ToStringOfLength
         {
-            private readonly int _toStringOfLength;
+            readonly int _toStringOfLength;
 
             public ToStringOfLength(int toStringOfLength)
             {
@@ -427,7 +428,7 @@ namespace Serilog.Tests
             Assert.Contains("2", limitedCollection);
         }
 
-        private static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
             LogEvent evt = null;
             var logConf = new LoggerConfiguration()
@@ -705,7 +706,7 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void WrappingSinkRespectsSetting()
+        public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
             DummyWrappingSink.Reset();
             var sink = new CollectingSink();
@@ -719,6 +720,26 @@ namespace Serilog.Tests
 
             Assert.NotEmpty(DummyWrappingSink.Emitted);
             Assert.NotEmpty(sink.Events);
+        }
+
+        [Fact]
+        public void EnrichersCanBeWrapped()
+        {
+            var enricher = new CollectingEnricher();
+
+            var configuration = new LoggerConfiguration();
+            LoggerEnrichmentConfiguration.Wrap(
+                configuration.Enrich,
+                e => new ConditionalEnricher(e, le => le.Level == LogEventLevel.Warning),
+                enrich => enrich.With(enricher));
+
+            var logger = configuration.CreateLogger();
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var evt = Assert.Single(enricher.Events);
+            Assert.Equal(LogEventLevel.Warning, evt.Level);
         }
     }
 }

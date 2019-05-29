@@ -89,8 +89,7 @@ namespace TestDummies
 
         public static LoggerConfiguration WithDummyHardCodedString(
             this LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            string hardCodedString
-        )
+            string hardCodedString)
         {
             return loggerDestructuringConfiguration.With(new DummyHardCodedStringDestructuringPolicy(hardCodedString));
         }

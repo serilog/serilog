@@ -22,7 +22,7 @@ namespace Serilog.Core.Pipeline
     {
         public static readonly ILogger Instance = new SilentLogger();
 
-        private SilentLogger()
+        SilentLogger()
         {
         }
 

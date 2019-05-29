@@ -49,6 +49,7 @@ namespace Serilog
         public LoggerConfiguration()
         {
             WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+            Enrich = new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
         }
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
@@ -102,7 +103,7 @@ namespace Serilog
         /// Configures enrichment of <see cref="LogEvent"/>s. Enrichers can add, remove and
         /// modify the properties associated with events.
         /// </summary>
-        public LoggerEnrichmentConfiguration Enrich => new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
+        public LoggerEnrichmentConfiguration Enrich { get; internal set; }
 
         /// <summary>
         /// Configures global filtering of <see cref="LogEvent"/>s.

@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>2.8.1</VersionPrefix>
+    <VersionPrefix>2.9.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
     <TargetFrameworks>net45;net46;netstandard1.0;netstandard1.3;netstandard2.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

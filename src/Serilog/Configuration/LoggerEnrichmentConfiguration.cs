@@ -13,8 +13,12 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
+using Serilog.Core.Sinks;
+using Serilog.Debugging;
 using Serilog.Enrichers;
 
 namespace Serilog.Configuration
@@ -85,5 +89,55 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public LoggerConfiguration FromLogContext() => With<LogContextEnricher>();
+
+        /// <summary>
+        /// Helper method for wrapping sinks.
+        /// </summary>
+        /// <param name="loggerEnrichmentConfiguration">The parent enrichment configuration.</param>
+        /// <param name="wrapEnricher">A function that allows for wrapping <see cref="ILogEventEnricher"/>s
+        /// added in <paramref name="configureWrappedEnricher"/>.</param>
+        /// <param name="configureWrappedEnricher">An action that configures enrichers to be wrapped in <paramref name="wrapEnricher"/>.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration Wrap(
+            LoggerEnrichmentConfiguration loggerEnrichmentConfiguration,
+            Func<ILogEventEnricher, ILogEventEnricher> wrapEnricher,
+            Action<LoggerEnrichmentConfiguration> configureWrappedEnricher)
+        {
+            if (loggerEnrichmentConfiguration == null) throw new ArgumentNullException(nameof(loggerEnrichmentConfiguration));
+            if (wrapEnricher == null) throw new ArgumentNullException(nameof(wrapEnricher));
+            if (configureWrappedEnricher == null) throw new ArgumentNullException(nameof(configureWrappedEnricher));
+
+            var enrichersToWrap = new List<ILogEventEnricher>();
+
+            var capturingConfiguration = new LoggerConfiguration();
+            var capturingLoggerEnrichmentConfiguration = new LoggerEnrichmentConfiguration(
+                capturingConfiguration,
+                enrichersToWrap.Add);
+
+            // `Enrich.With()` will return the capturing configuration; this ensures chained `Enrich` gets back
+            // to the capturing enrichment configuration, enabling `Enrich.WithX().Enrich.WithY()`.
+            capturingConfiguration.Enrich = capturingLoggerEnrichmentConfiguration;
+
+            configureWrappedEnricher(capturingLoggerEnrichmentConfiguration);
+
+            if (enrichersToWrap.Count == 0)
+                return loggerEnrichmentConfiguration._loggerConfiguration;
+
+            var enclosed = enrichersToWrap.Count == 1 ?
+                enrichersToWrap.Single() :
+                new SafeAggregateEnricher(enrichersToWrap);
+
+            var wrappedEnricher = wrapEnricher(enclosed);
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            if (!(wrappedEnricher is IDisposable))
+            {
+                SelfLog.WriteLine("Wrapping enricher {0} does not implement IDisposable; to ensure " +
+                                  "wrapped sinks are properly flushed, wrappers should dispose " +
+                                  "their wrapped contents", wrappedEnricher);
+            }
+
+            return loggerEnrichmentConfiguration.With(wrappedEnricher);
+        }
     }
 }
