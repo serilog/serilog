@@ -122,6 +122,21 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
+        /// Apply an enricher only to events with a <see cref="LogEventLevel"/> greater than or equal to the level specified by <paramref name="levelSwitch"/>.
+        /// </summary>
+        /// <param name="levelSwitch">A <see cref="LoggingLevelSwitch"/> that specifies the level from which the enricher will be applied.</param>
+        /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
+        /// to collect or store at lower levels.</remarks>
+        public LoggerConfiguration AtLevel(LoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        {
+            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+
+            return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= levelSwitch.MinimumLevel), configureEnricher);
+        }
+
+        /// <summary>
         /// Helper method for wrapping sinks.
         /// </summary>
         /// <param name="loggerEnrichmentConfiguration">The parent enrichment configuration.</param>

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Serilog.Core.Sinks;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -165,6 +166,23 @@ namespace Serilog.Configuration
 
             var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
             return Sink(secondarySink, restrictedToMinimumLevel);
+        }
+        
+        /// <summary>
+        /// Write to a sink only when <paramref name="condition"/> evaluates to <c>true</c>.
+        /// </summary>
+        /// <param name="condition">A predicate that evaluates to <c>true</c> when the supplied <see cref="LogEvent"/>
+        /// should be written to the configured sink.</param>
+        /// <param name="configureSink">An action that configures the wrapped sink.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration Conditional(Func<LogEvent, bool> condition, Action<LoggerSinkConfiguration> configureSink)
+        {
+            if (condition == null) throw new ArgumentNullException(nameof(condition));
+            if (configureSink == null) throw new ArgumentNullException(nameof(configureSink));
+
+            // Level aliases and so on don't need to be accepted here; if the user wants both a condition and leveling, they
+            // can specify `restrictedToMinimumLevel` etc in the wrapped sink configuration.
+            return Wrap(this, s => new ConditionalSink(s, condition), configureSink, LevelAlias.Minimum, null);
         }
 
         /// <summary>

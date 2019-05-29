@@ -11,6 +11,7 @@ using Serilog.Configuration;
 using Serilog.Core.Enrichers;
 using TestDummies;
 using Xunit;
+// ReSharper disable PossibleNullReferenceException
 
 namespace Serilog.Tests
 {
@@ -705,7 +706,7 @@ namespace Serilog.Tests
             Assert.Empty(DummyWrappingSink.Emitted);
             Assert.Empty(sink.Events);
         }
-
+        
         [Fact]
         public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
@@ -721,6 +722,24 @@ namespace Serilog.Tests
 
             Assert.NotEmpty(DummyWrappingSink.Emitted);
             Assert.NotEmpty(sink.Events);
+        }
+
+        [Fact]
+        public void ConditionalSinksReceiveEventsMatchingCondition()
+        {
+            var matching = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Conditional(
+                    le => le.Level == LogEventLevel.Warning,
+                    w => w.Sink(matching))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var evt = Assert.Single(matching.Events);
+            Assert.Equal(LogEventLevel.Warning, evt.Level);
         }
 
         [Fact]
@@ -759,7 +778,7 @@ namespace Serilog.Tests
             var evt = Assert.Single(enricher.Events);
             Assert.Equal(LogEventLevel.Warning, evt.Level);
         }
-
+        
         [Fact]
         public void LeveledEnrichersCheckLevels()
         {
@@ -775,6 +794,34 @@ namespace Serilog.Tests
 
             Assert.Equal(2, enricher.Events.Count);
             Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
+        }
+
+        [Fact]
+        public void LeveledEnrichersCheckLevelSwitch()
+        {
+            var enricher = new CollectingEnricher();
+            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+
+            var logger = new LoggerConfiguration()
+                .Enrich.AtLevel(levelSwitch, enrich => enrich.With(enricher))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            Assert.Equal(2, enricher.Events.Count);
+            Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
+
+            enricher.Events.Clear();
+            levelSwitch.MinimumLevel = LogEventLevel.Error;
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var error = Assert.Single(enricher.Events);
+            Assert.True(error.Level == LogEventLevel.Error);
         }
     }
 }
