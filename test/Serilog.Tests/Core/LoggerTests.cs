@@ -99,7 +99,7 @@ namespace Serilog.Tests.Core
             var log = new LoggerConfiguration()
                 .CreateLogger();
 
-            Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out MessageTemplate template, out IEnumerable<LogEventProperty> properties));
+            Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
 
             Assert.Equal("Hello, {Name}!", template.Text);
             Assert.Equal("World", properties.Single().Value.LiteralValue());
@@ -111,7 +111,7 @@ namespace Serilog.Tests.Core
             var log = new LoggerConfiguration()
                 .CreateLogger();
 
-            Assert.True(log.BindProperty("Name", "World", false, out LogEventProperty property));
+            Assert.True(log.BindProperty("Name", "World", false, out var property));
 
             Assert.Equal("Name", property.Name);
             Assert.Equal("World", property.Value.LiteralValue());
