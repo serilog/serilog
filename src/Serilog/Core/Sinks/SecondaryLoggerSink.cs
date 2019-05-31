@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Core.Sinks

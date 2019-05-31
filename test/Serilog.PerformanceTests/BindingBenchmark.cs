@@ -13,11 +13,8 @@
 // limitations under the License.
 
 using BenchmarkDotNet.Attributes;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
-using Serilog.Parsing;
 using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests

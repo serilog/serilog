@@ -368,7 +368,7 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out MessageTemplate parsedTemplate, out var boundProperties);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
             var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
