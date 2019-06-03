@@ -13,9 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Serilog.Context;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
-using Serilog.Enrichers;
+using Serilog.Debugging;
+using Serilog.Events;
 
 namespace Serilog.Configuration
 {
@@ -84,6 +88,103 @@ namespace Serilog.Configuration
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration FromLogContext() => With<LogContextEnricher>();
+
+        /// <summary>
+        /// Apply an enricher only when <paramref name="condition"/> evaluates to <c>true</c>.
+        /// </summary>
+        /// <param name="condition">A predicate that evaluates to <c>true</c> when the supplied <see cref="LogEvent"/>
+        /// should be enriched.</param>
+        /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration When(Func<LogEvent, bool> condition, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        {
+            if (condition == null) throw new ArgumentNullException(nameof(condition));
+            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+
+            return Wrap(this, e => new ConditionalEnricher(e, condition), configureEnricher);
+        }
+
+        /// <summary>
+        /// Apply an enricher only to events with a <see cref="LogEventLevel"/> greater than or equal to <paramref name="enrichFromLevel"/>.
+        /// </summary>
+        /// <param name="enrichFromLevel">The level from which the enricher will be applied.</param>
+        /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
+        /// to collect or store at lower levels.</remarks>
+        public LoggerConfiguration AtLevel(LogEventLevel enrichFromLevel, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        {
+            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+
+            return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= enrichFromLevel), configureEnricher);
+        }
+
+        /// <summary>
+        /// Apply an enricher only to events with a <see cref="LogEventLevel"/> greater than or equal to the level specified by <paramref name="levelSwitch"/>.
+        /// </summary>
+        /// <param name="levelSwitch">A <see cref="LoggingLevelSwitch"/> that specifies the level from which the enricher will be applied.</param>
+        /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
+        /// to collect or store at lower levels.</remarks>
+        public LoggerConfiguration AtLevel(LoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        {
+            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+
+            return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= levelSwitch.MinimumLevel), configureEnricher);
+        }
+
+        /// <summary>
+        /// Helper method for wrapping sinks.
+        /// </summary>
+        /// <param name="loggerEnrichmentConfiguration">The parent enrichment configuration.</param>
+        /// <param name="wrapEnricher">A function that allows for wrapping <see cref="ILogEventEnricher"/>s
+        /// added in <paramref name="configureWrappedEnricher"/>.</param>
+        /// <param name="configureWrappedEnricher">An action that configures enrichers to be wrapped in <paramref name="wrapEnricher"/>.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration Wrap(
+            LoggerEnrichmentConfiguration loggerEnrichmentConfiguration,
+            Func<ILogEventEnricher, ILogEventEnricher> wrapEnricher,
+            Action<LoggerEnrichmentConfiguration> configureWrappedEnricher)
+        {
+            if (loggerEnrichmentConfiguration == null) throw new ArgumentNullException(nameof(loggerEnrichmentConfiguration));
+            if (wrapEnricher == null) throw new ArgumentNullException(nameof(wrapEnricher));
+            if (configureWrappedEnricher == null) throw new ArgumentNullException(nameof(configureWrappedEnricher));
+
+            var enrichersToWrap = new List<ILogEventEnricher>();
+
+            var capturingConfiguration = new LoggerConfiguration();
+            var capturingLoggerEnrichmentConfiguration = new LoggerEnrichmentConfiguration(
+                capturingConfiguration,
+                enrichersToWrap.Add);
+
+            // `Enrich.With()` will return the capturing configuration; this ensures chained `Enrich` gets back
+            // to the capturing enrichment configuration, enabling `Enrich.WithX().Enrich.WithY()`.
+            capturingConfiguration.Enrich = capturingLoggerEnrichmentConfiguration;
+
+            configureWrappedEnricher(capturingLoggerEnrichmentConfiguration);
+
+            if (enrichersToWrap.Count == 0)
+                return loggerEnrichmentConfiguration._loggerConfiguration;
+
+            var enclosed = enrichersToWrap.Count == 1 ?
+                enrichersToWrap.Single() :
+                // Enrichment failures are not considered blocking for auditing purposes.
+                new SafeAggregateEnricher(enrichersToWrap);
+
+            var wrappedEnricher = wrapEnricher(enclosed);
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            if (!(wrappedEnricher is IDisposable))
+            {
+                SelfLog.WriteLine("Wrapping enricher {0} does not implement IDisposable; to ensure " +
+                                  "wrapped enrichers are properly disposed, wrappers should dispose " +
+                                  "their wrapped contents", wrappedEnricher);
+            }
+
+            return loggerEnrichmentConfiguration.With(wrappedEnricher);
+        }
     }
 }
