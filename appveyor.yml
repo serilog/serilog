@@ -20,7 +20,7 @@ for:
   build_script:
   - sh build.sh
 artifacts:
-  - path: artifacts/Serilog.*.nupkg
+- path: artifacts/Serilog.*.?nupkg
 deploy:
 - provider: NuGet
   api_key:
@@ -31,7 +31,7 @@ deploy:
 - provider: GitHub
   auth_token:
     secure: p4LpVhBKxGS5WqucHxFQ5c7C8cP74kbNB0Z8k9Oxx/PMaDQ1+ibmoexNqVU5ZlmX
-  artifact: /Serilog.*\.nupkg/
+  artifact: /Serilog.*\.?nupkg/
   tag: v$(appveyor_build_version)
   on:
     branch: master
