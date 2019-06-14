@@ -12,7 +12,7 @@
     <PackageId>Serilog</PackageId>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIconUrl>https://serilog.net/images/serilog-nuget.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/serilog/serilog</PackageProjectUrl>
+    <PackageProjectUrl>https://serilog.net/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
