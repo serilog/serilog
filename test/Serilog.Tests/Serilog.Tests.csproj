@@ -38,7 +38,4 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-sourcelink" Version="2.8.1" />
-  </ItemGroup>
 </Project>
