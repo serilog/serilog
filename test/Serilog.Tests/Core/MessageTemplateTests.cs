@@ -121,7 +121,7 @@ namespace Serilog.Tests.Core
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
             var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
-            var props = binder.ConstructProperties(mt, properties);
+            var props = binder.ConstructProperties(mt, new ObjectParameterValueProvider(properties));
             var output = new StringBuilder();
             var writer = new StringWriter(output);
             mt.Render(props.ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);

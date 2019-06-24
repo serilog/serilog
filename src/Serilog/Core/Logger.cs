@@ -309,7 +309,7 @@ namespace Serilog.Core
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, exception, messageTemplate, new object[] { propertyValue });
+                WriteImpl(level, exception, messageTemplate, new SingleValue<T>(propertyValue));
             }
         }
 
@@ -327,7 +327,7 @@ namespace Serilog.Core
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, exception, messageTemplate, new object[] { propertyValue0, propertyValue1 });
+                WriteImpl(level, exception, messageTemplate, new MultiValue<T0, SingleValue<T1>>(propertyValue0, new SingleValue<T1>(propertyValue1)));
             }
         }
 
@@ -346,7 +346,8 @@ namespace Serilog.Core
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, exception, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
+                WriteImpl(level, exception, messageTemplate,
+                    new MultiValue<T0, MultiValue<T1, SingleValue<T2>>>(propertyValue0, new MultiValue<T1, SingleValue<T2>>(propertyValue1, new SingleValue<T2>(propertyValue2))));
             }
         }
 
@@ -368,7 +369,19 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
+            _messageTemplateProcessor.Process(messageTemplate, new ObjectParameterValueProvider(propertyValues), out var parsedTemplate, out var boundProperties);
+
+            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
+            Dispatch(logEvent);
+        }
+
+        void WriteImpl<TList>(LogEventLevel level, Exception exception, string messageTemplate, in TList values)
+            where TList : struct, IMessageTemplateParameters
+        {
+            if (!IsEnabled(level)) return;
+            if (messageTemplate == null) return;
+
+            _messageTemplateProcessor.Process(messageTemplate, in values, out var parsedTemplate, out var boundProperties);
 
             var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
@@ -1334,7 +1347,7 @@ namespace Serilog.Core
                 return false;
             }
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
+            _messageTemplateProcessor.Process(messageTemplate, new ObjectParameterValueProvider(propertyValues), out parsedTemplate, out var boundEventProperties);
             boundProperties = boundEventProperties.Length == 0 ?
                 NoProperties :
                 boundEventProperties.Select(p => new LogEventProperty(p));

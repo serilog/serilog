@@ -31,7 +31,8 @@ namespace Serilog.Capturing
             _propertyBinder = new PropertyBinder(_propertyValueConverter);
         }
 
-        public void Process(string messageTemplate, object[] messageTemplateParameters, out MessageTemplate parsedTemplate, out EventProperty[] properties)
+        public void Process<TList>(string messageTemplate, in TList messageTemplateParameters, out MessageTemplate parsedTemplate, out EventProperty[] properties)
+            where TList : struct, IMessageTemplateParameters
         {
             parsedTemplate = _parser.Parse(messageTemplate);
             properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters);
