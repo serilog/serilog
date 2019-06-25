@@ -17,6 +17,7 @@ namespace Serilog.PerformanceTests
         readonly object _dictionaryValue;
         readonly object _anonymousObject;
         readonly object _sequence;
+        static readonly Guid GuidValue = new Guid("88AB8074-C3A4-47F4-85F4-B66B9A16A797");
 
         public AllocationsBenchmark()
         {
@@ -82,6 +83,18 @@ namespace Serilog.PerformanceTests
         public void LogScalar()
         {
             _logger.Information("Template: {ScalarValue}", "42");
+        }
+
+        [Benchmark]
+        public void LogScalarInt()
+        {
+            _logger.Information("Template: {ScalarValue}", 42);
+        }
+
+        [Benchmark]
+        public void LogScalarGuid()
+        {
+            _logger.Information("Template: {ScalarValue}", GuidValue);
         }
 
         [Benchmark]
