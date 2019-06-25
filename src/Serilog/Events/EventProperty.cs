@@ -97,7 +97,6 @@ namespace Serilog.Events
 
         public interface IBoundedPropertyVisitor
         {
-            void On(MessageTemplate parsedTemplate);
             void On(EventProperty property);
         }
     }

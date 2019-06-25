@@ -45,14 +45,12 @@ namespace Serilog.Capturing
         /// this will be empty.</returns>
         public void ConstructProperties<TPropertyVisitor>(MessageTemplate messageTemplate, object[] messageTemplateParameters, ref TPropertyVisitor visitor)
             where TPropertyVisitor : struct, EventProperty.IBoundedPropertyVisitor
-
         {
             if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
             {
                 if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
                     SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
 
-                visitor.Dispatch();
                 return;
             }
 

@@ -369,30 +369,25 @@ namespace Serilog.Core
                 propertyValues = new object[] { propertyValues };
 
             var visitor = default(PropertyVisitor);
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, ref visitor);
+            visitor.BoundedValues = new Dictionary<string, LogEventPropertyValue>(propertyValues?.Length ?? 0);
 
-            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, visitor._parsedTemplate, visitor._boundedValues);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, ref visitor);
+            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, visitor.BoundedValues);
             Dispatch(logEvent);
         }
 
         struct PropertyVisitor : EventProperty.IBoundedPropertyVisitor
         {
-            public Dictionary<string, LogEventPropertyValue> _boundedValues;
-            public MessageTemplate _parsedTemplate;
-
-            public void On(MessageTemplate parsedTemplate)
-            {
-                _parsedTemplate = parsedTemplate;
-            }
+            public Dictionary<string, LogEventPropertyValue> BoundedValues;
 
             public void On(EventProperty property)
             {
-                if (_boundedValues == null)
+                if (BoundedValues == null)
                 {
-                    _boundedValues = new Dictionary<string, LogEventPropertyValue>();
+                    BoundedValues = new Dictionary<string, LogEventPropertyValue>();
                 }
 
-                _boundedValues[property.Name] = property.Value;
+                BoundedValues[property.Name] = property.Value;
             }
         }
 
@@ -1356,39 +1351,27 @@ namespace Serilog.Core
                 return false;
             }
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
-            boundProperties = boundEventProperties.Length == 0 ?
-                NoProperties :
-                boundEventProperties.Select(p => new LogEventProperty(p));
+            var visitor= default(BindMessageTemplateVisitor);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, ref visitor);
+            boundProperties = visitor.Properties ?? (IEnumerable<LogEventProperty>) NoProperties;
 
             return true;
         }
 
-        struct BindMessageVisitor : EventProperty.IBoundedPropertyVisitor
+        struct BindMessageTemplateVisitor : EventProperty.IBoundedPropertyVisitor
         {
-            MessageTemplate _parsedTemplate;
-
-            public PropertyVisitor(MessageTemplate parsedTemplate)
-            {
-                _parsedTemplate = parsedTemplate;
-            }
-
-            public void On(MessageTemplate parsedTemplate)
-            {
-                _parsedTemplate = parsedTemplate;
-            }
+            public List<LogEventProperty> Properties;
 
             public void On(EventProperty property)
             {
-                _boundedValues[property.Name] = property.Value;
-            }
+                if (Properties == null)
+                {
+                    Properties = new List<LogEventProperty>();
+                }
 
-            public void Dispatch()
-            {
-                throw new NotImplementedException();
+                Properties.Add(new LogEventProperty(property));
             }
         }
-
 
         /// <summary>
         /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured

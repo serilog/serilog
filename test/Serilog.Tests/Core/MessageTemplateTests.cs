@@ -1,5 +1,6 @@
 ﻿using Serilog.Capturing;
 using Serilog.Core;
+using Serilog.Tests.Support;
 using System;
 using System.Globalization;
 using System.IO;
