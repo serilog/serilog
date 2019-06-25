@@ -75,7 +75,7 @@ namespace Serilog.Capturing
                         SelfLog.WriteLine("Unassigned positional value {0} in: {1}", position, template);
                     else
                     {
-                        var propertyValue = CreatePropertyValue(messageTemplateParameters, position, property);
+                        var propertyValue = messageTemplateParameters.CreatePropertyValue(_valueConverter, position, property.Destructuring);
                         result[position] = new EventProperty(property.PropertyName, propertyValue);
                     }
                 }
@@ -117,22 +117,16 @@ namespace Serilog.Capturing
             for (var i = 0; i < matchedRun; ++i)
             {
                 var property = template.NamedProperties[i];
-                var propertyValue = CreatePropertyValue(messageTemplateParameters, i, property);
+                var propertyValue = messageTemplateParameters.CreatePropertyValue(_valueConverter, i, property.Destructuring);
                 result[i] = new EventProperty(property.PropertyName, propertyValue);
             }
 
             for (var i = matchedRun; i < length; ++i)
             {
-                var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
+                var value = messageTemplateParameters.CreatePropertyValue(_valueConverter, i);
                 result[i] = new EventProperty("__" + i, value);
             }
             return result;
-        }
-
-        LogEventPropertyValue CreatePropertyValue<TParameters>(in TParameters parameters, int position, PropertyToken property)
-            where TParameters : struct, IMessageTemplateParameters
-        {
-            return _valueConverter.CreatePropertyValue(parameters[position], property.Destructuring);
         }
     }
 }

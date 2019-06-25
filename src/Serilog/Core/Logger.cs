@@ -327,7 +327,7 @@ namespace Serilog.Core
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                WriteImpl(level, exception, messageTemplate, new MultiValue<T0, SingleValue<T1>>(propertyValue0, new SingleValue<T1>(propertyValue1)));
+                WriteImpl(level, exception, messageTemplate, new TwoValues<T0, T1>(propertyValue0, propertyValue1));
             }
         }
 
@@ -346,8 +346,7 @@ namespace Serilog.Core
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                WriteImpl(level, exception, messageTemplate,
-                    new MultiValue<T0, MultiValue<T1, SingleValue<T2>>>(propertyValue0, new MultiValue<T1, SingleValue<T2>>(propertyValue1, new SingleValue<T2>(propertyValue2))));
+                WriteImpl(level, exception, messageTemplate, new ThreeValues<T0, T1, T2>(propertyValue0, propertyValue1, propertyValue2));
             }
         }
 

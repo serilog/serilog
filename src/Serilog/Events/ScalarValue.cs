@@ -21,6 +21,53 @@ namespace Serilog.Events
     /// <summary>
     /// A property value corresponding to a simple, scalar type.
     /// </summary>
+    /// <typeparam name="T">The type of the value</typeparam>
+    public class ScalarValue<T> : LogEventPropertyValue
+        where T : struct
+    {
+        readonly T Value;
+
+        /// <summary>
+        /// Construct a <see cref="ScalarValue"/> with the specified value.
+        /// </summary>
+        /// <param name="value">The value, which may be <code>null</code>.</param>
+        public ScalarValue(T value)
+        {
+            Value = value;
+        }
+
+        /// <summary>
+        /// Render the value to the output.
+        /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        {
+            ScalarValue.Render(Value, output, format, formatProvider);
+        }
+
+        /// <summary>
+        /// Determine if this instance is equal to <paramref name="obj"/>.
+        /// </summary>
+        /// <param name="obj">The instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            return obj is ScalarValue<T> sv && Equals(Value, sv.Value);
+        }
+
+        /// <summary>
+        /// Get a hash code representing the value.
+        /// </summary>
+        /// <returns>The instance's hash code.</returns>
+        public override int GetHashCode() => Value.GetHashCode();
+    }
+
+    /// <summary>
+    /// A property value corresponding to a simple, scalar type.
+    /// </summary>
     public class ScalarValue : LogEventPropertyValue
     {
         /// <summary>
@@ -50,7 +97,7 @@ namespace Serilog.Events
             Render(Value, output, format, formatProvider);
         }
 
-        internal static void Render(object value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        internal static void Render<T>(T value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
@@ -102,7 +149,7 @@ namespace Serilog.Events
         /// <returns>True if the instances are equal; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            return obj is ScalarValue sv ? Equals(Value, sv.Value) : false;
+            return obj is ScalarValue sv && Equals(Value, sv.Value);
         }
 
         /// <summary>
