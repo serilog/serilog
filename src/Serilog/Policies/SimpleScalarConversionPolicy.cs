@@ -28,11 +28,11 @@ namespace Serilog.Policies
             _scalarTypes = new HashSet<Type>(scalarTypes);
         }
 
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        public bool TryConvertToScalar<T>(T value, out LogEventPropertyValue result)
         {
-            if (_scalarTypes.Contains(value.GetType()))
+            if (_scalarTypes.Contains(typeof(T)))
             {
-                result = new ScalarValue(value);
+                result = new ScalarValue<T>(value);
                 return true;
             }
 

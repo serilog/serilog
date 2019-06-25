@@ -86,17 +86,27 @@ namespace Serilog.Capturing
             _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
         }
 
+        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        {
+            return CreatePropertyValue<object>(value, destructureObjects);
+        }
+
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
+        {
+            return CreateProperty<object>(name, value, destructureObjects);
+        }
+
+        public LogEventProperty CreateProperty<T>(string name, T value, bool destructureObjects = false)
         {
             return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        public LogEventPropertyValue CreatePropertyValue<T>(T value, bool destructureObjects = false)
         {
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        public LogEventPropertyValue CreatePropertyValue<T>(T value, Destructuring destructuring)
         {
             try
             {
@@ -113,7 +123,7 @@ namespace Serilog.Capturing
             }
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
+        LogEventPropertyValue CreatePropertyValue<T>(T value, bool destructureObjects, int depth)
         {
             return CreatePropertyValue(
                 value,
@@ -123,10 +133,12 @@ namespace Serilog.Capturing
                 depth);
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
+        LogEventPropertyValue CreatePropertyValue<T>(T value, Destructuring destructuring, int depth)
         {
-            if (value == null)
+            if (EqualityComparer<T>.Default.Equals(value, default))
+            {
                 return new ScalarValue(null);
+            }
 
             if (destructuring == Destructuring.Stringify)
             {
@@ -137,7 +149,7 @@ namespace Serilog.Capturing
             {
                 if (value is string stringValue)
                 {
-                    value = TruncateIfNecessary(stringValue);
+                    return new ScalarValue(TruncateIfNecessary(stringValue));
                 }
             }
 
@@ -150,29 +162,31 @@ namespace Serilog.Capturing
                     return converted;
             }
 
+            // it's not a simple scalar and deconstructing API is a part of the public API. Let's box the value and allocate now.
+            object boxed = value;
             DepthLimiter.SetCurrentDepth(depth);
 
             if (destructuring == Destructuring.Destructure)
             {
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {
-                    if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
+                    if (destructuringPolicy.TryDestructure(boxed, _depthLimiter, out var result))
                         return result;
                 }
             }
 
-            var valueType = value.GetType();
+            var valueType = boxed.GetType();
 
-            if (TryConvertEnumerable(value, destructuring, valueType, out var enumerableResult))
+            if (TryConvertEnumerable(boxed, destructuring, valueType, out var enumerableResult))
                 return enumerableResult;
 
-            if (TryConvertValueTuple(value, destructuring, valueType, out var tupleResult))
+            if (TryConvertValueTuple(boxed, destructuring, valueType, out var tupleResult))
                 return tupleResult;
 
-            if (TryConvertCompilerGeneratedType(value, destructuring, valueType, out var compilerGeneratedResult))
+            if (TryConvertCompilerGeneratedType(boxed, destructuring, valueType, out var compilerGeneratedResult))
                 return compilerGeneratedResult;
 
-            return new ScalarValue(value.ToString());
+            return new ScalarValue<T>(value);
         }
 
         bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
@@ -296,7 +310,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        LogEventPropertyValue Stringify(object value)
+        LogEventPropertyValue Stringify<T>(T value)
         {
             var stringified = value.ToString();
             var truncated = TruncateIfNecessary(stringified);

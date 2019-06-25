@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
@@ -23,7 +24,6 @@ namespace Serilog.Events
     /// </summary>
     /// <typeparam name="T">The type of the value</typeparam>
     public class ScalarValue<T> : LogEventPropertyValue
-        where T : struct
     {
         readonly T Value;
 
@@ -101,7 +101,7 @@ namespace Serilog.Events
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            if (value == null)
+            if (EqualityComparer<T>.Default.Equals(value, default))
             {
                 output.Write("null");
                 return;
