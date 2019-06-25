@@ -211,11 +211,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (IsEnabled(level))
-            {
-                Write(level, messageTemplate, new object[] { propertyValue });
-            }
+            WriteImpl(level, null, messageTemplate, new SingleValue<T>(propertyValue));
         }
 
         /// <summary>
@@ -228,11 +224,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (IsEnabled(level))
-            {
-                Write(level, messageTemplate, new object[] { propertyValue0, propertyValue1 });
-            }
+            WriteImpl(level, null, messageTemplate, new TwoValues<T0, T1>(propertyValue0, propertyValue1));
         }
 
         /// <summary>
@@ -246,11 +238,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (IsEnabled(level))
-            {
-                Write(level, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
-            }
+            WriteImpl(level, null, messageTemplate, new ThreeValues<T0, T1, T2>(propertyValue0, propertyValue1, propertyValue2));
         }
 
         /// <summary>
@@ -306,11 +294,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (IsEnabled(level))
-            {
-                WriteImpl(level, exception, messageTemplate, new SingleValue<T>(propertyValue));
-            }
+            WriteImpl(level, exception, messageTemplate, new SingleValue<T>(propertyValue));
         }
 
         /// <summary>
@@ -324,11 +308,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (IsEnabled(level))
-            {
-                WriteImpl(level, exception, messageTemplate, new TwoValues<T0, T1>(propertyValue0, propertyValue1));
-            }
+            WriteImpl(level, exception, messageTemplate, new TwoValues<T0, T1>(propertyValue0, propertyValue1));
         }
 
         /// <summary>
@@ -343,11 +323,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
-            // Avoid the array allocation and any boxing allocations when the level isn't enabled
-            if (IsEnabled(level))
-            {
-                WriteImpl(level, exception, messageTemplate, new ThreeValues<T0, T1, T2>(propertyValue0, propertyValue1, propertyValue2));
-            }
+            WriteImpl(level, exception, messageTemplate, new ThreeValues<T0, T1, T2>(propertyValue0, propertyValue1, propertyValue2));
         }
 
         /// <summary>

@@ -147,14 +147,14 @@ namespace Serilog.Capturing
 
             if (destructuring == Destructuring.Destructure)
             {
-                if (value is string stringValue)
+                if (value is string)
                 {
-                    return new ScalarValue(TruncateIfNecessary(stringValue));
+                    return new ScalarValue(TruncateIfNecessary(value.ToString()));
                 }
             }
 
             if (value is string)
-                return new ScalarValue(value);
+                return new ScalarValue(value.ToString());
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Serilog.Capturing;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -11,22 +12,24 @@ namespace Serilog.Core
 
         public SingleValue(TValue value)
         {
-            this._value = value;
+            _value = value;
         }
 
         public int Length => 1;
 
-        object this[int index] => index == 0 ? _value : throw new IndexOutOfRangeException();
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index)
         {
-            return converter.CreatePropertyValue(this[index]);
+            return index == 0 ? converter.CreatePropertyValue(_value) : ThrowOutOfRange();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index, Destructuring destructuring)
         {
-            return converter.CreatePropertyValue(this[index], destructuring);
+            return index == 0 ? converter.CreatePropertyValue(_value, destructuring) : ThrowOutOfRange();
         }
+
+        static LogEventPropertyValue ThrowOutOfRange() => throw new IndexOutOfRangeException();
     }
 
     readonly struct TwoValues<TValue0, TValue1> : IMessageTemplateParameters
@@ -42,31 +45,19 @@ namespace Serilog.Core
 
         public int Length => 2;
 
-        object this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0:
-                        return _value0;
-                    case 1:
-                        return _value1;
-                    default:
-                        throw new IndexOutOfRangeException();
-                }
-            }
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index)
         {
-            return converter.CreatePropertyValue(this[index]);
+            return index == 0 ? converter.CreatePropertyValue(_value0) : index == 1 ? converter.CreatePropertyValue(_value1) : ThrowOutOfRange();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index, Destructuring destructuring)
         {
-            return converter.CreatePropertyValue(this[index], destructuring);
+            return index == 0 ? converter.CreatePropertyValue(_value0, destructuring) : index == 1 ? converter.CreatePropertyValue(_value1, destructuring) : ThrowOutOfRange();
         }
+
+        static LogEventPropertyValue ThrowOutOfRange() => throw new IndexOutOfRangeException();
     }
 
     readonly struct ThreeValues<TValue0, TValue1, TValue2> : IMessageTemplateParameters
@@ -84,33 +75,40 @@ namespace Serilog.Core
 
         public int Length => 3;
 
-        object this[int index]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index)
         {
-            get
+            switch (index)
             {
-                switch (index)
-                {
-                    case 0:
-                        return _value0;
-                    case 1:
-                        return _value1;
-                    case 2:
-                        return _value2;
-                    default:
-                        throw new IndexOutOfRangeException();
-                }
+                case 0:
+                    return converter.CreatePropertyValue(_value0);
+                case 1:
+                    return converter.CreatePropertyValue(_value1);
+                case 2:
+                    return converter.CreatePropertyValue(_value2);
+                default:
+                    return ThrowOutOfRange();
             }
         }
 
-        public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index)
-        {
-            return converter.CreatePropertyValue(this[index]);
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public LogEventPropertyValue CreatePropertyValue(PropertyValueConverter converter, int index, Destructuring destructuring)
         {
-            return converter.CreatePropertyValue(this[index], destructuring);
+            switch (index)
+            {
+                case 0:
+                    return converter.CreatePropertyValue(_value0, destructuring);
+                case 1:
+                    return converter.CreatePropertyValue(_value1, destructuring);
+                case 2:
+                    return converter.CreatePropertyValue(_value2, destructuring);
+                default:
+                    return ThrowOutOfRange();
+            }
         }
+
+        static LogEventPropertyValue ThrowOutOfRange() => throw new IndexOutOfRangeException();
+
     }
 
     readonly struct ObjectParameterValueProvider : IMessageTemplateParameters
