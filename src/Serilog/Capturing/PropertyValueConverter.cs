@@ -186,6 +186,12 @@ namespace Serilog.Capturing
             if (TryConvertCompilerGeneratedType(boxed, destructuring, valueType, out var compilerGeneratedResult))
                 return compilerGeneratedResult;
 
+            // the non-generic case
+            if (typeof(T) == typeof(object))
+            {
+                return new ScalarValue(boxed);
+            }
+
             return new ScalarValue<T>(value);
         }
 
