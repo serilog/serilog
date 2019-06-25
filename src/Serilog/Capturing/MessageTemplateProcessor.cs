@@ -31,10 +31,13 @@ namespace Serilog.Capturing
             _propertyBinder = new PropertyBinder(_propertyValueConverter);
         }
 
-        public void Process(string messageTemplate, object[] messageTemplateParameters, out MessageTemplate parsedTemplate, out EventProperty[] properties)
+        public void Process<TPropertyVisitor>(string messageTemplate, object[] messageTemplateParameters, ref TPropertyVisitor visitor)
+            where TPropertyVisitor : struct, EventProperty.IBoundedPropertyVisitor
         {
-            parsedTemplate = _parser.Parse(messageTemplate);
-            properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters);
+            var parsedTemplate = _parser.Parse(messageTemplate);
+            visitor.On(parsedTemplate);
+
+            _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters, ref visitor);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)

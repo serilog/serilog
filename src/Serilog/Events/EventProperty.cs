@@ -94,5 +94,11 @@ namespace Serilog.Events
                 return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
             }
         }
+
+        public interface IBoundedPropertyVisitor
+        {
+            void On(MessageTemplate parsedTemplate);
+            void On(EventProperty property);
+        }
     }
 }

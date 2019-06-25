@@ -368,10 +368,32 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
+            var visitor = default(PropertyVisitor);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, ref visitor);
 
-            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
+            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, visitor._parsedTemplate, visitor._boundedValues);
             Dispatch(logEvent);
+        }
+
+        struct PropertyVisitor : EventProperty.IBoundedPropertyVisitor
+        {
+            public Dictionary<string, LogEventPropertyValue> _boundedValues;
+            public MessageTemplate _parsedTemplate;
+
+            public void On(MessageTemplate parsedTemplate)
+            {
+                _parsedTemplate = parsedTemplate;
+            }
+
+            public void On(EventProperty property)
+            {
+                if (_boundedValues == null)
+                {
+                    _boundedValues = new Dictionary<string, LogEventPropertyValue>();
+                }
+
+                _boundedValues[property.Name] = property.Value;
+            }
         }
 
         /// <summary>
@@ -1341,6 +1363,32 @@ namespace Serilog.Core
 
             return true;
         }
+
+        struct BindMessageVisitor : EventProperty.IBoundedPropertyVisitor
+        {
+            MessageTemplate _parsedTemplate;
+
+            public PropertyVisitor(MessageTemplate parsedTemplate)
+            {
+                _parsedTemplate = parsedTemplate;
+            }
+
+            public void On(MessageTemplate parsedTemplate)
+            {
+                _parsedTemplate = parsedTemplate;
+            }
+
+            public void On(EventProperty property)
+            {
+                _boundedValues[property.Name] = property.Value;
+            }
+
+            public void Dispatch()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 
         /// <summary>
         /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured

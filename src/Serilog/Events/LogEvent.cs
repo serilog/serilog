@@ -25,7 +25,7 @@ namespace Serilog.Events
     {
         readonly Dictionary<string, LogEventPropertyValue> _properties;
 
-        LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> properties)
+        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> properties)
         {
             Timestamp = timestamp;
             Level = level;
@@ -48,21 +48,6 @@ namespace Serilog.Events
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             foreach (var property in properties)
                 AddOrUpdateProperty(property);
-        }
-
-        /// <summary>
-        /// Construct a new <seealso cref="LogEvent"/>.
-        /// </summary>
-        /// <param name="timestamp">The time at which the event occurred.</param>
-        /// <param name="level">The level of the event.</param>
-        /// <param name="exception">An exception associated with the event, or null.</param>
-        /// <param name="messageTemplate">The message template describing the event.</param>
-        /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, EventProperty[] properties)
-            : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(properties?.Length ?? throw new ArgumentNullException(nameof(properties))))
-        {
-            for (var i = 0; i < properties.Length; ++i)
-                _properties[properties[i].Name] = properties[i].Value;
         }
 
         /// <summary>
