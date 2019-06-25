@@ -16,60 +16,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 
 namespace Serilog.Events
 {
     /// <summary>
     /// A property value corresponding to a simple, scalar type.
     /// </summary>
-    /// <typeparam name="T">The type of the value</typeparam>
-    public class ScalarValue<T> : LogEventPropertyValue
-    {
-        readonly T Value;
-
-        /// <summary>
-        /// Construct a <see cref="ScalarValue"/> with the specified value.
-        /// </summary>
-        /// <param name="value">The value, which may be <code>null</code>.</param>
-        public ScalarValue(T value)
-        {
-            Value = value;
-        }
-
-        /// <summary>
-        /// Render the value to the output.
-        /// </summary>
-        /// <param name="output">The output.</param>
-        /// <param name="format">A format string applied to the value, or null.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
-        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
-        {
-            ScalarValue.Render(Value, output, format, formatProvider);
-        }
-
-        /// <summary>
-        /// Determine if this instance is equal to <paramref name="obj"/>.
-        /// </summary>
-        /// <param name="obj">The instance to compare with.</param>
-        /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public override bool Equals(object obj)
-        {
-            return obj is ScalarValue<T> sv && Equals(Value, sv.Value);
-        }
-
-        /// <summary>
-        /// Get a hash code representing the value.
-        /// </summary>
-        /// <returns>The instance's hash code.</returns>
-        public override int GetHashCode() => Value.GetHashCode();
-    }
-
-    /// <summary>
-    /// A property value corresponding to a simple, scalar type.
-    /// </summary>
     public class ScalarValue : LogEventPropertyValue
     {
+        /// <summary>
+        /// Provides a flag-like object to mark the fact that the value has not been boxed yet
+        /// </summary>
+        protected static readonly object NotBoxedYet = new object();
+
+        object _value;
+
         /// <summary>
         /// Construct a <see cref="ScalarValue"/> with the specified
         /// value.
@@ -77,13 +39,20 @@ namespace Serilog.Events
         /// <param name="value">The value, which may be <code>null</code>.</param>
         public ScalarValue(object value)
         {
-            Value = value;
+            _value = value;
         }
 
         /// <summary>
         /// The value, which may be <code>null</code>.
         /// </summary>
-        public object Value { get; }
+        public object Value => GetValue(ref _value);
+
+        /// <summary>
+        /// Gets the (potentially boxed) value of the scalar.
+        /// </summary>
+        /// <param name="value">The holder of the value, that might be overriden when needed.</param>
+        /// <returns>The value of the object.</returns>
+        protected virtual object GetValue(ref object value) => value;
 
         /// <summary>
         /// Render the value to the output.
@@ -101,7 +70,7 @@ namespace Serilog.Events
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            if (EqualityComparer<T>.Default.Equals(value, default))
+            if (typeof(T).GetTypeInfo().IsValueType == false && EqualityComparer<T>.Default.Equals(value, default))
             {
                 output.Write("null");
                 return;
@@ -132,9 +101,9 @@ namespace Serilog.Events
                 }
             }
 
-            if (value is IFormattable f)
+            if (value is IFormattable)
             {
-                output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
+                output.Write(((IFormattable)value).ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
             }
             else
             {

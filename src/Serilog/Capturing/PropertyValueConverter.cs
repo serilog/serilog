@@ -135,7 +135,7 @@ namespace Serilog.Capturing
 
         LogEventPropertyValue CreatePropertyValue<T>(T value, Destructuring destructuring, int depth)
         {
-            if (EqualityComparer<T>.Default.Equals(value, default))
+            if (typeof(T).GetTypeInfo().IsValueType == false && EqualityComparer<T>.Default.Equals(value, default))
             {
                 return new ScalarValue(null);
             }

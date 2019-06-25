@@ -83,9 +83,11 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void UnderDestructuringABooleanIsAScalarValue()
         {
-            var pv = _converter.CreatePropertyValue(true, Destructuring.Destructure);
-            Assert.IsType<ScalarValue>(pv);
-            Assert.IsType<bool>(((ScalarValue)pv).Value);
+            const bool value = true;
+            var pv = _converter.CreatePropertyValue(value, Destructuring.Destructure);
+            Assert.IsType<ScalarValue<bool>>(pv);
+            Assert.IsType<bool>(((ScalarValue<bool>)pv).Value);
+            Assert.Equal(value, ((ScalarValue<bool>)pv).RawValue);
         }
 
         [Fact]
@@ -118,9 +120,9 @@ namespace Serilog.Tests.Capturing
 
         class B
         {
-// ReSharper disable UnusedAutoPropertyAccessor.Local
+            // ReSharper disable UnusedAutoPropertyAccessor.Local
             public A A { get; set; }
-// ReSharper restore UnusedAutoPropertyAccessor.Local
+            // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
         [Fact]
