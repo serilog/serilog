@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Serilog.Capturing;
 using Serilog.Core.Enrichers;
 using Serilog.Core.Pipeline;
@@ -368,27 +368,12 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            var visitor = default(PropertyVisitor);
-            visitor.BoundedValues = new Dictionary<string, LogEventPropertyValue>(propertyValues?.Length ?? 0);
+            var properties = new Dictionary<string, LogEventPropertyValue>(propertyValues?.Length ?? 0);
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, ref visitor);
-            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, visitor.BoundedValues);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, properties);
+
+            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, properties);
             Dispatch(logEvent);
-        }
-
-        struct PropertyVisitor : EventProperty.IBoundedPropertyVisitor
-        {
-            public Dictionary<string, LogEventPropertyValue> BoundedValues;
-
-            public void On(EventProperty property)
-            {
-                if (BoundedValues == null)
-                {
-                    BoundedValues = new Dictionary<string, LogEventPropertyValue>();
-                }
-
-                BoundedValues[property.Name] = property.Value;
-            }
         }
 
         /// <summary>
@@ -1351,26 +1336,59 @@ namespace Serilog.Core
                 return false;
             }
 
-            var visitor= default(BindMessageTemplateVisitor);
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, ref visitor);
-            boundProperties = visitor.Properties ?? (IEnumerable<LogEventProperty>) NoProperties;
+            var properties = new BindMessageProperties();
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, properties);
+            boundProperties = properties.Properties ?? (IEnumerable<LogEventProperty>) NoProperties;
 
             return true;
         }
 
-        struct BindMessageTemplateVisitor : EventProperty.IBoundedPropertyVisitor
+        struct BindMessageProperties : IDictionary<string, LogEventPropertyValue>
         {
             public List<LogEventProperty> Properties;
 
-            public void On(EventProperty property)
+            IEnumerator<KeyValuePair<string, LogEventPropertyValue>> IEnumerable<KeyValuePair<string, LogEventPropertyValue>>.GetEnumerator() => throw new NotImplementedException();
+
+            IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+
+            void ICollection<KeyValuePair<string, LogEventPropertyValue>>.Add(KeyValuePair<string, LogEventPropertyValue> item) => throw new NotImplementedException();
+
+            void ICollection<KeyValuePair<string, LogEventPropertyValue>>.Clear() => throw new NotImplementedException();
+
+            bool ICollection<KeyValuePair<string, LogEventPropertyValue>>.Contains(KeyValuePair<string, LogEventPropertyValue> item) => throw new NotImplementedException();
+
+            void ICollection<KeyValuePair<string, LogEventPropertyValue>>.CopyTo(KeyValuePair<string, LogEventPropertyValue>[] array, int arrayIndex) => throw new NotImplementedException();
+
+            bool ICollection<KeyValuePair<string, LogEventPropertyValue>>.Remove(KeyValuePair<string, LogEventPropertyValue> item) => throw new NotImplementedException();
+
+            int ICollection<KeyValuePair<string, LogEventPropertyValue>>.Count => throw new NotImplementedException();
+
+            bool ICollection<KeyValuePair<string, LogEventPropertyValue>>.IsReadOnly => false;
+
+            void IDictionary<string, LogEventPropertyValue>.Add(string key, LogEventPropertyValue value)
             {
                 if (Properties == null)
                 {
                     Properties = new List<LogEventProperty>();
                 }
 
-                Properties.Add(new LogEventProperty(property));
+                Properties.Add(new LogEventProperty(key, value));
             }
+
+            bool IDictionary<string, LogEventPropertyValue>.ContainsKey(string key) => throw new NotImplementedException();
+
+            bool IDictionary<string, LogEventPropertyValue>.Remove(string key) => throw new NotImplementedException();
+
+            bool IDictionary<string, LogEventPropertyValue>.TryGetValue(string key, out LogEventPropertyValue value) => throw new NotImplementedException();
+
+            LogEventPropertyValue IDictionary<string, LogEventPropertyValue>.this[string key]
+            {
+                get => throw new NotImplementedException();
+                set => throw new NotImplementedException();
+            }
+
+            ICollection<string> IDictionary<string, LogEventPropertyValue>.Keys => throw new NotImplementedException();
+            ICollection<LogEventPropertyValue> IDictionary<string, LogEventPropertyValue>.Values => throw new NotImplementedException();
         }
 
         /// <summary>

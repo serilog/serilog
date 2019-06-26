@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -24,8 +25,6 @@ namespace Serilog.Capturing
     class PropertyBinder
     {
         readonly PropertyValueConverter _valueConverter;
-
-        static readonly EventProperty[] NoProperties = new EventProperty[0];
 
         static readonly string[] UnmatchedNames = Enumerable.Range(0, 100).Select(i => "__" + i).ToArray();
 
@@ -40,11 +39,10 @@ namespace Serilog.Capturing
         /// <param name="messageTemplate">The template that the parameters apply to.</param>
         /// <param name="messageTemplateParameters">Objects corresponding to the properties
         ///     represented in the message template.</param>
-        /// <param name="visitor"></param>
+        /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>>
         /// <returns>A list of properties; if the template is malformed then
         /// this will be empty.</returns>
-        public void ConstructProperties<TPropertyVisitor>(MessageTemplate messageTemplate, object[] messageTemplateParameters, ref TPropertyVisitor visitor)
-            where TPropertyVisitor : struct, EventProperty.IBoundedPropertyVisitor
+        public void ConstructProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters, IDictionary<string, LogEventPropertyValue> properties)
         {
             if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
             {
@@ -56,16 +54,15 @@ namespace Serilog.Capturing
 
             if (messageTemplate.PositionalProperties != null)
             {
-                ConstructPositionalProperties(messageTemplate, messageTemplateParameters, ref visitor);
+                ConstructPositionalProperties(messageTemplate, messageTemplateParameters, properties);
             }
             else
             {
-                ConstructNamedProperties(messageTemplate, messageTemplateParameters, ref visitor);
+                ConstructNamedProperties(messageTemplate, messageTemplateParameters, properties);
             }
         }
 
-        void ConstructPositionalProperties<TPropertyVisitor>(MessageTemplate template, object[] messageTemplateParameters, ref TPropertyVisitor visitor)
-            where TPropertyVisitor : struct, EventProperty.IBoundedPropertyVisitor
+        void ConstructPositionalProperties(MessageTemplate template, object[] messageTemplateParameters, IDictionary<string, LogEventPropertyValue> properties)
         {
             var positionalProperties = template.PositionalProperties;
 
@@ -88,13 +85,12 @@ namespace Serilog.Capturing
             {
                 if (!result[i].Equals(EventProperty.None))
                 {
-                    visitor.On(result[i]);
+                    properties.Add(result[i].Name, result[i].Value);
                 }
             }
         }
 
-        void ConstructNamedProperties<TPropertyVisitor>(MessageTemplate template, object[] messageTemplateParameters, ref TPropertyVisitor visitor)
-            where TPropertyVisitor : struct, EventProperty.IBoundedPropertyVisitor
+        void ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters, IDictionary<string, LogEventPropertyValue> properties)
         {
             var namedProperties = template.NamedProperties;
             if (namedProperties == null)
@@ -113,13 +109,13 @@ namespace Serilog.Capturing
             {
                 var property = template.NamedProperties[i];
                 var value = messageTemplateParameters[i];
-                visitor.On(ConstructProperty(property, value));
+                properties.Add(property.PropertyName, _valueConverter.CreatePropertyValue(value, property.Destructuring));
             }
 
             for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)
             {
                 var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
-                visitor.On(new EventProperty(UnmatchedNames[i], value));
+                properties.Add(UnmatchedNames[i], value);
             }
         }
 
