@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Policies;
 
 namespace Serilog.Capturing
 {
@@ -22,7 +22,8 @@ namespace Serilog.Capturing
                 var fastScalarTypes = scalarTypes.Where(t => t != typeof(string)).ToArray();
                 var fastBuilders = new List<Delegate>
                 {
-                    converter.BuildString()
+                    converter.BuildString(),
+                    BuildBytes(),
                 };
 
                 var methods = typeof(PropertyValueConverter).GetRuntimeMethods().ToList();
@@ -171,6 +172,14 @@ namespace Serilog.Capturing
             };
         }
 
+        static PropertyValueBuilder<byte[]> BuildBytes()
+        {
+            return (value, destructuring, depth) =>
+            {
+                return value == null ? new ScalarValue(null) : ByteArrayScalarConversionPolicy.ConvertToScalarValue(value);
+            };
+        }
+
         static PropertyValueBuilder<TValue> BuildScalarValueType<TValue>()
             where TValue : struct
         {
@@ -202,6 +211,5 @@ namespace Serilog.Capturing
                 return value == null ? new ScalarValue(null) : new ScalarValue(value);
             };
         }
-
     }
 }

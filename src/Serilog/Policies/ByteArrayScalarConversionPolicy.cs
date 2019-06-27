@@ -40,18 +40,48 @@ namespace Serilog.Policies
                 return false;
             }
 
-            if (bytes.Length > MaximumByteArrayLength)
-            {
-                var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
-                var description = start + "... (" + bytes.Length + " bytes)";
-                result = new ScalarValue(description);
-            }
-            else
-            {
-                result = new ScalarValue(string.Concat(bytes.Select(b => b.ToString("X2"))));
-            }
+            result = ConvertToScalarValue(bytes);
 
             return true;
+        }
+
+        public static ScalarValue ConvertToScalarValue(byte[] bytes)
+        {
+            if (bytes.Length > MaximumByteArrayLength)
+            {
+                var prefix = bytes.Take(16).ToArray();
+                var start = ByteArrayToHexViaLookup32(prefix);
+                var description = start + "... (" + bytes.Length + " bytes)";
+                return new ScalarValue(description);
+            }
+
+            return new ScalarValue(ByteArrayToHexViaLookup32(bytes));
+        }
+
+        static readonly uint[] _lookup32 = CreateLookup32();
+
+        static uint[] CreateLookup32()
+        {
+            var result = new uint[256];
+            for (var i = 0; i < 256; i++)
+            {
+                var s = i.ToString("X2");
+                result[i] = s[0] + ((uint)s[1] << 16);
+            }
+            return result;
+        }
+
+        static string ByteArrayToHexViaLookup32(byte[] bytes)
+        {
+            var lookup32 = _lookup32;
+            var result = new char[bytes.Length * 2];
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                var val = lookup32[bytes[i]];
+                result[2 * i] = (char)val;
+                result[2 * i + 1] = (char)(val >> 16);
+            }
+            return new string(result);
         }
     }
 }
