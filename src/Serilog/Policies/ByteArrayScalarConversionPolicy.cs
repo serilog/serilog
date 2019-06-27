@@ -25,7 +25,7 @@ namespace Serilog.Policies
     {
         const int MaximumByteArrayLength = 1024;
 
-        public bool TryConvertToScalar(object value, out LogEventPropertyValue result)
+        public bool TryConvertToScalar(object value, out ScalarValue result)
         {
             if (value.GetType() != typeof(byte[]))
             {
