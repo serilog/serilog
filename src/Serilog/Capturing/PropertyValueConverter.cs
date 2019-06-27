@@ -187,10 +187,10 @@ namespace Serilog.Capturing
                 // multiple different interpretations.
                 if (TryGetDictionary(value, valueType, out var dictionary))
                 {
-                    result = new DictionaryValue(MapToDictionaryElements(dictionary, destructuring));
+                    result = new DictionaryValue(MapToDictionaryElements(dictionary, destructuring, limiter));
                     return true;
 
-                    IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> MapToDictionaryElements(IDictionary dictionaryEntries, Destructuring destructure)
+                    IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> MapToDictionaryElements(IDictionary dictionaryEntries, Destructuring destructure, DepthLimiter depthLimiter)
                     {
                         var count = 0;
                         foreach (DictionaryEntry entry in dictionaryEntries)
@@ -202,7 +202,7 @@ namespace Serilog.Capturing
 
                             var pair = new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                                 (ScalarValue)limiter.CreatePropertyValue(entry.Key, destructure),
-                                limiter.CreatePropertyValue(entry.Value, destructure));
+                                depthLimiter.CreatePropertyValue(entry.Value, destructure));
 
                             if (pair.Key.Value != null)
                                 yield return pair;
@@ -210,10 +210,10 @@ namespace Serilog.Capturing
                     }
                 }
 
-                result = new SequenceValue(MapToSequenceElements(enumerable, destructuring));
+                result = new SequenceValue(MapToSequenceElements(enumerable, destructuring, limiter));
                 return true;
 
-                IEnumerable<LogEventPropertyValue> MapToSequenceElements(IEnumerable sequence, Destructuring destructure)
+                IEnumerable<LogEventPropertyValue> MapToSequenceElements(IEnumerable sequence, Destructuring destructure, DepthLimiter depthLimiter)
                 {
                     var count = 0;
                     foreach (var element in sequence)
@@ -223,7 +223,7 @@ namespace Serilog.Capturing
                             yield break;
                         }
 
-                        yield return limiter.CreatePropertyValue(element, destructure);
+                        yield return depthLimiter.CreatePropertyValue(element, destructure);
                     }
                 }
             }
