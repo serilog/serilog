@@ -45,7 +45,7 @@ namespace Serilog.Capturing
 
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
-        readonly DepthLimiter _depthLimiter;
+        readonly IDepthLimiter _depthLimiter;
         readonly int _maximumStringLength;
         readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
@@ -83,7 +83,7 @@ namespace Serilog.Capturing
                 })
                 .ToArray();
 
-            _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
+            _depthLimiter = DepthLimiter.Create(maximumDestructuringDepth, this);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)

@@ -33,7 +33,7 @@ namespace Serilog.Capturing
         {
             class NullLimiter : IDepthLimiter
             {
-                public static NullLimiter Instance = new NullLimiter();
+                public static IDepthLimiter Instance = new NullLimiter();
 
                 NullLimiter() { }
 
@@ -54,11 +54,16 @@ namespace Serilog.Capturing
 
             readonly PropertyValueConverter _propertyValueConverter;
 
-            public DepthLimiter(int maximumDepth, PropertyValueConverter propertyValueConverter)
+            DepthLimiter(int maximumDepth, PropertyValueConverter propertyValueConverter)
             {
                 _propertyValueConverter = propertyValueConverter;
 
-                NextLevel = maximumDepth > 1 ? (IDepthLimiter)new DepthLimiter(maximumDepth - 1, propertyValueConverter) : NullLimiter.Instance;
+                NextLevel = Create(maximumDepth, propertyValueConverter);
+            }
+
+            public static IDepthLimiter Create(int maximumDepth, PropertyValueConverter propertyValueConverter)
+            {
+                return maximumDepth > 1 ? new DepthLimiter(maximumDepth - 1, propertyValueConverter) : NullLimiter.Instance;
             }
 
             public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
