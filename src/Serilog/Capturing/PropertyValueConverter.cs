@@ -45,7 +45,7 @@ namespace Serilog.Capturing
 
         readonly IDestructuringPolicy[] _destructuringPolicies;
         readonly IScalarConversionPolicy[] _scalarConversionPolicies;
-        readonly IDepthLimiter _depthLimiter;
+        readonly DepthLimiter _depthLimiter;
         readonly int _maximumStringLength;
         readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
@@ -113,7 +113,7 @@ namespace Serilog.Capturing
             }
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, IDepthLimiter limiter)
+        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, DepthLimiter limiter)
         {
             return CreatePropertyValue(
                 value,
@@ -123,7 +123,7 @@ namespace Serilog.Capturing
                 limiter);
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, IDepthLimiter limiter)
+        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, DepthLimiter limiter)
         {
             if (value == null)
                 return new ScalarValue(null);
@@ -173,7 +173,7 @@ namespace Serilog.Capturing
             return new ScalarValue(value.ToString());
         }
 
-        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, IDepthLimiter limiter, out LogEventPropertyValue result)
+        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
         {
             if (value is IEnumerable enumerable)
             {
@@ -232,7 +232,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        static bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, IDepthLimiter limiter, out LogEventPropertyValue result)
+        static bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
         {
             if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
             {
@@ -276,7 +276,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, IDepthLimiter limiter, out LogEventPropertyValue result)
+        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, DepthLimiter limiter, out LogEventPropertyValue result)
         {
             if (destructuring == Destructuring.Destructure)
             {
@@ -331,7 +331,7 @@ namespace Serilog.Capturing
                    valueType.GetTypeInfo().IsEnum;
         }
 
-        IEnumerable<LogEventProperty> GetProperties(object value, IDepthLimiter limiter)
+        IEnumerable<LogEventProperty> GetProperties(object value, DepthLimiter limiter)
         {
             foreach (var prop in value.GetType().GetPropertiesRecursive())
             {

@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -23,36 +21,13 @@ namespace Serilog.Capturing
 {
     partial class PropertyValueConverter
     {
-        interface IDepthLimiter : ILogEventPropertyValueFactory
+        class DepthLimiter : ILogEventPropertyValueFactory
         {
-            LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring);
-            IDepthLimiter NextLevel { get; }
-        }
-
-        class DepthLimiter : IDepthLimiter
-        {
-            class NullLimiter : IDepthLimiter
-            {
-                public static IDepthLimiter Instance = new NullLimiter();
-
-                NullLimiter() { }
-
-                public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
-                {
-                    SelfLog.WriteLine("Maximum destructuring depth reached.");
-                    return new ScalarValue(null);
-                }
-
-                public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
-                {
-                    SelfLog.WriteLine("Maximum destructuring depth reached.");
-                    return new ScalarValue(null);
-                }
-
-                public IDepthLimiter NextLevel => null;
-            }
+            static readonly DepthLimiter NullInstance = new DepthLimiter();
 
             readonly PropertyValueConverter _propertyValueConverter;
+
+            public readonly DepthLimiter NextLevel;
 
             DepthLimiter(int maximumDepth, PropertyValueConverter propertyValueConverter)
             {
@@ -61,20 +36,36 @@ namespace Serilog.Capturing
                 NextLevel = Create(maximumDepth, propertyValueConverter);
             }
 
-            public static IDepthLimiter Create(int maximumDepth, PropertyValueConverter propertyValueConverter)
+            /// <summary>
+            /// Null object.
+            /// </summary>
+            DepthLimiter ()
+            { }
+
+            public static DepthLimiter Create(int maximumDepth, PropertyValueConverter propertyValueConverter)
             {
-                return maximumDepth > 1 ? new DepthLimiter(maximumDepth - 1, propertyValueConverter) : NullLimiter.Instance;
+                return maximumDepth > 1 ? new DepthLimiter(maximumDepth - 1, propertyValueConverter) : NullInstance;
             }
 
             public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
             {
+                if (_propertyValueConverter == null)
+                {
+                    SelfLog.WriteLine("Maximum destructuring depth reached.");
+                    return new ScalarValue(null);
+                }
+
                 return _propertyValueConverter.CreatePropertyValue(value, destructuring, NextLevel);
             }
 
-            public IDepthLimiter NextLevel { get; }
-
             LogEventPropertyValue ILogEventPropertyValueFactory.CreatePropertyValue(object value, bool destructureObjects)
             {
+                if (_propertyValueConverter == null)
+                {
+                    SelfLog.WriteLine("Maximum destructuring depth reached.");
+                    return new ScalarValue(null);
+                }
+
                 return _propertyValueConverter.CreatePropertyValue(value, destructureObjects, NextLevel);
             }
         }
