@@ -201,7 +201,7 @@ namespace Serilog.Capturing
                             }
 
                             var pair = new KeyValuePair<ScalarValue, LogEventPropertyValue>(
-                                (ScalarValue)limiter.CreatePropertyValue(entry.Key, destructure),
+                                (ScalarValue)depthLimiter.CreatePropertyValue(entry.Key, destructure),
                                 depthLimiter.CreatePropertyValue(entry.Value, destructure));
 
                             if (pair.Key.Value != null)
