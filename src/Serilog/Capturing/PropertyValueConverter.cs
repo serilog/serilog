@@ -49,6 +49,7 @@ namespace Serilog.Capturing
         readonly int _maximumStringLength;
         readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
+        readonly FastBuildersLookup _fastBuilders;
 
         public PropertyValueConverter(
             int maximumDestructuringDepth,
@@ -68,9 +69,13 @@ namespace Serilog.Capturing
             _maximumStringLength = maximumStringLength;
             _maximumCollectionCount = maximumCollectionCount;
 
+            var scalarTypes = BuiltInScalarTypes.Concat(additionalScalarTypes).Distinct().ToArray();
+
+            _fastBuilders = new FastBuildersLookup(this, scalarTypes);
+
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
-                new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
+                new SimpleScalarConversionPolicy(scalarTypes),
                 new EnumScalarConversionPolicy(),
                 new ByteArrayScalarConversionPolicy()
             };
@@ -86,27 +91,22 @@ namespace Serilog.Capturing
             _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
-        {
-            return CreatePropertyValue<object>(value, destructureObjects);
-        }
-
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
-        {
-            return CreateProperty<object>(name, value, destructureObjects);
-        }
-
-        public LogEventProperty CreateProperty<T>(string name, T value, bool destructureObjects = false)
         {
             return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
         }
 
-        public LogEventPropertyValue CreatePropertyValue<T>(T value, bool destructureObjects = false)
+        public LogEventPropertyValue CreatePropertyValue<TValue>(TValue value, bool destructureObjects = false)
         {
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue<T>(T value, Destructuring destructuring)
+        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        {
+            return CreatePropertyValue(value, destructureObjects, 1);
+        }
+
+        public LogEventPropertyValue CreatePropertyValue<TValue>(TValue value, Destructuring destructuring)
         {
             try
             {
@@ -123,7 +123,24 @@ namespace Serilog.Capturing
             }
         }
 
-        LogEventPropertyValue CreatePropertyValue<T>(T value, bool destructureObjects, int depth)
+        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        {
+            try
+            {
+                return CreatePropertyValue(value, destructuring, 1);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Exception caught while converting property value: {0}", ex);
+
+                if (_propagateExceptions)
+                    throw;
+
+                return new ScalarValue("Capturing the property value threw an exception: " + ex.GetType().Name);
+            }
+        }
+
+        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
         {
             return CreatePropertyValue(
                 value,
@@ -133,12 +150,30 @@ namespace Serilog.Capturing
                 depth);
         }
 
-        LogEventPropertyValue CreatePropertyValue<T>(T value, Destructuring destructuring, int depth)
+        LogEventPropertyValue CreatePropertyValue<TValue>(TValue value, bool destructureObjects, int depth)
         {
-            if (typeof(T).GetTypeInfo().IsValueType == false && EqualityComparer<T>.Default.Equals(value, default))
+            return CreatePropertyValue(
+                value,
+                destructureObjects ?
+                    Destructuring.Destructure :
+                    Destructuring.Default,
+                depth);
+        }
+
+        LogEventPropertyValue CreatePropertyValue<TValue>(TValue value, Destructuring destructuring, int depth)
+        {
+            if (_fastBuilders.TryFindFastBuilder<TValue>(out var builder))
             {
-                return new ScalarValue(null);
+                return builder(value, destructuring, depth);
             }
+
+            return CreatePropertyValue((object)value, destructuring, depth);
+        }
+
+        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
+        {
+            if (value == null)
+                return new ScalarValue(null);
 
             if (destructuring == Destructuring.Stringify)
             {
@@ -147,14 +182,14 @@ namespace Serilog.Capturing
 
             if (destructuring == Destructuring.Destructure)
             {
-                if (value is string)
+                if (value is string stringValue)
                 {
-                    return new ScalarValue(TruncateIfNecessary(value.ToString()));
+                    value = TruncateIfNecessary(stringValue);
                 }
             }
 
             if (value is string)
-                return new ScalarValue(value.ToString());
+                return new ScalarValue(value);
 
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
@@ -162,37 +197,29 @@ namespace Serilog.Capturing
                     return converted;
             }
 
-            // it's not a simple scalar and deconstructing API is a part of the public API. Let's box the value and allocate now.
-            object boxed = value;
             DepthLimiter.SetCurrentDepth(depth);
 
             if (destructuring == Destructuring.Destructure)
             {
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {
-                    if (destructuringPolicy.TryDestructure(boxed, _depthLimiter, out var result))
+                    if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
                         return result;
                 }
             }
 
-            var valueType = boxed.GetType();
+            var valueType = value.GetType();
 
-            if (TryConvertEnumerable(boxed, destructuring, valueType, out var enumerableResult))
+            if (TryConvertEnumerable(value, destructuring, valueType, out var enumerableResult))
                 return enumerableResult;
 
-            if (TryConvertValueTuple(boxed, destructuring, valueType, out var tupleResult))
+            if (TryConvertValueTuple(value, destructuring, valueType, out var tupleResult))
                 return tupleResult;
 
-            if (TryConvertCompilerGeneratedType(boxed, destructuring, valueType, out var compilerGeneratedResult))
+            if (TryConvertCompilerGeneratedType(value, destructuring, valueType, out var compilerGeneratedResult))
                 return compilerGeneratedResult;
 
-            // the non-generic case
-            if (typeof(T) == typeof(object))
-            {
-                return new ScalarValue(boxed);
-            }
-
-            return new ScalarValue<T>(value);
+            return new ScalarValue(value.ToString());
         }
 
         bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
@@ -316,7 +343,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        LogEventPropertyValue Stringify<T>(T value)
+        LogEventPropertyValue Stringify(object value)
         {
             var stringified = value.ToString();
             var truncated = TruncateIfNecessary(stringified);
@@ -393,5 +420,6 @@ namespace Serilog.Capturing
                 && (typeName[0] == '<'
                     || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
+
     }
 }

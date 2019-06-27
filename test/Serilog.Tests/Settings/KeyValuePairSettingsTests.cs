@@ -484,7 +484,7 @@ namespace Serilog.Tests.Settings
             log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
             var prop = evt.Properties["Scalarized"];
 
-            Assert.IsType<ScalarValue<Version>>(prop);
+            Assert.IsAssignableFrom<ScalarValue>(prop);
         }
 
         [Fact]
@@ -502,7 +502,7 @@ namespace Serilog.Tests.Settings
             log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
             var prop = evt.Properties["Scalarized"];
 
-            Assert.IsType<ScalarValue<Version>>(prop);
+            Assert.IsAssignableFrom<ScalarValue>(prop);
         }
 
         [Fact]

@@ -16,7 +16,6 @@ using System;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Parsing;
 
 namespace Serilog.Capturing
 {

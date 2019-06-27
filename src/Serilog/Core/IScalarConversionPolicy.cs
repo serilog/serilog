@@ -13,6 +13,6 @@ namespace Serilog.Core
         /// <param name="value">The value to convert.</param>
         /// <param name="result">The converted value, or null.</param>
         /// <returns>True if the value could be converted under this policy.</returns>
-        bool TryConvertToScalar<T>(T value, out LogEventPropertyValue result);
+        bool TryConvertToScalar(object value, out LogEventPropertyValue result);
     }
 }

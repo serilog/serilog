@@ -20,11 +20,11 @@ namespace Serilog.Policies
 {
     class EnumScalarConversionPolicy : IScalarConversionPolicy
     {
-        public bool TryConvertToScalar<T>(T value, out LogEventPropertyValue result)
+        public bool TryConvertToScalar(object value, out LogEventPropertyValue result)
         {
-            if (typeof(T).GetTypeInfo().IsEnum)
+            if (value.GetType().GetTypeInfo().IsEnum)
             {
-                result = new ScalarValue<T>(value);
+                result = new ScalarValue(value);
                 return true;
             }
 

@@ -120,7 +120,7 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            Assert.IsType<ScalarValue<AB>>(prop);
+            Assert.IsType<ScalarValue>(prop);
         }
 
         [Fact]

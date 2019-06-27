@@ -33,9 +33,9 @@ namespace Serilog.Tests.Events
         public void AnEnumIsConvertedToANonStringScalarValue()
         {
             var value = _converter.CreatePropertyValue(LogEventLevel.Debug, Destructuring.Default);
-            Assert.IsAssignableFrom<ScalarValue<LogEventLevel>>(value);
-            var sv = (ScalarValue<LogEventLevel>)value;
-            Assert.Equal(LogEventLevel.Debug, sv.RawValue);
+            Assert.IsAssignableFrom<ScalarValue>(value);
+            var sv = (ScalarValue)value;
+            Assert.Equal(LogEventLevel.Debug, sv.Value);
             Assert.IsType<LogEventLevel>(sv.Value);
         }
 
