@@ -26,8 +26,23 @@ namespace Serilog.Capturing
                     BuildBytes(),
                 };
 
+                var formattable = new HashSet<Type>
+                {
+                    typeof(int),
+                    typeof(uint),
+                    typeof(long),
+                    typeof(ulong),
+                    typeof(decimal),
+                    typeof(byte),
+                    typeof(sbyte),
+                    typeof(short),
+                    typeof(ushort)
+                };
+
                 var methods = typeof(PropertyValueConverter).GetRuntimeMethods().ToList();
                 var buildScalar = methods.Single(m => m.Name.StartsWith(nameof(BuildScalarValueType)));
+                var buildFormattableScalar = methods.Single(m => m.Name.StartsWith(nameof(BuildFormattableScalarValueType)));
+                var buildFormattableNullableScalar = methods.Single(m => m.Name.StartsWith(nameof(BuildFormattableNullableValueType)));
                 var buildNullableScalar = methods.Single(m => m.Name.StartsWith(nameof(BuildScalarNullableValueType)));
                 var buildRef = methods.Single(m => m.Name.StartsWith(nameof(BuildScalarRefType)));
 
@@ -39,8 +54,9 @@ namespace Serilog.Capturing
 
                     if (isValueType)
                     {
-                        fastBuilders.Add(InvokeBuilder(buildScalar, scalarType));
-                        fastBuilders.Add(InvokeBuilder(buildNullableScalar, scalarType));
+                        var isFormattable = formattable.Contains(scalarType);
+                        fastBuilders.Add(InvokeBuilder(isFormattable ? buildFormattableScalar : buildScalar, scalarType));
+                        fastBuilders.Add(InvokeBuilder(isFormattable ? buildFormattableNullableScalar : buildNullableScalar, scalarType));
                     }
                     else
                     {
@@ -200,6 +216,29 @@ namespace Serilog.Capturing
                 }
 
                 return new ScalarValue<TValue>(value.Value);
+            };
+        }
+
+        static PropertyValueBuilder<TValue> BuildFormattableScalarValueType<TValue>()
+            where TValue : struct, IFormattable
+        {
+            return (value, destructuring, depth) =>
+            {
+                return new FormattableScalarValue<TValue>(value);
+            };
+        }
+
+        static PropertyValueBuilder<TValue?> BuildFormattableNullableValueType<TValue>()
+            where TValue : struct, IFormattable
+        {
+            return (value, destructuring, depth) =>
+            {
+                if (value == null)
+                {
+                    return new ScalarValue(null);
+                }
+
+                return new FormattableScalarValue<TValue>(value.Value);
             };
         }
 

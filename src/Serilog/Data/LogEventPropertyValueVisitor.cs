@@ -14,6 +14,7 @@
 
 using System;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 
 // ReSharper disable VirtualMemberNeverOverridden.Global
 

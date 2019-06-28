@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Serilog.Formatting.Json;
 
 namespace Serilog.Events
 {
@@ -67,5 +68,26 @@ namespace Serilog.Events
         /// Gets the raw, not-boxed value of this.
         /// </summary>
         public T RawValue => _value;
+    }
+
+    /// <summary>
+    /// A property value corresponding to a simple, scalar type.
+    /// </summary>
+    /// <typeparam name="T">The type of the value</typeparam>
+    public class FormattableScalarValue<T> : ScalarValue<T>, IJsonFormattable
+        where T :IFormattable
+    {
+        /// <summary>
+        /// Construct a <see cref="ScalarValue"/> with the specified value.
+        /// </summary>
+        /// <param name="value">The value, which may be <code>null</code>.</param>
+        public FormattableScalarValue(T value) : base(value)
+        {
+        }
+
+        void IJsonFormattable.Write(TextWriter output)
+        {
+            JsonValueFormatter.FormatExactNumericValue(RawValue, output);
+        }
     }
 }

@@ -63,7 +63,15 @@ namespace Serilog.Formatting.Json
         protected override bool VisitScalarValue(TextWriter state, ScalarValue scalar)
         {
             if (scalar == null) throw new ArgumentNullException(nameof(scalar));
-            FormatLiteralValue(scalar.Value, state);
+            if (scalar is IJsonFormattable formattable)
+            {
+                formattable.Write(state);
+            }
+            else
+            {
+                FormatLiteralValue(scalar.Value, state);
+            }
+
             return false;
         }
 
@@ -221,7 +229,7 @@ namespace Serilog.Formatting.Json
             FormatLiteralObjectValue(value, output);
         }
 
-        static void FormatBooleanValue(bool value, TextWriter output)
+        internal static void FormatBooleanValue(bool value, TextWriter output)
         {
             output.Write(value ? "true" : "false");
         }
@@ -248,7 +256,8 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
         }
 
-        static void FormatExactNumericValue(IFormattable value, TextWriter output)
+        internal static void FormatExactNumericValue<TFormattable>(TFormattable value, TextWriter output)
+            where TFormattable : IFormattable
         {
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
         }
