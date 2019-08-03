@@ -17,12 +17,12 @@ namespace Serilog.Tests.Capturing
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter =
-            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            new PropertyValueConverter(10, false, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         [Fact]
         public async Task MaximumDepthIsEffectiveAndThreadSafe()
         {
-            var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            var converter = new PropertyValueConverter(3, false, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
             var barrier = new Barrier(participantCount: 3);
 
@@ -54,6 +54,70 @@ namespace Serilog.Tests.Capturing
                     }));
 
             await Task.WhenAll(t1, t2, t3);
+
+            void DoThreadTest(object logObject, Action<string> assertAction)
+            {
+                for (var i = 0; i < 100; ++i)
+                {
+                    barrier.SignalAndWait();
+
+                    var propValue = converter.CreatePropertyValue(logObject, true);
+
+                    Assert.IsType<StructureValue>(propValue);
+
+                    var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value?.ToString();
+
+                    assertAction.Invoke(result);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task MaximumDepthAndFinalWriteIsEffectiveAndThreadSafe()
+        {
+            var converter = new PropertyValueConverter(3, true, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+
+            var barrier = new Barrier(participantCount: 1);
+
+            var testObject1 = new { Root = new { B = new { C = new { D = new { E = "F" } } } } };
+            var t1 =
+                Task.Run(() => DoThreadTest(testObject1,
+                    result =>
+                    {
+                        Assert.Contains("B", result);
+                        Assert.Contains("C", result);
+                        Assert.Contains(testObject1.Root.B.C.ToString(), result);
+                    }));
+
+            var testObject2 = new { Root = new { Y = new { Z = "5" } } };
+            var t2 =
+                Task.Run(() => DoThreadTest(testObject2,
+                    result =>
+                    {
+                        Assert.Contains("Y", result);
+                        Assert.Contains("Z", result);
+                    }));
+
+            var testObject3 = new { Root = new { M = new { N = new { V = 8 } } } };
+            var t3 =
+                Task.Run(() => DoThreadTest(testObject3,
+                    result =>
+                    {
+                        Assert.Contains("M", result);
+                        Assert.Contains("N", result);
+                        Assert.Contains(testObject3.Root.M.N.ToString(), result);
+                    }));
+
+            var testObject4 = new { Root = new { I = new { Arr = new[] { 1, 2, 3, 4, 5, 6 } } } };
+            var t4 =
+                Task.Run(() => DoThreadTest(testObject4,
+                    result =>
+                    {
+                        Assert.Contains("I", result);
+                        Assert.Contains("Arr: null", result);
+                    }));
+
+            await Task.WhenAll(t1, t2, t3, t4);
 
             void DoThreadTest(object logObject, Action<string> assertAction)
             {
@@ -118,9 +182,9 @@ namespace Serilog.Tests.Capturing
 
         class B
         {
-// ReSharper disable UnusedAutoPropertyAccessor.Local
+            // ReSharper disable UnusedAutoPropertyAccessor.Local
             public A A { get; set; }
-// ReSharper restore UnusedAutoPropertyAccessor.Local
+            // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
         [Fact]
