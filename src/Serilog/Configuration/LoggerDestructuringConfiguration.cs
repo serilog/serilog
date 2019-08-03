@@ -27,15 +27,17 @@ namespace Serilog.Configuration
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<Type> _addScalar;
         readonly Action<IDestructuringPolicy> _addPolicy;
-        readonly Action<int> _setMaximumDepth;
+        readonly SetMaximumDepthDeletegate _setMaximumDepth;
         readonly Action<int> _setMaximumStringLength;
         readonly Action<int> _setMaximumCollectionCount;
+
+        internal delegate void SetMaximumDepthDeletegate(int depth, bool writeFinalDepthAsScalar);
 
         internal LoggerDestructuringConfiguration(
             LoggerConfiguration loggerConfiguration,
             Action<Type> addScalar,
             Action<IDestructuringPolicy> addPolicy,
-            Action<int> setMaximumDepth,
+            SetMaximumDepthDeletegate setMaximumDepth,
             Action<int> setMaximumStringLength,
             Action<int> setMaximumCollectionCount)
         {
@@ -147,7 +149,23 @@ namespace Serilog.Configuration
         public LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth)
         {
             if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
-            _setMaximumDepth(maximumDestructuringDepth);
+            _setMaximumDepth(maximumDestructuringDepth, false);
+            return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// When destructuring objects, depth will be limited to 5 property traversals deep to
+        /// guard against ballooning space when recursive/cyclic structures are accidentally passed. To
+        /// increase this limit pass a higher value.
+        /// </summary>
+        /// <param name="maximumDestructuringDepth">The maximum depth to use.</param>
+        /// <param name="writeFinalDepthAsScalar">When set to true write the final depth as scalar instead of null.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth, bool writeFinalDepthAsScalar)
+        {
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
+            _setMaximumDepth(maximumDestructuringDepth, writeFinalDepthAsScalar);
             return _loggerConfiguration;
         }
 

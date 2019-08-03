@@ -29,11 +29,13 @@ namespace Serilog.Capturing
             static int _currentDepth;
 
             readonly int _maximumDestructuringDepth;
+            private bool _writeFinalDepthAsScalar;
             readonly PropertyValueConverter _propertyValueConverter;
 
-            public DepthLimiter(int maximumDepth, PropertyValueConverter propertyValueConverter)
+            public DepthLimiter(int maximumDepth, bool writeFinalDepthAsScalar, PropertyValueConverter propertyValueConverter)
             {
                 _maximumDestructuringDepth = maximumDepth;
+                _writeFinalDepthAsScalar = writeFinalDepthAsScalar;
                 _propertyValueConverter = propertyValueConverter;
             }
 
@@ -46,7 +48,7 @@ namespace Serilog.Capturing
             {
                 var storedDepth = _currentDepth;
 
-                var result = DefaultIfMaximumDepth(storedDepth) ??
+                var result = DefaultIfMaximumDepth(value, storedDepth) ??
                     _propertyValueConverter.CreatePropertyValue(value, destructuring, storedDepth + 1);
 
                 _currentDepth = storedDepth;
@@ -58,7 +60,7 @@ namespace Serilog.Capturing
             {
                 var storedDepth = _currentDepth;
 
-                var result = DefaultIfMaximumDepth(storedDepth) ??
+                var result = DefaultIfMaximumDepth(value, storedDepth) ??
                     _propertyValueConverter.CreatePropertyValue(value, destructureObjects, storedDepth + 1);
 
                 _currentDepth = storedDepth;
@@ -66,12 +68,19 @@ namespace Serilog.Capturing
                 return result;
             }
 
-            LogEventPropertyValue DefaultIfMaximumDepth(int depth)
+            LogEventPropertyValue DefaultIfMaximumDepth(object value, int depth)
             {
                 if (depth == _maximumDestructuringDepth)
                 {
                     SelfLog.WriteLine("Maximum destructuring depth reached.");
-                    return new ScalarValue(null);
+                    if (_writeFinalDepthAsScalar)
+                    {
+                        return _propertyValueConverter.CreatePropertyValue(value, Destructuring.Default, depth);
+                    }
+                    else
+                    {
+                        return new ScalarValue(null);
+                    }
                 }
 
                 return null;

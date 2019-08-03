@@ -52,6 +52,7 @@ namespace Serilog.Capturing
 
         public PropertyValueConverter(
             int maximumDestructuringDepth,
+            bool writeFinalDepthAsScalar,
             int maximumStringLength,
             int maximumCollectionCount,
             IEnumerable<Type> additionalScalarTypes,
@@ -83,7 +84,7 @@ namespace Serilog.Capturing
                 })
                 .ToArray();
 
-            _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
+            _depthLimiter = new DepthLimiter(maximumDestructuringDepth, writeFinalDepthAsScalar, this);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)

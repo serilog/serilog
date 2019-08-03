@@ -39,6 +39,7 @@ namespace Serilog
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
+        bool _writeFinalDepthAsScalar = false;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
         bool _loggerCreated;
@@ -121,7 +122,11 @@ namespace Serilog
                     this,
                     _additionalScalarTypes.Add,
                     _additionalDestructuringPolicies.Add,
-                    depth => _maximumDestructuringDepth = depth,
+                    (depth, writeFinalDepthAsScalar) =>
+                    {
+                        _maximumDestructuringDepth = depth;
+                        _writeFinalDepthAsScalar = writeFinalDepthAsScalar;
+                    },
                     length => _maximumStringLength = length,
                     count => _maximumCollectionCount = count);
             }
@@ -160,6 +165,7 @@ namespace Serilog
 
             var converter = new PropertyValueConverter(
                 _maximumDestructuringDepth,
+                _writeFinalDepthAsScalar,
                 _maximumStringLength,
                 _maximumCollectionCount,
                 _additionalScalarTypes,
