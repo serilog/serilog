@@ -134,14 +134,19 @@ namespace Serilog.Capturing
                 return Stringify(value);
             }
 
-            if (destructuring.HasFlag(Destructuring.Scalars))
+            if (destructuring.HasFlag(Destructuring.Destructure))
             {
                 if (value is string stringValue)
                 {
                     value = TruncateIfNecessary(stringValue);
-                    return new ScalarValue(value);
                 }
+            }
 
+            if (value is string)
+                return new ScalarValue(value);
+
+            if (destructuring.HasFlag(Destructuring.Scalars))
+            {
                 foreach (var scalarConversionPolicy in _scalarConversionPolicies)
                 {
                     if (scalarConversionPolicy.TryConvertToScalar(value, out var converted))
@@ -151,7 +156,7 @@ namespace Serilog.Capturing
 
             DepthLimiter.SetCurrentDepth(depth);
 
-            if (destructuring == Destructuring.Destructure)
+            if (destructuring.HasFlag(Destructuring.Destructure))
             {
                 foreach (var destructuringPolicy in _destructuringPolicies)
                 {

@@ -297,7 +297,7 @@ namespace Serilog.Tests
         public void MaximumStringLengthNOTEffectiveForString()
         {
             var x = "ABCD";
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(4));
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
 
             Assert.Equal("\"ABCD\"", limitedText);
         }
