@@ -31,16 +31,16 @@ namespace Serilog.Parsing
         /// <summary>
         /// Convert known types and objects to scalars.
         /// </summary>
-        Scalars = 1 << 1,
+        Scalars = 1 << 0,
         /// <summary>
         /// Convert arrays to sequences.
         /// </summary>
-        Sequences = 1 << 2,
+        Sequences = 1 << 1,
 
         /// <summary>
         /// Convert known types to scalars, destructure objects into structures.
         /// </summary>
-        Structures = 1 << 3,
+        Structures = 1 << 2,
 
         /// <summary>
         /// Convert known types and objects to scalars, arrays to sequences.
