@@ -297,7 +297,7 @@ namespace Serilog.Tests
         public void MaximumStringLengthNOTEffectiveForString()
         {
             var x = "ABCD";
-            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
+            var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(4));
 
             Assert.Equal("\"ABCD\"", limitedText);
         }
@@ -706,7 +706,7 @@ namespace Serilog.Tests
             Assert.Empty(DummyWrappingSink.Emitted);
             Assert.Empty(sink.Events);
         }
-        
+
         [Fact]
         public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
@@ -778,7 +778,7 @@ namespace Serilog.Tests
             var evt = Assert.Single(enricher.Events);
             Assert.Equal(LogEventLevel.Warning, evt.Level);
         }
-        
+
         [Fact]
         public void LeveledEnrichersCheckLevels()
         {

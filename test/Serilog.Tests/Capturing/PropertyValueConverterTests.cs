@@ -77,7 +77,7 @@ namespace Serilog.Tests.Capturing
         {
             var converter = new PropertyValueConverter(3, true, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
-            var barrier = new Barrier(participantCount: 1);
+            var barrier = new Barrier(participantCount: 4);
 
             var testObject1 = new { Root = new { B = new { C = new { D = new { E = "F" } } } } };
             var t1 =
@@ -105,7 +105,7 @@ namespace Serilog.Tests.Capturing
                     {
                         Assert.Contains("M", result);
                         Assert.Contains("N", result);
-                        Assert.Contains(testObject3.Root.M.N.ToString(), result);
+                        Assert.Contains("\"{ V = 8 }\"", result);
                     }));
 
             var testObject4 = new { Root = new { I = new { Arr = new[] { 1, 2, 3, 4, 5, 6 } } } };
@@ -114,7 +114,7 @@ namespace Serilog.Tests.Capturing
                     result =>
                     {
                         Assert.Contains("I", result);
-                        Assert.Contains("Arr: null", result);
+                        Assert.Contains("\"System.Int32[]\"", result);
                     }));
 
             await Task.WhenAll(t1, t2, t3, t4);
@@ -378,7 +378,7 @@ namespace Serilog.Tests.Capturing
         public void ValueTuplesAreRecognizedWhenDestructuring()
         {
             var o = (1, "A", new[] { "B" });
-            var result = _converter.CreatePropertyValue(o);
+            var result = _converter.CreatePropertyValue(o, true);
 
             var sequenceValue = Assert.IsType<SequenceValue>(result);
 
@@ -405,7 +405,7 @@ namespace Serilog.Tests.Capturing
             };
 
             foreach (var t in tuples)
-                Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
+                Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t, true));
         }
 
         [Fact]
