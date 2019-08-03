@@ -134,21 +134,19 @@ namespace Serilog.Capturing
                 return Stringify(value);
             }
 
-            if (destructuring == Destructuring.Destructure)
+            if (destructuring.HasFlag(Destructuring.Scalars))
             {
                 if (value is string stringValue)
                 {
                     value = TruncateIfNecessary(stringValue);
+                    return new ScalarValue(value);
                 }
-            }
 
-            if (value is string)
-                return new ScalarValue(value);
-
-            foreach (var scalarConversionPolicy in _scalarConversionPolicies)
-            {
-                if (scalarConversionPolicy.TryConvertToScalar(value, out var converted))
-                    return converted;
+                foreach (var scalarConversionPolicy in _scalarConversionPolicies)
+                {
+                    if (scalarConversionPolicy.TryConvertToScalar(value, out var converted))
+                        return converted;
+                }
             }
 
             DepthLimiter.SetCurrentDepth(depth);
@@ -178,7 +176,7 @@ namespace Serilog.Capturing
 
         bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
         {
-            if (value is IEnumerable enumerable)
+            if (destructuring.HasFlag(Destructuring.Sequences) && value is IEnumerable enumerable)
             {
                 // Only dictionaries with 'scalar' keys are permitted, as
                 // more complex keys may not serialize to unique values for
@@ -237,7 +235,7 @@ namespace Serilog.Capturing
 
         bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
         {
-            if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
+            if (!destructuring.HasFlag(Destructuring.Structures) || !(value is IStructuralEquatable && valueType.IsConstructedGenericType))
             {
                 result = null;
                 return false;
@@ -281,7 +279,7 @@ namespace Serilog.Capturing
 
         bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
         {
-            if (destructuring == Destructuring.Destructure)
+            if (destructuring.HasFlag(Destructuring.Structures))
             {
                 var typeTag = valueType.Name;
                 if (typeTag.Length <= 0 || IsCompilerGeneratedType(valueType))

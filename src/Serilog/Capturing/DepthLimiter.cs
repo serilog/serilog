@@ -75,7 +75,7 @@ namespace Serilog.Capturing
                     SelfLog.WriteLine("Maximum destructuring depth reached.");
                     if (_writeFinalDepthAsScalar)
                     {
-                        return _propertyValueConverter.CreatePropertyValue(value, Destructuring.Default, depth);
+                        return _propertyValueConverter.CreatePropertyValue(value, Destructuring.Scalars, depth);
                     }
                     else
                     {
