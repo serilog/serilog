@@ -39,6 +39,19 @@ namespace Serilog.Events
         }
 
         /// <summary>
+        /// Construct a <see cref="LogEventProperty"/> from an existing <see cref="EventProperty"/> instance.
+        /// </summary>
+        /// <param name="property">The existing property.</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal LogEventProperty(EventProperty property)
+        {
+            if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
+            Name = property.Name;
+            Value = property.Value;
+        }
+
+        /// <summary>
         /// The name of the property.
         /// </summary>
         public string Name { get; }

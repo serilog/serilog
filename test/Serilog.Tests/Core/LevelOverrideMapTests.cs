@@ -29,7 +29,7 @@ namespace Serilog.Tests.Core
 
             var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
 
-            lom.GetEffectiveLevel(context, out LogEventLevel overriddenLevel, out LoggingLevelSwitch overriddenSwitch);
+            lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
 
             if (overrideExpected)
             {

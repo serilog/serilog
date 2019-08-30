@@ -1,10 +1,12 @@
 version: '{build}'
 skip_tags: true
 image:
-  - Visual Studio 2017
-  - Ubuntu
+  - Visual Studio 2019
+  - Ubuntu1804
 configuration: Release
 test: off
+install:
+  - ps: ./Setup.ps1
 build_script:
   - ps: ./Build.ps1
   - ps: ./BuildNativeUWP.ps1
@@ -12,11 +14,14 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu
+      - image: Ubuntu1804
+  install:
+  - sh setup.sh
   build_script:
   - sh build.sh
 artifacts:
-  - path: artifacts/Serilog.*.nupkg
+- path: artifacts/Serilog.*.nupkg
+- path: artifacts/Serilog.*.snupkg
 deploy:
 - provider: NuGet
   api_key:
@@ -27,7 +32,9 @@ deploy:
 - provider: GitHub
   auth_token:
     secure: p4LpVhBKxGS5WqucHxFQ5c7C8cP74kbNB0Z8k9Oxx/PMaDQ1+ibmoexNqVU5ZlmX
-  artifact: /Serilog.*\.nupkg/
+  artifacts:
+    /Serilog.*\.nupkg/
+    /Serilog.*\.snupkg/
   tag: v$(appveyor_build_version)
   on:
     branch: master

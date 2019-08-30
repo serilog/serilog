@@ -12,7 +12,7 @@ namespace Serilog.PerformanceTests
         MessageTemplateParser _parser;
         const string _DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _parser = new MessageTemplateParser();

@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Serilog Contributors
+﻿// Copyright 2019 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,20 +17,26 @@ using Serilog.Events;
 
 namespace Serilog.Core.Enrichers
 {
-    class FixedPropertyEnricher : ILogEventEnricher
+    class ConditionalEnricher : ILogEventEnricher, IDisposable
     {
-        readonly EventProperty _eventProperty;
+        readonly ILogEventEnricher _wrapped;
+        readonly Func<LogEvent, bool> _condition;
 
-        public FixedPropertyEnricher(in EventProperty eventProperty)
+        public ConditionalEnricher(ILogEventEnricher wrapped, Func<LogEvent, bool> condition)
         {
-            if (eventProperty.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(eventProperty));
-            _eventProperty = eventProperty;
+            _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
+            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            logEvent.AddPropertyIfAbsent(_eventProperty);
+            if (_condition(logEvent))
+                _wrapped.Enrich(logEvent, propertyFactory);
+        }
+
+        public void Dispose()
+        {
+            (_wrapped as IDisposable)?.Dispose();
         }
     }
 }

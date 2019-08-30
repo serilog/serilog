@@ -342,9 +342,9 @@ namespace Serilog.Tests.Context
 
             await Task.Delay(200);
 
-            // This is intermittently 2 or 3, depending on the moods of the test runner;
+            // This is intermittently 2 or 3 (now, 4), depending on the moods of the test runner;
             // I think "at least two" is what we're concerned about, here.
-            Assert.InRange(tracker.DisconnectCount, 2, 3);
+            Assert.InRange(tracker.DisconnectCount, 2, 4);
 
             void CallFromRemote() { }
         }

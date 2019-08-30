@@ -27,7 +27,7 @@ namespace Serilog.PerformanceTests
         ILogger _log;
         Exception _exception;
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _exception = new Exception("An Error");
