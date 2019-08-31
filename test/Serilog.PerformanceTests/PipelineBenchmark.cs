@@ -24,18 +24,31 @@ namespace Serilog.PerformanceTests
     [MemoryDiagnoser]
     public class PipelineBenchmark
     {
-        ILogger _log;
-        Exception _exception;
+        readonly ILogger _log;
+        readonly ILogger _logOnlyFatal;
+
+        readonly Exception _exception = new Exception("An Error");
 
         public PipelineBenchmark()
         {
-            _exception = new Exception("An Error");
             _log = new LoggerConfiguration()
+                .WriteTo.Sink(new NullSink())
+                .CreateLogger();
+
+            _logOnlyFatal = new LoggerConfiguration()
+                .MinimumLevel.Fatal()
                 .WriteTo.Sink(new NullSink())
                 .CreateLogger();
 
             // Ensure template is cached
             _log.Information(_exception, "Hello, {Name}!", "World");
+            _logOnlyFatal.Information(_exception, "Hello, {Name}!", "World");
+        }
+        
+        [Benchmark(Baseline = true)]
+        public void EmitLogAIgnoredEvent()
+        {
+            _logOnlyFatal.Information(_exception, "Hello, {Name}!", "World");
         }
 
         [Benchmark]
