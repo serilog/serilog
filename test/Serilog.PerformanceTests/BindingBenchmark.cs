@@ -33,8 +33,7 @@ namespace Serilog.PerformanceTests
         ILogger _log;
         object[] _zero, _one, _five;
 
-        [GlobalSetup]
-        public void Setup()
+        public BindingBenchmark()
         {
             _log = new LoggerConfiguration()
                 .WriteTo.Sink(new NullSink())
