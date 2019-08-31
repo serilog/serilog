@@ -240,9 +240,9 @@ namespace Serilog.PerformanceTests
         }
     }
 
-    public class AllocationsNormalBenchmark : AllocationsBaseBenchmark
+    public class AllocationsBenchmark : AllocationsBaseBenchmark
     {
-        public AllocationsNormalBenchmark()
+        public AllocationsBenchmark()
         {
             _logger = new LoggerConfiguration()
                 .CreateLogger();
