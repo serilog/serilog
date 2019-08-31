@@ -9,8 +9,6 @@ using Serilog.PerformanceTests.Support;
 namespace Serilog.PerformanceTests
 {
     [MemoryDiagnoser]
-    [MinColumn, MaxColumn]
-    [ClrJob(baseline: true), CoreJob]
     [ShortRunJob]
     public class AlmostRealWorldBenchmark
     {
