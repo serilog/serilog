@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Core.Sinks
@@ -40,13 +39,7 @@ namespace Serilog.Core.Sinks
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-            var copy = new LogEvent(
-                logEvent.Timestamp,
-                logEvent.Level,
-                logEvent.Exception,
-                logEvent.MessageTemplate,
-                logEvent.Properties.Select(p => new LogEventProperty(p.Key, p.Value)));
-
+            var copy = logEvent.Copy();
             _logger.Write(copy);
         }
 

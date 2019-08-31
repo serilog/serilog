@@ -71,7 +71,7 @@ namespace Serilog.Filters
             var scalar = new ScalarValue(scalarValue);
             return e =>
             {
-                return e.Properties.TryGetValue(propertyName, out LogEventPropertyValue propertyValue) &&
+                return e.Properties.TryGetValue(propertyName, out var propertyValue) &&
                     scalar.Equals(propertyValue);
             };
         }
@@ -90,7 +90,7 @@ namespace Serilog.Filters
 
             return e =>
             {
-                if (!e.Properties.TryGetValue(propertyName, out LogEventPropertyValue propertyValue)) return false;
+                if (!e.Properties.TryGetValue(propertyName, out var propertyValue)) return false;
 
                 return propertyValue is ScalarValue s &&
                        ((s.Value is TScalar value) &&

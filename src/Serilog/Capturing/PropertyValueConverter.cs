@@ -133,9 +133,6 @@ namespace Serilog.Capturing
                 return Stringify(value);
             }
 
-            var valueType = value.GetType();
-            DepthLimiter.SetCurrentDepth(depth);
-
             if (destructuring == Destructuring.Destructure)
             {
                 if (value is string stringValue)
@@ -144,11 +141,16 @@ namespace Serilog.Capturing
                 }
             }
 
+            if (value is string)
+                return new ScalarValue(value);
+
             foreach (var scalarConversionPolicy in _scalarConversionPolicies)
             {
                 if (scalarConversionPolicy.TryConvertToScalar(value, out var converted))
                     return converted;
             }
+
+            DepthLimiter.SetCurrentDepth(depth);
 
             if (destructuring == Destructuring.Destructure)
             {
@@ -158,6 +160,8 @@ namespace Serilog.Capturing
                         return result;
                 }
             }
+
+            var valueType = value.GetType();
 
             if (TryConvertEnumerable(value, destructuring, valueType, out var enumerableResult))
                 return enumerableResult;

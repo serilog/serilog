@@ -63,7 +63,7 @@ namespace Serilog.Parsing
             _rawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
             Alignment = alignment;
 
-            if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out int position) &&
+            if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out var position) &&
                 position >= 0)
             {
                 _position = position;

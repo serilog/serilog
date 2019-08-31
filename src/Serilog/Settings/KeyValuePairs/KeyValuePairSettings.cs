@@ -93,7 +93,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
 
-            if (directives.TryGetValue(MinimumLevelDirective, out string minimumLevelDirective) &&
+            if (directives.TryGetValue(MinimumLevelDirective, out var minimumLevelDirective) &&
                 Enum.TryParse(minimumLevelDirective, out LogEventLevel minimumLevel))
             {
                 loggerConfiguration.MinimumLevel.Is(minimumLevel);
@@ -106,7 +106,7 @@ namespace Serilog.Settings.KeyValuePairs
                 loggerConfiguration.Enrich.WithProperty(name, enrichPropertyDirective.Value);
             }
 
-            if (directives.TryGetValue(MinimumLevelControlledByDirective, out string minimumLevelControlledByLevelSwitchName))
+            if (directives.TryGetValue(MinimumLevelControlledByDirective, out var minimumLevelControlledByLevelSwitchName))
             {
                 var globalMinimumLevelSwitch = LookUpSwitchByName(minimumLevelControlledByLevelSwitchName, declaredLevelSwitches);
                 loggerConfiguration.MinimumLevel.ControlledBy(globalMinimumLevelSwitch);
