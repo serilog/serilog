@@ -68,7 +68,7 @@ namespace Serilog.Events
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
             if (!LogEventProperty.IsValidName(name))
-                throw new ArgumentException("Property name is not valid.");
+                throw new ArgumentException("Property name is not valid.", nameof(name));
         }
 
         /// <inheritdoc />
