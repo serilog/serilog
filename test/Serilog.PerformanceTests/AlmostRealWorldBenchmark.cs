@@ -17,16 +17,46 @@ namespace Serilog.PerformanceTests
         static readonly Random Rnd = new Random(42);
 
         [Benchmark(Baseline = true)]
-        public void SimulateAApp()
+        public void SimulateAAppWithoutSerilog()
         {
             var execType = ExecutionType.Test;
             RunTestWithoutLog(execType);
         }
-        
+
         [Benchmark()]
-        public void SimulateAAppWithSerilog()
+        public void SimulateAAppWithSerilogOff()
+        {
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Fatal; //Just Log Fatal and other Log levels OFF
+            SimulateAAppWithSerilog();
+        }
+
+        [Benchmark()]
+        public void SimulateAAppWithSerilogOn()
+        {
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Verbose; //All Log levels ON
+            SimulateAAppWithSerilog();
+        }
+
+        static ILogger CreateLog()
+        {
+            return Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("Environment", "BenchmarkTester")
+                .Enrich.WithProperty("Application", "Serilog.PerformanceTests.AlmostRealWorldBenchmark")
+                .Enrich.WithProperty("ExecutionId", Guid.NewGuid())
+                .Enrich.WithProperty("ExecutionStartDate", DateTimeOffset.UtcNow)
+                .MinimumLevel.ControlledBy(LoggingLevelSwitch)
+                .WriteTo.Logger(l => l
+                    .Filter.ByExcluding(ev => ev.Properties.ContainsKey("ProgressEntry"))
+                    .WriteTo.Sink(new NullSink())) //To Simulate a FileSink that don't 'records' some LogEvents
+                .WriteTo.Sink(new NullSink()) //To Simulate a Console Sink that show all LogEvents
+                .CreateLogger();
+        }
+
+        static void SimulateAAppWithSerilog()
         {
             var log = CreateLog(); //Always create a new instance of the logger each test to Benchmark the creation with the test.
+
             try
             {
                 log.Debug("App - Start...");
@@ -46,21 +76,6 @@ namespace Serilog.PerformanceTests
             {
                 (log as IDisposable)?.Dispose();
             }
-        }
-        static ILogger CreateLog()
-        {
-            return Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .Enrich.WithProperty("Environment", "BenchmarkTester")
-                .Enrich.WithProperty("Application", "Serilog.PerformanceTests.AlmostRealWorldBenchmark")
-                .Enrich.WithProperty("ExecutionId", Guid.NewGuid())
-                .Enrich.WithProperty("ExecutionStartDate", DateTimeOffset.UtcNow)
-                .MinimumLevel.ControlledBy(LoggingLevelSwitch)
-                .WriteTo.Logger(l => l
-                    .Filter.ByExcluding(ev => ev.Properties.ContainsKey("ProgressEntry"))
-                    .WriteTo.Sink(new NullSink())) //To Simulate a FileSink that don't 'records' some LogEvents
-                .WriteTo.Sink(new NullSink()) //To Simulate a Console Sink that show all LogEvents
-                .CreateLogger();
         }
 
         static int RunTestWithoutLog(ExecutionType execType)
