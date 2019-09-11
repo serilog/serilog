@@ -90,19 +90,18 @@ namespace Serilog.PerformanceTests
         {
             _enrichedLogger.Write(_emptyEvent);
         }
-
-
+        
         [Benchmark]
         public void LogMsg()
         {
             _logger.Information("Template:");
         }
+
         [Benchmark]
         public void LogMsgWithEx()
         {
             _logger.Information(_exception, "Template:");
         }
-
 
         [Benchmark]
         public void LogScalar1()
@@ -124,8 +123,7 @@ namespace Serilog.PerformanceTests
         {
             _logger.Information("Template: {ScalarValue1},{ScalarValue2},{ScalarValue3},{ScalarValue4}", "42", "7", "108", "1024");
         }
-
-
+        
         [Benchmark]
         public void LogScalarStruct1()
         {
@@ -170,8 +168,7 @@ namespace Serilog.PerformanceTests
         {
             _logger.Information("Template: {@AnonymousObject}.", _anonymousObject);
         }
-
-
+        
         [Benchmark]
         public void LogMix2()
         {
@@ -227,7 +224,7 @@ namespace Serilog.PerformanceTests
             _enrichedLogger.Information("Template: {@AnonymousObject}.", _anonymousObject);
             _enrichedLogger.Information(_exception, "Hello, {Name}!", "World");
 
-            return x && y;
+            return x && y; //Force the compiler don''t optimize the IsEnabled
         }
 
         struct BigTestStruct
