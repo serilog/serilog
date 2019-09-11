@@ -12,10 +12,42 @@ namespace Serilog.PerformanceTests
     [ShortRunJob]
     public class AlmostRealWorldBenchmark
     {
+        const int TodoMainLoopCount = 10_000;
         static readonly LoggingLevelSwitch LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Verbose);
         static readonly Random Rnd = new Random(42);
 
-        ILogger CreateLog()
+        [Benchmark(Baseline = true)]
+        public void SimulateAApp()
+        {
+            var execType = ExecutionType.Test;
+            RunTestWithoutLog(execType);
+        }
+        
+        [Benchmark()]
+        public void SimulateAAppWithSerilog()
+        {
+            var log = CreateLog(); //Always create a new instance of the logger each test to Benchmark the creation with the test.
+            try
+            {
+                log.Debug("App - Start...");
+
+                log.Information("Arguments: {@Args}", new[] { "test", "performance", "-q" });
+                log.Debug("Parsing args.");
+                var execType = ExecutionType.Test;
+
+                var log2 = log.ForContext("Type", execType);
+                log2.Information("Running in {Type} mode", execType);
+
+                RunTestWithLog(execType, log2);
+
+                log.Debug("App - Ending...");
+            }
+            finally
+            {
+                (log as IDisposable)?.Dispose();
+            }
+        }
+        static ILogger CreateLog()
         {
             return Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -31,73 +63,82 @@ namespace Serilog.PerformanceTests
                 .CreateLogger();
         }
 
-        [Benchmark(Baseline = true)]
-        public void LogLikeAApp()
+        static int RunTestWithoutLog(ExecutionType execType)
         {
-            var log = CreateLog(); //Always create a new instance of the logger each test to Benchmark the creation with the test.
-            try
-            {
-                log.Debug("App - Start...");
-
-                log.Information("Arguments: {@Args}", new[] { "test", "performance", "-q" });
-                log.Debug("Parsing args.");
-                var execType = ExecutionType.Test;
-
-                var log2 = log.ForContext("Type", execType);
-                log2.Information("Running in {Type} mode", execType);
-
-                RunTest(log2);
-
-                log.Debug("App - Ending...");
-            }
-            finally
-            {
-                (log as IDisposable)?.Dispose();
-            }
-        }
-
-        static void RunTest(ILogger log)
-        {
-            var start = DateTimeOffset.UtcNow;
-            log.Information("Starting Exec of the Test Begin at {StartDateTime}", start);
-
             using (LogContext.PushProperty("Operation", "Testing"))
             {
-                var todo = Enumerable.Range(0, 10_000).ToList();
+                var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
                 var passed = 0;
                 var fail = 0;
 
-                foreach (var i in todo.LogProgress(log))
+                foreach (var i in todo)
                 {
                     using (LogContext.PushProperty("Item", i))
                     {
-                        log.Verbose("Testing... {ItemNumber}", i);
-
                         var result = (Rnd.Next(0, 1) == 1);
                         if (result)
                         {
                             passed++;
-                            log.Information("Test Passed.");
                         }
                         else
                         {
                             fail++;
-                            log.Warning("Test not Passed.");
                         }
-
-                        log.Verbose("Item Test End");
                     }
                 }
-                log.Debug("Test End");
 
-                log.Information("Qnt of tests: {QntOfItems}", todo.Count);
-                log.Information("Test Statistics: {@Statistics}", new { Qnt = todo.Count, Passed = passed, Fail = fail });
+                return passed - fail;
             }
+        }
 
-            var end = DateTimeOffset.UtcNow;
-            if (log.IsEnabled(LogEventLevel.Information))
+        static int RunTestWithLog(ExecutionType execType, ILogger log)
+        {
+            var start = DateTimeOffset.UtcNow;
+            log.Information("Starting Exec of the Test Begin at {StartDateTime}", start);
+            try
             {
-                log.Information($"Exec ended - Elapsed {(end - start)}");
+                using (LogContext.PushProperty("Operation", "Testing"))
+                {
+                    var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
+                    var passed = 0;
+                    var fail = 0;
+
+                    foreach (var i in todo.LogProgress(log))
+                    {
+                        using (LogContext.PushProperty("Item", i))
+                        {
+                            log.Verbose("Testing... {ItemNumber}", i);
+
+                            var result = (Rnd.Next(0, 1) == 1);
+                            if (result)
+                            {
+                                passed++;
+                                log.Information("Test Passed.");
+                            }
+                            else
+                            {
+                                fail++;
+                                log.Warning("Test not Passed.");
+                            }
+
+                            log.Verbose("Item Test End");
+                        }
+                    }
+                    log.Debug("Test End");
+
+                    log.Information("Qnt of tests: {QntOfItems}", todo.Count);
+                    log.Information("Test Statistics: {@Statistics}", new { Qnt = todo.Count, Passed = passed, Fail = fail });
+
+                    return passed - fail;
+                }
+            }
+            finally
+            {
+                var end = DateTimeOffset.UtcNow;
+                if (log.IsEnabled(LogEventLevel.Information))
+                {
+                    log.Information($"Exec ended - Elapsed {(end - start)}");
+                }
             }
         }
 
