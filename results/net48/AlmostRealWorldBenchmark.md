@@ -9,6 +9,7 @@ Job=ShortRun  IterationCount=3  LaunchCount=1
 WarmupCount=3  
 
 ```
-|      Method |     Mean |    Error |   StdDev | Ratio |     Gen 0 | Gen 1 | Gen 2 | Allocated |
-|------------ |---------:|---------:|---------:|------:|----------:|------:|------:|----------:|
-| LogLikeAApp | 96.16 ms | 50.81 ms | 2.785 ms |  1.00 | 9166.6667 |     - |     - |  27.68 MB |
+|                  Method |       Mean |     Error |    StdDev | Ratio | RatioSD |     Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------ |-----------:|----------:|----------:|------:|--------:|----------:|------:|------:|----------:|
+|            SimulateAApp |   1.704 ms |  2.732 ms | 0.1498 ms |  1.00 |    0.00 |  345.7031 |     - |     - |   1.04 MB |
+| SimulateAAppWithSerilog | 123.475 ms | 62.058 ms | 3.4016 ms | 72.91 |    7.77 | 9250.0000 |     - |     - |  28.26 MB |
