@@ -80,30 +80,24 @@ namespace Serilog.PerformanceTests
 
         static int RunTestWithoutLog(ExecutionType execType)
         {
-            using (LogContext.PushProperty("Operation", "Testing"))
+            var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
+            var passed = 0;
+            var fail = 0;
+
+            foreach (var i in todo)
             {
-                var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
-                var passed = 0;
-                var fail = 0;
-
-                foreach (var i in todo)
+                var result = (Rnd.Next(0, 1) == 1);
+                if (result)
                 {
-                    using (LogContext.PushProperty("Item", i))
-                    {
-                        var result = (Rnd.Next(0, 1) == 1);
-                        if (result)
-                        {
-                            passed++;
-                        }
-                        else
-                        {
-                            fail++;
-                        }
-                    }
+                    passed++;
                 }
-
-                return passed - fail;
+                else
+                {
+                    fail++;
+                }
             }
+
+            return passed - fail;
         }
 
         static int RunTestWithLog(ExecutionType execType, ILogger log)
