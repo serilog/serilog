@@ -12,10 +12,32 @@ namespace Serilog.PerformanceTests
     [ShortRunJob]
     public class AlmostRealWorldBenchmark
     {
+        const int TodoMainLoopCount = 10_000;
         static readonly LoggingLevelSwitch LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Verbose);
         static readonly Random Rnd = new Random(42);
 
-        ILogger CreateLog()
+        [Benchmark(Baseline = true)]
+        public void SimulateAAppWithoutSerilog()
+        {
+            var execType = ExecutionType.Test;
+            RunTestWithoutLog(execType);
+        }
+
+        [Benchmark()]
+        public void SimulateAAppWithSerilogOff()
+        {
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Fatal; //Just Log Fatal and other Log levels OFF
+            SimulateAAppWithSerilog();
+        }
+
+        [Benchmark()]
+        public void SimulateAAppWithSerilogOn()
+        {
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Verbose; //All Log levels ON
+            SimulateAAppWithSerilog();
+        }
+
+        static ILogger CreateLog()
         {
             return Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -31,10 +53,10 @@ namespace Serilog.PerformanceTests
                 .CreateLogger();
         }
 
-        [Benchmark(Baseline = true)]
-        public void LogLikeAApp()
+        static void SimulateAAppWithSerilog()
         {
             var log = CreateLog(); //Always create a new instance of the logger each test to Benchmark the creation with the test.
+
             try
             {
                 log.Debug("App - Start...");
@@ -46,7 +68,7 @@ namespace Serilog.PerformanceTests
                 var log2 = log.ForContext("Type", execType);
                 log2.Information("Running in {Type} mode", execType);
 
-                RunTest(log2);
+                RunTestWithLog(execType, log2);
 
                 log.Debug("App - Ending...");
             }
@@ -56,48 +78,76 @@ namespace Serilog.PerformanceTests
             }
         }
 
-        static void RunTest(ILogger log)
+        static int RunTestWithoutLog(ExecutionType execType)
+        {
+            var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
+            var passed = 0;
+            var fail = 0;
+
+            foreach (var i in todo)
+            {
+                var result = (Rnd.Next(0, 1) == 1);
+                if (result)
+                {
+                    passed++;
+                }
+                else
+                {
+                    fail++;
+                }
+            }
+
+            return passed - fail;
+        }
+
+        static int RunTestWithLog(ExecutionType execType, ILogger log)
         {
             var start = DateTimeOffset.UtcNow;
             log.Information("Starting Exec of the Test Begin at {StartDateTime}", start);
-
-            using (LogContext.PushProperty("Operation", "Testing"))
+            try
             {
-                var todo = Enumerable.Range(0, 10_000).ToList();
-                var passed = 0;
-                var fail = 0;
-
-                foreach (var i in todo.LogProgress(log))
+                using (LogContext.PushProperty("Operation", "Testing"))
                 {
-                    using (LogContext.PushProperty("Item", i))
+                    var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
+                    var passed = 0;
+                    var fail = 0;
+
+                    foreach (var i in todo.LogProgress(log))
                     {
-                        log.Verbose("Testing... {ItemNumber}", i);
-
-                        var result = (Rnd.Next(0, 1) == 1);
-                        if (result)
+                        using (LogContext.PushProperty("Item", i))
                         {
-                            passed++;
-                            log.Information("Test Passed.");
-                        }
-                        else
-                        {
-                            fail++;
-                            log.Warning("Test not Passed.");
-                        }
+                            log.Verbose("Testing... {ItemNumber}", i);
 
-                        log.Verbose("Item Test End");
+                            var result = (Rnd.Next(0, 1) == 1);
+                            if (result)
+                            {
+                                passed++;
+                                log.Information("Test Passed.");
+                            }
+                            else
+                            {
+                                fail++;
+                                log.Warning("Test not Passed.");
+                            }
+
+                            log.Verbose("Item Test End");
+                        }
                     }
+                    log.Debug("Test End");
+
+                    log.Information("Qnt of tests: {QntOfItems}", todo.Count);
+                    log.Information("Test Statistics: {@Statistics}", new { Qnt = todo.Count, Passed = passed, Fail = fail });
+
+                    return passed - fail;
                 }
-                log.Debug("Test End");
-
-                log.Information("Qnt of tests: {QntOfItems}", todo.Count);
-                log.Information("Test Statistics: {@Statistics}", new { Qnt = todo.Count, Passed = passed, Fail = fail });
             }
-
-            var end = DateTimeOffset.UtcNow;
-            if (log.IsEnabled(LogEventLevel.Information))
+            finally
             {
-                log.Information($"Exec ended - Elapsed {(end - start)}");
+                var end = DateTimeOffset.UtcNow;
+                if (log.IsEnabled(LogEventLevel.Information))
+                {
+                    log.Information($"Exec ended - Elapsed {(end - start)}");
+                }
             }
         }
 

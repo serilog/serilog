@@ -3,14 +3,14 @@
 BenchmarkDotNet=v0.11.5, OS=Windows 10.0.18362
 Intel Core i7-7700HQ CPU 2.80GHz (Kaby Lake), 1 CPU, 8 logical and 4 physical cores
 .NET Core SDK=2.2.401
-  [Host]     : .NET Core 2.2.6 (CoreCLR 4.6.27817.03, CoreFX 4.6.27818.02), 64bit RyuJIT
-  DefaultJob : .NET Core 2.2.6 (CoreCLR 4.6.27817.03, CoreFX 4.6.27818.02), 64bit RyuJIT
+  [Host]     : .NET Core 2.2.7 (CoreCLR 4.6.28008.02, CoreFX 4.6.28008.03), 64bit RyuJIT
+  DefaultJob : .NET Core 2.2.7 (CoreCLR 4.6.28008.02, CoreFX 4.6.28008.03), 64bit RyuJIT
 
 
 ```
-|               Method |      Mean |     Error |    StdDev | Ratio | RatioSD |
-|--------------------- |----------:|----------:|----------:|------:|--------:|
-|                 Bare |  11.52 ns | 0.2575 ns | 0.2965 ns |  1.00 |    0.00 |
-|         PushProperty | 106.93 ns | 2.0987 ns | 2.2456 ns |  9.29 |    0.36 |
-|   PushPropertyNested | 216.04 ns | 4.2368 ns | 5.7994 ns | 18.85 |    0.68 |
-| PushPropertyEnriched | 192.12 ns | 3.8611 ns | 4.5963 ns | 16.68 |    0.53 |
+|               Method |      Mean |     Error |    StdDev |    Median | Ratio | RatioSD |
+|--------------------- |----------:|----------:|----------:|----------:|------:|--------:|
+|                 Bare |  11.02 ns | 0.0582 ns | 0.0515 ns |  11.03 ns |  1.00 |    0.00 |
+|         PushProperty | 101.25 ns | 0.8756 ns | 0.7762 ns | 101.28 ns |  9.19 |    0.07 |
+|   PushPropertyNested | 215.39 ns | 4.3243 ns | 7.9072 ns | 210.98 ns | 20.01 |    0.89 |
+| PushPropertyEnriched | 181.38 ns | 1.1945 ns | 1.1174 ns | 181.80 ns | 16.45 |    0.15 |
