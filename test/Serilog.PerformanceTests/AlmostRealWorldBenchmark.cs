@@ -13,8 +13,15 @@ namespace Serilog.PerformanceTests
     public class AlmostRealWorldBenchmark
     {
         const int TodoMainLoopCount = 10_000;
-        static readonly LoggingLevelSwitch LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Verbose);
         static readonly Random Rnd = new Random(42);
+
+        static readonly LoggingLevelSwitch LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Verbose);
+        readonly ILogger _logger;
+
+        public AlmostRealWorldBenchmark()
+        {
+            _logger = CreateLog();
+        }
 
         [Benchmark(Baseline = true)]
         public void SimulateAAppWithoutSerilog()
@@ -26,7 +33,7 @@ namespace Serilog.PerformanceTests
         [Benchmark()]
         public void SimulateAAppWithSerilogOff()
         {
-            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Fatal; //Just Log Fatal and other Log levels OFF
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Fatal; //Just Log Fatal Events and all other Log levels are OFF
             SimulateAAppWithSerilog();
         }
 
@@ -53,29 +60,22 @@ namespace Serilog.PerformanceTests
                 .CreateLogger();
         }
 
-        static void SimulateAAppWithSerilog()
+        void SimulateAAppWithSerilog()
         {
-            var log = CreateLog(); //Always create a new instance of the logger each test to Benchmark the creation with the test.
+            var log = _logger;
 
-            try
-            {
-                log.Debug("App - Start...");
+            log.Debug("App - Start...");
 
-                log.Information("Arguments: {@Args}", new[] { "test", "performance", "-q" });
-                log.Debug("Parsing args.");
-                var execType = ExecutionType.Test;
+            log.Information("Arguments: {@Args}", new[] { "test", "performance", "-q" });
+            log.Debug("Parsing args.");
+            var execType = ExecutionType.Test;
 
-                var log2 = log.ForContext("Type", execType);
-                log2.Information("Running in {Type} mode", execType);
+            var log2 = log.ForContext("Type", execType);
+            log2.Information("Running in {Type} mode", execType);
 
-                RunTestWithLog(execType, log2);
+            RunTestWithLog(execType, log2);
 
-                log.Debug("App - Ending...");
-            }
-            finally
-            {
-                (log as IDisposable)?.Dispose();
-            }
+            log.Debug("App - Ending...");
         }
 
         static int RunTestWithoutLog(ExecutionType execType)
