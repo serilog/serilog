@@ -1,34 +1,33 @@
 ``` ini
 
 BenchmarkDotNet=v0.11.5, OS=Windows 10.0.18362
-Intel Core i7-7700HQ CPU 2.80GHz (Kaby Lake), 1 CPU, 8 logical and 4 physical cores
-.NET Core SDK=2.2.401
-  [Host]     : .NET Core 2.2.6 (CoreCLR 4.6.27817.03, CoreFX 4.6.27818.02), 64bit RyuJIT
-  DefaultJob : .NET Core 2.2.6 (CoreCLR 4.6.27817.03, CoreFX 4.6.27818.02), 64bit RyuJIT
+Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
+.NET Core SDK=2.2.402
+  [Host]     : .NET Core 2.2.7 (CoreCLR 4.6.28008.02, CoreFX 4.6.28008.03), 64bit RyuJIT
+  DefaultJob : .NET Core 2.2.7 (CoreCLR 4.6.28008.02, CoreFX 4.6.28008.03), 64bit RyuJIT
 
 
 ```
-|               Method |       Mean |      Error |     StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|--------------------- |-----------:|-----------:|-----------:|------:|--------:|-------:|------:|------:|----------:|
-|             LogEmpty |   3.363 ns |  0.1026 ns |  0.1797 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-| LogEmptyWithEnricher |   3.353 ns |  0.0986 ns |  0.1174 ns |  0.99 |    0.07 |      - |     - |     - |         - |
-|               LogMsg |   5.911 ns |  0.1488 ns |  0.3203 ns |  1.78 |    0.16 |      - |     - |     - |         - |
-|         LogMsgWithEx |   5.643 ns |  0.1096 ns |  0.1025 ns |  1.69 |    0.10 |      - |     - |     - |         - |
-|           LogScalar1 |   6.605 ns |  0.1645 ns |  0.3541 ns |  1.98 |    0.14 |      - |     - |     - |         - |
-|           LogScalar2 |  13.125 ns |  0.2939 ns |  0.4830 ns |  3.90 |    0.26 |      - |     - |     - |         - |
-|           LogScalar3 |  17.371 ns |  0.3765 ns |  0.7775 ns |  5.21 |    0.36 |      - |     - |     - |         - |
-|        LogScalarMany |  23.412 ns |  0.4883 ns |  0.5813 ns |  6.90 |    0.42 | 0.0178 |     - |     - |      56 B |
-|     LogScalarStruct1 |   5.945 ns |  0.1410 ns |  0.1250 ns |  1.77 |    0.09 |      - |     - |     - |         - |
-|     LogScalarStruct2 |   6.340 ns |  0.1564 ns |  0.2569 ns |  1.88 |    0.09 |      - |     - |     - |         - |
-|     LogScalarStruct3 |  10.049 ns |  0.2645 ns |  0.3531 ns |  2.97 |    0.23 |      - |     - |     - |         - |
-|  LogScalarStructMany |  30.164 ns |  0.6347 ns |  1.1921 ns |  8.99 |    0.67 | 0.0483 |     - |     - |     152 B |
-|   LogScalarBigStruct |  23.851 ns |  0.5048 ns |  0.6739 ns |  7.05 |    0.46 |      - |     - |     - |         - |
-|        LogDictionary |  11.070 ns |  0.2536 ns |  0.6361 ns |  3.36 |    0.31 | 0.0102 |     - |     - |      32 B |
-|          LogSequence |  10.909 ns |  0.2470 ns |  0.3917 ns |  3.24 |    0.22 | 0.0102 |     - |     - |      32 B |
-|         LogAnonymous |  10.530 ns |  0.2330 ns |  0.2774 ns |  3.10 |    0.20 | 0.0102 |     - |     - |      32 B |
-|              LogMix2 |  13.088 ns |  0.2918 ns |  0.5034 ns |  3.90 |    0.26 |      - |     - |     - |         - |
-|              LogMix3 |  17.040 ns |  0.3672 ns |  0.5608 ns |  5.05 |    0.31 |      - |     - |     - |         - |
-|              LogMix4 |  29.330 ns |  0.6089 ns |  1.2299 ns |  8.72 |    0.35 | 0.0432 |     - |     - |     136 B |
-|              LogMix5 |  34.686 ns |  0.7239 ns |  1.6040 ns | 10.38 |    0.65 | 0.0533 |     - |     - |     168 B |
-|           LogMixMany |  73.304 ns |  1.4990 ns |  3.5039 ns | 21.69 |    1.65 | 0.0889 |     - |     - |     280 B |
-|               LogAll | 281.563 ns | 10.9676 ns | 31.1134 ns | 91.25 |    9.70 | 0.0606 |     - |     - |     192 B |
+|               Method |      Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|--------------------- |----------:|----------:|----------:|------:|--------:|-------:|------:|------:|----------:|
+|             LogEmpty |  2.735 ns | 0.0148 ns | 0.0131 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+| LogEmptyWithEnricher |  2.720 ns | 0.0286 ns | 0.0267 ns |  0.99 |    0.01 |      - |     - |     - |         - |
+|               LogMsg |  4.522 ns | 0.0292 ns | 0.0273 ns |  1.65 |    0.01 |      - |     - |     - |         - |
+|         LogMsgWithEx |  4.803 ns | 0.0397 ns | 0.0371 ns |  1.76 |    0.01 |      - |     - |     - |         - |
+|           LogScalar1 |  5.463 ns | 0.0330 ns | 0.0293 ns |  2.00 |    0.01 |      - |     - |     - |         - |
+|           LogScalar2 | 11.967 ns | 0.0479 ns | 0.0448 ns |  4.38 |    0.02 |      - |     - |     - |         - |
+|           LogScalar3 | 14.794 ns | 0.0751 ns | 0.0702 ns |  5.41 |    0.03 |      - |     - |     - |         - |
+|        LogScalarMany | 16.128 ns | 0.0690 ns | 0.0645 ns |  5.90 |    0.03 | 0.0089 |     - |     - |      56 B |
+|     LogScalarStruct1 |  4.947 ns | 0.0197 ns | 0.0185 ns |  1.81 |    0.01 |      - |     - |     - |         - |
+|     LogScalarStruct2 |  5.393 ns | 0.0410 ns | 0.0364 ns |  1.97 |    0.02 |      - |     - |     - |         - |
+|     LogScalarStruct3 |  8.548 ns | 0.0432 ns | 0.0404 ns |  3.13 |    0.02 |      - |     - |     - |         - |
+|  LogScalarStructMany | 24.007 ns | 0.1304 ns | 0.1219 ns |  8.78 |    0.05 | 0.0241 |     - |     - |     152 B |
+|   LogScalarBigStruct | 19.556 ns | 0.1490 ns | 0.1394 ns |  7.15 |    0.06 |      - |     - |     - |         - |
+|        LogDictionary |  7.830 ns | 0.0531 ns | 0.0497 ns |  2.86 |    0.03 | 0.0051 |     - |     - |      32 B |
+|          LogSequence |  7.883 ns | 0.0672 ns | 0.0628 ns |  2.88 |    0.03 | 0.0051 |     - |     - |      32 B |
+|         LogAnonymous |  7.755 ns | 0.0461 ns | 0.0431 ns |  2.84 |    0.02 | 0.0051 |     - |     - |      32 B |
+|              LogMix2 | 11.316 ns | 0.0624 ns | 0.0584 ns |  4.14 |    0.03 |      - |     - |     - |         - |
+|              LogMix3 | 14.663 ns | 0.1091 ns | 0.1021 ns |  5.36 |    0.05 |      - |     - |     - |         - |
+|              LogMix4 | 23.504 ns | 0.1833 ns | 0.1715 ns |  8.60 |    0.07 | 0.0216 |     - |     - |     136 B |
+|              LogMix5 | 26.495 ns | 0.0728 ns | 0.0681 ns |  9.69 |    0.06 | 0.0267 |     - |     - |     168 B |
+|           LogMixMany | 53.398 ns | 0.5573 ns | 0.5213 ns | 19.55 |    0.21 | 0.0445 |     - |     - |     280 B |
