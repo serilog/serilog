@@ -48,7 +48,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
+        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, in EventProperty[] properties)
         {
             Timestamp = timestamp;
             Level = level;
@@ -67,7 +67,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, in EventProperty[] properties)
+        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         {
             Timestamp = timestamp;
             Level = level;
@@ -77,7 +77,7 @@ namespace Serilog.Events
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             ProcessProperties(properties);
         }
-
+        
         /// <summary>
         /// The time at which the event occurred.
         /// </summary>
@@ -221,7 +221,6 @@ namespace Serilog.Events
             for (int i = 0, length = properties.Length; i < length; i++)
                 _properties[properties[i].Name] = properties[i].Value;
         }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(LogEventProperty[] array)
         {
