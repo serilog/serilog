@@ -64,6 +64,13 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
+        public void DoubledBracketsAreParsedAsASingleBracket()
+        {
+            AssertParsedAs("{{Hi}}",
+                new TextToken("{Hi}"));
+        }
+
+        [Fact]
         public void AMalformedPropertyTagIsParsedAsText()
         {
             AssertParsedAs("{0 space}",

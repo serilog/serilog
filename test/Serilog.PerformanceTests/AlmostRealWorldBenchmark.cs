@@ -13,40 +13,37 @@ namespace Serilog.PerformanceTests
     public class AlmostRealWorldBenchmark
     {
         const int TodoMainLoopCount = 10_000;
-        static readonly LoggingLevelSwitch LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Verbose);
         static readonly Random Rnd = new Random(42);
 
+        static readonly LoggingLevelSwitch LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Verbose);
+        readonly ILogger _logger;
+
+        public AlmostRealWorldBenchmark()
+        {
+            _logger = CreateLog();
+        }
+
         [Benchmark(Baseline = true)]
-        public void SimulateAApp()
+        public void SimulateAAppWithoutSerilog()
         {
             var execType = ExecutionType.Test;
             RunTestWithoutLog(execType);
         }
-        
+
         [Benchmark()]
-        public void SimulateAAppWithSerilog()
+        public void SimulateAAppWithSerilogOff()
         {
-            var log = CreateLog(); //Always create a new instance of the logger each test to Benchmark the creation with the test.
-            try
-            {
-                log.Debug("App - Start...");
-
-                log.Information("Arguments: {@Args}", new[] { "test", "performance", "-q" });
-                log.Debug("Parsing args.");
-                var execType = ExecutionType.Test;
-
-                var log2 = log.ForContext("Type", execType);
-                log2.Information("Running in {Type} mode", execType);
-
-                RunTestWithLog(execType, log2);
-
-                log.Debug("App - Ending...");
-            }
-            finally
-            {
-                (log as IDisposable)?.Dispose();
-            }
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Fatal; //Just Log Fatal Events and all other Log levels are OFF
+            SimulateAAppWithSerilog();
         }
+
+        [Benchmark()]
+        public void SimulateAAppWithSerilogOn()
+        {
+            LoggingLevelSwitch.MinimumLevel = LogEventLevel.Verbose; //All Log levels ON
+            SimulateAAppWithSerilog();
+        }
+
         static ILogger CreateLog()
         {
             return Log.Logger = new LoggerConfiguration()
@@ -63,32 +60,44 @@ namespace Serilog.PerformanceTests
                 .CreateLogger();
         }
 
+        void SimulateAAppWithSerilog()
+        {
+            var log = _logger;
+
+            log.Debug("App - Start...");
+
+            log.Information("Arguments: {@Args}", new[] { "test", "performance", "-q" });
+            log.Debug("Parsing args.");
+            var execType = ExecutionType.Test;
+
+            var log2 = log.ForContext("Type", execType);
+            log2.Information("Running in {Type} mode", execType);
+
+            RunTestWithLog(execType, log2);
+
+            log.Debug("App - Ending...");
+        }
+
         static int RunTestWithoutLog(ExecutionType execType)
         {
-            using (LogContext.PushProperty("Operation", "Testing"))
+            var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
+            var passed = 0;
+            var fail = 0;
+
+            foreach (var i in todo)
             {
-                var todo = Enumerable.Range(0, TodoMainLoopCount).ToList();
-                var passed = 0;
-                var fail = 0;
-
-                foreach (var i in todo)
+                var result = (Rnd.Next(0, 1) == 1);
+                if (result)
                 {
-                    using (LogContext.PushProperty("Item", i))
-                    {
-                        var result = (Rnd.Next(0, 1) == 1);
-                        if (result)
-                        {
-                            passed++;
-                        }
-                        else
-                        {
-                            fail++;
-                        }
-                    }
+                    passed++;
                 }
-
-                return passed - fail;
+                else
+                {
+                    fail++;
+                }
             }
+
+            return passed - fail;
         }
 
         static int RunTestWithLog(ExecutionType execType, ILogger log)

@@ -9,7 +9,12 @@ namespace Serilog.PerformanceTests
     [MemoryDiagnoser]
     public class MessageTemplateParsingBenchmark
     {
-        MessageTemplateParser _parser;
+        readonly MessageTemplateParser _parser;
+
+        const string _SimpleTextTemplate = "Hello, world!";
+        const string _SinglePropertyTokenTemplate = "{Name}";
+        const string _ManyPropertyTokenTemplate = "{Greeting}, {Name}!";
+        const string _MultipleTokensTemplate = "Hello, world! {Greeting}, {Name} - {{Escaped}} - {@Hello} {$World}";
         const string _DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
         public MessageTemplateParsingBenchmark()
@@ -21,6 +26,30 @@ namespace Serilog.PerformanceTests
         public void EmptyTemplate()
         {
             _parser.Parse("");
+        }
+        
+        [Benchmark]
+        public void SimpleTextTemplate()
+        {
+            _parser.Parse(_SimpleTextTemplate);
+        }
+
+        [Benchmark]
+        public void SinglePropertyTokenTemplate()
+        {
+            _parser.Parse(_SinglePropertyTokenTemplate);
+        }
+        
+        [Benchmark]
+        public void ManyPropertyTokenTemplate()
+        {
+            _parser.Parse(_ManyPropertyTokenTemplate);
+        }
+
+        [Benchmark]
+        public void MultipleTokensTemplate()
+        {
+            _parser.Parse(_MultipleTokensTemplate);
         }
 
         [Benchmark]
