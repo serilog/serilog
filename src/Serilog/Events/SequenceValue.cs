@@ -33,8 +33,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
         {
-            if (elements == null) throw new ArgumentNullException(nameof(elements));
-            _elements = elements.ToArray();
+            _elements = elements as LogEventPropertyValue[] ?? elements?.ToArray() ?? throw new ArgumentNullException(nameof(elements));
         }
 
         /// <summary>

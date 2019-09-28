@@ -35,9 +35,8 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException"></exception>
         public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null)
         {
-            if (properties == null) throw new ArgumentNullException(nameof(properties));
             TypeTag = typeTag;
-            _properties = properties.ToArray();
+            _properties = properties as LogEventProperty[] ?? properties?.ToArray() ?? throw new ArgumentNullException(nameof(properties));
         }
 
         /// <summary>
