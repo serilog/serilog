@@ -42,7 +42,7 @@ namespace Serilog.Events
         /// <param name="property">The existing property.</param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        internal LogEventProperty(EventProperty property)
+        internal LogEventProperty(in EventProperty property)
         {
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
 
