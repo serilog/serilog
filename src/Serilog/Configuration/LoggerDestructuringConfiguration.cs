@@ -139,9 +139,9 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// When destructuring objects, depth will be limited to 5 property traversals deep to
+        /// When destructuring objects, depth will be limited to 10 property traversals deep to
         /// guard against ballooning space when recursive/cyclic structures are accidentally passed. To
-        /// increase this limit pass a higher value.
+        /// change this limit pass a new maximum depth.
         /// </summary>
         /// <param name="maximumDestructuringDepth">The maximum depth to use.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
