@@ -171,5 +171,19 @@ namespace Serilog.Tests.Parsing
             var parser = new MessageTemplateParser();
             parser.Parse("{,,}");
         }
+
+        [Fact]
+        public void FormatCanContainMultipleSections()
+        {
+            var parsed = (PropertyToken)Parse("{Number:##.0;-##.0;zero}").Single();
+            Assert.Equal("##.0;-##.0;zero", parsed.Format);
+        }
+
+        [Fact]
+        public void FormatCanContainPlusSign()
+        {
+            var parsed = (PropertyToken)Parse("{Number:+##.0}").Single();
+            Assert.Equal("+##.0", parsed.Format);
+        }
     }
 }
