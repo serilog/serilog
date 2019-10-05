@@ -171,5 +171,23 @@ namespace Serilog.Tests.Parsing
             var parser = new MessageTemplateParser();
             parser.Parse("{,,}");
         }
+
+        [Fact]
+        public void Bug1353FormatStringIsParsedCorrectly()
+        {
+            AssertParsedAs("{0,-25} {1,10:#,##0} {2,10:#,##0} {3,10:+#,##0;-#,##0;0} {4,10:0.00}",
+                new PropertyToken("0","{0,-25}", startIndex:0),
+                new TextToken(" ", startIndex:7),
+                new PropertyToken("1","{1,10:#,##0}", "#,##0", startIndex:8),
+                new TextToken(" ", startIndex:20),
+                new PropertyToken("2","{2,10:#,##0}", "#,##0", startIndex:21),
+                new TextToken(" ", startIndex:33),
+                new PropertyToken("3","{3,10:+#,##0;-#,##0;0}", "+#,##0;-#,##0;0", startIndex:34),
+                new TextToken(" ", startIndex:56),
+                new PropertyToken("4","{4,10:0.00}", "0.00", startIndex:57)
+            );
+        }
+        
+        
     }
 }
