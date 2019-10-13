@@ -1,7 +1,7 @@
-﻿using System;
-using Xunit;
-using Serilog.Core.Sinks;
+﻿using Serilog.Core.Sinks;
 using Serilog.Tests.Support;
+using System;
+using Xunit;
 
 namespace Serilog.Tests.Core
 {
@@ -28,9 +28,9 @@ namespace Serilog.Tests.Core
             bool called1 = false, called2 = false;
 
             var s = new SafeAggregateSink(new[] {
-                new DelegatingSink(le => called1 = true), 
+                new DelegatingSink(le => called1 = true),
                 new DelegatingSink(le => { throw new Exception("No go, pal."); }),
-                new DelegatingSink(le => called2 = true) 
+                new DelegatingSink(le => called2 = true)
             });
 
             s.Emit(Some.InformationEvent());

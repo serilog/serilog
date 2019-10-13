@@ -90,8 +90,7 @@ namespace Serilog.Parsing
             if (tagContent.Length == 0)
                 return new TextToken(rawText, first);
 
-            string propertyNameAndDestructuring, format, alignment;
-            if (!TrySplitTagContent(tagContent, out propertyNameAndDestructuring, out format, out alignment))
+            if (!TrySplitTagContent(tagContent, out var propertyNameAndDestructuring, out var format, out var alignment))
                 return new TextToken(rawText, first);
 
             var propertyName = propertyNameAndDestructuring;
@@ -133,8 +132,7 @@ namespace Serilog.Parsing
                 if (lastDash > 0)
                     return new TextToken(rawText, first);
 
-                var width = 0;
-                if (!int.TryParse(lastDash == -1 ? alignment : alignment.Substring(1), out width) || width == 0)
+                if (!int.TryParse(lastDash == -1 ? alignment : alignment.Substring(1), out var width) || width == 0)
                     return new TextToken(rawText, first);
 
                 var direction = lastDash == -1 ?
@@ -214,10 +212,7 @@ namespace Serilog.Parsing
                 c == ':';
         }
 
-        static bool IsValidInPropertyName(char c)
-        {
-            return char.IsLetterOrDigit(c) || c == '_';
-        }
+        static bool IsValidInPropertyName(char c) => char.IsLetterOrDigit(c) || c == '_';
 
         static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
         {
@@ -258,7 +253,8 @@ namespace Serilog.Parsing
             return c != '}' &&
                 (char.IsLetterOrDigit(c) ||
                  char.IsPunctuation(c) ||
-                 c == ' ');
+                 c == ' ' ||
+                 c == '+');
         }
 
         static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)

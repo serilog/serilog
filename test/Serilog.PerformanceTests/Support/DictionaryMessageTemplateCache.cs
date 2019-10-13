@@ -9,7 +9,7 @@ namespace Serilog.PerformanceTests.Support
     {
         readonly IMessageTemplateParser _innerParser;
         readonly object _templatesLock = new object();
-        
+
         readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string, MessageTemplate>();
 
         const int MaxCacheItems = 1000;
@@ -17,8 +17,7 @@ namespace Serilog.PerformanceTests.Support
 
         public DictionaryMessageTemplateCache(IMessageTemplateParser innerParser)
         {
-            if (innerParser == null) throw new ArgumentNullException(nameof(innerParser));
-            _innerParser = innerParser;
+            _innerParser = innerParser ?? throw new ArgumentNullException(nameof(innerParser));
         }
 
         public MessageTemplate Parse(string messageTemplate)
@@ -27,7 +26,7 @@ namespace Serilog.PerformanceTests.Support
 
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);
-            
+
             MessageTemplate result;
             lock (_templatesLock)
                 if (_templates.TryGetValue(messageTemplate, out result))

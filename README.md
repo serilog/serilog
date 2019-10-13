@@ -102,6 +102,7 @@ Serilog has an active and helpful community who are happy to help point you in t
  * Our [issue tracker](https://github.com/serilog/serilog/issues) here on GitHub
  * [Gitter chat](https://gitter.im/serilog/serilog)
  * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
+ * [Serilog-related courses on Pluralsight](https://www.pluralsight.com/search/?q=serilog)
 
 ### Contributing
 
@@ -111,9 +112,9 @@ When contributing please keep in mind our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Detailed build status
 
-Branch  | AppVeyor | Travis
-------------- | ------------- |-------------
-dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev)  | [![Build Status](https://travis-ci.org/serilog/serilog.svg?branch=dev)](https://travis-ci.org/serilog/serilog) 
-master | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master) | [![Build Status](https://travis-ci.org/serilog/serilog.svg?branch=master)](https://travis-ci.org/serilog/serilog) 
+Branch  | AppVeyor
+------------- | ------------- 
+dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev) 
+master | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master)
 
 _Serilog is copyright &copy; 2013-2018 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/)._

@@ -39,6 +39,19 @@ namespace Serilog.Events
         }
 
         /// <summary>
+        /// Construct a <see cref="LogEventProperty"/> from an existing <see cref="EventProperty"/> instance.
+        /// </summary>
+        /// <param name="property">The existing property.</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal LogEventProperty(EventProperty property)
+        {
+            if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
+            Name = property.Name;
+            Value = property.Value;
+        }
+
+        /// <summary>
         /// The name of the property.
         /// </summary>
         public string Name { get; }
@@ -53,9 +66,6 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="name">The name to check.</param>
         /// <returns>True if the name is valid; otherwise, false.</returns>
-        public static bool IsValidName(string name)
-        {
-            return !string.IsNullOrWhiteSpace(name);
-        }
+        public static bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name);
     }
 }

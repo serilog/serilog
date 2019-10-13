@@ -1,6 +1,6 @@
-﻿using Xunit;
-using Serilog.Filters;
+﻿using Serilog.Filters;
 using Serilog.Tests.Support;
+using Xunit;
 
 namespace Serilog.Tests.Filters
 {

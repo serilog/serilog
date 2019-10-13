@@ -16,8 +16,7 @@ namespace Serilog.PerformanceTests.Support
 
         public ConcurrentDictionaryMessageTemplateCache(IMessageTemplateParser innerParser)
         {
-            if (innerParser == null) throw new ArgumentNullException(nameof(innerParser));
-            _innerParser = innerParser;
+            _innerParser = innerParser ?? throw new ArgumentNullException(nameof(innerParser));
         }
 
         public MessageTemplate Parse(string messageTemplate)
@@ -27,8 +26,7 @@ namespace Serilog.PerformanceTests.Support
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);
 
-            MessageTemplate result;
-            if (_templates.TryGetValue(messageTemplate, out result))
+            if (_templates.TryGetValue(messageTemplate, out var result))
                 return result;
 
             result = _innerParser.Parse(messageTemplate);

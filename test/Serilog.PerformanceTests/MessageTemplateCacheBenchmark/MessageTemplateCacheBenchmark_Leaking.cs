@@ -25,7 +25,7 @@ namespace Serilog.PerformanceTests
         [Params(1, -1)]
         public int MaxDegreeOfParallelism { get; set; }
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
@@ -49,7 +49,8 @@ namespace Serilog.PerformanceTests
             Run(() => new ConcurrentDictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance));
         }
 
-        void Run<T>(Func<T> cacheFactory) where T : IMessageTemplateParser
+        void Run<T>(Func<T> cacheFactory)
+            where T : IMessageTemplateParser
         {
             var cache = cacheFactory();
             var total = MaxCacheItems + OverflowCount;
@@ -57,7 +58,7 @@ namespace Serilog.PerformanceTests
             Parallel.For(
                 0,
                 _templateList.Count,
-                new ParallelOptions() { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
+                new ParallelOptions { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
                 idx => cache.Parse(_templateList[idx % total]));
         }
     }

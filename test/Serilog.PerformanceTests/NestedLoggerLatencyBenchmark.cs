@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
-using Serilog.PerformanceTests.Support;
 using Serilog.Events;
+using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
@@ -12,7 +12,7 @@ namespace Serilog.PerformanceTests
         ILogger _log, _nested;
         readonly LogEvent _event = Some.InformationEvent();
 
-        [Setup]
+        [GlobalSetup]
         public void Setup()
         {
             _log = new LoggerConfiguration()
@@ -35,4 +35,3 @@ namespace Serilog.PerformanceTests
         }
     }
 }
-  

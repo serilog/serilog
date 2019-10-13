@@ -19,6 +19,4 @@ namespace TestDummies.Console
         {
         }
     }
-
 }
-

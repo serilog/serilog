@@ -1,21 +1,17 @@
-﻿
-namespace Serilog.Tests.Support
+﻿namespace Serilog.Tests.Support
 {
     public interface IAmAnInterface
     {
-
     }
 
     public abstract class AnAbstractClass
     {
-
     }
 
     class ConcreteImpl : AnAbstractClass, IAmAnInterface
     {
         ConcreteImpl()
         {
-
         }
 
         public static ConcreteImpl Instance { get; } = new ConcreteImpl();
@@ -36,6 +32,5 @@ namespace Serilog.Tests.Support
 #pragma warning restore 169
         public IAmAnInterface InstanceInterfaceProperty => ConcreteImpl.Instance;
         public IAmAnInterface InstanceInterfaceField = ConcreteImpl.Instance;
-
     }
 }

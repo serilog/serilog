@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Serilog.Events;
+using Serilog.Formatting.Json;
+using Serilog.Parsing;
+using Serilog.Tests.Support;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
-using Newtonsoft.Json;
-using Serilog.Events;
-using Serilog.Formatting.Json;
-using Serilog.Parsing;
-using Serilog.Tests.Support;
 
 namespace Serilog.Tests.Formatting.Json
 {
@@ -197,8 +197,7 @@ namespace Serilog.Tests.Formatting.Json
             var f = new StringWriter();
             j.Format(e, f);
 
-            var d = JsonConvert.DeserializeObject<dynamic>(f.ToString());
-            return d;
+            return JsonConvert.DeserializeObject<dynamic>(f.ToString());
         }
 
         [Fact]
@@ -210,7 +209,7 @@ namespace Serilog.Tests.Formatting.Json
 
             var d = FormatEvent(e);
 
-            var rs = ((IEnumerable)d.Renderings);
+            var rs = (IEnumerable)d.Renderings;
             Assert.Null(rs);
         }
 

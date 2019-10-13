@@ -1,14 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28917.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
 		build.sh = build.sh
+		BuildNativeUWP.ps1 = BuildNativeUWP.ps1
 		CHANGES.md = CHANGES.md
 		Directory.Build.props = Directory.Build.props
 		global.json = global.json

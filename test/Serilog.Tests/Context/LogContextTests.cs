@@ -1,18 +1,18 @@
-﻿using Xunit;
-using Serilog.Context;
-using Serilog.Events;
+﻿using Serilog.Context;
 using Serilog.Core.Enrichers;
+using Serilog.Events;
 using Serilog.Tests.Support;
 #if REMOTING
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
-using System.Runtime.Remoting.Services;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Services;
 #endif
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
+using Xunit;
 
 namespace Serilog.Tests.Context
 {
@@ -194,7 +194,7 @@ namespace Serilog.Tests.Context
 
                     log.Write(Some.InformationEvent());
                     Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
-                    
+
                     Assert.NotEqual(pre, post);
                 }
             },
@@ -221,7 +221,7 @@ namespace Serilog.Tests.Context
 
                 Assert.Empty(lastEvent.Properties);
 
-                // Reset should only work for current async scope, outside of it previous Context 
+                // Reset should only work for current async scope, outside of it previous Context
                 // instance should be available again.
                 log.Write(Some.InformationEvent());
                 Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
@@ -342,9 +342,9 @@ namespace Serilog.Tests.Context
 
             await Task.Delay(200);
 
-            // This is intermittently 2 or 3, depending on the moods of the test runner;
+            // This is intermittently 2 or 3 (now, 4), depending on the moods of the test runner;
             // I think "at least two" is what we're concerned about, here.
-            Assert.InRange(tracker.DisconnectCount, 2, 3);
+            Assert.InRange(tracker.DisconnectCount, 2, 4);
 
             void CallFromRemote() { }
         }

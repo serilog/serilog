@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog.Capturing;
 using Serilog.Core.Enrichers;
 using Serilog.Core.Pipeline;
@@ -32,6 +33,7 @@ namespace Serilog.Core
     public sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         static readonly object[] NoPropertyValues = new object[0];
+        static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
 
         readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly ILogEventSink _sink;
@@ -141,17 +143,15 @@ namespace Serilog.Core
             }
 
             // It'd be nice to do the destructuring lazily, but unfortunately `value` may be mutated between
-            // now and the first log event written...
-            // A future optimization opportunity may be to implement ILogEventEnricher on LogEventProperty to
-            // remove one more allocation.
-            var enricher = new FixedPropertyEnricher(_messageTemplateProcessor.CreateProperty(propertyName, value, destructureObjects));
+            // now and the first log event written.
+            var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
+            var enricher = new FixedPropertyEnricher(new EventProperty(propertyName, propertyValue));
 
             var minimumLevel = _minimumLevel;
             var levelSwitch = _levelSwitch;
             if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
             {
-                var context = value as string;
-                if (context != null)
+                if (value is string context)
                     _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
             }
 
@@ -185,10 +185,7 @@ namespace Serilog.Core
         /// </summary>
         /// <typeparam name="TSource">Type generating log messages in the context.</typeparam>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public ILogger ForContext<TSource>()
-        {
-            return ForContext(typeof(TSource));
-        }
+        public ILogger ForContext<TSource>() => ForContext(typeof(TSource));
 
         /// <summary>
         /// Write a log event with the specified level.
@@ -371,9 +368,7 @@ namespace Serilog.Core
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            MessageTemplate parsedTemplate;
-            IEnumerable<LogEventProperty> boundProperties;
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
             var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
@@ -1339,7 +1334,11 @@ namespace Serilog.Core
                 return false;
             }
 
-            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
+            _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
+            boundProperties = boundEventProperties.Length == 0 ?
+                NoProperties :
+                boundEventProperties.Select(p => new LogEventProperty(p));
+
             return true;
         }
 
@@ -1373,7 +1372,7 @@ namespace Serilog.Core
         {
             _dispose?.Invoke();
         }
-        
+
         /// <summary>
         /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
         /// </summary>

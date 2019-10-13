@@ -51,7 +51,7 @@ namespace Serilog.Rendering
                 }
                 else
                 {
-                    var pt = (PropertyToken) token;
+                    var pt = (PropertyToken)token;
                     RenderPropertyToken(pt, properties, output, formatProvider, isLiteral, isJson);
                 }
             }
@@ -64,8 +64,7 @@ namespace Serilog.Rendering
 
         public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider, bool isLiteral, bool isJson)
         {
-            LogEventPropertyValue propertyValue;
-            if (!properties.TryGetValue(pt.PropertyName, out propertyValue))
+            if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
             {
                 output.Write(pt.RawText);
                 return;
@@ -96,7 +95,7 @@ namespace Serilog.Rendering
             {
                 output.Write(str);
             }
-            else if (json)
+            else if (json && format == null)
             {
                 JsonValueFormatter.Format(propertyValue, output);
             }

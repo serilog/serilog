@@ -1,7 +1,7 @@
 ﻿using Serilog.Core;
+using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Tests.Support;
-using Serilog.Core.Pipeline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,8 +103,7 @@ namespace Serilog.Tests
 
             var level = LogEventLevel.Information;
 
-            CollectingSink sink;
-            var logger = GetLogger(loggerType, out sink);
+            var logger = GetLogger(loggerType, out var sink);
 
             InvokeMethod(writeMethod, logger, new object[] { Some.LogEvent(DateTimeOffset.Now, level) });
 
@@ -505,7 +504,7 @@ namespace Serilog.Tests
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
+        static void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
         {
             Assert.NotNull(normalResult);
             Assert.True(normalResult is ILogger);
@@ -749,14 +748,16 @@ namespace Serilog.Tests
             {
                 level = LogEventLevel.Information;
 
-                var paramList = new List<object>() { level };
+                var paramList = new List<object> { level };
 
                 paramList.AddRange(parameters);
 
                 parameters = paramList.ToArray();
             }
             else
+            {
                 Assert.True(Enum.TryParse(method.Name, out level));
+            }
 
             InvokeMethod(method, logger, parameters, typeArgs);
         }
@@ -768,10 +769,7 @@ namespace Serilog.Tests
 
         static void InvokeConventionMethodAndTest(MethodInfo method, Type[] typeArgs, object[] parameters)
         {
-            CollectingSink sink;
-            LogEventLevel level;
-
-            InvokeConventionMethod(method, typeArgs, parameters, out level, out sink);
+            InvokeConventionMethod(method, typeArgs, parameters, out var level, out var sink);
 
             EvaluateSingleResult(level, sink);
         }
@@ -899,10 +897,7 @@ namespace Serilog.Tests
             Assert.Equal(level, evt.Level);
         }
 
-        static ILogger GetLogger(Type loggerType)
-        {
-            return GetLogger(loggerType, out _);
-        }
+        static ILogger GetLogger(Type loggerType) => GetLogger(loggerType, out _);
 
         static ILogger GetLogger(Type loggerType, out CollectingSink sink, LogEventLevel level = LogEventLevel.Verbose)
         {

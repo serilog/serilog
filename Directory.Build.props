@@ -1,7 +1,7 @@
 <Project>
-  <ItemGroup>
-      <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.1" PrivateAssets="All" />
-  </ItemGroup>
   <!-- Workaround for https://github.com/dotnet/sdk/pull/908 -->
   <Target Name="GetPackagingOutputs" />
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
 </Project>

@@ -49,6 +49,7 @@ namespace Serilog
         public LoggerConfiguration()
         {
             WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+            Enrich = new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
         }
 
         void ApplyInheritedConfiguration(LoggerConfiguration child)
@@ -73,7 +74,7 @@ namespace Serilog
         /// Not all sinks are compatible with transactional auditing requirements (many will use asynchronous
         /// batching to improve write throughput and latency). Sinks need to opt-in to auditing support by
         /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
-        /// method allows any sink class to be adapted for auditing. 
+        /// method allows any sink class to be adapted for auditing.
         /// </remarks>
         public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
 
@@ -102,7 +103,7 @@ namespace Serilog
         /// Configures enrichment of <see cref="LogEvent"/>s. Enrichers can add, remove and
         /// modify the properties associated with events.
         /// </summary>
-        public LoggerEnrichmentConfiguration Enrich => new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
+        public LoggerEnrichmentConfiguration Enrich { get; internal set; }
 
         /// <summary>
         /// Configures global filtering of <see cref="LogEvent"/>s.
@@ -177,6 +178,7 @@ namespace Serilog
                     enricher = _enrichers[0];
                     break;
                 default:
+                    // Enrichment failures are not considered blocking for auditing purposes.
                     enricher = new SafeAggregateEnricher(_enrichers);
                     break;
             }

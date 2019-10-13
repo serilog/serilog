@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Xunit;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Tests.Support;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Serilog.Configuration;
+using Serilog.Core.Enrichers;
 using TestDummies;
+using Xunit;
+// ReSharper disable PossibleNullReferenceException
 
 namespace Serilog.Tests
 {
@@ -53,7 +56,7 @@ namespace Serilog.Tests
         public void DisposableSinksAreDisposedAlongWithRootLogger()
         {
             var sink = new DisposableSink();
-            var logger = (IDisposable) new LoggerConfiguration()
+            var logger = (IDisposable)new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
@@ -65,7 +68,7 @@ namespace Serilog.Tests
         public void DisposableSinksAreNotDisposedAlongWithContextualLoggers()
         {
             var sink = new DisposableSink();
-            var logger = (IDisposable) new LoggerConfiguration()
+            var logger = (IDisposable)new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger()
                 .ForContext<LoggerConfigurationTests>();
@@ -146,10 +149,8 @@ namespace Serilog.Tests
 
             public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
             {
-                if (canApply == null) throw new ArgumentNullException(nameof(canApply));
-                if (projection == null) throw new ArgumentNullException(nameof(projection));
-                _canApply = canApply;
-                _projection = projection;
+                _canApply = canApply ?? throw new ArgumentNullException(nameof(canApply));
+                _projection = projection ?? throw new ArgumentNullException(nameof(projection));
             }
 
             public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
@@ -173,7 +174,7 @@ namespace Serilog.Tests
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
-            
+
             var logger = new LoggerConfiguration()
                 .Destructure.With(new ProjectedDestructuringPolicy(
                     canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
@@ -208,7 +209,7 @@ namespace Serilog.Tests
 
             var ev = events.Single();
             var prop = ev.Properties["AB"];
-            var sv = (StructureValue) prop;
+            var sv = (StructureValue)prop;
             var c = sv.Properties.Single();
             Assert.Equal("C", c.Name);
         }
@@ -259,6 +260,35 @@ namespace Serilog.Tests
             logger.Write(Some.InformationEvent());
 
             Assert.True(enrichedPropertySeen);
+        }
+
+        [Fact]
+        public void MaximumDestructuringDepthDefaultIsEffective()
+        {
+            var x = new
+            {
+                Lvl01 = new
+                {
+                    Lvl02 = new
+                    {
+                        Lvl03 = new
+                        {
+                            Lvl04 = new
+                            {
+                                Lvl05 = new
+                                {
+                                    Lvl06 = new { Lvl07 = new { Lvl08 = new { Lvl09 = new { Lvl10 = "Lvl11" } } } }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var xs = LogAndGetAsString(x, conf => conf, "@");
+
+            Assert.Contains("Lvl10", xs);
+            Assert.DoesNotContain("Lvl11", xs);
         }
 
         [Fact]
@@ -357,7 +387,7 @@ namespace Serilog.Tests
 
         class ToStringOfLength
         {
-            private int _toStringOfLength;
+            readonly int _toStringOfLength;
 
             public ToStringOfLength(int toStringOfLength)
             {
@@ -404,9 +434,9 @@ namespace Serilog.Tests
         {
             var x = new Dictionary<string, int>
             {
-                {"1", 1},
-                {"2", 2},
-                {"3", 3}
+                { "1", 1 },
+                { "2", 2 },
+                { "3", 3 }
             };
 
             var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
@@ -420,8 +450,8 @@ namespace Serilog.Tests
         {
             var x = new Dictionary<string, int>
             {
-                {"1", 1},
-                {"2", 2},
+                { "1", 1 },
+                { "2", 2 },
             };
 
             var limitedCollection = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumCollectionCount(2));
@@ -429,7 +459,7 @@ namespace Serilog.Tests
             Assert.Contains("2", limitedCollection);
         }
 
-        private string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
             LogEvent evt = null;
             var logConf = new LoggerConfiguration()
@@ -438,8 +468,7 @@ namespace Serilog.Tests
             var log = logConf.CreateLogger();
 
             log.Information($"{{{destructuringSymbol}X}}", x);
-            var result = evt.Properties["X"].ToString();
-            return result;
+            return evt.Properties["X"].ToString();
         }
 
         [Fact]
@@ -706,9 +735,9 @@ namespace Serilog.Tests
             Assert.Empty(DummyWrappingSink.Emitted);
             Assert.Empty(sink.Events);
         }
-
+        
         [Fact]
-        public void WrappingSinkRespectsSetting()
+        public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
             DummyWrappingSink.Reset();
             var sink = new CollectingSink();
@@ -722,6 +751,106 @@ namespace Serilog.Tests
 
             Assert.NotEmpty(DummyWrappingSink.Emitted);
             Assert.NotEmpty(sink.Events);
+        }
+
+        [Fact]
+        public void ConditionalSinksReceiveEventsMatchingCondition()
+        {
+            var matching = new CollectingSink();
+            var logger = new LoggerConfiguration()
+                .WriteTo.Conditional(
+                    le => le.Level == LogEventLevel.Warning,
+                    w => w.Sink(matching))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var evt = Assert.Single(matching.Events);
+            Assert.Equal(LogEventLevel.Warning, evt.Level);
+        }
+
+        [Fact]
+        public void EnrichersCanBeWrapped()
+        {
+            var enricher = new CollectingEnricher();
+
+            var configuration = new LoggerConfiguration();
+            LoggerEnrichmentConfiguration.Wrap(
+                configuration.Enrich,
+                e => new ConditionalEnricher(e, le => le.Level == LogEventLevel.Warning),
+                enrich => enrich.With(enricher));
+
+            var logger = configuration.CreateLogger();
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var evt = Assert.Single(enricher.Events);
+            Assert.Equal(LogEventLevel.Warning, evt.Level);
+        }
+
+        [Fact]
+        public void ConditionalEnrichersCheckConditions()
+        {
+            var enricher = new CollectingEnricher();
+
+            var logger = new LoggerConfiguration()
+                .Enrich.When(le => le.Level == LogEventLevel.Warning, enrich => enrich.With(enricher))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var evt = Assert.Single(enricher.Events);
+            Assert.Equal(LogEventLevel.Warning, evt.Level);
+        }
+        
+        [Fact]
+        public void LeveledEnrichersCheckLevels()
+        {
+            var enricher = new CollectingEnricher();
+
+            var logger = new LoggerConfiguration()
+                .Enrich.AtLevel(LogEventLevel.Warning, enrich => enrich.With(enricher))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            Assert.Equal(2, enricher.Events.Count);
+            Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
+        }
+
+        [Fact]
+        public void LeveledEnrichersCheckLevelSwitch()
+        {
+            var enricher = new CollectingEnricher();
+            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+
+            var logger = new LoggerConfiguration()
+                .Enrich.AtLevel(levelSwitch, enrich => enrich.With(enricher))
+                .CreateLogger();
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            Assert.Equal(2, enricher.Events.Count);
+            Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
+
+            enricher.Events.Clear();
+            levelSwitch.MinimumLevel = LogEventLevel.Error;
+
+            logger.Information("Information");
+            logger.Warning("Warning");
+            logger.Error("Error");
+
+            var error = Assert.Single(enricher.Events);
+            Assert.True(error.Level == LogEventLevel.Error);
         }
     }
 }

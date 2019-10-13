@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 namespace Serilog.PerformanceTests.Support
@@ -76,10 +75,7 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override string ToString()
-        {
-            return String.Empty;
-        }
+        public override string ToString() => string.Empty;
 
         public override void Flush()
         {

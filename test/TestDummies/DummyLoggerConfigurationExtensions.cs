@@ -1,9 +1,9 @@
-﻿using System;
-using Serilog;
-using Serilog.Events;
-using Serilog.Formatting;
+﻿using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Events;
+using Serilog.Formatting;
+using System;
 using TestDummies.Console;
 using TestDummies.Console.Themes;
 
@@ -89,8 +89,7 @@ namespace TestDummies
 
         public static LoggerConfiguration WithDummyHardCodedString(
             this LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            string hardCodedString
-        )
+            string hardCodedString)
         {
             return loggerDestructuringConfiguration.With(new DummyHardCodedStringDestructuringPolicy(hardCodedString));
         }
