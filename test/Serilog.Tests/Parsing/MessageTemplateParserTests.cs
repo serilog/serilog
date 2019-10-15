@@ -22,7 +22,7 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
-        public void ANullMessageIsAException()
+        public void MessageTemplateIsRequired()
         {
             Assert.Throws<ArgumentNullException>(() => Parse(null));
         }
@@ -30,11 +30,9 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void AnEmptyMessageIsASingleTextToken()
         {
-            var t = Parse("");
-            Assert.Single(t);
-            Assert.IsType<TextToken>(t.Single());
-
-            var tt = t.Single() as TextToken;
+            var ts = Parse("");
+            var mt = Assert.Single(ts);
+            var tt = Assert.IsType<TextToken>(mt);
             Assert.Equal("", tt.Text);
             Assert.Equal("", tt.ToString());
             Assert.Equal(0, tt.StartIndex);
@@ -44,11 +42,9 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void AnEmptyPropertyIsIsParsedAsText()
         {
-            var t = Parse("{}").SingleOrDefault();
-            Assert.NotNull(t);
-            Assert.IsType<TextToken>(t);
-            
-            var tt = t as TextToken;
+            var ts = Parse("{}");
+            var mt = Assert.Single(ts);
+            var tt = Assert.IsType<TextToken>(mt);
             Assert.Equal("{}", tt.Text);
             Assert.Equal("{}", tt.ToString());
             Assert.Equal(0, tt.StartIndex);
@@ -214,7 +210,7 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
-        public void PropertiesCanRightAlignment()
+        public void PropertiesCanHaveRightAlignment()
         {
             var prop1 = (PropertyToken)Parse("{Hello,5}").Single();
             Assert.Equal("Hello", prop1.PropertyName);
@@ -352,7 +348,7 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
-        public void DestructureWIthInvalidHintsIsParsedAsText()
+        public void DestructureWithInvalidHintsIsParsedAsText()
         {
             AssertParsedAs("{@$}",
                 new TextToken("{@$}"));
