@@ -50,7 +50,7 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
  * Format-based logging API with familiar [levels](https://github.com/serilog/serilog/wiki/Configuration-Basics#minimum-level) like `Debug`, `Information`, `Warning`, `Error`, and so-on
  * Discoverable C# configuration syntax and optional [XML](https://github.com/serilog/serilog-settings-appsettings) or [JSON](https://github.com/serilog/serilog-settings-configuration) configuration support
  * Efficient when enabled, extremely low overhead when a logging level is switched off
- * Best-in-class .NET Core support, including a [provider for _Microsoft.Extensions.Logging_](https://github.com/serilog/serilog-extensions-logging)
+ * Best-in-class .NET Core support, including [rich integration with ASP.NET Core](https://github.com/serilog/serilog-aspnetcore)
  * Support for a [comprehensive range of sinks](https://github.com/serilog/serilog/wiki/Provided-Sinks), including files, the console, on-premises and cloud-based log servers, databases, and message queues
  * Sophisticated [enrichment](https://github.com/serilog/serilog/wiki/Enrichment) of log events with contextual information, including scoped (`LogContext`) properties, thread and process identifiers, and domain-specific correlation ids such as `HttpRequestId`
  * Zero-shared-state `Logger` objects, with an optional global static `Log` class
