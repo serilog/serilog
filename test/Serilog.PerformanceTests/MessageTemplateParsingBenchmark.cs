@@ -13,9 +13,11 @@ namespace Serilog.PerformanceTests
 
         const string _SimpleTextTemplate = "Hello, world!";
         const string _SinglePropertyTokenTemplate = "{Name}";
+        const string _SingleTextWithPropertyTemplate = "This is a new Log entry with some external {Data}";
         const string _ManyPropertyTokenTemplate = "{Greeting}, {Name}!";
         const string _MultipleTokensTemplate = "Hello, world! {Greeting}, {Name} - {{Escaped}} - {@Hello} {$World}";
         const string _DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
+        const string _BigTemplate = "Hello, world! {Greeting}, {Name} - {{Escaped}} - {@Hello} {$World} {Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception} Hello, world! {0} {-1} {2} {Test,-15} {Prop,50} {Qnt,5:000}";
 
         public MessageTemplateParsingBenchmark()
         {
@@ -39,7 +41,13 @@ namespace Serilog.PerformanceTests
         {
             _parser.Parse(_SinglePropertyTokenTemplate);
         }
-        
+
+        [Benchmark]
+        public void SingleTextWithPropertyTemplate()
+        {
+            _parser.Parse(_SingleTextWithPropertyTemplate);
+        }
+
         [Benchmark]
         public void ManyPropertyTokenTemplate()
         {
@@ -56,6 +64,12 @@ namespace Serilog.PerformanceTests
         public void DefaultConsoleOutputTemplate()
         {
             _parser.Parse(_DefaultConsoleOutputTemplate);
+        }
+
+        [Benchmark]
+        public void BigTemplate()
+        {
+            _parser.Parse(_BigTemplate);
         }
     }
 }
