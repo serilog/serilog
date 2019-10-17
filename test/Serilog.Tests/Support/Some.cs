@@ -81,12 +81,13 @@ namespace Serilog.Tests.Support
         public static LogEvent LogEvent(Action<ILogger> emit)
         {
             var cs = new CollectingSink();
-            using var logger = new LoggerConfiguration()
+            using (var logger = new LoggerConfiguration()
                 .MinimumLevel.Is(LevelAlias.Minimum)
                 .WriteTo.Sink(cs)
-                .CreateLogger();
-
-            emit(logger);
+                .CreateLogger())
+            {
+                emit(logger);
+            }
 
             return cs.SingleEvent;
         }
