@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -75,6 +76,24 @@ namespace Serilog.Tests.Support
         public static MessageTemplate MessageTemplate()
         {
             return new MessageTemplateParser().Parse(String());
+        }
+
+        public static LogEvent LogEvent(Action<ILogger> emit)
+        {
+            var cs = new CollectingSink();
+            using var logger = new LoggerConfiguration()
+                .MinimumLevel.Is(LevelAlias.Minimum)
+                .WriteTo.Sink(cs)
+                .CreateLogger();
+
+            emit(logger);
+
+            return cs.SingleEvent;
+        }
+
+        public static ILogEventPropertyFactory LogEventPropertyFactory()
+        {
+            return new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), true);
         }
     }
 }

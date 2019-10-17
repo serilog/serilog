@@ -17,6 +17,10 @@ using Serilog.Events;
 
 namespace Serilog.Core.Enrichers
 {
+    /// <summary>
+    /// A lower-cost alternative to <see cref="PropertyEnricher"/> that can be used in cases where
+    /// the logger's destructuring/scalar conversion policies won't apply.
+    /// </summary>
     class FixedPropertyEnricher : ILogEventEnricher
     {
         readonly EventProperty _eventProperty;

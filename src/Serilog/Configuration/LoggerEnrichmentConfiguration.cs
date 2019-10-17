@@ -84,6 +84,18 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
+        /// Remove the specified property from events.
+        /// </summary>
+        /// <param name="name">The name of the property to remove.</param>
+        /// <param name="retainWhenInMessage">If <c>true</c>, the property will be removed only when
+        /// it doesn't appear in the event's message template; otherwise, the property will be removed regardless.</param>
+        /// <returns></returns>
+        public LoggerConfiguration ByRemovingProperty(string name, bool retainWhenInMessage = false)
+        {
+            return With(new RemovePropertyEnricher(name, retainWhenInMessage));
+        }
+
+        /// <summary>
         /// Enrich log events with properties from <see cref="Context.LogContext"/>.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
