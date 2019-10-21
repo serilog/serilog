@@ -77,6 +77,9 @@ namespace Serilog.Tests.Parsing
         {
             AssertParsedAs("Well, {{ Hi!",
                 new TextToken("Well, { Hi!"));
+
+            AssertParsedAs("Hello, {{worl@d}!",
+                new TextToken("Hello, {worl@d}!"));
         }
 
         [Fact]
@@ -85,12 +88,25 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("Nice }}-: mo",
                 new TextToken("Nice }-: mo"));
         }
+        
+        [Fact]
+        public void DoubledRightBracketsAfterOneLeftIsParsedAPropertyTokenAndATextToken()
+        {
+            AssertParsedAs("{World}}!",
+                new PropertyToken("World", "{World}"), new TextToken("}!"));
+
+            AssertParsedAs("Hello, {World}}!",
+                new TextToken("Hello, "), new PropertyToken("World", "{World}"), new TextToken("}!"));
+        }
 
         [Fact]
         public void DoubledBracketsAreParsedAsASingleBracket()
         {
             AssertParsedAs("{{Hi}}",
                 new TextToken("{Hi}"));
+            
+            AssertParsedAs("Hello, {{worl@d}}!",
+                new TextToken("Hello, {worl@d}!"));
         }
 
         [Fact]
@@ -113,6 +129,22 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("{0_}}space}",
                 new PropertyToken("0_", "{0_}"),
                 new TextToken("}space}"));
+        }
+        
+        [Fact]
+        public void AMessageWithAMalformedPropertyTagIsParsedAsManyTextTokens()
+        {
+            AssertParsedAs("Hello, {w@rld}",
+                new TextToken("Hello, "), new TextToken("{w@rld}"));
+
+            AssertParsedAs("Hello, {w@rld}, HI!",
+                new TextToken("Hello, "), new TextToken("{w@rld}"), new TextToken(", HI!"));
+
+            AssertParsedAs("{w@rld} Hi!",
+                new TextToken("{w@rld}"), new TextToken(" Hi!"));
+
+            AssertParsedAs("{H&llo}, {w@rld}",
+                new TextToken("{H&llo}"), new TextToken(", "), new TextToken("{w@rld}"));
         }
 
         [Fact]
