@@ -228,6 +228,13 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
+        public void APropertyWithValidNameAndInvalidFormatIsParsedAsText()
+        {
+            AssertParsedAs("{Hello:HH$MM}",
+                new TextToken("{Hello:HH$MM}"));
+        }
+
+        [Fact]
         public void PropertiesCanHaveLeftAlignment()
         {
             var prop1 = (PropertyToken)Parse("{Hello,-5}").Single();
