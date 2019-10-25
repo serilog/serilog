@@ -114,6 +114,12 @@ namespace Serilog.Tests.Parsing
         {
             AssertParsedAs("{0 space}",
                 new TextToken("{0 space}"));
+
+            AssertParsedAs("{0 space",
+                new TextToken("{0 space"));
+            
+            AssertParsedAs("{0_space",
+                new TextToken("{0_space"));
         }
 
         [Fact]
@@ -121,6 +127,9 @@ namespace Serilog.Tests.Parsing
         {
             AssertParsedAs("{0_{{space}",
                 new TextToken("{0_{{space}"));
+
+            AssertParsedAs("{0_{{space",
+                new TextToken("{0_{{space"));
         }
 
         [Fact]
@@ -136,6 +145,15 @@ namespace Serilog.Tests.Parsing
         {
             AssertParsedAs("Hello, {w@rld}",
                 new TextToken("Hello, "), new TextToken("{w@rld}"));
+
+            AssertParsedAs("Hello, {w@rld",
+                new TextToken("Hello, "), new TextToken("{w@rld"));
+
+            AssertParsedAs("Hello, {w{{rld",
+                new TextToken("Hello, "), new TextToken("{w{{rld"));
+
+            AssertParsedAs("Hello{{, {w{{rld",
+                new TextToken("Hello{, "), new TextToken("{w{{rld"));
 
             AssertParsedAs("Hello, {w@rld}, HI!",
                 new TextToken("Hello, "), new TextToken("{w@rld}"), new TextToken(", HI!"));
@@ -401,6 +419,9 @@ namespace Serilog.Tests.Parsing
         {
             AssertParsedAs("{@}",
                 new TextToken("{@}"));
+
+            AssertParsedAs("{$}",
+                new TextToken("{$}"));
         }
 
         [Fact]
