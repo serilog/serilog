@@ -5,6 +5,7 @@ using Serilog.Parsing;
 using Serilog.Tests.Support;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,12 +18,12 @@ namespace Serilog.Tests.Capturing
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter =
-            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), null, false);
 
         [Fact]
         public async Task MaximumDepthIsEffectiveAndThreadSafe()
         {
-            var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), null, false);
 
             var barrier = new Barrier(participantCount: 3);
 
@@ -109,6 +110,28 @@ namespace Serilog.Tests.Capturing
             var pv = _converter.CreatePropertyValue(new int?(2), Destructuring.Destructure);
             // ReSharper restore RedundantExplicitNullableCreation
             Assert.Equal(2, ((ScalarValue)pv).Value);
+        }
+
+        [Fact]
+        public void ShouldDiscardsAllNullValues()
+        {
+            var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), (p, v) => v != null, false);
+
+            var pv = converter.CreatePropertyValue(new Person { Name = "Mister", Age = 42 }, Destructuring.Destructure);
+            var output = new StringWriter();
+            pv.Render(output);
+            Assert.Equal("Person { Name: \"Mister\", Age: 42 }", output.ToString());
+        }
+
+        class Person
+        {
+            public string Name { get; set; }
+
+            public int Age { get; set; }
+
+            public string NullableData { get; set; }
+
+            public int? NullableValueType { get; set; }
         }
 
         class A

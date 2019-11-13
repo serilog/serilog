@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using Serilog.Core;
 using Serilog.Policies;
 
@@ -30,6 +31,7 @@ namespace Serilog.Configuration
         readonly Action<int> _setMaximumDepth;
         readonly Action<int> _setMaximumStringLength;
         readonly Action<int> _setMaximumCollectionCount;
+        readonly Action<Func<PropertyInfo, object, bool>> _setDestructuringPropertyFilter;
 
         internal LoggerDestructuringConfiguration(
             LoggerConfiguration loggerConfiguration,
@@ -37,7 +39,8 @@ namespace Serilog.Configuration
             Action<IDestructuringPolicy> addPolicy,
             Action<int> setMaximumDepth,
             Action<int> setMaximumStringLength,
-            Action<int> setMaximumCollectionCount)
+            Action<int> setMaximumCollectionCount,
+            Action<Func<PropertyInfo, object, bool>> setDestructuringPropertyFilter)
         {
             _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
             _addScalar = addScalar ?? throw new ArgumentNullException(nameof(addScalar));
@@ -45,6 +48,7 @@ namespace Serilog.Configuration
             _setMaximumDepth = setMaximumDepth ?? throw new ArgumentNullException(nameof(setMaximumDepth));
             _setMaximumStringLength = setMaximumStringLength ?? throw new ArgumentNullException(nameof(setMaximumStringLength));
             _setMaximumCollectionCount = setMaximumCollectionCount ?? throw new ArgumentNullException(nameof(setMaximumCollectionCount));
+            _setDestructuringPropertyFilter = setDestructuringPropertyFilter ?? throw new ArgumentNullException(nameof(setDestructuringPropertyFilter));
         }
 
         /// <summary>
@@ -180,5 +184,23 @@ namespace Serilog.Configuration
             _setMaximumCollectionCount(maximumCollectionCount);
             return _loggerConfiguration;
         }
+
+        /// <summary>
+        /// When destructuring objects, allows to filter properties recorded in StructureValue.
+        /// </summary>
+        /// <param name="filter">Delegate used for filtering.</param>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration AllowOnly(Func<PropertyInfo, object, bool> filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+            _setDestructuringPropertyFilter(filter);
+            return _loggerConfiguration;
+        }
+
+        /// <summary>
+        /// When destructuring objects, discards all null values from being recorded in StructureValue.
+        /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration DisableNullProperties() => AllowOnly((prop, value) => value != null);
     }
 }

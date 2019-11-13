@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Serilog.Capturing;
 using Serilog.Configuration;
 using Serilog.Core;
@@ -41,6 +42,7 @@ namespace Serilog
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
+        Func<PropertyInfo, object, bool> _destructuringPropertyFilter;
         bool _loggerCreated;
 
         /// <summary>
@@ -123,7 +125,8 @@ namespace Serilog
                     _additionalDestructuringPolicies.Add,
                     depth => _maximumDestructuringDepth = depth,
                     length => _maximumStringLength = length,
-                    count => _maximumCollectionCount = count);
+                    count => _maximumCollectionCount = count,
+                    filter => _destructuringPropertyFilter = filter);
             }
         }
 
@@ -164,6 +167,7 @@ namespace Serilog
                 _maximumCollectionCount,
                 _additionalScalarTypes,
                 _additionalDestructuringPolicies,
+                _destructuringPropertyFilter,
                 auditing);
             var processor = new MessageTemplateProcessor(converter);
 

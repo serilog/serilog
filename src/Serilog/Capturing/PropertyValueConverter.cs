@@ -49,6 +49,7 @@ namespace Serilog.Capturing
         readonly int _maximumStringLength;
         readonly int _maximumCollectionCount;
         readonly bool _propagateExceptions;
+        readonly Func<PropertyInfo, object, bool> _destructuringPropertyFilter;
 
         public PropertyValueConverter(
             int maximumDestructuringDepth,
@@ -56,6 +57,7 @@ namespace Serilog.Capturing
             int maximumCollectionCount,
             IEnumerable<Type> additionalScalarTypes,
             IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
+            Func<PropertyInfo, object, bool> destructuringPropertyFilter,
             bool propagateExceptions)
         {
             if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
@@ -67,6 +69,7 @@ namespace Serilog.Capturing
             _propagateExceptions = propagateExceptions;
             _maximumStringLength = maximumStringLength;
             _maximumCollectionCount = maximumCollectionCount;
+            _destructuringPropertyFilter = destructuringPropertyFilter;
 
             _scalarConversionPolicies = new IScalarConversionPolicy[]
             {
@@ -358,7 +361,9 @@ namespace Serilog.Capturing
 
                     propValue = "The property accessor threw an exception: " + ex.InnerException?.GetType().Name;
                 }
-                yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+
+                if (_destructuringPropertyFilter?.Invoke(prop, propValue) == true)
+                    yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
             }
         }
 
