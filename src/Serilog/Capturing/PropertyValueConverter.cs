@@ -362,7 +362,7 @@ namespace Serilog.Capturing
                     propValue = "The property accessor threw an exception: " + ex.InnerException?.GetType().Name;
                 }
 
-                if (_destructuringPropertyFilter?.Invoke(prop, propValue) == true)
+                if (_destructuringPropertyFilter == null || _destructuringPropertyFilter(prop, propValue))
                     yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
             }
         }
