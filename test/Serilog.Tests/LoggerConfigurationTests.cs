@@ -264,6 +264,35 @@ namespace Serilog.Tests
         }
 
         [Fact]
+        public void MaximumDestructuringDepthDefaultIsEffective()
+        {
+            var x = new
+            {
+                Lvl01 = new
+                {
+                    Lvl02 = new
+                    {
+                        Lvl03 = new
+                        {
+                            Lvl04 = new
+                            {
+                                Lvl05 = new
+                                {
+                                    Lvl06 = new { Lvl07 = new { Lvl08 = new { Lvl09 = new { Lvl10 = "Lvl11" } } } }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var xs = LogAndGetAsString(x, conf => conf, "@");
+
+            Assert.Contains("Lvl10", xs);
+            Assert.DoesNotContain("Lvl11", xs);
+        }
+
+        [Fact]
         public void MaximumDestructuringDepthIsEffective()
         {
             var x = new

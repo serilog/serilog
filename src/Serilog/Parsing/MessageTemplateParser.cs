@@ -253,7 +253,8 @@ namespace Serilog.Parsing
             return c != '}' &&
                 (char.IsLetterOrDigit(c) ||
                  char.IsPunctuation(c) ||
-                 c == ' ');
+                 c == ' ' ||
+                 c == '+');
         }
 
         static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)

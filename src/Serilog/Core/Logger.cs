@@ -266,7 +266,7 @@ namespace Serilog.Core
         }
 
         /// <summary>
-        /// Determine if events at the specified level will be passed through
+        /// Determine if events at the specified level, and higher, will be passed through
         /// to the log sinks.
         /// </summary>
         /// <param name="level">Level to check.</param>
