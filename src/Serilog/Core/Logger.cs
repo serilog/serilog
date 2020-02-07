@@ -271,8 +271,14 @@ namespace Serilog.Core
             WriteInternal(level, null, messageTemplate, propertyValues);
         }
 
+        /// <summary>
+        /// Determine if events at the specified level, and higher, will be passed through
+        /// to the log sinks.
+        /// </summary>
+        /// <param name="level">Level to check.</param>
+        /// <returns>True if the level is enabled; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        bool IsEnabledInternal(LogEventLevel level)
+        public bool IsEnabled(LogEventLevel level)
         {
             if ((int)level < (int)_minimumLevel)
                 return false;
