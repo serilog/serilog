@@ -1,3 +1,6 @@
+2.9.1
+* #1401 - implementing RenderedJsonFormatter
+
 2.7.1
  * #1075 - overload of `LoggerSinkConfiguration.Wrap()` accepting `LoggingLevelSwitch`
  * #1083 - update package metadata, including `https://` project and icon URLs
