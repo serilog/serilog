@@ -15,12 +15,14 @@
 using System;
 using System.IO;
 using Serilog.Events;
-using Serilog.Formatting;
 using Serilog.Formatting.Compact;
-using Serilog.Formatting.Json;
 
 namespace Serilog.Formatting.Json
 {
+    /// <summary>
+    /// An <see cref="ITextFormatter"/> that writes events in a rendered JSON format, for consumption in environments 
+    /// without message template support. Message templates are rendered into text and a hashed event id is included.
+    /// </summary>
     public class RenderedJsonFormatter : ITextFormatter
     {
         readonly JsonValueFormatter _valueFormatter;
