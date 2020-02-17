@@ -212,5 +212,67 @@ namespace Serilog.Tests.Core
             Assert.False(delegatingLogger.Disposed);
         }
 #endif
+
+        [Fact]
+        public void IfNoTimeProviderIsSpecifiedTheDefaultIsUsed()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .CreateLogger()
+                .ForContext<LoggerTests>();
+
+            var now = DateTimeOffset.Now;
+            log.Information("Some message");
+
+            Assert.Single(events);
+
+            // The timestamp must be approximately identical to DateTimeOffset.Now.
+            var eventTimestamp = events.First().Timestamp;
+
+            Assert.Equal(now.Offset, eventTimestamp.Offset);
+
+            Assert.Equal(now.Date, eventTimestamp.Date);
+            Assert.Equal(now.Hour, eventTimestamp.Hour);
+            Assert.Equal(now.Minute, eventTimestamp.Minute);
+            // seconds are not checked intenionally to avoid instability.
+        }
+
+        [Fact]
+        public void ASpecifiedTimeProviderMustBeUsed()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            // set a dummy time provider
+            var log = new LoggerConfiguration()
+                .TimeProvider.SetTo(() =>
+                {
+                    var originalTime = DateTimeOffset.Now;
+                    return new DateTimeOffset(2019, 05, 04, originalTime.Hour, originalTime.Minute, originalTime.Second, originalTime.Offset);
+                })
+                .WriteTo.Sink(sink)
+                .CreateLogger()
+                .ForContext<LoggerTests>();
+
+            var now = DateTimeOffset.Now;
+            log.Information("Some message");
+
+            Assert.Single(events);
+
+            // The timestamp must be approximately identical to DateTimeOffset.Now.
+            var eventTimestamp = events.First().Timestamp;
+
+            Assert.Equal(now.Offset, eventTimestamp.Offset);
+
+            Assert.Equal(2019, eventTimestamp.Year);
+            Assert.Equal(05, eventTimestamp.Month);
+            Assert.Equal(04, eventTimestamp.Day);
+            Assert.Equal(now.Hour, eventTimestamp.Hour);
+            Assert.Equal(now.Minute, eventTimestamp.Minute);
+            // seconds are not checked intenionally to avoid instability.
+        }
     }
 }

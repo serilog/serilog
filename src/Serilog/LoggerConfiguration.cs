@@ -42,6 +42,7 @@ namespace Serilog
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
         bool _loggerCreated;
+        Func<DateTimeOffset> _timeProvider;
 
         /// <summary>
         /// Construct a <see cref="LoggerConfiguration"/>.
@@ -96,6 +97,20 @@ namespace Serilog
                     },
                     sw => _levelSwitch = sw,
                     (s, lls) => _overrides[s] = lls);
+            }
+        }
+
+        /// <summary>
+        /// Configures the time provider for the log events.
+        /// If not specified, a default time provider is used.
+        /// </summary>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerTimeProviderConfiguration TimeProvider
+        {
+            get
+            {
+                return new LoggerTimeProviderConfiguration(this,
+                    timeProvider => _timeProvider = timeProvider);
             }
         }
 
@@ -200,8 +215,8 @@ namespace Serilog
             }
 
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, enricher, Dispose, overrideMap) :
-                new Logger(processor, _levelSwitch, sink, enricher, Dispose, overrideMap);
+                new Logger(processor, _minimumLevel, sink, enricher, _timeProvider, Dispose, overrideMap) :
+                new Logger(processor, _levelSwitch, sink, enricher, _timeProvider, Dispose, overrideMap);
         }
     }
 }

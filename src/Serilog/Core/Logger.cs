@@ -39,6 +39,8 @@ namespace Serilog.Core
         readonly ILogEventSink _sink;
         readonly Action _dispose;
         readonly ILogEventEnricher _enricher;
+        Func<DateTimeOffset> _timeProvider;
+        Func<DateTimeOffset> _defaultTimeProvider = () => DateTimeOffset.Now;
 
         // It's important that checking minimum level is a very
         // quick (CPU-cacheable) read in the simple case, hence
@@ -54,9 +56,10 @@ namespace Serilog.Core
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
+            Func<DateTimeOffset> timeProvider,
             Action dispose = null,
             LevelOverrideMap overrideMap = null)
-            : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null, overrideMap)
+            : this(messageTemplateProcessor, minimumLevel, sink, enricher, timeProvider, dispose, null, overrideMap)
         {
         }
 
@@ -65,9 +68,10 @@ namespace Serilog.Core
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
             ILogEventEnricher enricher,
+            Func<DateTimeOffset> timeProvider,
             Action dispose = null,
             LevelOverrideMap overrideMap = null)
-            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch, overrideMap)
+            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, timeProvider, dispose, levelSwitch, overrideMap)
         {
         }
 
@@ -78,6 +82,7 @@ namespace Serilog.Core
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
+            Func<DateTimeOffset> timeProvider,
             Action dispose = null,
             LoggingLevelSwitch levelSwitch = null,
             LevelOverrideMap overrideMap = null)
@@ -89,6 +94,7 @@ namespace Serilog.Core
             _levelSwitch = levelSwitch;
             _overrideMap = overrideMap;
             _enricher = enricher;
+            _timeProvider = timeProvider ?? _defaultTimeProvider;
         }
 
         internal bool HasOverrideMap => _overrideMap != null;
@@ -108,6 +114,7 @@ namespace Serilog.Core
                         _minimumLevel,
                         this,
                         enricher,
+                        _timeProvider,
                         null,
                         _levelSwitch,
                         _overrideMap);
@@ -160,6 +167,7 @@ namespace Serilog.Core
                 minimumLevel,
                 this,
                 enricher,
+                _timeProvider,
                 null,
                 levelSwitch,
                 _overrideMap);
@@ -363,6 +371,9 @@ namespace Serilog.Core
             if (!IsEnabled(level)) return;
             if (messageTemplate == null) return;
 
+            // Generate the timestamp as early as possible
+            var timestamp = _timeProvider.Invoke();
+
             // Catch a common pitfall when a single non-object array is cast to object[]
             if (propertyValues != null &&
                 propertyValues.GetType() != typeof(object[]))
@@ -370,7 +381,7 @@ namespace Serilog.Core
 
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
+            var logEvent = new LogEvent(timestamp, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
         }
 
