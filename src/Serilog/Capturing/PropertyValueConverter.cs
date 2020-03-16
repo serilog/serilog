@@ -96,7 +96,7 @@ namespace Serilog.Capturing
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, string format)
+        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, string format = "")
         {
             try
             {
