@@ -96,11 +96,11 @@ namespace Serilog.Capturing
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, string format)
         {
             try
             {
-                return CreatePropertyValue(value, destructuring, 1);
+                return CreatePropertyValue(value, destructuring, 1, format);
             }
             catch (Exception ex)
             {
@@ -123,7 +123,7 @@ namespace Serilog.Capturing
                 depth);
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
+        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth, string format = "")
         {
             if (value == null)
                 return new ScalarValue(null);
@@ -159,6 +159,13 @@ namespace Serilog.Capturing
                     if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
                         return result;
                 }
+            }
+
+            // if a non builtin scalar has a format associated, pass it to the sink -
+            // considering it a scalar even if it is a structured type.
+            if (format != "")
+            {
+                return new ScalarValue(value);
             }
 
             var valueType = value.GetType();

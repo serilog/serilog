@@ -123,7 +123,7 @@ namespace Serilog.Capturing
         {
             return new EventProperty(
                         propertyToken.PropertyName,
-                        _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring));
+                        _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring, propertyToken.Format));
         }
     }
 }

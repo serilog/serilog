@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using Serilog.Core;
 using Serilog.Events;
@@ -14,9 +15,9 @@ namespace Serilog.Tests.Support
 
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
 
-        public StringSink(string outputTemplate = DefaultOutputTemplate)
+        public StringSink(string outputTemplate = DefaultOutputTemplate, IFormatProvider formatProvider = null)
         {
-            _formatter = new MessageTemplateTextFormatter(outputTemplate, CultureInfo.InvariantCulture);
+            _formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider ?? CultureInfo.InvariantCulture);
         }
 
         public void Emit(LogEvent logEvent)
