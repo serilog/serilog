@@ -48,7 +48,7 @@ namespace Serilog.Tests
             Assert.False(wr.IsAlive);
             GC.KeepAlive(logger);
         }
-        
+
         [Fact]
         public void CreateLoggerThrowsIfCalledMoreThanOnce()
         {
