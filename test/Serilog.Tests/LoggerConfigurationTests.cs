@@ -41,12 +41,12 @@ namespace Serilog.Tests
                 return (new WeakReference(loggerConfiguration), logger);
             }
 
-            var (wr, logger) = UseLoggerConfiguration();
+            var (wr, outerLogger) = UseLoggerConfiguration();
 
             GC.Collect();
 
             Assert.False(wr.IsAlive);
-            GC.KeepAlive(logger);
+            GC.KeepAlive(outerLogger);
         }
 
         [Fact]
