@@ -45,8 +45,8 @@ namespace Serilog.Core
         // we keep a separate field from the switch, which may
         // not be specified. If it is, we'll set _minimumLevel
         // to its lower limit and fall through to the secondary check.
-        readonly LogEventLevel _minimumLevel;
-        readonly LoggingLevelSwitch _levelSwitch;
+        LogEventLevel _minimumLevel;
+        LoggingLevelSwitch _levelSwitch;
         readonly LevelOverrideMap _overrideMap;
 
         internal Logger(
@@ -87,11 +87,16 @@ namespace Serilog.Core
             _sink = sink;
             _dispose = dispose;
             _levelSwitch = levelSwitch;
-            _overrideMap = overrideMap;
+            _overrideMap = overrideMap ?? new LevelOverrideMap(new Dictionary<string, LoggingLevelSwitch>(), minimumLevel, levelSwitch);
             _enricher = enricher;
+
+            if (_enricher is SourceContextEnricher)
+            {
+                _overrideMap.OverrideAdded += OnOverrideAdded;
+            }
         }
 
-        internal bool HasOverrideMap => _overrideMap != null;
+        internal bool HasAnyOverrides => _overrideMap.HasAnyOverrides();
 
         /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
@@ -145,14 +150,17 @@ namespace Serilog.Core
             // It'd be nice to do the destructuring lazily, but unfortunately `value` may be mutated between
             // now and the first log event written.
             var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
-            var enricher = new FixedPropertyEnricher(new EventProperty(propertyName, propertyValue));
+            ILogEventEnricher enricher = new FixedPropertyEnricher(new EventProperty(propertyName, propertyValue));
 
             var minimumLevel = _minimumLevel;
             var levelSwitch = _levelSwitch;
             if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
             {
                 if (value is string context)
+                {
                     _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+                    enricher = new SourceContextEnricher(context);
+                }
             }
 
             return new Logger(
@@ -1370,6 +1378,7 @@ namespace Serilog.Core
         /// </summary>
         public void Dispose()
         {
+            _overrideMap.OverrideAdded -= OnOverrideAdded;
             _dispose?.Invoke();
         }
 
@@ -1377,5 +1386,21 @@ namespace Serilog.Core
         /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
         /// </summary>
         public static ILogger None { get; } = SilentLogger.Instance;
+
+        /// <summary>
+        /// Gets or adds a LoggingLevelSwitch to update log level overrides during runtime
+        /// </summary>
+        /// <param name="context">The name of the context. Must be non-empty.</param>
+        public LoggingLevelSwitch GetOrAddOverride(string context)
+        {
+            return _overrideMap.GetOrAddOverride(context);
+        }
+
+        void OnOverrideAdded()
+        {
+            var context = (SourceContextEnricher)_enricher;
+            
+            _overrideMap.GetEffectiveLevel(context.Context, out _minimumLevel, out _levelSwitch);
+        }
     }
 }

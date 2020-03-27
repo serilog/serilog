@@ -140,5 +140,30 @@ namespace Serilog.Tests.Core
                 Assert.Same(Log.Logger, Logger.None);
             }
         }
+
+
+
+        [Fact]
+        public void AddingAnOverridingUpdatesTheLogLevel()
+        {
+            var rootLogger = new LoggerConfiguration()
+                .MinimumLevel.Warning()
+                .CreateLogger();
+
+
+            var contextLogger = (Logger)rootLogger.ForContext<LoggerTests>();
+
+            Assert.False(rootLogger.IsEnabled(LogEventLevel.Verbose));
+            Assert.False(contextLogger.IsEnabled(LogEventLevel.Verbose));
+
+            var loggerSwitch = contextLogger.GetOrAddOverride(typeof(LoggerTests).FullName);
+            Assert.Equal(LogEventLevel.Warning, loggerSwitch.MinimumLevel);
+
+            loggerSwitch.MinimumLevel = LogEventLevel.Verbose;
+
+
+            Assert.False(rootLogger.IsEnabled(LogEventLevel.Verbose));
+            Assert.True(contextLogger.IsEnabled(LogEventLevel.Verbose));
+        }
     }
 }

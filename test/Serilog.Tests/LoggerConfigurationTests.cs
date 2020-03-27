@@ -34,16 +34,21 @@ namespace Serilog.Tests
         [Fact]
         public void LoggerShouldNotReferenceToItsConfigurationAfterBeingCreated()
         {
-            var loggerConfiguration = new LoggerConfiguration();
-            var wr = new WeakReference(loggerConfiguration);
-            var logger = loggerConfiguration.CreateLogger();
+            (WeakReference, Logger) UseLoggerConfiguration()
+            {
+                var loggerConfiguration = new LoggerConfiguration();
+                var logger = loggerConfiguration.CreateLogger();
+                return (new WeakReference(loggerConfiguration), logger);
+            }
+
+            var (wr, logger) = UseLoggerConfiguration();
 
             GC.Collect();
 
             Assert.False(wr.IsAlive);
             GC.KeepAlive(logger);
         }
-
+        
         [Fact]
         public void CreateLoggerThrowsIfCalledMoreThanOnce()
         {

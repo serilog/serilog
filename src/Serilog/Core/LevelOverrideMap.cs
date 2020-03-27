@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Core
@@ -24,29 +23,13 @@ namespace Serilog.Core
         readonly LogEventLevel _defaultMinimumLevel;
         readonly LoggingLevelSwitch _defaultLevelSwitch;
 
-        struct LevelOverride
-        {
-            public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
-            {
-                Context = context;
-                ContextPrefix = context + ".";
-                LevelSwitch = levelSwitch;
-            }
-
-            public string Context { get; }
-
-            public string ContextPrefix { get; }
-
-            public LoggingLevelSwitch LevelSwitch { get; }
-        }
-
         // There are two possible strategies to apply:
         //   1. Keep some bookkeeping data to consult when a new context is encountered, and a concurrent dictionary
         //        for exact matching ~ O(1), but slow and requires fences/locks; or,
         //   2. O(n) search over the raw configuration data every time (fast for small sets of overrides).
-        // This implementation assumes there will only be a few overrides in each application, so chooses (2). This
-        // is an assumption that's up for debate.
-        readonly LevelOverride[] _overrides;
+        // This implementation has the ability to update loglevels durig runtime that is why option 1. is preferred
+        // concurrent dictionary is not available in netstandard 1.0 thats why a normal dictionary with manual locking is used
+        readonly Dictionary<string, LoggingLevelSwitch> _overrides;
 
         public LevelOverrideMap(
             IDictionary<string, LoggingLevelSwitch> overrides,
@@ -56,28 +39,71 @@ namespace Serilog.Core
             if (overrides == null) throw new ArgumentNullException(nameof(overrides));
             _defaultLevelSwitch = defaultLevelSwitch;
             _defaultMinimumLevel = defaultLevelSwitch != null ? LevelAlias.Minimum : defaultMinimumLevel;
+            _overrides = new Dictionary<string, LoggingLevelSwitch>(overrides);
+        }
 
-            // Descending order means that if we have a match, we're sure about it being the most specific.
-            _overrides = overrides
-                .OrderByDescending(o => o.Key)
-                .Select(o => new LevelOverride(o.Key, o.Value))
-                .ToArray();
+        public event Action OverrideAdded;
+
+        public bool HasAnyOverrides()
+        {
+            lock (_overrides)
+            {
+                return _overrides.Count > 0;
+            }
+        }
+
+        public LoggingLevelSwitch GetOrAddOverride(string context)
+        {
+            var added = false;
+            LoggingLevelSwitch levelSwitch;
+
+            lock (_overrides)
+            {
+                if (!_overrides.TryGetValue(context, out levelSwitch))
+                {
+                    levelSwitch = _overrides[context] = new LoggingLevelSwitch(_defaultMinimumLevel);
+                    added = true;
+                }
+            }
+
+            if (added)
+            {
+                OverrideAdded?.Invoke();
+            }
+
+            return levelSwitch;
         }
 
         public void GetEffectiveLevel(string context, out LogEventLevel minimumLevel, out LoggingLevelSwitch levelSwitch)
         {
-            foreach (var levelOverride in _overrides)
+            lock (_overrides)
             {
-                if (context.StartsWith(levelOverride.ContextPrefix) || context == levelOverride.Context)
+                foreach (var prefix in GetKeyPrefixes(context))
                 {
-                    minimumLevel = LevelAlias.Minimum;
-                    levelSwitch = levelOverride.LevelSwitch;
-                    return;
+                    if (_overrides.TryGetValue(prefix, out levelSwitch))
+                    {
+                        minimumLevel = LevelAlias.Minimum;
+                        return;
+                    }
                 }
             }
 
             minimumLevel = _defaultMinimumLevel;
             levelSwitch = _defaultLevelSwitch;
+        }
+
+        IEnumerable<string> GetKeyPrefixes(string name)
+        {
+            while (!string.IsNullOrEmpty(name))
+            {
+                yield return name;
+                var lastIndexOfDot = name.LastIndexOf('.');
+                if (lastIndexOfDot == -1)
+                {
+                    break;
+                }
+                name = name.Substring(0, lastIndexOfDot);
+            }
         }
     }
 }

@@ -131,7 +131,7 @@ namespace Serilog.Configuration
             configureLogger(lc);
 
             var subLogger = lc.CreateLogger();
-            if (subLogger.HasOverrideMap)
+            if (subLogger.HasAnyOverrides)
             {
                 SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
                                   "and may be removed completely in a future version.");
@@ -158,7 +158,7 @@ namespace Serilog.Configuration
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-            if (logger is Logger concreteLogger && concreteLogger.HasOverrideMap)
+            if (logger is Logger concreteLogger && concreteLogger.HasAnyOverrides)
             {
                 SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
                                   "and may be removed completely in a future version.");
