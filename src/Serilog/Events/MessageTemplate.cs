@@ -83,13 +83,6 @@ namespace Serilog.Events
                     NamedProperties = propertyTokens;
                 }
             }
-#if NETSTANDARD1_0 || NETSTANDARD1_1 || NET45 || NET451 || NET452
-            PositionalProperties = PositionalProperties ?? new PropertyToken[0];
-            NamedProperties = NamedProperties ?? new PropertyToken[0];
-#else
-            PositionalProperties = PositionalProperties ?? Array.Empty<PropertyToken>();
-            NamedProperties = NamedProperties ?? Array.Empty<PropertyToken>();
-#endif
         }
 
         /// <summary>
@@ -127,9 +120,9 @@ namespace Serilog.Events
 
         internal MessageTemplateToken[] TokenArray => _tokens;
 
-        internal PropertyToken[] NamedProperties { get; }
+        internal PropertyToken[]? NamedProperties { get; }
 
-        internal PropertyToken[] PositionalProperties { get; }
+        internal PropertyToken[]? PositionalProperties { get; }
 
         /// <summary>
         /// Convert the message template into a textual message, given the
