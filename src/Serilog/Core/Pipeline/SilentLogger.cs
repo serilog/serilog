@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Events;
 
 namespace Serilog.Core.Pipeline
@@ -323,14 +324,14 @@ namespace Serilog.Core.Pipeline
         }
 
         [MessageTemplateFormatMethod("messageTemplate")]
-        public bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        public bool BindMessageTemplate(string messageTemplate, object[] propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             parsedTemplate = null;
             boundProperties = null;
             return false;
         }
 
-        public bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        public bool BindProperty(string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             property = null;
             return false;

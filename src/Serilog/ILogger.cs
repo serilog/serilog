@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -58,7 +59,7 @@ namespace Serilog
         /// <param name="destructureObjects">If true, the value will be serialized as a structured
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        ILogger ForContext(string propertyName, object value, bool destructureObjects = false);
+        ILogger ForContext(string propertyName, object? value, bool destructureObjects = false);
 
         /// <summary>
         /// Create a logger that marks log events as being from the specified
@@ -925,7 +926,7 @@ namespace Serilog
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
         bool BindMessageTemplate(string messageTemplate, object[] propertyValues,
-                                 out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties);
+                                [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties);
 
         /// <summary>
         /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured
@@ -938,6 +939,6 @@ namespace Serilog
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <param name="property">The resulting property.</param>
         /// methods never throw exceptions).</returns>
-        bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property);
+        bool BindProperty(string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property);
     }
 }

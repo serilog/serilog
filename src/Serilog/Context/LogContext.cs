@@ -52,12 +52,12 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>?> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>?>();
 #elif REMOTING
         static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
         [ThreadStatic]
-        static ImmutableStack<ILogEventEnricher> Data;
+        static ImmutableStack<ILogEventEnricher>? Data;
 #endif
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Serilog.Context
 
 #if ASYNCLOCAL
 
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get => Data.Value;
             set => Data.Value = value;
@@ -223,7 +223,7 @@ namespace Serilog.Context
 
 #elif REMOTING
 
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get
             {
@@ -246,7 +246,7 @@ namespace Serilog.Context
         {
             static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
 
-            public DisposableObjectHandle(object o)
+            public DisposableObjectHandle(object? o)
                 : base(o)
             {
             }
@@ -255,7 +255,7 @@ namespace Serilog.Context
             {
                 var lease = base.InitializeLifetimeService() as ILease;
                 lease?.Register(LifeTimeSponsor);
-                return lease;
+                return lease!;
             }
 
             public void Dispose()
@@ -269,7 +269,7 @@ namespace Serilog.Context
 
 #else // DOTNET_51
 
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get => Data;
             set => Data = value;

@@ -65,7 +65,7 @@ namespace Serilog.Filters
         /// <param name="scalarValue">The property value to match; must be a scalar type.
         /// Null is allowed.</param>
         /// <returns>A predicate for matching events.</returns>
-        public static Func<LogEvent, bool> WithProperty(string propertyName, object scalarValue)
+        public static Func<LogEvent, bool> WithProperty(string propertyName, object? scalarValue)
         {
             if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
             var scalar = new ScalarValue(scalarValue);

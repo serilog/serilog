@@ -33,7 +33,7 @@ namespace Serilog.Events
         /// structure.</param>
         /// <param name="properties">The properties of the structure.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null)
+        public StructureValue(IEnumerable<LogEventProperty> properties, string? typeTag = null)
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             TypeTag = typeTag;
@@ -44,7 +44,7 @@ namespace Serilog.Events
         /// A piece of metadata describing the "type" of the
         /// structure, or null.
         /// </summary>
-        public string TypeTag { get; }
+        public string? TypeTag { get; }
 
         /// <summary>
         /// The properties of the structure.
@@ -61,7 +61,7 @@ namespace Serilog.Events
         /// <param name="format">A format string applied to the value, or null.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
@@ -88,7 +88,7 @@ namespace Serilog.Events
             output.Write(" }");
         }
 
-        static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null)
+        static void Render(TextWriter output, LogEventProperty property, IFormatProvider? formatProvider = null)
         {
             output.Write(property.Name);
             output.Write(": ");

@@ -22,7 +22,7 @@ namespace Serilog.Core
     class LevelOverrideMap
     {
         readonly LogEventLevel _defaultMinimumLevel;
-        readonly LoggingLevelSwitch _defaultLevelSwitch;
+        readonly LoggingLevelSwitch? _defaultLevelSwitch;
 
         struct LevelOverride
         {
@@ -51,7 +51,7 @@ namespace Serilog.Core
         public LevelOverrideMap(
             IDictionary<string, LoggingLevelSwitch> overrides,
             LogEventLevel defaultMinimumLevel,
-            LoggingLevelSwitch defaultLevelSwitch)
+            LoggingLevelSwitch? defaultLevelSwitch)
         {
             if (overrides == null) throw new ArgumentNullException(nameof(overrides));
             _defaultLevelSwitch = defaultLevelSwitch;
@@ -64,7 +64,7 @@ namespace Serilog.Core
                 .ToArray();
         }
 
-        public void GetEffectiveLevel(string context, out LogEventLevel minimumLevel, out LoggingLevelSwitch levelSwitch)
+        public void GetEffectiveLevel(string context, out LogEventLevel minimumLevel, out LoggingLevelSwitch? levelSwitch)
         {
             foreach (var levelOverride in _overrides)
             {

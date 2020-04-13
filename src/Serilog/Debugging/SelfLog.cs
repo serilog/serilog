@@ -23,7 +23,7 @@ namespace Serilog.Debugging
     /// </summary>
     public static class SelfLog
     {
-        static Action<string> _output;
+        static Action<string>? _output;
 
         /// <summary>
         /// The output mechanism for self-log messages.
@@ -33,7 +33,7 @@ namespace Serilog.Debugging
         /// </example>
         // ReSharper disable once MemberCanBePrivate.Global, UnusedAutoPropertyAccessor.Global
         [Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
-        public static TextWriter Out
+        public static TextWriter? Out
         {
             set
             {
@@ -91,7 +91,7 @@ namespace Serilog.Debugging
         /// The name is historical; because this is used from third-party sink packages, removing the "Line"
         /// suffix as would seem sensible isn't worth the breakage.
         /// </remarks>
-        public static void WriteLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
+        public static void WriteLine(string format, object? arg0 = null, object? arg1 = null, object? arg2 = null)
         {
             var o = _output;
 

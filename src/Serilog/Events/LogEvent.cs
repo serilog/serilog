@@ -25,7 +25,7 @@ namespace Serilog.Events
     {
         readonly Dictionary<string, LogEventPropertyValue> _properties;
 
-        LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> properties)
+        LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> properties)
         {
             Timestamp = timestamp;
             Level = level;
@@ -42,7 +42,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
+        public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
             : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>())
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
@@ -58,7 +58,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, EventProperty[] properties)
+        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
             : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(properties?.Length ?? throw new ArgumentNullException(nameof(properties))))
         {
             for (var i = 0; i < properties.Length; ++i)
@@ -86,7 +86,7 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="output">The output.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public void RenderMessage(TextWriter output, IFormatProvider formatProvider = null)
+        public void RenderMessage(TextWriter output, IFormatProvider? formatProvider = null)
         {
             MessageTemplate.Render(Properties, output, formatProvider);
         }
@@ -96,7 +96,7 @@ namespace Serilog.Events
         /// with the event, and return the result.
         /// </summary>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public string RenderMessage(IFormatProvider formatProvider = null)
+        public string RenderMessage(IFormatProvider? formatProvider = null)
         {
             return MessageTemplate.Render(Properties, formatProvider);
         }
@@ -109,7 +109,7 @@ namespace Serilog.Events
         /// <summary>
         /// An exception associated with the event, or null.
         /// </summary>
-        public Exception Exception { get; }
+        public Exception? Exception { get; }
 
         /// <summary>
         /// Add a property to the event if not already present, otherwise, update its value.

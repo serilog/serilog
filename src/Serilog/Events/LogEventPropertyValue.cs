@@ -30,7 +30,7 @@ namespace Serilog.Events
         /// <param name="format">A format string applied to the value, or null.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        public abstract void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null);
+        public abstract void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null);
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -52,7 +52,7 @@ namespace Serilog.Events
         /// <param name="formatProvider">The provider to use to format the value.-or- A null reference
         /// (Nothing in Visual Basic) to obtain the numeric format information from the current locale
         /// setting of the operating system. </param><filterpriority>2</filterpriority>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(string? format, IFormatProvider? formatProvider)
         {
             var output = new StringWriter();
             Render(output, format, formatProvider);

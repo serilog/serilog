@@ -136,7 +136,7 @@ namespace Serilog.Formatting.Json
             {
                 state.Write(delim);
                 delim = ",";
-                WriteQuotedJsonString((element.Key.Value ?? "null").ToString(), state);
+                WriteQuotedJsonString((element.Key.Value ?? "null").ToString()!, state);
                 state.Write(':');
                 Visit(state, element.Value);
             }
@@ -152,7 +152,7 @@ namespace Serilog.Formatting.Json
         /// </summary>
         /// <param name="value">The value to write.</param>
         /// <param name="output">The output</param>
-        protected virtual void FormatLiteralValue(object value, TextWriter output)
+        protected virtual void FormatLiteralValue(object? value, TextWriter output)
         {
             if (value == null)
             {
@@ -201,7 +201,7 @@ namespace Serilog.Formatting.Json
 
                 if (value is char)
                 {
-                    FormatStringValue(value.ToString(), output);
+                    FormatStringValue(value.ToString()!, output);
                     return;
                 }
 
@@ -270,7 +270,7 @@ namespace Serilog.Formatting.Json
         static void FormatLiteralObjectValue(object value, TextWriter output)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            FormatStringValue(value.ToString(), output);
+            FormatStringValue(value.ToString()!, output);
         }
 
         static void FormatStringValue(string str, TextWriter output)

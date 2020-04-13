@@ -39,7 +39,7 @@ namespace Serilog.Capturing
         /// represented in the message template.</param>
         /// <returns>A list of properties; if the template is malformed then
         /// this will be empty.</returns>
-        public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
+        public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters)
         {
             if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
             {
@@ -55,7 +55,7 @@ namespace Serilog.Capturing
             return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
         }
 
-        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object[] messageTemplateParameters)
+        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters)
         {
             var positionalProperties = template.PositionalProperties;
 
@@ -90,7 +90,7 @@ namespace Serilog.Capturing
             return result;
         }
 
-        EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
+        EventProperty[] ConstructNamedProperties(MessageTemplate template, object?[] messageTemplateParameters)
         {
             var namedProperties = template.NamedProperties;
             if (namedProperties == null)
@@ -119,7 +119,7 @@ namespace Serilog.Capturing
             return result;
         }
 
-        EventProperty ConstructProperty(PropertyToken propertyToken, object value)
+        EventProperty ConstructProperty(PropertyToken propertyToken, object? value)
         {
             return new EventProperty(
                         propertyToken.PropertyName,

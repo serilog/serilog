@@ -43,7 +43,7 @@ namespace Serilog.Configuration
             ILogEventSink logEventSink,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             // ReSharper disable once MethodOverloadWithOptionalParameter
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null)
         {
             return _sinkConfiguration.Sink(logEventSink, restrictedToMinimumLevel, levelSwitch);
         }
@@ -59,7 +59,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Sink<TSink>(
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null)
             where TSink : ILogEventSink, new()
         {
             return _sinkConfiguration.Sink<TSink>(restrictedToMinimumLevel, levelSwitch);
@@ -80,7 +80,7 @@ namespace Serilog.Configuration
         public LoggerConfiguration Logger(
             Action<LoggerConfiguration> configureLogger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null)
         {
             return _sinkConfiguration.Logger(configureLogger, restrictedToMinimumLevel, levelSwitch);
         }

@@ -37,7 +37,7 @@ namespace Serilog
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
         readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
         LogEventLevel _minimumLevel = LogEventLevel.Information;
-        LoggingLevelSwitch _levelSwitch;
+        LoggingLevelSwitch? _levelSwitch;
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
@@ -183,7 +183,7 @@ namespace Serilog
                     break;
             }
 
-            LevelOverrideMap overrideMap = null;
+            LevelOverrideMap? overrideMap = null;
             if (_overrides.Count != 0)
             {
                 overrideMap = new LevelOverrideMap(_overrides, _minimumLevel, _levelSwitch);

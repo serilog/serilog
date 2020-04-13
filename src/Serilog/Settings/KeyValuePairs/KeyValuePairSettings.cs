@@ -137,11 +137,11 @@ namespace Serilog.Settings.KeyValuePairs
                                       {
                                           ReceiverType = CallableDirectiveReceiverTypes[match.Groups["directive"].Value],
                                           Call = new ConfigurationMethodCall
-                                          {
-                                              MethodName = match.Groups["method"].Value,
-                                              ArgumentName = match.Groups["argument"].Value,
-                                              Value = wt.Value
-                                          }
+                                          (
+                                              methodName: match.Groups["method"].Value,
+                                              argumentName: match.Groups["argument"].Value,
+                                              value: wt.Value
+                                          )
                                       }).ToList();
 
             if (callableDirectives.Any())
@@ -197,7 +197,7 @@ namespace Serilog.Settings.KeyValuePairs
                 }
                 else
                 {
-                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
+                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel))!;
                     newSwitch = new LoggingLevelSwitch(initialLevel);
                 }
                 namedSwitches.Add(switchName, newSwitch);
@@ -221,7 +221,7 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 return LookUpSwitchByName(valueOrSwitchName, declaredSwitches);
             }
-            return SettingValueConversions.ConvertToType(valueOrSwitchName, type);
+            return SettingValueConversions.ConvertToType(valueOrSwitchName, type)!;
         }
 
         static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
@@ -270,11 +270,18 @@ namespace Serilog.Settings.KeyValuePairs
 
         internal class ConfigurationMethodCall
         {
-            public string MethodName { get; set; }
+            public ConfigurationMethodCall(string methodName, string argumentName, string value)
+            {
+                MethodName = methodName;
+                ArgumentName = argumentName;
+                Value = value;
+            }
 
-            public string ArgumentName { get; set; }
+            public string MethodName { get; }
 
-            public string Value { get; set; }
+            public string ArgumentName { get; }
+
+            public string Value { get; }
         }
     }
 }

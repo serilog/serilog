@@ -29,7 +29,7 @@ namespace Serilog.Policies
             _projection = projection ?? throw new ArgumentNullException(nameof(projection));
         }
 
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue? result)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
 

@@ -54,7 +54,7 @@ namespace Serilog.Parsing
         /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
         /// <param name="startIndex">The token's start index in the template.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
+        public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
             PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
@@ -81,7 +81,7 @@ namespace Serilog.Parsing
         /// <param name="properties">Properties that may be represented by the token.</param>
         /// <param name="output">Output for the rendered string.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
+        public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
@@ -102,7 +102,7 @@ namespace Serilog.Parsing
         /// <summary>
         /// Format applied to the property.
         /// </summary>
-        public string Format { get; }
+        public string? Format { get; }
 
         /// <summary>
         /// Alignment applied to the property.
@@ -140,7 +140,7 @@ namespace Serilog.Parsing
         /// true if the specified object  is equal to the current object; otherwise, false.
         /// </returns>
         /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is PropertyToken pt &&
                 pt.Destructuring == Destructuring &&

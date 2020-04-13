@@ -83,6 +83,13 @@ namespace Serilog.Events
                     NamedProperties = propertyTokens;
                 }
             }
+#if NETSTANDARD1_0 || NETSTANDARD1_1 || NET45 || NET451 || NET452
+            PositionalProperties = PositionalProperties ?? new PropertyToken[0];
+            NamedProperties = NamedProperties ?? new PropertyToken[0];
+#else
+            PositionalProperties = PositionalProperties ?? Array.Empty<PropertyToken>();
+            NamedProperties = NamedProperties ?? Array.Empty<PropertyToken>();
+#endif
         }
 
         /// <summary>
@@ -133,7 +140,7 @@ namespace Serilog.Events
         /// <returns>The message created from the template and properties. If the
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</returns>
-        public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider formatProvider = null)
+        public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider? formatProvider = null)
         {
             var writer = new StringWriter(formatProvider);
             Render(properties, writer, formatProvider);
@@ -149,7 +156,7 @@ namespace Serilog.Events
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
+        public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));

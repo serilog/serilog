@@ -32,7 +32,7 @@ namespace Serilog.Formatting.Display
     /// </summary>
     public class MessageTemplateTextFormatter : ITextFormatter
     {
-        readonly IFormatProvider _formatProvider;
+        readonly IFormatProvider? _formatProvider;
         readonly MessageTemplate _outputTemplate;
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Serilog.Formatting.Display
         /// <param name="outputTemplate">A message template describing the
         /// output messages.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider formatProvider = null)
+        public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider? formatProvider = null)
         {
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);

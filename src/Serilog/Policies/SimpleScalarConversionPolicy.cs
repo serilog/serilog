@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -28,7 +29,7 @@ namespace Serilog.Policies
             _scalarTypes = new HashSet<Type>(scalarTypes);
         }
 
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
         {
             if (_scalarTypes.Contains(value.GetType()))
             {

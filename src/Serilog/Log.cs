@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
@@ -1168,7 +1169,7 @@ namespace Serilog
         /// }
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             return Logger.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
         }
@@ -1184,7 +1185,7 @@ namespace Serilog
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <param name="property">The resulting property.</param>
         /// methods never throw exceptions).</returns>
-        public static bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        public static bool BindProperty(string propertyName, object value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             return Logger.BindProperty(propertyName, value, destructureObjects, out property);
         }

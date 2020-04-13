@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 // General-purpose type; not all features are used here.
 // ReSharper disable MemberCanBePrivate.Global
@@ -24,8 +25,9 @@ namespace Serilog.Context
 {
     class ImmutableStack<T> : IEnumerable<T>
     {
-        readonly ImmutableStack<T> _under;
-        readonly T _top;
+        readonly ImmutableStack<T>? _under;
+        [MaybeNull]
+        readonly T _top = default!;
 
         ImmutableStack()
         {
@@ -52,39 +54,42 @@ namespace Serilog.Context
 
         public ImmutableStack<T> Push(T t) => new ImmutableStack<T>(this, t);
 
+        [MaybeNull]
         public T Top => _top;
 
         internal struct Enumerator : IEnumerator<T>
         {
             readonly ImmutableStack<T> _stack;
             ImmutableStack<T> _top;
+
+            [MaybeNull]
             T _current;
 
             public Enumerator(ImmutableStack<T> stack)
             {
                 _stack = stack;
                 _top = stack;
-                _current = default;
+                _current = default!;
             }
 
             public bool MoveNext()
             {
                 if (_top.IsEmpty)
                     return false;
-                _current = _top.Top;
-                _top = _top._under;
+                _current = _top.Top!;
+                _top = _top._under!;
                 return true;
             }
 
             public void Reset()
             {
                 _top = _stack;
-                _current = default;
+                _current = default!;
             }
 
             public T Current => _current;
 
-            object IEnumerator.Current => _current;
+            object IEnumerator.Current => _current!;
 
             public void Dispose()
             {

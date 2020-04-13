@@ -53,7 +53,7 @@ namespace Serilog.Formatting.Display
             new []{ "F", "FA", "FTL", "FATL", "FATAL" }
         };
 
-        public static string GetLevelMoniker(LogEventLevel value, string format = null)
+        public static string GetLevelMoniker(LogEventLevel value, string? format = null)
         {
             var index = (int)value;
             if (index < 0 || index > (int)LogEventLevel.Fatal)

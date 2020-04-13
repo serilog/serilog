@@ -41,7 +41,7 @@ namespace Serilog.Formatting.Json
         readonly bool _omitEnclosingObject;
         readonly string _closingDelimiter;
         readonly bool _renderMessage;
-        readonly IFormatProvider _formatProvider;
+        readonly IFormatProvider? _formatProvider;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace Serilog.Formatting.Json
         /// property named RenderedMessage.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         public JsonFormatter(
-            string closingDelimiter = null,
+            string? closingDelimiter = null,
             bool renderMessage = false,
-            IFormatProvider formatProvider = null)
+            IFormatProvider? formatProvider = null)
             : this(false, closingDelimiter, renderMessage, formatProvider)
         {
         }
@@ -75,9 +75,9 @@ namespace Serilog.Formatting.Json
         [Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Serilog version.")]
         public JsonFormatter(
             bool omitEnclosingObject,
-            string closingDelimiter = null,
+            string? closingDelimiter = null,
             bool renderMessage = false,
-            IFormatProvider formatProvider = null)
+            IFormatProvider? formatProvider = null)
         {
             _omitEnclosingObject = omitEnclosingObject;
             _closingDelimiter = closingDelimiter ?? Environment.NewLine;
@@ -291,7 +291,7 @@ namespace Serilog.Formatting.Json
         /// Writes out a structure property
         /// </summary>
         [Obsolete(ExtensionPointObsoletionMessage)]
-        protected virtual void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
+        protected virtual void WriteStructure(string? typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
         {
             output.Write("{");
 
@@ -345,7 +345,7 @@ namespace Serilog.Formatting.Json
         /// Writes out a json property with the specified value on output writer
         /// </summary>
         [Obsolete(ExtensionPointObsoletionMessage)]
-        protected virtual void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
+        protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
         {
             output.Write(precedingDelimiter);
             output.Write("\"");
@@ -363,10 +363,10 @@ namespace Serilog.Formatting.Json
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteLiteralValue(object value, TextWriter output)
         {
-            WriteString(value.ToString(), output);
+            WriteString(value.ToString()!, output);
         }
 
-        void WriteLiteral(object value, TextWriter output, bool forceQuotation = false)
+        void WriteLiteral(object? value, TextWriter output, bool forceQuotation = false)
         {
             if (value == null)
             {
@@ -435,7 +435,7 @@ namespace Serilog.Formatting.Json
         /// <param name="s">A raw string.</param>
         /// <returns>A JSON-escaped version of <paramref name="s"/>.</returns>
         [Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead."), EditorBrowsable(EditorBrowsableState.Never)]
-        public static string Escape(string s)
+        public static string? Escape(string s)
         {
             if (s == null) return null;
 

@@ -72,7 +72,7 @@ namespace Serilog.Events
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is EventProperty other && Equals(other);
         }
