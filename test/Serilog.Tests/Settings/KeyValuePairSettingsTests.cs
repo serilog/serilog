@@ -71,7 +71,7 @@ namespace Serilog.Tests.Settings
             Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
             var suppliedArguments = new[]
             {
-                new KeyValuePairSettings.ConfigurationMethodCall { MethodName = "DummyRollingFile", ArgumentName = "pathFormat", Value = "C:\\" },
+                new KeyValuePairSettings.ConfigurationMethodCall( methodName: "DummyRollingFile", argumentName: "pathFormat", value: "C:\\" ),
             };
 
             var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);
@@ -85,8 +85,8 @@ namespace Serilog.Tests.Settings
             Assert.Equal(2, options.Count(mi => mi.Name == "DummyRollingFile"));
             var suppliedArguments = new[]
             {
-                new KeyValuePairSettings.ConfigurationMethodCall { MethodName = "DummyRollingFile", ArgumentName = "pathFormat", Value = "C:\\" },
-                new KeyValuePairSettings.ConfigurationMethodCall { MethodName = "DummyRollingFile", ArgumentName = "formatter", Value = "SomeFormatter, SomeAssembly" }
+                new KeyValuePairSettings.ConfigurationMethodCall ( methodName : "DummyRollingFile", argumentName : "pathFormat", value : "C:\\" ),
+                new KeyValuePairSettings.ConfigurationMethodCall ( methodName : "DummyRollingFile", argumentName : "formatter", value : "SomeFormatter, SomeAssembly" )
             };
 
             var selected = KeyValuePairSettings.SelectConfigurationMethod(options, "DummyRollingFile", suppliedArguments);

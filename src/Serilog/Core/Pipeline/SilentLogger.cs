@@ -31,7 +31,7 @@ namespace Serilog.Core.Pipeline
 
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers) => this;
 
-        public ILogger ForContext(string propertyName, object value, bool destructureObjects = false) => this;
+        public ILogger ForContext(string propertyName, object? value, bool destructureObjects = false) => this;
 
         public ILogger ForContext<TSource>() => this;
 
