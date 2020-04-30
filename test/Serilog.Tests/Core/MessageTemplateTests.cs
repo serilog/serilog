@@ -30,6 +30,15 @@ namespace Serilog.Tests.Core
             public override string ToString() => "a receipt";
         }
 
+        class ABadBehavior
+        {
+            public override string ToString() => null;
+        }
+        class ABug
+        {
+            public override string ToString() => throw new ArgumentNullException("","A possible a Bug in a class");
+        }
+
         [Fact]
         public void AnObjectIsRenderedInSimpleNotation()
         {
@@ -63,6 +72,12 @@ namespace Serilog.Tests.Core
         {
             var m = Render("I sat at {Chair}", new Chair());
             Assert.Equal("I sat at \"a chair\"", m);
+
+            var m2 = Render("I sat at {Obj}", new ABadBehavior());
+            Assert.Equal("I sat at null", m2);
+
+            var m3 = Render("I sat at {Obj}", new ABug());
+            Assert.Equal("I sat at \"Capturing the property value threw an exception: ArgumentNullException\"", m3);
         }
 
         [Fact]
@@ -70,6 +85,12 @@ namespace Serilog.Tests.Core
         {
             var m = Render("I sat at {$Chair}", new Chair());
             Assert.Equal("I sat at \"a chair\"", m);
+
+            var m2 = Render("I sat at {$Obj}", new ABadBehavior());
+            Assert.Equal("I sat at null", m2);
+
+            var m3 = Render("I sat at {$Obj}", new ABug());
+            Assert.Equal("I sat at \"Capturing the property value threw an exception: ArgumentNullException\"", m3);
         }
 
         [Fact]
