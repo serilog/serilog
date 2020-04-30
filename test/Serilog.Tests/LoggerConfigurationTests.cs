@@ -5,6 +5,7 @@ using Serilog.Events;
 using Serilog.Tests.Support;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -165,7 +166,7 @@ namespace Serilog.Tests
                 _projection = projection ?? throw new ArgumentNullException(nameof(projection));
             }
 
-            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue result)
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
 
