@@ -25,7 +25,7 @@ namespace Serilog.Formatting.Json
     /// </summary>
     public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
-        readonly string _typeTagName;
+        readonly string? _typeTagName;
 
         const string DefaultTypeTagName = "_typeTag";
 
@@ -36,7 +36,7 @@ namespace Serilog.Formatting.Json
         /// the property name to use for the Serilog <see cref="StructureValue.TypeTag"/> field
         /// in the resulting JSON. If null, no type tag field will be written. The default is
         /// "_typeTag".</param>
-        public JsonValueFormatter(string typeTagName = DefaultTypeTagName)
+        public JsonValueFormatter(string? typeTagName = DefaultTypeTagName)
         {
             _typeTagName = typeTagName;
         }
@@ -46,6 +46,7 @@ namespace Serilog.Formatting.Json
         /// </summary>
         /// <param name="value">The value to format</param>
         /// <param name="output">The output</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void Format(LogEventPropertyValue value, TextWriter output)
         {
             // Parameter order of ITextFormatter is the reverse of the visitor one.
@@ -60,6 +61,7 @@ namespace Serilog.Formatting.Json
         /// <param name="state">Operation state.</param>
         /// <param name="scalar">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="scalar"/>.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         protected override bool VisitScalarValue(TextWriter state, ScalarValue scalar)
         {
             if (scalar == null) throw new ArgumentNullException(nameof(scalar));
@@ -73,6 +75,7 @@ namespace Serilog.Formatting.Json
         /// <param name="state">Operation state.</param>
         /// <param name="sequence">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="sequence"/>.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         protected override bool VisitSequenceValue(TextWriter state, SequenceValue sequence)
         {
             if (sequence == null) throw new ArgumentNullException(nameof(sequence));
