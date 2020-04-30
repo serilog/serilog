@@ -3,7 +3,7 @@
     <Description>Simple .NET logging with fully-structured events</Description>
     <VersionPrefix>2.9.1</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
-    <TargetFrameworks>net45;net46;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard1.1;netstandard1.3;netstandard2.0;netstandard2.1;</TargetFrameworks>
+    <TargetFrameworks>net45;net46;netcoreapp3.1;netstandard1.1;netstandard1.3;netstandard2.0;netstandard2.1;</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Serilog</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
@@ -47,20 +47,11 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;TRYPARSEWITHSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;TRYPARSEWITHSPAN</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;TRYPARSEWITHSPAN</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;TRYPARSEWITHSPAN</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;TRYPARSEWITHSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;NULLABLE_REFERENCE_TYPES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
