@@ -30,6 +30,7 @@ namespace Serilog.Events
         /// <param name="format">A format string applied to the value, or null.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        /// <exception cref="ArgumentNullException"></exception>
         public abstract void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null);
 
         /// <summary>

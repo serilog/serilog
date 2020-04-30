@@ -42,6 +42,7 @@ namespace Serilog.Data
         /// <param name="state">Operation state.</param>
         /// <param name="value">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="value"/>.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         protected virtual TResult Visit(TState state, LogEventPropertyValue value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));

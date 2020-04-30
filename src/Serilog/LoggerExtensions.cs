@@ -20,6 +20,7 @@ namespace Serilog
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static ILogger ForContext<TValue>(
             this ILogger logger,
             LogEventLevel level,

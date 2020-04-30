@@ -48,6 +48,7 @@ namespace Serilog.Parsing
         /// <param name="properties">Properties that may be represented by the token.</param>
         /// <param name="output">Output for the rendered string.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));

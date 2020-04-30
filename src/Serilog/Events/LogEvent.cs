@@ -42,6 +42,8 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// 
         public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
             : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>())
         {
@@ -58,6 +60,7 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
             : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(properties?.Length ?? throw new ArgumentNullException(nameof(properties))))
         {
@@ -86,6 +89,7 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="output">The output.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void RenderMessage(TextWriter output, IFormatProvider? formatProvider = null)
         {
             MessageTemplate.Render(Properties, output, formatProvider);

@@ -41,6 +41,7 @@ namespace Serilog.Formatting.Display
         /// <param name="outputTemplate">A message template describing the
         /// output messages.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider? formatProvider = null)
         {
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
@@ -53,6 +54,7 @@ namespace Serilog.Formatting.Display
         /// </summary>
         /// <param name="logEvent">The event to format.</param>
         /// <param name="output">The output.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void Format(LogEvent logEvent, TextWriter output)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
