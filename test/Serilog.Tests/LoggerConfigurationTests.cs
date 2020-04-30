@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Serilog.Configuration;
 using Serilog.Core.Enrichers;
 using TestDummies;
@@ -34,15 +35,26 @@ namespace Serilog.Tests
         [Fact]
         public void LoggerShouldNotReferenceToItsConfigurationAfterBeingCreated()
         {
-            var loggerConfiguration = new LoggerConfiguration();
-            var wr = new WeakReference(loggerConfiguration);
-            var logger = loggerConfiguration.CreateLogger();
+            //.Net Core3 has a change in the JIT that can keep the loggerConfiguration instance alive in the same method. https://github.com/dotnet/runtime/issues/8561
+            //This local method makes the JIT works correct with WeakReference in .NetCore 3 or greater.
+            static WeakReference GetConfigurationWeakReference(out Logger log)
+            {
+                var loggerConfiguration = new LoggerConfiguration();
+                var weakReference = new WeakReference(loggerConfiguration);
+                log = loggerConfiguration.CreateLogger();
+                return weakReference;
+            }
 
+            var wr = GetConfigurationWeakReference(out var logger);
+            GC.KeepAlive(logger);
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             GC.Collect();
 
             Assert.False(wr.IsAlive);
-            GC.KeepAlive(logger);
         }
+
 
         [Fact]
         public void CreateLoggerThrowsIfCalledMoreThanOnce()
