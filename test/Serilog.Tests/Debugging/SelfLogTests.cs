@@ -8,7 +8,7 @@ namespace Serilog.Tests.Debugging
     public class SelfLogTests
     {
         [ThreadStatic]
-        static List<string> Messages;
+        static List<string>? Messages;
 
         [Fact]
         public void MessagesAreWrittenWhenOutputIsSet()
@@ -16,7 +16,7 @@ namespace Serilog.Tests.Debugging
             Messages = new List<string>();
             SelfLog.Enable(m =>
             {
-                Messages = Messages ?? new List<string>();
+                Messages ??= new List<string>();
                 Messages.Add(m);
             });
 

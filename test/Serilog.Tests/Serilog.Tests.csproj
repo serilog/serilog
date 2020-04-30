@@ -9,6 +9,11 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
     <ProjectReference Include="..\TestDummies\TestDummies.csproj" />

@@ -65,16 +65,16 @@ namespace Serilog.Tests.Core
                             outputs.FirstOrDefault() ?? "");
         }
 
-        public static IEnumerable<object[]> GetMinimumLevelOverrideInheritanceTestCases()
+        public static IEnumerable<object?[]> GetMinimumLevelOverrideInheritanceTestCases()
         {
             // Visualizing the pipeline from left to right ....
             //
             //   Event  --> Root Logger --> Child Logger
             //    lvl       override/lvl    override/levl
             //
-            object[] T(string rs, int? rl, string cs, int? cl)
+            object?[] T(string? rs, int? rl, string? cs, int? cl)
             {
-                return new object[] { rs, rl, cs, cl };
+                return new object?[] { rs, rl, cs, cl };
             }
             // numbers are relative to incoming event level
             // Information + 1 = Warning
@@ -111,7 +111,7 @@ namespace Serilog.Tests.Core
             var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var rootLoggerConfig = new LoggerConfiguration()
@@ -154,7 +154,7 @@ namespace Serilog.Tests.Core
             var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var childLoggerConfig = new LoggerConfiguration()

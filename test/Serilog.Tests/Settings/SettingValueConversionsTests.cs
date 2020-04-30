@@ -41,14 +41,14 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToEnumMembers()
         {
-            var result = (LogEventLevel)SettingValueConversions.ConvertToType("Information", typeof(LogEventLevel));
+            var result = (LogEventLevel?)SettingValueConversions.ConvertToType("Information", typeof(LogEventLevel));
             Assert.Equal(LogEventLevel.Information, result);
         }
 
         [Fact]
         public void ValuesConvertToTypeFromQualifiedName()
         {
-            var result = (Type)SettingValueConversions.ConvertToType("System.Version", typeof(Type));
+            var result = (Type?)SettingValueConversions.ConvertToType("System.Version", typeof(Type));
             Assert.Equal(typeof(Version), result);
         }
 
@@ -56,7 +56,7 @@ namespace Serilog.Tests.Settings
         public void ValuesConvertToTypeFromAssemblyQualifiedName()
         {
             var assemblyQualifiedName = typeof(Version).AssemblyQualifiedName;
-            var result = (Type)SettingValueConversions.ConvertToType(assemblyQualifiedName, typeof(Type));
+            var result = (Type?)SettingValueConversions.ConvertToType(assemblyQualifiedName, typeof(Type));
             Assert.Equal(typeof(Version), result);
         }
 

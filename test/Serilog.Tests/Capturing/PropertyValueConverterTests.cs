@@ -113,13 +113,13 @@ namespace Serilog.Tests.Capturing
 
         class A
         {
-            public B B { get; set; }
+            public B? B { get; set; }
         }
 
         class B
         {
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-            public A A { get; set; }
+            public A? A { get; set; }
 // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Capturing
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public IList<C?> C { get; set; }
+            public IList<C?>? C { get; set; }
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace Serilog.Tests.Capturing
         {
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string)pv.LiteralValue();
+            var lv = (string?)pv.LiteralValue();
             Assert.Equal("00010203040506070809", lv);
         }
 
@@ -196,7 +196,7 @@ namespace Serilog.Tests.Capturing
         {
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string)pv.LiteralValue();
+            var lv = (string?)pv.LiteralValue();
             Assert.EndsWith("(1025 bytes)", lv);
         }
 
@@ -237,16 +237,16 @@ namespace Serilog.Tests.Capturing
 
         public class BaseWithProps
         {
-            public string PropA { get; set; }
-            public virtual string PropB { get; set; }
-            public string PropC { get; set; }
+            public string? PropA { get; set; }
+            public virtual string? PropB { get; set; }
+            public string? PropC { get; set; }
         }
 
         public class DerivedWithOverrides : BaseWithProps
         {
-            public new string PropA { get; set; }
-            public override string PropB { get; set; }
-            public string PropD { get; set; }
+            public new string? PropA { get; set; }
+            public override string? PropB { get; set; }
+            public string? PropD { get; set; }
         }
 
         [Fact]

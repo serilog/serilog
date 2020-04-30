@@ -9,16 +9,16 @@ namespace Serilog.Tests.Core
 {
     public class ChildLoggerTests
     {
-        public static IEnumerable<object[]> GetMinimumLevelInheritanceTestCases()
+        public static IEnumerable<object?[]> GetMinimumLevelInheritanceTestCases()
         {
             // Visualizing the pipeline from left to right ....
             //
             //   Event  --> Root Logger --> restrictedTo --> Child Logger -> YES or
             //    lvl        min lvl           param            min lvl       NO ?
             //
-            object[] T(LogEventLevel el, int? rl, int? rt, int? cl, bool r)
+            object?[] T(LogEventLevel el, int? rl, int? rt, int? cl, bool r)
             {
-                return new object[]{ el, rl, rt, cl, r };
+                return new object?[]{ el, rl, rt, cl, r };
             }
             // numbers are relative to incoming event level
             // Information + 1 = Warning
@@ -81,7 +81,7 @@ namespace Serilog.Tests.Core
             var sinkRestrictedToMinimumLevel = eventLevel + sinkRestrictedToIncrement ?? Verbose;
             var childMinimumLevel = eventLevel + childMinimumLevelIncrement ?? Information;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var logger = new LoggerConfiguration()
@@ -117,7 +117,7 @@ namespace Serilog.Tests.Core
             var sinkRestrictedToMinimumLevel = eventLevel + sinkRestrictedToIncrement ?? Verbose;
             var childMinimumLevel = eventLevel + childMinimumLevelIncrement ?? Information;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var childLogger = new LoggerConfiguration()
@@ -142,16 +142,16 @@ namespace Serilog.Tests.Core
             }
         }
 
-        public static IEnumerable<object[]> GetMinimumLevelOverrideInheritanceTestCases()
+        public static IEnumerable<object?[]?> GetMinimumLevelOverrideInheritanceTestCases()
         {
             // Visualizing the pipeline from left to right ....
             //
             //   Event  --> Root Logger --> Child Logger -> YES or
             //    lvl       override/lvl    override/levl     NO ?
             //
-            object[] T(string rs, int? rl, string cs, int? cl, bool r)
+            object?[] T(string? rs, int? rl, string? cs, int? cl, bool r)
             {
-                return new object[] { rs, rl, cs, cl, r };
+                return new object?[] { rs, rl, cs, cl, r };
             }
             // numbers are relative to incoming event level
             // Information + 1 = Warning
@@ -201,7 +201,7 @@ namespace Serilog.Tests.Core
             var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var rootLoggerConfig = new LoggerConfiguration()
@@ -251,7 +251,7 @@ namespace Serilog.Tests.Core
             var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var childLoggerConfig = new LoggerConfiguration()

@@ -18,7 +18,7 @@ namespace Serilog.Tests.Core
             public string Back => "straight";
             public int[] Legs => new[] { 1, 2, 3, 4 };
             // ReSharper restore UnusedMember.Local
-            public override string ToString() => "a chair";
+            public override string? ToString() => "a chair";
         }
 
         class Receipt
@@ -27,16 +27,16 @@ namespace Serilog.Tests.Core
             public decimal Sum => 12.345m;
             public DateTime When => new DateTime(2013, 5, 20, 16, 39, 0);
             // ReSharper restore UnusedMember.Local
-            public override string ToString() => "a receipt";
+            public override string? ToString() => "a receipt";
         }
 
         class ABadBehavior
         {
-            public override string ToString() => null;
+            public override string? ToString() => null;
         }
         class ABug
         {
-            public override string ToString() => throw new ArgumentNullException("","A possible a Bug in a class");
+            public override string? ToString() => throw new ArgumentNullException("","A possible a Bug in a class");
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace Serilog.Tests.Core
             return Render(null, messageTemplate, properties);
         }
 
-        static string Render(IFormatProvider formatProvider, string messageTemplate, params object[] properties)
+        static string Render(IFormatProvider? formatProvider, string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
             var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));

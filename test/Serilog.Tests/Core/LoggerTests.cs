@@ -101,7 +101,7 @@ namespace Serilog.Tests.Core
 
             Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
 
-            Assert.Equal("Hello, {Name}!", template.Text);
+            Assert.Equal("Hello, {Name}!", template?.Text);
             Assert.Equal("World", properties.Single().Value.LiteralValue());
         }
 
@@ -112,9 +112,9 @@ namespace Serilog.Tests.Core
                 .CreateLogger();
 
             Assert.True(log.BindProperty("Name", "World", false, out var property));
-
-            Assert.Equal("Name", property.Name);
-            Assert.Equal("World", property.Value.LiteralValue());
+            Assert.NotNull(property);
+            Assert.Equal("Name", property!.Name);
+            Assert.Equal("World", property!.Value.LiteralValue());
         }
 
         [Fact]

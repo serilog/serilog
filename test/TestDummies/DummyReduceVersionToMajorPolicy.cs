@@ -6,7 +6,7 @@ namespace TestDummies
 {
     public class DummyReduceVersionToMajorPolicy : IDestructuringPolicy
     {
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue? result)
         {
             if (value is Version version)
             {

@@ -7,13 +7,12 @@ namespace TestDummies
 {
     public class DummyWithLevelSwitchSink : ILogEventSink
     {
-        public DummyWithLevelSwitchSink(LoggingLevelSwitch loggingControlLevelSwitch)
+        public DummyWithLevelSwitchSink(LoggingLevelSwitch? loggingControlLevelSwitch)
         {
             ControlLevelSwitch = loggingControlLevelSwitch;
         }
 
-        [ThreadStatic]
-        public static LoggingLevelSwitch ControlLevelSwitch;
+        [ThreadStatic] public static LoggingLevelSwitch? ControlLevelSwitch;
 
         [ThreadStatic]
         // ReSharper disable ThreadStaticFieldHasInitializer

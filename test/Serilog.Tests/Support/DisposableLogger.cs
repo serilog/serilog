@@ -24,7 +24,7 @@ namespace Serilog.Tests.Support
             throw new NotImplementedException();
         }
 
-        public ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
+        public ILogger ForContext(string propertyName, object? value, bool destructureObjects = false)
         {
             throw new NotImplementedException();
         }
@@ -404,7 +404,7 @@ namespace Serilog.Tests.Support
             throw new NotImplementedException();
         }
 
-        public bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        public bool BindProperty(string propertyName, object? value, bool destructureObjects, out LogEventProperty property)
         {
             throw new NotImplementedException();
         }

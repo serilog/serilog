@@ -24,7 +24,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void MessageTemplateIsRequired()
         {
-            Assert.Throws<ArgumentNullException>(() => Parse(null));
+            Assert.Throws<ArgumentNullException>(() => Parse(null!));
         }
 
         [Fact]

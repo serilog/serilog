@@ -166,7 +166,7 @@ namespace Serilog.Tests
                 _projection = projection ?? throw new ArgumentNullException(nameof(projection));
             }
 
-            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue result)
+            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
 
@@ -191,7 +191,7 @@ namespace Serilog.Tests
             var logger = new LoggerConfiguration()
                 .Destructure.With(new ProjectedDestructuringPolicy(
                     canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
-                    projection: o => ((Type)o).AssemblyQualifiedName))
+                    projection: o => ((Type)o).AssemblyQualifiedName!))
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
@@ -472,16 +472,16 @@ namespace Serilog.Tests
             Assert.Contains("2", limitedCollection);
         }
 
-        static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        static string? LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var logConf = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => evt = e));
             logConf = conf(logConf);
             var log = logConf.CreateLogger();
 
             log.Information($"{{{destructuringSymbol}X}}", x);
-            return evt.Properties["X"].ToString();
+            return evt?.Properties["X"].ToString();
         }
 
         [Fact]
