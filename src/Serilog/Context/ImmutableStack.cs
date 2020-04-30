@@ -26,6 +26,7 @@ namespace Serilog.Context
     class ImmutableStack<T> : IEnumerable<T>
     {
         readonly ImmutableStack<T>? _under;
+
         [MaybeNull]
         readonly T _top = default!;
 
