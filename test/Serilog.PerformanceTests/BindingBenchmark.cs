@@ -33,8 +33,7 @@ namespace Serilog.PerformanceTests
         ILogger _log;
         object[] _zero, _one, _five;
 
-        [GlobalSetup]
-        public void Setup()
+        public BindingBenchmark()
         {
             _log = new LoggerConfiguration()
                 .WriteTo.Sink(new NullSink())
@@ -49,21 +48,21 @@ namespace Serilog.PerformanceTests
         // is consumed (there's not much point benchmarking time to return a lazy enumerator).
 
         [Benchmark(Baseline = true)]
-        public (MessageTemplate, int) BindZero()
+        public (MessageTemplate?, int) BindZero()
         {
             _log.BindMessageTemplate(MT0, _zero, out var mt, out var p);
             return (mt, p.Count());
         }
 
         [Benchmark]
-        public (MessageTemplate, int) BindOne()
+        public (MessageTemplate?, int) BindOne()
         {
             _log.BindMessageTemplate(MT1, _one, out var mt, out var p);
             return (mt, p.Count());
         }
 
         [Benchmark]
-        public (MessageTemplate, int) BindFive()
+        public (MessageTemplate?, int) BindFive()
         {
             _log.BindMessageTemplate(MT5, _five, out var mt, out var p);
             return (mt, p.Count());

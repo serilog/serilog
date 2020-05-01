@@ -11,8 +11,7 @@ namespace Serilog.PerformanceTests
     {
         ILogger log;
 
-        [GlobalSetup]
-        public void Setup()
+        public NestedLoggerCreationBenchmark()
         {
             log = new LoggerConfiguration()
                 .WriteTo.Sink(new NullSink())

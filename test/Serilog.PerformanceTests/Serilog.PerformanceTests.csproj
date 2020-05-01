@@ -7,6 +7,11 @@
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
@@ -21,4 +26,5 @@
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
   </ItemGroup>
+
 </Project>
