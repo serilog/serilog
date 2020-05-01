@@ -67,7 +67,7 @@ namespace Serilog.Tests.Capturing
 
                     var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value?.ToString();
 
-                    assertAction.Invoke(result);
+                    assertAction.Invoke(result!);
                 }
             }
         }

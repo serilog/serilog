@@ -20,7 +20,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
-            var result = (int?)SettingValueConversions.ConvertToType(null, typeof(int?));
+            var result = (int?)SettingValueConversions.ConvertToType(null!, typeof(int?));
             Assert.True(result == null);
         }
 
@@ -55,7 +55,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToTypeFromAssemblyQualifiedName()
         {
-            var assemblyQualifiedName = typeof(Version).AssemblyQualifiedName;
+            var assemblyQualifiedName = typeof(Version).AssemblyQualifiedName!;
             var result = (Type?)SettingValueConversions.ConvertToType(assemblyQualifiedName, typeof(Type));
             Assert.Equal(typeof(Version), result);
         }

@@ -504,7 +504,7 @@ namespace Serilog.Tests
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        static void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
+        static void TestForContextResult(MethodInfo method, ILogger logger, object? normalResult)
         {
             Assert.NotNull(normalResult);
             Assert.True(normalResult is ILogger);
