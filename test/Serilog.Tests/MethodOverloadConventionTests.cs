@@ -892,8 +892,10 @@ namespace Serilog.Tests
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
+        static void EvaluateSingleResult(LogEventLevel level, CollectingSink? results)
         {
+            if (results == null) throw new ArgumentNullException(nameof(results), $"Invalid test state. {nameof(results)} should have a value here.");
+
             //evaluate single log event
             Assert.Single(results.Events);
 
@@ -929,7 +931,8 @@ namespace Serilog.Tests
                     .WriteTo.Sink(sink)
                     .CreateLogger();
 
-                return null;
+                var invalidLogger = new DisposableLogger();
+                return invalidLogger;
             }
 
             if (loggerType == typeof(SilentLogger))
