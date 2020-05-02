@@ -76,7 +76,7 @@ namespace Serilog.Configuration
         /// <param name="destructuringPolicies">Policies to apply when destructuring.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="destructuringPolicies"/> is <code>null</code></exception>
-        /// <exception cref="ArgumentException">When any element of <paramref name="destructuringPolicies"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When any element of <paramref name="destructuringPolicies"/> is <code>null</code></exception>
         // ReSharper disable once MemberCanBePrivate.Global
         public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
         {

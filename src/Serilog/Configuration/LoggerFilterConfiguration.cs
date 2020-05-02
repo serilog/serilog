@@ -41,7 +41,7 @@ namespace Serilog.Configuration
         /// <param name="filters">The filters to apply.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="filters"/> is <code>null</code></exception>
-        /// <exception cref="ArgumentException">When any element of <paramref name="filters"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When any element of <paramref name="filters"/> is <code>null</code></exception>
         public LoggerConfiguration With(params ILogEventFilter[] filters)
         {
             if (filters == null) throw new ArgumentNullException(nameof(filters));
