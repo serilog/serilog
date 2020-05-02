@@ -19,8 +19,7 @@ namespace Serilog
         /// <param name="destructureObjects">If true, the value will be serialized as a structured
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
         public static ILogger ForContext<TValue>(
             this ILogger logger,
             LogEventLevel level,

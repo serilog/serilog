@@ -53,7 +53,8 @@ namespace Serilog.Events
         /// <param name="text">The full text of the template; used by Serilog internally to avoid unneeded
         /// string concatenation.</param>
         /// <param name="tokens">The text and property tokens defining the template.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="text"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="tokens"/> is <code>null</code></exception>
         public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
             Text = text ?? throw new ArgumentNullException(nameof(text));
@@ -134,7 +135,7 @@ namespace Serilog.Events
         /// <returns>The message created from the template and properties. If the
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
         public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider? formatProvider = null)
         {
             var writer = new StringWriter(formatProvider);
@@ -151,11 +152,13 @@ namespace Serilog.Events
         /// properties are mismatched with the template, the template will be
         /// returned with incomplete substitution.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
+
             MessageTemplateRenderer.Render(this, properties, output, null, formatProvider);
         }
     }

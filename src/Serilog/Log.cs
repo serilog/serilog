@@ -46,7 +46,7 @@ namespace Serilog
         /// <summary>
         /// The globally-shared logger.
         /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         public static ILogger Logger
         {
             get => _logger;
@@ -1178,12 +1178,12 @@ namespace Serilog
         /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured
         /// representation.
         /// </summary>
-        /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// <param name="propertyName">The name of the property. Must be non-empty.</param>
         /// <param name="value">The property value.</param>
         /// <param name="destructureObjects">If true, the value will be serialized as a structured
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <param name="property">The resulting property.</param>
+        /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// methods never throw exceptions).</returns>
         public static bool BindProperty([NotNullWhen(true)] string propertyName, object value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {

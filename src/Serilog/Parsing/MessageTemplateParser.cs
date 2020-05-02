@@ -35,11 +35,11 @@ namespace Serilog.Parsing
         /// is not syntactically valid, text tokens will be returned. The parser
         /// will make a best effort to extract valid property tokens even in the
         /// presence of parsing issues.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
         public MessageTemplate Parse(string messageTemplate)
         {
-            if (messageTemplate == null)
-                throw new ArgumentNullException(nameof(messageTemplate));
+            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+
             return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
         }
 

@@ -61,10 +61,11 @@ namespace Serilog.Formatting.Json
         /// <param name="state">Operation state.</param>
         /// <param name="scalar">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="scalar"/>.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="scalar"/> is <code>null</code></exception>
         protected override bool VisitScalarValue(TextWriter state, ScalarValue scalar)
         {
             if (scalar == null) throw new ArgumentNullException(nameof(scalar));
+
             FormatLiteralValue(scalar.Value, state);
             return false;
         }
@@ -75,10 +76,11 @@ namespace Serilog.Formatting.Json
         /// <param name="state">Operation state.</param>
         /// <param name="sequence">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="sequence"/>.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="sequence"/> is <code>null</code></exception>
         protected override bool VisitSequenceValue(TextWriter state, SequenceValue sequence)
         {
             if (sequence == null) throw new ArgumentNullException(nameof(sequence));
+
             state.Write('[');
             var delim = "";
             for (var i = 0; i < sequence.Elements.Count; i++)
@@ -273,6 +275,7 @@ namespace Serilog.Formatting.Json
         static void FormatLiteralObjectValue(object value, TextWriter output)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
+            
             FormatStringValue(value.ToString()!, output);
         }
 
