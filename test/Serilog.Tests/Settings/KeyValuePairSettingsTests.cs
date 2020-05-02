@@ -269,7 +269,7 @@ namespace Serilog.Tests.Settings
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
 
-            Assert.False(DummyWithLevelSwitchSink.ControlLevelSwitch == null, "Sink ControlLevelSwitch should have been initialized");
+            Assert.False(DummyWithLevelSwitchSink.ControlLevelSwitch is null, "Sink ControlLevelSwitch should have been initialized");
 
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
             Assert.NotNull(controlSwitch);

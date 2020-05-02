@@ -100,7 +100,7 @@ namespace Serilog.Core
         /// <returns>A logger that will enrich log events as specified.</returns>
         public ILogger ForContext(ILogEventEnricher enricher)
         {
-            if (enricher == null)
+            if (enricher is null)
                 return this; // No context here, so little point writing to SelfLog.
 
             return new Logger(
@@ -120,7 +120,7 @@ namespace Serilog.Core
         /// <returns>A logger that will enrich log events as specified.</returns>
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
         {
-            if (enrichers == null)
+            if (enrichers is null)
                 return this; // No context here, so little point writing to SelfLog.
 
             return ForContext(new SafeAggregateEnricher(enrichers));
@@ -173,7 +173,7 @@ namespace Serilog.Core
         /// <returns>A logger that will enrich log events as specified.</returns>
         public ILogger ForContext(Type source)
         {
-            if (source == null)
+            if (source is null)
                 return this; // Little point in writing to SelfLog here because we don't have any contextual information
 
             return ForContext(Constants.SourceContextPropertyName, source.FullName);
@@ -276,7 +276,7 @@ namespace Serilog.Core
             if ((int)level < (int)_minimumLevel)
                 return false;
 
-            return _levelSwitch == null ||
+            return _levelSwitch is null ||
                    (int)level >= (int)_levelSwitch.MinimumLevel;
         }
 
@@ -361,7 +361,7 @@ namespace Serilog.Core
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
             if (!IsEnabled(level)) return;
-            if (messageTemplate == null) return;
+            if (messageTemplate is null) return;
 
             // Catch a common pitfall when a single non-object array is cast to object[]
             if (propertyValues != null &&
@@ -380,7 +380,7 @@ namespace Serilog.Core
         /// <param name="logEvent">The event to write.</param>
         public void Write(LogEvent logEvent)
         {
-            if (logEvent == null) return;
+            if (logEvent is null) return;
             if (!IsEnabled(logEvent.Level)) return;
             Dispatch(logEvent);
         }
@@ -1327,7 +1327,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
         {
-            if (messageTemplate == null)
+            if (messageTemplate is null)
             {
                 parsedTemplate = null;
                 boundProperties = null;

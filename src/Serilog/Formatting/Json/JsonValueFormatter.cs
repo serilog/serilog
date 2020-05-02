@@ -158,7 +158,7 @@ namespace Serilog.Formatting.Json
         /// <param name="output">The output</param>
         protected virtual void FormatLiteralValue(object value, TextWriter output)
         {
-            if (value == null)
+            if (value is null)
             {
                 FormatNullValue(output);
                 return;

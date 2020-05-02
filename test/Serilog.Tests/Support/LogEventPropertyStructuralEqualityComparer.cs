@@ -16,7 +16,7 @@ namespace Serilog.Tests.Support
 
         public bool Equals(LogEventProperty x, LogEventProperty y)
         {
-            if (x == null || y == null)
+            if (x is null || y is null)
                 return false; // throw new Exception($"the comparer doesn't support nulls, x={x}, y={y}");
 
             return x.Name == y.Name

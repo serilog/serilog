@@ -126,7 +126,7 @@ namespace Serilog.Parsing
         /// <returns>True if the property is positional, otherwise false.</returns>
         public bool TryGetPositionalValue(out int position)
         {
-            if (_position == null)
+            if (_position is null)
             {
                 position = 0;
                 return false;

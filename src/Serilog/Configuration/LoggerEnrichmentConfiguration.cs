@@ -54,7 +54,7 @@ namespace Serilog.Configuration
 
             foreach (var logEventEnricher in enrichers)
             {
-                if (logEventEnricher == null)  throw new ArgumentException("Null enricher is not allowed.");
+                if (logEventEnricher is null)  throw new ArgumentException("Null enricher is not allowed.");
 
                 _addEnricher(logEventEnricher);
             }

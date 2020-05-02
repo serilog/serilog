@@ -84,7 +84,7 @@ namespace Serilog.Configuration
 
             foreach (var destructuringPolicy in destructuringPolicies)
             {
-                if (destructuringPolicy == null) throw new ArgumentException("Null policy is not allowed.");
+                if (destructuringPolicy is null) throw new ArgumentException("Null policy is not allowed.");
 
                 _addPolicy(destructuringPolicy);
             }

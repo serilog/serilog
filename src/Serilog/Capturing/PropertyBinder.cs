@@ -41,7 +41,7 @@ namespace Serilog.Capturing
         /// this will be empty.</returns>
         public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
         {
-            if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
+            if (messageTemplateParameters is null || messageTemplateParameters.Length == 0)
             {
                 if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
                     SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
@@ -93,7 +93,7 @@ namespace Serilog.Capturing
         EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
         {
             var namedProperties = template.NamedProperties;
-            if (namedProperties == null)
+            if (namedProperties is null)
                 return NoProperties;
 
             var matchedRun = namedProperties.Length;

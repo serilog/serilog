@@ -372,7 +372,7 @@ namespace Serilog.Formatting.Json
 
         void WriteLiteral(object value, TextWriter output, bool forceQuotation = false)
         {
-            if (value == null)
+            if (value is null)
             {
                 output.Write("null");
                 return;
@@ -441,7 +441,7 @@ namespace Serilog.Formatting.Json
         [Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead."), EditorBrowsable(EditorBrowsableState.Never)]
         public static string Escape(string s)
         {
-            if (s == null) return null;
+            if (s is null) return null;
 
             var escapedResult = new StringWriter();
             JsonValueFormatter.WriteQuotedJsonString(s, escapedResult);
