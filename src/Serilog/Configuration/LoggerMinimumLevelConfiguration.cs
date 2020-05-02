@@ -111,15 +111,15 @@ namespace Serilog.Configuration
         /// <param name="levelSwitch">The switch controlling loggers for matching sources.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
-        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentException">When a trimmed <paramref name="source"/> is empty</exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception> 
         public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
         {
             if (source is null) throw new ArgumentNullException(nameof(source));
             if (levelSwitch is null) throw new ArgumentNullException(nameof(levelSwitch));
 
             var trimmed = source.Trim();
-            if (trimmed.Length == 0)
-                throw new ArgumentException("A source name must be provided.", nameof(source));
+            if (trimmed.Length == 0) throw new ArgumentException($"A source {nameof(source)} must be provided.", nameof(source));
 
             _addOverride(trimmed, levelSwitch);
             return _loggerConfiguration;

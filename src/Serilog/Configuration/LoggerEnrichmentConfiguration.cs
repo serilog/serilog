@@ -47,14 +47,15 @@ namespace Serilog.Configuration
         /// the logger.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentException">When any element of <paramref name="enrichers"/> is <code>null</code></exception>
         public LoggerConfiguration With(params ILogEventEnricher[] enrichers)
         {
             if (enrichers is null) throw new ArgumentNullException(nameof(enrichers));
 
             foreach (var logEventEnricher in enrichers)
             {
-                if (logEventEnricher == null)
-                    throw new ArgumentException("Null enricher is not allowed.");
+                if (logEventEnricher == null)  throw new ArgumentException("Null enricher is not allowed.");
+
                 _addEnricher(logEventEnricher);
             }
             return _loggerConfiguration;
