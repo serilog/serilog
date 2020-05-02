@@ -18,7 +18,8 @@ namespace Serilog.Tests.Support
 
         public static IDisposable SaveTo(List<string> target)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (target is null) throw new ArgumentNullException(nameof(target));
+
             return new TemporarySelfLog(target.Add);
         }
     }

@@ -44,7 +44,7 @@ namespace Serilog.Formatting.Display
         /// <exception cref="ArgumentNullException">When <paramref name="outputTemplate"/> is <code>null</code></exception>
         public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider formatProvider = null)
         {
-            if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
+            if (outputTemplate is null) throw new ArgumentNullException(nameof(outputTemplate));
 
             _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
             _formatProvider = formatProvider;
@@ -59,8 +59,8 @@ namespace Serilog.Formatting.Display
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public void Format(LogEvent logEvent, TextWriter output)
         {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (logEvent is null) throw new ArgumentNullException(nameof(logEvent));
+            if (output is null) throw new ArgumentNullException(nameof(output));
 
             foreach (var token in _outputTemplate.Tokens)
             {

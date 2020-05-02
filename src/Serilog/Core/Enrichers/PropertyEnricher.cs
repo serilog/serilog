@@ -56,8 +56,8 @@ namespace Serilog.Core.Enrichers
         /// <exception cref="ArgumentNullException">When <paramref name="propertyFactory"/> is <code>null</code></exception>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            if (propertyFactory == null) throw new ArgumentNullException(nameof(propertyFactory));
+            if (logEvent is null) throw new ArgumentNullException(nameof(logEvent));
+            if (propertyFactory is null) throw new ArgumentNullException(nameof(propertyFactory));
 
             var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
             logEvent.AddPropertyIfAbsent(property);

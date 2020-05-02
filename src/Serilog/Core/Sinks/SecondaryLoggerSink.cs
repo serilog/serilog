@@ -37,7 +37,7 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+            if (logEvent is null) throw new ArgumentNullException(nameof(logEvent));
 
             var copy = logEvent.Copy();
             _logger.Write(copy);

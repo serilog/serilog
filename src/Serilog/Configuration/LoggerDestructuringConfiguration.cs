@@ -56,7 +56,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="scalarType"/> is <code>null</code></exception>
         public LoggerConfiguration AsScalar(Type scalarType)
         {
-            if (scalarType == null) throw new ArgumentNullException(nameof(scalarType));
+            if (scalarType is null) throw new ArgumentNullException(nameof(scalarType));
 
             _addScalar(scalarType);
             return _loggerConfiguration;
@@ -80,7 +80,7 @@ namespace Serilog.Configuration
         // ReSharper disable once MemberCanBePrivate.Global
         public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
         {
-            if (destructuringPolicies == null) throw new ArgumentNullException(nameof(destructuringPolicies));
+            if (destructuringPolicies is null) throw new ArgumentNullException(nameof(destructuringPolicies));
 
             foreach (var destructuringPolicy in destructuringPolicies)
             {
@@ -113,7 +113,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="transformation"/> is <code>null</code></exception>
         public LoggerConfiguration ByTransforming<TValue>(Func<TValue, object> transformation)
         {
-            if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+            if (transformation is null) throw new ArgumentNullException(nameof(transformation));
 
             var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
                                                           o => transformation((TValue)o));
@@ -137,8 +137,8 @@ namespace Serilog.Configuration
             Func<Type, bool> predicate,
             Func<TValue, object> transformation)
         {
-            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
-            if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+            if (predicate is null) throw new ArgumentNullException(nameof(predicate));
+            if (transformation is null) throw new ArgumentNullException(nameof(transformation));
 
             var policy = new ProjectedDestructuringPolicy(predicate,
                                                           o => transformation((TValue)o));

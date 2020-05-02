@@ -21,7 +21,7 @@ namespace Serilog.PerformanceTests.Support
 
         public MessageTemplate Parse(string messageTemplate)
         {
-            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+            if (messageTemplate is null) throw new ArgumentNullException(nameof(messageTemplate));
 
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);

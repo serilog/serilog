@@ -155,7 +155,7 @@ namespace Serilog.Tests
 
             public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
             {
-                if (value == null) throw new ArgumentNullException(nameof(value));
+                if (value is null) throw new ArgumentNullException(nameof(value));
 
                 if (!_canApply(value.GetType()))
                 {

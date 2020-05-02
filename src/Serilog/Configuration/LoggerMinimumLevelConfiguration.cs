@@ -57,7 +57,7 @@ namespace Serilog.Configuration
         // ReSharper disable once UnusedMethodReturnValue.Global
         public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
         {
-            if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+            if (levelSwitch is null) throw new ArgumentNullException(nameof(levelSwitch));
 
             _setLevelSwitch(levelSwitch);
             return _loggerConfiguration;
@@ -114,8 +114,8 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
         public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+            if (source is null) throw new ArgumentNullException(nameof(source));
+            if (levelSwitch is null) throw new ArgumentNullException(nameof(levelSwitch));
 
             var trimmed = source.Trim();
             if (trimmed.Length == 0)

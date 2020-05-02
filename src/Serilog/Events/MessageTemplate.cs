@@ -156,8 +156,8 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
-            if (properties == null) throw new ArgumentNullException(nameof(properties));
-            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (properties is null) throw new ArgumentNullException(nameof(properties));
+            if (output is null) throw new ArgumentNullException(nameof(output));
 
             MessageTemplateRenderer.Render(this, properties, output, null, formatProvider);
         }

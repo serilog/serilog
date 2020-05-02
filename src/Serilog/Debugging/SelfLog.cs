@@ -53,7 +53,7 @@ namespace Serilog.Debugging
         // ReSharper disable once MemberCanBePrivate.Global
         public static void Enable(TextWriter output)
         {
-            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (output is null) throw new ArgumentNullException(nameof(output));
 
             Enable(m =>
             {

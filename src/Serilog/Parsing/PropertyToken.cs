@@ -86,8 +86,8 @@ namespace Serilog.Parsing
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
         {
-            if (properties == null) throw new ArgumentNullException(nameof(properties));
-            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (properties is null) throw new ArgumentNullException(nameof(properties));
+            if (output is null) throw new ArgumentNullException(nameof(output));
 
             MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, isLiteral: false, isJson: false);
         }

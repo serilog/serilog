@@ -49,7 +49,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         public EventProperty(string name, LogEventPropertyValue value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (value is null) throw new ArgumentNullException(nameof(value));
             LogEventProperty.EnsureValidName(name);
 
             Name = name;

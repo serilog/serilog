@@ -53,7 +53,7 @@ namespace Serilog.Core
             LogEventLevel defaultMinimumLevel,
             LoggingLevelSwitch defaultLevelSwitch)
         {
-            if (overrides == null) throw new ArgumentNullException(nameof(overrides));
+            if (overrides is null) throw new ArgumentNullException(nameof(overrides));
 
             _defaultLevelSwitch = defaultLevelSwitch;
             _defaultMinimumLevel = defaultLevelSwitch != null ? LevelAlias.Minimum : defaultMinimumLevel;

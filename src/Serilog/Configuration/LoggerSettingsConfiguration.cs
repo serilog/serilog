@@ -37,7 +37,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
         public LoggerConfiguration Settings(ILoggerSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (settings is null) throw new ArgumentNullException(nameof(settings));
 
             settings.Configure(_loggerConfiguration);
             return _loggerConfiguration;
@@ -52,7 +52,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
         public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (settings is null) throw new ArgumentNullException(nameof(settings));
 
             var uniqueSettings = new Dictionary<string, string>();
             foreach (var kvp in settings)
