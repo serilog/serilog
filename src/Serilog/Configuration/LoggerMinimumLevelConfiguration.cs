@@ -53,10 +53,12 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="levelSwitch">The switch.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
         // ReSharper disable once UnusedMethodReturnValue.Global
         public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
         {
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+
             _setLevelSwitch(levelSwitch);
             return _loggerConfiguration;
         }
@@ -108,6 +110,8 @@ namespace Serilog.Configuration
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="levelSwitch">The switch controlling loggers for matching sources.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
         public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -127,6 +131,7 @@ namespace Serilog.Configuration
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="minimumLevel">The minimum level applied to loggers for matching sources.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
         public LoggerConfiguration Override(string source, LogEventLevel minimumLevel)
         {
             return Override(source, new LoggingLevelSwitch(minimumLevel));

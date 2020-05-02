@@ -117,14 +117,16 @@ namespace Serilog.Configuration
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
         /// <param name="levelSwitch">A switch allowing the pass-through minimum level
-        /// to be changed at runtime.</param>
+        /// to be changed at runtime. Can be <code>null</code></param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureLogger"/> is <code>null</code></exception>
         public LoggerConfiguration Logger(
             Action<LoggerConfiguration> configureLogger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             LoggingLevelSwitch levelSwitch = null)
         {
             if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
+
             var lc = new LoggerConfiguration();
 
             _applyInheritedConfiguration(lc);
@@ -152,6 +154,7 @@ namespace Serilog.Configuration
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
         public LoggerConfiguration Logger(
             ILogger logger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
@@ -167,7 +170,7 @@ namespace Serilog.Configuration
             var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
             return Sink(secondarySink, restrictedToMinimumLevel);
         }
-        
+
         /// <summary>
         /// Write to a sink only when <paramref name="condition"/> evaluates to <c>true</c>.
         /// </summary>
@@ -175,6 +178,8 @@ namespace Serilog.Configuration
         /// should be written to the configured sink.</param>
         /// <param name="configureSink">An action that configures the wrapped sink.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="condition"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureSink"/> is <code>null</code></exception>
         public LoggerConfiguration Conditional(Func<LogEvent, bool> condition, Action<LoggerSinkConfiguration> configureSink)
         {
             if (condition == null) throw new ArgumentNullException(nameof(condition));
@@ -212,8 +217,11 @@ namespace Serilog.Configuration
         /// <param name="restrictedToMinimumLevel">The minimum level for
         /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
         /// <param name="levelSwitch">A switch allowing the pass-through minimum level
-        /// to be changed at runtime.</param>
+        /// to be changed at runtime. Can be <code>null</code></param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="loggerSinkConfiguration"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code></exception>
         public static LoggerConfiguration Wrap(
             LoggerSinkConfiguration loggerSinkConfiguration,
             Func<ILogEventSink, ILogEventSink> wrapSink,

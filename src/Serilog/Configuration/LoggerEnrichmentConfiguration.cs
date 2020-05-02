@@ -46,9 +46,11 @@ namespace Serilog.Configuration
         /// <param name="enrichers">Enrichers to apply to all events passing through
         /// the logger.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
         public LoggerConfiguration With(params ILogEventEnricher[] enrichers)
         {
             if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
+
             foreach (var logEventEnricher in enrichers)
             {
                 if (logEventEnricher == null)
@@ -98,6 +100,8 @@ namespace Serilog.Configuration
         /// should be enriched.</param>
         /// <param name="configureEnricher">An action that configures the wrapped enricher.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="condition"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
         public LoggerConfiguration When(Func<LogEvent, bool> condition, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
             if (condition == null) throw new ArgumentNullException(nameof(condition));
@@ -114,6 +118,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
         /// to collect or store at lower levels.</remarks>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
         public LoggerConfiguration AtLevel(LogEventLevel enrichFromLevel, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
             if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
@@ -129,6 +134,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
         /// to collect or store at lower levels.</remarks>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
         public LoggerConfiguration AtLevel(LoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
             if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
@@ -144,6 +150,9 @@ namespace Serilog.Configuration
         /// added in <paramref name="configureWrappedEnricher"/>.</param>
         /// <param name="configureWrappedEnricher">An action that configures enrichers to be wrapped in <paramref name="wrapEnricher"/>.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="loggerEnrichmentConfiguration"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="wrapEnricher"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedEnricher"/> is <code>null</code></exception>
         public static LoggerConfiguration Wrap(
             LoggerEnrichmentConfiguration loggerEnrichmentConfiguration,
             Func<ILogEventEnricher, ILogEventEnricher> wrapEnricher,

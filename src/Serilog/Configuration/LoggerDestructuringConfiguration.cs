@@ -53,9 +53,11 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="scalarType">Type to treat as scalar.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="scalarType"/> is <code>null</code></exception>
         public LoggerConfiguration AsScalar(Type scalarType)
         {
             if (scalarType == null) throw new ArgumentNullException(nameof(scalarType));
+
             _addScalar(scalarType);
             return _loggerConfiguration;
         }
@@ -73,14 +75,17 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="destructuringPolicies">Policies to apply when destructuring.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="destructuringPolicies"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When any element of <paramref name="destructuringPolicies"/> is <code>null</code></exception>
         // ReSharper disable once MemberCanBePrivate.Global
         public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
         {
             if (destructuringPolicies == null) throw new ArgumentNullException(nameof(destructuringPolicies));
+
             foreach (var destructuringPolicy in destructuringPolicies)
             {
-                if (destructuringPolicy == null)
-                    throw new ArgumentException("Null policy is not allowed.");
+                if (destructuringPolicy == null) throw new ArgumentException("Null policy is not allowed.");
+
                 _addPolicy(destructuringPolicy);
             }
             return _loggerConfiguration;
@@ -105,10 +110,11 @@ namespace Serilog.Configuration
         /// to an alternative representation.</param>
         /// <typeparam name="TValue">Type of values to transform.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="transformation"/> is <code>null</code></exception>
         public LoggerConfiguration ByTransforming<TValue>(Func<TValue, object> transformation)
         {
             if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+
             var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
                                                           o => transformation((TValue)o));
             return With(policy);
@@ -125,12 +131,15 @@ namespace Serilog.Configuration
         /// to an alternative representation.</param>
         /// <typeparam name="TValue">Type of values to transform.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="predicate"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="transformation"/> is <code>null</code></exception>
         public LoggerConfiguration ByTransformingWhere<TValue>(
             Func<Type, bool> predicate,
             Func<TValue, object> transformation)
         {
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
             if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+
             var policy = new ProjectedDestructuringPolicy(predicate,
                                                           o => transformation((TValue)o));
             return With(policy);
@@ -143,10 +152,11 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="maximumDestructuringDepth">The maximum depth to use.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">When <paramref name="maximumDestructuringDepth"/> is negative</exception>
         public LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth)
         {
-            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
+            if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth), "Maximum destructuring depth must be positive.");
+
             _setMaximumDepth(maximumDestructuringDepth);
             return _loggerConfiguration;
         }
@@ -158,10 +168,11 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="maximumStringLength">The maximum string length.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">When passed length is less than 2</exception>
+        /// <exception cref="ArgumentOutOfRangeException">When <paramref name="maximumStringLength"/> is less than 2</exception>
         public LoggerConfiguration ToMaximumStringLength(int maximumStringLength)
         {
             if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength), maximumStringLength, "Maximum string length must be at least two.");
+
             _setMaximumStringLength(maximumStringLength);
             return _loggerConfiguration;
         }
@@ -173,10 +184,11 @@ namespace Serilog.Configuration
         /// Applies limit to all <see cref="IEnumerable"/> including dictionaries.
         /// </summary>
         /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">When passed length is less than 1</exception>
+        /// <exception cref="ArgumentOutOfRangeException">When <paramref name="maximumCollectionCount"/> is less than 1</exception>
         public LoggerConfiguration ToMaximumCollectionCount(int maximumCollectionCount)
         {
             if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount), maximumCollectionCount, "Maximum collection length must be at least one.");
+
             _setMaximumCollectionCount(maximumCollectionCount);
             return _loggerConfiguration;
         }
