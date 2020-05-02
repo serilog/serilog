@@ -48,7 +48,7 @@ namespace Serilog.Context
 
         public static ImmutableStack<T> Empty { get; } = new ImmutableStack<T>();
 
-        public bool IsEmpty => _under == null;
+        public bool IsEmpty => _under is null;
 
         public ImmutableStack<T> Push(T t) => new ImmutableStack<T>(this, t);
 

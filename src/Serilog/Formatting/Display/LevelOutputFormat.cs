@@ -59,7 +59,7 @@ namespace Serilog.Formatting.Display
             if (index < 0 || index > (int)LogEventLevel.Fatal)
                 return Casing.Format(value.ToString(), format);
 
-            if (format == null || format.Length != 2 && format.Length != 3)
+            if (format is null || format.Length != 2 && format.Length != 3)
                 return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format);
 
             // Using int.Parse() here requires allocating a string to exclude the first character prefix.

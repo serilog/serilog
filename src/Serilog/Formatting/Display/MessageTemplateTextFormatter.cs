@@ -82,7 +82,7 @@ namespace Serilog.Formatting.Display
                 }
                 else if (pt.PropertyName == OutputProperties.ExceptionPropertyName)
                 {
-                    var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
+                    var exception = logEvent.Exception is null ? "" : logEvent.Exception + Environment.NewLine;
                     Padding.Apply(output, exception, pt.Alignment);
                 }
                 else

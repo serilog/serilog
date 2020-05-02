@@ -15,7 +15,7 @@ namespace Serilog.Tests.Data
         protected override LogEventPropertyValue VisitScalarValue(int state, ScalarValue scalar)
         {
             var str = scalar.Value as string;
-            if (str == null || str.Length <= state)
+            if (str is null || str.Length <= state)
                 return scalar;
 
             return new ScalarValue(str.Substring(0, state));

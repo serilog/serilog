@@ -125,7 +125,7 @@ namespace Serilog.Capturing
 
         LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
         {
-            if (value == null)
+            if (value is null)
                 return new ScalarValue(null);
 
             if (destructuring == Destructuring.Stringify)
@@ -299,7 +299,7 @@ namespace Serilog.Capturing
         LogEventPropertyValue Stringify(object value)
         {
             var stringified = value.ToString();
-            var truncated = stringified == null ? null : TruncateIfNecessary(stringified);
+            var truncated = stringified is null ? null : TruncateIfNecessary(stringified);
             return new ScalarValue(truncated);
         }
 
@@ -369,7 +369,7 @@ namespace Serilog.Capturing
             var typeName = type.Name;
 
             // C# Anonymous types always start with "<>" and VB's start with "VB$"
-            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
+            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace is null
                 && (typeName[0] == '<'
                     || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }

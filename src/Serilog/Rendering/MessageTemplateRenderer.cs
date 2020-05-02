@@ -95,7 +95,7 @@ namespace Serilog.Rendering
             {
                 output.Write(str);
             }
-            else if (json && format == null)
+            else if (json && format is null)
             {
                 JsonValueFormatter.Format(propertyValue, output);
             }

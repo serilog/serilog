@@ -234,7 +234,7 @@ namespace Serilog.Settings.KeyValuePairs
                 {
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
-                                select directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
+                                select directive is null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
 
                     call.Insert(0, loggerConfigMethod);
 

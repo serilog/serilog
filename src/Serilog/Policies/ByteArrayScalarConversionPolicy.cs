@@ -28,7 +28,7 @@ namespace Serilog.Policies
         public bool TryConvertToScalar(object value, out ScalarValue result)
         {
             var bytes = value as byte[];
-            if (bytes == null)
+            if (bytes is null)
             {
                 result = null;
                 return false;

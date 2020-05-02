@@ -40,7 +40,7 @@ namespace Serilog.Capturing
                 }
 
                 var baseType = currentTypeInfo.BaseType;
-                if (baseType == null)
+                if (baseType is null)
                 {
                     yield break;
                 }

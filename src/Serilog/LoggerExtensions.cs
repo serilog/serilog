@@ -27,8 +27,7 @@ namespace Serilog
             TValue value,
             bool destructureObjects = false)
         {
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
+            if (logger is null) throw new ArgumentNullException(nameof(logger));
 
             return logger.IsEnabled(level)
                 ? logger.ForContext(propertyName, value, destructureObjects)

@@ -48,7 +48,7 @@ namespace Serilog.Configuration
 
             foreach (var logEventFilter in filters)
             {
-                if (logEventFilter == null) throw new ArgumentException("Null filter is not allowed.");
+                if (logEventFilter is null) throw new ArgumentException("Null filter is not allowed.");
 
                 _addFilter(logEventFilter);
             }

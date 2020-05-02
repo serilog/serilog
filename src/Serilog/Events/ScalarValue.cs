@@ -113,7 +113,7 @@ namespace Serilog.Events
         /// <returns>The instance's hash code.</returns>
         public override int GetHashCode()
         {
-            if (Value == null) return 0;
+            if (Value is null) return 0;
             return Value.GetHashCode();
         }
     }

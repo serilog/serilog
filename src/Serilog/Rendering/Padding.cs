@@ -27,7 +27,7 @@ namespace Serilog.Rendering
         /// </summary>
         public static void Apply(TextWriter output, string value, Alignment? alignment)
         {
-            if (alignment == null || value.Length >= alignment.Value.Width)
+            if (alignment is null || value.Length >= alignment.Value.Width)
             {
                 output.Write(value);
                 return;

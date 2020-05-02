@@ -91,7 +91,7 @@ namespace Serilog.Formatting.Display
             result[NewLinePropertyName] = LiteralNewLine;
             result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties, outputTemplate);
 
-            var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
+            var exception = logEvent.Exception is null ? "" : logEvent.Exception + Environment.NewLine;
             result[ExceptionPropertyName] = new LiteralStringValue(exception);
 
             return result;

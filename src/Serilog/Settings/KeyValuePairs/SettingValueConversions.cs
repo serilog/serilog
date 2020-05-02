@@ -102,7 +102,7 @@ namespace Serilog.Settings.KeyValuePairs
                         return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
                     });
 
-                    if (ctor == null)
+                    if (ctor is null)
                         throw new InvalidOperationException($"A default constructor was not found on {type.FullName}.");
 
                     var call = ctor.GetParameters().Select(pi => pi.DefaultValue).ToArray();
@@ -115,7 +115,7 @@ namespace Serilog.Settings.KeyValuePairs
 
         internal static bool TryParseStaticMemberAccessor(string input, out string accessorTypeName, out string memberName)
         {
-            if (input == null)
+            if (input is null)
             {
                 accessorTypeName = null;
                 memberName = null;

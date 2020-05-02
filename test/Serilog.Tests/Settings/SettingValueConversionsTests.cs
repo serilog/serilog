@@ -21,14 +21,14 @@ namespace Serilog.Tests.Settings
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)SettingValueConversions.ConvertToType(null, typeof(int?));
-            Assert.True(result == null);
+            Assert.True(result is null);
         }
 
         [Fact]
         public void EmptyStringValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)SettingValueConversions.ConvertToType("", typeof(int?));
-            Assert.True(result == null);
+            Assert.True(result is null);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Serilog.Tests.Settings
                 out var actualAccessorType,
                 out var actualMemberName);
 
-            if (expectedAccessorType == null)
+            if (expectedAccessorType is null)
             {
                 Assert.False(actual, $"Should not parse {input}");
             }
