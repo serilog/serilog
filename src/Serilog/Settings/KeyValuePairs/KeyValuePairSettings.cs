@@ -85,7 +85,7 @@ namespace Serilog.Settings.KeyValuePairs
 
         public void Configure(LoggerConfiguration loggerConfiguration)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (loggerConfiguration is null) throw new ArgumentNullException(nameof(loggerConfiguration));
 
             var directives = _settings
                 .Where(kvp => _supportedDirectives.Any(kvp.Key.StartsWith))

@@ -31,7 +31,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
         public DictionaryValue(IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> elements)
         {
-            if (elements == null) throw new ArgumentNullException(nameof(elements));
+            if (elements is null) throw new ArgumentNullException(nameof(elements));
 
             Elements = elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
@@ -51,7 +51,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
-            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (output is null) throw new ArgumentNullException(nameof(output));
 
             output.Write('[');
             var delim = "(";

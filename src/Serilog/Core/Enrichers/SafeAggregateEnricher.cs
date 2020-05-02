@@ -26,7 +26,7 @@ namespace Serilog.Core.Enrichers
 
         public SafeAggregateEnricher(IEnumerable<ILogEventEnricher> enrichers)
         {
-            if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
+            if (enrichers is null) throw new ArgumentNullException(nameof(enrichers));
 
             _enrichers = enrichers.ToArray();
         }

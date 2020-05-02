@@ -50,7 +50,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentException">When any element of <paramref name="enrichers"/> is <code>null</code></exception>
         public LoggerConfiguration With(params ILogEventEnricher[] enrichers)
         {
-            if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
+            if (enrichers is null) throw new ArgumentNullException(nameof(enrichers));
 
             foreach (var logEventEnricher in enrichers)
             {
@@ -105,8 +105,8 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
         public LoggerConfiguration When(Func<LogEvent, bool> condition, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
-            if (condition == null) throw new ArgumentNullException(nameof(condition));
-            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+            if (condition is null) throw new ArgumentNullException(nameof(condition));
+            if (configureEnricher is null) throw new ArgumentNullException(nameof(configureEnricher));
 
             return Wrap(this, e => new ConditionalEnricher(e, condition), configureEnricher);
         }
@@ -122,7 +122,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
         public LoggerConfiguration AtLevel(LogEventLevel enrichFromLevel, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
-            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+            if (configureEnricher is null) throw new ArgumentNullException(nameof(configureEnricher));
 
             return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= enrichFromLevel), configureEnricher);
         }
@@ -138,7 +138,7 @@ namespace Serilog.Configuration
         /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
         public LoggerConfiguration AtLevel(LoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
-            if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+            if (configureEnricher is null) throw new ArgumentNullException(nameof(configureEnricher));
 
             return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= levelSwitch.MinimumLevel), configureEnricher);
         }
@@ -159,9 +159,9 @@ namespace Serilog.Configuration
             Func<ILogEventEnricher, ILogEventEnricher> wrapEnricher,
             Action<LoggerEnrichmentConfiguration> configureWrappedEnricher)
         {
-            if (loggerEnrichmentConfiguration == null) throw new ArgumentNullException(nameof(loggerEnrichmentConfiguration));
-            if (wrapEnricher == null) throw new ArgumentNullException(nameof(wrapEnricher));
-            if (configureWrappedEnricher == null) throw new ArgumentNullException(nameof(configureWrappedEnricher));
+            if (loggerEnrichmentConfiguration is null) throw new ArgumentNullException(nameof(loggerEnrichmentConfiguration));
+            if (wrapEnricher is null) throw new ArgumentNullException(nameof(wrapEnricher));
+            if (configureWrappedEnricher is null) throw new ArgumentNullException(nameof(configureWrappedEnricher));
 
             var enrichersToWrap = new List<ILogEventEnricher>();
 

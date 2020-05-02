@@ -32,7 +32,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         public LogEventProperty(string name, LogEventPropertyValue value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (value is null) throw new ArgumentNullException(nameof(value));
             EnsureValidName(name);
 
             Name = name;
@@ -74,7 +74,7 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void EnsureValidName(string name)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (name is null) throw new ArgumentNullException(nameof(name));
             if (!IsValidName(name)) throw new ArgumentException($"Property {nameof(name)} must not be empty or whitespace.", nameof(name));
         }
     }

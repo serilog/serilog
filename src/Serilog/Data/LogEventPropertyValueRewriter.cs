@@ -35,7 +35,7 @@ namespace Serilog.Data
         /// <exception cref="ArgumentNullException">When <paramref name="scalar"/> is <code>null</code></exception>
         protected override LogEventPropertyValue VisitScalarValue(TState state, ScalarValue scalar)
         {
-            if (scalar == null) throw new ArgumentNullException(nameof(scalar));
+            if (scalar is null) throw new ArgumentNullException(nameof(scalar));
 
             return scalar;
         }
@@ -49,7 +49,7 @@ namespace Serilog.Data
         /// <exception cref="ArgumentNullException">When <paramref name="sequence"/> is <code>null</code></exception>
         protected override LogEventPropertyValue VisitSequenceValue(TState state, SequenceValue sequence)
         {
-            if (sequence == null) throw new ArgumentNullException(nameof(sequence));
+            if (sequence is null) throw new ArgumentNullException(nameof(sequence));
 
             for (var i = 0; i < sequence.Elements.Count; ++i)
             {
@@ -86,7 +86,7 @@ namespace Serilog.Data
         /// <exception cref="ArgumentNullException">When <paramref name="structure"/> is <code>null</code></exception>
         protected override LogEventPropertyValue VisitStructureValue(TState state, StructureValue structure)
         {
-            if (structure == null) throw new ArgumentNullException(nameof(structure));
+            if (structure is null) throw new ArgumentNullException(nameof(structure));
 
             for (var i = 0; i < structure.Properties.Count; ++i)
             {
@@ -124,7 +124,7 @@ namespace Serilog.Data
         /// <exception cref="ArgumentNullException">When <paramref name="dictionary"/> is <code>null</code></exception>
         protected override LogEventPropertyValue VisitDictionaryValue(TState state, DictionaryValue dictionary)
         {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+            if (dictionary is null) throw new ArgumentNullException(nameof(dictionary));
 
             foreach (var original in dictionary.Elements)
             {
