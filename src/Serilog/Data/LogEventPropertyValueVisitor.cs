@@ -42,6 +42,7 @@ namespace Serilog.Data
         /// <param name="state">Operation state.</param>
         /// <param name="value">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="value"/>.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         protected virtual TResult Visit(TState state, LogEventPropertyValue value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
@@ -94,11 +95,13 @@ namespace Serilog.Data
         protected abstract TResult VisitDictionaryValue(TState state, DictionaryValue dictionary);
 
         /// <summary>
-        /// Visit a value of an unsupported type.
+        /// Visit a value of an unsupported type. Always throws <see cref="NotSupportedException"/>, when is not overridden.
         /// </summary>
         /// <param name="state">Operation state.</param>
         /// <param name="value">The value to visit.</param>
         /// <returns>The result of visiting <paramref name="value"/>.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
+        /// <exception cref="NotSupportedException">Always</exception>
         // ReSharper disable once UnusedParameter.Global
         protected virtual TResult VisitUnsupportedValue(TState state, LogEventPropertyValue value)
         {

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Serilog.Events
 {
@@ -26,13 +27,13 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         public LogEventProperty(string name, LogEventPropertyValue value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            if (!IsValidName(name))
-                throw new ArgumentException("Property name is not valid.");
+            EnsureValidName(name);
 
             Name = name;
             Value = value;
@@ -42,11 +43,11 @@ namespace Serilog.Events
         /// Construct a <see cref="LogEventProperty"/> from an existing <see cref="EventProperty"/> instance.
         /// </summary>
         /// <param name="property">The existing property.</param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>default</code></exception>
         internal LogEventProperty(EventProperty property)
         {
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
+
             Name = property.Name;
             Value = property.Value;
         }
@@ -67,5 +68,14 @@ namespace Serilog.Events
         /// <param name="name">The name to check.</param>
         /// <returns>True if the name is valid; otherwise, false.</returns>
         public static bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name);
+
+        /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void EnsureValidName(string name)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (!IsValidName(name)) throw new ArgumentException($"Property {nameof(name)} must not be empty or whitespace.", nameof(name));
+        }
     }
 }
