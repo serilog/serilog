@@ -275,7 +275,7 @@ namespace Serilog.Formatting.Json
         static void FormatLiteralObjectValue(object value, TextWriter output)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            
+
             FormatStringValue(value.ToString()!, output);
         }
 

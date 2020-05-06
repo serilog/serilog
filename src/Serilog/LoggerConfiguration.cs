@@ -139,10 +139,11 @@ namespace Serilog
         /// <remarks>To free resources held by sinks ahead of program shutdown,
         /// the returned logger may be cast to <see cref="IDisposable"/> and
         /// disposed.</remarks>
+        /// <exception cref="InvalidOperationException">When the logger is already created</exception>
         public Logger CreateLogger()
         {
-            if (_loggerCreated)
-                throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
+            if (_loggerCreated)  throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
+
             _loggerCreated = true;
 
             ILogEventSink sink = new SafeAggregateSink(_logEventSinks);

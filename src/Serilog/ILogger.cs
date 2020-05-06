@@ -906,7 +906,7 @@ namespace Serilog
 
         /// <summary>
         /// Uses configured scalar conversion and destructuring rules to bind a set of properties to a
-        /// message template. Returns false if the template or values are invalid (<summary>ILogger</summary>
+        /// message template. Returns false if the template or values are invalid (<c>ILogger</c>
         /// methods never throw exceptions).
         /// </summary>
         /// <param name="messageTemplate">Message template describing an event.</param>
