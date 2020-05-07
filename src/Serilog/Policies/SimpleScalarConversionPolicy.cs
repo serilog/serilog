@@ -29,9 +29,9 @@ namespace Serilog.Policies
             _scalarTypes = new HashSet<Type>(scalarTypes);
         }
 
-        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
+        public bool TryConvertToScalar([NotNullWhen(true)] object? value, [NotNullWhen(true)] out ScalarValue? result)
         {
-            if (_scalarTypes.Contains(value.GetType()))
+            if (value != null && _scalarTypes.Contains(value.GetType()))
             {
                 result = new ScalarValue(value);
                 return true;

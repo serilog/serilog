@@ -12,9 +12,9 @@ namespace Serilog.Core
         /// <summary>
         /// If supported, convert the provided value into an immutable scalar.
         /// </summary>
-        /// <param name="value">The value to convert.</param>
+        /// <param name="value">The value to convert.  Can be <code>null</code>.</param>
         /// <param name="result">The converted value, or null.</param>
         /// <returns>True if the value could be converted under this policy.</returns>
-        bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result);
+        bool TryConvertToScalar([NotNullWhen(true)] object? value, [NotNullWhen(true)] out ScalarValue? result);
     }
 }

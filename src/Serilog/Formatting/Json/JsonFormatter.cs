@@ -439,7 +439,7 @@ namespace Serilog.Formatting.Json
         /// <param name="s">A raw string.</param>
         /// <returns>A JSON-escaped version of <paramref name="s"/>.</returns>
         [Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead."), EditorBrowsable(EditorBrowsableState.Never)]
-        public static string? Escape(string s)
+        public static string? Escape(string? s)
         {
             if (s == null) return null;
 

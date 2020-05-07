@@ -26,7 +26,7 @@ namespace Serilog.Policies
     {
         const int MaximumByteArrayLength = 1024;
 
-        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
+        public bool TryConvertToScalar([NotNullWhen(true)] object? value, [NotNullWhen(true)] out ScalarValue? result)
         {
             var bytes = value as byte[];
             if (bytes == null)
