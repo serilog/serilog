@@ -347,7 +347,7 @@ namespace Serilog.Core
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                WriteInternal(level, exception, messageTemplate, new object?[] { propertyValue0!, propertyValue1!, propertyValue2! });
+                WriteInternal(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
             }
         }
 
