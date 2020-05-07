@@ -204,9 +204,9 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-                if (value is char)
+                if (value is char c)
                 {
-                    FormatStringValue(value.ToString()!, output);
+                    FormatStringValue(c.ToString(), output);
                     return;
                 }
 
