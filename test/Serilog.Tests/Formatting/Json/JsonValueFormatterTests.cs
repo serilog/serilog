@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 using Serilog.Formatting.Json;
+using Serilog.Tests.Support;
 using Xunit;
 
 namespace Serilog.Tests.Formatting.Json
@@ -20,11 +21,21 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Theory]
+        [InlineData(0, "0")]
         [InlineData(123, "123")]
+        [InlineData(-123, "-123")]
+        [InlineData(123L, "123")]
+        [InlineData(-123L, "-123")]
         [InlineData('c', "\"c\"")]
+        [InlineData('é', "\"é\"")]
+        [InlineData('\t', "\"\\t\"")]
+        [InlineData('\n', "\"\\n\"")]
+        [InlineData('\0', "\"\\u0000\"")]
         [InlineData("Hello, world!", "\"Hello, world!\"")]
         [InlineData(true, "true")]
+        [InlineData(false, "false")]
         [InlineData("\\\"\t\r\n\f", "\"\\\\\\\"\\t\\r\\n\\f\"")]
+        [InlineData("🤷‍", "\"🤷‍\"")]
         [InlineData("\u0001", "\"\\u0001\"")]
         [InlineData("a\nb", "\"a\\nb\"")]
         [InlineData(null, "null")]
@@ -43,7 +54,11 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void DoubleFormatsAsNumber()
         {
+            JsonLiteralTypesAreFormatted(0d, "0");
+            JsonLiteralTypesAreFormatted(123.0d, "123");
+            JsonLiteralTypesAreFormatted(-123.0d, "-123");
             JsonLiteralTypesAreFormatted(123.45, "123.45");
+            JsonLiteralTypesAreFormatted(-123.45, "-123.45");
         }
 
         [Fact]
@@ -57,7 +72,11 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void FloatFormatsAsNumber()
         {
+            JsonLiteralTypesAreFormatted(0f, "0");
+            JsonLiteralTypesAreFormatted(123.0f, "123");
+            JsonLiteralTypesAreFormatted(-123.0f, "-123");
             JsonLiteralTypesAreFormatted(123.45f, "123.45");
+            JsonLiteralTypesAreFormatted(-123.45f, "-123.45");
         }
 
         [Fact]
@@ -71,7 +90,11 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void DecimalFormatsAsNumber()
         {
+            JsonLiteralTypesAreFormatted(0m, "0");
             JsonLiteralTypesAreFormatted(123.45m, "123.45");
+            JsonLiteralTypesAreFormatted(-123.45m, "-123.45");
+            JsonLiteralTypesAreFormatted(123.0m, "123.0");
+            JsonLiteralTypesAreFormatted(-123.0m, "-123.0");
         }
 
         static string Format(LogEventPropertyValue value)
