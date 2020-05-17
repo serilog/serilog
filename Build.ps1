@@ -6,8 +6,8 @@ echo "build: Build started"
 Push-Location $PSScriptRoot
 
 if(Test-Path .\artifacts) {
-	echo "build: Cleaning .\artifacts"
-	Remove-Item .\artifacts -Force -Recurse
+    echo "build: Cleaning .\artifacts"
+    Remove-Item .\artifacts -Force -Recurse
 }
 
 & dotnet restore --no-cache
@@ -21,12 +21,12 @@ $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($c
 echo "build: Package version suffix is $suffix"
 echo "build: Build version suffix is $buildSuffix" 
 
-foreach ($src in ls src/*) {
+foreach ($src in dir src/*) {
     Push-Location $src
 
-	echo "build: Packaging project in $src"
+    echo "build: Packaging project in $src"
 
-    & dotnet build -c Release --version-suffix=$buildSuffix
+    & dotnet build -c Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
 
     if($suffix) {
         & dotnet pack -c Release --no-build -o ..\..\artifacts --version-suffix=$suffix
@@ -38,10 +38,10 @@ foreach ($src in ls src/*) {
     Pop-Location
 }
 
-foreach ($test in ls test/*.Tests) {
+foreach ($test in dir test/*.Tests) {
     Push-Location $test
 
-	echo "build: Testing project in $test"
+    echo "build: Testing project in $test"
 
     & dotnet test -c Release
     if($LASTEXITCODE -ne 0) { exit 3 }
@@ -49,10 +49,10 @@ foreach ($test in ls test/*.Tests) {
     Pop-Location
 }
 
-foreach ($test in ls test/*.PerformanceTests) {
+foreach ($test in dir test/*.PerformanceTests) {
     Push-Location $test
 
-	echo "build: Building performance test project in $test"
+    echo "build: Building performance test project in $test"
 
     & dotnet build -c Release
     if($LASTEXITCODE -ne 0) { exit 2 }

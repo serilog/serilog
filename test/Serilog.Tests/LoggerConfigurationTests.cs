@@ -5,10 +5,8 @@ using Serilog.Events;
 using Serilog.Tests.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Serilog.Configuration;
 using Serilog.Core.Enrichers;
 using TestDummies;
@@ -36,26 +34,19 @@ namespace Serilog.Tests
         [Fact]
         public void LoggerShouldNotReferenceToItsConfigurationAfterBeingCreated()
         {
-            //.Net Core3 has a change in the JIT that can keep the loggerConfiguration instance alive in the same method. https://github.com/dotnet/runtime/issues/8561
-            //This local method makes the JIT works correct with WeakReference in .NetCore 3 or greater.
-            static WeakReference GetConfigurationWeakReference(out Logger log)
-            {
-                var loggerConfiguration = new LoggerConfiguration();
-                var weakReference = new WeakReference(loggerConfiguration);
-                log = loggerConfiguration.CreateLogger();
-                return weakReference;
-            }
+            var (logger, wr) = CreateLogger();
 
-            var wr = GetConfigurationWeakReference(out var logger);
-            GC.KeepAlive(logger);
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
             GC.Collect();
 
             Assert.False(wr.IsAlive);
-        }
+            GC.KeepAlive(logger);
 
+            (ILogger, WeakReference) CreateLogger()
+            {
+                var loggerConfiguration = new LoggerConfiguration();
+                return (loggerConfiguration.CreateLogger(), new WeakReference(loggerConfiguration));
+            }
+        }
 
         [Fact]
         public void CreateLoggerThrowsIfCalledMoreThanOnce()
@@ -166,7 +157,7 @@ namespace Serilog.Tests
                 _projection = projection ?? throw new ArgumentNullException(nameof(projection));
             }
 
-            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
+            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
 
@@ -191,7 +182,7 @@ namespace Serilog.Tests
             var logger = new LoggerConfiguration()
                 .Destructure.With(new ProjectedDestructuringPolicy(
                     canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
-                    projection: o => ((Type)o).AssemblyQualifiedName!))
+                    projection: o => ((Type)o).AssemblyQualifiedName))
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
@@ -472,16 +463,16 @@ namespace Serilog.Tests
             Assert.Contains("2", limitedCollection);
         }
 
-        static string? LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
+        static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
-            LogEvent? evt = null;
+            LogEvent evt = null;
             var logConf = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => evt = e));
             logConf = conf(logConf);
             var log = logConf.CreateLogger();
 
             log.Information($"{{{destructuringSymbol}X}}", x);
-            return evt?.Properties["X"].ToString();
+            return evt.Properties["X"].ToString();
         }
 
         [Fact]
