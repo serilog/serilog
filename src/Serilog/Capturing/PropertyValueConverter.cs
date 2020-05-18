@@ -172,6 +172,9 @@ namespace Serilog.Capturing
             if (TryConvertCompilerGeneratedType(value, destructuring, valueType, out var compilerGeneratedResult))
                 return compilerGeneratedResult;
 
+            if (value is IFormattable)
+                return new ScalarValue(value);
+
             return new ScalarValue(value.ToString());
         }
 

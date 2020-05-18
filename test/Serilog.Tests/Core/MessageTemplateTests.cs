@@ -114,6 +114,22 @@ namespace Serilog.Tests.Core
             Assert.Equal("Welcome, customer 0012", m);
         }
 
+        class CustomFormattable : IFormattable
+        {
+            public override string ToString() => "No format used";
+
+            public string ToString(string format) => ToString(format, null);
+
+            public string ToString(string format, IFormatProvider provider) => $"Format string {format} used";
+        }
+
+        [Fact]
+        public void FormatStringsArePropagatedForCustomIFormattable()
+        {
+            var m = Render("{Formatted:F}", new CustomFormattable());
+            Assert.Equal("Format string F used", m);
+        }
+
         [Theory]
         [InlineData("Welcome, customer #{CustomerId,-10}, pleasure to see you", "Welcome, customer #1234      , pleasure to see you")]
         [InlineData("Welcome, customer #{CustomerId,-10:000000}, pleasure to see you", "Welcome, customer #001234    , pleasure to see you")]
