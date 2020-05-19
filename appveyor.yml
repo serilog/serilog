@@ -5,8 +5,6 @@ image:
   - Ubuntu
 configuration: Release
 test: off
-install:
-  - ps: ./Setup.ps1
 build_script:
   - ps: ./Build.ps1
   - ps: ./BuildNativeUWP.ps1
