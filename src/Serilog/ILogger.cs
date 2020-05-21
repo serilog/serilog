@@ -39,6 +39,7 @@ namespace Serilog
     {
 #if FEATURE_DEFAULT_INTERFACE
         private static readonly object[] NoPropertyValues = Array.Empty<object>();
+        private static readonly Logger DefaultLoggerImpl = new LoggerConfiguration().CreateLogger();
 #endif
 
         /// <summary>
@@ -46,7 +47,18 @@ namespace Serilog
         /// </summary>
         /// <param name="enricher">Enricher that applies in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        ILogger ForContext(ILogEventEnricher enricher);
+#if FEATURE_DEFAULT_INTERFACE
+        [CustomDefaultMethodImplementation]
+#endif
+        ILogger ForContext(ILogEventEnricher enricher)
+#if FEATURE_DEFAULT_INTERFACE
+            => new LoggerConfiguration()
+                .MinimumLevel.Is(LevelAlias.Minimum)
+                .WriteTo.Logger(this)
+                .CreateLogger()
+                .ForContext(enricher)
+#endif
+        ;
 
         /// <summary>
         /// Create a logger that enriches log events via the provided enrichers.
@@ -73,7 +85,18 @@ namespace Serilog
         /// <param name="destructureObjects">If true, the value will be serialized as a structured
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        ILogger ForContext(string propertyName, object? value, bool destructureObjects = false);
+#if FEATURE_DEFAULT_INTERFACE
+        [CustomDefaultMethodImplementation]
+#endif
+        ILogger ForContext(string propertyName, object? value, bool destructureObjects = false)
+#if FEATURE_DEFAULT_INTERFACE
+            => new LoggerConfiguration()
+                .MinimumLevel.Is(LevelAlias.Minimum)
+                .WriteTo.Logger(this)
+                .CreateLogger()
+                .ForContext(propertyName, value, destructureObjects)
+#endif
+        ;
 
         /// <summary>
         /// Create a logger that marks log events as being from the specified
@@ -300,7 +323,28 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Write(LogEventLevel level, Exception? exception, string messageTemplate, params object?[]? propertyValues);
+#if FEATURE_DEFAULT_INTERFACE
+        [CustomDefaultMethodImplementation]
+#endif
+        void Write(LogEventLevel level, Exception? exception, string messageTemplate, params object?[]? propertyValues)
+#if FEATURE_DEFAULT_INTERFACE
+        {
+            if (!IsEnabled(level)) return;
+            if (messageTemplate == null) return;
+
+            // Catch a common pitfall when a single non-object array is cast to object[]
+            if (propertyValues != null &&
+                propertyValues.GetType() != typeof(object[]))
+                propertyValues = new object[] { propertyValues };
+
+            if (DefaultLoggerImpl.BindMessageTemplate(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties))
+            {
+                Write(new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties));
+            }
+        }
+#else
+        ;
+#endif
 
         /// <summary>
         /// Determine if events at the specified level will be passed through
@@ -308,7 +352,14 @@ namespace Serilog
         /// </summary>
         /// <param name="level">Level to check.</param>
         /// <returns>True if the level is enabled; otherwise, false.</returns>
-        bool IsEnabled(LogEventLevel level);
+#if FEATURE_DEFAULT_INTERFACE
+        [CustomDefaultMethodImplementation]
+#endif
+        bool IsEnabled(LogEventLevel level)
+#if FEATURE_DEFAULT_INTERFACE
+            => true
+#endif
+            ;
 
         /// <summary>
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level.
@@ -1285,8 +1336,15 @@ namespace Serilog
         /// }
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
+#if FEATURE_DEFAULT_INTERFACE
+        [CustomDefaultMethodImplementation]
+#endif
         bool BindMessageTemplate([NotNullWhen(true)] string messageTemplate, object?[]? propertyValues,
-                                [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties);
+                                 [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
+#if FEATURE_DEFAULT_INTERFACE
+            => DefaultLoggerImpl.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties)
+#endif
+            ;
 
         /// <summary>
         /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured
@@ -1299,6 +1357,13 @@ namespace Serilog
         /// <param name="property">The resulting property.</param>
         /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// methods never throw exceptions).</returns>
-        bool BindProperty([NotNullWhen(true)] string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property);
+#if FEATURE_DEFAULT_INTERFACE
+        [CustomDefaultMethodImplementation]
+#endif
+        bool BindProperty([NotNullWhen(true)] string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+#if FEATURE_DEFAULT_INTERFACE
+            => DefaultLoggerImpl.BindProperty(propertyName, value, destructureObjects, out property)
+#endif
+            ;
     }
 }

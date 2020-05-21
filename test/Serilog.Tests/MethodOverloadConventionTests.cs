@@ -39,6 +39,7 @@ namespace Serilog.Tests
         public static IEnumerable<object[]> DefaultInterfaceMethods =>
             typeof(ILogger).GetMethods()
                 .Where(mi => mi.GetMethodBody() != null)
+                .Where(mi => mi.GetCustomAttribute(typeof(CustomDefaultMethodImplementationAttribute)) == null)
                 .Where(mi => typeof(Logger).GetInterfaceMap(typeof(ILogger)).InterfaceMethods.Contains(mi))
                 .Select(mi => new object[] { mi });
 
@@ -140,7 +141,7 @@ namespace Serilog.Tests
                         }
                         else
                         {
-                            if (object.Equals(ifaceField, classField))
+                            if (!object.Equals(ifaceField, classField))
                             {
                                 return false;
                             }
