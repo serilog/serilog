@@ -25,11 +25,11 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<LogEventLevel> _setMinimum;
-        readonly Action<LoggingLevelSwitch> _setLevelSwitch;
-        readonly Action<string, LoggingLevelSwitch> _addOverride;
+        readonly Action<ILoggingLevelSwitch> _setLevelSwitch;
+        readonly Action<string, ILoggingLevelSwitch> _addOverride;
 
         internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum,
-                                                 Action<LoggingLevelSwitch> setLevelSwitch, Action<string, LoggingLevelSwitch> addOverride)
+                                                 Action<ILoggingLevelSwitch> setLevelSwitch, Action<string, ILoggingLevelSwitch> addOverride)
         {
             _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
             _setMinimum = setMinimum ?? throw new ArgumentNullException(nameof(setMinimum));
@@ -55,7 +55,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
         // ReSharper disable once UnusedMethodReturnValue.Global
-        public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
+        public LoggerConfiguration ControlledBy(ILoggingLevelSwitch levelSwitch)
         {
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
 
@@ -112,8 +112,8 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
         /// <exception cref="ArgumentException">When a trimmed <paramref name="source"/> is empty</exception>
-        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception> 
-        public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
+        public LoggerConfiguration Override(string source, ILoggingLevelSwitch levelSwitch)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));

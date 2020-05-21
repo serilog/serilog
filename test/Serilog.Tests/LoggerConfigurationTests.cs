@@ -475,7 +475,7 @@ namespace Serilog.Tests
         public void DynamicallySwitchingSinkRestrictsOutput()
         {
             var eventsReceived = 0;
-            var levelSwitch = new LoggingLevelSwitch();
+            ILoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(
@@ -735,7 +735,7 @@ namespace Serilog.Tests
             Assert.Empty(DummyWrappingSink.Emitted);
             Assert.Empty(sink.Events);
         }
-        
+
         [Fact]
         public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
@@ -807,7 +807,7 @@ namespace Serilog.Tests
             var evt = Assert.Single(enricher.Events);
             Assert.Equal(LogEventLevel.Warning, evt.Level);
         }
-        
+
         [Fact]
         public void LeveledEnrichersCheckLevels()
         {
@@ -829,7 +829,7 @@ namespace Serilog.Tests
         public void LeveledEnrichersCheckLevelSwitch()
         {
             var enricher = new CollectingEnricher();
-            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+            ILoggingLevelSwitch levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
 
             var logger = new LoggerConfiguration()
                 .Enrich.AtLevel(levelSwitch, enrich => enrich.With(enricher))

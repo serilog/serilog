@@ -46,7 +46,7 @@ namespace Serilog.Core
         // not be specified. If it is, we'll set _minimumLevel
         // to its lower limit and fall through to the secondary check.
         readonly LogEventLevel _minimumLevel;
-        readonly LoggingLevelSwitch _levelSwitch;
+        readonly ILoggingLevelSwitch _levelSwitch;
         readonly LevelOverrideMap _overrideMap;
 
         internal Logger(
@@ -62,7 +62,7 @@ namespace Serilog.Core
 
         internal Logger(
             MessageTemplateProcessor messageTemplateProcessor,
-            LoggingLevelSwitch levelSwitch,
+            ILoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
@@ -79,7 +79,7 @@ namespace Serilog.Core
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
-            LoggingLevelSwitch levelSwitch = null,
+            ILoggingLevelSwitch levelSwitch = null,
             LevelOverrideMap overrideMap = null)
         {
             _messageTemplateProcessor = messageTemplateProcessor;

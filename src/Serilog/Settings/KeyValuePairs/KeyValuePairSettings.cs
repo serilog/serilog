@@ -167,7 +167,7 @@ namespace Serilog.Settings.KeyValuePairs
             return Regex.IsMatch(input, LevelSwitchNameRegex);
         }
 
-        static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
+        static IReadOnlyDictionary<string, ILoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
         {
             var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
 
@@ -180,7 +180,7 @@ namespace Serilog.Settings.KeyValuePairs
                                                    InitialSwitchLevel = wt.Value
                                                }).ToList();
 
-            var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
+            var namedSwitches = new Dictionary<string, ILoggingLevelSwitch>();
             foreach (var switchDeclarationDirective in switchDeclarationDirectives)
             {
                 var switchName = switchDeclarationDirective.SwitchName;
@@ -190,7 +190,7 @@ namespace Serilog.Settings.KeyValuePairs
                 {
                     throw new FormatException($"\"{switchName}\" is not a valid name for a Level Switch declaration. Level switch must be declared with a '$' sign, like \"level-switch:$switchName\"");
                 }
-                LoggingLevelSwitch newSwitch;
+                ILoggingLevelSwitch newSwitch;
                 if (string.IsNullOrEmpty(switchInitialLevel))
                 {
                     newSwitch = new LoggingLevelSwitch();
@@ -205,26 +205,26 @@ namespace Serilog.Settings.KeyValuePairs
             return namedSwitches;
         }
 
-        static LoggingLevelSwitch LookUpSwitchByName(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
+        static ILoggingLevelSwitch LookUpSwitchByName(string switchName, IReadOnlyDictionary<string, ILoggingLevelSwitch> declaredLevelSwitches)
         {
             if (declaredLevelSwitches.TryGetValue(switchName, out var levelSwitch))
             {
                 return levelSwitch;
             }
 
-            throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
+            throw new InvalidOperationException($"No ILoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
         }
 
-        static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
+        static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, ILoggingLevelSwitch> declaredSwitches)
         {
-            if (type == typeof(LoggingLevelSwitch))
+            if (type == typeof(ILoggingLevelSwitch))
             {
                 return LookUpSwitchByName(valueOrSwitchName, declaredSwitches);
             }
             return SettingValueConversions.ConvertToType(valueOrSwitchName, type);
         }
 
-        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
+        static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, ILoggingLevelSwitch> declaredSwitches)
         {
             foreach (var directiveInfo in directives)
             {

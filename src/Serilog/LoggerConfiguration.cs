@@ -35,9 +35,9 @@ namespace Serilog
         readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-        readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
+        readonly Dictionary<string, ILoggingLevelSwitch> _overrides = new Dictionary<string, ILoggingLevelSwitch>();
         LogEventLevel _minimumLevel = LogEventLevel.Information;
-        LoggingLevelSwitch _levelSwitch;
+        ILoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;

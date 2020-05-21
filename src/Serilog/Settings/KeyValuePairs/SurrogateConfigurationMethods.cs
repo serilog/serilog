@@ -48,7 +48,7 @@ namespace Serilog.Settings.KeyValuePairs
             LoggerSinkConfiguration loggerSinkConfiguration,
             ILogEventSink sink,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
+            ILoggingLevelSwitch levelSwitch = null)
         {
             return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
         }
@@ -57,7 +57,7 @@ namespace Serilog.Settings.KeyValuePairs
             LoggerAuditSinkConfiguration auditSinkConfiguration,
             ILogEventSink sink,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
+            ILoggingLevelSwitch levelSwitch = null)
         {
             return auditSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
         }

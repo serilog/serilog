@@ -188,14 +188,14 @@ namespace Serilog.Tests.Settings
         [InlineData(" ", false)]
         [InlineData("$1switch", false)]
         [InlineData("$switch_name", false)]
-        public void LoggingLevelSwitchNameValidityScenarios(string switchName, bool expectedValid)
+        public void ILoggingLevelSwitchNameValidityScenarios(string switchName, bool expectedValid)
         {
             Assert.True(KeyValuePairSettings.IsValidSwitchName(switchName) == expectedValid,
                 $"expected IsValidSwitchName({switchName}) to return {expectedValid} ");
         }
 
         [Fact]
-        public void LoggingLevelSwitchWithInvalidNameThrowsFormatException()
+        public void ILoggingLevelSwitchWithInvalidNameThrowsFormatException()
         {
             var settings = new Dictionary<string, string>
             {
@@ -211,7 +211,7 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void LoggingLevelSwitchIsConfigured()
+        public void ILoggingLevelSwitchIsConfigured()
         {
             var settings = new Dictionary<string, string>
             {
@@ -252,7 +252,7 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void LoggingLevelSwitchIsPassedToSinks()
+        public void ILoggingLevelSwitchIsPassedToSinks()
         {
             var settings = new Dictionary<string, string>
             {
@@ -302,7 +302,7 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
-        public void LoggingLevelSwitchCanBeUsedForMinimumLevelOverrides()
+        public void ILoggingLevelSwitchCanBeUsedForMinimumLevelOverrides()
         {
             var settings = new Dictionary<string, string>
             {

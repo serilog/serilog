@@ -65,7 +65,7 @@ namespace Serilog.Tests.Core
         }
 
         [Fact]
-        public void LoggingLevelSwitchDynamicallyChangesLevel()
+        public void ILoggingLevelSwitchDynamicallyChangesLevel()
         {
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);

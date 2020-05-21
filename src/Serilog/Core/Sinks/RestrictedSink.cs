@@ -20,9 +20,9 @@ namespace Serilog.Core.Sinks
     class RestrictedSink : ILogEventSink, IDisposable
     {
         readonly ILogEventSink _sink;
-        readonly LoggingLevelSwitch _levelSwitch;
+        readonly ILoggingLevelSwitch _levelSwitch;
 
-        public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
+        public RestrictedSink(ILogEventSink sink, ILoggingLevelSwitch levelSwitch)
         {
             _sink = sink ?? throw new ArgumentNullException(nameof(sink));
             _levelSwitch = levelSwitch ?? throw new ArgumentNullException(nameof(levelSwitch));

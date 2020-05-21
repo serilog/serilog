@@ -48,7 +48,7 @@ namespace TestDummies
         public static LoggerConfiguration DummyWithLevelSwitch(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch controlLevelSwitch = null)
+            ILoggingLevelSwitch controlLevelSwitch = null)
         {
             return loggerSinkConfiguration.Sink(new DummyWithLevelSwitchSink(controlLevelSwitch), restrictedToMinimumLevel);
         }
@@ -77,7 +77,7 @@ namespace TestDummies
             this LoggerSinkConfiguration loggerSinkConfiguration,
             Action<LoggerSinkConfiguration> wrappedSinkAction,
             LogEventLevel logEventLevel,
-            LoggingLevelSwitch levelSwitch)
+            ILoggingLevelSwitch levelSwitch)
         {
             return LoggerSinkConfiguration.Wrap(
                 loggerSinkConfiguration,

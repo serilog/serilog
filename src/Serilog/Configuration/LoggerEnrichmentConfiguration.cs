@@ -136,7 +136,7 @@ namespace Serilog.Configuration
         /// <remarks>This method permits additional information to be attached to e.g. warnings and errors, that might be too expensive
         /// to collect or store at lower levels.</remarks>
         /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
-        public LoggerConfiguration AtLevel(LoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
+        public LoggerConfiguration AtLevel(ILoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
         {
             if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
 
