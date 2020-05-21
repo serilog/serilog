@@ -271,7 +271,7 @@ namespace Serilog.Tests.Settings
 
             Assert.False(DummyWithLevelSwitchSink.ControlLevelSwitch == null, "Sink ControlLevelSwitch should have been initialized");
 
-            var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+            var controlSwitch = (LoggingLevelSwitch) DummyWithLevelSwitchSink.ControlLevelSwitch;
             Assert.NotNull(controlSwitch);
 
             log.Write(Some.DebugEvent());
@@ -334,7 +334,7 @@ namespace Serilog.Tests.Settings
             Assert.False(evt is null, "LoggingLevelSwitch initial level was Warning for logger System.*. It should log Warning messages for SourceContext System.Bar");
 
             evt = null;
-            var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
+            var controlSwitch = (LoggingLevelSwitch) DummyWithLevelSwitchSink.ControlLevelSwitch;
 
             controlSwitch.MinimumLevel = LogEventLevel.Information;
             systemLogger.Write(Some.InformationEvent());

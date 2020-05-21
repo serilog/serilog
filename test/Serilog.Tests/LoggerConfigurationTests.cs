@@ -475,7 +475,7 @@ namespace Serilog.Tests
         public void DynamicallySwitchingSinkRestrictsOutput()
         {
             var eventsReceived = 0;
-            ILoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
+            var levelSwitch = new LoggingLevelSwitch();
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(
@@ -829,7 +829,7 @@ namespace Serilog.Tests
         public void LeveledEnrichersCheckLevelSwitch()
         {
             var enricher = new CollectingEnricher();
-            ILoggingLevelSwitch levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
 
             var logger = new LoggerConfiguration()
                 .Enrich.AtLevel(levelSwitch, enrich => enrich.With(enricher))

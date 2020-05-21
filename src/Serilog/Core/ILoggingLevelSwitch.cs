@@ -11,6 +11,6 @@ namespace Serilog.Core
         /// The current minimum level, below which no events
         /// should be generated.
         /// </summary>
-        LogEventLevel MinimumLevel { get; set; }
+        LogEventLevel MinimumLevel { get; }
     }
 }
