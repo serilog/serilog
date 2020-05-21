@@ -19,7 +19,7 @@ namespace Serilog.Core
     /// <summary>
     /// Dynamically controls logging level.
     /// </summary>
-    public class LoggingLevelSwitch
+    public class LoggingLevelSwitch : ILoggingLevelSwitch
     {
         volatile LogEventLevel _minimumLevel;
 
