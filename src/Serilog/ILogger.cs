@@ -337,7 +337,7 @@ namespace Serilog
                 propertyValues.GetType() != typeof(object[]))
                 propertyValues = new object[] { propertyValues };
 
-            if (DefaultLoggerImpl.BindMessageTemplate(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties))
+            if (BindMessageTemplate(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties))
             {
                 Write(new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties));
             }
