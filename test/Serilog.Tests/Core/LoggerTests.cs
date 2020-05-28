@@ -237,7 +237,7 @@ namespace Serilog.Tests.Core
             Assert.Equal(now.Date, eventTimestamp.Date);
             Assert.Equal(now.Hour, eventTimestamp.Hour);
             Assert.Equal(now.Minute, eventTimestamp.Minute);
-            // seconds are not checked intenionally to avoid instability.
+            // seconds are not checked intentionally to avoid instability.
         }
 
         [Fact]

@@ -3,7 +3,7 @@
 namespace Serilog.Configuration
 {
     /// <summary>
-    /// Controls sink configuration.
+    /// Controls time provider configuration.
     /// </summary>
     public class LoggerTimeProviderConfiguration
     {
@@ -17,7 +17,7 @@ namespace Serilog.Configuration
         }
 
         /// <summary>
-        /// Sets the time provider.
+        /// Sets the time provider, which will be used for creating the time stamps of the log events.
         /// </summary>
         /// <param name="timeProvider">The time provider.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
