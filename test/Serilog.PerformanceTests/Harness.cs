@@ -26,6 +26,12 @@ namespace Serilog.PerformanceTests
     public class Harness
     {
         [Fact]
+        public void SourceContextMatch()
+        {
+            BenchmarkRunner.Run<SourceContextMatchBenchmark>();
+        }
+
+        [Fact]
         public void Allocations()
         {
             BenchmarkRunner.Run<AllocationsBenchmark>();
@@ -79,7 +85,7 @@ namespace Serilog.PerformanceTests
         {
             BenchmarkRunner.Run<OutputTemplateRenderingBenchmark>();
         }
-        
+
         [Fact]
         public void MessageTemplateRendering()
         {

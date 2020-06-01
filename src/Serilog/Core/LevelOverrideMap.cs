@@ -29,13 +29,10 @@ namespace Serilog.Core
             public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
             {
                 Context = context;
-                ContextPrefix = context + ".";
                 LevelSwitch = levelSwitch;
             }
 
             public string Context { get; }
-
-            public string ContextPrefix { get; }
 
             public LoggingLevelSwitch LevelSwitch { get; }
         }
@@ -65,11 +62,19 @@ namespace Serilog.Core
                 .ToArray();
         }
 
-        public void GetEffectiveLevel(string context, out LogEventLevel minimumLevel, out LoggingLevelSwitch levelSwitch)
+        public void GetEffectiveLevel(
+#if FEATURE_SPAN
+            ReadOnlySpan<char> context,
+#else
+            string context,
+#endif
+            out LogEventLevel minimumLevel,
+            out LoggingLevelSwitch levelSwitch)
         {
             foreach (var levelOverride in _overrides)
             {
-                if (context.StartsWith(levelOverride.ContextPrefix) || context == levelOverride.Context)
+                if (context.StartsWith(levelOverride.Context) &&
+                   (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
                 {
                     minimumLevel = LevelAlias.Minimum;
                     levelSwitch = levelOverride.LevelSwitch;
