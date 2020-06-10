@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,6 +106,8 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Override the minimum level for events from a specific namespace or type name.
+        /// This API is not supported for configuring sub-loggers (created through <see cref="LoggerSinkConfiguration.Logger(ILogger, LogEventLevel)"/>). Use <see cref="LoggerConfiguration.Filter"/> or <see cref="LoggerSinkConfiguration.Conditional(Func{LogEvent, bool}, Action{LoggerSinkConfiguration})"/> instead.
+        /// You also might consider using https://github.com/serilog/serilog-filters-expressions.
         /// </summary>
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="levelSwitch">The switch controlling loggers for matching sources.</param>
@@ -127,6 +129,8 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Override the minimum level for events from a specific namespace or type name.
+        /// This API is not supported for configuring sub-loggers (created through <see cref="LoggerSinkConfiguration.Logger(ILogger, LogEventLevel)"/>). Use <see cref="LoggerConfiguration.Filter"/> or <see cref="LoggerSinkConfiguration.Conditional(Func{LogEvent, bool}, Action{LoggerSinkConfiguration})"/> instead.
+        /// You also might consider using https://github.com/serilog/serilog-filters-expressions.
         /// </summary>
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="minimumLevel">The minimum level applied to loggers for matching sources.</param>
