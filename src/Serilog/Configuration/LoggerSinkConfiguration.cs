@@ -252,7 +252,7 @@ namespace Serilog.Configuration
 
             var enclosed = sinksToWrap.Count == 1 ?
                 sinksToWrap.Single() :
-                new SafeAggregateSink(sinksToWrap);
+                new AggregateSink(sinksToWrap);
 
             var wrappedSink = wrapSink(enclosed);
 
