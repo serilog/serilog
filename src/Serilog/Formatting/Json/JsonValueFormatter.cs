@@ -275,6 +275,12 @@ namespace Serilog.Formatting.Json
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
 
+            var str = value.ToString();
+            if (str is null)
+            {
+                output.Write("null");
+                return;
+            }
             FormatStringValue(value.ToString(), output);
         }
 

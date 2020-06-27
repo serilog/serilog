@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 using Serilog.Formatting.Json;
-using Serilog.Tests.Support;
 using Xunit;
 
 namespace Serilog.Tests.Formatting.Json
@@ -97,6 +96,40 @@ namespace Serilog.Tests.Formatting.Json
             JsonLiteralTypesAreFormatted(-123.0m, "-123.0");
         }
 
+
+        [Fact]
+        public void TimeSpanFormatsAsString()
+        {
+            JsonLiteralTypesAreFormatted(TimeSpan.FromHours(1), "\"01:00:00\"");
+            JsonLiteralTypesAreFormatted(TimeSpan.FromHours(-1), "\"-01:00:00\"");
+            JsonLiteralTypesAreFormatted(TimeSpan.Zero, "\"00:00:00\"");
+            JsonLiteralTypesAreFormatted(TimeSpan.FromDays(1), "\"1.00:00:00\"");
+            JsonLiteralTypesAreFormatted(TimeSpan.FromDays(-1), "\"-1.00:00:00\"");
+            JsonLiteralTypesAreFormatted(TimeSpan.MinValue, "\"-10675199.02:48:05.4775808\"");
+            JsonLiteralTypesAreFormatted(TimeSpan.MaxValue, "\"10675199.02:48:05.4775807\"");
+        }
+
+        [Fact]
+        public void GuidFormatsAsString()
+        {
+            JsonLiteralTypesAreFormatted(Guid.Parse("88c117ae-616c-4bf7-ab58-9c729b15c562"), "\"88c117ae-616c-4bf7-ab58-9c729b15c562\"");
+            JsonLiteralTypesAreFormatted(Guid.Empty, "\"00000000-0000-0000-0000-000000000000\"");
+        }
+
+        [Fact]
+        public void ObjectsAreFormattedViaToStringAsString()
+        {
+            JsonLiteralTypesAreFormatted(new Exception("This e a Exception"), "\"System.Exception: This e a Exception\"");
+            JsonLiteralTypesAreFormatted(new AChair(), "\"a chair\"");
+            JsonLiteralTypesAreFormatted(new ABadBehavior(), "null");
+        }
+
+        [Fact]
+        public void ObjectsWithBugReturnExceptionWhenUseFormattedViaToStringAsString()
+        {
+            Assert.Throws<ArgumentNullException>(() => JsonLiteralTypesAreFormatted(new ABug(), "will Throws a error before comparing with this string"));
+        }
+
         static string Format(LogEventPropertyValue value)
         {
             var formatter = new JsonValueFormatter();
@@ -167,6 +200,23 @@ namespace Serilog.Tests.Formatting.Json
             formatter.Format(structure, output);
             var f = output.ToString();
             Assert.Equal("{}", f);
+        }
+
+        class AChair
+        {
+            public string Back => "";
+            public int[] Legs => null;
+            public override string ToString() => "a chair";
+        }
+        class ABadBehavior
+        {
+            public string AProp => "";
+            public override string ToString() => null;
+        }
+        class ABug
+        {
+            public string AProp => "";
+            public override string ToString() => throw new ArgumentNullException("", "A possible a Bug in a class");
         }
     }
 }
