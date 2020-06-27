@@ -2,11 +2,9 @@ version: '{build}'
 skip_tags: true
 image:
   - Visual Studio 2019
-  - Ubuntu1804
+  - Ubuntu
 configuration: Release
 test: off
-install:
-  - ps: ./Setup.ps1
 build_script:
   - ps: ./Build.ps1
   - ps: ./BuildNativeUWP.ps1
@@ -14,9 +12,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu1804
-  install:
-  - sh setup.sh
+      - image: Ubuntu
   build_script:
   - sh build.sh
 artifacts:
