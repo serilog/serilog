@@ -281,7 +281,7 @@ namespace Serilog.Formatting.Json
                 output.Write("null");
                 return;
             }
-            FormatStringValue(value.ToString(), output);
+            FormatStringValue(str, output);
         }
 
         static void FormatStringValue(string str, TextWriter output)
