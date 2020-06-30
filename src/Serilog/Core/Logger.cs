@@ -480,7 +480,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose(string messageTemplate, params object?[]? propertyValues)
         {
-            Write(LogEventLevel.Verbose, messageTemplate, propertyValues);
+            Verbose((Exception?)null, messageTemplate, propertyValues);
         }
 
         /// <summary>
@@ -629,7 +629,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug(string messageTemplate, params object?[]? propertyValues)
         {
-            Write(LogEventLevel.Debug, messageTemplate, propertyValues);
+            Debug((Exception?)null, messageTemplate, propertyValues);
         }
 
         /// <summary>
@@ -778,7 +778,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Information(string messageTemplate, params object?[]? propertyValues)
         {
-            Write(LogEventLevel.Information, messageTemplate, propertyValues);
+            Information((Exception?)null, messageTemplate, propertyValues);
         }
 
         /// <summary>
@@ -927,7 +927,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning(string messageTemplate, params object?[]? propertyValues)
         {
-            Write(LogEventLevel.Warning, messageTemplate, propertyValues);
+            Warning((Exception?)null, messageTemplate, propertyValues);
         }
 
         /// <summary>
@@ -1076,7 +1076,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Error(string messageTemplate, params object?[]? propertyValues)
         {
-            Write(LogEventLevel.Error, messageTemplate, propertyValues);
+            Error((Exception?)null, messageTemplate, propertyValues);
         }
 
         /// <summary>
@@ -1225,7 +1225,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal(string messageTemplate, params object?[]? propertyValues)
         {
-            Write(LogEventLevel.Fatal, messageTemplate, propertyValues);
+            Fatal((Exception?) null, messageTemplate, propertyValues);
         }
 
         /// <summary>
