@@ -263,7 +263,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, string messageTemplate, params object?[]? propertyValues)
         {
-            Write(level, messageTemplate, propertyValues);
+            Write(level, (Exception?)null, messageTemplate, propertyValues);
         }
 
         /// <summary>
