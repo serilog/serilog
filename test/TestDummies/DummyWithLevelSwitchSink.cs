@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
@@ -12,7 +12,8 @@ namespace TestDummies
             ControlLevelSwitch = loggingControlLevelSwitch;
         }
 
-        [ThreadStatic] public static LoggingLevelSwitch? ControlLevelSwitch;
+        [ThreadStatic]
+        public static LoggingLevelSwitch? ControlLevelSwitch;
 
         [ThreadStatic]
         // ReSharper disable ThreadStaticFieldHasInitializer
