@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -289,7 +289,7 @@ namespace Serilog.Capturing
         {
             if (destructuring == Destructuring.Destructure)
             {
-                string? typeTag = valueType.Name;
+                var typeTag = valueType.Name;
                 if (typeTag.Length <= 0 || IsCompilerGeneratedType(valueType))
                 {
                     typeTag = null;
