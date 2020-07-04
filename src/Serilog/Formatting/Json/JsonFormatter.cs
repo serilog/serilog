@@ -367,7 +367,13 @@ namespace Serilog.Formatting.Json
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteLiteralValue(object value, TextWriter output)
         {
-            WriteString(value.ToString()!, output);
+            var str = value.ToString();
+            if (str is null)
+            {
+                output.Write("null");
+                return;
+            }
+            WriteString(str, output);
         }
 
         void WriteLiteral(object? value, TextWriter output, bool forceQuotation = false)
