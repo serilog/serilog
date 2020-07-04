@@ -63,7 +63,6 @@ namespace Serilog.Context
             readonly ImmutableStack<T> _stack;
             ImmutableStack<T> _top;
 
-            [MaybeNull]
             T _current;
 
             public Enumerator(ImmutableStack<T> stack)
@@ -90,7 +89,7 @@ namespace Serilog.Context
 
             public T Current => _current;
 
-            object IEnumerator.Current => _current!;
+            object? IEnumerator.Current => _current;
 
             public void Dispose()
             {
