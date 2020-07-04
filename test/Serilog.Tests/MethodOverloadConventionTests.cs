@@ -69,8 +69,8 @@ namespace Serilog.Tests
                     (OpCodes.Ldsfld, OpCodes.Ldsfld)
                 }.ToLookup(x => x.Item1.Value, el => el.Item2.Value);
 
-                var ifaceBytes = ifaceMethod.GetMethodBody().GetILAsByteArray().AsSpan();
-                var classBytes = classMethod.GetMethodBody().GetILAsByteArray().AsSpan();
+                var ifaceBytes = ifaceMethod.GetMethodBody()!.GetILAsByteArray().AsSpan();
+                var classBytes = classMethod.GetMethodBody()!.GetILAsByteArray().AsSpan();
 
                 while (ifaceBytes[0] == OpCodes.Nop.Value)
                 {

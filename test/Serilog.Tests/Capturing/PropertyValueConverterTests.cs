@@ -1,4 +1,4 @@
-﻿using Serilog.Capturing;
+using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -59,9 +59,9 @@ namespace Serilog.Tests.Capturing
             {
                 for (var i = 0; i < 100; ++i)
                 {
-                    barrier.SignalAndWait();
+                    barrier!.SignalAndWait();
 
-                    var propValue = converter.CreatePropertyValue(logObject, true);
+                    var propValue = converter!.CreatePropertyValue(logObject, true);
 
                     Assert.IsType<StructureValue>(propValue);
 

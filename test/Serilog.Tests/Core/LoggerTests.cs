@@ -199,7 +199,7 @@ namespace Serilog.Tests.Core
             Assert.Equal(42, collectingSink.SingleEvent.Properties["number"].LiteralValue());
             Assert.Equal(
                 expected: new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2), new ScalarValue(3) }),
-                actual: (collectingSink.SingleEvent.Properties["values"] as SequenceValue),
+                actual: (collectingSink.SingleEvent.Properties["values"] as SequenceValue)!,
                 comparer: new LogEventPropertyValueComparer());
 
             levelSwitch.MinimumLevel = LogEventLevel.Fatal;
