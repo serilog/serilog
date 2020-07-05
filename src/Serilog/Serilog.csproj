@@ -57,6 +57,7 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_DEFAULT_INTERFACE;NULLABLE_REFERENCE_TYPES</DefineConstants>
   </PropertyGroup>
 
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
   </ItemGroup>
