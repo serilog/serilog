@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net452</TargetFrameworks>
     <AssemblyName>TestDummies</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
