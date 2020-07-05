@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
@@ -269,7 +269,7 @@ namespace Serilog.Tests.Formatting.Json
         class ABadBehavior
         {
             public string AProp() => "AProp";
-            public override string ToString() => null;
+            public override string? ToString() => null;
         }
     }
 }

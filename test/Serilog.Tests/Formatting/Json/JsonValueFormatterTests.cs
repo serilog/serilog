@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
@@ -205,13 +205,13 @@ namespace Serilog.Tests.Formatting.Json
         class AChair
         {
             public string Back => "";
-            public int[] Legs => null;
+            public int[]? Legs => null;
             public override string ToString() => "a chair";
         }
         class ABadBehavior
         {
             public string AProp => "";
-            public override string ToString() => null;
+            public override string? ToString() => null;
         }
         class ABug
         {
