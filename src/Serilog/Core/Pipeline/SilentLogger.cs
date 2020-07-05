@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -324,14 +324,14 @@ namespace Serilog.Core.Pipeline
         }
 
         [MessageTemplateFormatMethod("messageTemplate")]
-        public bool BindMessageTemplate([NotNullWhen(true)] string messageTemplate, object?[]? propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
+        public bool BindMessageTemplate([NotNullWhen(true)] string? messageTemplate, object?[]? propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             parsedTemplate = null;
             boundProperties = null;
             return false;
         }
 
-        public bool BindProperty([NotNullWhen(true)] string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+        public bool BindProperty([NotNullWhen(true)] string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             property = null;
             return false;
