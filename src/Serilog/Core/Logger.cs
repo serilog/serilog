@@ -1326,7 +1326,7 @@ namespace Serilog.Core
         /// }
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        public bool BindMessageTemplate([NotNullWhen(true)] string messageTemplate, object?[]? propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
+        public bool BindMessageTemplate([NotNullWhen(true)] string? messageTemplate, object?[]? propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             if (messageTemplate == null)
             {
@@ -1354,7 +1354,7 @@ namespace Serilog.Core
         /// <param name="property">The resulting property.</param>
         /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// methods never throw exceptions).</returns>
-        public bool BindProperty([NotNullWhen(true)] string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+        public bool BindProperty([NotNullWhen(true)] string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             if (!LogEventProperty.IsValidName(propertyName))
             {
