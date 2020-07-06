@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using Serilog.Events;
+using System.Linq;
 
 namespace Serilog
 {
@@ -8,6 +9,78 @@ namespace Serilog
     /// </summary>
     public static class LoggerExtensions
     {
+        #region Nested Types
+
+        private class LazyPropertyValue
+        {
+            #region Constructors
+
+            public LazyPropertyValue(Func<object> valueAccessor)
+            {
+                _valueAccessor = valueAccessor;
+            }
+
+            #endregion Constructors
+
+            #region Fields
+
+            private readonly Func<object> _valueAccessor;
+
+            #endregion Fields
+
+            #region Methods
+
+            #region Public Methods
+
+            public override string ToString()
+            {
+                return _valueAccessor?.Invoke()?.ToString();
+            }
+
+            #endregion Public Methods
+
+            #endregion Methods
+        }
+
+        #endregion Nested Types
+
+        #region Methods
+
+        #region Public Static Methods
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Debug"/> level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Debug(this ILogger logger, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Debug(messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Error"/> level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Error(this ILogger logger, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Error(messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Fatal(this ILogger logger, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Fatal(messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
         /// <summary>
         /// Create a logger that enriches log events when the specified level is enabled.
         /// </summary>
@@ -34,5 +107,53 @@ namespace Serilog
                 ? logger.ForContext(propertyName, value, destructureObjects)
                 : logger;
         }
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Information"/> level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Information(this ILogger logger, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Information(messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Verbose(this ILogger logger, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Verbose(messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
+        /// <summary>
+        /// Write a log event with the <see cref="LogEventLevel.Warning"/> level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Warning(this ILogger logger, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Warning(messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
+        /// <summary>
+        /// Write a log event with the specified level and message.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="messageTemplate">Message template describing the event.</param>
+        /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
+        public static void Write(this ILogger logger, LogEventLevel level, string messageTemplate, params Func<object>[] propertyValueAccessors)
+        {
+            logger.Write(level, messageTemplate, propertyValueAccessors.Select(x => new LazyPropertyValue(x)));
+        }
+
+        #endregion Public Static Methods
+
+        #endregion Methods
     }
 }
