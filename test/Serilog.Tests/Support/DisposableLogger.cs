@@ -400,12 +400,12 @@ namespace Serilog.Tests.Support
             throw new NotImplementedException();
         }
 
-        public bool BindMessageTemplate([NotNullWhen(true)] string messageTemplate, object?[]? propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
+        public bool BindMessageTemplate([NotNullWhen(true)] string? messageTemplate, object?[]? propertyValues, [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             throw new NotImplementedException();
         }
 
-        public bool BindProperty([NotNullWhen(true)] string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+        public bool BindProperty([NotNullWhen(true)] string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             throw new NotImplementedException();
         }
