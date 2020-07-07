@@ -86,7 +86,7 @@ namespace Serilog.Context
         /// </summary>
         /// <param name="enricher">An enricher to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="enricher"/> is <code>null</code></exception>
         public static IDisposable Push(ILogEventEnricher enricher)
         {
             if (enricher == null) throw new ArgumentNullException(nameof(enricher));
@@ -108,7 +108,7 @@ namespace Serilog.Context
         /// <seealso cref="PropertyEnricher"/>.
         /// <param name="enrichers">Enrichers to push onto the log context</param>
         /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
         public static IDisposable Push(params ILogEventEnricher[] enrichers)
         {
             if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));

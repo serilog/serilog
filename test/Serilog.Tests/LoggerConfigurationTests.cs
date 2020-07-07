@@ -34,15 +34,18 @@ namespace Serilog.Tests
         [Fact]
         public void LoggerShouldNotReferenceToItsConfigurationAfterBeingCreated()
         {
-            // This fact required to run in Release mode to run successful.
-            var loggerConfiguration = new LoggerConfiguration();
-            var wr = new WeakReference(loggerConfiguration);
-            var logger = loggerConfiguration.CreateLogger();
+            var (logger, wr) = CreateLogger();
 
             GC.Collect();
 
             Assert.False(wr.IsAlive);
             GC.KeepAlive(logger);
+
+            (ILogger, WeakReference) CreateLogger()
+            {
+                var loggerConfiguration = new LoggerConfiguration();
+                return (loggerConfiguration.CreateLogger(), new WeakReference(loggerConfiguration));
+            }
         }
 
         [Fact]

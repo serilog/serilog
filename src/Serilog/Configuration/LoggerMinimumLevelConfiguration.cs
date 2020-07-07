@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,10 +53,12 @@ namespace Serilog.Configuration
         /// </summary>
         /// <param name="levelSwitch">The switch.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
         // ReSharper disable once UnusedMethodReturnValue.Global
         public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
         {
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+
             _setLevelSwitch(levelSwitch);
             return _loggerConfiguration;
         }
@@ -104,18 +106,22 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Override the minimum level for events from a specific namespace or type name.
+        /// This API is not supported for configuring sub-loggers (created through <see cref="LoggerSinkConfiguration.Logger(ILogger, LogEventLevel)"/>). Use <see cref="LoggerConfiguration.Filter"/> or <see cref="LoggerSinkConfiguration.Conditional(Func{LogEvent, bool}, Action{LoggerSinkConfiguration})"/> instead.
+        /// You also might consider using https://github.com/serilog/serilog-filters-expressions.
         /// </summary>
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="levelSwitch">The switch controlling loggers for matching sources.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentException">When a trimmed <paramref name="source"/> is empty</exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception> 
         public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
 
             var trimmed = source.Trim();
-            if (trimmed.Length == 0)
-                throw new ArgumentException("A source name must be provided.", nameof(source));
+            if (trimmed.Length == 0) throw new ArgumentException($"A source {nameof(source)} must be provided.", nameof(source));
 
             _addOverride(trimmed, levelSwitch);
             return _loggerConfiguration;
@@ -123,10 +129,13 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Override the minimum level for events from a specific namespace or type name.
+        /// This API is not supported for configuring sub-loggers (created through <see cref="LoggerSinkConfiguration.Logger(ILogger, LogEventLevel)"/>). Use <see cref="LoggerConfiguration.Filter"/> or <see cref="LoggerSinkConfiguration.Conditional(Func{LogEvent, bool}, Action{LoggerSinkConfiguration})"/> instead.
+        /// You also might consider using https://github.com/serilog/serilog-filters-expressions.
         /// </summary>
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="minimumLevel">The minimum level applied to loggers for matching sources.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
         public LoggerConfiguration Override(string source, LogEventLevel minimumLevel)
         {
             return Override(source, new LoggingLevelSwitch(minimumLevel));

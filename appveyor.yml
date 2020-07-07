@@ -2,11 +2,9 @@ version: '{build}'
 skip_tags: true
 image:
   - Visual Studio 2019
-  - Ubuntu1804
+  - Ubuntu
 configuration: Release
 test: off
-install:
-  - ps: ./Setup.ps1
 build_script:
   - ps: ./Build.ps1
   - ps: ./BuildNativeUWP.ps1
@@ -14,9 +12,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu1804
-  install:
-  - sh setup.sh
+      - image: Ubuntu
   build_script:
   - sh build.sh
 artifacts:
@@ -25,8 +21,7 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: N59tiJECUYpip6tEn0xvdmDAEiP9SIzyLEFLpwiigm/8WhJvBNs13QxzT1/3/JW/
-  skip_symbols: true
+    secure: hHbvIML/EUrC0+eQvNS0oTd0++/EJHLGUrfvcvY1LBPY4FKRgAOkkq5sWygTNHY7
   on:
     branch: /^(master|dev)$/
 - provider: GitHub

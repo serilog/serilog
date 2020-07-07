@@ -42,10 +42,13 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+        /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
         public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
             : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>())
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
+
             foreach (var property in properties)
                 AddOrUpdateProperty(property);
         }
@@ -58,6 +61,8 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+        /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
         internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, EventProperty[] properties)
             : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(properties?.Length ?? throw new ArgumentNullException(nameof(properties))))
         {
@@ -115,10 +120,11 @@ namespace Serilog.Events
         /// Add a property to the event if not already present, otherwise, update its value.
         /// </summary>
         /// <param name="property">The property to add or update.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
         public void AddOrUpdateProperty(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
+
             _properties[property.Name] = property.Value;
         }
 
@@ -126,10 +132,11 @@ namespace Serilog.Events
         /// Add a property to the event if not already present, otherwise, update its value.
         /// </summary>
         /// <param name="property">The property to add or update.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>default</code></exception>
         internal void AddOrUpdateProperty(in EventProperty property)
         {
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
+
             _properties[property.Name] = property.Value;
         }
 
@@ -137,10 +144,11 @@ namespace Serilog.Events
         /// Add a property to the event if not already present.
         /// </summary>
         /// <param name="property">The property to add.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
         public void AddPropertyIfAbsent(LogEventProperty property)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
+
             if (!_properties.ContainsKey(property.Name))
                 _properties.Add(property.Name, property.Value);
         }
@@ -149,10 +157,11 @@ namespace Serilog.Events
         /// Add a property to the event if not already present.
         /// </summary>
         /// <param name="property">The property to add.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>default</code></exception>
         internal void AddPropertyIfAbsent(in EventProperty property)
         {
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
+
             if (!_properties.ContainsKey(property.Name))
                 _properties.Add(property.Name, property.Value);
         }
