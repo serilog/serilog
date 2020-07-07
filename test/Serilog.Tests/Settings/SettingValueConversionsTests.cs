@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
@@ -21,14 +21,14 @@ namespace Serilog.Tests.Settings
         public void NullValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)SettingValueConversions.ConvertToType(null, typeof(int?));
-            Assert.True(result is null);
+            Assert.Null(result);
         }
 
         [Fact]
         public void EmptyStringValuesConvertToNullIfTargetIsNullable()
         {
             var result = (int?)SettingValueConversions.ConvertToType("", typeof(int?));
-            Assert.True(result is null);
+            Assert.Null(result);
         }
 
         [Fact]
