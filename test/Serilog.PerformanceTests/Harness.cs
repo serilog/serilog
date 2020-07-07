@@ -21,7 +21,7 @@ namespace Serilog.PerformanceTests
     /// Wrappers that make it easy to run benchmark suites through the <c>dotnet test</c> runner.
     /// </summary>
     /// <example>
-    /// <code>dotnet test -c Release -f netcoreapp2.2 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"</code>
+    /// <code>dotnet test -c Release -f netcoreapp3.1 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"</code>
     /// </example>
     public class Harness
     {

@@ -1,4 +1,4 @@
-﻿using Serilog.Core;
+using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -10,6 +10,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xunit;
 using Xunit.Sdk;
+
+#if FEATURE_DEFAULT_INTERFACE
+using System.Reflection.Emit;
+#endif
+
 // ReSharper disable PossibleMultipleEnumeration
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -29,6 +34,127 @@ namespace Serilog.Tests
         //this is used as both the variable name for message template parameter
         // and as the argument for the MessageTemplateFormatMethodAttr
         const string MessageTemplate = "messageTemplate";
+
+#if FEATURE_DEFAULT_INTERFACE
+        public static IEnumerable<object[]> DefaultInterfaceMethods =>
+            typeof(ILogger).GetMethods()
+                .Where(mi => mi.GetMethodBody() != null)
+                .Where(mi => mi.GetCustomAttribute(typeof(CustomDefaultMethodImplementationAttribute)) == null)
+                .Where(mi => typeof(Logger).GetInterfaceMap(typeof(ILogger)).InterfaceMethods.Contains(mi))
+                .Select(mi => new object[] { mi });
+
+        [Theory]
+        [MemberData(nameof(DefaultInterfaceMethods))]
+        public void ILoggerDefaultMethodsShouldBeInSyncWithLogger(MethodInfo defaultInterfaceMethod)
+        {
+            var imap = typeof(Logger).GetInterfaceMap(typeof(ILogger));
+            var loggerMatchingMethod = imap.TargetMethods[Array.IndexOf(imap.InterfaceMethods, defaultInterfaceMethod)];
+
+            Assert.True(MethodBodyEqual(defaultInterfaceMethod, loggerMatchingMethod));
+
+            // checking binary IL equality of two method bodies, excluding Nops at the start
+            // and up to the call/callvirt differences, that is
+            // Serilog.Core.Logger.ForContext<T>(): call instance class Serilog.ILogger Serilog.Core.Logger::ForContext(class [netstandard]System.Type)
+            // ILogger.ForContext<T>():         callvirt instance class Serilog.ILogger Serilog.ILogger::ForContext(class [netstandard]System.Type)
+            // calls with the same type arguments, name and parameters are considered equal
+            static bool MethodBodyEqual(MethodBase ifaceMethod, MethodBase classMethod)
+            {
+                var imap = typeof(Logger).GetInterfaceMap(typeof(ILogger));
+
+                var opCodesMap = new[]
+                {
+                    (OpCodes.Call, OpCodes.Call),
+                    (OpCodes.Callvirt, OpCodes.Call),
+                    (OpCodes.Callvirt, OpCodes.Callvirt),
+                    (OpCodes.Ldsfld, OpCodes.Ldsfld)
+                }.ToLookup(x => x.Item1.Value, el => el.Item2.Value);
+
+                var ifaceBytes = ifaceMethod.GetMethodBody().GetILAsByteArray().AsSpan();
+                var classBytes = classMethod.GetMethodBody().GetILAsByteArray().AsSpan();
+
+                while (ifaceBytes[0] == OpCodes.Nop.Value)
+                {
+                    ifaceBytes = ifaceBytes.Slice(1);
+                }
+
+                while (classBytes[0] == OpCodes.Nop.Value)
+                {
+                    classBytes = classBytes.Slice(1);
+                }
+
+                if (ifaceBytes.Length != classBytes.Length)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < ifaceBytes.Length; ++i)
+                {
+                    var l = ifaceBytes[i];
+                    var r = classBytes[i];
+
+                    var allowedOpCodes = opCodesMap[l];
+                    if (!allowedOpCodes.Any())
+                    {
+                        continue;
+                    }
+
+                    if (!allowedOpCodes.Contains(r))
+                    {
+                        return false;
+                    }
+
+                    var ifaceMetaToken = BitConverter.ToInt32(ifaceBytes.Slice(i + 1, 4));
+                    var classMetaToken = BitConverter.ToInt32(classBytes.Slice(i + 1, 4));
+
+                    var ifaceMember = ifaceMethod.Module.ResolveMember(ifaceMetaToken, null, ifaceMethod.GetGenericArguments());
+                    var classMember = classMethod.Module.ResolveMember(classMetaToken, null, classMethod.GetGenericArguments());
+
+                    if (l == OpCodes.Call.Value || l == OpCodes.Callvirt.Value)
+                    {
+                        var ifaceMethodDef = ifaceMember is MethodInfo mi ? mi.IsGenericMethod ? mi.GetGenericMethodDefinition() : mi : null;
+                        var classMethodDef = classMember is MethodInfo mc ? mc.IsGenericMethod ? mc.GetGenericMethodDefinition() : mc : null;
+
+                        if (ifaceMethodDef == classMethodDef)
+                        {
+                            continue;
+                        }
+
+                        var mappedClassMethodDef = imap.TargetMethods[Array.IndexOf(imap.InterfaceMethods, ifaceMethodDef)];
+                        if (mappedClassMethodDef != classMethodDef)
+                        {
+                            return false;
+                        }
+                    }
+
+                    // special handling for accessing static fields (e.g. NoPropertyValues)
+                    if (l == OpCodes.Ldsfld.Value)
+                    {
+                        var ifaceField = (ifaceMember as FieldInfo)?.GetValue(null);
+                        var classField = (classMember as FieldInfo)?.GetValue(null);
+
+                        if (ifaceField is object[] io && classField is object[] co)
+                        {
+                            if (!io.SequenceEqual(co))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (!object.Equals(ifaceField, classField))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    i += 4;
+                }
+
+                return true;
+            }
+        }
+#endif
 
         [Theory]
         [InlineData(Write)]

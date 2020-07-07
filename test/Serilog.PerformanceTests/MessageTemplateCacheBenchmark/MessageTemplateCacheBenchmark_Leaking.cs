@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Serilog.PerformanceTests
 {
+    [ShortRunJob]
     public class MessageTemplateCacheBenchmark_Leaking
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";

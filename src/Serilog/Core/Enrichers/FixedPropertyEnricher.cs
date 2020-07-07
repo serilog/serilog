@@ -24,12 +24,14 @@ namespace Serilog.Core.Enrichers
         public FixedPropertyEnricher(in EventProperty eventProperty)
         {
             if (eventProperty.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(eventProperty));
+
             _eventProperty = eventProperty;
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+
             logEvent.AddPropertyIfAbsent(_eventProperty);
         }
     }

@@ -195,38 +195,6 @@ namespace Serilog.PerformanceTests
             _logger.Information("Template: {Value1},{Value2},{Value3},{Value4},{Value5},{Value6},{Value7},{Value8},{@Value9}", "42", 7, 108L, 1024M, (short?)-11, _bigStruct, _dictionaryValue, _sequence, _anonymousObject);
         }
 
-        [Benchmark]
-        public bool LogAll()
-        {
-            var x = _logger.IsEnabled(LogEventLevel.Debug);
-            _logger.Write(_emptyEvent);
-            _logger.Information("Template:");
-            _logger.Information("Template: {ScalarStructValue}", 42);
-            _logger.Information("Template: {ScalarStructValue1},{ScalarStructValue2},{ScalarStructValue3}", 42, 7, 108);
-            _logger.Information("Template: {ScalarBigStructValue}", _bigStruct);
-            _logger.Information("Template: {ScalarValue}", "42");
-            _logger.Information("Template: {ScalarValue1},{ScalarValue2},{ScalarValue3}", "42", "7", "108");
-            _logger.Information("Template: {DictionaryValue}", _dictionaryValue);
-            _logger.Information("Template: {SequenceValue}", _sequence);
-            _logger.Information("Template: {@AnonymousObject}.", _anonymousObject);
-            _logger.Information(_exception, "Hello, {Name}!", "World");
-
-            var y = _enrichedLogger.IsEnabled(LogEventLevel.Debug);
-            _enrichedLogger.Write(_emptyEvent);
-            _enrichedLogger.Information("Template:");
-            _enrichedLogger.Information("Template: {ScalarStructValue}", 42);
-            _enrichedLogger.Information("Template: {ScalarStructValue1},{ScalarStructValue2},{ScalarStructValue3}", 42, 7, 108);
-            _enrichedLogger.Information("Template: {ScalarBigStructValue}", _bigStruct);
-            _enrichedLogger.Information("Template: {ScalarValue}", "42");
-            _enrichedLogger.Information("Template: {ScalarValue1},{ScalarValue2},{ScalarValue3}", "42", "7", "108");
-            _enrichedLogger.Information("Template: {DictionaryValue}", _dictionaryValue);
-            _enrichedLogger.Information("Template: {SequenceValue}", _sequence);
-            _enrichedLogger.Information("Template: {@AnonymousObject}.", _anonymousObject);
-            _enrichedLogger.Information(_exception, "Hello, {Name}!", "World");
-
-            return x && y; //Force the compiler don''t optimize the IsEnabled
-        }
-
         struct BigTestStruct
         {
             public decimal Lat { get; set; }
