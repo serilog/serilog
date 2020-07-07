@@ -68,7 +68,7 @@ namespace Serilog
         ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
 #if FEATURE_DEFAULT_INTERFACE
         {
-            if (enrichers == null)
+            if (enrichers is null)
                 return this; // No context here, so little point writing to SelfLog.
 
             return ForContext(new Core.Enrichers.SafeAggregateEnricher(enrichers));
@@ -119,7 +119,7 @@ namespace Serilog
         ILogger ForContext(Type source)
 #if FEATURE_DEFAULT_INTERFACE
         {
-            if (source == null)
+            if (source is null)
                 return this; // Little point in writing to SelfLog here because we don't have any contextual information
 
             return ForContext(Constants.SourceContextPropertyName, source.FullName);
@@ -330,7 +330,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         {
             if (!IsEnabled(level)) return;
-            if (messageTemplate == null) return;
+            if (messageTemplate is null) return;
 
             // Catch a common pitfall when a single non-object array is cast to object[]
             if (propertyValues != null &&
