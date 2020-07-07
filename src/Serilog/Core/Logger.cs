@@ -278,7 +278,7 @@ namespace Serilog.Core
         /// <param name="level">Level to check.</param>
         /// <returns>True if the level is enabled; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEnabled(LogEventLevel level)
+        bool IsEnabledInternal(LogEventLevel level)
         {
             if ((int)level < (int)_minimumLevel)
                 return false;
