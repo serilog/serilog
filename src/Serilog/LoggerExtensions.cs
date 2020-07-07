@@ -145,6 +145,7 @@ namespace Serilog
         /// Write a log event with the specified level and message.
         /// </summary>
         /// <param name="logger">The logger.</param>
+        /// <param name="level">The level of the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValueAccessors">Objects positionally formatted into the message template.</param>
         public static void Write(this ILogger logger, LogEventLevel level, string messageTemplate, params Func<object>[] propertyValueAccessors)
