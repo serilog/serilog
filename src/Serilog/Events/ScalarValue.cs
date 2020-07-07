@@ -45,11 +45,13 @@ namespace Serilog.Events
         /// <param name="format">A format string applied to the value, or null.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             Render(Value, output, format, formatProvider);
         }
 
+        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         internal static void Render(object value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));

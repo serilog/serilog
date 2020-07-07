@@ -28,7 +28,7 @@ namespace Serilog.Events
         /// Create a <see cref="DictionaryValue"/> with the provided <paramref name="elements"/>.
         /// </summary>
         /// <param name="elements">The key-value mappings represented in the dictionary.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
         public DictionaryValue(IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> elements)
         {
             Elements = elements as IReadOnlyDictionary<ScalarValue, LogEventPropertyValue>
@@ -48,6 +48,7 @@ namespace Serilog.Events
         /// <param name="format">A format string applied to the value, or null.</param>
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
