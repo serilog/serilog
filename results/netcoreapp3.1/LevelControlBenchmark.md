@@ -10,7 +10,7 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 ```
 |         Method |      Mean |     Error |    StdDev | Ratio | RatioSD |
 |--------------- |----------:|----------:|----------:|------:|--------:|
-|            Off |  2.207 ns | 0.0426 ns | 0.0398 ns |  1.00 |    0.00 |
-| LevelSwitchOff |  2.748 ns | 0.0900 ns | 0.1552 ns |  1.22 |    0.10 |
-| MinimumLevelOn | 10.734 ns | 0.1451 ns | 0.1358 ns |  4.86 |    0.09 |
-|  LevelSwitchOn | 10.587 ns | 0.1508 ns | 0.1259 ns |  4.81 |    0.12 |
+|            Off |  2.359 ns | 0.0726 ns | 0.0679 ns |  1.00 |    0.00 |
+| LevelSwitchOff |  3.457 ns | 0.0952 ns | 0.1170 ns |  1.46 |    0.08 |
+| MinimumLevelOn | 10.290 ns | 0.1835 ns | 0.1716 ns |  4.36 |    0.12 |
+|  LevelSwitchOn | 10.065 ns | 0.2019 ns | 0.1888 ns |  4.27 |    0.16 |
