@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,284 +40,354 @@ namespace Serilog.Core.Pipeline
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
         public bool IsEnabled(LogEventLevel level) => false;
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose(string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose<T>(string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose(Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug(string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug<T>(string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug(Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug<T>(Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information(string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information<T>(string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information(Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information<T>(Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning(string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning<T>(string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning(Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning<T>(Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error(string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error<T>(string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error(Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error<T>(Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal(string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal<T>(string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal(string messageTemplate, params object[] propertyValues)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal(Exception exception, string messageTemplate)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
         }
 
+        [MessageTemplateFormatMethod("messageTemplate")]
         public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
         {
         }
