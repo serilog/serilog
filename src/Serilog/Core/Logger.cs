@@ -33,8 +33,13 @@ namespace Serilog.Core
     /// </summary>
     public sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
-        static readonly object[] NoPropertyValues = new object[0]; //TODO Use Array.Empty
-        static readonly LogEventProperty[] NoProperties = new LogEventProperty[0]; //TODO Use Array.Empty
+#if NETSTANDARD1_0 || NET45
+        static readonly object[] NoPropertyValues = new object[0];
+        static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
+#else
+        static readonly object[] NoPropertyValues = Array.Empty<object>();
+        static readonly LogEventProperty[] NoProperties = Array.Empty<LogEventProperty>();
+#endif
 
         readonly MessageTemplateProcessor _messageTemplateProcessor;
         readonly ILogEventSink _sink;
