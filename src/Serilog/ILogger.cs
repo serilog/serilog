@@ -142,7 +142,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write(LogEventLevel level, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
-            => WriteInternal(level, null, messageTemplate, NoPropertyValues);
+            => WriteInternal(level, null, messageTemplate);
 #else
         ;
 #endif
