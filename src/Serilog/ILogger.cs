@@ -142,9 +142,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write(LogEventLevel level, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, null, messageTemplate, NoPropertyValues);
-        }
+            => WriteInternal(level, null, messageTemplate, NoPropertyValues);
 #else
         ;
 #endif
@@ -158,9 +156,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, null, messageTemplate, propertyValue);
-        }
+            => WriteInternal(level, null, messageTemplate, propertyValue);
 #else
         ;
 #endif
@@ -175,9 +171,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, null, messageTemplate, propertyValue0, propertyValue1);
-        }
+            => WriteInternal(level, null, messageTemplate, propertyValue0, propertyValue1);
 #else
         ;
 #endif
@@ -193,9 +187,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, null, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
-        }
+            => WriteInternal(level, null, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
 #else
         ;
 #endif
@@ -222,9 +214,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write(LogEventLevel level, Exception exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, exception, messageTemplate);
-        }
+            => WriteInternal(level, exception, messageTemplate);
 #else
         ;
 #endif
@@ -239,9 +229,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, exception, messageTemplate, propertyValue);
-        }
+            => WriteInternal(level, exception, messageTemplate, propertyValue);
 #else
         ;
 #endif
@@ -257,9 +245,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, exception, messageTemplate, propertyValue0, propertyValue1);
-        }
+            => WriteInternal(level, exception, messageTemplate, propertyValue0, propertyValue1);
 #else
         ;
 #endif
@@ -276,9 +262,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
-        }
+            => WriteInternal(level, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
 #else
         ;
 #endif
@@ -293,9 +277,7 @@ namespace Serilog
         [MessageTemplateFormatMethod("messageTemplate")]
         void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-        {
-            WriteInternal(level, exception, messageTemplate, propertyValues);
-        }
+            => WriteInternal(level, exception, messageTemplate, propertyValues);
 #else
         ;
 #endif
@@ -359,7 +341,6 @@ namespace Serilog
                 Write(new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties));
             }
         }
-
 #endif
 
         /// <summary>
