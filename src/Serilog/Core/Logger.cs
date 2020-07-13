@@ -327,7 +327,6 @@ namespace Serilog.Core
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// 
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
