@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ namespace Serilog.Events
     public class LogEvent
     {
         //A cached and shared instance for a empty list of Properties
-        static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new Dictionary<string, LogEventPropertyValue>();
+        static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new Dictionary<string, LogEventPropertyValue>(0);
 
         //Lazy Load a Instance for the Properties List
-        Dictionary<string, LogEventPropertyValue> _properties => _propertiesInternal ?? (_propertiesInternal = new Dictionary<string, LogEventPropertyValue>());
+        Dictionary<string, LogEventPropertyValue> _properties => _propertiesInternal ??= new Dictionary<string, LogEventPropertyValue>();
         Dictionary<string, LogEventPropertyValue> _propertiesInternal = null; //This can be null. When null the LogEvent will use the NoProperties shared/cached instance.
 
         LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> propertiesDictionary)
@@ -207,9 +207,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessProperties(IEnumerable<LogEventProperty> properties)
         {
-            //Try to allocate the correct Dictionary size and use the best for/foreach for the type.
             switch (properties)
             {
+                //Try to allocate the correct Dictionary size and use the best for/foreach for the type.
                 case LogEventProperty[] array:
                     ProcessPropertiesInternal(array);
                     return;
