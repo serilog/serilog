@@ -213,6 +213,7 @@ namespace Serilog.Tests.Core
             innerLogger.Dispose();
             Assert.False(delegatingLogger.Disposed);
         }
+#endif
 
         [Fact]
         public void ASingleSinkIsDisposedWhenLoggerIsDisposed()
@@ -255,6 +256,5 @@ namespace Serilog.Tests.Core
 
             Assert.True(sink.IsDisposed);
         }
-#endif
     }
 }
