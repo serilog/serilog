@@ -254,14 +254,16 @@ namespace Serilog.Configuration
                 sinksToWrap.Single() :
                 new SafeAggregateSink(sinksToWrap);
 
-            var wrappedSink = wrapSink(enclosed);
-
-            if (!(wrappedSink is IDisposable))
+            var disposableSinks = sinksToWrap.OfType<IDisposable>().ToArray();
+            void Dispose()
             {
-                SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable; to ensure " +
-                                  "wrapped sinks are properly flushed, wrappers should dispose " +
-                                  "their wrapped contents", wrappedSink);
+                foreach (var disposable in disposableSinks)
+                {
+                    disposable.Dispose();
+                }
             }
+
+            var wrappedSink = new DisposeWrappingSink(wrapSink(enclosed), Dispose);
 
             return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
         }

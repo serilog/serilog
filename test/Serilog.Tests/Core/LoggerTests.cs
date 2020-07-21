@@ -1,3 +1,4 @@
+using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Core.Pipeline;
@@ -6,6 +7,7 @@ using Serilog.Tests.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TestDummies;
 using Xunit;
 
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
@@ -210,6 +212,48 @@ namespace Serilog.Tests.Core
 
             innerLogger.Dispose();
             Assert.False(delegatingLogger.Disposed);
+        }
+
+        [Fact]
+        public void ASingleSinkIsDisposedWhenLoggerIsDisposed()
+        {
+            var sink = new DummyDisposableSink();
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            log.Dispose();
+
+            Assert.True(sink.IsDisposed);
+        }
+
+        [Fact]
+        public void AllSinksAreDisposedWhenLoggerIsDisposed()
+        {
+            var sinka = new DummyDisposableSink();
+            var sinkb = new DummyDisposableSink();
+            var log = new LoggerConfiguration()
+                .WriteTo.Sink(sinka)
+                .WriteTo.Sink(sinkb)
+                .CreateLogger();
+
+            log.Dispose();
+
+            Assert.True(sinka.IsDisposed);
+            Assert.True(sinkb.IsDisposed);
+        }
+
+        [Fact]
+        public void WrappedSinksAreDisposedWhenLoggerIsDisposed()
+        {
+            var sink = new DummyDisposableSink();
+            var log = new LoggerConfiguration()
+                .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+                .CreateLogger();
+
+            log.Dispose();
+
+            Assert.True(sink.IsDisposed);
         }
 #endif
     }
