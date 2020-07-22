@@ -8,8 +8,8 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 
 
 ```
-|           Method |     Mean |    Error |   StdDev |   Median |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|----------------- |---------:|---------:|---------:|---------:|-------:|------:|------:|----------:|
-|    ForContextInt | 85.48 ns | 2.723 ns | 7.634 ns | 82.56 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString | 49.49 ns | 0.980 ns | 1.204 ns | 49.01 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType | 85.76 ns | 1.302 ns | 1.218 ns | 85.87 ns | 0.0204 |     - |     - |     128 B |
+|           Method |     Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|----------------- |---------:|---------:|---------:|-------:|------:|------:|----------:|
+|    ForContextInt | 72.25 ns | 0.926 ns | 0.866 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString | 43.00 ns | 0.865 ns | 0.888 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType | 78.52 ns | 1.499 ns | 1.402 ns | 0.0204 |     - |     - |     128 B |

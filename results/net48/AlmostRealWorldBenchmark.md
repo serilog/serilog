@@ -11,6 +11,6 @@ WarmupCount=3
 ```
 |                     Method |        Mean |        Error |      StdDev |  Ratio | RatioSD |     Gen 0 |    Gen 1 | Gen 2 |   Allocated |
 |--------------------------- |------------:|-------------:|------------:|-------:|--------:|----------:|---------:|------:|------------:|
-| SimulateAAppWithoutSerilog |    277.7 us |     79.79 us |     4.37 us |   1.00 |    0.00 |   24.9023 |   3.9063 |     - |   128.29 KB |
-| SimulateAAppWithSerilogOff |  1,624.6 us |    731.71 us |    40.11 us |   5.85 |    0.18 |  208.9844 |   1.9531 |     - |  1071.64 KB |
-|  SimulateAAppWithSerilogOn | 92,572.7 us | 54,005.67 us | 2,960.23 us | 333.42 |   10.13 | 5400.0000 | 200.0000 |     - | 28336.64 KB |
+| SimulateAAppWithoutSerilog |    261.8 us |     23.90 us |     1.31 us |   1.00 |    0.00 |   24.9023 |   3.9063 |     - |   128.29 KB |
+| SimulateAAppWithSerilogOff |  1,523.1 us |     69.54 us |     3.81 us |   5.82 |    0.02 |  208.9844 |   1.9531 |     - |  1071.64 KB |
+|  SimulateAAppWithSerilogOn | 88,066.6 us | 19,184.97 us | 1,051.59 us | 336.36 |    5.55 | 5500.0000 | 166.6667 |     - | 28336.65 KB |
