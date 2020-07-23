@@ -1,4 +1,4 @@
-﻿using Serilog.Core;
+using Serilog.Core;
 using Serilog.Core.Filters;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -692,20 +692,6 @@ namespace Serilog.Tests
             Assert.Same(evt, DummyWrappingSink.Emitted.Single());
             Assert.Same(evt, sink1.SingleEvent);
             Assert.Same(evt, sink2.SingleEvent);
-        }
-
-        [Fact]
-        public void WrappingWarnsAboutNonDisposableWrapper()
-        {
-            var messages = new List<string>();
-            SelfLog.Enable(s => messages.Add(s));
-
-            new LoggerConfiguration()
-                .WriteTo.Dummy(w => w.Sink<DisposeTrackingSink>())
-                .CreateLogger();
-
-            SelfLog.Disable();
-            Assert.NotEmpty(messages);
         }
 
         [Fact]

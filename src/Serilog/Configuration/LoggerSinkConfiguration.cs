@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -252,18 +252,21 @@ namespace Serilog.Configuration
 
             var enclosed = sinksToWrap.Count == 1 ?
                 sinksToWrap.Single() :
-                new SafeAggregateSink(sinksToWrap);
+                new DisposingSafeAggregateSink(sinksToWrap);
 
-            var disposableSinks = sinksToWrap.OfType<IDisposable>().ToArray();
-            void Dispose()
+            var wrappedSink = wrapSink(enclosed);
+            if (!(wrappedSink is IDisposable))
             {
-                foreach (var disposable in disposableSinks)
+                var disposableSinks = sinksToWrap.OfType<IDisposable>().ToArray();
+                void Dispose()
                 {
-                    disposable.Dispose();
+                    foreach (var disposable in disposableSinks)
+                    {
+                        disposable.Dispose();
+                    }
                 }
+                wrappedSink = new DisposeWrappingSink(wrappedSink, Dispose);
             }
-
-            var wrappedSink = new DisposeWrappingSink(wrapSink(enclosed), Dispose);
 
             return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
         }
