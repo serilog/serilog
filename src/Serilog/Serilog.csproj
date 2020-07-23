@@ -4,6 +4,8 @@
     <VersionPrefix>2.10.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
     <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;netcoreapp3.1;netcoreapp3.0;net45;net46;</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Serilog</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
@@ -17,11 +19,6 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
