@@ -7,13 +7,13 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 
 
 ```
-|                         Method |       Mean |     Error |    StdDev |     Median | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|------------------------------- |-----------:|----------:|----------:|-----------:|------:|--------:|-------:|------:|------:|----------:|
-|                  EmptyTemplate |   149.7 ns |   1.01 ns |   0.94 ns |   149.8 ns |  1.00 |    0.00 | 0.0288 |     - |     - |     152 B |
-|             SimpleTextTemplate |   232.8 ns |   1.46 ns |   1.29 ns |   233.0 ns |  1.55 |    0.01 | 0.0503 |     - |     - |     264 B |
-|    SinglePropertyTokenTemplate |   362.7 ns |   2.53 ns |   2.36 ns |   363.1 ns |  2.42 |    0.02 | 0.0625 |     - |     - |     328 B |
-| SingleTextWithPropertyTemplate |   608.3 ns |   4.61 ns |   4.32 ns |   610.0 ns |  4.07 |    0.04 | 0.1183 |     - |     - |     625 B |
-|      ManyPropertyTokenTemplate |   742.1 ns |   6.99 ns |   6.54 ns |   741.8 ns |  4.96 |    0.06 | 0.1259 |     - |     - |     665 B |
-|         MultipleTokensTemplate | 1,553.0 ns |  36.49 ns |  91.53 ns | 1,515.7 ns | 10.82 |    1.01 | 0.2213 |     - |     - |    1166 B |
-|   DefaultConsoleOutputTemplate | 2,178.9 ns |  22.14 ns |  19.63 ns | 2,175.6 ns | 14.55 |    0.18 | 0.2785 |     - |     - |    1478 B |
-|                    BigTemplate | 6,063.7 ns | 120.76 ns | 188.01 ns | 6,029.6 ns | 41.12 |    1.48 | 0.7935 |     - |     - |    4182 B |
+|                         Method |       Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------------- |-----------:|---------:|---------:|------:|--------:|-------:|------:|------:|----------:|
+|                  EmptyTemplate |   151.3 ns |  1.84 ns |  1.63 ns |  1.00 |    0.00 | 0.0288 |     - |     - |     152 B |
+|             SimpleTextTemplate |   223.7 ns |  2.03 ns |  1.90 ns |  1.48 |    0.02 | 0.0503 |     - |     - |     264 B |
+|    SinglePropertyTokenTemplate |   341.1 ns |  5.26 ns |  4.92 ns |  2.26 |    0.03 | 0.0625 |     - |     - |     328 B |
+| SingleTextWithPropertyTemplate |   589.2 ns |  6.63 ns |  5.54 ns |  3.89 |    0.03 | 0.1183 |     - |     - |     625 B |
+|      ManyPropertyTokenTemplate |   723.1 ns |  6.29 ns |  5.89 ns |  4.77 |    0.05 | 0.1259 |     - |     - |     665 B |
+|         MultipleTokensTemplate | 1,451.5 ns | 13.16 ns | 12.31 ns |  9.59 |    0.08 | 0.2213 |     - |     - |    1166 B |
+|   DefaultConsoleOutputTemplate | 2,126.3 ns | 50.29 ns | 61.76 ns | 14.14 |    0.47 | 0.2785 |     - |     - |    1478 B |
+|                    BigTemplate | 5,793.0 ns | 73.51 ns | 61.38 ns | 38.26 |    0.73 | 0.7935 |     - |     - |    4182 B |
