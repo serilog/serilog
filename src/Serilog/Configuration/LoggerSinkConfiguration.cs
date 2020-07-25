@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -252,15 +252,20 @@ namespace Serilog.Configuration
 
             var enclosed = sinksToWrap.Count == 1 ?
                 sinksToWrap.Single() :
-                new SafeAggregateSink(sinksToWrap);
+                new DisposingSafeAggregateSink(sinksToWrap);
 
             var wrappedSink = wrapSink(enclosed);
-
             if (!(wrappedSink is IDisposable))
             {
-                SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable; to ensure " +
-                                  "wrapped sinks are properly flushed, wrappers should dispose " +
-                                  "their wrapped contents", wrappedSink);
+                var disposableSinks = sinksToWrap.OfType<IDisposable>().ToArray();
+                void Dispose()
+                {
+                    foreach (var disposable in disposableSinks)
+                    {
+                        disposable.Dispose();
+                    }
+                }
+                wrappedSink = new DisposeWrappingSink(wrappedSink, Dispose);
             }
 
             return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
