@@ -1,4 +1,4 @@
-﻿using Serilog.Filters;
+using Serilog.Filters;
 using Serilog.Tests.Support;
 using Xunit;
 
@@ -52,6 +52,20 @@ namespace Serilog.Tests.Filters
 
             log.Write(Some.InformationEvent());
             Assert.False(written);
+        }
+
+        [Fact]
+        public void SourceFiltersSkipNonNamespaces()
+        {
+            var written = false;
+            var log = new LoggerConfiguration()
+                .Filter.ByExcluding(Matching.FromSource("Serilog.Tests"))
+                .WriteTo.Sink(new DelegatingSink(e => written = true))
+                .CreateLogger()
+                .ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Serilog.TestsLong");
+
+            log.Write(Some.InformationEvent());
+            Assert.True(written);
         }
     }
 }
