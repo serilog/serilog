@@ -1,4 +1,4 @@
-// Copyright 2019 Serilog Contributors
+// Copyright 2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,21 +27,19 @@ namespace Serilog.Core.Sinks
 
         public void Dispose()
         {
-            var sinks = _sinks;
-            if (sinks != null)
+            if (_sinks == null) return;
+
+            foreach (var sink in _sinks)
             {
-                foreach (var sink in sinks)
+                if (sink is IDisposable disposable)
                 {
-                    if (sink is IDisposable disposable)
+                    try
                     {
-                        try
-                        {
-                            disposable.Dispose();
-                        }
-                        catch (Exception ex)
-                        {
-                            SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
-                        }
+                        disposable.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
                     }
                 }
             }

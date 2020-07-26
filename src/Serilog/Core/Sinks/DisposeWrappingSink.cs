@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Serilog Contributors
+﻿// Copyright 2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ namespace Serilog.Core.Sinks
 {
     class DisposeWrappingSink : ILogEventSink, IDisposable
     {
-        private readonly ILogEventSink _sink;
-        private readonly Action _dispose;
+        readonly ILogEventSink _sink;
+        readonly Action _dispose;
 
         public DisposeWrappingSink(ILogEventSink sink, Action dispose)
         {

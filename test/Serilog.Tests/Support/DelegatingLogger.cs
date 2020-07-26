@@ -1,9 +1,10 @@
-﻿namespace Serilog.Tests.Support
-{
-#if FEATURE_DEFAULT_INTERFACE
-    using System;
-    using Serilog.Events;
+﻿#if FEATURE_DEFAULT_INTERFACE
 
+using System;
+using Serilog.Events;
+
+namespace Serilog.Tests.Support
+{
     public class DelegatingLogger : ILogger, IDisposable
     {
         readonly ILogger _inner;
@@ -19,5 +20,6 @@
 
         public void Write(LogEvent logEvent) => _inner.Write(logEvent);
     }
-#endif
 }
+
+#endif
