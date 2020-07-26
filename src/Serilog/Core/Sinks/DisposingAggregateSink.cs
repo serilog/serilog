@@ -20,11 +20,11 @@ using Serilog.Events;
 
 namespace Serilog.Core.Sinks
 {
-    class DisposingSafeAggregateSink : ILogEventSink, IDisposable
+    class DisposingAggregateSink : ILogEventSink, IDisposable
     {
         readonly ILogEventSink[] _sinks;
 
-        public DisposingSafeAggregateSink(IEnumerable<ILogEventSink> sinks)
+        public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
         {
             if (sinks == null) throw new ArgumentNullException(nameof(sinks));
             _sinks = sinks.ToArray();
@@ -32,6 +32,7 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
+            List<Exception> exceptions = null;
             foreach (var sink in _sinks)
             {
                 try
@@ -41,8 +42,13 @@ namespace Serilog.Core.Sinks
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
+                    exceptions ??= new List<Exception>();
+                    exceptions.Add(ex);
                 }
             }
+
+            if (exceptions != null)
+                throw new AggregateException("Failed to emit a log event.", exceptions);
         }
 
         public void Dispose()

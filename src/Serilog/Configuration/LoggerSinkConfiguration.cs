@@ -251,7 +251,7 @@ namespace Serilog.Configuration
 
             var enclosed = sinksToWrap.Count == 1 ?
                 sinksToWrap.Single() :
-                new DisposingSafeAggregateSink(sinksToWrap);
+                new DisposingAggregateSink(sinksToWrap);
 
             var wrappedSink = wrapSink(enclosed);
             if (!(wrappedSink is IDisposable) && enclosed is IDisposable target)
