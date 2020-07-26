@@ -76,7 +76,7 @@ namespace Serilog.Tests.Core
             Assert.Equal("I sat at \"a chair\"", m);
 
             var m2 = Render("I sat at {Obj}", new ToStringReturnsNull());
-            Assert.Equal("I sat at ", m2);
+            Assert.Equal("I sat at \"\"", m2);
 
             var m3 = Render("I sat at {Obj}", new ToStringThrows());
             Assert.Equal("I sat at \"Capturing the property value threw an exception: ArgumentNullException\"", m3);
@@ -89,7 +89,7 @@ namespace Serilog.Tests.Core
             Assert.Equal("I sat at \"a chair\"", m);
 
             var m2 = Render("I sat at {$Obj}", new ToStringReturnsNull());
-            Assert.Equal("I sat at ", m2);
+            Assert.Equal("I sat at \"\"", m2);
 
             var m3 = Render("I sat at {$Obj}", new ToStringThrows());
             Assert.Equal("I sat at \"Capturing the property value threw an exception: ArgumentNullException\"", m3);
