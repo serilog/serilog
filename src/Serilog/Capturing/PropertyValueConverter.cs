@@ -299,7 +299,7 @@ namespace Serilog.Capturing
         LogEventPropertyValue Stringify(object value)
         {
             var stringified = value.ToString();
-            var truncated = stringified == null ? null : TruncateIfNecessary(stringified);
+            var truncated = stringified == null ? "" : TruncateIfNecessary(stringified);
             return new ScalarValue(truncated);
         }
 

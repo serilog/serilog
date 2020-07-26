@@ -30,11 +30,13 @@ namespace Serilog.Tests.Core
             public override string ToString() => "a receipt";
         }
 
-        class ABadBehavior
+        class ToStringReturnsNull
         {
+            // ReSharper disable once AssignNullToNotNullAttribute
             public override string ToString() => null;
         }
-        class ABug
+
+        class ToStringThrows
         {
             public override string ToString() => throw new ArgumentNullException("","A possible a Bug in a class");
         }
@@ -73,10 +75,10 @@ namespace Serilog.Tests.Core
             var m = Render("I sat at {Chair}", new Chair());
             Assert.Equal("I sat at \"a chair\"", m);
 
-            var m2 = Render("I sat at {Obj}", new ABadBehavior());
-            Assert.Equal("I sat at null", m2);
+            var m2 = Render("I sat at {Obj}", new ToStringReturnsNull());
+            Assert.Equal("I sat at ", m2);
 
-            var m3 = Render("I sat at {Obj}", new ABug());
+            var m3 = Render("I sat at {Obj}", new ToStringThrows());
             Assert.Equal("I sat at \"Capturing the property value threw an exception: ArgumentNullException\"", m3);
         }
 
@@ -86,10 +88,10 @@ namespace Serilog.Tests.Core
             var m = Render("I sat at {$Chair}", new Chair());
             Assert.Equal("I sat at \"a chair\"", m);
 
-            var m2 = Render("I sat at {$Obj}", new ABadBehavior());
-            Assert.Equal("I sat at null", m2);
+            var m2 = Render("I sat at {$Obj}", new ToStringReturnsNull());
+            Assert.Equal("I sat at ", m2);
 
-            var m3 = Render("I sat at {$Obj}", new ABug());
+            var m3 = Render("I sat at {$Obj}", new ToStringThrows());
             Assert.Equal("I sat at \"Capturing the property value threw an exception: ArgumentNullException\"", m3);
         }
 
