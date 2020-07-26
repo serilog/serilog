@@ -17,20 +17,20 @@ using System;
 
 namespace Serilog.Core.Sinks
 {
-    class DisposeWrappingSink : ILogEventSink, IDisposable
+    class DisposeDelegatingSink : ILogEventSink, IDisposable
     {
         readonly ILogEventSink _sink;
-        readonly Action _dispose;
+        readonly IDisposable _disposable;
 
-        public DisposeWrappingSink(ILogEventSink sink, Action dispose)
+        public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
         {
-            _sink = sink;
-            _dispose = dispose;
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+            _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
         }
 
         public void Dispose()
         {
-            _dispose();
+            _disposable.Dispose();
         }
 
         public void Emit(LogEvent logEvent)

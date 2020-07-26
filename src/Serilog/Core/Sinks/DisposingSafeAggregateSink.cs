@@ -15,14 +15,34 @@
 using Serilog.Debugging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Serilog.Events;
 
 namespace Serilog.Core.Sinks
 {
-    class DisposingSafeAggregateSink : SafeAggregateSink, IDisposable
+    class DisposingSafeAggregateSink : ILogEventSink, IDisposable
     {
+        readonly ILogEventSink[] _sinks;
+
         public DisposingSafeAggregateSink(IEnumerable<ILogEventSink> sinks)
-            : base(sinks)
         {
+            if (sinks == null) throw new ArgumentNullException(nameof(sinks));
+            _sinks = sinks.ToArray();
+        }
+
+        public void Emit(LogEvent logEvent)
+        {
+            foreach (var sink in _sinks)
+            {
+                try
+                {
+                    sink.Emit(logEvent);
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
+                }
+            }
         }
 
         public void Dispose()
@@ -31,16 +51,15 @@ namespace Serilog.Core.Sinks
 
             foreach (var sink in _sinks)
             {
-                if (sink is IDisposable disposable)
+                if (!(sink is IDisposable disposable)) continue;
+
+                try
                 {
-                    try
-                    {
-                        disposable.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
-                    }
+                    disposable.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
                 }
             }
         }

@@ -22,7 +22,7 @@ namespace Serilog.Core.Sinks
 {
     class SafeAggregateSink : ILogEventSink
     {
-        protected readonly ILogEventSink[] _sinks;
+        readonly ILogEventSink[] _sinks;
 
         public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
         {
