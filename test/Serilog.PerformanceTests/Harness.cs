@@ -1,4 +1,4 @@
-// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,16 @@ namespace Serilog.PerformanceTests
     /// Wrappers that make it easy to run benchmark suites through the <c>dotnet test</c> runner.
     /// </summary>
     /// <example>
-    /// <code>dotnet test -c Release -f netcoreapp2.2 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"</code>
+    /// <code>dotnet test -c Release -f netcoreapp3.1 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"</code>
     /// </example>
     public class Harness
     {
+        [Fact]
+        public void SourceContextMatch()
+        {
+            BenchmarkRunner.Run<SourceContextMatchBenchmark>();
+        }
+
         [Fact]
         public void Allocations()
         {
@@ -79,7 +85,7 @@ namespace Serilog.PerformanceTests
         {
             BenchmarkRunner.Run<OutputTemplateRenderingBenchmark>();
         }
-        
+
         [Fact]
         public void MessageTemplateRendering()
         {

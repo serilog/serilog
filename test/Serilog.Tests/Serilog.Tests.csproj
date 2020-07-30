@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.2;net452;net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;netcoreapp2.1;net452;net46</TargetFrameworks>
     <AssemblyName>Serilog.Tests</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -8,10 +8,12 @@
     <PackageId>Serilog.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
     <ProjectReference Include="..\TestDummies\TestDummies.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
@@ -21,21 +23,17 @@
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="System.ValueTuple" Version="4.3.1" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <DefineConstants>$(DefineConstants);APPDOMAIN;REMOTING;GETCURRENTMETHOD</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <DefineConstants>$(DefineConstants);APPDOMAIN;ASYNCLOCAL;GETCURRENTMETHOD</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DefineConstants>$(DefineConstants);ASYNCLOCAL</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;FEATURE_DEFAULT_INTERFACE</DefineConstants>
+  </PropertyGroup>
 </Project>

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>2.9.1</VersionPrefix>
+    <VersionPrefix>2.10.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
-    <TargetFrameworks>net45;net46;netstandard1.0;netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Serilog</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
@@ -11,7 +11,7 @@
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Serilog</PackageId>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
-    <PackageIconUrl>https://serilog.net/images/serilog-nuget.png</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://serilog.net/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
@@ -37,22 +37,13 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
   </ItemGroup>
-
 
   <PropertyGroup>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -62,7 +53,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19270-01" PrivateAssets="All"/>
+    <None Include="..\..\assets\icon.png" Pack="true" Visible="false" PackagePath="" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
