@@ -232,7 +232,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             var p = new MessageTemplateParser();
             var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
-                p.Parse("{@ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ABadBehavior())) });
+                p.Parse("{@ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ToStringReturnsNull())) });
 
             var d = FormatEvent(e);
 
@@ -245,7 +245,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             var p = new MessageTemplateParser();
             var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
-                p.Parse("{$ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ABadBehavior())) });
+                p.Parse("{$ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ToStringReturnsNull())) });
 
             var d = FormatEvent(e);
 
@@ -258,7 +258,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             var p = new MessageTemplateParser();
             var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
-                p.Parse("{ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ABadBehavior())) });
+                p.Parse("{ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ToStringReturnsNull())) });
 
             var d = FormatEvent(e);
 
@@ -266,7 +266,7 @@ namespace Serilog.Tests.Formatting.Json
             Assert.Null(h);
         }
 
-        class ABadBehavior
+        class ToStringReturnsNull
         {
             public string AProp() => "AProp";
             public override string ToString() => null;
