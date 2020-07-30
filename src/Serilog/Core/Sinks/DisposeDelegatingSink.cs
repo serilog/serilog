@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Serilog Contributors
+﻿// Copyright 2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@ using System;
 
 namespace Serilog.Core.Sinks
 {
-    class DisposeWrappingSink : ILogEventSink, IDisposable
+    class DisposeDelegatingSink : ILogEventSink, IDisposable
     {
-        private readonly ILogEventSink _sink;
-        private readonly Action _dispose;
+        readonly ILogEventSink _sink;
+        readonly IDisposable _disposable;
 
-        public DisposeWrappingSink(ILogEventSink sink, Action dispose)
+        public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
         {
-            _sink = sink;
-            _dispose = dispose;
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+            _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
         }
 
         public void Dispose()
         {
-            _dispose();
+            _disposable.Dispose();
         }
 
         public void Emit(LogEvent logEvent)
