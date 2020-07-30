@@ -37,6 +37,7 @@ namespace Serilog.Tests.Formatting.Json
         [InlineData("🤷‍", "\"🤷‍\"")]
         [InlineData("\u0001", "\"\\u0001\"")]
         [InlineData("a\nb", "\"a\\nb\"")]
+        [InlineData("", "\"\"")]
         [InlineData(null, "null")]
         public void JsonLiteralTypesAreFormatted(object value, string expectedJson)
         {
@@ -121,7 +122,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             JsonLiteralTypesAreFormatted(new Exception("This e a Exception"), "\"System.Exception: This e a Exception\"");
             JsonLiteralTypesAreFormatted(new AChair(), "\"a chair\"");
-            JsonLiteralTypesAreFormatted(new ToStringReturnsNull(), "null");
+            JsonLiteralTypesAreFormatted(new ToStringReturnsNull(), "\"\"");
         }
 
         [Fact]

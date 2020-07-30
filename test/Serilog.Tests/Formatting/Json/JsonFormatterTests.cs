@@ -237,7 +237,7 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var h = (string)d.Properties.ABadBehavior;
-            Assert.Null(h);
+            Assert.Empty(h);
         }
 
         [Fact]
@@ -250,7 +250,7 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var h = (string)d.Properties.ABadBehavior;
-            Assert.Null(h);
+            Assert.Empty(h);
         }
 
         [Fact]
@@ -263,7 +263,7 @@ namespace Serilog.Tests.Formatting.Json
             var d = FormatEvent(e);
 
             var h = (string)d.Properties.ABadBehavior;
-            Assert.Null(h);
+            Assert.Empty(h);
         }
 
         class ToStringReturnsNull
