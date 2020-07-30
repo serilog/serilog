@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Serilog Contributors
+﻿// Copyright 2019-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Enrichers
+namespace Serilog.Core.Sinks
 {
     class ConditionalSink : ILogEventSink, IDisposable
     {

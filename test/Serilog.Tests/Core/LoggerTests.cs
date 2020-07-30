@@ -1,4 +1,3 @@
-using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Core.Pipeline;
@@ -80,7 +79,7 @@ namespace Serilog.Tests.Core
             var events = new List<LogEvent>();
             var sink = new DelegatingSink(events.Add);
 
-            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
+            var levelSwitch = new LoggingLevelSwitch();
 
             var log = CreateLogger(loggerType, lc => lc
                 .MinimumLevel.ControlledBy(levelSwitch)
@@ -156,7 +155,7 @@ namespace Serilog.Tests.Core
             }
         }
 
-        ILogger CreateLogger(Type loggerType, Func<LoggerConfiguration, LoggerConfiguration> configureLogger)
+        static ILogger CreateLogger(Type loggerType, Func<LoggerConfiguration, LoggerConfiguration> configureLogger)
         {
             var lc = new LoggerConfiguration();
 
@@ -166,7 +165,7 @@ namespace Serilog.Tests.Core
 #if FEATURE_DEFAULT_INTERFACE
                 _ when loggerType == typeof(DelegatingLogger) => new DelegatingLogger(configureLogger(lc).CreateLogger()),
 #endif
-                _ => throw new NotImplementedException()
+                _ => throw new NotSupportedException()
             };
         }
 
@@ -231,17 +230,17 @@ namespace Serilog.Tests.Core
         [Fact]
         public void AggregatedSinksAreDisposedWhenLoggerIsDisposed()
         {
-            var sinka = new DisposeTrackingSink();
-            var sinkb = new DisposeTrackingSink();
+            var sinkA = new DisposeTrackingSink();
+            var sinkB = new DisposeTrackingSink();
             var log = new LoggerConfiguration()
-                .WriteTo.Sink(sinka)
-                .WriteTo.Sink(sinkb)
+                .WriteTo.Sink(sinkA)
+                .WriteTo.Sink(sinkB)
                 .CreateLogger();
 
             log.Dispose();
 
-            Assert.True(sinka.IsDisposed);
-            Assert.True(sinkb.IsDisposed);
+            Assert.True(sinkA.IsDisposed);
+            Assert.True(sinkB.IsDisposed);
         }
 
         [Fact]
@@ -260,16 +259,16 @@ namespace Serilog.Tests.Core
         [Fact]
         public void WrappedAggregatedSinksAreDisposedWhenLoggerIsDisposed()
         {
-            var sinka = new DisposeTrackingSink();
-            var sinkb = new DisposeTrackingSink();
+            var sinkA = new DisposeTrackingSink();
+            var sinkB = new DisposeTrackingSink();
             var log = new LoggerConfiguration()
-                .WriteTo.Dummy(wrapped => wrapped.Sink(sinka).WriteTo.Sink(sinkb))
+                .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
                 .CreateLogger();
 
             log.Dispose();
 
-            Assert.True(sinka.IsDisposed);
-            Assert.True(sinkb.IsDisposed);
+            Assert.True(sinkA.IsDisposed);
+            Assert.True(sinkB.IsDisposed);
         }
     }
 }

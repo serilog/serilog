@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Serilog.Core;
-using Serilog.Core.Enrichers;
 using Serilog.Core.Sinks;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -252,20 +251,12 @@ namespace Serilog.Configuration
 
             var enclosed = sinksToWrap.Count == 1 ?
                 sinksToWrap.Single() :
-                new DisposingSafeAggregateSink(sinksToWrap);
+                new DisposingAggregateSink(sinksToWrap);
 
             var wrappedSink = wrapSink(enclosed);
-            if (!(wrappedSink is IDisposable))
+            if (!(wrappedSink is IDisposable) && enclosed is IDisposable target)
             {
-                var disposableSinks = sinksToWrap.OfType<IDisposable>().ToArray();
-                void Dispose()
-                {
-                    foreach (var disposable in disposableSinks)
-                    {
-                        disposable.Dispose();
-                    }
-                }
-                wrappedSink = new DisposeWrappingSink(wrappedSink, Dispose);
+                wrappedSink = new DisposeDelegatingSink(wrappedSink, target);
             }
 
             return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
