@@ -128,7 +128,11 @@ namespace Serilog.Configuration
 
             var lc = new LoggerConfiguration();
 
+            // apply inherited configuration except minimum level
+            // since parent logger can have overrides
             _applyInheritedConfiguration(lc);
+            lc.MinimumLevel.Is(LevelAlias.Minimum);
+
             configureLogger(lc);
 
             var subLogger = lc.CreateLogger();
