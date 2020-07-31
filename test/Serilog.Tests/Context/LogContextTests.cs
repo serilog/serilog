@@ -188,13 +188,15 @@ namespace Serilog.Tests.Context
                 {
                     var pre = Thread.CurrentThread.ManagedThreadId;
 
-                    await Task.Delay(1000);
+                    await Task.Yield();
 
                     var post = Thread.CurrentThread.ManagedThreadId;
 
                     log.Write(Some.InformationEvent());
                     Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
+                    Assert.False(Thread.CurrentThread.IsThreadPoolThread);
+                    Assert.True(Thread.CurrentThread.IsBackground);
                     Assert.NotEqual(pre, post);
                 }
             },
@@ -404,6 +406,6 @@ namespace Serilog.Tests.Context
 
     class ForceNewThreadSyncContext : SynchronizationContext
     {
-        public override void Post(SendOrPostCallback d, object state) => new Thread(x => d(x)).Start(state);
+        public override void Post(SendOrPostCallback d, object state) => new Thread(x => d(x)) { IsBackground = true }.Start(state);
     }
 }
