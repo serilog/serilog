@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,13 +30,11 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventSink> _addSink;
-        readonly Action<LoggerConfiguration> _applyInheritedConfiguration;
 
-        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
+        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {
             _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
             _addSink = addSink ?? throw new ArgumentNullException(nameof(addSink));
-            _applyInheritedConfiguration = applyInheritedConfiguration ?? throw new ArgumentNullException(nameof(applyInheritedConfiguration));
         }
 
         /// <summary>
@@ -126,13 +124,7 @@ namespace Serilog.Configuration
         {
             if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
 
-            var lc = new LoggerConfiguration();
-
-            // apply inherited configuration except minimum level
-            // since parent logger can have overrides
-            _applyInheritedConfiguration(lc);
-            lc.MinimumLevel.Is(LevelAlias.Minimum);
-
+            var lc = new LoggerConfiguration().MinimumLevel.Is(LevelAlias.Minimum);
             configureLogger(lc);
 
             var subLogger = lc.CreateLogger();
@@ -241,8 +233,7 @@ namespace Serilog.Configuration
             var capturingConfiguration = new LoggerConfiguration();
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
                 capturingConfiguration,
-                sinksToWrap.Add,
-                loggerSinkConfiguration._applyInheritedConfiguration);
+                sinksToWrap.Add);
 
             // `WriteTo.Sink()` will return the capturing configuration; this ensures chained `WriteTo` gets back
             // to the capturing sink configuration, enabling `WriteTo.X().WriteTo.Y()`.
