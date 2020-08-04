@@ -13,6 +13,7 @@ using Xunit.Sdk;
 
 #if FEATURE_DEFAULT_INTERFACE
 using System.Reflection.Emit;
+// ReSharper disable PossibleNullReferenceException
 #endif
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -59,6 +60,7 @@ namespace Serilog.Tests
             // calls with the same type arguments, name and parameters are considered equal
             static bool MethodBodyEqual(MethodBase ifaceMethod, MethodBase classMethod)
             {
+                // ReSharper disable once VariableHidesOuterVariable
                 var imap = typeof(Logger).GetInterfaceMap(typeof(ILogger));
 
                 var opCodesMap = new[]
@@ -141,7 +143,7 @@ namespace Serilog.Tests
                         }
                         else
                         {
-                            if (!object.Equals(ifaceField, classField))
+                            if (!Equals(ifaceField, classField))
                             {
                                 return false;
                             }
@@ -342,7 +344,7 @@ namespace Serilog.Tests
 
             Assert.IsType<bool>(result);
 
-            //silentlogger is always false
+            //SilentLogger is always false
             if (loggerType == typeof(SilentLogger))
                 return;
 
@@ -398,7 +400,7 @@ namespace Serilog.Tests
 
             Assert.IsType<bool>(result);
 
-            //silentlogger will always be false
+            //SilentLogger will always be false
             if (loggerType == typeof(SilentLogger))
                 return;
 
@@ -444,7 +446,7 @@ namespace Serilog.Tests
 
             Assert.IsType<bool>(trueResult);
 
-            //return as silentlogger will always be false
+            //return as SilentLogger will always be false
             if (loggerType == typeof(SilentLogger))
                 return;
 
@@ -553,7 +555,7 @@ namespace Serilog.Tests
             Assert.NotNull(enrichedLogger);
             Assert.True(enrichedLogger is ILogger);
 
-            //silentlogger will always return itself
+            //SilentLogger will always return itself
             if (method.DeclaringType == typeof(SilentLogger))
                 return;
 
