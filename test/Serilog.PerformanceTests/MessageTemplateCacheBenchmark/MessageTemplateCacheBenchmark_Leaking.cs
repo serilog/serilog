@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.PerformanceTests.Support;
@@ -26,7 +26,8 @@ namespace Serilog.PerformanceTests
         [Params(1, -1)]
         public int MaxDegreeOfParallelism { get; set; }
 
-        public MessageTemplateCacheBenchmark_Leaking()
+        [GlobalSetup]
+        public void Setup()
         {
             _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
         }
