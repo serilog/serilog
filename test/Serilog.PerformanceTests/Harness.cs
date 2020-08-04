@@ -1,4 +1,4 @@
-// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,12 @@ namespace Serilog.PerformanceTests
     /// </example>
     public class Harness
     {
+        [Fact]
+        public void SourceContextMatch()
+        {
+            BenchmarkRunner.Run<SourceContextMatchBenchmark>();
+        }
+
         [Fact]
         public void Allocations()
         {
@@ -79,7 +85,7 @@ namespace Serilog.PerformanceTests
         {
             BenchmarkRunner.Run<OutputTemplateRenderingBenchmark>();
         }
-        
+
         [Fact]
         public void MessageTemplateRendering()
         {
