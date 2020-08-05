@@ -32,7 +32,7 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
-            List<Exception> exceptions = null;
+            List<Exception>? exceptions = null;
             foreach (var sink in _sinks)
             {
                 try
