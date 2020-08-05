@@ -1,4 +1,4 @@
-﻿// Copyright 2019-2020 Serilog Contributors
+﻿// Copyright 2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,31 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Serilog.Events;
+using System;
 
 namespace Serilog.Core.Sinks
 {
-    class ConditionalSink : ILogEventSink, IDisposable
+    class DisposeDelegatingSink : ILogEventSink, IDisposable
     {
-        readonly ILogEventSink _wrapped;
-        readonly Func<LogEvent, bool> _condition;
+        readonly ILogEventSink _sink;
+        readonly IDisposable _disposable;
 
-        public ConditionalSink(ILogEventSink wrapped, Func<LogEvent, bool> condition)
+        public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
         {
-            _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
-            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            if (_condition(logEvent))
-                _wrapped.Emit(logEvent);
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+            _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
         }
 
         public void Dispose()
         {
-            (_wrapped as IDisposable)?.Dispose();
+            _disposable.Dispose();
+        }
+
+        public void Emit(LogEvent logEvent)
+        {
+            _sink.Emit(logEvent);
         }
     }
 }

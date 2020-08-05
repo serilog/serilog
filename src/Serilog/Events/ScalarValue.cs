@@ -104,7 +104,7 @@ namespace Serilog.Events
         /// <returns>True if the instances are equal; otherwise, false.</returns>
         public override bool Equals(object? obj)
         {
-            return obj is ScalarValue sv ? Equals(Value, sv.Value) : false;
+            return obj is ScalarValue sv && Equals(Value, sv.Value);
         }
 
         /// <summary>

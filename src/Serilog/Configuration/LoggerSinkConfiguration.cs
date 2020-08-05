@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Serilog.Core;
-using Serilog.Core.Enrichers;
 using Serilog.Core.Sinks;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -31,13 +30,11 @@ namespace Serilog.Configuration
     {
         readonly LoggerConfiguration _loggerConfiguration;
         readonly Action<ILogEventSink> _addSink;
-        readonly Action<LoggerConfiguration> _applyInheritedConfiguration;
 
-        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
+        internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {
             _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
             _addSink = addSink ?? throw new ArgumentNullException(nameof(addSink));
-            _applyInheritedConfiguration = applyInheritedConfiguration ?? throw new ArgumentNullException(nameof(applyInheritedConfiguration));
         }
 
         /// <summary>
@@ -127,9 +124,7 @@ namespace Serilog.Configuration
         {
             if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
 
-            var lc = new LoggerConfiguration();
-
-            _applyInheritedConfiguration(lc);
+            var lc = new LoggerConfiguration().MinimumLevel.Is(LevelAlias.Minimum);
             configureLogger(lc);
 
             var subLogger = lc.CreateLogger();
@@ -238,8 +233,7 @@ namespace Serilog.Configuration
             var capturingConfiguration = new LoggerConfiguration();
             var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
                 capturingConfiguration,
-                sinksToWrap.Add,
-                loggerSinkConfiguration._applyInheritedConfiguration);
+                sinksToWrap.Add);
 
             // `WriteTo.Sink()` will return the capturing configuration; this ensures chained `WriteTo` gets back
             // to the capturing sink configuration, enabling `WriteTo.X().WriteTo.Y()`.
@@ -252,15 +246,12 @@ namespace Serilog.Configuration
 
             var enclosed = sinksToWrap.Count == 1 ?
                 sinksToWrap.Single() :
-                new SafeAggregateSink(sinksToWrap);
+                new DisposingAggregateSink(sinksToWrap);
 
             var wrappedSink = wrapSink(enclosed);
-
-            if (!(wrappedSink is IDisposable))
+            if (!(wrappedSink is IDisposable) && enclosed is IDisposable target)
             {
-                SelfLog.WriteLine("Wrapping sink {0} does not implement IDisposable; to ensure " +
-                                  "wrapped sinks are properly flushed, wrappers should dispose " +
-                                  "their wrapped contents", wrappedSink);
+                wrappedSink = new DisposeDelegatingSink(wrappedSink, target);
             }
 
             return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);

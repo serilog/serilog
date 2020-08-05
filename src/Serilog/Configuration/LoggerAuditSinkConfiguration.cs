@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serilog Contributors
+// Copyright 2016-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ namespace Serilog.Configuration
     {
         readonly LoggerSinkConfiguration _sinkConfiguration;
 
-        internal LoggerAuditSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink, Action<LoggerConfiguration> applyInheritedConfiguration)
+        internal LoggerAuditSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {
-            _sinkConfiguration = new LoggerSinkConfiguration(loggerConfiguration, addSink, applyInheritedConfiguration);
+            _sinkConfiguration = new LoggerSinkConfiguration(loggerConfiguration, addSink);
         }
 
         /// <summary>

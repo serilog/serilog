@@ -44,7 +44,7 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_DEFAULT_INTERFACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
