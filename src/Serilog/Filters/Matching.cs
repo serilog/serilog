@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,8 +44,13 @@ namespace Serilog.Filters
         {
             if (source is null) throw new ArgumentNullException(nameof(source));
 
-            var sourcePrefix = source + ".";
-            return WithProperty<string>(Constants.SourceContextPropertyName, s => s != null && (s == source || s.StartsWith(sourcePrefix)));
+            return WithProperty<string>(
+                Constants.SourceContextPropertyName,
+                s => s != null && s
+#if FEATURE_SPAN
+                  .AsSpan()
+#endif
+                  .StartsWith(source) && (s.Length == source.Length || s[source.Length] == '.'));
         }
 
         /// <summary>

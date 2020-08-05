@@ -1,6 +1,5 @@
-﻿using Serilog.Core;
+using Serilog.Core;
 using Serilog.Core.Filters;
-using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Tests.Support;
 using System;
@@ -11,6 +10,7 @@ using Serilog.Configuration;
 using Serilog.Core.Enrichers;
 using TestDummies;
 using Xunit;
+
 // ReSharper disable PossibleNullReferenceException
 
 namespace Serilog.Tests
@@ -695,20 +695,6 @@ namespace Serilog.Tests
         }
 
         [Fact]
-        public void WrappingWarnsAboutNonDisposableWrapper()
-        {
-            var messages = new List<string>();
-            SelfLog.Enable(s => messages.Add(s));
-
-            new LoggerConfiguration()
-                .WriteTo.Dummy(w => w.Sink<DisposeTrackingSink>())
-                .CreateLogger();
-
-            SelfLog.Disable();
-            Assert.NotEmpty(messages);
-        }
-
-        [Fact]
         public void WrappingSinkRespectsLogEventLevelSetting()
         {
             DummyWrappingSink.Reset();
@@ -739,7 +725,7 @@ namespace Serilog.Tests
             Assert.Empty(DummyWrappingSink.Emitted);
             Assert.Empty(sink.Events);
         }
-        
+
         [Fact]
         public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
@@ -811,7 +797,7 @@ namespace Serilog.Tests
             var evt = Assert.Single(enricher.Events);
             Assert.Equal(LogEventLevel.Warning, evt.Level);
         }
-        
+
         [Fact]
         public void LeveledEnrichersCheckLevels()
         {
