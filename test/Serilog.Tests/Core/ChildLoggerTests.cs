@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -149,9 +149,9 @@ namespace Serilog.Tests.Core
             //   Event  --> Root Logger --> Child Logger -> YES or
             //    lvl       override/lvl    override/levl     NO ?
             //
-            object[] T(string rs, int? rl, string cs, int? cl, bool r)
+            object[] T(string rs, int? rl, string cs, int? cl, bool r, LogEventLevel dl = LevelAlias.Minimum)
             {
-                return new object[] { rs, rl, cs, cl, r };
+                return new object[] { dl, rs, rl, cs, cl, r };
             }
             // numbers are relative to incoming event level
             // Information + 1 = Warning
@@ -166,10 +166,13 @@ namespace Serilog.Tests.Core
             // ... and child logger is out of the way
             yield return T("Root", +0, null, +0, true);
             yield return T("Root", -1, null, +0, true);
+            yield return T("Root", -1, null, +0, true, LevelAlias.Maximum);
             yield return T("Root.N1", +0, null, +0, true);
             yield return T("Root.N1", -1, null, +0, true);
+            yield return T("Root.N1", -1, null, +0, true, LevelAlias.Maximum);
             yield return T("Root.N1.N2", +0, null, +0, true);
             yield return T("Root.N1.N2", -1, null, +0, true);
+            yield return T("Root.N1.N2", -1, null, +0, true, LevelAlias.Maximum);
             // - root overrides on irrelevant namespaces
             yield return T("xx", +1, null, +0, true);
             yield return T("Root.xx", +1, null, +0, true);
@@ -191,6 +194,7 @@ namespace Serilog.Tests.Core
         [Theory]
         [MemberData(nameof(GetMinimumLevelOverrideInheritanceTestCases))]
         public void WriteToLoggerWithConfigCallbackMinimumLevelOverrideInheritanceScenarios(
+            LogEventLevel defaultRootLevel,
             string rootOverrideSource,
             int rootOverrideLevelIncrement,
             string childOverrideSource,
@@ -205,7 +209,7 @@ namespace Serilog.Tests.Core
             var sink = new DelegatingSink(e => evt = e);
 
             var rootLoggerConfig = new LoggerConfiguration()
-                .MinimumLevel.Is(LevelAlias.Minimum);
+                .MinimumLevel.Is(defaultRootLevel);
 
             if (rootOverrideSource != null)
             {
@@ -215,7 +219,6 @@ namespace Serilog.Tests.Core
             var logger = rootLoggerConfig
                 .WriteTo.Logger(lc =>
                 {
-                    lc.MinimumLevel.Is(LevelAlias.Minimum);
                     if (childOverrideSource != null)
                     {
                         lc.MinimumLevel.Override(childOverrideSource, childOverrideLevel);
@@ -241,6 +244,7 @@ namespace Serilog.Tests.Core
         [Theory]
         [MemberData(nameof(GetMinimumLevelOverrideInheritanceTestCases))]
         public void WriteToLoggerMinimumLevelOverrideInheritanceScenarios(
+            LogEventLevel defaultRootLevel,
             string rootOverrideSource,
             int rootOverrideLevelIncrement,
             string childOverrideSource,
@@ -264,7 +268,7 @@ namespace Serilog.Tests.Core
             var childLogger = childLoggerConfig.CreateLogger();
 
             var rootLoggerConfig = new LoggerConfiguration()
-                .MinimumLevel.Is(LevelAlias.Minimum);
+                .MinimumLevel.Is(defaultRootLevel);
 
             if (rootOverrideSource != null)
             {
