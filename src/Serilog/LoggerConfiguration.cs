@@ -132,17 +132,39 @@ namespace Serilog
         /// the returned logger may be cast to <see cref="IDisposable"/> and
         /// disposed.</remarks>
         /// <exception cref="InvalidOperationException">When the logger is already created</exception>
-        public Logger CreateLogger()
+        public Logger CreateLogger() => CreateLogger(false);
+
+        /// <summary>
+        /// Create a logger using the configured sinks, enrichers and minimum level.
+        /// </summary>
+        /// <param name="propagateExceptions">Propagate exceptions from sinks. If <c>false</c> caught exception is written to SelfLog.</param>
+        /// <returns>The logger.</returns>
+        /// <remarks>To free resources held by sinks ahead of program shutdown,
+        /// the returned logger may be cast to <see cref="IDisposable"/> and
+        /// disposed.</remarks>
+        /// <exception cref="InvalidOperationException">When the logger is already created</exception>
+        public Logger CreateLogger(bool propagateExceptions)
         {
             if (_loggerCreated)  throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
 
             _loggerCreated = true;
 
-            ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
-
+            ILogEventSink sink = null;
             var auditing = _auditSinks.Any();
-            if (auditing)
-                sink = new AggregateSink(new[] { sink }.Concat(_auditSinks));
+
+            if (propagateExceptions)
+            {
+                if (auditing)
+                    sink = new AggregateSink(_logEventSinks.Concat(_auditSinks));
+                else
+                    sink = new AggregateSink(_logEventSinks);
+            }
+            else
+            {
+                sink = new SafeAggregateSink(_logEventSinks);
+                if (auditing)
+                    sink = new AggregateSink(new[] { sink }.Concat(_auditSinks));
+            }
 
             if (_filters.Any())
             {
