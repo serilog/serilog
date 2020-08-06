@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Serilog.Events
 {
@@ -28,7 +27,7 @@ namespace Serilog.Events
         /// No property.
         /// </summary>
         public static EventProperty None = default;
-        
+
         /// <summary>
         /// The name of the property.
         /// </summary>
