@@ -26,7 +26,7 @@ namespace Serilog.Core.Sinks
 
         public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
         {
-            if (sinks == null) throw new ArgumentNullException(nameof(sinks));
+            if (sinks is null) throw new ArgumentNullException(nameof(sinks));
             _sinks = sinks.ToArray();
         }
 
@@ -53,7 +53,7 @@ namespace Serilog.Core.Sinks
 
         public void Dispose()
         {
-            if (_sinks == null) return;
+            if (_sinks is null) return;
 
             foreach (var sink in _sinks)
             {
