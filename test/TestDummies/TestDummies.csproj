@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.0;net452</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
     <AssemblyName>TestDummies</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>

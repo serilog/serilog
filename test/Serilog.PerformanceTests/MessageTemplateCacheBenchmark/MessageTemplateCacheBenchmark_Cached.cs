@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,12 +28,17 @@ namespace Serilog.PerformanceTests
 
         public MessageTemplateCacheBenchmark_Cached()
         {
-            _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
-
             _concurrentCache = new ConcurrentDictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance);
             _dictionaryCache = new DictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance);
             _hashtableCache = new MessageTemplateCache(NoOpMessageTemplateParser.Instance);
+        }
 
+        [GlobalSetup]
+        public void Setup()
+        {
+            _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
+
+            //Warm Cache
             foreach (var t in _templateList)
             {
                 _concurrentCache.Parse(t);
