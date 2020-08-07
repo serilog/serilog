@@ -35,7 +35,7 @@ namespace Serilog.Events
         {
             if(elements == null) throw new ArgumentNullException(nameof(elements));
 
-            _elements = elements as LogEventPropertyValue[] ?? elements?.ToArray();
+            _elements = elements.ToArray();
         }
 
         /// <summary>

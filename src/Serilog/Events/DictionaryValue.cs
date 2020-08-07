@@ -33,8 +33,7 @@ namespace Serilog.Events
         {
             if (elements == null) throw new ArgumentNullException(nameof(elements));
 
-            Elements = elements as IReadOnlyDictionary<ScalarValue, LogEventPropertyValue>
-                       ?? elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Elements = elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         /// <summary>
