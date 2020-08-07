@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 // Copyright 2013-2015 Serilog Contributors
 //
@@ -35,8 +35,10 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
         public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null)
         {
+            if (properties == null) throw new ArgumentNullException(nameof(properties));
+
             TypeTag = typeTag;
-            _properties = properties as LogEventProperty[] ?? properties?.ToArray() ?? throw new ArgumentNullException(nameof(properties));
+            _properties = properties as LogEventProperty[] ?? properties?.ToArray();
         }
 
         /// <summary>

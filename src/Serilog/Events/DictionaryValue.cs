@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,10 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
         public DictionaryValue(IEnumerable<KeyValuePair<ScalarValue, LogEventPropertyValue>> elements)
         {
+            if (elements == null) throw new ArgumentNullException(nameof(elements));
+
             Elements = elements as IReadOnlyDictionary<ScalarValue, LogEventPropertyValue>
-                       ?? elements?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
-                       ?? throw new ArgumentNullException(nameof(elements));
+                       ?? elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         /// <summary>
