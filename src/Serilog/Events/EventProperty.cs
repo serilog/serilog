@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Serilog Contributors
+// Copyright 2019 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,11 +48,10 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         public EventProperty(string name, LogEventPropertyValue value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
             LogEventProperty.EnsureValidName(name);
 
             Name = name;
-            Value = value;
+            Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>
@@ -75,10 +74,23 @@ namespace Serilog.Events
         /// <summary>Indicates whether this instance and a specified <see cref="EventProperty"/> are equal.</summary>
         /// <param name="other">The <see cref="EventProperty"/> to compare with the current instance. </param>
         /// <returns>
-        /// <see langword="true" /> if <paramref name="other" /> and this instance represent the same value; otherwise, <see langword="false" />. </returns>
+        ///     <see langword="true"/> if <paramref name="other" /> and this instance represent the same value; otherwise, <see langword="false"/>.
+        /// </returns>
         public bool Equals(in EventProperty other)
         {
             return string.Equals(Name, other.Name) && Equals(Value, other.Value);
+        }
+
+        /// <inheritdoc />
+        public static bool operator ==(EventProperty left, EventProperty right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(EventProperty left, EventProperty right)
+        {
+            return !left.Equals(right);
         }
 
         /// <inheritdoc />
