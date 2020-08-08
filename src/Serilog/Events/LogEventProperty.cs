@@ -76,55 +76,5 @@ namespace Serilog.Events
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (!IsValidName(name)) throw new ArgumentException($"Property {nameof(name)} must not be empty or whitespace.", nameof(name));
         }
-
-        /// <summary>
-        /// Permit deconstruction of the property into a name/value pair.
-        /// </summary>
-        /// <param name="name">The name of the property.</param>
-        /// <param name="value">The value of the property.</param>
-        public void Deconstruct(out string name, out LogEventPropertyValue value)
-        {
-            name = Name;
-            value = Value;
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj) || obj is LogEventProperty other && Equals(other);
-        }
-
-        /// <summary>
-        /// Indicates whether this instance and a specified <see cref="LogEventProperty"/> are equal.
-        /// </summary>
-        /// <param name="other">The <see cref="LogEventProperty"/> to compare with the current instance.</param>
-        /// <returns>
-        ///     <see langword="true"/> if <paramref name="other" /> and this instance represent the same value; otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool Equals(LogEventProperty other)
-        {
-            return Name == other.Name && Equals(Value, other.Value);
-        }
-
-        /// <inheritdoc />
-        public static bool operator ==(LogEventProperty left, LogEventProperty right)
-        {
-            return Equals(left, right);
-        }
-
-        /// <inheritdoc />
-        public static bool operator !=(LogEventProperty left, LogEventProperty right)
-        {
-            return !Equals(left, right);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
-            }
-        }
     }
 }
