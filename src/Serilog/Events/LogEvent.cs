@@ -210,7 +210,7 @@ namespace Serilog.Events
             switch (properties)
             {
                 //Try to allocate the correct Dictionary size and use the best for/foreach for the type.
-                case LogEventProperty[] array:
+                case LogEventProperty[] array: //Most common usage by Serilog Internally, first to be checked.
                     ProcessPropertiesInternal(array);
                     return;
                 case IList<LogEventProperty> listOfT:
@@ -234,6 +234,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessProperties(in EventProperty[] properties)
         {
+            if (properties.Length == 0)
+                return;
+
             InitProperties(properties.Length);
 
             for (int i = 0, length = properties.Length; i < length; i++)
@@ -242,6 +245,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(LogEventProperty[] array)
         {
+            if (array.Length == 0)
+                return;
+
             InitProperties(array.Length);
 
             for (int i = 0, length = array.Length; i < length; i++)
@@ -250,6 +256,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(IList<LogEventProperty> list)
         {
+            if (list.Count == 0)
+                return;
+
             InitProperties(list.Count);
 
             for (int i = 0, length = list.Count; i < length; i++)
@@ -258,6 +267,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(IReadOnlyList<LogEventProperty> list)
         {
+            if (list.Count == 0)
+                return;
+
             InitProperties(list.Count);
 
             for (int i = 0, length = list.Count; i < length; i++)
@@ -266,6 +278,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(ICollection<LogEventProperty> collection)
         {
+            if (collection.Count == 0)
+                return;
+
             InitProperties(collection.Count);
 
             foreach (var p in collection)
@@ -274,6 +289,9 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(IReadOnlyCollection<LogEventProperty> collection)
         {
+            if (collection.Count == 0)
+                return;
+
             InitProperties(collection.Count);
 
             foreach (var p in collection)
@@ -283,8 +301,7 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void InitProperties(int itemCount)
         {
-            if (itemCount > 0)
-                _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount);
+            _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount);
         }
     }
 }
