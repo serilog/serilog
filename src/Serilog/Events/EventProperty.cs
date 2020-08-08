@@ -73,24 +73,10 @@ namespace Serilog.Events
 
         /// <summary>Indicates whether this instance and a specified <see cref="EventProperty"/> are equal.</summary>
         /// <param name="other">The <see cref="EventProperty"/> to compare with the current instance. </param>
-        /// <returns>
-        ///     <see langword="true"/> if <paramref name="other" /> and this instance represent the same value; otherwise, <see langword="false"/>.
-        /// </returns>
+        /// <returns><see langword="true"/> if <paramref name="other" /> and this instance represent the same value; otherwise, <see langword="false"/>.</returns>
         public bool Equals(in EventProperty other)
         {
             return string.Equals(Name, other.Name) && Equals(Value, other.Value);
-        }
-
-        /// <inheritdoc />
-        public static bool operator ==(EventProperty left, EventProperty right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <inheritdoc />
-        public static bool operator !=(EventProperty left, EventProperty right)
-        {
-            return !left.Equals(right);
         }
 
         /// <inheritdoc />
