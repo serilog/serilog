@@ -33,7 +33,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
         public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
         {
-            if(elements == null) throw new ArgumentNullException(nameof(elements));
+            if (elements == null) throw new ArgumentNullException(nameof(elements));
 
             _elements = elements.ToArray();
         }
