@@ -210,7 +210,7 @@ namespace Serilog.Events
             switch (properties)
             {
                 //Try to allocate the correct Dictionary size and use the best for/foreach for the type.
-                case LogEventProperty[] array: //Most common usage by Serilog Internally, first to be checked.
+                case LogEventProperty[] array:
                     ProcessPropertiesInternal(array);
                     return;
                 case IList<LogEventProperty> listOfT:
