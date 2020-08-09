@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Serilog.Support;
 
 namespace Serilog.Events
 {
@@ -25,7 +26,7 @@ namespace Serilog.Events
     public class LogEvent
     {
         //A cached and shared instance for a empty list of Properties
-        static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new Dictionary<string, LogEventPropertyValue>(0);
+        static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new EmptyReadOnlyDictionary<string, LogEventPropertyValue>();
 
         //Lazy Load a Instance for the Properties List
         Dictionary<string, LogEventPropertyValue> _properties => _propertiesInternal ??= new Dictionary<string, LogEventPropertyValue>();
