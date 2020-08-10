@@ -10,4 +10,4 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 ```
 |         Method |     Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |--------------- |---------:|---------:|---------:|-------:|------:|------:|----------:|
-| FormatToOutput | 962.0 ns | 18.71 ns | 21.55 ns | 0.0515 |     - |     - |     336 B |
+| FormatToOutput | 992.9 ns | 19.68 ns | 18.41 ns | 0.0515 |     - |     - |     336 B |

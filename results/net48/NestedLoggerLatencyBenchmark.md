@@ -7,7 +7,7 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 
 
 ```
-|       Method |     Mean |    Error |   StdDev | Ratio | RatioSD |
-|------------- |---------:|---------:|---------:|------:|--------:|
-|   RootLogger | 10.34 ns | 0.220 ns | 0.206 ns |  1.00 |    0.00 |
-| NestedLogger | 45.99 ns | 0.937 ns | 1.539 ns |  4.43 |    0.17 |
+|       Method |      Mean |     Error |    StdDev | Ratio | RatioSD |
+|------------- |----------:|----------:|----------:|------:|--------:|
+|   RootLogger |  9.345 ns | 0.2101 ns | 0.1966 ns |  1.00 |    0.00 |
+| NestedLogger | 47.408 ns | 0.9698 ns | 1.1545 ns |  5.07 |    0.14 |

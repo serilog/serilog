@@ -9,11 +9,11 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 ```
 |                         Method |       Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |------------------------------- |-----------:|----------:|----------:|------:|--------:|-------:|------:|------:|----------:|
-|                  EmptyTemplate |   142.5 ns |   2.87 ns |   3.42 ns |  1.00 |    0.00 | 0.0288 |     - |     - |     152 B |
-|             SimpleTextTemplate |   207.8 ns |   3.23 ns |   3.02 ns |  1.46 |    0.04 | 0.0503 |     - |     - |     264 B |
-|    SinglePropertyTokenTemplate |   323.0 ns |   5.10 ns |   4.77 ns |  2.27 |    0.08 | 0.0625 |     - |     - |     328 B |
-| SingleTextWithPropertyTemplate |   538.8 ns |   9.98 ns |   9.34 ns |  3.78 |    0.15 | 0.1183 |     - |     - |     625 B |
-|      ManyPropertyTokenTemplate |   690.1 ns |  12.06 ns |  11.28 ns |  4.84 |    0.12 | 0.1259 |     - |     - |     665 B |
-|         MultipleTokensTemplate | 1,381.7 ns |  21.24 ns |  19.87 ns |  9.69 |    0.27 | 0.2213 |     - |     - |    1166 B |
-|   DefaultConsoleOutputTemplate | 2,026.9 ns |  39.53 ns |  52.77 ns | 14.24 |    0.46 | 0.2785 |     - |     - |    1478 B |
-|                    BigTemplate | 5,393.4 ns | 106.68 ns | 104.77 ns | 37.92 |    1.04 | 0.7935 |     - |     - |    4182 B |
+|                  EmptyTemplate |   148.0 ns |   2.88 ns |   3.54 ns |  1.00 |    0.00 | 0.0267 |     - |     - |     140 B |
+|             SimpleTextTemplate |   219.1 ns |   3.44 ns |   3.21 ns |  1.48 |    0.05 | 0.0479 |     - |     - |     252 B |
+|    SinglePropertyTokenTemplate |   343.0 ns |   6.82 ns |   6.69 ns |  2.32 |    0.08 | 0.0625 |     - |     - |     328 B |
+| SingleTextWithPropertyTemplate |   550.1 ns |  10.96 ns |  12.62 ns |  3.72 |    0.08 | 0.1183 |     - |     - |     625 B |
+|      ManyPropertyTokenTemplate |   690.2 ns |  13.66 ns |  13.41 ns |  4.66 |    0.16 | 0.1259 |     - |     - |     665 B |
+|         MultipleTokensTemplate | 1,359.1 ns |  25.02 ns |  23.40 ns |  9.18 |    0.31 | 0.2213 |     - |     - |    1166 B |
+|   DefaultConsoleOutputTemplate | 1,945.0 ns |  25.38 ns |  23.74 ns | 13.14 |    0.43 | 0.2804 |     - |     - |    1478 B |
+|                    BigTemplate | 5,322.1 ns | 104.76 ns | 102.89 ns | 35.93 |    1.08 | 0.7935 |     - |     - |    4182 B |
