@@ -19,6 +19,7 @@ using System.Linq;
 using Serilog.Debugging;
 using Serilog.Parsing;
 using Serilog.Rendering;
+using Serilog.Support;
 
 namespace Serilog.Events
 {
@@ -58,50 +59,43 @@ namespace Serilog.Events
         public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
             Text = text ?? throw new ArgumentNullException(nameof(text));
-            _tokens = (tokens ?? throw new ArgumentNullException(nameof(tokens))).ToArray();
+            _tokens = (tokens ?? throw new ArgumentNullException(nameof(tokens))).AsArray(forceNewInstance: false);
 
-            var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(_tokens);
-            if (propertyTokens.Length != 0)
+            if(_tokens.Length == 0)
+                return;
+
+            //Process Tokens Array - In a Similar way of Enumerable.OfType{TResult}, but faster and setting all flags in the same loop.
+            var allPositional = true;
+            var anyPositional = false;
+            var propertyTokens = new List<PropertyToken>(_tokens.Length / 2);
+
+            for (var i = 0; i < _tokens.Length; i++)
             {
-                var allPositional = true;
-                var anyPositional = false;
-                foreach (var propertyToken in propertyTokens)
+                if (_tokens[i] is PropertyToken propertyToken)
                 {
+                    propertyTokens.Add(propertyToken);
+
                     if (propertyToken.IsPositional)
                         anyPositional = true;
                     else
                         allPositional = false;
                 }
-
-                if (allPositional)
-                {
-                    PositionalProperties = propertyTokens;
-                }
-                else
-                {
-                    if (anyPositional)
-                        SelfLog.WriteLine("Message template is malformed: {0}", text);
-
-                    NamedProperties = propertyTokens;
-                }
             }
-        }
 
-        /// <summary>
-        /// Similar to <see cref="Enumerable.OfType{TResult}"/>, but faster.
-        /// </summary>
-        static TResult[] GetElementsOfTypeToArray<TResult>(MessageTemplateToken[] tokens)
-            where TResult : class
-        {
-            var result = new List<TResult>(tokens.Length / 2);
-            for (var i = 0; i < tokens.Length; i++)
+            if (propertyTokens.Count == 0)
+                return;
+
+            if (allPositional)
             {
-                if (tokens[i] is TResult token)
-                {
-                    result.Add(token);
-                }
+                PositionalProperties = propertyTokens.ToArray();
             }
-            return result.ToArray();
+            else
+            {
+                if (anyPositional)
+                    SelfLog.WriteLine("Message template is malformed: {0}", text);
+
+                NamedProperties = propertyTokens.ToArray();
+            }
         }
 
         /// <summary>
@@ -125,6 +119,9 @@ namespace Serilog.Events
         internal PropertyToken[] NamedProperties { get; }
 
         internal PropertyToken[] PositionalProperties { get; }
+
+        internal IEnumerable<PropertyToken> AllProperties => NamedProperties ?? PositionalProperties ?? Enumerable.Empty<PropertyToken>();
+
 
         /// <summary>
         /// Convert the message template into a textual message, given the

@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using Serilog.Support;
 
 namespace Serilog.Events
 {
@@ -35,7 +35,7 @@ namespace Serilog.Events
         {
             if (elements == null) throw new ArgumentNullException(nameof(elements));
 
-            _elements = elements.ToArray();
+            _elements = elements.AsArray();
         }
 
         /// <summary>
