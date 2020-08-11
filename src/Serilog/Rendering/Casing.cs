@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ namespace Serilog.Rendering
         /// Apply upper or lower casing to <paramref name="value"/> when <paramref name="format"/> is provided.
         /// Returns <paramref name="value"/> when no or invalid format provided
         /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="format">Define how the <paramref name="value"/> will be casting.</param>
         /// <returns>The provided <paramref name="value"/> with formatting applied</returns>
         public static string Format(string value, string format = null)
         {

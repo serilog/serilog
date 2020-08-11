@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,6 +85,11 @@ namespace Serilog
         /// <summary>
         /// Create a logger that enriches log events with the specified property.
         /// </summary>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be converted to a structure; otherwise, unknown types will
+        /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
         public static ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
         {

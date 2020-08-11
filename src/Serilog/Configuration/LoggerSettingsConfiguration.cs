@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Serilog Contributors
+// Copyright 2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ namespace Serilog.Configuration
         /// <summary>
         /// Apply external settings to the logger configuration.
         /// </summary>
+        /// <param name="settings">The logger settings.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
         public LoggerConfiguration Settings(ILoggerSettings settings)

@@ -90,6 +90,9 @@ namespace Serilog.Events
         /// <summary>
         /// Similar to <see cref="Enumerable.OfType{TResult}"/>, but faster.
         /// </summary>
+        /// <typeparam name="TResult">The type to be filtered</typeparam>
+        /// <param name="tokens">A array to be filtered.</param>
+        /// <returns>A filtered array with only the <typeparamref name="TResult"/> type from <paramref name="tokens"/></returns>
         static TResult[] GetElementsOfTypeToArray<TResult>(MessageTemplateToken[] tokens)
             where TResult : class
         {

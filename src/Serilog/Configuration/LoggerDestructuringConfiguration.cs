@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -183,6 +183,7 @@ namespace Serilog.Configuration
         /// sum of length of collection can exceed limit.
         /// Applies limit to all <see cref="IEnumerable"/> including dictionaries.
         /// </summary>
+        /// <param name="maximumCollectionCount">The maximum collection count.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentOutOfRangeException">When <paramref name="maximumCollectionCount"/> is less than 1</exception>
         public LoggerConfiguration ToMaximumCollectionCount(int maximumCollectionCount)

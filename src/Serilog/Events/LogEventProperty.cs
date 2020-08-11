@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,6 +69,10 @@ namespace Serilog.Events
         /// <returns>True if the name is valid; otherwise, false.</returns>
         public static bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name);
 
+        /// <summary>
+        /// Ensure that a Property Name is validated
+        /// </summary>
+        /// <param name="name">The Property Name.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
         /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

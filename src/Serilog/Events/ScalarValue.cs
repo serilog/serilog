@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,6 +51,13 @@ namespace Serilog.Events
             Render(Value, output, format, formatProvider);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         internal static void Render(object value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {

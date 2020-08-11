@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ namespace Serilog.Rendering
         /// <summary>
         /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
         /// </summary>
+        /// <param name="output">The output Writer.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="alignment">Define how <paramref name="value"/> will be alignment.</param>
         public static void Apply(TextWriter output, string value, Alignment? alignment)
         {
             if (alignment == null || value.Length >= alignment.Value.Width)

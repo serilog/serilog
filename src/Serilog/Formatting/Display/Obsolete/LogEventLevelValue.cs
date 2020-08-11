@@ -32,6 +32,9 @@ namespace Serilog.Formatting.Display.Obsolete
         /// <summary>
         /// This method will apply only upper or lower case formatting, not fixed width
         /// </summary>
+        /// <param name="output">The output.</param>
+        /// <param name="format">A format string applied to the value, or null.</param>
+        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
         {
             output.Write(LevelOutputFormat.GetLevelMoniker(_value, format));
