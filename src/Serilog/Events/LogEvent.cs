@@ -136,7 +136,9 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
         public void AddOrUpdateProperty(LogEventProperty property)
         {
-            AddOrUpdatePropertyInternal(property);
+            if (property == null) throw new ArgumentNullException(nameof(property));
+
+            _properties[property.Name] = property.Value;
         }
 
         /// <summary>
@@ -147,14 +149,6 @@ namespace Serilog.Events
         internal void AddOrUpdateProperty(in EventProperty property)
         {
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
-
-            _properties[property.Name] = property.Value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void AddOrUpdatePropertyInternal(LogEventProperty property)
-        {
-            if (property == null) throw new ArgumentNullException(nameof(property));
 
             _properties[property.Name] = property.Value;
         }
@@ -229,7 +223,7 @@ namespace Serilog.Events
             }
 
             foreach (var p in properties)
-                AddOrUpdatePropertyInternal(p);
+                _properties[p.Name] = p.Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -240,8 +234,8 @@ namespace Serilog.Events
 
             InitProperties(properties.Length);
 
-            for (int i = 0, length = properties.Length; i < length; i++)
-                _properties[properties[i].Name] = properties[i].Value;
+            foreach (var p in properties) //This will be optimized to for(;;) by the compiler
+                _propertiesInternal[p.Name] = p.Value;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(LogEventProperty[] array)
@@ -251,8 +245,8 @@ namespace Serilog.Events
 
             InitProperties(array.Length);
 
-            for (int i = 0, length = array.Length; i < length; i++)
-                AddOrUpdatePropertyInternal(array[i]);
+            foreach (var p in array) //This will be optimized to for(;;) by the compiler
+                _propertiesInternal[p.Name] = p.Value;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(IList<LogEventProperty> list)
@@ -263,7 +257,10 @@ namespace Serilog.Events
             InitProperties(list.Count);
 
             for (int i = 0, length = list.Count; i < length; i++)
-                AddOrUpdatePropertyInternal(list[i]);
+            {
+                var p = list[i];
+                _propertiesInternal[p.Name] = p.Value;
+            }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(IReadOnlyList<LogEventProperty> list)
@@ -274,7 +271,10 @@ namespace Serilog.Events
             InitProperties(list.Count);
 
             for (int i = 0, length = list.Count; i < length; i++)
-                AddOrUpdatePropertyInternal(list[i]);
+            {
+                var p = list[i];
+                _propertiesInternal[p.Name] = p.Value;
+            }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(ICollection<LogEventProperty> collection)
@@ -285,7 +285,7 @@ namespace Serilog.Events
             InitProperties(collection.Count);
 
             foreach (var p in collection)
-                AddOrUpdatePropertyInternal(p);
+                _propertiesInternal[p.Name] = p.Value;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessPropertiesInternal(IReadOnlyCollection<LogEventProperty> collection)
@@ -296,11 +296,11 @@ namespace Serilog.Events
             InitProperties(collection.Count);
 
             foreach (var p in collection)
-                AddOrUpdatePropertyInternal(p);
+                _propertiesInternal[p.Name] = p.Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void InitProperties(int itemCount)
+        void InitProperties(int itemCount = 0)
         {
             _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount);
         }
