@@ -28,7 +28,7 @@ namespace Serilog.Events
         /// No property.
         /// </summary>
         public static EventProperty None = default;
-        
+
         /// <summary>
         /// The name of the property.
         /// </summary>
