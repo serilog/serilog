@@ -13,8 +13,8 @@ namespace Serilog.Support
             return source switch
             {
                 Dictionary<TKey, TValue> dic => forceNewInstance ? new Dictionary<TKey, TValue>(dic) : dic,
-                ReadOnlyDictionary<TKey, TValue> roDic => roDic,
-                IReadOnlyDictionary<TKey, TValue> roDic => roDic,
+                ReadOnlyDictionary<TKey, TValue> roDic => forceNewInstance ? (IReadOnlyDictionary<TKey,TValue>) new Dictionary<TKey, TValue>(roDic) : roDic,
+                IReadOnlyDictionary<TKey, TValue> roDic => forceNewInstance ? roDic.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : roDic,
                 IDictionary<TKey, TValue> dic => new Dictionary<TKey, TValue>(dic),
                 _ => source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
             };
