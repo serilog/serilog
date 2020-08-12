@@ -33,7 +33,7 @@ namespace Serilog.Events
         {
             if (elements == null) throw new ArgumentNullException(nameof(elements));
 
-            Elements = elements.AsReadOnlyDictionary(forceNewInstance: false);
+            Elements = elements.AsReadOnlyDictionary();
         }
 
         /// <summary>
