@@ -38,7 +38,7 @@ namespace Serilog.Events
             if (properties == null) throw new ArgumentNullException(nameof(properties));
 
             TypeTag = typeTag;
-            _properties = properties.AsArray();
+            _properties = properties.AsArray(forceNewInstance: false);
         }
 
         /// <summary>
