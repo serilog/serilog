@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ namespace Serilog.Formatting.Json
         /// Format the log event into the output.
         /// </summary>
         /// <param name="logEvent">The event to format.</param>
-        /// <param name="output">The output.</param>
+        /// <param name="output">The writer to write on</param>
         /// <exception cref="ArgumentNullException">When <paramref name="logEvent"/> is <code>null</code></exception>
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
         public void Format(LogEvent logEvent, TextWriter output)
@@ -177,6 +177,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out individual renderings of attached properties
         /// </summary>
+        /// <param name="tokensWithFormat">The tokens with format.</param>
+        /// <param name="properties">The properties names and values dictionary.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
@@ -188,6 +191,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the values of individual renderings of attached properties
         /// </summary>
+        /// <param name="tokensWithFormat">The tokens with format.</param>
+        /// <param name="properties">The properties names and values dictionary.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
@@ -225,6 +231,8 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the attached properties
         /// </summary>
+        /// <param name="properties">The properties names and values dictionary.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
@@ -236,6 +244,8 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the attached properties values
         /// </summary>
+        /// <param name="properties">The properties names and values dictionary.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
@@ -249,6 +259,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the attached exception
         /// </summary>
+        /// <param name="exception">The Exception</param>
+        /// <param name="delim">The preceding delimiter.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteException(Exception exception, ref string delim, TextWriter output)
         {
@@ -258,6 +271,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// (Optionally) writes out the rendered message
         /// </summary>
+        /// <param name="message">The RenderedMessage Text.</param>
+        /// <param name="delim">The preceding delimiter.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteRenderedMessage(string message, ref string delim, TextWriter output)
         {
@@ -267,6 +283,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the message template for the logevent.
         /// </summary>
+        /// <param name="template">The MessageTemplate text.</param>
+        /// <param name="delim">The delimiter.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteMessageTemplate(string template, ref string delim, TextWriter output)
         {
@@ -276,6 +295,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the log level
         /// </summary>
+        /// <param name="level">The Log event level.</param>
+        /// <param name="delim">The delimiter.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
         {
@@ -285,6 +307,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out the log timestamp
         /// </summary>
+        /// <param name="timestamp">The timestamp.</param>
+        /// <param name="delim">The delimiter.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
         {
@@ -294,6 +319,9 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out a structure property
         /// </summary>
+        /// <param name="typeTag">The type tag.</param>
+        /// <param name="properties"></param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
         {
@@ -312,6 +340,8 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out a sequence property
         /// </summary>
+        /// <param name="elements">The Enumerable with the elements.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteSequence(IEnumerable elements, TextWriter output)
         {
@@ -329,6 +359,8 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out a dictionary
         /// </summary>
+        /// <param name="elements">The Dictionary with the elements.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
         {
@@ -348,6 +380,10 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Writes out a json property with the specified value on output writer
         /// </summary>
+        /// <param name="name">The property name.</param>
+        /// <param name="value">The property value.</param>
+        /// <param name="precedingDelimiter">The preceding delimiter.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
         {
@@ -362,8 +398,8 @@ namespace Serilog.Formatting.Json
         /// <summary>
         /// Allows a subclass to write out objects that have no configured literal writer.
         /// </summary>
-        /// <param name="value">The value to be written as a json construct</param>
-        /// <param name="output">The writer to write on</param>
+        /// <param name="value">The value to be written as a json construct.</param>
+        /// <param name="output">The writer to write on.</param>
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteLiteralValue(object value, TextWriter output)
         {
