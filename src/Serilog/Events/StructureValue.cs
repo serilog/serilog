@@ -15,7 +15,7 @@ using System.Collections.Generic;
 // limitations under the License.
 
 using System.IO;
-using Serilog.Support;
+using System.Linq;
 
 namespace Serilog.Events
 {
@@ -38,7 +38,7 @@ namespace Serilog.Events
             if (properties == null) throw new ArgumentNullException(nameof(properties));
 
             TypeTag = typeTag;
-            _properties = properties.AsArray();
+            _properties = properties.ToArray();
         }
 
         /// <summary>

@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Serilog.Support;
+using System.Linq;
 
 namespace Serilog.Events
 {
@@ -33,7 +33,7 @@ namespace Serilog.Events
         {
             if (elements == null) throw new ArgumentNullException(nameof(elements));
 
-            Elements = elements.AsReadOnlyDictionary();
+            Elements = elements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         /// <summary>

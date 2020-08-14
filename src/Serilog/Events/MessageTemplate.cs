@@ -19,7 +19,6 @@ using System.Linq;
 using Serilog.Debugging;
 using Serilog.Parsing;
 using Serilog.Rendering;
-using Serilog.Support;
 
 namespace Serilog.Events
 {
@@ -59,7 +58,7 @@ namespace Serilog.Events
         public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
             Text = text ?? throw new ArgumentNullException(nameof(text));
-            _tokens = (tokens ?? throw new ArgumentNullException(nameof(tokens))).AsArray(forceNewInstance: false);
+            _tokens = (tokens ?? throw new ArgumentNullException(nameof(tokens))).ToArray();
 
             if(_tokens.Length == 0)
                 return;
