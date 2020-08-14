@@ -80,7 +80,7 @@ namespace Serilog.Events
             MessageTemplate = messageTemplate ?? throw new ArgumentNullException(nameof(messageTemplate));
 
             if (properties == null) throw new ArgumentNullException(nameof(properties));
-            ProcessProperties(properties);
+            ProcessProperties(properties, messageTemplate.AllProperties.Length);
         }
         
         /// <summary>
@@ -200,33 +200,6 @@ namespace Serilog.Events
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessProperties(IEnumerable<LogEventProperty> properties)
-        {
-            switch (properties)
-            {
-                //Try to allocate the correct Dictionary size and use the best for/foreach for the type.
-                case LogEventProperty[] array:
-                    ProcessPropertiesInternal(array);
-                    return;
-                case IList<LogEventProperty> listOfT:
-                    ProcessPropertiesInternal(listOfT);
-                    return;
-                case IReadOnlyList<LogEventProperty> roListOfT:
-                    ProcessPropertiesInternal(roListOfT);
-                    return;
-                case ICollection<LogEventProperty> collectionOfT:
-                    ProcessPropertiesInternal(collectionOfT);
-                    return;
-                case IReadOnlyCollection<LogEventProperty> roCollectionOfT:
-                    ProcessPropertiesInternal(roCollectionOfT);
-                    return;
-            }
-
-            foreach (var p in properties)
-                _properties[p.Name] = p.Value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void ProcessProperties(in EventProperty[] properties)
         {
             if (properties.Length == 0)
@@ -237,72 +210,23 @@ namespace Serilog.Events
             foreach (var p in properties) //This will be optimized to for(;;) by the compiler
                 _propertiesInternal[p.Name] = p.Value;
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessPropertiesInternal(LogEventProperty[] array)
+        void ProcessProperties(IEnumerable<LogEventProperty> properties, int propertiesCountInMessage)
         {
-            if (array.Length == 0)
-                return;
+            InitProperties(propertiesCountInMessage);
 
-            InitProperties(array.Length);
-
-            foreach (var p in array) //This will be optimized to for(;;) by the compiler
-                _propertiesInternal[p.Name] = p.Value;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessPropertiesInternal(IList<LogEventProperty> list)
-        {
-            if (list.Count == 0)
-                return;
-
-            InitProperties(list.Count);
-
-            for (int i = 0, length = list.Count; i < length; i++)
-            {
-                var p = list[i];
-                _propertiesInternal[p.Name] = p.Value;
-            }
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessPropertiesInternal(IReadOnlyList<LogEventProperty> list)
-        {
-            if (list.Count == 0)
-                return;
-
-            InitProperties(list.Count);
-
-            for (int i = 0, length = list.Count; i < length; i++)
-            {
-                var p = list[i];
-                _propertiesInternal[p.Name] = p.Value;
-            }
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessPropertiesInternal(ICollection<LogEventProperty> collection)
-        {
-            if (collection.Count == 0)
-                return;
-
-            InitProperties(collection.Count);
-
-            foreach (var p in collection)
-                _propertiesInternal[p.Name] = p.Value;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessPropertiesInternal(IReadOnlyCollection<LogEventProperty> collection)
-        {
-            if (collection.Count == 0)
-                return;
-
-            InitProperties(collection.Count);
-
-            foreach (var p in collection)
-                _propertiesInternal[p.Name] = p.Value;
+            foreach (var p in properties)
+                _properties[p.Name] = p.Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void InitProperties(int itemCount = 0)
+        void InitProperties(int itemCount)
         {
-            _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount);
+            if (itemCount == 0)
+                return;
+
+            _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount+2);
         }
     }
 }
