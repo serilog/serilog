@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ using Serilog.Parsing;
 
 namespace Serilog.Capturing
 {
-    class MessageTemplateProcessor : ILogEventPropertyFactory
+    class MessageTemplateProcessor : ILogEventPropertyFactory, IStructLogEventPropertyFactory
     {
         readonly MessageTemplateCache _parser = new MessageTemplateCache(new MessageTemplateParser());
         readonly PropertyBinder _propertyBinder;
@@ -40,6 +40,10 @@ namespace Serilog.Capturing
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
         {
             return _propertyValueConverter.CreateProperty(name, value, destructureObjects);
+        }
+        EventProperty IStructLogEventPropertyFactory.CreateProperty(string name, object value, bool destructureObjects)
+        {
+            return ((IStructLogEventPropertyFactory) _propertyValueConverter).CreateProperty(name, value, destructureObjects);
         }
 
         public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)

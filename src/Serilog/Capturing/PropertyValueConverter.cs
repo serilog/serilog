@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace Serilog.Capturing
     // type system so that there is a better chance of code written with one sink in
     // mind working correctly with any other. This technique also makes the programmer
     // writing a log event (roughly) in control of the cost of recording that event.
-    partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
+    partial class PropertyValueConverter : ILogEventPropertyFactory, IStructLogEventPropertyFactory, ILogEventPropertyValueFactory
     {
         static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
         {
@@ -89,6 +89,10 @@ namespace Serilog.Capturing
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
         {
             return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
+        }
+        EventProperty IStructLogEventPropertyFactory.CreateProperty(string name, object value, bool destructureObjects)
+        {
+            return new EventProperty(name, CreatePropertyValue(value, destructureObjects));
         }
 
         public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)

@@ -59,6 +59,13 @@ namespace Serilog.Core.Enrichers
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             if (propertyFactory == null) throw new ArgumentNullException(nameof(propertyFactory));
 
+            if (propertyFactory is IStructLogEventPropertyFactory evtPropertyFactory)
+            {
+                var evtProperty = evtPropertyFactory.CreateProperty(_name, _value, _destructureObjects);
+                logEvent.AddPropertyIfAbsent(evtProperty);
+                return;
+            }
+
             var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
             logEvent.AddPropertyIfAbsent(property);
         }

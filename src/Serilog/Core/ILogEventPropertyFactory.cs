@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,5 +32,23 @@ namespace Serilog.Core
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns></returns>
         LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false);
+    }
+
+    /// <summary>
+    /// Creates log event properties from regular .NET objects, applying policies as
+    /// required.
+    /// </summary>
+    interface IStructLogEventPropertyFactory
+    {
+        /// <summary>
+        /// Construct a <see cref="EventProperty"/> with the specified name and value.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be converted to a structure; otherwise, unknown types will
+        /// be converted to scalars, which are generally stored as strings.</param>
+        /// <returns></returns>
+        EventProperty CreateProperty(string name, object value, bool destructureObjects = false);
     }
 }
