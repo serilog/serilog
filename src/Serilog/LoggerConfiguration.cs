@@ -36,11 +36,14 @@ namespace Serilog
         readonly List<Type> _additionalScalarTypes = new List<Type>();
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
         readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
+
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
+        internal int NumOfEnrichers { get; set; } = 0;
+
         bool _loggerCreated;
 
         /// <summary>
@@ -192,8 +195,8 @@ namespace Serilog
             }
 
             return _levelSwitch == null ?
-                new Logger(processor, _minimumLevel, sink, enricher, Dispose, overrideMap) :
-                new Logger(processor, _levelSwitch, sink, enricher, Dispose, overrideMap);
+                new Logger(processor, _minimumLevel, sink, enricher, Dispose, overrideMap, NumOfEnrichers) :
+                new Logger(processor, _levelSwitch, sink, enricher, Dispose, overrideMap, NumOfEnrichers);
         }
     }
 }

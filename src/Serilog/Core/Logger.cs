@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2016 Serilog Contributors
+// Copyright 2013-2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,38 +49,40 @@ namespace Serilog.Core
         readonly LoggingLevelSwitch _levelSwitch;
         readonly LevelOverrideMap _overrideMap;
 
-        internal Logger(
-            MessageTemplateProcessor messageTemplateProcessor,
+        readonly int _numOfEnrichers = 0;
+
+        internal Logger(MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
-            LevelOverrideMap overrideMap = null)
-            : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null, overrideMap)
+            LevelOverrideMap overrideMap = null,
+            int numOfEnrichers = 0)
+            : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null, overrideMap, numOfEnrichers)
         {
         }
 
-        internal Logger(
-            MessageTemplateProcessor messageTemplateProcessor,
+        internal Logger(MessageTemplateProcessor messageTemplateProcessor,
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
-            LevelOverrideMap overrideMap = null)
-            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch, overrideMap)
+            LevelOverrideMap overrideMap = null,
+            int numOfEnrichers = 0)
+            : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch, overrideMap, numOfEnrichers)
         {
         }
 
         // The messageTemplateProcessor, sink and enricher are required. Argument checks are dropped because
         // throwing from here breaks the logger's no-throw contract, and callers are all in this file anyway.
-        Logger(
-            MessageTemplateProcessor messageTemplateProcessor,
+        Logger(MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
             LoggingLevelSwitch levelSwitch = null,
-            LevelOverrideMap overrideMap = null)
+            LevelOverrideMap overrideMap = null,
+            int numOfEnrichers = 0)
         {
             _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
@@ -89,6 +91,7 @@ namespace Serilog.Core
             _levelSwitch = levelSwitch;
             _overrideMap = overrideMap;
             _enricher = enricher;
+            _numOfEnrichers = numOfEnrichers;
         }
 
         internal bool HasOverrideMap => _overrideMap != null;
@@ -110,7 +113,8 @@ namespace Serilog.Core
                         enricher,
                         null,
                         _levelSwitch,
-                        _overrideMap);
+                        _overrideMap,
+                        _numOfEnrichers + 1);
         }
 
         /// <summary>
@@ -162,7 +166,8 @@ namespace Serilog.Core
                 enricher,
                 null,
                 levelSwitch,
-                _overrideMap);
+                _overrideMap,
+                _numOfEnrichers + 1);
         }
 
         /// <summary>
@@ -370,7 +375,7 @@ namespace Serilog.Core
 
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
+            var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties, _numOfEnrichers);
             Dispatch(logEvent);
         }
 
