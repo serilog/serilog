@@ -120,7 +120,9 @@ namespace Serilog.Events
         internal PropertyToken[] PositionalProperties { get; }
 
 #if NET45 || NETSTANDARD1_0
-        internal PropertyToken[] AllProperties => NamedProperties ?? PositionalProperties ?? new PropertyToken[0];
+        readonly PropertyToken[] CachedNoPropertiesArray = new PropertyToken[0];
+
+        internal PropertyToken[] AllProperties => NamedProperties ?? PositionalProperties ?? CachedNoPropertiesArray;
 #else
         internal PropertyToken[] AllProperties => NamedProperties ?? PositionalProperties ?? Array.Empty<PropertyToken>();
 #endif
