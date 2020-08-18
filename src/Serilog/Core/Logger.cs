@@ -51,7 +51,8 @@ namespace Serilog.Core
 
         readonly int _numOfEnrichers = 0;
 
-        internal Logger(MessageTemplateProcessor messageTemplateProcessor,
+        internal Logger(
+            MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
@@ -62,7 +63,8 @@ namespace Serilog.Core
         {
         }
 
-        internal Logger(MessageTemplateProcessor messageTemplateProcessor,
+        internal Logger(
+            MessageTemplateProcessor messageTemplateProcessor,
             LoggingLevelSwitch levelSwitch,
             ILogEventSink sink,
             ILogEventEnricher enricher,
@@ -75,7 +77,8 @@ namespace Serilog.Core
 
         // The messageTemplateProcessor, sink and enricher are required. Argument checks are dropped because
         // throwing from here breaks the logger's no-throw contract, and callers are all in this file anyway.
-        Logger(MessageTemplateProcessor messageTemplateProcessor,
+        Logger(
+            MessageTemplateProcessor messageTemplateProcessor,
             LogEventLevel minimumLevel,
             ILogEventSink sink,
             ILogEventEnricher enricher,
