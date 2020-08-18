@@ -114,7 +114,7 @@ namespace Serilog.Core
                         null,
                         _levelSwitch,
                         _overrideMap,
-                        Math.Max(_numOfEnrichers, _numOfEnrichers + 1));
+                        _numOfEnrichers + 1);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Serilog.Core
                 null,
                 levelSwitch,
                 _overrideMap,
-                Math.Max(_numOfEnrichers, _numOfEnrichers + 1));
+                _numOfEnrichers + 1);
         }
 
         /// <summary>
