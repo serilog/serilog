@@ -17,8 +17,9 @@ namespace Serilog.PerformanceTests
         }
 
         static IConfig GetGlobalConfig() => DefaultConfig.Instance
-                                                         .AddJob(Job.Default.WithRuntime(ClrRuntime.Net48).WithJit(Jit.RyuJit).WithId("net48RyuJit"))
+                                                         .AddJob(Job.Default.WithRuntime(ClrRuntime.Net48).WithJit(Jit.RyuJit).WithId("net48RyuJit").AsDefault())
                                                          .AddJob(Job.Default.WithRuntime(ClrRuntime.Net48).WithJit(Jit.LegacyJit).WithId("net48LegacyJit"))
                                                          .AddJob(Job.Default.WithRuntime(CoreRuntime.Core31).WithJit(Jit.RyuJit).WithId("core31RyuJit"));
+        
     }
 }
