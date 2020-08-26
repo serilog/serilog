@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using System.Globalization;
 using System.IO;
 using Serilog.Events;
@@ -12,7 +12,7 @@ namespace Serilog.PerformanceTests
     /// like the console or a text file.
     /// </summary>
     [MemoryDiagnoser]
-    public class OutputTemplateRenderingBenchmark
+    public class OutputTemplateRenderingBenchmark : BaseBenchmark
     {
         const string DefaultFileOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
         static readonly LogEvent HelloWorldEvent = Some.InformationEvent("Hello, {Name}", "World");

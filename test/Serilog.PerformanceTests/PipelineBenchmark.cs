@@ -14,11 +14,6 @@
 
 using BenchmarkDotNet.Attributes;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Configuration;
-using Serilog.Context;
 using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
@@ -27,7 +22,7 @@ namespace Serilog.PerformanceTests
     /// Tests the cost of writing through the logging pipeline.
     /// </summary>
     [MemoryDiagnoser]
-    public class PipelineBenchmark
+    public class PipelineBenchmark : BaseBenchmark
     {
         readonly ILogger _log;
         readonly ILogger _logOnlyFatal;

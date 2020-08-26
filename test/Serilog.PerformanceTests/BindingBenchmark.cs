@@ -23,7 +23,7 @@ namespace Serilog.PerformanceTests
     /// Tests the cost of writing through the logging pipeline.
     /// </summary>
     [MemoryDiagnoser]
-    public class BindingBenchmark
+    public class BindingBenchmark : BaseBenchmark
     {
         const string
             MT0 = "Zero",

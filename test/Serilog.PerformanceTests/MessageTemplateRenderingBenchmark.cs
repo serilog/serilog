@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using System.IO;
 using Serilog.Events;
 using Serilog.PerformanceTests.Support;
@@ -9,7 +9,7 @@ namespace Serilog.PerformanceTests
     /// Determines the cost of rendering a message template.
     /// </summary>
     [MemoryDiagnoser]
-    public class MessageTemplateRenderingBenchmark
+    public class MessageTemplateRenderingBenchmark : BaseBenchmark
     {
         static readonly LogEvent NoProperties =
             Some.InformationEvent("This template has no properties");

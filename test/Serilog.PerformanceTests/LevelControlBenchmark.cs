@@ -8,7 +8,7 @@ namespace Serilog.PerformanceTests
     /// <summary>
     /// Tests the overhead of determining the active logging level.
     /// </summary>
-    public class LevelControlBenchmark
+    public class LevelControlBenchmark : BaseBenchmark
     {
         ILogger _off, _levelSwitchOff, _minLevel, _levelSwitch;
         readonly LogEvent _event = Some.InformationEvent();

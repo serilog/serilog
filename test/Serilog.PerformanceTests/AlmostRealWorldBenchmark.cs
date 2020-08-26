@@ -8,9 +8,9 @@ using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
+    [MyBenchmarkRun(MyConfigs.ShortRun)]
     [MemoryDiagnoser]
-    [ShortRunJob]
-    public class AlmostRealWorldBenchmark
+    public class AlmostRealWorldBenchmark : BaseBenchmark
     {
         const int TodoMainLoopCount = 10_000;
         static readonly Random Rnd = new Random(42);
