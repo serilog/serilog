@@ -48,9 +48,12 @@ namespace Serilog.Filters
                 Constants.SourceContextPropertyName,
                 s => s != null && s
 #if FEATURE_SPAN
-                  .AsSpan()
+                    .AsSpan().StartsWith(source.AsSpan())
+#else
+                    .StartsWith(source)
 #endif
-                  .StartsWith(source) && (s.Length == source.Length || s[source.Length] == '.'));
+                    && (s.Length == source.Length || s[source.Length] == '.'));
+
         }
 
         /// <summary>
