@@ -7,7 +7,7 @@ namespace Serilog.PerformanceTests
     /// Tests the cost of parsing various message templates.
     /// </summary>
     [MemoryDiagnoser]
-    public class MessageTemplateParsingBenchmark
+    public class MessageTemplateParsingBenchmark : BaseBenchmark
     {
         readonly MessageTemplateParser _parser;
 
@@ -25,51 +25,51 @@ namespace Serilog.PerformanceTests
         }
 
         [Benchmark(Baseline = true)]
-        public void EmptyTemplate()
+        public object EmptyTemplate()
         {
-            _parser.Parse("");
+            return _parser.Parse("");
         }
         
         [Benchmark]
-        public void SimpleTextTemplate()
+        public object SimpleTextTemplate()
         {
-            _parser.Parse(_SimpleTextTemplate);
+            return _parser.Parse(_SimpleTextTemplate);
         }
 
         [Benchmark]
-        public void SinglePropertyTokenTemplate()
+        public object SinglePropertyTokenTemplate()
         {
-            _parser.Parse(_SinglePropertyTokenTemplate);
+            return _parser.Parse(_SinglePropertyTokenTemplate);
         }
 
         [Benchmark]
-        public void SingleTextWithPropertyTemplate()
+        public object SingleTextWithPropertyTemplate()
         {
-            _parser.Parse(_SingleTextWithPropertyTemplate);
+            return _parser.Parse(_SingleTextWithPropertyTemplate);
         }
 
         [Benchmark]
-        public void ManyPropertyTokenTemplate()
+        public object ManyPropertyTokenTemplate()
         {
-            _parser.Parse(_ManyPropertyTokenTemplate);
+            return _parser.Parse(_ManyPropertyTokenTemplate);
         }
 
         [Benchmark]
-        public void MultipleTokensTemplate()
+        public object MultipleTokensTemplate()
         {
-            _parser.Parse(_MultipleTokensTemplate);
+            return _parser.Parse(_MultipleTokensTemplate);
         }
 
         [Benchmark]
-        public void DefaultConsoleOutputTemplate()
+        public object DefaultConsoleOutputTemplate()
         {
-            _parser.Parse(_DefaultConsoleOutputTemplate);
+            return _parser.Parse(_DefaultConsoleOutputTemplate);
         }
 
         [Benchmark]
-        public void BigTemplate()
+        public object BigTemplate()
         {
-            _parser.Parse(_BigTemplate);
+            return _parser.Parse(_BigTemplate);
         }
     }
 }

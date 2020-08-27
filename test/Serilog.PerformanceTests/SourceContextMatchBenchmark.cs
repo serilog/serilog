@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Filters;
@@ -10,10 +7,8 @@ using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
-    [SimpleJob(RuntimeMoniker.NetCoreApp21, baseline: true)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
-    [SimpleJob(RuntimeMoniker.Net48)]
-    public class SourceContextMatchBenchmark
+    [MyBenchmarkRun(MyConfigs.SpanCompare)]
+    public class SourceContextMatchBenchmark : BaseBenchmark
     {
         readonly LevelOverrideMap _levelOverrideMap;
         readonly Logger _loggerWithOverrides;

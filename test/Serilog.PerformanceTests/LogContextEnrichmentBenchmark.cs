@@ -5,7 +5,7 @@ using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
-    public class LogContextEnrichmentBenchmark
+    public class LogContextEnrichmentBenchmark : BaseBenchmark
     {
         ILogger _bare, _enriched;
         readonly LogEvent _event = Some.InformationEvent();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Serilog.Context;
@@ -8,9 +8,9 @@ using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
+    [MyBenchmarkRun(MyConfigs.ShortRun)]
     [MemoryDiagnoser]
-    [ShortRunJob]
-    public class AlmostRealWorldBenchmark
+    public class AlmostRealWorldBenchmark : BaseBenchmark
     {
         const int TodoMainLoopCount = 10_000;
         static readonly Random Rnd = new Random(42);
@@ -20,7 +20,7 @@ namespace Serilog.PerformanceTests
 
         public AlmostRealWorldBenchmark()
         {
-            _logger = CreateLog();
+            _logger = CreateLog().ForContext<AlmostRealWorldBenchmark>();
         }
 
         [Benchmark(Baseline = true)]
@@ -62,7 +62,7 @@ namespace Serilog.PerformanceTests
 
         void SimulateAAppWithSerilog()
         {
-            var log = _logger;
+            var log = _logger.ForContext("Prop", "Value");
 
             log.Debug("App - Start...");
 
