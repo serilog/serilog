@@ -7,7 +7,7 @@ namespace Serilog.PerformanceTests
     /// <summary>
     /// Tests the overhead of writing through a nested logger.
     /// </summary>
-    public class NestedLoggerLatencyBenchmark
+    public class NestedLoggerLatencyBenchmark : BaseBenchmark
     {
         ILogger _log, _nested;
         readonly LogEvent _event = Some.InformationEvent();
