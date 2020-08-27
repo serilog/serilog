@@ -99,7 +99,7 @@ namespace Serilog.Core
             foreach (var levelOverride in _overrides)
             {
                 if (context.StartsWith(levelOverride.Context) &&
-                    (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
+                   (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
                 {
                     minimumLevel = LevelAlias.Minimum;
                     levelSwitch = levelOverride.LevelSwitch;
