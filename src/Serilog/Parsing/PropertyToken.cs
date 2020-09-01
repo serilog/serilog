@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ using System.Globalization;
 using System.IO;
 using Serilog.Events;
 using Serilog.Rendering;
+using Serilog.Support;
 
 namespace Serilog.Parsing
 {
@@ -64,8 +65,7 @@ namespace Serilog.Parsing
             _rawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
             Alignment = alignment;
 
-            if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out var position) &&
-                position >= 0)
+            if (propertyName.Length > 0 && char.IsDigit(propertyName[0]) && IntHelper.TryParse(PropertyName, out var position) && position >= 0)
             {
                 _position = position;
             }

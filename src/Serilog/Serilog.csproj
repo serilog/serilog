@@ -40,7 +40,7 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_SPAN;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_SPAN;FEATURE_DEFAULT_INTERFACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_SPAN;FEATURE_SPAN_COMPLETE;FEATURE_DEFAULT_INTERFACE;</DefineConstants>
   </PropertyGroup>
 
 

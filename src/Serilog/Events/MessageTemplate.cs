@@ -55,10 +55,14 @@ namespace Serilog.Events
         /// <param name="tokens">The text and property tokens defining the template.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="text"/> is <code>null</code></exception>
         /// <exception cref="ArgumentNullException">When <paramref name="tokens"/> is <code>null</code></exception>
-        public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
+        public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens) : this(text, tokens?.ToArray())
+        {
+        }
+
+        internal MessageTemplate(string text, MessageTemplateToken[] tokens)
         {
             Text = text ?? throw new ArgumentNullException(nameof(text));
-            _tokens = (tokens ?? throw new ArgumentNullException(nameof(tokens))).ToArray();
+            _tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 
             var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(_tokens);
             if (propertyTokens.Length != 0)
