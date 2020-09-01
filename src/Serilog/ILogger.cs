@@ -284,7 +284,6 @@ namespace Serilog
 
 #if FEATURE_DEFAULT_INTERFACE
 
-        [CustomDefaultMethodImplementation]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteInternal<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
         {
@@ -295,7 +294,6 @@ namespace Serilog
             }
         }
 
-        [CustomDefaultMethodImplementation]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteInternal<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
         {
@@ -306,7 +304,6 @@ namespace Serilog
             }
         }
 
-        [CustomDefaultMethodImplementation]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteInternal<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
         {
@@ -317,7 +314,6 @@ namespace Serilog
             }
         }
 
-        [CustomDefaultMethodImplementation]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteInternal(LogEventLevel level, Exception exception, string messageTemplate)
         {
