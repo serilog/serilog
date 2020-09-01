@@ -288,7 +288,7 @@ namespace Serilog.Core
         [MessageTemplateFormatMethod("messageTemplate")]
         public void Write(LogEventLevel level, Exception exception, string messageTemplate)
         {
-            WriteInternal(level, exception, messageTemplate, NoPropertyValues);
+            WriteInternal(level, exception, messageTemplate);
         }
 
         /// <summary>
