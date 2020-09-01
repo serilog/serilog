@@ -121,6 +121,12 @@ namespace Serilog.Tests
                             continue;
                         }
 
+                        var isSameSignature = ifaceMethodDef.IsPrivate && classMethodDef.IsPrivate && ifaceMethodDef.ToString() == classMethodDef.ToString();
+                        if (isSameSignature)
+                        {
+                            continue;
+                        }
+
                         var mappedClassMethodDef = imap.TargetMethods[Array.IndexOf(imap.InterfaceMethods, ifaceMethodDef)];
                         if (mappedClassMethodDef != classMethodDef)
                         {
