@@ -24,7 +24,7 @@ namespace Serilog.Core
         readonly LogEventLevel _defaultMinimumLevel;
         readonly LoggingLevelSwitch _defaultLevelSwitch;
 
-        struct LevelOverride
+        readonly struct LevelOverride
         {
             public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
             {
@@ -62,12 +62,37 @@ namespace Serilog.Core
                 .ToArray();
         }
 
-        public void GetEffectiveLevel(
 #if FEATURE_SPAN
-            ReadOnlySpan<char> context,
-#else
+        public void GetEffectiveLevel(
             string context,
-#endif
+            out LogEventLevel minimumLevel,
+            out LoggingLevelSwitch levelSwitch)
+        {
+            GetEffectiveLevel(context.AsSpan(), out minimumLevel, out levelSwitch);
+        }
+
+        public void GetEffectiveLevel(
+            ReadOnlySpan<char> context,
+            out LogEventLevel minimumLevel,
+            out LoggingLevelSwitch levelSwitch)
+        {
+            foreach (var levelOverride in _overrides)
+            {
+                if (context.StartsWith(levelOverride.Context.AsSpan()) &&
+                   (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
+                {
+                    minimumLevel = LevelAlias.Minimum;
+                    levelSwitch = levelOverride.LevelSwitch;
+                    return;
+                }
+            }
+
+            minimumLevel = _defaultMinimumLevel;
+            levelSwitch = _defaultLevelSwitch;
+        }
+#else
+        public void GetEffectiveLevel(
+            string context,
             out LogEventLevel minimumLevel,
             out LoggingLevelSwitch levelSwitch)
         {
@@ -85,5 +110,6 @@ namespace Serilog.Core
             minimumLevel = _defaultMinimumLevel;
             levelSwitch = _defaultLevelSwitch;
         }
+#endif
     }
 }
