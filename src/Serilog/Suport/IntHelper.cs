@@ -12,7 +12,7 @@ namespace Serilog.Support
             return int.TryParse(str, NumberStyles.None, CultureInfo.InvariantCulture, out result);
         }
 
-#if !NETSTANDARD1_0
+#if FEATURE_SPAN
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryParse(ReadOnlySpan<char> str, out int result)
         {
@@ -23,6 +23,5 @@ namespace Serilog.Support
 #endif
         }
 #endif
-
     }
 }
