@@ -178,7 +178,9 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>default</code></exception>
         internal void AddPropertyIfAbsent(in EventProperty property)
         {
+#if DEBUG
             if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
+#endif
 
             if (!_properties.ContainsKey(property.Name))
                 _properties.Add(property.Name, property.Value);
