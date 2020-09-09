@@ -97,7 +97,6 @@ namespace Serilog.Tests.Formatting.Json
             JsonLiteralTypesAreFormatted(-123.0m, "-123.0");
         }
 
-
         [Fact]
         public void TimeSpanFormatsAsString()
         {
@@ -118,7 +117,7 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Fact]
-        public void ObjectsAreFormattedViaToStringAsString()
+        public void ObjectsAreFormattedAsJsonStringViaToString()
         {
             JsonLiteralTypesAreFormatted(new Exception("This e a Exception"), "\"System.Exception: This e a Exception\"");
             JsonLiteralTypesAreFormatted(new AChair(), "\"a chair\"");
@@ -126,7 +125,7 @@ namespace Serilog.Tests.Formatting.Json
         }
 
         [Fact]
-        public void ObjectsWithBugReturnExceptionWhenUseFormattedViaToStringAsString()
+        public void ObjectsAreFormattedAsExceptionStringsInJsonWhenToStringThrows()
         {
             Assert.Throws<ArgumentNullException>(() => JsonLiteralTypesAreFormatted(new ToStringThrows(), "will Throws a error before comparing with this string"));
         }
@@ -209,11 +208,13 @@ namespace Serilog.Tests.Formatting.Json
             public int[] Legs => null;
             public override string ToString() => "a chair";
         }
+        
         class ToStringReturnsNull
         {
             public string AProp => "";
             public override string ToString() => null;
         }
+        
         class ToStringThrows
         {
             public string AProp => "";
