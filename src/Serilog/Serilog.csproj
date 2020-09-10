@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>2.10.0</VersionPrefix>
+    <VersionPrefix>2.10.1</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
     <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.1;netstandard1.0;netcoreapp3.0;netcoreapp2.1;net46;net45;</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
