@@ -1,3 +1,16 @@
+## 2.10.0
+
+ * #1370, #1374 - improve test coverage (@rafaelsc)
+ * #1371, #1377, #1429, #1445 - documentation updates (@perjahn, @morgankenyon, @rafaelsc, @JakenVeina)
+ * #1378, #1392 - build fixes (@nblumhardt)
+ * #1477 - don't fail to log when `ToString()` throws an exception (@rafaelsc)
+ * #1435 - `netstandard2.1` support and default implementations for `ILogger` methods (@skomis-mm)
+ * #1442 - `MinimumLevel.Override()` runtime optimizations (@skomis-mm)
+ * #1463 - fix disposal of wrapped sinks through `LoggerSinkConfiguration.Wrap()`
+ * #1466 - internal wrapper sink refactoring (@nblumhardt)
+ * #1427, #1452, #1467 - when `ToString()` on a logged object returns `null`, serialize as `""` (@rafaelsc, @nblumhardt)
+ * #1472 - improve handling of minimum level overrides in sub-loggers (@skomis-mm)
+
 ## 2.9.0
 
  * #1296 - switch from TravisCI to AppVeyor for Linux builds (@merbla)
