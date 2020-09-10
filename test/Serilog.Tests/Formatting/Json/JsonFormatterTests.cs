@@ -225,51 +225,5 @@ namespace Serilog.Tests.Formatting.Json
             var h = (string)d.Properties.AProperty[0][0];
             Assert.Equal("Hello", h);
         }
-
-
-        [Fact]
-        public void ABadBehaviorClassAsSerialized()
-        {
-            var p = new MessageTemplateParser();
-            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
-                p.Parse("{@ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ABadBehavior())) });
-
-            var d = FormatEvent(e);
-
-            var h = (string)d.Properties.ABadBehavior;
-            Assert.Null(h);
-        }
-
-        [Fact]
-        public void ABadBehaviorClassAsStringification()
-        {
-            var p = new MessageTemplateParser();
-            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
-                p.Parse("{$ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ABadBehavior())) });
-
-            var d = FormatEvent(e);
-
-            var h = (string)d.Properties.ABadBehavior;
-            Assert.Null(h);
-        }
-
-        [Fact]
-        public void ABadBehaviorClassAsRenderings()
-        {
-            var p = new MessageTemplateParser();
-            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
-                p.Parse("{ABadBehavior}"), new[] { new LogEventProperty("ABadBehavior", new ScalarValue(new ABadBehavior())) });
-
-            var d = FormatEvent(e);
-
-            var h = (string)d.Properties.ABadBehavior;
-            Assert.Null(h);
-        }
-
-        class ABadBehavior
-        {
-            public string AProp() => "AProp";
-            public override string? ToString() => null;
-        }
     }
 }
