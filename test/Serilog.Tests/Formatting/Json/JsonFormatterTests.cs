@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
