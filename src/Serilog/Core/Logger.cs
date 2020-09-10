@@ -266,7 +266,7 @@ namespace Serilog.Core
         }
 
         /// <summary>
-        /// Determine if events at the specified level will be passed through
+        /// Determine if events at the specified level, and higher, will be passed through
         /// to the log sinks.
         /// </summary>
         /// <param name="level">Level to check.</param>
@@ -1306,7 +1306,7 @@ namespace Serilog.Core
 
         /// <summary>
         /// Uses configured scalar conversion and destructuring rules to bind a set of properties to a
-        /// message template. Returns false if the template or values are invalid (<summary>ILogger</summary>
+        /// message template. Returns false if the template or values are invalid (<c>ILogger</c>
         /// methods never throw exceptions).
         /// </summary>
         /// <param name="messageTemplate">Message template describing an event.</param>
@@ -1346,12 +1346,12 @@ namespace Serilog.Core
         /// Uses configured scalar conversion and destructuring rules to bind a property value to its captured
         /// representation.
         /// </summary>
-        /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// <param name="propertyName">The name of the property. Must be non-empty.</param>
         /// <param name="value">The property value.</param>
         /// <param name="destructureObjects">If true, the value will be serialized as a structured
         /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
         /// <param name="property">The resulting property.</param>
+        /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// methods never throw exceptions).</returns>
         public bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
         {

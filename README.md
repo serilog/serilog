@@ -39,7 +39,7 @@ Back-ends that are capable of recording structured event data make log searches 
 Supporting structured data doesn't mean giving up text: when Serilog writes events to files or the console, the template and properties are rendered into friendly human-readable text just like a traditional logging library would produce:
 
 ```
-09:14:22 [INF] Processed { Latitude: 25, Longitude: 134 } in 34 ms.
+09:14:22 [INF] Processed {"Latitude": 25, "Longitude": 134} in 34 ms.
 ```
 
 > **Upgrading from Serilog 1.x?** Check out the [2.0 Upgrade Guide](https://github.com/serilog/serilog/wiki/2.x-Upgrade-Guide) and [Release Notes](https://github.com/serilog/serilog/blob/dev/CHANGES.md).
@@ -50,7 +50,7 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
  * Format-based logging API with familiar [levels](https://github.com/serilog/serilog/wiki/Configuration-Basics#minimum-level) like `Debug`, `Information`, `Warning`, `Error`, and so-on
  * Discoverable C# configuration syntax and optional [XML](https://github.com/serilog/serilog-settings-appsettings) or [JSON](https://github.com/serilog/serilog-settings-configuration) configuration support
  * Efficient when enabled, extremely low overhead when a logging level is switched off
- * Best-in-class .NET Core support, including a [provider for _Microsoft.Extensions.Logging_](https://github.com/serilog/serilog-extensions-logging)
+ * Best-in-class .NET Core support, including [rich integration with ASP.NET Core](https://github.com/serilog/serilog-aspnetcore)
  * Support for a [comprehensive range of sinks](https://github.com/serilog/serilog/wiki/Provided-Sinks), including files, the console, on-premises and cloud-based log servers, databases, and message queues
  * Sophisticated [enrichment](https://github.com/serilog/serilog/wiki/Enrichment) of log events with contextual information, including scoped (`LogContext`) properties, thread and process identifiers, and domain-specific correlation ids such as `HttpRequestId`
  * Zero-shared-state `Logger` objects, with an optional global static `Log` class
@@ -98,15 +98,16 @@ To learn more about Serilog, check out the [documentation](https://github.com/se
 
 Serilog has an active and helpful community who are happy to help point you in the right direction or work through any issues you might encounter. You can get in touch via:
 
- * [Stack Overflow](http://stackoverflow.com/questions/tagged/serilog) - this is the best place to start if you have a question
- * Our [issue tracker](https://github.com/serilog/serilog/issues) here on GitHub
+ * [Stack Overflow](http://stackoverflow.com/questions/tagged/serilog) &mdash; this is the best place to start if you have a question
  * [Gitter chat](https://gitter.im/serilog/serilog)
  * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
  * [Serilog-related courses on Pluralsight](https://www.pluralsight.com/search/?q=serilog)
 
+We welcome bug reports and suggestions through our [issue tracker](https://github.com/serilog/serilog/issues) here on GitHub.
+
 ### Contributing
 
-Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Aserilog+label%3Aup-for-grabs) label. Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts.  For more details check out our [contributing guide](CONTRIBUTING.md).
+Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+user%3Aserilog+label%3Aup-for-grabs) label (accessible only when logged into GitHub). Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts.  For more details check out our [contributing guide](CONTRIBUTING.md).
 
 When contributing please keep in mind our [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -117,4 +118,4 @@ Branch  | AppVeyor
 dev | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev) 
 master | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master)
 
-_Serilog is copyright &copy; 2013-2018 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/)._
+_Serilog is copyright &copy; 2013-2020 Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/)._

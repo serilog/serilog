@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serilog Contributors
+﻿// Copyright 2016-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ namespace Serilog.Core.Sinks
         public AggregateSink(IEnumerable<ILogEventSink> sinks)
         {
             if (sinks == null) throw new ArgumentNullException(nameof(sinks));
+
             _sinks = sinks.ToArray();
         }
 
@@ -42,7 +43,7 @@ namespace Serilog.Core.Sinks
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                    exceptions = exceptions ?? new List<Exception>();
+                    exceptions ??= new List<Exception>();
                     exceptions.Add(ex);
                 }
             }

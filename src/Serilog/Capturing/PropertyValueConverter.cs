@@ -172,7 +172,7 @@ namespace Serilog.Capturing
             if (TryConvertCompilerGeneratedType(value, destructuring, valueType, out var compilerGeneratedResult))
                 return compilerGeneratedResult;
 
-            return new ScalarValue(value.ToString());
+            return new ScalarValue(value.ToString() ?? "");
         }
 
         bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
@@ -299,7 +299,7 @@ namespace Serilog.Capturing
         LogEventPropertyValue Stringify(object value)
         {
             var stringified = value.ToString();
-            var truncated = TruncateIfNecessary(stringified);
+            var truncated = stringified == null ? "" : TruncateIfNecessary(stringified);
             return new ScalarValue(truncated);
         }
 

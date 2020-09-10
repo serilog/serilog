@@ -24,7 +24,7 @@ namespace Serilog.Core.Sinks
     /// <remarks>The properties dictionary is copied, however the values within
     /// the dictionary (of type <see cref="LogEventProperty"/> are expected to
     /// be immutable.</remarks>
-    sealed class SecondaryLoggerSink : ILogEventSink, IDisposable
+    class SecondaryLoggerSink : ILogEventSink, IDisposable
     {
         readonly ILogger _logger;
         readonly bool _attemptDispose;

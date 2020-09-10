@@ -27,7 +27,7 @@ namespace Serilog.Events
         /// No property.
         /// </summary>
         public static EventProperty None = default;
-        
+
         /// <summary>
         /// The name of the property.
         /// </summary>
@@ -43,11 +43,13 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
+        /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         public EventProperty(string name, LogEventPropertyValue value)
         {
-            EnsureValid(name, value);
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            LogEventProperty.EnsureValidName(name);
 
             Name = name;
             Value = value;
@@ -62,13 +64,6 @@ namespace Serilog.Events
         {
             name = Name;
             value = Value;
-        }
-
-        static void EnsureValid(string name, LogEventPropertyValue value)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-            if (!LogEventProperty.IsValidName(name))
-                throw new ArgumentException("Property name is not valid.");
         }
 
         /// <inheritdoc />

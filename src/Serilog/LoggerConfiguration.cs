@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2016 Serilog Contributors
+// Copyright 2013-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,16 +48,8 @@ namespace Serilog
         /// </summary>
         public LoggerConfiguration()
         {
-            WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s), ApplyInheritedConfiguration);
+            WriteTo = new LoggerSinkConfiguration(this, s => _logEventSinks.Add(s));
             Enrich = new LoggerEnrichmentConfiguration(this, e => _enrichers.Add(e));
-        }
-
-        void ApplyInheritedConfiguration(LoggerConfiguration child)
-        {
-            if (_levelSwitch != null)
-                child.MinimumLevel.ControlledBy(_levelSwitch);
-            else
-                child.MinimumLevel.Is(_minimumLevel);
         }
 
         /// <summary>
@@ -76,7 +68,7 @@ namespace Serilog
         /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
         /// method allows any sink class to be adapted for auditing.
         /// </remarks>
-        public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s), ApplyInheritedConfiguration);
+        public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s));
 
         /// <summary>
         /// Configures the minimum level at which events will be passed to sinks. If
@@ -139,10 +131,11 @@ namespace Serilog
         /// <remarks>To free resources held by sinks ahead of program shutdown,
         /// the returned logger may be cast to <see cref="IDisposable"/> and
         /// disposed.</remarks>
+        /// <exception cref="InvalidOperationException">When the logger is already created</exception>
         public Logger CreateLogger()
         {
-            if (_loggerCreated)
-                throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
+            if (_loggerCreated)  throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
+
             _loggerCreated = true;
 
             ILogEventSink sink = new SafeAggregateSink(_logEventSinks);

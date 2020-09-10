@@ -1,4 +1,4 @@
-// Copyright 2013-2020 Serilog Contributors
+// Copyright 2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Serilog.Debugging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Core.Sinks
 {
-    class SafeAggregateSink : ILogEventSink
+    class DisposingAggregateSink : ILogEventSink, IDisposable
     {
         readonly ILogEventSink[] _sinks;
 
-        public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
+        public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
         {
             if (sinks == null) throw new ArgumentNullException(nameof(sinks));
             _sinks = sinks.ToArray();
@@ -32,6 +32,7 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
+            List<Exception> exceptions = null;
             foreach (var sink in _sinks)
             {
                 try
@@ -41,6 +42,30 @@ namespace Serilog.Core.Sinks
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
+                    exceptions ??= new List<Exception>();
+                    exceptions.Add(ex);
+                }
+            }
+
+            if (exceptions != null)
+                throw new AggregateException("Failed to emit a log event.", exceptions);
+        }
+
+        public void Dispose()
+        {
+            if (_sinks == null) return;
+
+            foreach (var sink in _sinks)
+            {
+                if (!(sink is IDisposable disposable)) continue;
+
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
                 }
             }
         }
