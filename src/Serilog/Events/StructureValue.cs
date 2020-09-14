@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 // Copyright 2013-2015 Serilog Contributors
 //
@@ -73,6 +73,7 @@ namespace Serilog.Events
                 output.Write(' ');
             }
             output.Write("{ ");
+
             var allButLast = _properties.Length - 1;
             for (var i = 0; i < allButLast; i++)
             {

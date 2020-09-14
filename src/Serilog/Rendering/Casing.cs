@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Runtime.CompilerServices;
+
 namespace Serilog.Rendering
 {
     static class Casing
@@ -21,17 +23,15 @@ namespace Serilog.Rendering
         /// Returns <paramref name="value"/> when no or invalid format provided
         /// </summary>
         /// <returns>The provided <paramref name="value"/> with formatting applied</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Format(string value, string format = null)
         {
-            switch (format)
+            return format switch
             {
-                case "u":
-                    return value.ToUpperInvariant();
-                case "w":
-                    return value.ToLowerInvariant();
-                default:
-                    return value;
-            }
+                "u" => value.ToUpperInvariant(),
+                "w" => value.ToLowerInvariant(),
+                _ => value
+            };
         }
     }
 }

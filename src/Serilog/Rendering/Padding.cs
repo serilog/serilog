@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Serilog.Parsing;
 
 namespace Serilog.Rendering
@@ -25,6 +26,7 @@ namespace Serilog.Rendering
         /// <summary>
         /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Apply(TextWriter output, string value, Alignment? alignment)
         {
             if (alignment == null || value.Length >= alignment.Value.Width)
@@ -36,7 +38,9 @@ namespace Serilog.Rendering
             var pad = alignment.Value.Width - value.Length;
 
             if (alignment.Value.Direction == AlignmentDirection.Left)
+            {
                 output.Write(value);
+            }
 
             if (pad <= PaddingChars.Length)
             {
@@ -48,7 +52,9 @@ namespace Serilog.Rendering
             }
 
             if (alignment.Value.Direction == AlignmentDirection.Right)
+            {
                 output.Write(value);
+            }
         }
     }
 }

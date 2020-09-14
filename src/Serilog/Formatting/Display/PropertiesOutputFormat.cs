@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 
@@ -29,10 +30,8 @@ namespace Serilog.Formatting.Display
         {
             if (format?.Contains("j") == true)
             {
-                var sv = new StructureValue(properties
-                    .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
-                                    TemplateContainsPropertyName(outputTemplate, kvp.Key)))
-                    .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
+                var sv = new StructureValue(properties.Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) || TemplateContainsPropertyName(outputTemplate, kvp.Key)))
+                                                      .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
                 JsonValueFormatter.Format(sv, output);
                 return;
             }
@@ -42,11 +41,8 @@ namespace Serilog.Formatting.Display
             var delim = "";
             foreach (var kvp in properties)
             {
-                if (TemplateContainsPropertyName(template, kvp.Key) ||
-                    TemplateContainsPropertyName(outputTemplate, kvp.Key))
-                {
+                if (TemplateContainsPropertyName(template, kvp.Key) || TemplateContainsPropertyName(outputTemplate, kvp.Key))
                     continue;
-                }
 
                 output.Write(delim);
                 delim = ", ";
@@ -58,32 +54,26 @@ namespace Serilog.Formatting.Display
             output.Write(" }");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
         {
             if (template.PositionalProperties != null)
             {
-                for (var i = 0; i < template.PositionalProperties.Length; i++)
+                foreach (var token in template.PositionalProperties)
                 {
-                    var token = template.PositionalProperties[i];
                     if (token.PropertyName == propertyName)
-                    {
                         return true;
-                    }
                 }
-
                 return false;
             }
-
             if (template.NamedProperties != null)
             {
-                for (var i = 0; i < template.NamedProperties.Length; i++)
+                foreach (var namedProperty in template.NamedProperties)
                 {
-                    var namedProperty = template.NamedProperties[i];
                     if (namedProperty.PropertyName == propertyName)
-                    {
                         return true;
-                    }
                 }
+                return false;
             }
 
             return false;

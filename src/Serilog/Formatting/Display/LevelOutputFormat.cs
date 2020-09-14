@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Runtime.CompilerServices;
 using Serilog.Events;
 using Serilog.Rendering;
 
@@ -74,25 +75,23 @@ namespace Serilog.Formatting.Display
             if (width < 1)
                 return string.Empty;
 
-            switch (format[0])
+            return format[0] switch
             {
-                case 'w':
-                    return GetLevelMoniker(_lowerCaseLevelMap, index, width);
-                case 'u':
-                    return GetLevelMoniker(_upperCaseLevelMap, index, width);
-                case 't':
-                    return GetLevelMoniker(_titleCaseLevelMap, index, width);
-                default:
-                    return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format);
-            }
+                'w' => GetLevelMoniker(_lowerCaseLevelMap, index, width),
+                'u' => GetLevelMoniker(_upperCaseLevelMap, index, width),
+                't' => GetLevelMoniker(_titleCaseLevelMap, index, width),
+                _ => Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format)
+            };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static string GetLevelMoniker(string[][] caseLevelMap, int index, int width)
         {
             var caseLevel = caseLevelMap[index];
             return caseLevel[Math.Min(width, caseLevel.Length) - 1];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static string GetLevelMoniker(string[][] caseLevelMap, int index)
         {
             var caseLevel = caseLevelMap[index];

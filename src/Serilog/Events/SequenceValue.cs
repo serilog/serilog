@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,15 +56,20 @@ namespace Serilog.Events
             if (output == null) throw new ArgumentNullException(nameof(output));
 
             output.Write('[');
+
             var allButLast = _elements.Length - 1;
             for (var i = 0; i < allButLast; ++i)
             {
-                _elements[i].Render(output, format, formatProvider);
+                var property = _elements[i];
+                property.Render(output, format, formatProvider);
                 output.Write(", ");
             }
 
             if (_elements.Length > 0)
-                _elements[_elements.Length - 1].Render(output, format, formatProvider);
+            {
+                var last = _elements[_elements.Length - 1];
+                last.Render(output, format, formatProvider);
+            }
 
             output.Write(']');
         }

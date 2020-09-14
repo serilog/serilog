@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ namespace Serilog.Formatting.Display
             if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            foreach (var token in _outputTemplate.Tokens)
+            foreach (var token in _outputTemplate.TokenArray)
             {
                 if (token is TextToken tt)
                 {

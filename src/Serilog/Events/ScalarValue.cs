@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,35 +56,34 @@ namespace Serilog.Events
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
-            if (value == null)
+            switch (value)
             {
-                output.Write("null");
-                return;
-            }
-
-            if (value is string s)
-            {
-                if (format != "l")
+                case null:
                 {
-                    output.Write("\"");
-                    output.Write(s.Replace("\"", "\\\""));
-                    output.Write("\"");
-                }
-                else
-                {
-                    output.Write(s);
-                }
-                return;
-            }
-
-            if (formatProvider != null)
-            {
-                var custom = (ICustomFormatter)formatProvider.GetFormat(typeof(ICustomFormatter));
-                if (custom != null)
-                {
-                    output.Write(custom.Format(format, value, formatProvider));
+                    output.Write("null");
                     return;
                 }
+                case string s:
+                {
+                    if (format != "l")
+                    {
+                        output.Write("\"");
+                        output.Write(s.Replace("\"", "\\\""));
+                        output.Write("\"");
+                    }
+                    else
+                    {
+                        output.Write(s);
+                    }
+                    return;
+                }
+            }
+
+            var custom = (ICustomFormatter) formatProvider?.GetFormat(typeof(ICustomFormatter));
+            if (custom != null)
+            {
+                output.Write(custom.Format(format, value, formatProvider));
+                return;
             }
 
             if (value is IFormattable f)

@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serilog Contributors
+// Copyright 2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Serilog.Data;
 using Serilog.Events;
 
@@ -158,64 +159,65 @@ namespace Serilog.Formatting.Json
         /// <param name="output">The output</param>
         protected virtual void FormatLiteralValue(object value, TextWriter output)
         {
-            if (value == null)
-            {
-                FormatNullValue(output);
-                return;
-            }
-
             // Although the linear switch-on-type has apparently worse algorithmic performance than the O(1)
             // dictionary lookup alternative, in practice, it's much to make a few equality comparisons
             // than the hash/bucket dictionary lookup, and since most data will be string (one comparison),
             // numeric (a handful) or an object (two comparisons) the real-world performance of the code
             // as written is as fast or faster.
 
-            if (value is string str)
+            switch (value)
             {
-                FormatStringValue(str, output);
-                return;
-            }
+                case null:
+                {
+                    FormatNullValue(output);
+                    return;
+                }
+                case string str:
+                {
+                    FormatStringValue(str, output);
+                    return;
+                }
 
-            if (value is ValueType)
-            {
-                if (value is int || value is uint || value is long || value is ulong || value is decimal ||
-                    value is byte || value is sbyte || value is short || value is ushort)
+                case int _:
+                case uint _:
+                case long _:
+                case ulong _:
+                case decimal _:
+                case byte _:
+                case sbyte _:
+                case short _:
+                case ushort _:
                 {
                     FormatExactNumericValue((IFormattable)value, output);
                     return;
                 }
-
-                if (value is double d)
+                case double d:
                 {
                     FormatDoubleValue(d, output);
                     return;
                 }
-
-                if (value is float f)
+                case float f:
                 {
                     FormatFloatValue(f, output);
                     return;
                 }
-
-                if (value is bool b)
+                case bool b:
                 {
                     FormatBooleanValue(b, output);
                     return;
                 }
-
-                if (value is char)
+                case char _:
                 {
                     FormatStringValue(value.ToString(), output);
                     return;
                 }
-
-                if (value is DateTime || value is DateTimeOffset)
+                case DateTime _:
+                case DateTimeOffset _:
                 {
                     FormatDateTimeValue((IFormattable)value, output);
                     return;
                 }
-
-                if (value is TimeSpan timeSpan)
+                case TimeSpan timeSpan:
                 {
                     FormatTimeSpanValue(timeSpan, output);
                     return;
@@ -225,11 +227,13 @@ namespace Serilog.Formatting.Json
             FormatLiteralObjectValue(value, output);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatBooleanValue(bool value, TextWriter output)
         {
             output.Write(value ? "true" : "false");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatFloatValue(float value, TextWriter output)
         {
             if (float.IsNaN(value) || float.IsInfinity(value))
@@ -241,6 +245,7 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatDoubleValue(double value, TextWriter output)
         {
             if (double.IsNaN(value) || double.IsInfinity(value))
@@ -252,11 +257,13 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatExactNumericValue(IFormattable value, TextWriter output)
         {
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatDateTimeValue(IFormattable value, TextWriter output)
         {
             output.Write('\"');
@@ -264,6 +271,7 @@ namespace Serilog.Formatting.Json
             output.Write('\"');
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatTimeSpanValue(TimeSpan value, TextWriter output)
         {
             output.Write('\"');
@@ -271,18 +279,19 @@ namespace Serilog.Formatting.Json
             output.Write('\"');
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatLiteralObjectValue(object value, TextWriter output)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-
             FormatStringValue(value.ToString() ?? "", output);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatStringValue(string str, TextWriter output)
         {
             WriteQuotedJsonString(str, output);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FormatNullValue(TextWriter output)
         {
             output.Write("null");
@@ -355,7 +364,9 @@ namespace Serilog.Formatting.Json
             if (anyEscaped)
             {
                 if (cleanSegmentStart != str.Length)
+                {
                     output.Write(str.Substring(cleanSegmentStart));
+                }
             }
             else
             {

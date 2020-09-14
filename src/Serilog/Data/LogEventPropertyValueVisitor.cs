@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serilog Contributors
+// Copyright 2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,21 +45,15 @@ namespace Serilog.Data
         /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
         protected virtual TResult Visit(TState state, LogEventPropertyValue value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-
-            if (value is ScalarValue sv)
-                return VisitScalarValue(state, sv);
-
-            if (value is SequenceValue seqv)
-                return VisitSequenceValue(state, seqv);
-
-            if (value is StructureValue strv)
-                return VisitStructureValue(state, strv);
-
-            if (value is DictionaryValue dictv)
-                return VisitDictionaryValue(state, dictv);
-
-            return VisitUnsupportedValue(state, value);
+            return value switch
+            {
+                null => throw new ArgumentNullException(nameof(value)),
+                ScalarValue sv => VisitScalarValue(state, sv),
+                SequenceValue seqv => VisitSequenceValue(state, seqv),
+                StructureValue strv => VisitStructureValue(state, strv),
+                DictionaryValue dictv => VisitDictionaryValue(state, dictv),
+                _ => VisitUnsupportedValue(state, value)
+            };
         }
 
         /// <summary>
@@ -106,6 +100,7 @@ namespace Serilog.Data
         protected virtual TResult VisitUnsupportedValue(TState state, LogEventPropertyValue value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
+
             throw new NotSupportedException($"The value {value} is not of a type supported by this visitor.");
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -122,7 +122,9 @@ namespace Serilog.Formatting.Json
             if (output == null) throw new ArgumentNullException(nameof(output));
 
             if (!_omitEnclosingObject)
+            {
                 output.Write("{");
+            }
 
             var delim = "";
             WriteTimestamp(logEvent.Timestamp, ref delim, output);
@@ -135,10 +137,14 @@ namespace Serilog.Formatting.Json
             }
 
             if (logEvent.Exception != null)
+            {
                 WriteException(logEvent.Exception, ref delim, output);
+            }
 
             if (logEvent.Properties.Count != 0)
+            {
                 WriteProperties(logEvent.Properties, output);
+            }
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
                 .OfType<PropertyToken>()

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,9 +42,8 @@ namespace Serilog.Rendering
                 }
             }
 
-            for (var ti = 0; ti < messageTemplate.TokenArray.Length; ++ti)
+            foreach (var token in messageTemplate.TokenArray)
             {
-                var token = messageTemplate.TokenArray[ti];
                 if (token is TextToken tt)
                 {
                     RenderTextToken(tt, output);
@@ -57,11 +56,13 @@ namespace Serilog.Rendering
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RenderTextToken(TextToken tt, TextWriter output)
         {
             output.Write(tt.Text);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider, bool isLiteral, bool isJson)
         {
             if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
@@ -89,6 +90,7 @@ namespace Serilog.Rendering
             Padding.Apply(output, value, pt.Alignment.Value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string format, IFormatProvider formatProvider)
         {
             if (literal && propertyValue is ScalarValue sv && sv.Value is string str)

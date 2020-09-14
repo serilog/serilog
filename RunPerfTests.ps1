@@ -13,7 +13,7 @@ foreach ($test in ls .\test\*.PerformanceTests) {
     if (Test-Path "./BenchmarkDotNet.Artifacts/") { Remove-Item "./BenchmarkDotNet.Artifacts/" -Recurse -Force }
 
 	echo "perf: Running performance test project in $test";
-    & dotnet run -c Release --framework netcoreapp3.1 -- --filter *
+    & dotnet run -c Release --framework netcoreapp3.1 -- --filter MessageTemplateRenderingBenchmark
 
     if($LASTEXITCODE -ne 0) {
         Pop-Location
