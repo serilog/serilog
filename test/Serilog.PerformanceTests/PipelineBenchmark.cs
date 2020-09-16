@@ -117,7 +117,7 @@ namespace Serilog.PerformanceTests
             {
                 _log100e100fc100lc.Information(_exception, "Hello, {Name}!", "World");
             }
-            using (PropertiesAdderHelper.ManyLogContext(100))
+            using (PropertiesAdderHelper.ManyLogContext(1000))
             {
                 _log1000e1000fc1000lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -173,7 +173,7 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith100Enrich100ForContext100LogContext()
         {
-            using (PropertiesAdderHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(100))
             {
                 _log100e100fc100lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -181,7 +181,7 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith1000Enrich1000ForContext1000LogContext()
         {
-            using (PropertiesAdderHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(1000))
             {
                 _log1000e1000fc1000lc.Information(_exception, "Hello, {Name}!", "World");
             }
