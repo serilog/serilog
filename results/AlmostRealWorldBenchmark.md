@@ -1,26 +1,26 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.450 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET Core SDK=3.1.401
-  [Host]          : .NET Core 3.1.7 (CoreCLR 4.700.20.36602, CoreFX 4.700.20.37001), X64 RyuJIT
-  core31 RyuJit   : .NET Core 3.1.7 (CoreCLR 4.700.20.36602, CoreFX 4.700.20.37001), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4200.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4200.0), X64 RyuJIT
+.NET Core SDK=3.1.402
+  [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
+  core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
+  net48 LegacyJit : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
+  net48 RyuJit    : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
 
 IterationCount=3  LaunchCount=1  WarmupCount=3  
 
 ```
-|                     Method |             Job |       Jit |       Runtime |         Mean |        Error |       StdDev |  Ratio | RatioSD |     Gen 0 |    Gen 1 | Gen 2 |   Allocated |
-|--------------------------- |---------------- |---------- |-------------- |-------------:|-------------:|-------------:|-------:|--------:|----------:|---------:|------:|------------:|
-| SimulateAAppWithoutSerilog |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     268.1 μs |     799.2 μs |     43.81 μs |   1.00 |    0.00 |    6.3477 |   0.7324 |     - |    39.16 KB |
-| SimulateAAppWithSerilogOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   2,322.1 μs |     628.1 μs |     34.43 μs |   8.80 |    1.31 |  437.5000 |  54.6875 |     - |  2702.13 KB |
-|  SimulateAAppWithSerilogOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  96,252.1 μs | 374,141.4 μs | 20,507.95 μs | 357.37 |   20.56 | 9714.2857 | 142.8571 |     - | 59720.68 KB |
-|                            |                 |           |               |              |              |              |        |         |           |          |       |             |
-| SimulateAAppWithoutSerilog | net48 LegacyJit | LegacyJit |      .NET 4.8 |     339.6 μs |     514.4 μs |     28.19 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
-| SimulateAAppWithSerilogOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |   2,676.6 μs |   3,108.7 μs |    170.40 μs |   7.92 |    0.89 |  324.2188 |  54.6875 |     - |  2015.73 KB |
-|  SimulateAAppWithSerilogOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 102,653.4 μs |  71,593.9 μs |  3,924.30 μs | 303.90 |   31.57 | 9666.6667 | 166.6667 |     - | 59674.55 KB |
-|                            |                 |           |               |              |              |              |        |         |           |          |       |             |
-| SimulateAAppWithoutSerilog |    net48 RyuJit |    RyuJit |      .NET 4.8 |     295.7 μs |     606.9 μs |     33.27 μs |   1.00 |    0.00 |   20.5078 |   2.9297 |     - |   128.52 KB |
-| SimulateAAppWithSerilogOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |   2,193.6 μs |     782.0 μs |     42.87 μs |   7.48 |    0.86 |  324.2188 |  54.6875 |     - |  2015.73 KB |
-|  SimulateAAppWithSerilogOn |    net48 RyuJit |    RyuJit |      .NET 4.8 |  83,636.1 μs |  26,597.7 μs |  1,457.91 μs | 285.15 |   31.62 | 9666.6667 | 166.6667 |     - | 59674.55 KB |
+|                     Method |             Job |       Jit |       Runtime |        Mean |       Error |    StdDev |  Ratio | RatioSD |     Gen 0 |    Gen 1 | Gen 2 |   Allocated |
+|--------------------------- |---------------- |---------- |-------------- |------------:|------------:|----------:|-------:|--------:|----------:|---------:|------:|------------:|
+| SimulateAAppWithoutSerilog |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    137.3 μs |    10.30 μs |   0.56 μs |   1.00 |    0.00 |    6.3477 |   0.7324 |     - |    39.16 KB |
+| SimulateAAppWithSerilogOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1,468.6 μs |    21.66 μs |   1.19 μs |  10.70 |    0.04 |  439.4531 |  54.6875 |     - |  2702.13 KB |
+|  SimulateAAppWithSerilogOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 58,288.6 μs | 7,148.79 μs | 391.85 μs | 424.52 |    4.45 | 9666.6667 | 111.1111 |     - |  59720.6 KB |
+|                            |                 |           |               |             |             |           |        |         |           |          |       |             |
+| SimulateAAppWithoutSerilog | net48 LegacyJit | LegacyJit |      .NET 4.8 |    193.3 μs |    32.82 μs |   1.80 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
+| SimulateAAppWithSerilogOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1,434.1 μs |    22.54 μs |   1.24 μs |   7.42 |    0.07 |  326.1719 |  54.6875 |     - |  2015.72 KB |
+|  SimulateAAppWithSerilogOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 59,789.2 μs |   937.32 μs |  51.38 μs | 309.25 |    3.12 | 9666.6667 | 222.2222 |     - | 59673.58 KB |
+|                            |                 |           |               |             |             |           |        |         |           |          |       |             |
+| SimulateAAppWithoutSerilog |    net48 RyuJit |    RyuJit |      .NET 4.8 |    192.8 μs |     7.80 μs |   0.43 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
+| SimulateAAppWithSerilogOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1,460.5 μs |    78.56 μs |   4.31 μs |   7.58 |    0.04 |  326.1719 |  54.6875 |     - |  2015.72 KB |
+|  SimulateAAppWithSerilogOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 59,303.6 μs | 6,323.99 μs | 346.64 μs | 307.62 |    1.58 | 9666.6667 | 222.2222 |     - | 59673.76 KB |
