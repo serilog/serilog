@@ -33,11 +33,11 @@ namespace Serilog.Rendering
 
             if (format != null)
             {
-                for (var i = 0; i < format.Length; ++i)
+                foreach (var c in format)
                 {
-                    if (format[i] == 'l')
+                    if (c == 'l')
                         isLiteral = true;
-                    else if (format[i] == 'j')
+                    else if (c == 'j')
                         isJson = true;
                 }
             }
