@@ -36,9 +36,13 @@ namespace Serilog.Rendering
                 foreach (var c in format)
                 {
                     if (c == 'l')
+                    {
                         isLiteral = true;
+                    }
                     else if (c == 'j')
+                    {
                         isJson = true;
+                    }
                 }
             }
 
@@ -48,9 +52,8 @@ namespace Serilog.Rendering
                 {
                     RenderTextToken(tt, output);
                 }
-                else
+                else if(token is PropertyToken pt)
                 {
-                    var pt = (PropertyToken)token;
                     RenderPropertyToken(pt, properties, output, formatProvider, isLiteral, isJson);
                 }
             }
