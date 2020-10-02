@@ -213,6 +213,8 @@ namespace Serilog.Context
             }
         }
 
+        internal static int Count => Enrichers?.Count ?? 0;
+
 #if ASYNCLOCAL
 
         static ImmutableStack<ILogEventEnricher> Enrichers

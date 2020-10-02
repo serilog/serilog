@@ -25,14 +25,11 @@ namespace Serilog.Events
     /// </summary>
     public class LogEvent
     {
-        const byte DefaultExtraCapacityForProperties = 2;
-        readonly int _numOfEnrichers = 0;
-
         //A cached and shared instance for a empty list of Properties
         static readonly IReadOnlyDictionary<string, LogEventPropertyValue> NoProperties = new EmptyReadOnlyDictionary<string, LogEventPropertyValue>();
 
         //Lazy Load a Instance for the Properties List
-        Dictionary<string, LogEventPropertyValue> _properties => _propertiesInternal ??= new Dictionary<string, LogEventPropertyValue>(_numOfEnrichers + DefaultExtraCapacityForProperties);
+        Dictionary<string, LogEventPropertyValue> _properties => _propertiesInternal ??= new Dictionary<string, LogEventPropertyValue>();
         Dictionary<string, LogEventPropertyValue> _propertiesInternal = null; //This can be null. When null the LogEvent will use the NoProperties shared/cached instance.
 
         LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> propertiesDictionary)
@@ -73,19 +70,18 @@ namespace Serilog.Events
         /// <param name="exception">An exception associated with the event, or null.</param>
         /// <param name="messageTemplate">The message template describing the event.</param>
         /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-        /// <param name="numOfEnrichers"></param>
+        /// <param name="numOfPropertiesViaEnrichers"></param>
         /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
         /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, in EventProperty[] properties, int numOfEnrichers)
+        internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception exception, MessageTemplate messageTemplate, in EventProperty[] properties, int numOfPropertiesViaEnrichers = 0)
         {
             Timestamp = timestamp;
             Level = level;
             Exception = exception;
             MessageTemplate = messageTemplate ?? throw new ArgumentNullException(nameof(messageTemplate));
-            _numOfEnrichers = numOfEnrichers;
 
             if (properties == null) throw new ArgumentNullException(nameof(properties));
-            ProcessProperties(properties, messageTemplate.AllProperties.Length, numOfEnrichers);
+            ProcessProperties(properties, messageTemplate.AllProperties.Length, numOfPropertiesViaEnrichers);
         }
 
         /// <summary>
@@ -207,12 +203,12 @@ namespace Serilog.Events
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ProcessProperties(in EventProperty[] properties, int propertiesCountInMessage, int numOfEnricherProperties)
+        void ProcessProperties(in EventProperty[] properties, int propertiesCountInMessage, int numOfPropertiesViaEnrichers)
         {
             if (properties.Length == 0)
                 return;
 
-            InitProperties(Math.Max(properties.Length, propertiesCountInMessage) + numOfEnricherProperties);
+            InitProperties(Math.Max(properties.Length, propertiesCountInMessage) + numOfPropertiesViaEnrichers);
 
             foreach (var p in properties) //This will be optimized to for(;;) by the compiler
                 _propertiesInternal[p.Name] = p.Value;
@@ -230,10 +226,10 @@ namespace Serilog.Events
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void InitProperties(int itemCount)
         {
-            if (itemCount == 0)
+            if (itemCount <= 0)
                 return;
 
-            _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount + DefaultExtraCapacityForProperties);
+            _propertiesInternal = new Dictionary<string, LogEventPropertyValue>(itemCount);
         }
     }
 }
