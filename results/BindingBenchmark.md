@@ -5,22 +5,22 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 .NET Core SDK=3.1.402
   [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
   core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
+  net48 LegacyJit : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
+  net48 RyuJit    : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
 
 IterationCount=15  LaunchCount=2  WarmupCount=10  
 
 ```
-|   Method |             Job |       Jit |       Runtime |      Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|--------- |---------------- |---------- |-------------- |----------:|----------:|----------:|------:|--------:|-------:|------:|------:|----------:|
-| BindZero |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  45.55 ns |  0.259 ns |  0.388 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-|  BindOne |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 170.24 ns |  1.152 ns |  1.724 ns |  3.74 |    0.05 | 0.0229 |     - |     - |     144 B |
-| BindFive |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 489.30 ns | 10.582 ns | 15.839 ns | 10.74 |    0.36 | 0.0687 |     - |     - |     432 B |
-|          |                 |           |               |           |           |           |       |         |        |       |       |           |
-| BindZero | net48 LegacyJit | LegacyJit |      .NET 4.8 |  55.08 ns |  0.399 ns |  0.597 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-|  BindOne | net48 LegacyJit | LegacyJit |      .NET 4.8 | 175.37 ns |  1.164 ns |  1.742 ns |  3.18 |    0.05 | 0.0253 |     - |     - |     160 B |
-| BindFive | net48 LegacyJit | LegacyJit |      .NET 4.8 | 535.37 ns |  5.069 ns |  7.587 ns |  9.72 |    0.17 | 0.0706 |     - |     - |     449 B |
-|          |                 |           |               |           |           |           |       |         |        |       |       |           |
-| BindZero |    net48 RyuJit |    RyuJit |      .NET 4.8 |  55.07 ns |  0.176 ns |  0.258 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-|  BindOne |    net48 RyuJit |    RyuJit |      .NET 4.8 | 175.88 ns |  1.184 ns |  1.659 ns |  3.19 |    0.04 | 0.0253 |     - |     - |     160 B |
-| BindFive |    net48 RyuJit |    RyuJit |      .NET 4.8 | 531.92 ns |  4.035 ns |  6.040 ns |  9.66 |    0.13 | 0.0706 |     - |     - |     449 B |
+|   Method |             Job |       Jit |       Runtime |      Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|--------- |---------------- |---------- |-------------- |----------:|---------:|---------:|------:|--------:|-------:|------:|------:|----------:|
+| BindZero |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  43.15 ns | 0.517 ns | 0.774 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+|  BindOne |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 150.70 ns | 1.777 ns | 2.660 ns |  3.49 |    0.09 | 0.0229 |     - |     - |     144 B |
+| BindFive |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 420.81 ns | 3.616 ns | 5.300 ns |  9.75 |    0.20 | 0.0687 |     - |     - |     432 B |
+|          |                 |           |               |           |          |          |       |         |        |       |       |           |
+| BindZero | net48 LegacyJit | LegacyJit |      .NET 4.8 |  54.01 ns | 0.441 ns | 0.660 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+|  BindOne | net48 LegacyJit | LegacyJit |      .NET 4.8 | 155.36 ns | 2.383 ns | 3.567 ns |  2.88 |    0.08 | 0.0253 |     - |     - |     160 B |
+| BindFive | net48 LegacyJit | LegacyJit |      .NET 4.8 | 457.71 ns | 3.930 ns | 5.882 ns |  8.48 |    0.17 | 0.0710 |     - |     - |     449 B |
+|          |                 |           |               |           |          |          |       |         |        |       |       |           |
+| BindZero |    net48 RyuJit |    RyuJit |      .NET 4.8 |  54.06 ns | 0.477 ns | 0.714 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+|  BindOne |    net48 RyuJit |    RyuJit |      .NET 4.8 | 156.24 ns | 3.172 ns | 4.649 ns |  2.89 |    0.08 | 0.0253 |     - |     - |     160 B |
+| BindFive |    net48 RyuJit |    RyuJit |      .NET 4.8 | 456.03 ns | 5.944 ns | 8.896 ns |  8.44 |    0.19 | 0.0710 |     - |     - |     449 B |
