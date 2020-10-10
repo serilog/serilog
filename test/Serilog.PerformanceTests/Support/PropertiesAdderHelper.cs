@@ -11,17 +11,17 @@ namespace Serilog.PerformanceTests.Support
         public static LoggerConfiguration AddManyProperties(this LoggerEnrichmentConfiguration enrich, int numOfProps)
         {
             LoggerConfiguration config = null;
-            for (int i = 0; i < numOfProps; i++)
+            for (var i = 0; i < numOfProps; i++)
             {
-                config = enrich.WithProperty($"EnrichProp{i}", $"Value{i}");
+                config = enrich.WithProperty($"ConfigEnrichProp{i}", $"Value{i}");
             }
             return config;
         }
         public static ILogger AddManyProperties(this ILogger log, int numOfProps)
         {
-            for (int i = 0; i < numOfProps; i++)
+            for (var i = 0; i < numOfProps; i++)
             {
-                log = log.ForContext($"EnrichProp{i}", $"Value{i}");
+                log = log.ForContext($"LoggerEnrichProp{i}", $"Value{i}");
             }
             return log;
         }
@@ -29,7 +29,7 @@ namespace Serilog.PerformanceTests.Support
         public static IDisposable ManyLogContext(int numOfProps)
         {
             var list = new List<IDisposable>(numOfProps);
-            for (int i = 0; i < numOfProps; i++)
+            for (var i = 0; i < numOfProps; i++)
             {
                 list.Add(LogContext.PushProperty($"LogContextProp{i}", $"Value{i}"));
             }
@@ -47,7 +47,7 @@ namespace Serilog.PerformanceTests.Support
 
             public void Dispose()
             {
-                if(Disposables == null)
+                if (Disposables == null)
                     return;
 
                 foreach (var disposable in Disposables.Reverse())
