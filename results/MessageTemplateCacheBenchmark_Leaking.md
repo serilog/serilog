@@ -5,106 +5,106 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 .NET Core SDK=3.1.402
   [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
   core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4220.0), X64 RyuJIT
+  net48 LegacyJit : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
+  net48 RyuJit    : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
 
 IterationCount=3  LaunchCount=1  WarmupCount=3  
 
 ```
-|     Method |             Job |       Jit |       Runtime | Items | OverflowCount | MaxDegreeOfParallelism |       Mean |       Error |     StdDev |     Median |  Ratio | RatioSD |
-|----------- |---------------- |---------- |-------------- |------ |-------------- |----------------------- |-----------:|------------:|-----------:|-----------:|-------:|--------:|
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |             **1** |                     **-1** |   **1.457 ms** |   **0.6512 ms** |  **0.0357 ms** |   **1.453 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                     -1 |   2.367 ms |  20.1677 ms |  1.1055 ms |   1.835 ms |   1.61 |    0.71 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                     -1 |  40.774 ms |  28.5363 ms |  1.5642 ms |  40.081 ms |  27.97 |    0.46 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                     -1 |   3.079 ms |   1.8529 ms |  0.1016 ms |   3.104 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                     -1 |  21.164 ms |  27.0860 ms |  1.4847 ms |  21.876 ms |   6.87 |    0.29 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                     -1 |  46.261 ms |  63.1463 ms |  3.4613 ms |  45.978 ms |  15.04 |    1.31 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                     -1 |   2.967 ms |   2.5385 ms |  0.1391 ms |   2.913 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                     -1 |  21.209 ms |  21.6706 ms |  1.1878 ms |  21.381 ms |   7.16 |    0.44 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                     -1 |  52.292 ms |  13.0502 ms |  0.7153 ms |  52.178 ms |  17.65 |    0.58 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |             **1** |                      **1** |   **1.065 ms** |   **0.1285 ms** |  **0.0070 ms** |   **1.064 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                      1 |   2.089 ms |   0.3525 ms |  0.0193 ms |   2.083 ms |   1.96 |    0.03 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                      1 | 227.580 ms |  41.8990 ms |  2.2966 ms | 228.821 ms | 213.72 |    1.37 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.752 ms |   0.0886 ms |  0.0049 ms |   1.750 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.763 ms |   0.1554 ms |  0.0085 ms |   1.768 ms |   1.01 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                      1 | 237.424 ms |  11.1056 ms |  0.6087 ms | 237.705 ms | 135.55 |    0.72 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.761 ms |   0.1463 ms |  0.0080 ms |   1.765 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.752 ms |   0.0740 ms |  0.0041 ms |   1.753 ms |   0.99 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                      1 | 239.999 ms |   1.7500 ms |  0.0959 ms | 239.971 ms | 136.31 |    0.61 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |            **10** |                     **-1** |   **1.523 ms** |   **0.9564 ms** |  **0.0524 ms** |   **1.528 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                     -1 |   3.048 ms |   3.3553 ms |  0.1839 ms |   3.145 ms |   2.00 |    0.14 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                     -1 |  61.383 ms | 122.7008 ms |  6.7256 ms |  60.021 ms |  40.24 |    3.07 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                     -1 |   3.042 ms |   3.3104 ms |  0.1815 ms |   2.957 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                     -1 |  19.756 ms |  26.3398 ms |  1.4438 ms |  19.464 ms |   6.52 |    0.70 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                     -1 |  51.326 ms |  67.4641 ms |  3.6979 ms |  52.393 ms |  16.91 |    1.50 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                     -1 |   2.898 ms |   0.9969 ms |  0.0546 ms |   2.871 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                     -1 |  21.382 ms |  23.8066 ms |  1.3049 ms |  20.855 ms |   7.38 |    0.51 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                     -1 |  49.026 ms |  98.4624 ms |  5.3971 ms |  49.961 ms |  16.90 |    1.64 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |            **10** |                      **1** |   **1.062 ms** |   **0.1088 ms** |  **0.0060 ms** |   **1.064 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                      1 |   2.062 ms |   0.0266 ms |  0.0015 ms |   2.062 ms |   1.94 |    0.01 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                      1 | 226.759 ms |  27.1737 ms |  1.4895 ms | 226.054 ms | 213.57 |    2.60 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.750 ms |   0.0712 ms |  0.0039 ms |   1.750 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.774 ms |   0.0407 ms |  0.0022 ms |   1.773 ms |   1.01 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                      1 | 240.998 ms |  38.0448 ms |  2.0854 ms | 241.122 ms | 137.68 |    1.05 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.754 ms |   0.0962 ms |  0.0053 ms |   1.754 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.761 ms |   0.1572 ms |  0.0086 ms |   1.757 ms |   1.00 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                      1 | 238.852 ms |  10.7408 ms |  0.5887 ms | 238.599 ms | 136.21 |    0.26 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |           **100** |                     **-1** |   **1.560 ms** |   **0.1824 ms** |  **0.0100 ms** |   **1.558 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                     -1 |   2.969 ms |   2.5679 ms |  0.1408 ms |   2.992 ms |   1.90 |    0.10 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                     -1 |  99.442 ms | 182.4203 ms |  9.9991 ms |  99.540 ms |  63.78 |    6.67 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                     -1 |   3.321 ms |   1.3501 ms |  0.0740 ms |   3.361 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                     -1 |  19.918 ms |   9.5733 ms |  0.5247 ms |  19.961 ms |   6.00 |    0.07 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                     -1 |  70.606 ms |  64.2076 ms |  3.5194 ms |  71.694 ms |  21.28 |    1.45 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                     -1 |   3.050 ms |   0.7419 ms |  0.0407 ms |   3.071 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                     -1 |  19.923 ms |  17.9744 ms |  0.9852 ms |  19.848 ms |   6.53 |    0.33 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                     -1 |  65.520 ms | 163.0035 ms |  8.9348 ms |  61.829 ms |  21.47 |    2.77 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |           **100** |                      **1** |   **1.062 ms** |   **0.1458 ms** |  **0.0080 ms** |   **1.066 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                      1 |   2.066 ms |   0.0278 ms |  0.0015 ms |   2.066 ms |   1.94 |    0.02 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                      1 | 221.667 ms |   9.8855 ms |  0.5419 ms | 221.554 ms | 208.69 |    1.53 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.760 ms |   0.0898 ms |  0.0049 ms |   1.760 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.763 ms |   0.0779 ms |  0.0043 ms |   1.761 ms |   1.00 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                      1 | 235.597 ms |  16.5720 ms |  0.9084 ms | 235.256 ms | 133.85 |    0.61 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.753 ms |   0.0368 ms |  0.0020 ms |   1.754 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.762 ms |   0.0555 ms |  0.0030 ms |   1.761 ms |   1.01 |    0.00 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                      1 | 235.974 ms |  34.0765 ms |  1.8678 ms | 234.908 ms | 134.62 |    0.97 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |          **1000** |                     **-1** |   **1.750 ms** |   **0.5224 ms** |  **0.0286 ms** |   **1.736 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                     -1 |   3.613 ms |   4.9964 ms |  0.2739 ms |   3.596 ms |   2.06 |    0.13 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                     -1 | 180.858 ms | 252.4718 ms | 13.8388 ms | 182.498 ms | 103.29 |    6.70 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                     -1 |   3.395 ms |   2.8198 ms |  0.1546 ms |   3.334 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                     -1 |  16.344 ms |  24.9617 ms |  1.3682 ms |  15.555 ms |   4.81 |    0.19 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                     -1 | 124.900 ms | 280.6305 ms | 15.3823 ms | 130.914 ms |  36.77 |    4.03 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                     -1 |   3.342 ms |   1.6147 ms |  0.0885 ms |   3.329 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                     -1 |  16.681 ms |  40.9359 ms |  2.2438 ms |  16.443 ms |   5.01 |    0.80 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                     -1 | 143.156 ms | 387.4348 ms | 21.2366 ms | 137.651 ms |  42.93 |    7.18 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |          **1000** |                      **1** |   **1.057 ms** |   **0.0562 ms** |  **0.0031 ms** |   **1.058 ms** |   **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                      1 |   2.059 ms |   0.2280 ms |  0.0125 ms |   2.065 ms |   1.95 |    0.02 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                      1 | 227.649 ms |   5.9494 ms |  0.3261 ms | 227.687 ms | 215.44 |    0.44 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.755 ms |   0.1161 ms |  0.0064 ms |   1.756 ms |   1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.771 ms |   0.1697 ms |  0.0093 ms |   1.770 ms |   1.01 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                      1 | 236.448 ms |  20.6591 ms |  1.1324 ms | 237.091 ms | 134.71 |    1.08 |
-|            |                 |           |               |       |               |                        |            |             |            |            |        |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.761 ms |   0.1533 ms |  0.0084 ms |   1.758 ms |   1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.765 ms |   0.1104 ms |  0.0061 ms |   1.766 ms |   1.00 |    0.00 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                      1 | 242.713 ms |  28.8252 ms |  1.5800 ms | 242.183 ms | 137.82 |    0.39 |
+|     Method |             Job |       Jit |       Runtime | Items | OverflowCount | MaxDegreeOfParallelism |       Mean |         Error |     StdDev |  Ratio | RatioSD |
+|----------- |---------------- |---------- |-------------- |------ |-------------- |----------------------- |-----------:|--------------:|-----------:|-------:|--------:|
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |             **1** |                     **-1** |   **1.435 ms** |     **0.5002 ms** |  **0.0274 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                     -1 |   2.126 ms |     8.0870 ms |  0.4433 ms |   1.48 |    0.33 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                     -1 |  32.696 ms |    90.0073 ms |  4.9336 ms |  22.83 |    3.84 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                     -1 |   3.005 ms |     2.6478 ms |  0.1451 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                     -1 |  22.153 ms |     7.1640 ms |  0.3927 ms |   7.38 |    0.24 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                     -1 |  49.804 ms |    68.1100 ms |  3.7333 ms |  16.56 |    0.47 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                     -1 |   3.194 ms |     2.1329 ms |  0.1169 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                     -1 |  22.646 ms |    27.9775 ms |  1.5335 ms |   7.10 |    0.52 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                     -1 |  47.713 ms |    31.6235 ms |  1.7334 ms |  14.97 |    1.05 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |             **1** |                      **1** |   **1.062 ms** |     **0.5942 ms** |  **0.0326 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                      1 |   2.110 ms |     1.0955 ms |  0.0601 ms |   1.99 |    0.10 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |             1 |                      1 | 229.458 ms |   119.8941 ms |  6.5718 ms | 216.10 |    3.00 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.787 ms |     0.3719 ms |  0.0204 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.818 ms |     0.2261 ms |  0.0124 ms |   1.02 |    0.00 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |             1 |                      1 | 237.573 ms |   119.1271 ms |  6.5298 ms | 132.96 |    3.77 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.792 ms |     0.3977 ms |  0.0218 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                      1 |   1.792 ms |     0.4227 ms |  0.0232 ms |   1.00 |    0.02 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |             1 |                      1 | 239.940 ms |   125.9049 ms |  6.9013 ms | 133.97 |    5.32 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |            **10** |                     **-1** |   **1.511 ms** |     **0.1623 ms** |  **0.0089 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                     -1 |   2.460 ms |     0.8055 ms |  0.0442 ms |   1.63 |    0.04 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                     -1 |  60.554 ms |    31.4853 ms |  1.7258 ms |  40.08 |    1.31 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                     -1 |   3.088 ms |     0.5569 ms |  0.0305 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                     -1 |  23.290 ms |    16.8103 ms |  0.9214 ms |   7.54 |    0.34 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                     -1 |  50.814 ms |    60.2994 ms |  3.3052 ms |  16.45 |    0.90 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                     -1 |   3.191 ms |     1.8327 ms |  0.1005 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                     -1 |  21.333 ms |    17.3551 ms |  0.9513 ms |   6.69 |    0.36 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                     -1 |  57.290 ms |    27.3505 ms |  1.4992 ms |  17.97 |    0.80 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |            **10** |                      **1** |   **1.069 ms** |     **0.6112 ms** |  **0.0335 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                      1 |   2.085 ms |     0.8677 ms |  0.0476 ms |   1.95 |    0.10 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |            10 |                      1 | 226.871 ms |   103.2032 ms |  5.6569 ms | 212.34 |    1.48 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.787 ms |     0.5467 ms |  0.0300 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.838 ms |     0.5268 ms |  0.0289 ms |   1.03 |    0.01 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |            10 |                      1 | 242.255 ms |   107.1004 ms |  5.8705 ms | 135.59 |    4.22 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.799 ms |     0.0476 ms |  0.0026 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                      1 |   1.788 ms |     0.6365 ms |  0.0349 ms |   0.99 |    0.02 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |            10 |                      1 | 233.397 ms |    90.7787 ms |  4.9759 ms | 129.73 |    2.63 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |           **100** |                     **-1** |   **1.601 ms** |     **0.4539 ms** |  **0.0249 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                     -1 |   2.837 ms |     6.1656 ms |  0.3380 ms |   1.77 |    0.23 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                     -1 |  72.295 ms |   249.2304 ms | 13.6612 ms |  45.23 |    9.17 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                     -1 |   3.254 ms |     1.5661 ms |  0.0858 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                     -1 |  23.557 ms |    27.1188 ms |  1.4865 ms |   7.25 |    0.62 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                     -1 |  73.811 ms |   179.7426 ms |  9.8523 ms |  22.72 |    3.32 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                     -1 |   3.196 ms |     2.2103 ms |  0.1212 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                     -1 |  22.162 ms |    30.4180 ms |  1.6673 ms |   6.93 |    0.31 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                     -1 |  65.921 ms |   121.1654 ms |  6.6415 ms |  20.69 |    2.79 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |           **100** |                      **1** |   **1.052 ms** |     **0.6239 ms** |  **0.0342 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                      1 |   2.090 ms |     0.4102 ms |  0.0225 ms |   1.99 |    0.04 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |           100 |                      1 | 228.287 ms |    70.6778 ms |  3.8741 ms | 217.01 |    4.84 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.824 ms |     0.7528 ms |  0.0413 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.830 ms |     0.3567 ms |  0.0195 ms |   1.00 |    0.03 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |           100 |                      1 | 239.027 ms |   118.8848 ms |  6.5165 ms | 131.06 |    3.65 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.783 ms |     0.4413 ms |  0.0242 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                      1 |   1.851 ms |     0.1908 ms |  0.0105 ms |   1.04 |    0.02 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |           100 |                      1 | 238.463 ms |    48.8092 ms |  2.6754 ms | 133.76 |    3.19 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |          **1000** |                     **-1** |   **1.771 ms** |     **0.5063 ms** |  **0.0278 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                     -1 |   3.366 ms |     1.2610 ms |  0.0691 ms |   1.90 |    0.02 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                     -1 | 192.768 ms | 1,320.9009 ms | 72.4030 ms | 108.85 |   40.73 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                     -1 |   3.329 ms |     1.4432 ms |  0.0791 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                     -1 |  18.409 ms |    30.5945 ms |  1.6770 ms |   5.54 |    0.63 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                     -1 | 151.955 ms | 1,187.2686 ms | 65.0782 ms |  45.35 |   18.37 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                     -1 |   3.304 ms |     1.0378 ms |  0.0569 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                     -1 |  18.750 ms |    17.7334 ms |  0.9720 ms |   5.68 |    0.27 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                     -1 | 137.043 ms |   252.3630 ms | 13.8329 ms |  41.53 |    4.82 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** | **10000** |          **1000** |                      **1** |   **1.067 ms** |     **0.3684 ms** |  **0.0202 ms** |   **1.00** |    **0.00** |
+|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                      1 |   2.112 ms |     0.9776 ms |  0.0536 ms |   1.98 |    0.05 |
+| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10000 |          1000 |                      1 | 229.826 ms |   105.1561 ms |  5.7640 ms | 215.53 |    9.34 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.792 ms |     0.4526 ms |  0.0248 ms |   1.00 |    0.00 |
+|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.797 ms |     0.4866 ms |  0.0267 ms |   1.00 |    0.00 |
+| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10000 |          1000 |                      1 | 244.933 ms |   142.7759 ms |  7.8260 ms | 136.74 |    4.94 |
+|            |                 |           |               |       |               |                        |            |               |            |        |         |
+| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.795 ms |     0.4335 ms |  0.0238 ms |   1.00 |    0.00 |
+|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                      1 |   1.796 ms |     0.5875 ms |  0.0322 ms |   1.00 |    0.01 |
+| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10000 |          1000 |                      1 | 240.767 ms |   113.0706 ms |  6.1978 ms | 134.09 |    2.46 |
