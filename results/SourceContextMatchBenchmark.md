@@ -12,14 +12,14 @@ Jit=RyuJit  IterationCount=15  LaunchCount=2
 WarmupCount=10  
 
 ```
-|                             Method |           Job |       Runtime |       Mean |    Error |    StdDev |
-|----------------------------------- |-------------- |-------------- |-----------:|---------:|----------:|
-|          Filter_MatchingFromSource | core22 RyuJit | .NET Core 2.2 | 5,778.8 ns | 77.70 ns | 116.29 ns |
-|                  Logger_ForContext | core22 RyuJit | .NET Core 2.2 | 3,356.2 ns | 35.10 ns |  52.54 ns |
-| LevelOverrideMap_GetEffectiveLevel | core22 RyuJit | .NET Core 2.2 | 2,678.3 ns | 31.66 ns |  46.40 ns |
-|          Filter_MatchingFromSource | core31 RyuJit | .NET Core 3.1 | 2,437.2 ns | 70.78 ns | 105.94 ns |
-|                  Logger_ForContext | core31 RyuJit | .NET Core 3.1 |   633.6 ns |  9.23 ns |  13.82 ns |
-| LevelOverrideMap_GetEffectiveLevel | core31 RyuJit | .NET Core 3.1 |   132.2 ns |  4.05 ns |   5.93 ns |
-|          Filter_MatchingFromSource |  net48 RyuJit |      .NET 4.8 | 6,335.1 ns | 80.60 ns | 118.14 ns |
-|                  Logger_ForContext |  net48 RyuJit |      .NET 4.8 | 3,166.1 ns | 41.34 ns |  61.87 ns |
-| LevelOverrideMap_GetEffectiveLevel |  net48 RyuJit |      .NET 4.8 | 2,600.9 ns | 33.21 ns |  49.71 ns |
+|                             Method |           Job |       Runtime |       Mean |     Error |    StdDev |
+|----------------------------------- |-------------- |-------------- |-----------:|----------:|----------:|
+|          Filter_MatchingFromSource | core22 RyuJit | .NET Core 2.2 | 6,026.1 ns | 108.77 ns | 162.81 ns |
+|                  Logger_ForContext | core22 RyuJit | .NET Core 2.2 | 3,340.0 ns |  34.00 ns |  50.89 ns |
+| LevelOverrideMap_GetEffectiveLevel | core22 RyuJit | .NET Core 2.2 | 2,672.1 ns |  27.30 ns |  40.86 ns |
+|          Filter_MatchingFromSource | core31 RyuJit | .NET Core 3.1 | 2,574.5 ns |  62.71 ns |  93.87 ns |
+|                  Logger_ForContext | core31 RyuJit | .NET Core 3.1 |   693.5 ns |   7.09 ns |  10.61 ns |
+| LevelOverrideMap_GetEffectiveLevel | core31 RyuJit | .NET Core 3.1 |   133.2 ns |   2.91 ns |   4.35 ns |
+|          Filter_MatchingFromSource |  net48 RyuJit |      .NET 4.8 | 6,591.2 ns |  80.51 ns | 118.01 ns |
+|                  Logger_ForContext |  net48 RyuJit |      .NET 4.8 | 3,306.7 ns |  26.87 ns |  40.22 ns |
+| LevelOverrideMap_GetEffectiveLevel |  net48 RyuJit |      .NET 4.8 | 2,684.0 ns |  27.84 ns |  40.81 ns |

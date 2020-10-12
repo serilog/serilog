@@ -13,14 +13,14 @@ IterationCount=3  LaunchCount=1  WarmupCount=3
 ```
 |                     Method |             Job |       Jit |       Runtime |        Mean |        Error |      StdDev |  Ratio | RatioSD |     Gen 0 |    Gen 1 | Gen 2 |   Allocated |
 |--------------------------- |---------------- |---------- |-------------- |------------:|-------------:|------------:|-------:|--------:|----------:|---------:|------:|------------:|
-| SimulateAAppWithoutSerilog |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    153.7 μs |     69.22 μs |     3.79 μs |   1.00 |    0.00 |    6.3477 |   0.7324 |     - |    39.16 KB |
-| SimulateAAppWithSerilogOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1,536.6 μs |    491.17 μs |    26.92 μs |  10.00 |    0.33 |  439.4531 |  54.6875 |     - |  2702.13 KB |
-|  SimulateAAppWithSerilogOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 58,859.0 μs | 46,973.77 μs | 2,574.79 μs | 383.27 |   26.06 | 9666.6667 | 111.1111 |     - | 59720.67 KB |
+| SimulateAAppWithoutSerilog |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    145.0 μs |     33.47 μs |     1.83 μs |   1.00 |    0.00 |    6.3477 |   0.7324 |     - |    39.16 KB |
+| SimulateAAppWithSerilogOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1,631.1 μs |  2,110.46 μs |   115.68 μs |  11.25 |    0.82 |  439.4531 |  54.6875 |     - |  2702.13 KB |
+|  SimulateAAppWithSerilogOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 56,456.2 μs | 24,734.77 μs | 1,355.80 μs | 389.33 |   12.27 | 7777.7778 | 111.1111 |     - | 47987.03 KB |
 |                            |                 |           |               |             |              |             |        |         |           |          |       |             |
-| SimulateAAppWithoutSerilog | net48 LegacyJit | LegacyJit |      .NET 4.8 |    195.8 μs |     82.52 μs |     4.52 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
-| SimulateAAppWithSerilogOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1,450.0 μs |    508.78 μs |    27.89 μs |   7.41 |    0.31 |  326.1719 |  54.6875 |     - |  2015.72 KB |
-|  SimulateAAppWithSerilogOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 60,147.5 μs | 36,026.42 μs | 1,974.73 μs | 307.48 |   17.23 | 9666.6667 | 222.2222 |     - | 59673.59 KB |
+| SimulateAAppWithoutSerilog | net48 LegacyJit | LegacyJit |      .NET 4.8 |    205.2 μs |     46.80 μs |     2.57 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
+| SimulateAAppWithSerilogOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1,494.2 μs |    375.72 μs |    20.59 μs |   7.28 |    0.17 |  326.1719 |  54.6875 |     - |  2015.72 KB |
+|  SimulateAAppWithSerilogOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 60,881.8 μs | 25,079.02 μs | 1,374.67 μs | 296.65 |    4.76 | 8000.0000 | 222.2222 |     - | 49552.85 KB |
 |                            |                 |           |               |             |              |             |        |         |           |          |       |             |
-| SimulateAAppWithoutSerilog |    net48 RyuJit |    RyuJit |      .NET 4.8 |    196.2 μs |     48.71 μs |     2.67 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
-| SimulateAAppWithSerilogOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1,432.6 μs |    614.75 μs |    33.70 μs |   7.30 |    0.16 |  326.1719 |  54.6875 |     - |  2015.72 KB |
-|  SimulateAAppWithSerilogOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 60,489.8 μs | 18,188.54 μs |   996.98 μs | 308.37 |    5.35 | 9666.6667 | 222.2222 |     - | 59673.39 KB |
+| SimulateAAppWithoutSerilog |    net48 RyuJit |    RyuJit |      .NET 4.8 |    206.3 μs |     77.99 μs |     4.27 μs |   1.00 |    0.00 |   20.7520 |   3.4180 |     - |   128.52 KB |
+| SimulateAAppWithSerilogOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1,492.1 μs |    350.72 μs |    19.22 μs |   7.24 |    0.18 |  326.1719 |  54.6875 |     - |  2015.72 KB |
+|  SimulateAAppWithSerilogOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 61,238.1 μs | 30,107.08 μs | 1,650.27 μs | 296.98 |    9.18 | 8000.0000 | 222.2222 |     - | 49552.88 KB |

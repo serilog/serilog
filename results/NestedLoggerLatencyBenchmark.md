@@ -13,11 +13,11 @@ IterationCount=15  LaunchCount=2  WarmupCount=10
 ```
 |       Method |             Job |       Jit |       Runtime |      Mean |     Error |    StdDev | Ratio | RatioSD |
 |------------- |---------------- |---------- |-------------- |----------:|----------:|----------:|------:|--------:|
-|   RootLogger |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10.443 ns | 0.1453 ns | 0.2174 ns |  1.00 |    0.00 |
-| NestedLogger |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 37.290 ns | 0.9015 ns | 1.3493 ns |  3.57 |    0.16 |
+|   RootLogger |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  9.955 ns | 0.1048 ns | 0.1536 ns |  1.00 |    0.00 |
+| NestedLogger |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 39.043 ns | 1.2682 ns | 1.8981 ns |  3.91 |    0.20 |
 |              |                 |           |               |           |           |           |       |         |
-|   RootLogger | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.024 ns | 0.1172 ns | 0.1754 ns |  1.00 |    0.00 |
-| NestedLogger | net48 LegacyJit | LegacyJit |      .NET 4.8 | 41.484 ns | 0.7039 ns | 1.0318 ns |  4.13 |    0.10 |
+|   RootLogger | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.517 ns | 0.0927 ns | 0.1387 ns |  1.00 |    0.00 |
+| NestedLogger | net48 LegacyJit | LegacyJit |      .NET 4.8 | 48.024 ns | 1.0855 ns | 1.6248 ns |  4.57 |    0.17 |
 |              |                 |           |               |           |           |           |       |         |
-|   RootLogger |    net48 RyuJit |    RyuJit |      .NET 4.8 |  9.973 ns | 0.1272 ns | 0.1904 ns |  1.00 |    0.00 |
-| NestedLogger |    net48 RyuJit |    RyuJit |      .NET 4.8 | 41.135 ns | 0.9173 ns | 1.2860 ns |  4.13 |    0.15 |
+|   RootLogger |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.536 ns | 0.1462 ns | 0.2097 ns |  1.00 |    0.00 |
+| NestedLogger |    net48 RyuJit |    RyuJit |      .NET 4.8 | 48.265 ns | 1.2194 ns | 1.8252 ns |  4.59 |    0.21 |

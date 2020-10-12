@@ -11,22 +11,22 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 IterationCount=15  LaunchCount=2  WarmupCount=10  
 
 ```
-|              Method |             Job |       Jit |       Runtime |         Mean |      Error |     StdDev |  Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|-------------------- |---------------- |---------- |-------------- |-------------:|-----------:|-----------:|-------:|--------:|-------:|------:|------:|----------:|
-|           NoMessage |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     3.639 ns |  0.4640 ns |  0.6945 ns |   1.00 |    0.00 |      - |     - |     - |         - |
-|        NoProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     4.481 ns |  0.1277 ns |  0.1831 ns |   1.25 |    0.21 |      - |     - |     - |         - |
-| OneSimpleProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    51.613 ns |  0.5417 ns |  0.8108 ns |  14.68 |    2.72 |      - |     - |     - |         - |
-|    VariedProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   291.733 ns |  5.3260 ns |  7.9716 ns |  83.16 |   16.45 | 0.0153 |     - |     - |      96 B |
-|   ComplexProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1,259.429 ns | 18.6270 ns | 27.3033 ns | 357.30 |   72.39 | 0.1259 |     - |     - |     800 B |
-|                     |                 |           |               |              |            |            |        |         |        |       |       |           |
-|           NoMessage | net48 LegacyJit | LegacyJit |      .NET 4.8 |     3.402 ns |  0.0704 ns |  0.1054 ns |   1.00 |    0.00 |      - |     - |     - |         - |
-|        NoProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 |     3.383 ns |  0.0488 ns |  0.0730 ns |   0.99 |    0.02 |      - |     - |     - |         - |
-| OneSimpleProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 |    84.629 ns |  1.1712 ns |  1.7531 ns |  24.90 |    0.93 | 0.0050 |     - |     - |      32 B |
-|    VariedProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 |   362.810 ns |  4.4624 ns |  6.6790 ns | 106.75 |    3.77 | 0.0153 |     - |     - |      96 B |
-|   ComplexProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1,869.230 ns | 24.5526 ns | 36.7491 ns | 550.05 |   21.75 | 0.1698 |     - |     - |    1075 B |
-|                     |                 |           |               |              |            |            |        |         |        |       |       |           |
-|           NoMessage |    net48 RyuJit |    RyuJit |      .NET 4.8 |     3.374 ns |  0.0551 ns |  0.0825 ns |   1.00 |    0.00 |      - |     - |     - |         - |
-|        NoProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 |     3.478 ns |  0.1054 ns |  0.1578 ns |   1.03 |    0.05 |      - |     - |     - |         - |
-| OneSimpleProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 |    85.664 ns |  2.2131 ns |  3.3124 ns |  25.40 |    1.12 | 0.0050 |     - |     - |      32 B |
-|    VariedProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 |   363.265 ns |  4.9153 ns |  7.3570 ns | 107.73 |    3.74 | 0.0153 |     - |     - |      96 B |
-|   ComplexProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1,860.783 ns | 23.8260 ns | 35.6616 ns | 551.77 |   16.29 | 0.1698 |     - |     - |    1075 B |
+|              Method |             Job |       Jit |       Runtime |         Mean |      Error |     StdDev |       Median |  Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|-------------------- |---------------- |---------- |-------------- |-------------:|-----------:|-----------:|-------------:|-------:|--------:|-------:|------:|------:|----------:|
+|           NoMessage |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     4.421 ns |  0.1307 ns |  0.1956 ns |     4.424 ns |   1.00 |    0.00 |      - |     - |     - |         - |
+|        NoProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     4.429 ns |  0.1347 ns |  0.2016 ns |     4.435 ns |   1.01 |    0.09 |      - |     - |     - |         - |
+| OneSimpleProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    50.531 ns |  0.4213 ns |  0.6306 ns |    50.598 ns |  11.45 |    0.52 |      - |     - |     - |         - |
+|    VariedProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   302.906 ns |  4.7680 ns |  7.1366 ns |   300.849 ns |  68.61 |    2.74 | 0.0153 |     - |     - |      96 B |
+|   ComplexProperties |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1,312.175 ns | 15.6709 ns | 22.9702 ns | 1,316.004 ns | 296.87 |   12.04 | 0.1259 |     - |     - |     800 B |
+|                     |                 |           |               |              |            |            |              |        |         |        |       |       |           |
+|           NoMessage | net48 LegacyJit | LegacyJit |      .NET 4.8 |     4.806 ns |  0.7242 ns |  1.0386 ns |     5.623 ns |   1.00 |    0.00 |      - |     - |     - |         - |
+|        NoProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 |     4.176 ns |  0.3365 ns |  0.5036 ns |     4.176 ns |   0.88 |    0.11 |      - |     - |     - |         - |
+| OneSimpleProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 |    89.435 ns |  0.9378 ns |  1.4037 ns |    89.524 ns |  19.48 |    4.28 | 0.0050 |     - |     - |      32 B |
+|    VariedProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 |   380.763 ns |  3.6273 ns |  5.4292 ns |   381.522 ns |  83.05 |   18.59 | 0.0153 |     - |     - |      96 B |
+|   ComplexProperties | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1,927.514 ns | 20.6071 ns | 30.2056 ns | 1,929.283 ns | 420.57 |   94.16 | 0.1698 |     - |     - |    1075 B |
+|                     |                 |           |               |              |            |            |              |        |         |        |       |       |           |
+|           NoMessage |    net48 RyuJit |    RyuJit |      .NET 4.8 |     3.698 ns |  0.0490 ns |  0.0734 ns |     3.688 ns |   1.00 |    0.00 |      - |     - |     - |         - |
+|        NoProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 |     3.688 ns |  0.0501 ns |  0.0750 ns |     3.676 ns |   1.00 |    0.03 |      - |     - |     - |         - |
+| OneSimpleProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 |    90.224 ns |  0.8573 ns |  1.2832 ns |    90.478 ns |  24.41 |    0.57 | 0.0050 |     - |     - |      32 B |
+|    VariedProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 |   380.224 ns |  5.1817 ns |  7.2641 ns |   380.021 ns | 102.97 |    3.03 | 0.0153 |     - |     - |      96 B |
+|   ComplexProperties |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1,927.867 ns | 22.1241 ns | 32.4293 ns | 1,925.825 ns | 521.95 |   16.16 | 0.1698 |     - |     - |    1075 B |

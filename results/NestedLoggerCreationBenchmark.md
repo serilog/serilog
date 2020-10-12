@@ -11,14 +11,14 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 IterationCount=15  LaunchCount=2  WarmupCount=10  
 
 ```
-|           Method |             Job |       Jit |       Runtime |     Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|----------------- |---------------- |---------- |-------------- |---------:|---------:|---------:|-------:|------:|------:|----------:|
-|    ForContextInt |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 77.72 ns | 1.248 ns | 1.868 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 50.44 ns | 0.663 ns | 0.972 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 85.83 ns | 1.287 ns | 1.927 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt | net48 LegacyJit | LegacyJit |      .NET 4.8 | 76.99 ns | 1.196 ns | 1.790 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString | net48 LegacyJit | LegacyJit |      .NET 4.8 | 48.21 ns | 0.424 ns | 0.634 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType | net48 LegacyJit | LegacyJit |      .NET 4.8 | 95.28 ns | 1.072 ns | 1.605 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt |    net48 RyuJit |    RyuJit |      .NET 4.8 | 76.87 ns | 0.912 ns | 1.365 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |    net48 RyuJit |    RyuJit |      .NET 4.8 | 48.31 ns | 0.592 ns | 0.886 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |    net48 RyuJit |    RyuJit |      .NET 4.8 | 94.92 ns | 1.325 ns | 1.983 ns | 0.0204 |     - |     - |     128 B |
+|           Method |             Job |       Jit |       Runtime |      Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|----------------- |---------------- |---------- |-------------- |----------:|---------:|---------:|-------:|------:|------:|----------:|
+|    ForContextInt |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  87.27 ns | 0.868 ns | 1.299 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  56.27 ns | 0.367 ns | 0.549 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  93.54 ns | 1.605 ns | 2.402 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt | net48 LegacyJit | LegacyJit |      .NET 4.8 |  86.18 ns | 1.025 ns | 1.534 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString | net48 LegacyJit | LegacyJit |      .NET 4.8 |  54.62 ns | 0.790 ns | 1.158 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType | net48 LegacyJit | LegacyJit |      .NET 4.8 | 102.58 ns | 1.272 ns | 1.865 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |    net48 RyuJit |    RyuJit |      .NET 4.8 |  86.49 ns | 1.308 ns | 1.918 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |    net48 RyuJit |    RyuJit |      .NET 4.8 |  54.23 ns | 0.431 ns | 0.632 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |    net48 RyuJit |    RyuJit |      .NET 4.8 | 103.36 ns | 0.843 ns | 1.262 ns | 0.0204 |     - |     - |     128 B |

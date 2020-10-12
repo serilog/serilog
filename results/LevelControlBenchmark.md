@@ -13,17 +13,17 @@ IterationCount=15  LaunchCount=2  WarmupCount=10
 ```
 |         Method |             Job |       Jit |       Runtime |      Mean |     Error |    StdDev | Ratio | RatioSD |
 |--------------- |---------------- |---------- |-------------- |----------:|----------:|----------:|------:|--------:|
-|            Off |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  2.660 ns | 0.0672 ns | 0.1006 ns |  1.00 |    0.00 |
-| LevelSwitchOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  2.889 ns | 0.0602 ns | 0.0902 ns |  1.09 |    0.06 |
-| MinimumLevelOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10.603 ns | 0.1539 ns | 0.2207 ns |  3.99 |    0.17 |
-|  LevelSwitchOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  9.723 ns | 0.1358 ns | 0.2033 ns |  3.66 |    0.15 |
+|            Off |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  2.241 ns | 0.0346 ns | 0.0485 ns |  1.00 |    0.00 |
+| LevelSwitchOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  2.710 ns | 0.0441 ns | 0.0661 ns |  1.21 |    0.04 |
+| MinimumLevelOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10.642 ns | 0.1192 ns | 0.1784 ns |  4.75 |    0.13 |
+|  LevelSwitchOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  9.812 ns | 0.0954 ns | 0.1428 ns |  4.38 |    0.12 |
 |                |                 |           |               |           |           |           |       |         |
-|            Off | net48 LegacyJit | LegacyJit |      .NET 4.8 |  2.426 ns | 0.0666 ns | 0.0997 ns |  1.00 |    0.00 |
-| LevelSwitchOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |  2.678 ns | 0.0669 ns | 0.1001 ns |  1.11 |    0.06 |
-| MinimumLevelOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.365 ns | 0.2081 ns | 0.3051 ns |  4.27 |    0.21 |
-|  LevelSwitchOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.010 ns | 0.1245 ns | 0.1864 ns |  4.13 |    0.21 |
+|            Off | net48 LegacyJit | LegacyJit |      .NET 4.8 |  3.227 ns | 0.0520 ns | 0.0779 ns |  1.00 |    0.00 |
+| LevelSwitchOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |  3.535 ns | 0.0676 ns | 0.1012 ns |  1.10 |    0.02 |
+| MinimumLevelOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.701 ns | 0.1216 ns | 0.1782 ns |  3.32 |    0.10 |
+|  LevelSwitchOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.607 ns | 0.0930 ns | 0.1393 ns |  3.29 |    0.09 |
 |                |                 |           |               |           |           |           |       |         |
-|            Off |    net48 RyuJit |    RyuJit |      .NET 4.8 |  2.414 ns | 0.0500 ns | 0.0732 ns |  1.00 |    0.00 |
-| LevelSwitchOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |  2.684 ns | 0.0592 ns | 0.0887 ns |  1.11 |    0.03 |
-| MinimumLevelOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.300 ns | 0.1275 ns | 0.1908 ns |  4.27 |    0.15 |
-|  LevelSwitchOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.023 ns | 0.1184 ns | 0.1772 ns |  4.15 |    0.11 |
+|            Off |    net48 RyuJit |    RyuJit |      .NET 4.8 |  3.191 ns | 0.0469 ns | 0.0703 ns |  1.00 |    0.00 |
+| LevelSwitchOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |  3.500 ns | 0.0483 ns | 0.0723 ns |  1.10 |    0.03 |
+| MinimumLevelOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.664 ns | 0.1128 ns | 0.1689 ns |  3.34 |    0.10 |
+|  LevelSwitchOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.619 ns | 0.0868 ns | 0.1299 ns |  3.33 |    0.09 |

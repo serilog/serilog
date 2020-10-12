@@ -13,6 +13,6 @@ IterationCount=15  LaunchCount=2  WarmupCount=10
 ```
 |         Method |             Job |       Jit |       Runtime |       Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |--------------- |---------------- |---------- |-------------- |-----------:|---------:|---------:|-------:|------:|------:|----------:|
-| FormatToOutput |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   865.5 ns |  8.14 ns | 12.18 ns | 0.0315 |     - |     - |     200 B |
-| FormatToOutput | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1,127.6 ns | 18.49 ns | 27.67 ns | 0.1106 |     - |     - |     698 B |
-| FormatToOutput |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1,130.9 ns | 18.16 ns | 27.19 ns | 0.1106 |     - |     - |     698 B |
+| FormatToOutput |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   875.4 ns |  7.57 ns | 11.33 ns | 0.0267 |     - |     - |     168 B |
+| FormatToOutput | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1,129.1 ns | 15.72 ns | 23.53 ns | 0.1049 |     - |     - |     666 B |
+| FormatToOutput |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1,132.3 ns | 14.95 ns | 22.38 ns | 0.1049 |     - |     - |     666 B |
