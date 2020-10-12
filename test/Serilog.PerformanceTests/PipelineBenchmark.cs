@@ -14,11 +14,6 @@
 
 using BenchmarkDotNet.Attributes;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Configuration;
-using Serilog.Context;
 using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
@@ -27,7 +22,7 @@ namespace Serilog.PerformanceTests
     /// Tests the cost of writing through the logging pipeline.
     /// </summary>
     [MemoryDiagnoser]
-    public class PipelineBenchmark
+    public class PipelineBenchmark : BaseBenchmark
     {
         readonly ILogger _log;
         readonly ILogger _logOnlyFatal;
@@ -105,24 +100,24 @@ namespace Serilog.PerformanceTests
 
             _log1e0fc0lc.Information(_exception, "Hello, {Name}!", "World");
             _log0e1fc0lc.Information(_exception, "Hello, {Name}!", "World");
-            using (PipelineBenchmarkHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(1))
             {
                 _log0e0fc1lc.Information(_exception, "Hello, {Name}!", "World");
             }
 
-            using (PipelineBenchmarkHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(1))
             {
                 _log1e1fc1lc.Information(_exception, "Hello, {Name}!", "World");
             }
-            using (PipelineBenchmarkHelper.ManyLogContext(10))
+            using (PropertiesAdderHelper.ManyLogContext(10))
             {
                 _log10e10fc10lc.Information(_exception, "Hello, {Name}!", "World");
             }
-            using (PipelineBenchmarkHelper.ManyLogContext(100))
+            using (PropertiesAdderHelper.ManyLogContext(100))
             {
                 _log100e100fc100lc.Information(_exception, "Hello, {Name}!", "World");
             }
-            using (PipelineBenchmarkHelper.ManyLogContext(100))
+            using (PropertiesAdderHelper.ManyLogContext(1000))
             {
                 _log1000e1000fc1000lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -153,7 +148,7 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith0Enrich0ForContext1LogContext()
         {
-            using (PipelineBenchmarkHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(1))
             {
                 _log0e0fc1lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -162,7 +157,7 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith1Enrich1ForContext1LogContext()
         {
-            using (PipelineBenchmarkHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(1))
             {
                 _log1e1fc1lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -170,7 +165,7 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith10Enrich10ForContext10LogContext()
         {
-            using (PipelineBenchmarkHelper.ManyLogContext(10))
+            using (PropertiesAdderHelper.ManyLogContext(10))
             {
                 _log10e10fc10lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -178,7 +173,7 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith100Enrich100ForContext100LogContext()
         {
-            using (PipelineBenchmarkHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(100))
             {
                 _log100e100fc100lc.Information(_exception, "Hello, {Name}!", "World");
             }
@@ -186,61 +181,9 @@ namespace Serilog.PerformanceTests
         [Benchmark]
         public void EmitLogEventWith1000Enrich1000ForContext1000LogContext()
         {
-            using (PipelineBenchmarkHelper.ManyLogContext(1))
+            using (PropertiesAdderHelper.ManyLogContext(1000))
             {
                 _log1000e1000fc1000lc.Information(_exception, "Hello, {Name}!", "World");
-            }
-        }
-    }
-
-    static class PipelineBenchmarkHelper
-    {
-        public static LoggerConfiguration AddManyProperties(this LoggerEnrichmentConfiguration enrich, int numOfProps)
-        {
-            LoggerConfiguration config = null;
-            for (int i = 0; i < numOfProps; i++)
-            {
-                config = enrich.WithProperty($"EnrichProp{i}", $"Value{i}");
-            }
-            return config;
-        }
-        public static ILogger AddManyProperties(this ILogger log, int numOfProps)
-        {
-            for (int i = 0; i < numOfProps; i++)
-            {
-                log = log.ForContext($"EnrichProp{i}", $"Value{i}");
-            }
-            return log;
-        }
-
-        public static IDisposable ManyLogContext(int numOfProps)
-        {
-            var list = new List<IDisposable>(numOfProps);
-            for (int i = 0; i < numOfProps; i++)
-            {
-                list.Add(LogContext.PushProperty($"LogContextProp{i}", $"Value{i}"));
-            }
-            return new ManyDisposable(list);
-        }
-
-        class ManyDisposable : IDisposable
-        {
-            IList<IDisposable> Disposables { get; }
-
-            public ManyDisposable(IList<IDisposable> disposables)
-            {
-                Disposables = disposables;
-            }
-
-            public void Dispose()
-            {
-                if(Disposables == null)
-                    return;
-
-                foreach (var disposable in Disposables.Reverse())
-                {
-                    disposable?.Dispose();
-                }
             }
         }
     }

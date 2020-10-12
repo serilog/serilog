@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Serilog.PerformanceTests
 {
-    [ShortRunJob]
-    public class MessageTemplateCacheBenchmark_Leaking
+    [MyBenchmarkRun(MyConfigs.ShortRun)]
+    public class MessageTemplateCacheBenchmark_Leaking : BaseBenchmark
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
         const int MaxCacheItems = 1000;

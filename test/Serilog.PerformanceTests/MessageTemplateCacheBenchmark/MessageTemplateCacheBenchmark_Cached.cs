@@ -9,8 +9,8 @@ using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
-    [ShortRunJob]
-    public class MessageTemplateCacheBenchmark_Cached
+    [MyBenchmarkRun(MyConfigs.ShortRun)]
+    public class MessageTemplateCacheBenchmark_Cached : BaseBenchmark
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 

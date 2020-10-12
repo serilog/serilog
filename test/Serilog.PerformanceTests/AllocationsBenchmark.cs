@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -10,7 +10,7 @@ using System.Numerics;
 namespace Serilog.PerformanceTests
 {
     [MemoryDiagnoser]
-    public abstract class AllocationsBaseBenchmark
+    public abstract class AllocationsBaseBenchmark : BaseBenchmark
     {
         protected ILogger _logger;
         protected ILogger _enrichedLogger;
