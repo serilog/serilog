@@ -1,6 +1,6 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.572 (2004/?/20H1)
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 .NET Core SDK=3.1.402
   [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
@@ -11,19 +11,19 @@ Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
 IterationCount=15  LaunchCount=2  WarmupCount=10  
 
 ```
-|         Method |             Job |       Jit |       Runtime |      Mean |     Error |    StdDev | Ratio | RatioSD |
-|--------------- |---------------- |---------- |-------------- |----------:|----------:|----------:|------:|--------:|
-|            Off |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  2.660 ns | 0.0672 ns | 0.1006 ns |  1.00 |    0.00 |
-| LevelSwitchOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  2.889 ns | 0.0602 ns | 0.0902 ns |  1.09 |    0.06 |
-| MinimumLevelOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 10.603 ns | 0.1539 ns | 0.2207 ns |  3.99 |    0.17 |
-|  LevelSwitchOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  9.723 ns | 0.1358 ns | 0.2033 ns |  3.66 |    0.15 |
-|                |                 |           |               |           |           |           |       |         |
-|            Off | net48 LegacyJit | LegacyJit |      .NET 4.8 |  2.426 ns | 0.0666 ns | 0.0997 ns |  1.00 |    0.00 |
-| LevelSwitchOff | net48 LegacyJit | LegacyJit |      .NET 4.8 |  2.678 ns | 0.0669 ns | 0.1001 ns |  1.11 |    0.06 |
-| MinimumLevelOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.365 ns | 0.2081 ns | 0.3051 ns |  4.27 |    0.21 |
-|  LevelSwitchOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 10.010 ns | 0.1245 ns | 0.1864 ns |  4.13 |    0.21 |
-|                |                 |           |               |           |           |           |       |         |
-|            Off |    net48 RyuJit |    RyuJit |      .NET 4.8 |  2.414 ns | 0.0500 ns | 0.0732 ns |  1.00 |    0.00 |
-| LevelSwitchOff |    net48 RyuJit |    RyuJit |      .NET 4.8 |  2.684 ns | 0.0592 ns | 0.0887 ns |  1.11 |    0.03 |
-| MinimumLevelOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.300 ns | 0.1275 ns | 0.1908 ns |  4.27 |    0.15 |
-|  LevelSwitchOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 10.023 ns | 0.1184 ns | 0.1772 ns |  4.15 |    0.11 |
+|         Method |             Job |       Jit |       Runtime |     Mean |     Error |    StdDev | Ratio | RatioSD |
+|--------------- |---------------- |---------- |-------------- |---------:|----------:|----------:|------:|--------:|
+|            Off |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1.653 ns | 0.0114 ns | 0.0163 ns |  1.00 |    0.00 |
+| LevelSwitchOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1.698 ns | 0.0129 ns | 0.0189 ns |  1.03 |    0.01 |
+| MinimumLevelOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 7.641 ns | 0.0411 ns | 0.0576 ns |  4.62 |    0.06 |
+|  LevelSwitchOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 8.171 ns | 0.0444 ns | 0.0664 ns |  4.94 |    0.06 |
+|                |                 |           |               |          |           |           |       |         |
+|            Off | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1.446 ns | 0.0100 ns | 0.0150 ns |  1.00 |    0.00 |
+| LevelSwitchOff | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1.458 ns | 0.0222 ns | 0.0326 ns |  1.01 |    0.02 |
+| MinimumLevelOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 7.690 ns | 0.0329 ns | 0.0462 ns |  5.32 |    0.07 |
+|  LevelSwitchOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 8.124 ns | 0.0466 ns | 0.0683 ns |  5.62 |    0.07 |
+|                |                 |           |               |          |           |           |       |         |
+|            Off |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1.464 ns | 0.0140 ns | 0.0201 ns |  1.00 |    0.00 |
+| LevelSwitchOff |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1.447 ns | 0.0140 ns | 0.0205 ns |  0.99 |    0.02 |
+| MinimumLevelOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 7.697 ns | 0.0511 ns | 0.0749 ns |  5.26 |    0.09 |
+|  LevelSwitchOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 8.143 ns | 0.0373 ns | 0.0558 ns |  5.57 |    0.07 |
