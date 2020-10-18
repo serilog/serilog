@@ -32,8 +32,11 @@ namespace Serilog.Events
         /// <summary>
         /// Represents the empty message template.
         /// </summary>
-        public static MessageTemplate Empty { get; } = new MessageTemplate(Enumerable.Empty<MessageTemplateToken>());
-
+#if NETSTANDARD1_0 || NETSTANDARD1_1 || NET45
+        public static MessageTemplate Empty { get; } = new MessageTemplate(string.Empty, new MessageTemplateToken[]{});
+#else
+        public static MessageTemplate Empty { get; } = new MessageTemplate(string.Empty, Array.Empty<MessageTemplateToken>());
+#endif
         readonly MessageTemplateToken[] _tokens;
 
         /// <summary>
