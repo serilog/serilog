@@ -42,7 +42,7 @@ namespace Serilog.Tests
             Assert.False(wr.IsAlive);
             GC.KeepAlive(logger);
 
-            (ILogger, WeakReference) CreateLogger()
+            static (ILogger, WeakReference) CreateLogger()
             {
                 var loggerConfiguration = new LoggerConfiguration();
                 return (loggerConfiguration.CreateLogger(), new WeakReference(loggerConfiguration));

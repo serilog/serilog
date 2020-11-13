@@ -1,4 +1,4 @@
-﻿using Serilog.Context;
+using Serilog.Context;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -314,7 +314,7 @@ namespace Serilog.Tests.Context
 
             Assert.Null(remotingException);
 
-            void CallFromRemote() => Thread.Sleep(200);
+            static void CallFromRemote() => Thread.Sleep(200);
         }
 
         [Fact]
@@ -348,7 +348,7 @@ namespace Serilog.Tests.Context
             // I think "at least two" is what we're concerned about, here.
             Assert.InRange(tracker.DisconnectCount, 2, 4);
 
-            void CallFromRemote() { }
+            static void CallFromRemote() { }
         }
 #endif
 

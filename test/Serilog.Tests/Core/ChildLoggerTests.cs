@@ -16,7 +16,7 @@ namespace Serilog.Tests.Core
             //   Event  --> Root Logger --> restrictedTo --> Child Logger -> YES or
             //    lvl        min lvl           param            min lvl       NO ?
             //
-            object?[] T(LogEventLevel el, int? rl, int? rt, int? cl, bool r)
+            static object?[] T(LogEventLevel el, int? rl, int? rt, int? cl, bool r)
             {
                 return new object?[]{ el, rl, rt, cl, r };
             }
@@ -149,7 +149,7 @@ namespace Serilog.Tests.Core
             //   Event  --> Root Logger --> Child Logger -> YES or
             //    lvl       override/lvl    override/levl     NO ?
             //
-            object?[] T(string? rs, int? rl, string? cs, int? cl, bool r, LogEventLevel dl = LevelAlias.Minimum)
+            object[] T(string rs, int? rl, string cs, int? cl, bool r, LogEventLevel dl = LevelAlias.Minimum)
             {
                 return new object?[] { dl, rs, rl, cs, cl, r };
             }

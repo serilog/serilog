@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
@@ -72,7 +72,7 @@ namespace Serilog.Tests.Core
             //   Event  --> Root Logger --> Child Logger
             //    lvl       override/lvl    override/levl
             //
-            object?[] T(string? rs, int? rl, string? cs, int? cl)
+            static object?[] T(string? rs, int? rl, string? cs, int? cl)
             {
                 return new object?[] { rs, rl, cs, cl };
             }
