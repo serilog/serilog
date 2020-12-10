@@ -49,7 +49,7 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Treat objects of the specified type as scalar values, i.e., don't break
-        /// them down into properties event when destructuring complex types.
+        /// them down into properties even when destructuring complex types.
         /// </summary>
         /// <param name="scalarType">Type to treat as scalar.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
@@ -64,7 +64,7 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Treat objects of the specified type as scalar values, i.e., don't break
-        /// them down into properties event when destructuring complex types.
+        /// them down into properties even when destructuring complex types.
         /// </summary>
         /// <typeparam name="TScalar">Type to treat as scalar.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>
