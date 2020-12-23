@@ -1,10 +1,17 @@
 Push-Location $PSScriptRoot
 
-Remove-Item $PSScriptRoot\results\* -Recurse -Force
+$destinationPath = ($PSScriptRoot + "/results/");
+
+if(test-path $destinationPath)
+{
+    Remove-Item $destinationPath\* -Recurse -Force
+}
+else
+{
+    New-Item -ItemType Directory -Force -Path $destinationPath
+}
 
 ./Build.ps1
-
-$destinationPath = ($PSScriptRoot + "/results/");
 
 foreach ($test in ls .\test\*.PerformanceTests) {
     Push-Location $test
