@@ -2,133 +2,134 @@
 
 BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET Core SDK=3.1.404
-  [Host]          : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
-  core31 RyuJit   : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
+.NET Core SDK=5.0.101
+  [Host] : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+  core31 : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+  net48  : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
+  net50  : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
 
-IterationCount=3  LaunchCount=1  WarmupCount=3  
+Jit=RyuJit  IterationCount=3  LaunchCount=1  
+WarmupCount=3  
 
 ```
-|     Method |             Job |       Jit |       Runtime | Items | MaxDegreeOfParallelism |        Mean |        Error |     StdDev | Ratio | RatioSD |
-|----------- |---------------- |---------- |-------------- |------ |----------------------- |------------:|-------------:|-----------:|------:|--------:|
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |    **10** |                     **-1** |   **220.27 μs** |     **6.308 μs** |   **0.346 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    10 |                     -1 |    27.52 μs |     8.681 μs |   0.476 μs |  0.12 |    0.00 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    10 |                     -1 |    26.88 μs |    16.241 μs |   0.890 μs |  0.12 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |    10 |                     -1 |   505.66 μs |   338.362 μs |  18.547 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |    10 |                     -1 |    37.88 μs |     5.684 μs |   0.312 μs |  0.07 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |    10 |                     -1 |    38.34 μs |    23.856 μs |   1.308 μs |  0.08 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |    10 |                     -1 |   537.20 μs |   610.282 μs |  33.452 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |    10 |                     -1 |    36.79 μs |    12.169 μs |   0.667 μs |  0.07 |    0.00 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |    10 |                     -1 |    39.76 μs |    26.599 μs |   1.458 μs |  0.07 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |    **10** |                      **1** |    **64.26 μs** |    **16.845 μs** |   **0.923 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    10 |                      1 |   109.40 μs |    19.838 μs |   1.087 μs |  1.70 |    0.01 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    10 |                      1 |   105.39 μs |    25.101 μs |   1.376 μs |  1.64 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |    10 |                      1 |   114.79 μs |    32.063 μs |   1.757 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |    10 |                      1 |    89.62 μs |    29.721 μs |   1.629 μs |  0.78 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |    10 |                      1 |    85.73 μs |     8.382 μs |   0.459 μs |  0.75 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |    10 |                      1 |   107.43 μs |    30.066 μs |   1.648 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |    10 |                      1 |    97.67 μs |    46.256 μs |   2.535 μs |  0.91 |    0.04 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |    10 |                      1 |    85.29 μs |     6.764 μs |   0.371 μs |  0.79 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |    **20** |                     **-1** |   **339.32 μs** |   **348.220 μs** |  **19.087 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    20 |                     -1 |    42.01 μs |    32.140 μs |   1.762 μs |  0.12 |    0.01 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    20 |                     -1 |    40.58 μs |    25.921 μs |   1.421 μs |  0.12 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |    20 |                     -1 |   799.96 μs |   482.933 μs |  26.471 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |    20 |                     -1 |    55.12 μs |    13.672 μs |   0.749 μs |  0.07 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |    20 |                     -1 |    57.85 μs |    10.187 μs |   0.558 μs |  0.07 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |    20 |                     -1 |   775.39 μs |   626.109 μs |  34.319 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |    20 |                     -1 |    55.58 μs |    12.785 μs |   0.701 μs |  0.07 |    0.00 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |    20 |                     -1 |    57.86 μs |     4.408 μs |   0.242 μs |  0.07 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |    **20** |                      **1** |   **131.60 μs** |    **28.536 μs** |   **1.564 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    20 |                      1 |   220.36 μs |    29.676 μs |   1.627 μs |  1.67 |    0.02 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    20 |                      1 |   206.96 μs |    43.318 μs |   2.374 μs |  1.57 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |    20 |                      1 |   206.05 μs |    23.313 μs |   1.278 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |    20 |                      1 |   173.93 μs |    41.514 μs |   2.276 μs |  0.84 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |    20 |                      1 |   173.69 μs |    60.293 μs |   3.305 μs |  0.84 |    0.02 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |    20 |                      1 |   217.11 μs |    74.916 μs |   4.106 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |    20 |                      1 |   175.13 μs |    10.221 μs |   0.560 μs |  0.81 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |    20 |                      1 |   181.04 μs |    23.836 μs |   1.307 μs |  0.83 |    0.02 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |    **50** |                     **-1** |   **598.73 μs** |   **112.252 μs** |   **6.153 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    50 |                     -1 |    86.70 μs |    65.035 μs |   3.565 μs |  0.14 |    0.01 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    50 |                     -1 |    87.05 μs |    47.784 μs |   2.619 μs |  0.15 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |    50 |                     -1 | 1,273.03 μs |   248.258 μs |  13.608 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |    50 |                     -1 |   114.82 μs |   104.641 μs |   5.736 μs |  0.09 |    0.00 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |    50 |                     -1 |   111.78 μs |    60.544 μs |   3.319 μs |  0.09 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |    50 |                     -1 | 1,284.79 μs | 1,464.271 μs |  80.262 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |    50 |                     -1 |   112.54 μs |    11.159 μs |   0.612 μs |  0.09 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |    50 |                     -1 |   108.89 μs |    77.872 μs |   4.268 μs |  0.09 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |    **50** |                      **1** |   **323.83 μs** |    **49.118 μs** |   **2.692 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    50 |                      1 |   558.44 μs |    44.635 μs |   2.447 μs |  1.72 |    0.02 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |    50 |                      1 |   520.61 μs |    54.737 μs |   3.000 μs |  1.61 |    0.02 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |    50 |                      1 |   538.92 μs |    79.125 μs |   4.337 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |    50 |                      1 |   438.62 μs |    30.050 μs |   1.647 μs |  0.81 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |    50 |                      1 |   451.31 μs |    27.527 μs |   1.509 μs |  0.84 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |    50 |                      1 |   521.49 μs |   114.795 μs |   6.292 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |    50 |                      1 |   439.78 μs |    57.573 μs |   3.156 μs |  0.84 |    0.00 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |    50 |                      1 |   427.70 μs |    40.315 μs |   2.210 μs |  0.82 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |   **100** |                     **-1** | **1,036.65 μs** |   **419.551 μs** |  **22.997 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   100 |                     -1 |   162.79 μs |    74.938 μs |   4.108 μs |  0.16 |    0.01 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   100 |                     -1 |   165.49 μs |   147.406 μs |   8.080 μs |  0.16 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |   100 |                     -1 | 2,055.18 μs | 2,094.311 μs | 114.796 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |   100 |                     -1 |   202.64 μs |    40.445 μs |   2.217 μs |  0.10 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |   100 |                     -1 |   196.12 μs |   118.348 μs |   6.487 μs |  0.10 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |   100 |                     -1 | 2,089.07 μs | 1,641.001 μs |  89.949 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |   100 |                     -1 |   194.03 μs |   214.285 μs |  11.746 μs |  0.09 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |   100 |                     -1 |   196.42 μs |   140.958 μs |   7.726 μs |  0.09 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |   **100** |                      **1** |   **630.17 μs** |    **57.654 μs** |   **3.160 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   100 |                      1 | 1,038.46 μs |   303.171 μs |  16.618 μs |  1.65 |    0.02 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   100 |                      1 | 1,041.98 μs |   149.563 μs |   8.198 μs |  1.65 |    0.02 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |   100 |                      1 | 1,046.64 μs |   140.866 μs |   7.721 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |   100 |                      1 |   891.91 μs |    75.335 μs |   4.129 μs |  0.85 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |   100 |                      1 |   885.20 μs |   114.539 μs |   6.278 μs |  0.85 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |   100 |                      1 | 1,025.88 μs |   178.807 μs |   9.801 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |   100 |                      1 |   892.46 μs |   146.645 μs |   8.038 μs |  0.87 |    0.00 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |   100 |                      1 |   917.79 μs |   114.467 μs |   6.274 μs |  0.89 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |  **1000** |                     **-1** | **1,079.44 μs** |   **495.145 μs** |  **27.141 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1000 |                     -1 |   167.25 μs |   123.547 μs |   6.772 μs |  0.15 |    0.00 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1000 |                     -1 |   170.94 μs |   100.157 μs |   5.490 μs |  0.16 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1000 |                     -1 | 1,978.00 μs | 1,707.188 μs |  93.577 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1000 |                     -1 |   203.98 μs |   180.768 μs |   9.908 μs |  0.10 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1000 |                     -1 |   214.53 μs |   114.103 μs |   6.254 μs |  0.11 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1000 |                     -1 | 2,004.92 μs | 2,629.257 μs | 144.118 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1000 |                     -1 |   202.77 μs |   180.771 μs |   9.909 μs |  0.10 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1000 |                     -1 |   207.51 μs |   135.106 μs |   7.406 μs |  0.10 |    0.00 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| **Dictionary** |   **core31 RyuJit** |    **RyuJit** | **.NET Core 3.1** |  **1000** |                      **1** |   **664.05 μs** |   **106.825 μs** |   **5.855 μs** |  **1.00** |    **0.00** |
-|  Hashtable |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1000 |                      1 | 1,086.97 μs |   270.094 μs |  14.805 μs |  1.64 |    0.04 |
-| Concurrent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  1000 |                      1 | 1,065.18 μs |   315.656 μs |  17.302 μs |  1.60 |    0.04 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1000 |                      1 | 1,053.16 μs |   116.922 μs |   6.409 μs |  1.00 |    0.00 |
-|  Hashtable | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1000 |                      1 |   906.85 μs |    45.711 μs |   2.506 μs |  0.86 |    0.01 |
-| Concurrent | net48 LegacyJit | LegacyJit |      .NET 4.8 |  1000 |                      1 |   917.60 μs |   156.426 μs |   8.574 μs |  0.87 |    0.01 |
-|            |                 |           |               |       |                        |             |              |            |       |         |
-| Dictionary |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1000 |                      1 | 1,041.81 μs |   240.293 μs |  13.171 μs |  1.00 |    0.00 |
-|  Hashtable |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1000 |                      1 |   899.16 μs |    72.418 μs |   3.969 μs |  0.86 |    0.01 |
-| Concurrent |    net48 RyuJit |    RyuJit |      .NET 4.8 |  1000 |                      1 |   918.65 μs |    16.649 μs |   0.913 μs |  0.88 |    0.01 |
+|     Method |    Job |       Runtime | Items | MaxDegreeOfParallelism |        Mean |      Error |    StdDev | Ratio | RatioSD |
+|----------- |------- |-------------- |------ |----------------------- |------------:|-----------:|----------:|------:|--------:|
+| **Dictionary** | **core31** | **.NET Core 3.1** |    **10** |                     **-1** |   **233.43 μs** | **257.827 μs** | **14.132 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |    10 |                     -1 |    24.25 μs |   5.206 μs |  0.285 μs |  0.10 |    0.01 |
+| Concurrent | core31 | .NET Core 3.1 |    10 |                     -1 |    23.49 μs |  17.854 μs |  0.979 μs |  0.10 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |    10 |                     -1 |   528.27 μs | 218.437 μs | 11.973 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |    10 |                     -1 |    36.26 μs |   9.775 μs |  0.536 μs |  0.07 |    0.00 |
+| Concurrent |  net48 |      .NET 4.8 |    10 |                     -1 |    37.09 μs |   7.123 μs |  0.390 μs |  0.07 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |    10 |                     -1 |   206.38 μs |  52.758 μs |  2.892 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |    10 |                     -1 |    24.42 μs |  11.890 μs |  0.652 μs |  0.12 |    0.00 |
+| Concurrent |  net50 | .NET Core 5.0 |    10 |                     -1 |    23.01 μs |  16.607 μs |  0.910 μs |  0.11 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |    **10** |                      **1** |    **63.67 μs** |  **26.259 μs** |  **1.439 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |    10 |                      1 |   103.15 μs |   5.983 μs |  0.328 μs |  1.62 |    0.03 |
+| Concurrent | core31 | .NET Core 3.1 |    10 |                      1 |   101.68 μs |  19.153 μs |  1.050 μs |  1.60 |    0.02 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |    10 |                      1 |   103.40 μs |   8.458 μs |  0.464 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |    10 |                      1 |    88.79 μs |  29.393 μs |  1.611 μs |  0.86 |    0.02 |
+| Concurrent |  net48 |      .NET 4.8 |    10 |                      1 |    85.01 μs |   8.296 μs |  0.455 μs |  0.82 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |    10 |                      1 |    56.78 μs |   5.712 μs |  0.313 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |    10 |                      1 |   113.96 μs |  16.897 μs |  0.926 μs |  2.01 |    0.01 |
+| Concurrent |  net50 | .NET Core 5.0 |    10 |                      1 |   101.40 μs |  14.258 μs |  0.782 μs |  1.79 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |    **20** |                     **-1** |   **295.41 μs** |  **89.062 μs** |  **4.882 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |    20 |                     -1 |    39.69 μs |  25.484 μs |  1.397 μs |  0.13 |    0.01 |
+| Concurrent | core31 | .NET Core 3.1 |    20 |                     -1 |    44.30 μs |  21.872 μs |  1.199 μs |  0.15 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |    20 |                     -1 |   766.91 μs | 317.449 μs | 17.400 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |    20 |                     -1 |    53.74 μs |  31.212 μs |  1.711 μs |  0.07 |    0.00 |
+| Concurrent |  net48 |      .NET 4.8 |    20 |                     -1 |    53.79 μs |  21.070 μs |  1.155 μs |  0.07 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |    20 |                     -1 |   301.86 μs |  81.036 μs |  4.442 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |    20 |                     -1 |    40.69 μs |  10.467 μs |  0.574 μs |  0.13 |    0.00 |
+| Concurrent |  net50 | .NET Core 5.0 |    20 |                     -1 |    37.83 μs |  21.053 μs |  1.154 μs |  0.13 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |    **20** |                      **1** |   **126.13 μs** |  **34.302 μs** |  **1.880 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |    20 |                      1 |   220.41 μs |  20.670 μs |  1.133 μs |  1.75 |    0.03 |
+| Concurrent | core31 | .NET Core 3.1 |    20 |                      1 |   204.28 μs |  57.911 μs |  3.174 μs |  1.62 |    0.02 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |    20 |                      1 |   218.67 μs |  36.399 μs |  1.995 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |    20 |                      1 |   180.58 μs |  17.558 μs |  0.962 μs |  0.83 |    0.00 |
+| Concurrent |  net48 |      .NET 4.8 |    20 |                      1 |   171.11 μs |  27.092 μs |  1.485 μs |  0.78 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |    20 |                      1 |   119.02 μs |   8.215 μs |  0.450 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |    20 |                      1 |   210.33 μs |  35.763 μs |  1.960 μs |  1.77 |    0.02 |
+| Concurrent |  net50 | .NET Core 5.0 |    20 |                      1 |   198.96 μs |  36.541 μs |  2.003 μs |  1.67 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |    **50** |                     **-1** |   **600.07 μs** | **164.680 μs** |  **9.027 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |    50 |                     -1 |    80.00 μs |  74.020 μs |  4.057 μs |  0.13 |    0.00 |
+| Concurrent | core31 | .NET Core 3.1 |    50 |                     -1 |    82.27 μs |  69.587 μs |  3.814 μs |  0.14 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |    50 |                     -1 | 1,232.28 μs | 687.000 μs | 37.657 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |    50 |                     -1 |   104.09 μs |  46.134 μs |  2.529 μs |  0.08 |    0.00 |
+| Concurrent |  net48 |      .NET 4.8 |    50 |                     -1 |   106.66 μs |  19.846 μs |  1.088 μs |  0.09 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |    50 |                     -1 |   545.71 μs | 288.143 μs | 15.794 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |    50 |                     -1 |    83.96 μs |  40.863 μs |  2.240 μs |  0.15 |    0.00 |
+| Concurrent |  net50 | .NET Core 5.0 |    50 |                     -1 |    82.22 μs |  48.045 μs |  2.633 μs |  0.15 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |    **50** |                      **1** |   **323.57 μs** |  **38.875 μs** |  **2.131 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |    50 |                      1 |   537.00 μs | 180.534 μs |  9.896 μs |  1.66 |    0.02 |
+| Concurrent | core31 | .NET Core 3.1 |    50 |                      1 |   503.63 μs | 115.060 μs |  6.307 μs |  1.56 |    0.03 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |    50 |                      1 |   517.71 μs | 154.919 μs |  8.492 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |    50 |                      1 |   470.70 μs |  80.734 μs |  4.425 μs |  0.91 |    0.02 |
+| Concurrent |  net48 |      .NET 4.8 |    50 |                      1 |   424.81 μs |  73.648 μs |  4.037 μs |  0.82 |    0.02 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |    50 |                      1 |   287.29 μs | 115.094 μs |  6.309 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |    50 |                      1 |   522.41 μs |  48.557 μs |  2.662 μs |  1.82 |    0.04 |
+| Concurrent |  net50 | .NET Core 5.0 |    50 |                      1 |   494.70 μs | 172.773 μs |  9.470 μs |  1.72 |    0.02 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |   **100** |                     **-1** | **1,013.48 μs** | **209.656 μs** | **11.492 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |   100 |                     -1 |   173.47 μs | 119.420 μs |  6.546 μs |  0.17 |    0.00 |
+| Concurrent | core31 | .NET Core 3.1 |   100 |                     -1 |   183.48 μs |  27.443 μs |  1.504 μs |  0.18 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |   100 |                     -1 | 1,913.98 μs | 767.653 μs | 42.078 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |   100 |                     -1 |   183.66 μs | 108.523 μs |  5.948 μs |  0.10 |    0.00 |
+| Concurrent |  net48 |      .NET 4.8 |   100 |                     -1 |   187.63 μs | 243.341 μs | 13.338 μs |  0.10 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |   100 |                     -1 |   973.66 μs | 101.185 μs |  5.546 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |   100 |                     -1 |   155.77 μs | 108.019 μs |  5.921 μs |  0.16 |    0.01 |
+| Concurrent |  net50 | .NET Core 5.0 |   100 |                     -1 |   153.07 μs |  98.379 μs |  5.393 μs |  0.16 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |   **100** |                      **1** |   **630.94 μs** | **201.192 μs** | **11.028 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |   100 |                      1 | 1,054.76 μs | 208.111 μs | 11.407 μs |  1.67 |    0.03 |
+| Concurrent | core31 | .NET Core 3.1 |   100 |                      1 | 1,037.21 μs | 209.968 μs | 11.509 μs |  1.64 |    0.05 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |   100 |                      1 | 1,036.87 μs | 281.216 μs | 15.414 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |   100 |                      1 |   888.96 μs | 111.861 μs |  6.131 μs |  0.86 |    0.01 |
+| Concurrent |  net48 |      .NET 4.8 |   100 |                      1 |   892.10 μs |  52.178 μs |  2.860 μs |  0.86 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |   100 |                      1 |   588.45 μs | 235.226 μs | 12.894 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |   100 |                      1 | 1,068.18 μs | 245.376 μs | 13.450 μs |  1.82 |    0.06 |
+| Concurrent |  net50 | .NET Core 5.0 |   100 |                      1 |   998.62 μs | 258.096 μs | 14.147 μs |  1.70 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |  **1000** |                     **-1** | **1,056.30 μs** | **341.524 μs** | **18.720 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |  1000 |                     -1 |   170.54 μs | 166.415 μs |  9.122 μs |  0.16 |    0.01 |
+| Concurrent | core31 | .NET Core 3.1 |  1000 |                     -1 |   183.26 μs | 101.375 μs |  5.557 μs |  0.17 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |  1000 |                     -1 | 1,960.48 μs | 399.304 μs | 21.887 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |  1000 |                     -1 |   191.21 μs |   4.619 μs |  0.253 μs |  0.10 |    0.00 |
+| Concurrent |  net48 |      .NET 4.8 |  1000 |                     -1 |   190.54 μs | 103.547 μs |  5.676 μs |  0.10 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |  1000 |                     -1 | 1,000.86 μs |  25.900 μs |  1.420 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |  1000 |                     -1 |   164.04 μs |  64.579 μs |  3.540 μs |  0.16 |    0.00 |
+| Concurrent |  net50 | .NET Core 5.0 |  1000 |                     -1 |   156.99 μs |  52.032 μs |  2.852 μs |  0.16 |    0.00 |
+|            |        |               |       |                        |             |            |           |       |         |
+| **Dictionary** | **core31** | **.NET Core 3.1** |  **1000** |                      **1** |   **666.20 μs** |  **77.262 μs** |  **4.235 μs** |  **1.00** |    **0.00** |
+|  Hashtable | core31 | .NET Core 3.1 |  1000 |                      1 | 1,095.97 μs | 197.271 μs | 10.813 μs |  1.65 |    0.03 |
+| Concurrent | core31 | .NET Core 3.1 |  1000 |                      1 | 1,054.89 μs | 157.647 μs |  8.641 μs |  1.58 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net48 |      .NET 4.8 |  1000 |                      1 | 1,071.28 μs | 231.587 μs | 12.694 μs |  1.00 |    0.00 |
+|  Hashtable |  net48 |      .NET 4.8 |  1000 |                      1 |   907.09 μs | 100.202 μs |  5.492 μs |  0.85 |    0.01 |
+| Concurrent |  net48 |      .NET 4.8 |  1000 |                      1 |   888.09 μs | 149.650 μs |  8.203 μs |  0.83 |    0.01 |
+|            |        |               |       |                        |             |            |           |       |         |
+| Dictionary |  net50 | .NET Core 5.0 |  1000 |                      1 |   605.44 μs |  83.607 μs |  4.583 μs |  1.00 |    0.00 |
+|  Hashtable |  net50 | .NET Core 5.0 |  1000 |                      1 | 1,103.02 μs | 437.940 μs | 24.005 μs |  1.82 |    0.05 |
+| Concurrent |  net50 | .NET Core 5.0 |  1000 |                      1 | 1,007.74 μs | 159.004 μs |  8.716 μs |  1.66 |    0.00 |
