@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <Optimize>true</Optimize>
-    <TargetFrameworks>netcoreapp3.1;netcoreapp2.2;net48</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;netcoreapp2.2;net48;net5.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <AssemblyName>Serilog.PerformanceTests</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
