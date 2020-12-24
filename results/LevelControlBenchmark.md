@@ -1,29 +1,30 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.572 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET Core SDK=3.1.402
-  [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
+.NET Core SDK=5.0.101
+  [Host] : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+  core31 : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+  net48  : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
+  net50  : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
 
-IterationCount=15  LaunchCount=2  WarmupCount=10  
+Jit=RyuJit  IterationCount=15  LaunchCount=2  
+WarmupCount=10  
 
 ```
-|         Method |             Job |       Jit |       Runtime |     Mean |     Error |    StdDev | Ratio | RatioSD |
-|--------------- |---------------- |---------- |-------------- |---------:|----------:|----------:|------:|--------:|
-|            Off |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1.653 ns | 0.0114 ns | 0.0163 ns |  1.00 |    0.00 |
-| LevelSwitchOff |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1.698 ns | 0.0129 ns | 0.0189 ns |  1.03 |    0.01 |
-| MinimumLevelOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 7.641 ns | 0.0411 ns | 0.0576 ns |  4.62 |    0.06 |
-|  LevelSwitchOn |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 8.171 ns | 0.0444 ns | 0.0664 ns |  4.94 |    0.06 |
-|                |                 |           |               |          |           |           |       |         |
-|            Off | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1.446 ns | 0.0100 ns | 0.0150 ns |  1.00 |    0.00 |
-| LevelSwitchOff | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1.458 ns | 0.0222 ns | 0.0326 ns |  1.01 |    0.02 |
-| MinimumLevelOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 7.690 ns | 0.0329 ns | 0.0462 ns |  5.32 |    0.07 |
-|  LevelSwitchOn | net48 LegacyJit | LegacyJit |      .NET 4.8 | 8.124 ns | 0.0466 ns | 0.0683 ns |  5.62 |    0.07 |
-|                |                 |           |               |          |           |           |       |         |
-|            Off |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1.464 ns | 0.0140 ns | 0.0201 ns |  1.00 |    0.00 |
-| LevelSwitchOff |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1.447 ns | 0.0140 ns | 0.0205 ns |  0.99 |    0.02 |
-| MinimumLevelOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 7.697 ns | 0.0511 ns | 0.0749 ns |  5.26 |    0.09 |
-|  LevelSwitchOn |    net48 RyuJit |    RyuJit |      .NET 4.8 | 8.143 ns | 0.0373 ns | 0.0558 ns |  5.57 |    0.07 |
+|         Method |    Job |       Runtime |      Mean |     Error |    StdDev | Ratio | RatioSD |
+|--------------- |------- |-------------- |----------:|----------:|----------:|------:|--------:|
+|            Off | core31 | .NET Core 3.1 |  2.728 ns | 0.0370 ns | 0.0553 ns |  1.00 |    0.00 |
+| LevelSwitchOff | core31 | .NET Core 3.1 |  2.589 ns | 0.0232 ns | 0.0340 ns |  0.95 |    0.02 |
+| MinimumLevelOn | core31 | .NET Core 3.1 | 10.102 ns | 0.0791 ns | 0.1159 ns |  3.70 |    0.09 |
+|  LevelSwitchOn | core31 | .NET Core 3.1 | 10.041 ns | 0.0627 ns | 0.0938 ns |  3.68 |    0.07 |
+|                |        |               |           |           |           |       |         |
+|            Off |  net48 |      .NET 4.8 |  2.481 ns | 0.0227 ns | 0.0339 ns |  1.00 |    0.00 |
+| LevelSwitchOff |  net48 |      .NET 4.8 |  2.757 ns | 0.0321 ns | 0.0481 ns |  1.11 |    0.03 |
+| MinimumLevelOn |  net48 |      .NET 4.8 | 10.756 ns | 0.0560 ns | 0.0838 ns |  4.34 |    0.06 |
+|  LevelSwitchOn |  net48 |      .NET 4.8 | 10.365 ns | 0.0562 ns | 0.0841 ns |  4.18 |    0.06 |
+|                |        |               |           |           |           |       |         |
+|            Off |  net50 | .NET Core 5.0 |  2.717 ns | 0.0298 ns | 0.0446 ns |  1.00 |    0.00 |
+| LevelSwitchOff |  net50 | .NET Core 5.0 |  3.152 ns | 0.1232 ns | 0.1806 ns |  1.16 |    0.07 |
+| MinimumLevelOn |  net50 | .NET Core 5.0 | 10.259 ns | 0.0784 ns | 0.1173 ns |  3.78 |    0.07 |
+|  LevelSwitchOn |  net50 | .NET Core 5.0 |  9.890 ns | 0.0775 ns | 0.1160 ns |  3.64 |    0.08 |
