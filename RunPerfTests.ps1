@@ -1,10 +1,21 @@
+Param (
+    [string] $BenchmarkFilter = "*"
+)
+
 Push-Location $PSScriptRoot
 
-Remove-Item $PSScriptRoot\results\* -Recurse -Force
+$destinationPath = ($PSScriptRoot + "/results/");
+
+if(test-path $destinationPath)
+{
+    Remove-Item $destinationPath\* -Recurse -Force
+}
+else
+{
+    New-Item -ItemType Directory -Force -Path $destinationPath
+}
 
 ./Build.ps1
-
-$destinationPath = ($PSScriptRoot + "/results/");
 
 foreach ($test in ls .\test\*.PerformanceTests) {
     Push-Location $test
@@ -13,7 +24,7 @@ foreach ($test in ls .\test\*.PerformanceTests) {
     if (Test-Path "./BenchmarkDotNet.Artifacts/") { Remove-Item "./BenchmarkDotNet.Artifacts/" -Recurse -Force }
 
 	echo "perf: Running performance test project in $test";
-    & dotnet run -c Release --framework netcoreapp3.1 -- --filter MessageTemplateRenderingBenchmark
+    & dotnet run -c Release --framework net5.0 -- --filter $BenchmarkFilter
 
     if($LASTEXITCODE -ne 0) {
         Pop-Location
