@@ -1,44 +1,45 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET Core SDK=3.1.402
-  [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
+.NET Core SDK=5.0.101
+  [Host] : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+  core31 : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+  net48  : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
+  net50  : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
 
-IterationCount=15  LaunchCount=2  WarmupCount=10  
+Jit=RyuJit  IterationCount=15  LaunchCount=2  
+WarmupCount=10  
 
 ```
-|                                                 Method |             Job |       Jit |       Runtime |          Mean |        Error |        StdDev |        Median |     Ratio |  RatioSD |   Gen 0 |   Gen 1 | Gen 2 | Allocated |
-|------------------------------------------------------- |---------------- |---------- |-------------- |--------------:|-------------:|--------------:|--------------:|----------:|---------:|--------:|--------:|------:|----------:|
-|                                   EmitLogAIgnoredEvent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |      12.50 ns |     0.937 ns |      1.403 ns |      11.61 ns |      1.00 |     0.00 |       - |       - |     - |         - |
-|                                           EmitLogEvent |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     692.31 ns |     9.773 ns |     14.628 ns |     688.80 ns |     55.95 |     5.35 |  0.0582 |       - |     - |     368 B |
-|          EmitLogEventWith1Enrich0ForContext0LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     768.05 ns |    10.928 ns |     16.357 ns |     765.75 ns |     62.21 |     7.24 |  0.0620 |       - |     - |     392 B |
-|          EmitLogEventWith0Enrich1ForContext0LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 |     731.93 ns |     8.173 ns |     12.233 ns |     733.01 ns |     59.24 |     6.50 |  0.0582 |       - |     - |     368 B |
-|          EmitLogEventWith0Enrich0ForContext1LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   1,317.67 ns |    48.599 ns |     69.699 ns |   1,299.93 ns |    105.96 |    12.83 |  0.1507 |       - |     - |     952 B |
-|          EmitLogEventWith1Enrich1ForContext1LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   1,413.63 ns |    17.172 ns |     25.702 ns |   1,414.71 ns |    114.34 |    11.85 |  0.1717 |       - |     - |    1088 B |
-|       EmitLogEventWith10Enrich10ForContext10LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   6,529.51 ns |    63.446 ns |     94.964 ns |   6,522.25 ns |    528.51 |    58.30 |  0.9613 |  0.0076 |     - |    6032 B |
-|    EmitLogEventWith100Enrich100ForContext100LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  54,786.86 ns |   547.791 ns |    819.908 ns |  54,831.40 ns |  4,434.78 |   490.79 |  8.9111 |  0.6714 |     - |   55920 B |
-| EmitLogEventWith1000Enrich1000ForContext1000LogContext |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 571,980.07 ns | 8,014.973 ns | 11,996.434 ns | 569,591.21 ns | 46,273.51 | 4,928.22 | 86.9141 | 34.1797 |     - |  550828 B |
-|                                                        |                 |           |               |               |              |               |               |           |          |         |         |       |           |
-|                                   EmitLogAIgnoredEvent | net48 LegacyJit | LegacyJit |      .NET 4.8 |      14.52 ns |     0.199 ns |      0.297 ns |      14.42 ns |      1.00 |     0.00 |       - |       - |     - |         - |
-|                                           EmitLogEvent | net48 LegacyJit | LegacyJit |      .NET 4.8 |     670.78 ns |     7.756 ns |     11.609 ns |     671.52 ns |     46.22 |     1.29 |  0.0591 |       - |     - |     377 B |
-|          EmitLogEventWith1Enrich0ForContext0LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 |     757.87 ns |     7.155 ns |     10.710 ns |     761.21 ns |     52.22 |     1.21 |  0.0629 |       - |     - |     401 B |
-|          EmitLogEventWith0Enrich1ForContext0LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 |     751.57 ns |    33.643 ns |     50.355 ns |     736.09 ns |     51.80 |     3.79 |  0.0591 |       - |     - |     377 B |
-|          EmitLogEventWith0Enrich0ForContext1LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 |   1,375.71 ns |    15.027 ns |     22.491 ns |   1,372.34 ns |     94.79 |     2.02 |  0.1545 |       - |     - |     979 B |
-|          EmitLogEventWith1Enrich1ForContext1LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 |   1,532.89 ns |    15.117 ns |     22.626 ns |   1,532.92 ns |    105.63 |     2.65 |  0.1755 |       - |     - |    1115 B |
-|       EmitLogEventWith10Enrich10ForContext10LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 |   7,350.85 ns |    51.751 ns |     75.856 ns |   7,352.24 ns |    506.23 |    11.33 |  0.9384 |       - |     - |    5929 B |
-|    EmitLogEventWith100Enrich100ForContext100LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 |  66,484.53 ns |   856.180 ns |  1,281.490 ns |  66,669.79 ns |  4,582.05 |   153.13 |  8.6670 |  0.8545 |     - |   55241 B |
-| EmitLogEventWith1000Enrich1000ForContext1000LogContext | net48 LegacyJit | LegacyJit |      .NET 4.8 | 720,906.09 ns | 7,123.124 ns | 10,661.557 ns | 721,709.33 ns | 49,673.21 | 1,121.84 | 86.9141 | 27.3438 |     - |  551390 B |
-|                                                        |                 |           |               |               |              |               |               |           |          |         |         |       |           |
-|                                   EmitLogAIgnoredEvent |    net48 RyuJit |    RyuJit |      .NET 4.8 |      14.73 ns |     0.220 ns |      0.329 ns |      14.78 ns |      1.00 |     0.00 |       - |       - |     - |         - |
-|                                           EmitLogEvent |    net48 RyuJit |    RyuJit |      .NET 4.8 |     677.13 ns |     7.373 ns |     10.808 ns |     678.21 ns |     46.02 |     1.32 |  0.0591 |       - |     - |     377 B |
-|          EmitLogEventWith1Enrich0ForContext0LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 |     758.65 ns |     7.795 ns |     11.667 ns |     762.02 ns |     51.54 |     1.30 |  0.0629 |       - |     - |     401 B |
-|          EmitLogEventWith0Enrich1ForContext0LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 |     737.43 ns |    14.293 ns |     20.036 ns |     734.58 ns |     50.17 |     1.90 |  0.0591 |       - |     - |     377 B |
-|          EmitLogEventWith0Enrich0ForContext1LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 |   1,368.03 ns |    13.841 ns |     20.717 ns |   1,366.18 ns |     92.95 |     2.76 |  0.1545 |       - |     - |     979 B |
-|          EmitLogEventWith1Enrich1ForContext1LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 |   1,538.09 ns |    16.519 ns |     24.724 ns |   1,543.63 ns |    104.50 |     2.91 |  0.1755 |       - |     - |    1115 B |
-|       EmitLogEventWith10Enrich10ForContext10LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 |   7,360.72 ns |    62.108 ns |     92.960 ns |   7,380.06 ns |    500.08 |    12.32 |  0.9384 |       - |     - |    5929 B |
-|    EmitLogEventWith100Enrich100ForContext100LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 |  66,610.61 ns |   882.507 ns |  1,320.894 ns |  66,519.40 ns |  4,524.84 |   108.11 |  8.6670 |  0.8545 |     - |   55241 B |
-| EmitLogEventWith1000Enrich1000ForContext1000LogContext |    net48 RyuJit |    RyuJit |      .NET 4.8 | 719,929.71 ns | 9,384.604 ns | 13,459.119 ns | 720,597.71 ns | 48,964.14 | 1,332.27 | 86.9141 | 27.3438 |     - |  551390 B |
+|                                                 Method |    Job |       Runtime |             Mean |          Error |         StdDev |           Median |      Ratio |  RatioSD |    Gen 0 |   Gen 1 |   Gen 2 | Allocated |
+|------------------------------------------------------- |------- |-------------- |-----------------:|---------------:|---------------:|-----------------:|-----------:|---------:|---------:|--------:|--------:|----------:|
+|                                   EmitLogAIgnoredEvent | core31 | .NET Core 3.1 |        12.055 ns |      0.4199 ns |      0.5886 ns |        12.482 ns |       1.00 |     0.00 |        - |       - |       - |         - |
+|                                           EmitLogEvent | core31 | .NET Core 3.1 |       614.207 ns |      4.8482 ns |      6.9531 ns |       613.851 ns |      51.09 |     2.62 |   0.0582 |       - |       - |     368 B |
+|          EmitLogEventWith1Enrich0ForContext0LogContext | core31 | .NET Core 3.1 |       692.438 ns |      4.9842 ns |      7.4601 ns |       693.929 ns |      57.54 |     2.89 |   0.0668 |       - |       - |     424 B |
+|          EmitLogEventWith0Enrich1ForContext0LogContext | core31 | .NET Core 3.1 |       642.482 ns |      5.0691 ns |      7.5872 ns |       642.201 ns |      53.38 |     2.75 |   0.0582 |       - |       - |     368 B |
+|          EmitLogEventWith0Enrich0ForContext1LogContext | core31 | .NET Core 3.1 |     1,172.675 ns |      9.4425 ns |     14.1331 ns |     1,171.986 ns |      97.52 |     4.93 |   0.1564 |       - |       - |     984 B |
+|          EmitLogEventWith1Enrich1ForContext1LogContext | core31 | .NET Core 3.1 |     1,409.307 ns |     10.7302 ns |     16.0604 ns |     1,410.680 ns |     117.25 |     5.86 |   0.2041 |       - |       - |    1288 B |
+|       EmitLogEventWith10Enrich10ForContext10LogContext | core31 | .NET Core 3.1 |     6,482.084 ns |     45.4754 ns |     68.0654 ns |     6,482.333 ns |     539.07 |    25.39 |   1.2054 |  0.0076 |       - |    7584 B |
+|    EmitLogEventWith100Enrich100ForContext100LogContext | core31 | .NET Core 3.1 |    56,656.172 ns |    309.4956 ns |    463.2384 ns |    56,783.676 ns |   4,712.12 |   231.43 |  11.8408 |  1.0376 |       - |   74616 B |
+| EmitLogEventWith1000Enrich1000ForContext1000LogContext | core31 | .NET Core 3.1 | 1,176,281.309 ns | 16,993.0349 ns | 25,434.3745 ns | 1,177,996.582 ns |  97,816.19 | 5,108.52 | 119.1406 | 52.7344 | 29.2969 |  735963 B |
+|                                                        |        |               |                  |                |                |                  |            |          |          |         |         |           |
+|                                   EmitLogAIgnoredEvent |  net48 |      .NET 4.8 |        14.178 ns |      0.2343 ns |      0.3507 ns |        14.210 ns |       1.00 |     0.00 |        - |       - |       - |         - |
+|                                           EmitLogEvent |  net48 |      .NET 4.8 |       626.186 ns |      5.0818 ns |      7.6061 ns |       625.203 ns |      44.19 |     1.27 |   0.0591 |       - |       - |     377 B |
+|          EmitLogEventWith1Enrich0ForContext0LogContext |  net48 |      .NET 4.8 |       696.208 ns |      4.7775 ns |      7.1508 ns |       694.963 ns |      49.12 |     1.00 |   0.0687 |       - |       - |     433 B |
+|          EmitLogEventWith0Enrich1ForContext0LogContext |  net48 |      .NET 4.8 |       680.631 ns |      6.6157 ns |      9.9020 ns |       680.311 ns |      48.03 |     1.08 |   0.0591 |       - |       - |     377 B |
+|          EmitLogEventWith0Enrich0ForContext1LogContext |  net48 |      .NET 4.8 |     1,313.742 ns |      8.9940 ns |     13.4617 ns |     1,314.332 ns |      92.70 |     2.16 |   0.1602 |       - |       - |    1011 B |
+|          EmitLogEventWith1Enrich1ForContext1LogContext |  net48 |      .NET 4.8 |     1,545.127 ns |     11.7338 ns |     17.5626 ns |     1,543.621 ns |     109.02 |     2.16 |   0.2079 |       - |       - |    1316 B |
+|       EmitLogEventWith10Enrich10ForContext10LogContext |  net48 |      .NET 4.8 |     7,465.173 ns |     36.2506 ns |     54.2582 ns |     7,466.070 ns |     526.79 |    11.96 |   1.1826 |  0.0076 |       - |    7486 B |
+|    EmitLogEventWith100Enrich100ForContext100LogContext |  net48 |      .NET 4.8 |    69,382.373 ns |    631.6677 ns |    945.4504 ns |    69,145.978 ns |   4,897.22 |   165.61 |  11.7188 |  0.8545 |       - |   73988 B |
+| EmitLogEventWith1000Enrich1000ForContext1000LogContext |  net48 |      .NET 4.8 | 1,266,538.340 ns | 14,799.1732 ns | 22,150.7057 ns | 1,268,770.410 ns |  89,375.52 | 2,503.06 | 119.1406 | 56.6406 | 29.2969 |  737005 B |
+|                                                        |        |               |                  |                |                |                  |            |          |          |         |         |           |
+|                                   EmitLogAIgnoredEvent |  net50 | .NET Core 5.0 |         7.586 ns |      0.0726 ns |      0.1064 ns |         7.567 ns |       1.00 |     0.00 |        - |       - |       - |         - |
+|                                           EmitLogEvent |  net50 | .NET Core 5.0 |       349.597 ns |      2.8707 ns |      4.2967 ns |       349.854 ns |      46.07 |     0.79 |   0.0596 |       - |       - |     376 B |
+|          EmitLogEventWith1Enrich0ForContext0LogContext |  net50 | .NET Core 5.0 |       400.196 ns |      2.4111 ns |      3.6088 ns |       401.009 ns |      52.78 |     0.81 |   0.0687 |       - |       - |     432 B |
+|          EmitLogEventWith0Enrich1ForContext0LogContext |  net50 | .NET Core 5.0 |       397.589 ns |      3.1955 ns |      4.7828 ns |       397.363 ns |      52.40 |     1.06 |   0.0596 |       - |       - |     376 B |
+|          EmitLogEventWith0Enrich0ForContext1LogContext |  net50 | .NET Core 5.0 |       806.949 ns |     12.3735 ns |     18.1369 ns |       801.855 ns |     106.38 |     2.10 |   0.1574 |       - |       - |     992 B |
+|          EmitLogEventWith1Enrich1ForContext1LogContext |  net50 | .NET Core 5.0 |       985.917 ns |     12.1924 ns |     17.8715 ns |       981.797 ns |     130.00 |     3.32 |   0.2060 |       - |       - |    1296 B |
+|       EmitLogEventWith10Enrich10ForContext10LogContext |  net50 | .NET Core 5.0 |     5,081.107 ns |     45.6860 ns |     68.3807 ns |     5,058.711 ns |     669.51 |     8.32 |   1.2054 |  0.0076 |       - |    7592 B |
+|    EmitLogEventWith100Enrich100ForContext100LogContext |  net50 | .NET Core 5.0 |    44,888.550 ns |    300.2689 ns |    449.4284 ns |    44,861.346 ns |   5,921.35 |   108.98 |  11.8408 |  0.9766 |       - |   74624 B |
+| EmitLogEventWith1000Enrich1000ForContext1000LogContext |  net50 | .NET Core 5.0 |   958,171.198 ns | 47,696.9562 ns | 71,390.5582 ns |   956,299.316 ns | 125,862.04 | 8,669.24 | 119.1406 | 56.6406 | 29.2969 |  735952 B |

@@ -8,7 +8,7 @@ using Serilog.PerformanceTests.Support;
 
 namespace Serilog.PerformanceTests
 {
-    [MyBenchmarkRun(MyConfigs.ShortRun)]
+    [MyBenchmarkRun(MyConfigs.ShortRunWithAllFrameworks)]
     [MemoryDiagnoser]
     public class AlmostRealWorldBenchmark : BaseBenchmark
     {

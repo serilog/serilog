@@ -1,24 +1,25 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET Core SDK=3.1.402
-  [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
+.NET Core SDK=5.0.101
+  [Host] : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+  core31 : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+  net48  : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
+  net50  : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
 
-IterationCount=15  LaunchCount=2  WarmupCount=10  
+Jit=RyuJit  IterationCount=15  LaunchCount=2  
+WarmupCount=10  
 
 ```
-|           Method |             Job |       Jit |       Runtime |      Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|----------------- |---------------- |---------- |-------------- |----------:|---------:|---------:|-------:|------:|------:|----------:|
-|    ForContextInt |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  87.27 ns | 0.868 ns | 1.299 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  56.27 ns | 0.367 ns | 0.549 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |   core31 RyuJit |    RyuJit | .NET Core 3.1 |  93.54 ns | 1.605 ns | 2.402 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt | net48 LegacyJit | LegacyJit |      .NET 4.8 |  86.18 ns | 1.025 ns | 1.534 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString | net48 LegacyJit | LegacyJit |      .NET 4.8 |  54.62 ns | 0.790 ns | 1.158 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType | net48 LegacyJit | LegacyJit |      .NET 4.8 | 102.58 ns | 1.272 ns | 1.865 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt |    net48 RyuJit |    RyuJit |      .NET 4.8 |  86.49 ns | 1.308 ns | 1.918 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |    net48 RyuJit |    RyuJit |      .NET 4.8 |  54.23 ns | 0.431 ns | 0.632 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |    net48 RyuJit |    RyuJit |      .NET 4.8 | 103.36 ns | 0.843 ns | 1.262 ns | 0.0204 |     - |     - |     128 B |
+|           Method |    Job |       Runtime |     Mean |    Error |   StdDev |   Median |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|----------------- |------- |-------------- |---------:|---------:|---------:|---------:|-------:|------:|------:|----------:|
+|    ForContextInt | core31 | .NET Core 3.1 | 81.53 ns | 0.720 ns | 1.078 ns | 82.14 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString | core31 | .NET Core 3.1 | 50.77 ns | 0.310 ns | 0.454 ns | 50.78 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType | core31 | .NET Core 3.1 | 86.56 ns | 0.861 ns | 1.288 ns | 86.48 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |  net48 |      .NET 4.8 | 78.85 ns | 0.688 ns | 1.030 ns | 79.09 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |  net48 |      .NET 4.8 | 50.73 ns | 0.891 ns | 1.334 ns | 50.64 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |  net48 |      .NET 4.8 | 97.77 ns | 0.771 ns | 1.154 ns | 97.86 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |  net50 | .NET Core 5.0 | 65.99 ns | 0.951 ns | 1.424 ns | 66.12 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |  net50 | .NET Core 5.0 | 37.21 ns | 0.209 ns | 0.307 ns | 37.16 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |  net50 | .NET Core 5.0 | 73.54 ns | 0.713 ns | 1.067 ns | 73.52 ns | 0.0204 |     - |     - |     128 B |

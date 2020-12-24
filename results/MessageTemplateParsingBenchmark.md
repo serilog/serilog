@@ -1,41 +1,42 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.508 (2004/?/20H1)
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 Intel Core i7-9750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET Core SDK=3.1.402
-  [Host]          : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  core31 RyuJit   : .NET Core 3.1.8 (CoreCLR 4.700.20.41105, CoreFX 4.700.20.41903), X64 RyuJIT
-  net48 LegacyJit : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
-  net48 RyuJit    : .NET Framework 4.8 (4.8.4250.0), X64 RyuJIT
+.NET Core SDK=5.0.101
+  [Host] : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+  core31 : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+  net48  : .NET Framework 4.8 (4.8.4300.0), X64 RyuJIT
+  net50  : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
 
-IterationCount=15  LaunchCount=2  WarmupCount=10  
+Jit=RyuJit  IterationCount=15  LaunchCount=2  
+WarmupCount=10  
 
 ```
-|                         Method |             Job |       Jit |       Runtime |       Mean |    Error |    StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
-|------------------------------- |---------------- |---------- |-------------- |-----------:|---------:|----------:|------:|--------:|-------:|-------:|------:|----------:|
-|                  EmptyTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   143.7 ns |  1.53 ns |   2.19 ns |  1.00 |    0.00 | 0.0408 |      - |     - |     256 B |
-|             SimpleTextTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   214.4 ns |  1.60 ns |   2.35 ns |  1.49 |    0.03 | 0.0648 |      - |     - |     408 B |
-|    SinglePropertyTokenTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   283.2 ns |  4.13 ns |   6.17 ns |  1.97 |    0.06 | 0.0877 |      - |     - |     552 B |
-| SingleTextWithPropertyTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   526.9 ns |  8.07 ns |  12.08 ns |  3.66 |    0.09 | 0.1478 |      - |     - |     928 B |
-|      ManyPropertyTokenTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 |   512.2 ns |  7.17 ns |  10.73 ns |  3.57 |    0.08 | 0.1650 |      - |     - |    1040 B |
-|         MultipleTokensTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1,052.7 ns | 12.78 ns |  19.14 ns |  7.32 |    0.15 | 0.2823 | 0.0019 |     - |    1776 B |
-|   DefaultConsoleOutputTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 1,341.3 ns | 13.51 ns |  20.22 ns |  9.34 |    0.17 | 0.3567 | 0.0019 |     - |    2240 B |
-|                    BigTemplate |   core31 RyuJit |    RyuJit | .NET Core 3.1 | 3,721.5 ns | 41.11 ns |  61.52 ns | 25.93 |    0.54 | 0.9918 | 0.0229 |     - |    6264 B |
-|                                |                 |           |               |            |          |           |       |         |        |        |       |           |
-|                  EmptyTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 |   121.2 ns |  1.47 ns |   2.20 ns |  1.00 |    0.00 | 0.0420 |      - |     - |     265 B |
-|             SimpleTextTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 |   179.9 ns |  1.96 ns |   2.94 ns |  1.48 |    0.04 | 0.0675 |      - |     - |     425 B |
-|    SinglePropertyTokenTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 |   307.1 ns |  4.27 ns |   6.40 ns |  2.53 |    0.07 | 0.0901 |      - |     - |     570 B |
-| SingleTextWithPropertyTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 |   496.9 ns |  6.96 ns |  10.42 ns |  4.10 |    0.14 | 0.1497 |      - |     - |     947 B |
-|      ManyPropertyTokenTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 |   624.9 ns |  8.52 ns |  12.75 ns |  5.16 |    0.14 | 0.1707 |      - |     - |    1075 B |
-|         MultipleTokensTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1,230.0 ns | 16.19 ns |  24.24 ns | 10.15 |    0.28 | 0.2918 | 0.0019 |     - |    1845 B |
-|   DefaultConsoleOutputTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 | 1,698.9 ns | 15.34 ns |  22.95 ns | 14.02 |    0.31 | 0.3643 | 0.0019 |     - |    2303 B |
-|                    BigTemplate | net48 LegacyJit | LegacyJit |      .NET 4.8 | 4,789.8 ns | 72.31 ns | 108.22 ns | 39.52 |    1.10 | 1.0529 | 0.0229 |     - |    6652 B |
-|                                |                 |           |               |            |          |           |       |         |        |        |       |           |
-|                  EmptyTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 |   120.8 ns |  1.89 ns |   2.83 ns |  1.00 |    0.00 | 0.0420 |      - |     - |     265 B |
-|             SimpleTextTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 |   180.8 ns |  2.01 ns |   3.01 ns |  1.50 |    0.03 | 0.0675 |      - |     - |     425 B |
-|    SinglePropertyTokenTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 |   306.0 ns |  3.10 ns |   4.63 ns |  2.53 |    0.08 | 0.0901 |      - |     - |     570 B |
-| SingleTextWithPropertyTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 |   497.5 ns |  7.97 ns |  11.93 ns |  4.12 |    0.15 | 0.1497 |      - |     - |     947 B |
-|      ManyPropertyTokenTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 |   621.2 ns |  7.93 ns |  11.88 ns |  5.14 |    0.15 | 0.1707 |      - |     - |    1075 B |
-|         MultipleTokensTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1,229.1 ns | 18.21 ns |  27.26 ns | 10.18 |    0.35 | 0.2918 | 0.0019 |     - |    1845 B |
-|   DefaultConsoleOutputTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 | 1,717.9 ns | 24.44 ns |  34.27 ns | 14.25 |    0.35 | 0.3643 | 0.0019 |     - |    2303 B |
-|                    BigTemplate |    net48 RyuJit |    RyuJit |      .NET 4.8 | 4,770.7 ns | 56.17 ns |  80.55 ns | 39.53 |    1.14 | 1.0529 | 0.0229 |     - |    6652 B |
+|                         Method |    Job |       Runtime |       Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
+|------------------------------- |------- |-------------- |-----------:|---------:|---------:|------:|--------:|-------:|-------:|------:|----------:|
+|                  EmptyTemplate | core31 | .NET Core 3.1 |   153.1 ns |  1.47 ns |  2.15 ns |  1.00 |    0.00 | 0.0408 |      - |     - |     256 B |
+|             SimpleTextTemplate | core31 | .NET Core 3.1 |   231.6 ns |  2.29 ns |  3.36 ns |  1.51 |    0.04 | 0.0648 |      - |     - |     408 B |
+|    SinglePropertyTokenTemplate | core31 | .NET Core 3.1 |   283.3 ns |  2.16 ns |  3.23 ns |  1.85 |    0.04 | 0.0877 |      - |     - |     552 B |
+| SingleTextWithPropertyTemplate | core31 | .NET Core 3.1 |   532.1 ns |  6.07 ns |  9.08 ns |  3.48 |    0.07 | 0.1478 |      - |     - |     928 B |
+|      ManyPropertyTokenTemplate | core31 | .NET Core 3.1 |   531.0 ns |  5.61 ns |  8.39 ns |  3.47 |    0.08 | 0.1650 |      - |     - |    1040 B |
+|         MultipleTokensTemplate | core31 | .NET Core 3.1 | 1,089.4 ns |  9.45 ns | 14.14 ns |  7.12 |    0.13 | 0.2823 | 0.0019 |     - |    1776 B |
+|   DefaultConsoleOutputTemplate | core31 | .NET Core 3.1 | 1,363.9 ns | 11.06 ns | 16.55 ns |  8.91 |    0.19 | 0.3567 | 0.0019 |     - |    2240 B |
+|                    BigTemplate | core31 | .NET Core 3.1 | 3,899.1 ns | 38.87 ns | 58.18 ns | 25.47 |    0.52 | 0.9918 | 0.0229 |     - |    6264 B |
+|                                |        |               |            |          |          |       |         |        |        |       |           |
+|                  EmptyTemplate |  net48 |      .NET 4.8 |   144.7 ns |  6.48 ns |  9.70 ns |  1.00 |    0.00 | 0.0458 |      - |     - |     289 B |
+|             SimpleTextTemplate |  net48 |      .NET 4.8 |   206.9 ns |  1.25 ns |  1.86 ns |  1.44 |    0.09 | 0.0713 |      - |     - |     449 B |
+|    SinglePropertyTokenTemplate |  net48 |      .NET 4.8 |   316.6 ns |  2.57 ns |  3.85 ns |  2.20 |    0.16 | 0.0901 |      - |     - |     570 B |
+| SingleTextWithPropertyTemplate |  net48 |      .NET 4.8 |   520.9 ns | 16.83 ns | 25.20 ns |  3.63 |    0.41 | 0.1497 |      - |     - |     947 B |
+|      ManyPropertyTokenTemplate |  net48 |      .NET 4.8 |   684.0 ns | 32.24 ns | 48.25 ns |  4.72 |    0.08 | 0.1707 |      - |     - |    1075 B |
+|         MultipleTokensTemplate |  net48 |      .NET 4.8 | 1,340.9 ns | 52.96 ns | 79.27 ns |  9.34 |    1.15 | 0.2918 | 0.0019 |     - |    1845 B |
+|   DefaultConsoleOutputTemplate |  net48 |      .NET 4.8 | 1,715.0 ns |  9.16 ns | 13.70 ns | 11.90 |    0.84 | 0.3643 | 0.0019 |     - |    2303 B |
+|                    BigTemplate |  net48 |      .NET 4.8 | 4,904.9 ns | 25.38 ns | 35.58 ns | 34.30 |    2.27 | 1.0529 | 0.0229 |     - |    6652 B |
+|                                |        |               |            |          |          |       |         |        |        |       |           |
+|                  EmptyTemplate |  net50 | .NET Core 5.0 |   139.4 ns |  1.47 ns |  2.19 ns |  1.00 |    0.00 | 0.0408 |      - |     - |     256 B |
+|             SimpleTextTemplate |  net50 | .NET Core 5.0 |   204.6 ns |  1.09 ns |  1.64 ns |  1.47 |    0.02 | 0.0648 |      - |     - |     408 B |
+|    SinglePropertyTokenTemplate |  net50 | .NET Core 5.0 |   263.7 ns |  2.46 ns |  3.69 ns |  1.89 |    0.03 | 0.0877 |      - |     - |     552 B |
+| SingleTextWithPropertyTemplate |  net50 | .NET Core 5.0 |   510.3 ns |  6.57 ns |  9.84 ns |  3.66 |    0.11 | 0.1478 |      - |     - |     928 B |
+|      ManyPropertyTokenTemplate |  net50 | .NET Core 5.0 |   496.8 ns |  5.34 ns |  7.99 ns |  3.57 |    0.09 | 0.1650 |      - |     - |    1040 B |
+|         MultipleTokensTemplate |  net50 | .NET Core 5.0 |   993.2 ns |  8.90 ns | 13.32 ns |  7.13 |    0.14 | 0.2823 | 0.0019 |     - |    1776 B |
+|   DefaultConsoleOutputTemplate |  net50 | .NET Core 5.0 | 1,316.6 ns | 23.92 ns | 35.81 ns |  9.45 |    0.34 | 0.3567 | 0.0019 |     - |    2240 B |
+|                    BigTemplate |  net50 | .NET Core 5.0 | 3,669.2 ns | 31.73 ns | 47.49 ns | 26.33 |    0.51 | 0.9956 | 0.0267 |     - |    6264 B |
