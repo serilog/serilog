@@ -2,7 +2,7 @@ version: '{build}'
 skip_tags: true
 image:
   - Visual Studio 2019
-  - Ubuntu
+  - Previous Ubuntu
 configuration: Release
 test: off
 build_script:
@@ -12,7 +12,7 @@ for:
 -
   matrix:
     only:
-      - image: Ubuntu
+      - image: Previous Ubuntu
   build_script:
   - sh build.sh
 artifacts:
