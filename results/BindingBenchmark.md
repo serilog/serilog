@@ -14,14 +14,14 @@ WarmupCount=10
 ```
 |   Method |    Job |       Runtime |      Mean |    Error |   StdDev | Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |--------- |------- |-------------- |----------:|---------:|---------:|------:|--------:|-------:|------:|------:|----------:|
-| BindZero | core31 | .NET Core 3.1 |  44.94 ns | 0.481 ns | 0.720 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-|  BindOne | core31 | .NET Core 3.1 | 156.17 ns | 1.496 ns | 2.240 ns |  3.48 |    0.08 | 0.0229 |     - |     - |     144 B |
-| BindFive | core31 | .NET Core 3.1 | 431.40 ns | 3.919 ns | 5.866 ns |  9.60 |    0.22 | 0.0687 |     - |     - |     432 B |
+| BindZero | core31 | .NET Core 3.1 |  45.22 ns | 0.346 ns | 0.508 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+|  BindOne | core31 | .NET Core 3.1 | 154.73 ns | 1.874 ns | 2.805 ns |  3.43 |    0.09 | 0.0229 |     - |     - |     144 B |
+| BindFive | core31 | .NET Core 3.1 | 435.49 ns | 2.262 ns | 3.385 ns |  9.63 |    0.12 | 0.0687 |     - |     - |     432 B |
 |          |        |               |           |          |          |       |         |        |       |       |           |
-| BindZero |  net48 |      .NET 4.8 |  53.70 ns | 0.179 ns | 0.263 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-|  BindOne |  net48 |      .NET 4.8 | 159.98 ns | 1.307 ns | 1.957 ns |  2.98 |    0.04 | 0.0253 |     - |     - |     160 B |
-| BindFive |  net48 |      .NET 4.8 | 471.16 ns | 3.100 ns | 4.641 ns |  8.77 |    0.10 | 0.0706 |     - |     - |     449 B |
+| BindZero |  net48 |      .NET 4.8 |  54.02 ns | 0.246 ns | 0.368 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+|  BindOne |  net48 |      .NET 4.8 | 159.69 ns | 1.304 ns | 1.952 ns |  2.96 |    0.04 | 0.0253 |     - |     - |     160 B |
+| BindFive |  net48 |      .NET 4.8 | 477.56 ns | 3.662 ns | 5.481 ns |  8.84 |    0.12 | 0.0706 |     - |     - |     449 B |
 |          |        |               |           |          |          |       |         |        |       |       |           |
-| BindZero |  net50 | .NET Core 5.0 |  35.34 ns | 0.297 ns | 0.445 ns |  1.00 |    0.00 |      - |     - |     - |         - |
-|  BindOne |  net50 | .NET Core 5.0 | 128.20 ns | 1.167 ns | 1.747 ns |  3.63 |    0.06 | 0.0229 |     - |     - |     144 B |
-| BindFive |  net50 | .NET Core 5.0 | 374.33 ns | 2.406 ns | 3.602 ns | 10.60 |    0.16 | 0.0687 |     - |     - |     432 B |
+| BindZero |  net50 | .NET Core 5.0 |  35.46 ns | 0.280 ns | 0.392 ns |  1.00 |    0.00 |      - |     - |     - |         - |
+|  BindOne |  net50 | .NET Core 5.0 | 137.28 ns | 1.390 ns | 2.080 ns |  3.88 |    0.09 | 0.0229 |     - |     - |     144 B |
+| BindFive |  net50 | .NET Core 5.0 | 376.58 ns | 3.034 ns | 4.541 ns | 10.64 |    0.14 | 0.0687 |     - |     - |     432 B |
