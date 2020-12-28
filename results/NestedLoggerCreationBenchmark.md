@@ -12,14 +12,14 @@ Jit=RyuJit  IterationCount=15  LaunchCount=2
 WarmupCount=10  
 
 ```
-|           Method |    Job |       Runtime |     Mean |    Error |   StdDev |   Median |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|----------------- |------- |-------------- |---------:|---------:|---------:|---------:|-------:|------:|------:|----------:|
-|    ForContextInt | core31 | .NET Core 3.1 | 81.53 ns | 0.720 ns | 1.078 ns | 82.14 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString | core31 | .NET Core 3.1 | 50.77 ns | 0.310 ns | 0.454 ns | 50.78 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType | core31 | .NET Core 3.1 | 86.56 ns | 0.861 ns | 1.288 ns | 86.48 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt |  net48 |      .NET 4.8 | 78.85 ns | 0.688 ns | 1.030 ns | 79.09 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |  net48 |      .NET 4.8 | 50.73 ns | 0.891 ns | 1.334 ns | 50.64 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |  net48 |      .NET 4.8 | 97.77 ns | 0.771 ns | 1.154 ns | 97.86 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt |  net50 | .NET Core 5.0 | 65.99 ns | 0.951 ns | 1.424 ns | 66.12 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |  net50 | .NET Core 5.0 | 37.21 ns | 0.209 ns | 0.307 ns | 37.16 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |  net50 | .NET Core 5.0 | 73.54 ns | 0.713 ns | 1.067 ns | 73.52 ns | 0.0204 |     - |     - |     128 B |
+|           Method |    Job |       Runtime |     Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|----------------- |------- |-------------- |---------:|---------:|---------:|-------:|------:|------:|----------:|
+|    ForContextInt | core31 | .NET Core 3.1 | 79.91 ns | 0.867 ns | 1.271 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString | core31 | .NET Core 3.1 | 50.57 ns | 0.409 ns | 0.613 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType | core31 | .NET Core 3.1 | 86.63 ns | 1.007 ns | 1.445 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |  net48 |      .NET 4.8 | 77.78 ns | 0.809 ns | 1.211 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |  net48 |      .NET 4.8 | 49.42 ns | 0.370 ns | 0.554 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |  net48 |      .NET 4.8 | 96.07 ns | 0.828 ns | 1.239 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |  net50 | .NET Core 5.0 | 59.58 ns | 0.937 ns | 1.374 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |  net50 | .NET Core 5.0 | 37.94 ns | 0.455 ns | 0.680 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |  net50 | .NET Core 5.0 | 72.07 ns | 0.412 ns | 0.617 ns | 0.0204 |     - |     - |     128 B |

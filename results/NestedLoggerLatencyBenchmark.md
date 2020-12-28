@@ -14,11 +14,11 @@ WarmupCount=10
 ```
 |       Method |    Job |       Runtime |     Mean |    Error |   StdDev | Ratio | RatioSD |
 |------------- |------- |-------------- |---------:|---------:|---------:|------:|--------:|
-|   RootLogger | core31 | .NET Core 3.1 | 10.05 ns | 0.068 ns | 0.099 ns |  1.00 |    0.00 |
-| NestedLogger | core31 | .NET Core 3.1 | 35.64 ns | 0.411 ns | 0.615 ns |  3.54 |    0.07 |
+|   RootLogger | core31 | .NET Core 3.1 | 10.45 ns | 0.084 ns | 0.126 ns |  1.00 |    0.00 |
+| NestedLogger | core31 | .NET Core 3.1 | 40.03 ns | 1.240 ns | 1.855 ns |  3.83 |    0.19 |
 |              |        |               |          |          |          |       |         |
-|   RootLogger |  net48 |      .NET 4.8 | 10.17 ns | 0.095 ns | 0.139 ns |  1.00 |    0.00 |
-| NestedLogger |  net48 |      .NET 4.8 | 40.04 ns | 0.298 ns | 0.447 ns |  3.94 |    0.07 |
+|   RootLogger |  net48 |      .NET 4.8 | 10.18 ns | 0.091 ns | 0.133 ns |  1.00 |    0.00 |
+| NestedLogger |  net48 |      .NET 4.8 | 47.49 ns | 1.365 ns | 2.043 ns |  4.67 |    0.24 |
 |              |        |               |          |          |          |       |         |
-|   RootLogger |  net50 | .NET Core 5.0 | 10.24 ns | 0.150 ns | 0.224 ns |  1.00 |    0.00 |
-| NestedLogger |  net50 | .NET Core 5.0 | 31.78 ns | 0.534 ns | 0.800 ns |  3.11 |    0.14 |
+|   RootLogger |  net50 | .NET Core 5.0 | 10.22 ns | 0.086 ns | 0.128 ns |  1.00 |    0.00 |
+| NestedLogger |  net50 | .NET Core 5.0 | 35.96 ns | 1.161 ns | 1.738 ns |  3.52 |    0.19 |
