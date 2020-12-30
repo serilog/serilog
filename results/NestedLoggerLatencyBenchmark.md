@@ -12,13 +12,13 @@ Jit=RyuJit  IterationCount=15  LaunchCount=2
 WarmupCount=10  
 
 ```
-|       Method |    Job |       Runtime |     Mean |    Error |   StdDev | Ratio | RatioSD |
-|------------- |------- |-------------- |---------:|---------:|---------:|------:|--------:|
-|   RootLogger | core31 | .NET Core 3.1 | 10.79 ns | 0.073 ns | 0.109 ns |  1.00 |    0.00 |
-| NestedLogger | core31 | .NET Core 3.1 | 36.18 ns | 0.504 ns | 0.739 ns |  3.35 |    0.08 |
-|              |        |               |          |          |          |       |         |
-|   RootLogger |  net48 |      .NET 4.8 | 10.55 ns | 0.076 ns | 0.111 ns |  1.00 |    0.00 |
-| NestedLogger |  net48 |      .NET 4.8 | 41.57 ns | 0.293 ns | 0.430 ns |  3.94 |    0.06 |
-|              |        |               |          |          |          |       |         |
-|   RootLogger |  net50 | .NET Core 5.0 | 10.50 ns | 0.065 ns | 0.098 ns |  1.00 |    0.00 |
-| NestedLogger |  net50 | .NET Core 5.0 | 31.40 ns | 0.298 ns | 0.447 ns |  2.99 |    0.05 |
+|       Method |    Job |       Runtime |      Mean |     Error |    StdDev | Ratio | RatioSD |
+|------------- |------- |-------------- |----------:|----------:|----------:|------:|--------:|
+|   RootLogger | core31 | .NET Core 3.1 |  9.873 ns | 0.1439 ns | 0.2154 ns |  1.00 |    0.00 |
+| NestedLogger | core31 | .NET Core 3.1 | 39.264 ns | 1.5288 ns | 2.2882 ns |  3.98 |    0.24 |
+|              |        |               |           |           |           |       |         |
+|   RootLogger |  net48 |      .NET 4.8 | 10.304 ns | 0.1259 ns | 0.1884 ns |  1.00 |    0.00 |
+| NestedLogger |  net48 |      .NET 4.8 | 44.581 ns | 1.1322 ns | 1.6946 ns |  4.33 |    0.17 |
+|              |        |               |           |           |           |       |         |
+|   RootLogger |  net50 | .NET Core 5.0 |  9.177 ns | 0.1365 ns | 0.2043 ns |  1.00 |    0.00 |
+| NestedLogger |  net50 | .NET Core 5.0 | 33.826 ns | 1.0906 ns | 1.5987 ns |  3.69 |    0.18 |
