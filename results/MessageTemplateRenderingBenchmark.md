@@ -14,20 +14,20 @@ WarmupCount=10
 ```
 |              Method |    Job |       Runtime |         Mean |      Error |     StdDev |  Ratio | RatioSD |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |-------------------- |------- |-------------- |-------------:|-----------:|-----------:|-------:|--------:|-------:|------:|------:|----------:|
-|           NoMessage | core31 | .NET Core 3.1 |     4.314 ns |  0.0668 ns |  0.0999 ns |   1.00 |    0.00 |      - |     - |     - |         - |
-|        NoProperties | core31 | .NET Core 3.1 |     4.310 ns |  0.0691 ns |  0.1034 ns |   1.00 |    0.04 |      - |     - |     - |         - |
-| OneSimpleProperties | core31 | .NET Core 3.1 |    50.763 ns |  0.4629 ns |  0.6929 ns |  11.77 |    0.33 |      - |     - |     - |         - |
-|    VariedProperties | core31 | .NET Core 3.1 |   288.462 ns |  5.3281 ns |  7.9749 ns |  66.90 |    2.45 | 0.0153 |     - |     - |      96 B |
-|   ComplexProperties | core31 | .NET Core 3.1 | 1,272.593 ns | 18.3318 ns | 27.4381 ns | 295.18 |   10.72 | 0.1259 |     - |     - |     800 B |
+|           NoMessage | core31 | .NET Core 3.1 |     3.615 ns |  0.3406 ns |  0.5098 ns |   1.00 |    0.00 |      - |     - |     - |         - |
+|        NoProperties | core31 | .NET Core 3.1 |     3.581 ns |  0.3505 ns |  0.5246 ns |   1.03 |    0.29 |      - |     - |     - |         - |
+| OneSimpleProperties | core31 | .NET Core 3.1 |    49.677 ns |  0.6915 ns |  0.9917 ns |  14.12 |    1.83 |      - |     - |     - |         - |
+|    VariedProperties | core31 | .NET Core 3.1 |   286.184 ns |  4.1996 ns |  6.2857 ns |  80.76 |   11.80 | 0.0153 |     - |     - |      96 B |
+|   ComplexProperties | core31 | .NET Core 3.1 | 1,251.811 ns | 18.1765 ns | 27.2057 ns | 352.82 |   48.67 | 0.1259 |     - |     - |     800 B |
 |                     |        |               |              |            |            |        |         |        |       |       |           |
-|           NoMessage |  net48 |      .NET 4.8 |     4.161 ns |  0.5542 ns |  0.8295 ns |   1.00 |    0.00 |      - |     - |     - |         - |
-|        NoProperties |  net48 |      .NET 4.8 |     3.371 ns |  0.0605 ns |  0.0905 ns |   0.84 |    0.17 |      - |     - |     - |         - |
-| OneSimpleProperties |  net48 |      .NET 4.8 |    84.737 ns |  0.9433 ns |  1.4118 ns |  21.18 |    4.23 | 0.0050 |     - |     - |      32 B |
-|    VariedProperties |  net48 |      .NET 4.8 |   362.621 ns |  4.0648 ns |  6.0840 ns |  90.61 |   18.01 | 0.0153 |     - |     - |      96 B |
-|   ComplexProperties |  net48 |      .NET 4.8 | 1,836.579 ns | 11.4374 ns | 17.1190 ns | 459.19 |   92.43 | 0.1698 |     - |     - |    1075 B |
+|           NoMessage |  net48 |      .NET 4.8 |     4.276 ns |  0.0682 ns |  0.1020 ns |   1.00 |    0.00 |      - |     - |     - |         - |
+|        NoProperties |  net48 |      .NET 4.8 |     4.245 ns |  0.0528 ns |  0.0790 ns |   0.99 |    0.04 |      - |     - |     - |         - |
+| OneSimpleProperties |  net48 |      .NET 4.8 |    84.629 ns |  1.1080 ns |  1.6583 ns |  19.80 |    0.67 | 0.0050 |     - |     - |      32 B |
+|    VariedProperties |  net48 |      .NET 4.8 |   367.149 ns |  4.6453 ns |  6.9529 ns |  85.89 |    1.72 | 0.0153 |     - |     - |      96 B |
+|   ComplexProperties |  net48 |      .NET 4.8 | 1,830.743 ns | 13.2930 ns | 19.4847 ns | 428.82 |   10.62 | 0.1698 |     - |     - |    1075 B |
 |                     |        |               |              |            |            |        |         |        |       |       |           |
-|           NoMessage |  net50 | .NET Core 5.0 |     3.935 ns |  0.0630 ns |  0.0944 ns |   1.00 |    0.00 |      - |     - |     - |         - |
-|        NoProperties |  net50 | .NET Core 5.0 |     3.728 ns |  0.0652 ns |  0.0976 ns |   0.95 |    0.04 |      - |     - |     - |         - |
-| OneSimpleProperties |  net50 | .NET Core 5.0 |    38.222 ns |  0.4523 ns |  0.6769 ns |   9.72 |    0.29 |      - |     - |     - |         - |
-|    VariedProperties |  net50 | .NET Core 5.0 |   238.851 ns |  3.8489 ns |  5.7609 ns |  60.75 |    2.46 | 0.0153 |     - |     - |      96 B |
-|   ComplexProperties |  net50 | .NET Core 5.0 | 1,118.862 ns | 18.8457 ns | 27.6238 ns | 284.51 |    9.56 | 0.1259 |     - |     - |     800 B |
+|           NoMessage |  net50 | .NET Core 5.0 |     3.965 ns |  0.0651 ns |  0.0974 ns |   1.00 |    0.00 |      - |     - |     - |         - |
+|        NoProperties |  net50 | .NET Core 5.0 |     3.863 ns |  0.0880 ns |  0.1318 ns |   0.98 |    0.05 |      - |     - |     - |         - |
+| OneSimpleProperties |  net50 | .NET Core 5.0 |    38.172 ns |  0.4563 ns |  0.6829 ns |   9.63 |    0.27 |      - |     - |     - |         - |
+|    VariedProperties |  net50 | .NET Core 5.0 |   239.037 ns |  3.7318 ns |  5.5855 ns |  60.31 |    1.65 | 0.0153 |     - |     - |      96 B |
+|   ComplexProperties |  net50 | .NET Core 5.0 | 1,112.097 ns | 17.8198 ns | 26.6718 ns | 280.71 |   11.24 | 0.1259 |     - |     - |     800 B |

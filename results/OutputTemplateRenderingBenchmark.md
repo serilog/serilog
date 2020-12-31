@@ -12,8 +12,8 @@ Jit=RyuJit  IterationCount=15  LaunchCount=2
 WarmupCount=10  
 
 ```
-|         Method |    Job |       Runtime |       Mean |   Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|--------------- |------- |-------------- |-----------:|--------:|---------:|-------:|------:|------:|----------:|
-| FormatToOutput | core31 | .NET Core 3.1 |   860.3 ns | 8.41 ns | 12.59 ns | 0.0315 |     - |     - |     200 B |
-| FormatToOutput |  net48 |      .NET 4.8 | 1,130.9 ns | 9.60 ns | 13.77 ns | 0.1106 |     - |     - |     698 B |
-| FormatToOutput |  net50 | .NET Core 5.0 |   801.1 ns | 8.96 ns | 13.41 ns | 0.0315 |     - |     - |     200 B |
+|         Method |    Job |       Runtime |       Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|--------------- |------- |-------------- |-----------:|---------:|---------:|-------:|------:|------:|----------:|
+| FormatToOutput | core31 | .NET Core 3.1 |   862.4 ns |  8.05 ns | 12.04 ns | 0.0315 |     - |     - |     200 B |
+| FormatToOutput |  net48 |      .NET 4.8 | 1,134.9 ns | 15.78 ns | 23.61 ns | 0.1106 |     - |     - |     698 B |
+| FormatToOutput |  net50 | .NET Core 5.0 |   796.4 ns |  6.80 ns | 10.18 ns | 0.0315 |     - |     - |     200 B |

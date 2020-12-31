@@ -14,12 +14,12 @@ WarmupCount=10
 ```
 |           Method |    Job |       Runtime |     Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |----------------- |------- |-------------- |---------:|---------:|---------:|-------:|------:|------:|----------:|
-|    ForContextInt | core31 | .NET Core 3.1 | 78.60 ns | 1.425 ns | 2.133 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString | core31 | .NET Core 3.1 | 49.99 ns | 0.487 ns | 0.729 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType | core31 | .NET Core 3.1 | 85.32 ns | 1.148 ns | 1.718 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt |  net48 |      .NET 4.8 | 76.28 ns | 0.942 ns | 1.381 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |  net48 |      .NET 4.8 | 47.93 ns | 0.517 ns | 0.774 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |  net48 |      .NET 4.8 | 93.28 ns | 1.186 ns | 1.776 ns | 0.0204 |     - |     - |     128 B |
-|    ForContextInt |  net50 | .NET Core 5.0 | 61.68 ns | 0.967 ns | 1.448 ns | 0.0242 |     - |     - |     152 B |
-| ForContextString |  net50 | .NET Core 5.0 | 37.07 ns | 0.511 ns | 0.765 ns | 0.0204 |     - |     - |     128 B |
-|   ForContextType |  net50 | .NET Core 5.0 | 70.28 ns | 1.180 ns | 1.766 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt | core31 | .NET Core 3.1 | 78.60 ns | 1.046 ns | 1.565 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString | core31 | .NET Core 3.1 | 49.42 ns | 0.540 ns | 0.808 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType | core31 | .NET Core 3.1 | 85.07 ns | 1.111 ns | 1.664 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |  net48 |      .NET 4.8 | 77.02 ns | 1.170 ns | 1.752 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |  net48 |      .NET 4.8 | 49.63 ns | 0.512 ns | 0.751 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |  net48 |      .NET 4.8 | 92.82 ns | 0.997 ns | 1.492 ns | 0.0204 |     - |     - |     128 B |
+|    ForContextInt |  net50 | .NET Core 5.0 | 59.36 ns | 1.056 ns | 1.580 ns | 0.0242 |     - |     - |     152 B |
+| ForContextString |  net50 | .NET Core 5.0 | 36.63 ns | 0.694 ns | 1.038 ns | 0.0204 |     - |     - |     128 B |
+|   ForContextType |  net50 | .NET Core 5.0 | 74.07 ns | 1.253 ns | 1.836 ns | 0.0204 |     - |     - |     128 B |
