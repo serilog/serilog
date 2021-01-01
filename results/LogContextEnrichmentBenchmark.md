@@ -14,17 +14,17 @@ WarmupCount=10
 ```
 |               Method |    Job |       Runtime |       Mean |     Error |    StdDev | Ratio | RatioSD |
 |--------------------- |------- |-------------- |-----------:|----------:|----------:|------:|--------:|
-|                 Bare | core31 | .NET Core 3.1 |  10.273 ns | 0.1364 ns | 0.2041 ns |  1.00 |    0.00 |
-|         PushProperty | core31 | .NET Core 3.1 |  94.590 ns | 1.2954 ns | 1.9389 ns |  9.21 |    0.31 |
-|   PushPropertyNested | core31 | .NET Core 3.1 | 185.845 ns | 2.2189 ns | 3.3212 ns | 18.10 |    0.42 |
-| PushPropertyEnriched | core31 | .NET Core 3.1 | 165.161 ns | 4.2143 ns | 6.3077 ns | 16.09 |    0.76 |
+|                 Bare | core31 | .NET Core 3.1 |   9.565 ns | 0.0408 ns | 0.0598 ns |  1.00 |    0.00 |
+|         PushProperty | core31 | .NET Core 3.1 |  88.911 ns | 0.9107 ns | 1.3349 ns |  9.30 |    0.14 |
+|   PushPropertyNested | core31 | .NET Core 3.1 | 176.014 ns | 0.8598 ns | 1.2331 ns | 18.40 |    0.19 |
+| PushPropertyEnriched | core31 | .NET Core 3.1 | 160.979 ns | 0.8159 ns | 1.1959 ns | 16.83 |    0.18 |
 |                      |        |               |            |           |           |       |         |
-|                 Bare |  net48 |      .NET 4.8 |  10.428 ns | 0.1287 ns | 0.1927 ns |  1.00 |    0.00 |
-|         PushProperty |  net48 |      .NET 4.8 |  77.650 ns | 0.9898 ns | 1.4815 ns |  7.45 |    0.18 |
-|   PushPropertyNested |  net48 |      .NET 4.8 | 149.741 ns | 1.9308 ns | 2.8899 ns | 14.36 |    0.32 |
-| PushPropertyEnriched |  net48 |      .NET 4.8 | 152.414 ns | 2.3360 ns | 3.4241 ns | 14.63 |    0.43 |
+|                 Bare |  net48 |      .NET 4.8 |  10.177 ns | 0.0560 ns | 0.0804 ns |  1.00 |    0.00 |
+|         PushProperty |  net48 |      .NET 4.8 |  75.953 ns | 0.4055 ns | 0.5943 ns |  7.46 |    0.09 |
+|   PushPropertyNested |  net48 |      .NET 4.8 | 146.940 ns | 0.7974 ns | 1.1936 ns | 14.44 |    0.18 |
+| PushPropertyEnriched |  net48 |      .NET 4.8 | 148.863 ns | 0.6357 ns | 0.9317 ns | 14.63 |    0.16 |
 |                      |        |               |            |           |           |       |         |
-|                 Bare |  net50 | .NET Core 5.0 |   9.624 ns | 0.1506 ns | 0.2254 ns |  1.00 |    0.00 |
-|         PushProperty |  net50 | .NET Core 5.0 |  88.645 ns | 1.1491 ns | 1.7199 ns |  9.22 |    0.37 |
-|   PushPropertyNested |  net50 | .NET Core 5.0 | 182.442 ns | 2.1069 ns | 3.1535 ns | 18.97 |    0.69 |
-| PushPropertyEnriched |  net50 | .NET Core 5.0 | 151.947 ns | 2.3082 ns | 3.4548 ns | 15.80 |    0.49 |
+|                 Bare |  net50 | .NET Core 5.0 |   9.391 ns | 0.0441 ns | 0.0659 ns |  1.00 |    0.00 |
+|         PushProperty |  net50 | .NET Core 5.0 |  86.080 ns | 0.3769 ns | 0.5406 ns |  9.17 |    0.10 |
+|   PushPropertyNested |  net50 | .NET Core 5.0 | 178.609 ns | 0.8696 ns | 1.2747 ns | 19.02 |    0.21 |
+| PushPropertyEnriched |  net50 | .NET Core 5.0 | 147.602 ns | 0.8531 ns | 1.2504 ns | 15.72 |    0.17 |
