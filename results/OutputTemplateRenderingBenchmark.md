@@ -14,6 +14,6 @@ WarmupCount=10
 ```
 |         Method |    Job |       Runtime |       Mean |    Error |   StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
 |--------------- |------- |-------------- |-----------:|---------:|---------:|-------:|------:|------:|----------:|
-| FormatToOutput | core31 | .NET Core 3.1 |   879.4 ns |  6.48 ns |  9.69 ns | 0.0315 |     - |     - |     200 B |
-| FormatToOutput |  net48 |      .NET 4.8 | 1,134.4 ns | 12.04 ns | 18.01 ns | 0.1106 |     - |     - |     698 B |
-| FormatToOutput |  net50 | .NET Core 5.0 |   819.5 ns |  6.43 ns |  9.62 ns | 0.0315 |     - |     - |     200 B |
+| FormatToOutput | core31 | .NET Core 3.1 |   851.2 ns |  4.90 ns |  7.34 ns | 0.0315 |     - |     - |     200 B |
+| FormatToOutput |  net48 |      .NET 4.8 | 1,100.3 ns | 13.57 ns | 20.31 ns | 0.1106 |     - |     - |     698 B |
+| FormatToOutput |  net50 | .NET Core 5.0 |   799.3 ns |  7.24 ns | 10.61 ns | 0.0315 |     - |     - |     200 B |

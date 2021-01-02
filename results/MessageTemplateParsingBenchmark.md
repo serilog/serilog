@@ -14,29 +14,29 @@ WarmupCount=10
 ```
 |                         Method |    Job |       Runtime |        Mean |     Error |    StdDev | Ratio | RatioSD |  Gen 0 |  Gen 1 | Gen 2 | Allocated |
 |------------------------------- |------- |-------------- |------------:|----------:|----------:|------:|--------:|-------:|-------:|------:|----------:|
-|                  EmptyTemplate | core31 | .NET Core 3.1 |    33.83 ns |  0.558 ns |  0.835 ns |  1.00 |    0.00 | 0.0127 |      - |     - |      80 B |
-|             SimpleTextTemplate | core31 | .NET Core 3.1 |   141.33 ns |  1.439 ns |  2.154 ns |  4.18 |    0.10 | 0.0610 |      - |     - |     384 B |
-|    SinglePropertyTokenTemplate | core31 | .NET Core 3.1 |   192.89 ns |  2.379 ns |  3.561 ns |  5.71 |    0.20 | 0.0854 |      - |     - |     536 B |
-| SingleTextWithPropertyTemplate | core31 | .NET Core 3.1 |   434.24 ns |  2.681 ns |  4.013 ns | 12.84 |    0.34 | 0.1440 | 0.0005 |     - |     904 B |
-|      ManyPropertyTokenTemplate | core31 | .NET Core 3.1 |   385.23 ns |  3.620 ns |  5.418 ns | 11.39 |    0.33 | 0.1326 | 0.0005 |     - |     832 B |
-|         MultipleTokensTemplate | core31 | .NET Core 3.1 |   781.94 ns |  4.217 ns |  6.048 ns | 23.16 |    0.61 | 0.2308 | 0.0019 |     - |    1448 B |
-|   DefaultConsoleOutputTemplate | core31 | .NET Core 3.1 |   956.98 ns |  9.980 ns | 14.937 ns | 28.31 |    0.91 | 0.2584 | 0.0019 |     - |    1624 B |
-|                    BigTemplate | core31 | .NET Core 3.1 | 2,725.95 ns | 22.958 ns | 34.362 ns | 80.63 |    2.24 | 0.7019 | 0.0153 |     - |    4424 B |
+|                  EmptyTemplate | core31 | .NET Core 3.1 |    32.79 ns |  0.406 ns |  0.607 ns |  1.00 |    0.00 | 0.0127 |      - |     - |      80 B |
+|             SimpleTextTemplate | core31 | .NET Core 3.1 |   139.69 ns |  1.703 ns |  2.549 ns |  4.26 |    0.09 | 0.0610 |      - |     - |     384 B |
+|    SinglePropertyTokenTemplate | core31 | .NET Core 3.1 |   192.07 ns |  1.607 ns |  2.305 ns |  5.86 |    0.15 | 0.0854 |      - |     - |     536 B |
+| SingleTextWithPropertyTemplate | core31 | .NET Core 3.1 |   428.80 ns |  2.452 ns |  3.670 ns | 13.08 |    0.27 | 0.1440 | 0.0005 |     - |     904 B |
+|      ManyPropertyTokenTemplate | core31 | .NET Core 3.1 |   382.27 ns |  2.979 ns |  4.459 ns | 11.66 |    0.26 | 0.1326 | 0.0005 |     - |     832 B |
+|         MultipleTokensTemplate | core31 | .NET Core 3.1 |   771.59 ns |  6.362 ns |  9.523 ns | 23.54 |    0.42 | 0.2308 | 0.0019 |     - |    1448 B |
+|   DefaultConsoleOutputTemplate | core31 | .NET Core 3.1 |   927.86 ns |  7.847 ns | 11.746 ns | 28.31 |    0.70 | 0.2575 | 0.0019 |     - |    1624 B |
+|                    BigTemplate | core31 | .NET Core 3.1 | 2,660.52 ns | 27.007 ns | 40.423 ns | 81.16 |    1.92 | 0.7019 | 0.0153 |     - |    4424 B |
 |                                |        |               |             |           |           |       |         |        |        |       |           |
-|                  EmptyTemplate |  net48 |      .NET 4.8 |    44.89 ns |  0.872 ns |  1.306 ns |  1.00 |    0.00 | 0.0178 |      - |     - |     112 B |
-|             SimpleTextTemplate |  net48 |      .NET 4.8 |   165.91 ns |  1.633 ns |  2.444 ns |  3.70 |    0.13 | 0.0687 |      - |     - |     433 B |
-|    SinglePropertyTokenTemplate |  net48 |      .NET 4.8 |   256.89 ns |  5.588 ns |  8.364 ns |  5.73 |    0.19 | 0.0825 |      - |     - |     522 B |
-| SingleTextWithPropertyTemplate |  net48 |      .NET 4.8 |   483.68 ns |  5.787 ns |  8.662 ns | 10.78 |    0.36 | 0.1478 |      - |     - |     931 B |
-|      ManyPropertyTokenTemplate |  net48 |      .NET 4.8 |   506.08 ns |  6.496 ns |  9.722 ns | 11.28 |    0.38 | 0.1383 |      - |     - |     875 B |
-|         MultipleTokensTemplate |  net48 |      .NET 4.8 | 1,018.84 ns | 14.628 ns | 21.895 ns | 22.72 |    0.79 | 0.2422 |      - |     - |    1524 B |
-|   DefaultConsoleOutputTemplate |  net48 |      .NET 4.8 | 1,358.40 ns | 14.005 ns | 20.962 ns | 30.29 |    0.99 | 0.2670 | 0.0019 |     - |    1685 B |
-|                    BigTemplate |  net48 |      .NET 4.8 | 3,924.01 ns | 51.520 ns | 77.112 ns | 87.50 |    3.22 | 0.7477 | 0.0153 |     - |    4742 B |
+|                  EmptyTemplate |  net48 |      .NET 4.8 |    42.59 ns |  0.363 ns |  0.520 ns |  1.00 |    0.00 | 0.0178 |      - |     - |     112 B |
+|             SimpleTextTemplate |  net48 |      .NET 4.8 |   162.25 ns |  1.582 ns |  2.367 ns |  3.81 |    0.08 | 0.0687 |      - |     - |     433 B |
+|    SinglePropertyTokenTemplate |  net48 |      .NET 4.8 |   248.45 ns |  3.135 ns |  4.692 ns |  5.83 |    0.12 | 0.0825 |      - |     - |     522 B |
+| SingleTextWithPropertyTemplate |  net48 |      .NET 4.8 |   472.95 ns |  6.069 ns |  8.895 ns | 11.11 |    0.24 | 0.1478 |      - |     - |     931 B |
+|      ManyPropertyTokenTemplate |  net48 |      .NET 4.8 |   493.78 ns |  5.937 ns |  8.886 ns | 11.60 |    0.25 | 0.1383 |      - |     - |     875 B |
+|         MultipleTokensTemplate |  net48 |      .NET 4.8 |   994.83 ns | 12.807 ns | 19.169 ns | 23.35 |    0.54 | 0.2422 |      - |     - |    1524 B |
+|   DefaultConsoleOutputTemplate |  net48 |      .NET 4.8 | 1,327.12 ns | 12.583 ns | 18.834 ns | 31.16 |    0.49 | 0.2670 | 0.0019 |     - |    1685 B |
+|                    BigTemplate |  net48 |      .NET 4.8 | 3,796.51 ns | 17.700 ns | 25.944 ns | 89.13 |    1.16 | 0.7515 | 0.0153 |     - |    4742 B |
 |                                |        |               |             |           |           |       |         |        |        |       |           |
-|                  EmptyTemplate |  net50 | .NET Core 5.0 |    31.40 ns |  0.689 ns |  1.009 ns |  1.00 |    0.00 | 0.0127 |      - |     - |      80 B |
-|             SimpleTextTemplate |  net50 | .NET Core 5.0 |   139.84 ns |  1.792 ns |  2.682 ns |  4.46 |    0.13 | 0.0610 |      - |     - |     384 B |
-|    SinglePropertyTokenTemplate |  net50 | .NET Core 5.0 |   185.68 ns |  1.686 ns |  2.523 ns |  5.92 |    0.19 | 0.0854 |      - |     - |     536 B |
-| SingleTextWithPropertyTemplate |  net50 | .NET Core 5.0 |   416.30 ns |  4.889 ns |  7.318 ns | 13.27 |    0.58 | 0.1440 | 0.0005 |     - |     904 B |
-|      ManyPropertyTokenTemplate |  net50 | .NET Core 5.0 |   366.99 ns |  4.555 ns |  6.817 ns | 11.70 |    0.52 | 0.1326 | 0.0005 |     - |     832 B |
-|         MultipleTokensTemplate |  net50 | .NET Core 5.0 |   738.07 ns |  6.854 ns | 10.258 ns | 23.52 |    0.88 | 0.2308 | 0.0019 |     - |    1448 B |
-|   DefaultConsoleOutputTemplate |  net50 | .NET Core 5.0 |   899.23 ns |  5.892 ns |  8.820 ns | 28.66 |    0.99 | 0.2584 | 0.0019 |     - |    1624 B |
-|                    BigTemplate |  net50 | .NET Core 5.0 | 2,582.90 ns | 26.181 ns | 39.186 ns | 82.39 |    3.26 | 0.7019 | 0.0153 |     - |    4424 B |
+|                  EmptyTemplate |  net50 | .NET Core 5.0 |    29.57 ns |  0.501 ns |  0.751 ns |  1.00 |    0.00 | 0.0127 |      - |     - |      80 B |
+|             SimpleTextTemplate |  net50 | .NET Core 5.0 |   136.77 ns |  2.122 ns |  3.110 ns |  4.63 |    0.19 | 0.0610 |      - |     - |     384 B |
+|    SinglePropertyTokenTemplate |  net50 | .NET Core 5.0 |   179.27 ns |  1.876 ns |  2.808 ns |  6.07 |    0.19 | 0.0854 |      - |     - |     536 B |
+| SingleTextWithPropertyTemplate |  net50 | .NET Core 5.0 |   403.27 ns |  6.109 ns |  9.144 ns | 13.65 |    0.47 | 0.1440 | 0.0005 |     - |     904 B |
+|      ManyPropertyTokenTemplate |  net50 | .NET Core 5.0 |   355.66 ns |  3.487 ns |  5.219 ns | 12.04 |    0.33 | 0.1326 | 0.0005 |     - |     832 B |
+|         MultipleTokensTemplate |  net50 | .NET Core 5.0 |   718.73 ns |  6.594 ns |  9.869 ns | 24.32 |    0.72 | 0.2308 | 0.0019 |     - |    1448 B |
+|   DefaultConsoleOutputTemplate |  net50 | .NET Core 5.0 |   885.10 ns |  5.246 ns |  7.689 ns | 29.98 |    0.86 | 0.2584 | 0.0019 |     - |    1624 B |
+|                    BigTemplate |  net50 | .NET Core 5.0 | 2,499.51 ns | 27.388 ns | 40.993 ns | 84.59 |    2.60 | 0.7019 | 0.0153 |     - |    4424 B |
