@@ -39,7 +39,7 @@ namespace Serilog.Core
         /// </summary>
         // Reading this property generates a memory barrier,
         // so needs to be used judiciously in the logging pipeline.
-        public LogEventLevel MinimumLevel
+        public virtual LogEventLevel MinimumLevel
         {
             get { return _minimumLevel; }
             set { _minimumLevel = value; }
