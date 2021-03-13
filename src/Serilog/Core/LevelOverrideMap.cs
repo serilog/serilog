@@ -1,4 +1,4 @@
-// Copyright 2016-2020 Serilog Contributors
+// Copyright 2016-2021 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ using Serilog.Events;
 
 namespace Serilog.Core
 {
-    class LevelOverrideMap
+    class LevelOverrideMap<TSwitch>
     {
         readonly LogEventLevel _defaultMinimumLevel;
-        readonly LoggingLevelSwitch _defaultLevelSwitch;
+        readonly TSwitch _defaultLevelSwitch;
 
         struct LevelOverride
         {
-            public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
+            public LevelOverride(string context, TSwitch levelSwitch)
             {
                 Context = context;
                 LevelSwitch = levelSwitch;
@@ -34,7 +34,7 @@ namespace Serilog.Core
 
             public string Context { get; }
 
-            public LoggingLevelSwitch LevelSwitch { get; }
+            public TSwitch LevelSwitch { get; }
         }
 
         // There are two possible strategies to apply:
@@ -46,9 +46,9 @@ namespace Serilog.Core
         readonly LevelOverride[] _overrides;
 
         public LevelOverrideMap(
-            IDictionary<string, LoggingLevelSwitch> overrides,
+            IDictionary<string, TSwitch> overrides,
             LogEventLevel defaultMinimumLevel,
-            LoggingLevelSwitch defaultLevelSwitch)
+            TSwitch defaultLevelSwitch)
         {
             if (overrides == null) throw new ArgumentNullException(nameof(overrides));
 
@@ -69,7 +69,7 @@ namespace Serilog.Core
             string context,
 #endif
             out LogEventLevel minimumLevel,
-            out LoggingLevelSwitch levelSwitch)
+            out TSwitch levelSwitch)
         {
             foreach (var levelOverride in _overrides)
             {

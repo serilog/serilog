@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
 using Xunit;
@@ -27,7 +27,7 @@ namespace Serilog.Tests.Core
                 ["MyApp.Api"] = new LoggingLevelSwitch(LogEventLevel.Error)
             };
 
-            var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
+            var lom = new LevelOverrideMap<LoggingLevelSwitch>(overrides, LogEventLevel.Fatal, null);
 
             lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
 

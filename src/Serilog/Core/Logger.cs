@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2016 Serilog Contributors
+// Copyright 2013-2021 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ namespace Serilog.Core
         // to its lower limit and fall through to the secondary check.
         readonly LogEventLevel _minimumLevel;
         readonly LoggingLevelSwitch _levelSwitch;
-        readonly LevelOverrideMap _overrideMap;
+        readonly LevelOverrideMap<LoggingLevelSwitch> _overrideMap;
 
         internal Logger(
             MessageTemplateProcessor messageTemplateProcessor,
@@ -55,7 +55,7 @@ namespace Serilog.Core
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
-            LevelOverrideMap overrideMap = null)
+            LevelOverrideMap<LoggingLevelSwitch> overrideMap = null)
             : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null, overrideMap)
         {
         }
@@ -66,7 +66,7 @@ namespace Serilog.Core
             ILogEventSink sink,
             ILogEventEnricher enricher,
             Action dispose = null,
-            LevelOverrideMap overrideMap = null)
+            LevelOverrideMap<LoggingLevelSwitch> overrideMap = null)
             : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch, overrideMap)
         {
         }
@@ -80,7 +80,7 @@ namespace Serilog.Core
             ILogEventEnricher enricher,
             Action dispose = null,
             LoggingLevelSwitch levelSwitch = null,
-            LevelOverrideMap overrideMap = null)
+            LevelOverrideMap<LoggingLevelSwitch> overrideMap = null)
         {
             _messageTemplateProcessor = messageTemplateProcessor;
             _minimumLevel = minimumLevel;
