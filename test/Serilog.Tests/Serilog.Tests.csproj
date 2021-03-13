@@ -38,6 +38,6 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' OR '$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netcoreapp2.1' ">
-    <Compile Remove="Core\ScopedLoggerTests.cs" />
+    <Compile Remove="Core\OpenSwitchLoggerTests.cs" />
   </ItemGroup>
 </Project>

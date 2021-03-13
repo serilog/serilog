@@ -1,19 +1,35 @@
-﻿using Serilog.Core;
+using Serilog.Core;
 using Serilog.Events;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace Serilog.Tests.Support
 {
+    /// <summary>
+    /// Dummy sink which simply collects the events in memory.
+    /// Thread-safe.
+    /// NB: The order of the events is not guaranteed.
+    /// </summary>
     class CollectingSink : ILogEventSink
     {
-        public List<LogEvent> Events { get; } = new List<LogEvent>();
+        private ConcurrentBag<LogEvent> mEvents = new();
 
-        public LogEvent SingleEvent => Events.Single();
+        public IReadOnlyCollection<LogEvent> Events => mEvents.ToList();
 
-        public void Emit(LogEvent logEvent)
+        public LogEvent SingleEvent => mEvents.Single();
+
+
+        void ILogEventSink.Emit(LogEvent logEvent)
         {
-            Events.Add(logEvent);
+            mEvents.Add(logEvent);
+        }
+
+
+        public void Clear()
+        {
+            mEvents = new();
         }
     }
 }

@@ -204,7 +204,7 @@ namespace Serilog.Tests.Core
                 comparer: new LogEventPropertyValueComparer());
 
             levelSwitch.MinimumLevel = LogEventLevel.Fatal;
-            collectingSink.Events.Clear();
+            collectingSink.Clear();
 
             log.Error("error");
             Assert.Empty(collectingSink.Events);
