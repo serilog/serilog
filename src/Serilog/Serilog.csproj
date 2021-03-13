@@ -46,8 +46,9 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netstandard1.0' OR '$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0' ">
-    <Compile Remove="Core\ScopedLogger.cs" />
-    <Compile Remove="ScopedLoggerExtensions.cs" />
+    <Compile Remove="Core\OpenSwitchLogger.cs" />
+    <Compile Remove="Core\LoggingLevelOverrider.cs" />
+    <Compile Remove="OpenSwitchLoggerExtensions.cs" />
   </ItemGroup>
 
   <PropertyGroup>

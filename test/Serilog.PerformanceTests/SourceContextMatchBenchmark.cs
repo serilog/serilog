@@ -14,7 +14,7 @@ namespace Serilog.PerformanceTests
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public class SourceContextMatchBenchmark
     {
-        readonly LevelOverrideMap _levelOverrideMap;
+        readonly LevelOverrideMap<LoggingLevelSwitch> _levelOverrideMap;
         readonly Logger _loggerWithOverrides;
         readonly List<ILogger> _loggersWithFilters = new List<ILogger>();
         readonly LogEvent _event = Some.InformationEvent();
@@ -43,7 +43,7 @@ namespace Serilog.PerformanceTests
                 ["MyApp.Api"] = new LoggingLevelSwitch(LogEventLevel.Error)
             };
 
-            _levelOverrideMap = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
+            _levelOverrideMap = new LevelOverrideMap<LoggingLevelSwitch>(overrides, LogEventLevel.Fatal, null);
 
             var loggerConfiguration = new LoggerConfiguration().MinimumLevel.Fatal();
 

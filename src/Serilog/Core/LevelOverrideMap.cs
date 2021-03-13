@@ -43,7 +43,8 @@ namespace Serilog.Core
         //   2. O(n) search over the raw configuration data every time (fast for small sets of overrides).
         // This implementation assumes there will only be a few overrides in each application, so chooses (2). This
         // is an assumption that's up for debate.
-        readonly LevelOverride[] _overrides;
+        private LevelOverride[] _overrides;
+
 
         public LevelOverrideMap(
             IDictionary<string, TSwitch> overrides,
@@ -59,6 +60,21 @@ namespace Serilog.Core
             _overrides = overrides
                 .OrderByDescending(o => o.Key)
                 .Select(o => new LevelOverride(o.Key, o.Value))
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Add a new context override.
+        /// </summary>
+        internal void Add(string context, TSwitch levelSwitch)
+        {
+            // Append() is only available on .NET Standard 2.0+
+            var tempOverrides = _overrides.ToList();
+            tempOverrides.Add(new LevelOverride(context, levelSwitch));
+
+            // Descending order means that if we have a match, we're sure about it being the most specific.
+            _overrides = tempOverrides
+                .OrderByDescending(o => o.Context)
                 .ToArray();
         }
 

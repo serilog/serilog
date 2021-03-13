@@ -176,10 +176,10 @@ namespace Serilog
                     break;
             }
 
-            LevelOverrideMap overrideMap = null;
+            LevelOverrideMap<LoggingLevelSwitch> overrideMap = null;
             if (_overrides.Count != 0)
             {
-                overrideMap = new LevelOverrideMap(_overrides, _minimumLevel, _levelSwitch);
+                overrideMap = new LevelOverrideMap<LoggingLevelSwitch>(_overrides, _minimumLevel, _levelSwitch);
             }
 
             var disposableSinks = _logEventSinks.Concat(_auditSinks).OfType<IDisposable>().ToArray();

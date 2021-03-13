@@ -19,24 +19,15 @@ using Serilog.Events;
 namespace Serilog
 {
     /// <summary>
-    /// An object returned by <see cref="IScopedLogger.SetMinimumLevelOverrider"/>
-    /// and used by the client to ovverride the minimum logging level
-    /// per scope.
+    /// The implementation is used by the client to override the
+    /// minimum logging level per scope.
     /// </summary>
     public interface ILoggingLevelOverrider
     {
         /// <summary>
-        /// Override the minimum level for all events.
+        /// The current minimum level, below which no events
+        /// should be generated.
         /// </summary>
-        /// <param name="minimumLevel">The minimum level to set.</param>
-        void OverrideMinimumLevel(LogEventLevel minimumLevel);
-
-
-        /// <summary>
-        /// Override the minimum level for events from a specific namespace or type name.
-        /// </summary>
-        /// <param name="source">The (partial) namespace or type name to set the override for.</param>
-        /// <param name="minimumLevel">The minimum level to set.</param>
-        void OverrideMinimumLevel(string source, LogEventLevel minimumLevel);
+        LogEventLevel MinimumLevel { get; set; }
     }
 }
