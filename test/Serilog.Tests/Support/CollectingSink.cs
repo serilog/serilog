@@ -14,7 +14,7 @@ namespace Serilog.Tests.Support
     /// </summary>
     class CollectingSink : ILogEventSink
     {
-        private ConcurrentBag<LogEvent> mEvents = new();
+        private ConcurrentBag<LogEvent> mEvents = new ConcurrentBag<LogEvent>();
 
         public IReadOnlyCollection<LogEvent> Events => mEvents.ToList();
 
@@ -29,7 +29,8 @@ namespace Serilog.Tests.Support
 
         public void Clear()
         {
-            mEvents = new();
+            // Clear() is missing in .NET Framework 4.x
+            mEvents = new ConcurrentBag<LogEvent>();
         }
     }
 }

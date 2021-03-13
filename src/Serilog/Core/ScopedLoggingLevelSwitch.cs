@@ -23,7 +23,7 @@ namespace Serilog.Core
     /// </summary>
     internal class ScopedLoggingLevelSwitch : ILoggingLevelSwitch
     {
-        private readonly AsyncLocal<LogEventLevel> mLevel = new();
+        private readonly AsyncLocal<LogEventLevel> mLevel = new AsyncLocal<LogEventLevel>();
 
 
         /// <summary>
