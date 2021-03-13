@@ -25,7 +25,7 @@ namespace Serilog.Core
         /// </summary>
         /// <param name="overrider">The object used to set minimum level.</param>
         /// <returns>The same instance to allow call chaining.</returns>
-        IOpenSwitchLogger MinimumLevelOverride(ILoggingLevelOverrider overrider);
+        IOpenSwitchLogger MinimumLevelOverride(ILoggingLevelSwitch overrider);
 
 
         /// <summary>
@@ -34,6 +34,6 @@ namespace Serilog.Core
         /// <param name="source">The (partial) namespace or type name to set the override for.</param>
         /// <param name="overrider">The object used to set minimum level.</param>
         /// <returns>The same instance to allow call chaining.</returns>
-        IOpenSwitchLogger MinimumLevelOverride(string source, ILoggingLevelOverrider overrider);
+        IOpenSwitchLogger MinimumLevelOverride(string source, ILoggingLevelSwitch overrider);
     }
 }

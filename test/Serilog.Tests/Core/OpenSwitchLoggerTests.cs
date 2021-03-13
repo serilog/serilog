@@ -20,7 +20,7 @@ namespace Serilog.Tests.Core
             // Write all 5 level messages.
             // This emulates a dependency-injected object.
             async Task RunTask(
-                ILogger serilogger, ILoggingLevelOverrider overrider, LogEventLevel level,
+                ILogger serilogger, ILoggingLevelSwitch overrider, LogEventLevel level,
                 string name, AutoResetEvent finished)
             {
                 overrider.MinimumLevel = level;
@@ -37,7 +37,7 @@ namespace Serilog.Tests.Core
 
 
             var sink = new CollectingSink();
-            var overrider = new LoggingLevelOverrider();
+            var overrider = new ScopedLoggingLevelSwitch();
 
             // This emulates Log.Logger property, which has type Serilog.ILogger
             ILogger logger = new LoggerConfiguration()
@@ -69,7 +69,7 @@ namespace Serilog.Tests.Core
             // Write all 5 level messages into the given logger.
             // This emulates a dependency-injected object
             async Task RunTask(
-                ILogger serilogger, ILoggingLevelOverrider overrider, LogEventLevel level,
+                ILogger serilogger, ILoggingLevelSwitch overrider, LogEventLevel level,
                 string name, AutoResetEvent finished)
             {
                 overrider.MinimumLevel = level;
@@ -86,7 +86,7 @@ namespace Serilog.Tests.Core
 
 
             var sink = new CollectingSink();
-            var sysOverrider = new LoggingLevelOverrider(); // Specific for System.*
+            var sysOverrider = new ScopedLoggingLevelSwitch(); // Specific for System.*
 
             // This emulates Log.Logger property, which has type Serilog.ILogger
             ILogger logger = new LoggerConfiguration()

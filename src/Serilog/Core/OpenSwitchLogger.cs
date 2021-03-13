@@ -23,7 +23,7 @@ namespace Serilog.Core
 {
     /// <summary>
     /// An add-on for <see cref="Logger"/>, allowing for logging level setting
-    /// be adjusted more openly due to <see cref="ILoggingLevelOverrider"/> interface.
+    /// be adjusted more openly due to <see cref="ILoggingLevelSwitch"/> interface.
     /// If logging level limits are also provided in the base logger, they
     /// are also taken into account.
     /// </summary>
@@ -33,9 +33,9 @@ namespace Serilog.Core
 
         private readonly ILogger mBaseLogger;
 
-        private ILoggingLevelOverrider mDefaultOverrider;
+        private ILoggingLevelSwitch mDefaultOverrider;
 
-        private LevelOverrideMap<ILoggingLevelOverrider> mOverrideMap;
+        private LevelOverrideMap<ILoggingLevelSwitch> mOverrideMap;
 
         #endregion
 
@@ -59,8 +59,8 @@ namespace Serilog.Core
         /// <param name="defaultOverrider">The default level switch if there is no match in the map</param>
         /// <param name="overrideMap">A collection of namespace - level switch</param>
         private OpenSwitchLogger(
-            ILogger baseLogger, ILoggingLevelOverrider defaultOverrider,
-            LevelOverrideMap<ILoggingLevelOverrider> overrideMap)
+            ILogger baseLogger, ILoggingLevelSwitch defaultOverrider,
+            LevelOverrideMap<ILoggingLevelSwitch> overrideMap)
         {
             mBaseLogger = baseLogger;
             mDefaultOverrider = defaultOverrider;
@@ -117,7 +117,7 @@ namespace Serilog.Core
         #region IScopedLogger API
 
         /// <inheritdoc/>
-        IOpenSwitchLogger IOpenSwitchLogger.MinimumLevelOverride(ILoggingLevelOverrider overrider)
+        IOpenSwitchLogger IOpenSwitchLogger.MinimumLevelOverride(ILoggingLevelSwitch overrider)
         {
             mDefaultOverrider = overrider;
             return this;
@@ -125,12 +125,12 @@ namespace Serilog.Core
 
 
         /// <inheritdoc/>
-        IOpenSwitchLogger IOpenSwitchLogger.MinimumLevelOverride(string source, ILoggingLevelOverrider overrider)
+        IOpenSwitchLogger IOpenSwitchLogger.MinimumLevelOverride(string source, ILoggingLevelSwitch overrider)
         {
             if (mOverrideMap is null)
             {
-                mOverrideMap = new LevelOverrideMap<ILoggingLevelOverrider>(
-                    new Dictionary<string, ILoggingLevelOverrider> { {source, overrider } },
+                mOverrideMap = new LevelOverrideMap<ILoggingLevelSwitch>(
+                    new Dictionary<string, ILoggingLevelSwitch> { {source, overrider } },
                     LevelAlias.Minimum,
                     mDefaultOverrider);
             }

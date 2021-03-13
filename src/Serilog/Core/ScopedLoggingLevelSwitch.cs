@@ -12,22 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Core;
+using System.Threading;
 using Serilog.Events;
 
 
-namespace Serilog
+namespace Serilog.Core
 {
     /// <summary>
-    /// The implementation is used by the client to override the
-    /// minimum logging level per scope.
+    /// This mimics <see cref="LoggingLevelSwitch"/>, but is an interface implementation.
     /// </summary>
-    public interface ILoggingLevelOverrider
+    internal class ScopedLoggingLevelSwitch : ILoggingLevelSwitch
     {
+        private readonly AsyncLocal<LogEventLevel> mLevel = new();
+
+
         /// <summary>
-        /// The current minimum level, below which no events
-        /// should be generated.
+        /// The minimum level, below which the events are not generated.
         /// </summary>
-        LogEventLevel MinimumLevel { get; set; }
+        LogEventLevel ILoggingLevelSwitch.MinimumLevel
+        {
+            get => mLevel.Value;
+            set => mLevel.Value = value;
+        }
     }
 }
