@@ -36,4 +36,8 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;FEATURE_DEFAULT_INTERFACE</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' OR '$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netcoreapp2.1' ">
+    <Compile Remove="Core\ScopedLoggerTests.cs" />
+  </ItemGroup>
 </Project>
