@@ -1,0 +1,53 @@
+name: Serilog CI/CD Pipeline
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  ci:
+    name: Continuous integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        id: checkout_repo
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # GitHub automatic tagging step
+
+      - name: Build solution
+        id: build_solution
+        shell: pwsh
+        run: |
+          dotnet build -c Release
+
+      - name: Run unit tests
+        id: run_unit_tests
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          dotnet test -c Release
+
+      # Automated bundling and signing
+
+    # Continuous deployment job
+
+      - name: Create NuGet packages
+        id: create_nuget_pack
+        shell: pwsh
+        run: |
+          dotnet pack -c Release --no-build -o Artifacts/
+
+      - name: Upload NuGet packages as artifact
+        id: upload_nuget_package
+        uses: actions/upload-artifact@v1
+        with:
+          name: NuGet Packages
+          path: Artifacts/
+
+      # NuGet package publish step
+
+      # GitHub release automation step
+
+# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
