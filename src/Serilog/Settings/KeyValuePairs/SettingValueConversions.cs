@@ -20,14 +20,14 @@ using System.Text.RegularExpressions;
 
 namespace Serilog.Settings.KeyValuePairs
 {
-    internal class SettingValueConversions
+    class SettingValueConversions
     {
         // should match "The.NameSpace.TypeName::MemberName" optionally followed by
         // usual assembly qualifiers like :
         // ", MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-        private static Regex StaticMemberAccessorRegex = new Regex("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
+        static Regex StaticMemberAccessorRegex = new Regex("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
 
-        private static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new Dictionary<Type, Func<string, object>>
+        static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new Dictionary<Type, Func<string, object>>
             {
                 { typeof(Uri), s => new Uri(s) },
                 { typeof(TimeSpan), s => TimeSpan.Parse(s) },
@@ -112,7 +112,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             if (toType == typeof(String[]))
             {
-                var items = value.Split(';');
+                var items = value.Split(',');
                 return items;
             }
 
