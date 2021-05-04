@@ -13,7 +13,7 @@ namespace Serilog.Tests.Filters
 
             var log = new LoggerConfiguration()
                 .Filter.ByExcluding(Matching.FromSource<MatchingTests>())
-                .WriteTo.Sink(new DelegatingSink(e => written = true))
+                .WriteTo.Sink(new DelegatingSink(_ => written = true))
                 .CreateLogger();
 
             var sourceContext = log.ForContext<MatchingTests>();
@@ -29,7 +29,7 @@ namespace Serilog.Tests.Filters
 
             var log = new LoggerConfiguration()
                 .Filter.ByExcluding(Matching.WithProperty<int>("Count", p => p < 10))
-                .WriteTo.Sink(new DelegatingSink(e => seen++))
+                .WriteTo.Sink(new DelegatingSink(_ => seen++))
                 .CreateLogger();
 
             log.Warning("Unrelated");
@@ -46,7 +46,7 @@ namespace Serilog.Tests.Filters
             var written = false;
             var log = new LoggerConfiguration()
                 .Filter.ByExcluding(Matching.FromSource("Serilog.Tests"))
-                .WriteTo.Sink(new DelegatingSink(e => written = true))
+                .WriteTo.Sink(new DelegatingSink(_ => written = true))
                 .CreateLogger()
                 .ForContext<MatchingTests>();
 
@@ -60,7 +60,7 @@ namespace Serilog.Tests.Filters
             var written = false;
             var log = new LoggerConfiguration()
                 .Filter.ByExcluding(Matching.FromSource("Serilog.Tests"))
-                .WriteTo.Sink(new DelegatingSink(e => written = true))
+                .WriteTo.Sink(new DelegatingSink(_ => written = true))
                 .CreateLogger()
                 .ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Serilog.TestsLong");
 

@@ -1,8 +1,7 @@
-﻿using Serilog;
+using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting;
 using System;
 using TestDummies.Console;
 using TestDummies.Console.Themes;
@@ -18,18 +17,6 @@ namespace TestDummies
 
         public static LoggerConfiguration DummyRollingFile(
             this LoggerSinkConfiguration loggerSinkConfiguration,
-            string pathFormat,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = null,
-            IFormatProvider formatProvider = null)
-        {
-            return loggerSinkConfiguration.Sink(new DummyRollingFileSink(), restrictedToMinimumLevel);
-        }
-
-        public static LoggerConfiguration DummyRollingFile(
-            this LoggerSinkConfiguration loggerSinkConfiguration,
-            ITextFormatter formatter,
-            string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             return loggerSinkConfiguration.Sink(new DummyRollingFileSink(), restrictedToMinimumLevel);
@@ -37,10 +24,7 @@ namespace TestDummies
 
         public static LoggerConfiguration DummyRollingFile(
             this LoggerAuditSinkConfiguration loggerSinkConfiguration,
-            string pathFormat,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = null,
-            IFormatProvider formatProvider = null)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             return loggerSinkConfiguration.Sink(new DummyRollingFileAuditSink(), restrictedToMinimumLevel);
         }

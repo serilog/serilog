@@ -225,7 +225,7 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Logger(l => l
-                    .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
+                    .WriteTo.Sink(new DelegatingSink(_ => eventReceived = true)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -241,7 +241,7 @@ namespace Serilog.Tests
             var logger = new LoggerConfiguration()
                 .WriteTo.Logger(l => l
                     .MinimumLevel.Fatal()
-                    .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
+                    .WriteTo.Sink(new DelegatingSink(_ => eventReceived = true)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -257,8 +257,8 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new StringSink())
-                .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
-                .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
+                .Enrich.With(new DelegatingEnricher((e, _) => e.AddPropertyIfAbsent(property)))
+                .Enrich.With(new DelegatingEnricher((e, _) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -483,7 +483,7 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(
-                    new DelegatingSink(e => eventsReceived++),
+                    new DelegatingSink(_ => eventsReceived++),
                     levelSwitch: levelSwitch)
                 .CreateLogger();
 
@@ -566,7 +566,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownBySinksAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
+                .WriteTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -579,7 +579,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
-                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
+                .WriteTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -591,7 +591,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownByFiltersAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .Filter.ByExcluding(e => throw new Exception("Boom!"))
+                .Filter.ByExcluding(_ => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -606,7 +606,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new CollectingSink())
-                .Destructure.ByTransforming<Value>(v => throw new Exception("Boom!"))
+                .Destructure.ByTransforming<Value>(_ => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Information("{@Value}", new Value());

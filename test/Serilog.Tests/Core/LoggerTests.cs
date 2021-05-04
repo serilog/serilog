@@ -27,7 +27,7 @@ namespace Serilog.Tests.Core
 
             var l = CreateLogger(loggerType, lc => lc
                 .WriteTo.Sink(new StringSink())
-                .Enrich.With(new DelegatingEnricher((le, pf) =>
+                .Enrich.With(new DelegatingEnricher((_, _) =>
                 {
                     thrown = true;
                     throw new Exception("No go, pal.");
