@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.PerformanceTests.Support;
@@ -28,7 +28,7 @@ namespace Serilog.PerformanceTests
         [GlobalSetup]
         public void Setup()
         {
-            _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
+            _templateList = Enumerable.Range(0, Items).Select(_ => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
         }
 
         [Benchmark(Baseline = true)]

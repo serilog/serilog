@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,8 +86,8 @@ namespace Serilog.Formatting.Json
 
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
-                { typeof(bool), (v, q, w) => WriteBoolean((bool)v, w) },
-                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(), w) },
+                { typeof(bool), (v, _, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, _, w) => WriteString(((char)v).ToString(), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -96,16 +96,16 @@ namespace Serilog.Formatting.Json
                 { typeof(uint), WriteToString },
                 { typeof(long), WriteToString },
                 { typeof(ulong), WriteToString },
-                { typeof(float), (v, q, w) => WriteSingle((float)v, w) },
-                { typeof(double), (v, q, w) => WriteDouble((double)v, w) },
+                { typeof(float), (v, _, w) => WriteSingle((float)v, w) },
+                { typeof(double), (v, _, w) => WriteDouble((double)v, w) },
                 { typeof(decimal), WriteToString },
-                { typeof(string), (v, q, w) => WriteString((string)v, w) },
-                { typeof(DateTime), (v, q, w) => WriteDateTime((DateTime)v, w) },
-                { typeof(DateTimeOffset), (v, q, w) => WriteOffset((DateTimeOffset)v, w) },
+                { typeof(string), (v, _, w) => WriteString((string)v, w) },
+                { typeof(DateTime), (v, _, w) => WriteDateTime((DateTime)v, w) },
+                { typeof(DateTimeOffset), (v, _, w) => WriteOffset((DateTimeOffset)v, w) },
                 { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w, q) },
-                { typeof(SequenceValue), (v, q, w) => WriteSequence(((SequenceValue)v).Elements, w) },
-                { typeof(DictionaryValue), (v, q, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },
-                { typeof(StructureValue), (v, q, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
+                { typeof(SequenceValue), (v, _, w) => WriteSequence(((SequenceValue)v).Elements, w) },
+                { typeof(DictionaryValue), (v, _, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },
+                { typeof(StructureValue), (v, _, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
             };
         }
 
