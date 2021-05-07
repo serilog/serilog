@@ -13,10 +13,10 @@ namespace Serilog.Tests.Core
         [Fact]
         public void SpecifyingMinimumLevelOverridesInWriteToLoggerWithConfigCallBackWritesWarningToSelfLog()
         {
-            var outputs = new List<string>();
+            List<string> outputs = new();
             using (TemporarySelfLog.SaveTo(outputs))
             {
-                var configCallBackSink = new CollectingSink();
+                CollectingSink configCallBackSink = new();
 
                 var logger = new LoggerConfiguration()
                     .MinimumLevel.Verbose()
@@ -39,10 +39,10 @@ namespace Serilog.Tests.Core
         [Fact]
         public void SpecifyingMinimumLevelOverridesInWriteToLoggerWritesWarningToSelfLog()
         {
-            var outputs = new List<string>();
+            List<string> outputs = new();
             using (TemporarySelfLog.SaveTo(outputs))
             {
-                var subSink = new CollectingSink();
+                CollectingSink subSink = new();
 
                 var subLogger = new LoggerConfiguration()
                     .MinimumLevel.Verbose()
@@ -112,7 +112,7 @@ namespace Serilog.Tests.Core
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
             LogEvent evt = null;
-            var sink = new DelegatingSink(e => evt = e);
+            DelegatingSink sink = new(e => evt = e);
 
             var rootLoggerConfig = new LoggerConfiguration()
                 .MinimumLevel.Is(LevelAlias.Minimum);
@@ -155,7 +155,7 @@ namespace Serilog.Tests.Core
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
             LogEvent evt = null;
-            var sink = new DelegatingSink(e => evt = e);
+            DelegatingSink sink = new(e => evt = e);
 
             var childLoggerConfig = new LoggerConfiguration()
                 .MinimumLevel.Is(LevelAlias.Minimum);

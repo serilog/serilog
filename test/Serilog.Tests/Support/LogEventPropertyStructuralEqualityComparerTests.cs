@@ -9,34 +9,34 @@ namespace Serilog.Tests.Support
         [Fact]
         public void HandlesNullAsNotEqual()
         {
-            var sut = new LogEventPropertyStructuralEqualityComparer();
-            Assert.False(sut.Equals(null, new LogEventProperty("a", new ScalarValue(null))));
-            Assert.False(sut.Equals(new LogEventProperty("a", new ScalarValue(null)), null));
+            LogEventPropertyStructuralEqualityComparer sut = new();
+            Assert.False(sut.Equals(null, new("a", new ScalarValue(null))));
+            Assert.False(sut.Equals(new("a", new ScalarValue(null)), null));
             Assert.False(sut.Equals(null, null));
         }
 
         [Fact]
         public void LogEventPropertyStructuralEqualityComparerWorksForSequences()
         {
-            var intStringDoubleScalarArray =
-                new[] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.0), };
+            ScalarValue[] intStringDoubleScalarArray =
+                { new(1), new("2"), new(3.0), };
 
-            var intStringFloatScalarArray =
-                new[] { new ScalarValue("1"), new ScalarValue(2), new ScalarValue(3.0f), };
+            ScalarValue[] intStringFloatScalarArray =
+                { new("1"), new(2), new(3.0f), };
 
-            var sequenceOfScalarsIntStringDoubleA = new LogEventProperty("a", new SequenceValue(intStringDoubleScalarArray));
+            LogEventProperty sequenceOfScalarsIntStringDoubleA = new("a", new SequenceValue(intStringDoubleScalarArray));
 
-            var sequenceOfScalarsIntStringDoubleAStructurallyEqual = new LogEventProperty("a",
-                new SequenceValue(new[] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.0), }));
+            LogEventProperty sequenceOfScalarsIntStringDoubleAStructurallyEqual = new("a",
+                new SequenceValue(new ScalarValue[] { new(1), new("2"), new(3.0), }));
 
-            var sequenceOfScalarsIntStringDoubleAStructurallyNotEqual = new LogEventProperty("a",
-                new SequenceValue(new [] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.1), }));
+            LogEventProperty sequenceOfScalarsIntStringDoubleAStructurallyNotEqual = new("a",
+                new SequenceValue(new ScalarValue[] { new(1), new("2"), new(3.1), }));
 
-            var sequenceOfScalarsIntStringFloatA = new LogEventProperty("a", new ScalarValue(intStringFloatScalarArray));
+            LogEventProperty sequenceOfScalarsIntStringFloatA = new("a", new ScalarValue(intStringFloatScalarArray));
 
-            var sequenceOfScalarsIntStringDoubleB = new LogEventProperty("b", new SequenceValue(intStringDoubleScalarArray));
+            LogEventProperty sequenceOfScalarsIntStringDoubleB = new("b", new SequenceValue(intStringDoubleScalarArray));
 
-            var sut = new LogEventPropertyStructuralEqualityComparer();
+            LogEventPropertyStructuralEqualityComparer sut = new();
 
             // Structurally equal
             Assert.True(sut.Equals(sequenceOfScalarsIntStringDoubleA, sequenceOfScalarsIntStringDoubleAStructurallyEqual));
@@ -54,25 +54,25 @@ namespace Serilog.Tests.Support
         [Fact]
         public void LogEventPropertyStructuralEqualityComparerWorksForScalars()
         {
-            var scalarStringA = new LogEventProperty("a", new ScalarValue("a"));
-            var scalarStringAStructurallyEqual = new LogEventProperty("a", new ScalarValue("a"));
+            LogEventProperty scalarStringA = new("a", new ScalarValue("a"));
+            LogEventProperty scalarStringAStructurallyEqual = new("a", new ScalarValue("a"));
 
-            var scalarStringB = new LogEventProperty("b", new ScalarValue("b"));
-            var scalarStringBStructurallyNotEqual = new LogEventProperty("b", new ScalarValue("notEqual"));
+            LogEventProperty scalarStringB = new("b", new ScalarValue("b"));
+            LogEventProperty scalarStringBStructurallyNotEqual = new("b", new ScalarValue("notEqual"));
 
-            var scalarIntA1 = new LogEventProperty("a", new ScalarValue(1));
-            var scalarIntA1StructurallyEqual = new LogEventProperty("a", new ScalarValue(1));
-            var scalarIntA1DiffValueSameType = new LogEventProperty("a", new ScalarValue(0));
-            var scalarIntB1 = new LogEventProperty("b", new ScalarValue(1));
+            LogEventProperty scalarIntA1 = new("a", new ScalarValue(1));
+            LogEventProperty scalarIntA1StructurallyEqual = new("a", new ScalarValue(1));
+            LogEventProperty scalarIntA1DiffValueSameType = new("a", new ScalarValue(0));
+            LogEventProperty scalarIntB1 = new("b", new ScalarValue(1));
 
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
-            var scalarGuid1 = new LogEventProperty("1", new ScalarValue(guid1));
-            var scalarGuid1StructurallyEqual = new LogEventProperty("1", new ScalarValue(guid1));
-            var scalarGuid1StructurallyNotEqual = new LogEventProperty("1", new ScalarValue("notEqual"));
-            var scalarGuid2 = new LogEventProperty("2", new ScalarValue(guid2));
+            LogEventProperty scalarGuid1 = new("1", new ScalarValue(guid1));
+            LogEventProperty scalarGuid1StructurallyEqual = new("1", new ScalarValue(guid1));
+            LogEventProperty scalarGuid1StructurallyNotEqual = new("1", new ScalarValue("notEqual"));
+            LogEventProperty scalarGuid2 = new("2", new ScalarValue(guid2));
 
-            var sut = new LogEventPropertyStructuralEqualityComparer();
+            LogEventPropertyStructuralEqualityComparer sut = new();
 
             Assert.True(sut.Equals(scalarStringA, scalarStringAStructurallyEqual));
             Assert.True(sut.Equals(scalarIntA1, scalarIntA1StructurallyEqual));

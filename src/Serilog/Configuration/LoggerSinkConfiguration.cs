@@ -134,7 +134,7 @@ namespace Serilog.Configuration
                                   "and may be removed completely in a future version.");
             }
 
-            var secondarySink = new SecondaryLoggerSink(subLogger, attemptDispose: true);
+            SecondaryLoggerSink secondarySink = new(subLogger, attemptDispose: true);
             return Sink(secondarySink, restrictedToMinimumLevel, levelSwitch);
         }
 
@@ -162,7 +162,7 @@ namespace Serilog.Configuration
                                   "and may be removed completely in a future version.");
             }
 
-            var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
+            SecondaryLoggerSink secondarySink = new(logger, attemptDispose: false);
             return Sink(secondarySink, restrictedToMinimumLevel);
         }
 
@@ -228,10 +228,10 @@ namespace Serilog.Configuration
             if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
             if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
 
-            var sinksToWrap = new List<ILogEventSink>();
+            List<ILogEventSink> sinksToWrap = new();
 
-            var capturingConfiguration = new LoggerConfiguration();
-            var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
+            LoggerConfiguration capturingConfiguration = new();
+            LoggerSinkConfiguration capturingLoggerSinkConfiguration = new(
                 capturingConfiguration,
                 sinksToWrap.Add);
 

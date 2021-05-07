@@ -76,10 +76,10 @@ namespace Serilog.Tests.Core
 #endif
         public void LoggingLevelSwitchDynamicallyChangesLevel(Type loggerType)
         {
-            var events = new List<LogEvent>();
-            var sink = new DelegatingSink(events.Add);
+            List<LogEvent> events = new();
+            DelegatingSink sink = new(events.Add);
 
-            var levelSwitch = new LoggingLevelSwitch();
+            LoggingLevelSwitch levelSwitch = new();
 
             var log = CreateLogger(loggerType, lc => lc
                 .MinimumLevel.ControlledBy(levelSwitch)
@@ -157,7 +157,7 @@ namespace Serilog.Tests.Core
 
         static ILogger CreateLogger(Type loggerType, Func<LoggerConfiguration, LoggerConfiguration> configureLogger)
         {
-            var lc = new LoggerConfiguration();
+            LoggerConfiguration lc = new();
 
             return loggerType switch
             {
@@ -173,8 +173,8 @@ namespace Serilog.Tests.Core
         [Fact]
         public void DelegatingLoggerShouldDelegateCallsToInnerLogger()
         {
-            var collectingSink = new CollectingSink();
-            var levelSwitch = new LoggingLevelSwitch();
+            CollectingSink collectingSink = new();
+            LoggingLevelSwitch levelSwitch = new();
 
             var innerLogger =
                 new LoggerConfiguration()
@@ -182,7 +182,7 @@ namespace Serilog.Tests.Core
                     .WriteTo.Sink(collectingSink)
                     .CreateLogger();
 
-            var delegatingLogger = new DelegatingLogger(innerLogger);
+            DelegatingLogger delegatingLogger = new(innerLogger);
 
             var log = ((ILogger)delegatingLogger).ForContext("number", 42)
                                                  .ForContext(new PropertyEnricher("type", "string"));
@@ -217,7 +217,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void ASingleSinkIsDisposedWhenLoggerIsDisposed()
         {
-            var sink = new DisposeTrackingSink();
+            DisposeTrackingSink sink = new();
             var log = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger();
@@ -230,8 +230,8 @@ namespace Serilog.Tests.Core
         [Fact]
         public void AggregatedSinksAreDisposedWhenLoggerIsDisposed()
         {
-            var sinkA = new DisposeTrackingSink();
-            var sinkB = new DisposeTrackingSink();
+            DisposeTrackingSink sinkA = new();
+            DisposeTrackingSink sinkB = new();
             var log = new LoggerConfiguration()
                 .WriteTo.Sink(sinkA)
                 .WriteTo.Sink(sinkB)
@@ -246,7 +246,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void WrappedSinksAreDisposedWhenLoggerIsDisposed()
         {
-            var sink = new DisposeTrackingSink();
+            DisposeTrackingSink sink = new();
             var log = new LoggerConfiguration()
                 .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
                 .CreateLogger();
@@ -259,8 +259,8 @@ namespace Serilog.Tests.Core
         [Fact]
         public void WrappedAggregatedSinksAreDisposedWhenLoggerIsDisposed()
         {
-            var sinkA = new DisposeTrackingSink();
-            var sinkB = new DisposeTrackingSink();
+            DisposeTrackingSink sinkA = new();
+            DisposeTrackingSink sinkB = new();
             var log = new LoggerConfiguration()
                 .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
                 .CreateLogger();

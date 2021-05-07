@@ -163,10 +163,10 @@ namespace Serilog.Configuration
             if (wrapEnricher == null) throw new ArgumentNullException(nameof(wrapEnricher));
             if (configureWrappedEnricher == null) throw new ArgumentNullException(nameof(configureWrappedEnricher));
 
-            var enrichersToWrap = new List<ILogEventEnricher>();
+            List<ILogEventEnricher> enrichersToWrap = new();
 
-            var capturingConfiguration = new LoggerConfiguration();
-            var capturingLoggerEnrichmentConfiguration = new LoggerEnrichmentConfiguration(
+            LoggerConfiguration capturingConfiguration = new();
+            LoggerEnrichmentConfiguration capturingLoggerEnrichmentConfiguration = new(
                 capturingConfiguration,
                 enrichersToWrap.Add);
 

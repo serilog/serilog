@@ -12,7 +12,7 @@ namespace Serilog.Tests.Core
         {
             var thrown = false;
 
-            var s = new SafeAggregateSink(new[] { new DelegatingSink(_ => {
+            SafeAggregateSink s = new(new[] { new DelegatingSink(_ => {
                 thrown = true;
                 throw new Exception("No go, pal.");
             }) });
@@ -27,7 +27,7 @@ namespace Serilog.Tests.Core
         {
             bool called1 = false, called2 = false;
 
-            var s = new SafeAggregateSink(new[] {
+            SafeAggregateSink s = new(new[] {
                 new DelegatingSink(_ => called1 = true),
                 new DelegatingSink(_ => { throw new Exception("No go, pal."); }),
                 new DelegatingSink(_ => called2 = true)

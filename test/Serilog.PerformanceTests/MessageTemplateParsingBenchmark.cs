@@ -15,7 +15,7 @@ namespace Serilog.PerformanceTests
         [GlobalSetup]
         public void Setup()
         {
-            _parser = new MessageTemplateParser();
+            _parser = new();
         }
 
         [Benchmark(Baseline = true)]

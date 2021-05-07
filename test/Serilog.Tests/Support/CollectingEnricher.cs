@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
@@ -7,7 +7,7 @@ namespace Serilog.Tests.Support
 {
     class CollectingEnricher : ILogEventEnricher
     {
-        public List<LogEvent> Events { get; } = new List<LogEvent>();
+        public List<LogEvent> Events { get; } = new();
 
         public LogEvent SingleEvent => Events.Single();
 

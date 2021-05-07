@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ namespace Serilog.Policies
             {
                 var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
                 var description = start + "... (" + bytes.Length + " bytes)";
-                result = new ScalarValue(description);
+                result = new(description);
             }
             else
             {
-                result = new ScalarValue(string.Concat(bytes.Select(b => b.ToString("X2"))));
+                result = new(string.Concat(bytes.Select(b => b.ToString("X2"))));
             }
 
             return true;

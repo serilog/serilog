@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ namespace Serilog.Policies
         {
             if (value.GetType().GetTypeInfo().IsEnum)
             {
-                result = new ScalarValue(value);
+                result = new(value);
                 return true;
             }
 

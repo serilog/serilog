@@ -262,7 +262,7 @@ namespace Serilog.Parsing
         {
             var first = startAt;
 
-            var accum = new StringBuilder();
+            StringBuilder accum = new();
             do
             {
                 var nc = messageTemplate[startAt];

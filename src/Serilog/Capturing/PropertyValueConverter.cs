@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace Serilog.Capturing
     // writing a log event (roughly) in control of the cost of recording that event.
     partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
-        static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
+        static readonly HashSet<Type> BuiltInScalarTypes = new()
         {
             typeof(bool),
             typeof(char),
@@ -88,7 +88,7 @@ namespace Serilog.Capturing
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
         {
-            return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
+            return new(name, CreatePropertyValue(value, destructureObjects));
         }
 
         public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
@@ -202,7 +202,7 @@ namespace Serilog.Capturing
                                 yield break;
                             }
 
-                            var pair = new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                            KeyValuePair<ScalarValue, LogEventPropertyValue> pair = new(
                                 (ScalarValue)_depthLimiter.CreatePropertyValue(entry.Key, destructure),
                                 _depthLimiter.CreatePropertyValue(entry.Value, destructure));
 
@@ -259,7 +259,7 @@ namespace Serilog.Capturing
                 defn == "System.ValueTuple`7")
 #endif
             {
-                var elements = new List<LogEventPropertyValue>();
+                List<LogEventPropertyValue> elements = new();
                 foreach (var field in valueType.GetTypeInfo().DeclaredFields)
                 {
                     if (field.IsPublic && !field.IsStatic)

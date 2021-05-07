@@ -91,7 +91,7 @@ namespace Serilog.Tests.Settings
         [InlineData("0:0:0.2", 0, 0, 0, 0, 200)] // minimal milliseconds
         public void TimeSpanValuesCanBeParsed(string input, int expDays, int expHours, int expMin, int expSec, int expMs)
         {
-            var expectedTimeSpan = new TimeSpan(expDays, expHours, expMin, expSec, expMs);
+            TimeSpan expectedTimeSpan = new(expDays, expHours, expMin, expSec, expMs);
             var actual = SettingValueConversions.ConvertToType(input, typeof(TimeSpan));
 
             Assert.IsType<TimeSpan>(actual);

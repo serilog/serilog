@@ -96,7 +96,7 @@ namespace Serilog.Tests.Context
                 clonedContext = LogContext.Clone();
             }
 
-            var t = new Thread(() =>
+            Thread t = new(() =>
             {
                 using (LogContext.Push(clonedContext))
                 {
@@ -320,7 +320,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task DisconnectRemoteObjectsAfterCrossDomainCallsOnDispose()
         {
-            var tracker = new InMemoryRemoteObjectTracker();
+            InMemoryRemoteObjectTracker tracker = new();
             TrackingServices.RegisterTrackingHandler(tracker);
 
             var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);

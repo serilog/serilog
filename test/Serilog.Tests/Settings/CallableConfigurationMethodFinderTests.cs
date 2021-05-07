@@ -1,4 +1,5 @@
-﻿using Serilog.Configuration;
+﻿using System.Collections.Generic;
+using Serilog.Configuration;
 using Serilog.Settings.KeyValuePairs;
 using System.Linq;
 using System.Reflection;

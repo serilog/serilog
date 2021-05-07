@@ -29,13 +29,13 @@ namespace Serilog
     /// </summary>
     public class LoggerConfiguration
     {
-        readonly List<ILogEventSink> _logEventSinks = new List<ILogEventSink>();
-        readonly List<ILogEventSink> _auditSinks = new List<ILogEventSink>();
-        readonly List<ILogEventEnricher> _enrichers = new List<ILogEventEnricher>();
-        readonly List<ILogEventFilter> _filters = new List<ILogEventFilter>();
-        readonly List<Type> _additionalScalarTypes = new List<Type>();
-        readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new List<IDestructuringPolicy>();
-        readonly Dictionary<string, LoggingLevelSwitch> _overrides = new Dictionary<string, LoggingLevelSwitch>();
+        readonly List<ILogEventSink> _logEventSinks = new();
+        readonly List<ILogEventSink> _auditSinks = new();
+        readonly List<ILogEventEnricher> _enrichers = new();
+        readonly List<ILogEventFilter> _filters = new();
+        readonly List<Type> _additionalScalarTypes = new();
+        readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
+        readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
         LogEventLevel _minimumLevel = LogEventLevel.Information;
         LoggingLevelSwitch _levelSwitch;
         int _maximumDestructuringDepth = 10;
@@ -68,7 +68,7 @@ namespace Serilog
         /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
         /// method allows any sink class to be adapted for auditing.
         /// </remarks>
-        public LoggerAuditSinkConfiguration AuditTo => new LoggerAuditSinkConfiguration(this, s => _auditSinks.Add(s));
+        public LoggerAuditSinkConfiguration AuditTo => new(this, s => _auditSinks.Add(s));
 
         /// <summary>
         /// Configures the minimum level at which events will be passed to sinks. If
@@ -80,7 +80,7 @@ namespace Serilog
         {
             get
             {
-                return new LoggerMinimumLevelConfiguration(this,
+                return new(this,
                     l =>
                     {
                         _minimumLevel = l;
@@ -100,7 +100,7 @@ namespace Serilog
         /// <summary>
         /// Configures global filtering of <see cref="LogEvent"/>s.
         /// </summary>
-        public LoggerFilterConfiguration Filter => new LoggerFilterConfiguration(this, f => _filters.Add(f));
+        public LoggerFilterConfiguration Filter => new(this, f => _filters.Add(f));
 
         /// <summary>
         /// Configures destructuring of message template parameters.
@@ -109,7 +109,7 @@ namespace Serilog
         {
             get
             {
-                return new LoggerDestructuringConfiguration(
+                return new(
                     this,
                     _additionalScalarTypes.Add,
                     _additionalDestructuringPolicies.Add,
@@ -122,7 +122,7 @@ namespace Serilog
         /// <summary>
         /// Apply external settings to the logger configuration.
         /// </summary>
-        public LoggerSettingsConfiguration ReadFrom => new LoggerSettingsConfiguration(this);
+        public LoggerSettingsConfiguration ReadFrom => new(this);
 
         /// <summary>
         /// Create a logger using the configured sinks, enrichers and minimum level.
@@ -151,14 +151,14 @@ namespace Serilog
                 sink = new FilteringSink(sink, _filters, auditing);
             }
 
-            var converter = new PropertyValueConverter(
+            PropertyValueConverter converter = new(
                 _maximumDestructuringDepth,
                 _maximumStringLength,
                 _maximumCollectionCount,
                 _additionalScalarTypes,
                 _additionalDestructuringPolicies,
                 auditing);
-            var processor = new MessageTemplateProcessor(converter);
+            MessageTemplateProcessor processor = new(converter);
 
             ILogEventEnricher enricher;
             switch (_enrichers.Count)

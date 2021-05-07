@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Tests.Support;
 using Xunit;
@@ -17,7 +18,7 @@ namespace Serilog.Tests.Core
         {
             var propValue = Guid.NewGuid();
             var propKey = Some.String();
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Is(logMinLevel)
                 .WriteTo.Sink(sink)
@@ -40,7 +41,7 @@ namespace Serilog.Tests.Core
         {
             var propValue = Guid.NewGuid();
             var propKey = Some.String();
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Is(logMinLevel)
                 .WriteTo.Sink(sink)

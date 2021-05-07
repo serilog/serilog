@@ -178,7 +178,7 @@ namespace Serilog.Events
 
         internal LogEvent Copy()
         {
-            var properties = new Dictionary<string, LogEventPropertyValue>(Properties.Count);
+            Dictionary<string, LogEventPropertyValue> properties = new(Properties.Count);
             foreach (var key in _properties.Keys)
                 properties.Add(key, _properties[key]);
 

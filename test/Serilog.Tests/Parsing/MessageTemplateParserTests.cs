@@ -433,7 +433,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void IndexOutOfRangeExceptionBugHasNotRegressed()
         {
-            var parser = new MessageTemplateParser();
+            MessageTemplateParser parser = new();
             parser.Parse("{,,}");
         }
 

@@ -8,9 +8,9 @@ namespace Serilog.PerformanceTests.Support
     class DictionaryMessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
-        readonly object _templatesLock = new object();
+        readonly object _templatesLock = new();
 
-        readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string, MessageTemplate>();
+        readonly Dictionary<string, MessageTemplate> _templates = new();
 
         const int MaxCacheItems = 1000;
         const int MaxCachedTemplateLength = 1024;

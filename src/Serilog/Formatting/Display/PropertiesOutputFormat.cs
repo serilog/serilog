@@ -18,18 +18,19 @@ using System.IO;
 using System.Linq;
 using Serilog.Events;
 using Serilog.Formatting.Json;
+using Serilog.Parsing;
 
 namespace Serilog.Formatting.Display
 {
     static class PropertiesOutputFormat
     {
-        static readonly JsonValueFormatter JsonValueFormatter = new JsonValueFormatter("$type");
+        static readonly JsonValueFormatter JsonValueFormatter = new("$type");
 
         public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string format, IFormatProvider formatProvider = null)
         {
             if (format?.Contains("j") == true)
             {
-                var sv = new StructureValue(properties
+                StructureValue sv = new(properties
                     .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
                                     TemplateContainsPropertyName(outputTemplate, kvp.Key)))
                     .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));

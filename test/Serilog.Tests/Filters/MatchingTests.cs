@@ -1,3 +1,4 @@
+using Serilog.Core;
 using Serilog.Filters;
 using Serilog.Tests.Support;
 using Xunit;

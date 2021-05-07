@@ -52,7 +52,7 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new();
 #elif REMOTING
         static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
@@ -92,7 +92,7 @@ namespace Serilog.Context
             if (enricher == null) throw new ArgumentNullException(nameof(enricher));
 
             var stack = GetOrCreateEnricherStack();
-            var bookmark = new ContextStackBookmark(stack);
+            ContextStackBookmark bookmark = new(stack);
 
             Enrichers = stack.Push(enricher);
 
@@ -114,7 +114,7 @@ namespace Serilog.Context
             if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
 
             var stack = GetOrCreateEnricherStack();
-            var bookmark = new ContextStackBookmark(stack);
+            ContextStackBookmark bookmark = new(stack);
 
             for (var i = 0; i < enrichers.Length; ++i)
                 stack = stack.Push(enrichers[i]);
@@ -157,7 +157,7 @@ namespace Serilog.Context
         public static IDisposable Suspend()
         {
             var stack = GetOrCreateEnricherStack();
-            var bookmark = new ContextStackBookmark(stack);
+            ContextStackBookmark bookmark = new(stack);
 
             Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
 

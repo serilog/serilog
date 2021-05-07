@@ -1,4 +1,4 @@
-﻿using Serilog.Configuration;
+using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -24,9 +24,9 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>("enrich:with-property:App", "InitialValue"),
-                    new KeyValuePair<string, string>("enrich:with-property:App", "OverridenValue"),
-                    new KeyValuePair<string, string>("enrich:with-property:App", "FinalValue")
+                    new("enrich:with-property:App", "InitialValue"),
+                    new("enrich:with-property:App", "OverridenValue"),
+                    new("enrich:with-property:App", "FinalValue")
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
@@ -105,7 +105,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void SinksAreConfigured()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
                 ["write-to:DummyRollingFile.pathFormat"] = "C:\\"
@@ -127,7 +127,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void AuditSinksAreConfigured()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
                 ["audit-to:DummyRollingFile.pathFormat"] = "C:\\"
@@ -149,7 +149,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void TestMinimumLevelOverrides()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["minimum-level:override:System"] = "Warning",
             };
@@ -197,7 +197,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void LoggingLevelSwitchWithInvalidNameThrowsFormatException()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["level-switch:switchNameNotStartingWithDollar"] = "Warning",
             };
@@ -213,7 +213,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void LoggingLevelSwitchIsConfigured()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["level-switch:$switch1"] = "Warning",
                 ["minimum-level:controlled-by"] = "$switch1",
@@ -237,7 +237,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void SettingMinimumLevelControlledByToAnUndeclaredSwitchThrows()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["level-switch:$switch1"] = "Information",
                 ["minimum-level:controlled-by"] = "$switch2",
@@ -254,7 +254,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void LoggingLevelSwitchIsPassedToSinks()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["level-switch:$switch1"] = "Information",
                 ["minimum-level:controlled-by"] = "$switch1",
@@ -285,7 +285,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ReferencingAnUndeclaredSwitchInSinkThrows()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["level-switch:$switch1"] = "Information",
                 ["minimum-level:controlled-by"] = "$switch1",
@@ -304,7 +304,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void LoggingLevelSwitchCanBeUsedForMinimumLevelOverrides()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["minimum-level"] = "Debug",
                 ["level-switch:$specificSwitch"] = "Warning",
@@ -345,7 +345,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void SinksWithAbstractParamsAreConfiguredWithTypeName()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
                 ["write-to:DummyConsole.theme"] = "Serilog.Tests.Support.CustomConsoleTheme, Serilog.Tests"
@@ -364,7 +364,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void SinksAreConfiguredWithStaticMember()
         {
-            var settings = new Dictionary<string, string>
+            Dictionary<string, string> settings = new()
             {
                 ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
                 ["write-to:DummyConsole.theme"] = "TestDummies.Console.Themes.ConsoleThemes::Theme1, TestDummies"

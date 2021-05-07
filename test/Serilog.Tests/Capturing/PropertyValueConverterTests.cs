@@ -6,6 +6,7 @@ using Serilog.Tests.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,14 +18,14 @@ namespace Serilog.Tests.Capturing
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter =
-            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         [Fact]
         public async Task MaximumDepthIsEffectiveAndThreadSafe()
         {
-            var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            PropertyValueConverter converter = new(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
-            var barrier = new Barrier(participantCount: 3);
+            Barrier barrier = new(participantCount: 3);
 
             var t1 =
                 Task.Run(() => DoThreadTest(new { Root = new { B = new { C = new { D = new { E = "F" } } } } },
@@ -126,7 +127,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void DestructuringACyclicStructureDoesNotStackOverflow()
         {
-            var ab = new A { B = new B() };
+            A ab = new() { B = new B() };
             ab.B.A = ab;
 
             var pv = _converter.CreatePropertyValue(ab, true);
@@ -148,7 +149,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void CollectionsAndCustomPoliciesInCyclesDoNotStackOverflow()
         {
-            var cd = new C { D = new D() };
+            C cd = new() { D = new D() };
             cd.D.C = new List<C?> { cd };
 
             var pv = _converter.CreatePropertyValue(cd, true);
@@ -252,7 +253,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void NewAndInheritedPropertiesAppearOnlyOnce()
         {
-            var valAsDerived = new DerivedWithOverrides
+            DerivedWithOverrides valAsDerived = new()
             {
                 PropA = "A",
                 PropB = "B",
@@ -278,7 +279,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void IndexerPropertiesAreIgnoredWhenDestructuring()
         {
-            var indexed = new HasIndexer();
+            HasIndexer indexed = new();
             var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
             Assert.Equal(0, pv.Properties.Count);
         }
@@ -293,7 +294,7 @@ namespace Serilog.Tests.Capturing
         [Fact]
         public void ItemPropertiesNotAreIgnoredWhenDestructuring()
         {
-            var indexed = new HasItem();
+            HasItem indexed = new();
             var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
             Assert.Equal(1, pv.Properties.Count);
             var item = pv.Properties.Single();

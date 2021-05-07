@@ -34,7 +34,7 @@ namespace Serilog.Tests
         [Fact]
         public void LoggerShouldNotReferenceToItsConfigurationAfterBeingCreated()
         {
-            var (logger, wr) = CreateLogger();
+            (var logger, var wr) = CreateLogger();
 
             GC.Collect();
 
@@ -43,7 +43,7 @@ namespace Serilog.Tests
 
             static (ILogger, WeakReference) CreateLogger()
             {
-                var loggerConfiguration = new LoggerConfiguration();
+                LoggerConfiguration loggerConfiguration = new();
                 return (loggerConfiguration.CreateLogger(), new WeakReference(loggerConfiguration));
             }
         }
@@ -51,7 +51,7 @@ namespace Serilog.Tests
         [Fact]
         public void CreateLoggerThrowsIfCalledMoreThanOnce()
         {
-            var loggerConfiguration = new LoggerConfiguration();
+            LoggerConfiguration loggerConfiguration = new();
             loggerConfiguration.CreateLogger();
             Assert.Throws<InvalidOperationException>(() => loggerConfiguration.CreateLogger());
         }
@@ -59,7 +59,7 @@ namespace Serilog.Tests
         [Fact]
         public void DisposableSinksAreDisposedAlongWithRootLogger()
         {
-            var sink = new DisposableSink();
+            DisposableSink sink = new();
             var logger = (IDisposable)new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger();
@@ -71,7 +71,7 @@ namespace Serilog.Tests
         [Fact]
         public void DisposableSinksAreNotDisposedAlongWithContextualLoggers()
         {
-            var sink = new DisposableSink();
+            DisposableSink sink = new();
             var logger = (IDisposable)new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .CreateLogger()
@@ -87,9 +87,9 @@ namespace Serilog.Tests
             var excluded = Some.InformationEvent();
             var included = Some.InformationEvent();
 
-            var filter = new DelegateFilter(e => e.MessageTemplate != excluded.MessageTemplate);
-            var events = new List<LogEvent>();
-            var sink = new DelegatingSink(events.Add);
+            DelegateFilter filter = new(e => e.MessageTemplate != excluded.MessageTemplate);
+            List<LogEvent> events = new();
+            DelegatingSink sink = new(events.Add);
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
                 .Filter.With(filter)
@@ -112,8 +112,8 @@ namespace Serilog.Tests
         [Fact]
         public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
         {
-            var events = new List<LogEvent>();
-            var sink = new DelegatingSink(events.Add);
+            List<LogEvent> events = new();
+            DelegatingSink sink = new(events.Add);
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
@@ -130,8 +130,8 @@ namespace Serilog.Tests
         [Fact]
         public void DestructuringSystemTypeGivesScalarByDefault()
         {
-            var events = new List<LogEvent>();
-            var sink = new DelegatingSink(events.Add);
+            List<LogEvent> events = new();
+            DelegatingSink sink = new(events.Add);
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
@@ -176,8 +176,8 @@ namespace Serilog.Tests
         [Fact]
         public void DestructuringIsPossibleForSystemTypeDerivedProperties()
         {
-            var events = new List<LogEvent>();
-            var sink = new DelegatingSink(events.Add);
+            List<LogEvent> events = new();
+            DelegatingSink sink = new(events.Add);
 
             var logger = new LoggerConfiguration()
                 .Destructure.With(new ProjectedDestructuringPolicy(
@@ -198,8 +198,8 @@ namespace Serilog.Tests
         [Fact]
         public void TransformationsAreAppliedToEventProperties()
         {
-            var events = new List<LogEvent>();
-            var sink = new DelegatingSink(events.Add);
+            List<LogEvent> events = new();
+            DelegatingSink sink = new(events.Add);
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink)
@@ -373,7 +373,7 @@ namespace Serilog.Tests
         [Fact]
         public void MaximumStringLengthEffectiveForStringifiedObject()
         {
-            var x = new ToStringOfLength(4);
+            ToStringOfLength x = new(4);
 
             var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3), "$");
             Assert.Contains("##…", limitedText);
@@ -382,7 +382,7 @@ namespace Serilog.Tests
         [Fact]
         public void MaximumStringLengthNOTEffectiveForObject()
         {
-            var x = new ToStringOfLength(4);
+            ToStringOfLength x = new(4);
 
             var limitedText = LogAndGetAsString(x, conf => conf.Destructure.ToMaximumStringLength(3));
 
@@ -400,7 +400,7 @@ namespace Serilog.Tests
 
             public override string ToString()
             {
-                return new string('#', _toStringOfLength);
+                return new('#', _toStringOfLength);
             }
         }
 
@@ -436,7 +436,7 @@ namespace Serilog.Tests
         [Fact]
         public void MaximumCollectionCountEffectiveForDictionaryWithMoreKeysThanLimit()
         {
-            var x = new Dictionary<string, int>
+            Dictionary<string, int> x = new()
             {
                 { "1", 1 },
                 { "2", 2 },
@@ -452,7 +452,7 @@ namespace Serilog.Tests
         [Fact]
         public void MaximumCollectionCountNotEffectiveForDictionaryWithAsManyKeysAsLimit()
         {
-            var x = new Dictionary<string, int>
+            Dictionary<string, int> x = new()
             {
                 { "1", 1 },
                 { "2", 2 },
@@ -479,7 +479,7 @@ namespace Serilog.Tests
         public void DynamicallySwitchingSinkRestrictsOutput()
         {
             var eventsReceived = 0;
-            var levelSwitch = new LoggingLevelSwitch();
+            LoggingLevelSwitch levelSwitch = new();
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(
@@ -499,7 +499,7 @@ namespace Serilog.Tests
         [Fact]
         public void LevelSwitchTakesPrecedenceOverMinimumLevel()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(sink, LogEventLevel.Fatal, new LoggingLevelSwitch())
@@ -513,7 +513,7 @@ namespace Serilog.Tests
         [Fact]
         public void LastMinimumLevelConfigurationWins()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Fatal))
@@ -529,7 +529,7 @@ namespace Serilog.Tests
         [Fact]
         public void HigherMinimumLevelOverridesArePropagated()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -547,7 +547,7 @@ namespace Serilog.Tests
         [Fact]
         public void LowerMinimumLevelOverridesArePropagated()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Error()
@@ -624,7 +624,7 @@ namespace Serilog.Tests
         public void WrappingDecoratesTheConfiguredSink()
         {
             DummyWrappingSink.Reset();
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w => w.Sink(sink))
                 .CreateLogger();
@@ -639,7 +639,7 @@ namespace Serilog.Tests
         [Fact]
         public void WrappingDoesNotPermitEnrichment()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var propertyName = Some.String();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w => w.Sink(sink)
@@ -657,8 +657,8 @@ namespace Serilog.Tests
         public void WrappingIsAppliedWhenChaining()
         {
             DummyWrappingSink.Reset();
-            var sink1 = new CollectingSink();
-            var sink2 = new CollectingSink();
+            CollectingSink sink1 = new();
+            CollectingSink sink2 = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w => w.Sink(sink1)
                     .WriteTo.Sink(sink2))
@@ -676,8 +676,8 @@ namespace Serilog.Tests
         public void WrappingIsAppliedWhenCallingMultipleTimes()
         {
             DummyWrappingSink.Reset();
-            var sink1 = new CollectingSink();
-            var sink2 = new CollectingSink();
+            CollectingSink sink1 = new();
+            CollectingSink sink2 = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.Dummy(w =>
                 {
@@ -698,7 +698,7 @@ namespace Serilog.Tests
         public void WrappingSinkRespectsLogEventLevelSetting()
         {
             DummyWrappingSink.Reset();
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.DummyWrap(w => w.Sink(sink), LogEventLevel.Error, null)
                 .CreateLogger();
@@ -713,7 +713,7 @@ namespace Serilog.Tests
         public void WrappingSinkRespectsLevelSwitchSetting()
         {
             DummyWrappingSink.Reset();
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.DummyWrap(
                     w => w.Sink(sink), LogEventLevel.Verbose,
@@ -730,7 +730,7 @@ namespace Serilog.Tests
         public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
         {
             DummyWrappingSink.Reset();
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.DummyWrap(
                     w => w.Sink(sink), LogEventLevel.Error,
@@ -746,7 +746,7 @@ namespace Serilog.Tests
         [Fact]
         public void ConditionalSinksReceiveEventsMatchingCondition()
         {
-            var matching = new CollectingSink();
+            CollectingSink matching = new();
             var logger = new LoggerConfiguration()
                 .WriteTo.Conditional(
                     le => le.Level == LogEventLevel.Warning,
@@ -764,9 +764,9 @@ namespace Serilog.Tests
         [Fact]
         public void EnrichersCanBeWrapped()
         {
-            var enricher = new CollectingEnricher();
+            CollectingEnricher enricher = new();
 
-            var configuration = new LoggerConfiguration();
+            LoggerConfiguration configuration = new();
             LoggerEnrichmentConfiguration.Wrap(
                 configuration.Enrich,
                 e => new ConditionalEnricher(e, le => le.Level == LogEventLevel.Warning),
@@ -784,7 +784,7 @@ namespace Serilog.Tests
         [Fact]
         public void ConditionalEnrichersCheckConditions()
         {
-            var enricher = new CollectingEnricher();
+            CollectingEnricher enricher = new();
 
             var logger = new LoggerConfiguration()
                 .Enrich.When(le => le.Level == LogEventLevel.Warning, enrich => enrich.With(enricher))
@@ -801,7 +801,7 @@ namespace Serilog.Tests
         [Fact]
         public void LeveledEnrichersCheckLevels()
         {
-            var enricher = new CollectingEnricher();
+            CollectingEnricher enricher = new();
 
             var logger = new LoggerConfiguration()
                 .Enrich.AtLevel(LogEventLevel.Warning, enrich => enrich.With(enricher))
@@ -818,8 +818,8 @@ namespace Serilog.Tests
         [Fact]
         public void LeveledEnrichersCheckLevelSwitch()
         {
-            var enricher = new CollectingEnricher();
-            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+            CollectingEnricher enricher = new();
+            LoggingLevelSwitch levelSwitch = new(LogEventLevel.Warning);
 
             var logger = new LoggerConfiguration()
                 .Enrich.AtLevel(levelSwitch, enrich => enrich.With(enricher))

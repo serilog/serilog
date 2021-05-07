@@ -17,7 +17,7 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void JsonFormattedEventsIncludeTimestamp()
         {
-            var @event = new LogEvent(
+            LogEvent @event = new(
                 new DateTimeOffset(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
                 LogEventLevel.Information,
                 null,
@@ -33,8 +33,8 @@ namespace Serilog.Tests.Formatting.Json
 
         static string FormatToJson(LogEvent @event)
         {
-            var formatter = new JsonFormatter();
-            var output = new StringWriter();
+            JsonFormatter formatter = new();
+            StringWriter output = new();
             formatter.Format(@event, output);
             return output.ToString();
         }
@@ -42,7 +42,7 @@ namespace Serilog.Tests.Formatting.Json
         static dynamic FormatJson(LogEvent @event)
         {
             var output = FormatToJson(@event);
-            var serializer = new JsonSerializer { DateParseHandling = DateParseHandling.None };
+            JsonSerializer serializer = new() { DateParseHandling = DateParseHandling.None };
             return serializer.Deserialize(new JsonTextReader(new StringReader(output)));
         }
 
@@ -103,12 +103,12 @@ namespace Serilog.Tests.Formatting.Json
         {
             var name = Some.String();
             var ints = new[]{ Some.Int(), Some.Int() };
-            var value = new SequenceValue(ints.Select(i => new ScalarValue(i)));
+            SequenceValue value = new(ints.Select(i => new ScalarValue(i)));
             var @event = Some.InformationEvent();
             @event.AddOrUpdateProperty(new LogEventProperty(name, value));
 
             var formatted = FormatJson(@event);
-            var result = new List<int>();
+            List<int> result = new();
             foreach (var el in formatted.Properties[name])
                 result.Add((int)el);
 
@@ -119,9 +119,9 @@ namespace Serilog.Tests.Formatting.Json
         public void AStructureSerializesAsAnObject()
         {
             var value = Some.Int();
-            var memberProp = new LogEventProperty(Some.String(), new ScalarValue(value));
-            var structure = new StructureValue(new[] { memberProp });
-            var structureProp = new LogEventProperty(Some.String(), structure);
+            LogEventProperty memberProp = new(Some.String(), new ScalarValue(value));
+            StructureValue structure = new(new[] { memberProp });
+            LogEventProperty structureProp = new(Some.String(), structure);
             var @event = Some.InformationEvent();
             @event.AddOrUpdateProperty(structureProp);
 
@@ -135,10 +135,10 @@ namespace Serilog.Tests.Formatting.Json
         {
             var dictKey = Some.Int();
             var dictValue = Some.Int();
-            var dict = new DictionaryValue(new Dictionary<ScalarValue, LogEventPropertyValue> {
+            DictionaryValue dict = new(new Dictionary<ScalarValue, LogEventPropertyValue> {
                 { new ScalarValue(dictKey), new ScalarValue(dictValue) }
             });
-            var dictProp = new LogEventProperty(Some.String(), dict);
+            LogEventProperty dictProp = new(Some.String(), dict);
             var @event = Some.InformationEvent();
             @event.AddOrUpdateProperty(dictProp);
 
@@ -160,7 +160,8 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void DictionariesAreDestructuredViaDictionaryValue()
         {
-            var dict = new Dictionary<string, object> {
+            Dictionary<string, object> dict = new()
+            {
                 { "hello", "world" },
                 { "nums", new[] { 1.2 } }
             };
@@ -175,8 +176,8 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void PropertyTokensWithFormatStringsAreIncludedAsRenderings()
         {
-            var p = new MessageTemplateParser();
-            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+            MessageTemplateParser p = new();
+            LogEvent e = new(Some.OffsetInstant(), LogEventLevel.Information, null,
                 p.Parse("{AProperty:000}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
 
             var d = FormatEvent(e);
@@ -192,9 +193,9 @@ namespace Serilog.Tests.Formatting.Json
 
         static dynamic FormatEvent(LogEvent e)
         {
-            var j = new JsonFormatter();
+            JsonFormatter j = new();
 
-            var f = new StringWriter();
+            StringWriter f = new();
             j.Format(e, f);
 
             return JsonConvert.DeserializeObject<dynamic>(f.ToString());
@@ -203,8 +204,8 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void PropertyTokensWithoutFormatStringsAreNotIncludedAsRenderings()
         {
-            var p = new MessageTemplateParser();
-            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+            MessageTemplateParser p = new();
+            LogEvent e = new(Some.OffsetInstant(), LogEventLevel.Information, null,
                 p.Parse("{AProperty}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
 
             var d = FormatEvent(e);
@@ -216,8 +217,8 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void SequencesOfSequencesAreSerialized()
         {
-            var p = new MessageTemplateParser();
-            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+            MessageTemplateParser p = new();
+            LogEvent e = new(Some.OffsetInstant(), LogEventLevel.Information, null,
                 p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
 
             var d = FormatEvent(e);

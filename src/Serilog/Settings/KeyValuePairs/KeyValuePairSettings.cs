@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ namespace Serilog.Settings.KeyValuePairs
             DestructureDirective
         };
 
-        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
+        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new()
         {
             ["audit-to"] = typeof(LoggerAuditSinkConfiguration),
             ["write-to"] = typeof(LoggerSinkConfiguration),
@@ -67,7 +67,7 @@ namespace Serilog.Settings.KeyValuePairs
             ["destructure"] = typeof(LoggerDestructuringConfiguration),
         };
 
-        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new Dictionary<Type, Func<LoggerConfiguration, object>>
+        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new()
         {
             [typeof(LoggerAuditSinkConfiguration)] = lc => lc.AuditTo,
             [typeof(LoggerSinkConfiguration)] = lc => lc.WriteTo,
@@ -128,7 +128,7 @@ namespace Serilog.Settings.KeyValuePairs
                 }
             }
 
-            var matchCallables = new Regex(CallableDirectiveRegex);
+            Regex matchCallables = new(CallableDirectiveRegex);
 
             var callableDirectives = (from wt in directives
                                       where matchCallables.IsMatch(wt.Key)
@@ -169,7 +169,7 @@ namespace Serilog.Settings.KeyValuePairs
 
         static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
         {
-            var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
+            Regex matchLevelSwitchDeclarations = new(LevelSwitchDeclarationDirectiveRegex);
 
             var switchDeclarationDirectives = (from wt in directives
                                                where matchLevelSwitchDeclarations.IsMatch(wt.Key)
@@ -180,7 +180,7 @@ namespace Serilog.Settings.KeyValuePairs
                                                    InitialSwitchLevel = wt.Value
                                                }).ToList();
 
-            var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
+            Dictionary<string, LoggingLevelSwitch> namedSwitches = new();
             foreach (var switchDeclarationDirective in switchDeclarationDirectives)
             {
                 var switchName = switchDeclarationDirective.SwitchName;
@@ -193,12 +193,12 @@ namespace Serilog.Settings.KeyValuePairs
                 LoggingLevelSwitch newSwitch;
                 if (string.IsNullOrEmpty(switchInitialLevel))
                 {
-                    newSwitch = new LoggingLevelSwitch();
+                    newSwitch = new();
                 }
                 else
                 {
                     var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
-                    newSwitch = new LoggingLevelSwitch(initialLevel);
+                    newSwitch = new(initialLevel);
                 }
                 namedSwitches.Add(switchName, newSwitch);
             }
@@ -254,7 +254,7 @@ namespace Serilog.Settings.KeyValuePairs
 
         internal static IEnumerable<Assembly> LoadConfigurationAssemblies(IReadOnlyDictionary<string, string> directives)
         {
-            var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
+            List<Assembly> configurationAssemblies = new() { typeof(ILogger).GetTypeInfo().Assembly };
 
             foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
                                                                  d.Key.StartsWith(UsingDirectiveFullFormPrefix)))

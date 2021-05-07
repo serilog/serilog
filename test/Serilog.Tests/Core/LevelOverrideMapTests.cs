@@ -19,7 +19,7 @@ namespace Serilog.Tests.Core
         [InlineData("Api.Controllers.HomeController", false, LevelAlias.Minimum)]
         public void OverrideScenarios(string context, bool overrideExpected, LogEventLevel expected)
         {
-            var overrides = new Dictionary<string, LoggingLevelSwitch>
+            Dictionary<string, LoggingLevelSwitch> overrides = new()
             {
                 ["MyApp"] = new LoggingLevelSwitch(LogEventLevel.Debug),
                 ["MyApp.Api.Controllers"] = new LoggingLevelSwitch(LogEventLevel.Information),
@@ -27,7 +27,7 @@ namespace Serilog.Tests.Core
                 ["MyApp.Api"] = new LoggingLevelSwitch(LogEventLevel.Error)
             };
 
-            var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
+            LevelOverrideMap lom = new(overrides, LogEventLevel.Fatal, null);
 
             lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
 

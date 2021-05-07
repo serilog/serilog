@@ -30,7 +30,7 @@ namespace Serilog.PerformanceTests
         [GlobalSetup]
         public void Setup()
         {
-            _exception = new Exception("An Error");
+            _exception = new("An Error");
             _log = new LoggerConfiguration()
                 .WriteTo.Sink(new NullSink())
                 .CreateLogger();

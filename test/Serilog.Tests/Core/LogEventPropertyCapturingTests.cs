@@ -1,4 +1,4 @@
-﻿using Serilog.Capturing;
+using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -73,7 +73,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void ProvidingLessParametersThanNamedPropertiesInTheTemplateWorksAndSelfLogs()
         {
-            var selfLogOutput = new List<string>();
+            List<string> selfLogOutput = new();
             SelfLog.Enable(selfLogOutput.Add);
 
             Assert.Equal(new[]
@@ -177,7 +177,7 @@ namespace Serilog.Tests.Core
         static IEnumerable<LogEventProperty> Capture(string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
-            var binder = new PropertyBinder(
+            PropertyBinder binder = new(
                 new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
             return binder.ConstructProperties(mt, properties).Select(p => new LogEventProperty(p.Name, p.Value));
         }

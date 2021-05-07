@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,18 +23,18 @@ namespace Serilog.Tests.Support
 
         public static DateTime Instant() => new DateTime(2012, 10, 28) + TimeSpan();
 
-        public static DateTimeOffset OffsetInstant() => new DateTimeOffset(Instant());
+        public static DateTimeOffset OffsetInstant() => new(Instant());
 
         public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
         {
-            return new LogEvent(timestamp ?? OffsetInstant(), level,
+            return new(timestamp ?? OffsetInstant(), level,
                 null, MessageTemplate(),
-                new List<LogEventProperty> { new LogEventProperty(Constants.SourceContextPropertyName, new ScalarValue(sourceContext)) });
+                new List<LogEventProperty> { new(Constants.SourceContextPropertyName, new ScalarValue(sourceContext)) });
         }
 
         public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
         {
-            return new LogEvent(timestamp ?? OffsetInstant(), level,
+            return new(timestamp ?? OffsetInstant(), level,
                 null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
         }
 
@@ -55,7 +55,7 @@ namespace Serilog.Tests.Support
 
         public static LogEventProperty LogEventProperty()
         {
-            return new LogEventProperty(String(), new ScalarValue(Int()));
+            return new(String(), new ScalarValue(Int()));
         }
 
         public static string NonexistentTempFilePath()

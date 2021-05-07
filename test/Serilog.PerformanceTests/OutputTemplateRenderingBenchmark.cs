@@ -16,7 +16,7 @@ namespace Serilog.PerformanceTests
     {
         const string DefaultFileOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
         static readonly LogEvent HelloWorldEvent = Some.InformationEvent("Hello, {Name}", "World");
-        static readonly MessageTemplateTextFormatter Formatter = new MessageTemplateTextFormatter(DefaultFileOutputTemplate, CultureInfo.InvariantCulture);
+        static readonly MessageTemplateTextFormatter Formatter = new(DefaultFileOutputTemplate, CultureInfo.InvariantCulture);
 
         readonly TextWriter _output = new NullTextWriter();
 

@@ -14,10 +14,10 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void UsesFormatProvider()
         {
-            var french = new CultureInfo("fr-FR");
-            var formatter = new MessageTemplateTextFormatter("{Message}", french);
+            CultureInfo french = new("fr-FR");
+            MessageTemplateTextFormatter formatter = new("{Message}", french);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{0}", 12.345));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("12,345", sw.ToString());
         }
@@ -25,9 +25,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void MessageTemplatesContainingFormatStringPropertiesRenderCorrectly()
         {
-            var formatter = new MessageTemplateTextFormatter("{Message}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Message}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{Message}", "Hello, world!"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("\"Hello, world!\"", sw.ToString());
         }
@@ -35,9 +35,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void UppercaseFormatSpecifierIsSupportedForStrings()
         {
-            var formatter = new MessageTemplateTextFormatter("{Name:u}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Name:u}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("NICK", sw.ToString());
         }
@@ -45,9 +45,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void LowercaseFormatSpecifierIsSupportedForStrings()
         {
-            var formatter = new MessageTemplateTextFormatter("{Name:w}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Name:w}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("nick", sw.ToString());
         }
@@ -104,9 +104,9 @@ namespace Serilog.Tests.Formatting.Display
             int width,
             string expected)
         {
-            var formatter = new MessageTemplateTextFormatter($"{{Level:t{width}}}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new($"{{Level:t{width}}}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Write(level, "Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
@@ -114,9 +114,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void FixedLengthLevelSupportsUpperCasing()
         {
-            var formatter = new MessageTemplateTextFormatter("{Level:u3}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Level:u3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("INF", sw.ToString());
         }
@@ -124,9 +124,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void FixedLengthLevelSupportsLowerCasing()
         {
-            var formatter = new MessageTemplateTextFormatter("{Level:w3}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Level:w3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("inf", sw.ToString());
         }
@@ -134,9 +134,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void DefaultLevelLengthIsFullText()
         {
-            var formatter = new MessageTemplateTextFormatter("{Level}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Level}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("Information", sw.ToString());
         }
@@ -144,9 +144,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void AlignmentAndWidthCanBeCombined()
         {
-            var formatter = new MessageTemplateTextFormatter("{Level,5:w3}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Level,5:w3}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("  inf", sw.ToString());
         }
@@ -185,9 +185,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void AppliesCustomFormatterToEnums()
         {
-            var formatter = new MessageTemplateTextFormatter("{Message}", new SizeFormatter(CultureInfo.InvariantCulture));
+            MessageTemplateTextFormatter formatter = new("{Message}", new SizeFormatter(CultureInfo.InvariantCulture));
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Size {Size}", Size.Large));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("Size Huge", sw.ToString());
         }
@@ -195,9 +195,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void NonMessagePropertiesAreRendered()
         {
-            var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Properties}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {Bar}!", "bar"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("{ Foo: 42 }", sw.ToString());
         }
@@ -205,9 +205,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void NonMessagePositionalPropertiesAreRendered()
         {
-            var formatter = new MessageTemplateTextFormatter("{Properties}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Properties}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).Information("Hello from {0}!", "bar"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("{ Foo: 42 }", sw.ToString());
         }
@@ -215,9 +215,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void DoNotDuplicatePropertiesAlreadyRenderedInOutputTemplate()
         {
-            var formatter = new MessageTemplateTextFormatter("{Foo} {Properties}", CultureInfo.InvariantCulture);
+            MessageTemplateTextFormatter formatter = new("{Foo} {Properties}", CultureInfo.InvariantCulture);
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Foo", 42).ForContext("Bar", 42).Information("Hello from bar!"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal("42 { Bar: 42 }", sw.ToString());
         }
@@ -230,9 +230,9 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":jl", "Hello, World!")]
         public void AppliesLiteralFormattingToMessageStringsWhenSpecified(string format, string expected)
         {
-            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", null);
+            MessageTemplateTextFormatter formatter = new("{Message" + format + "}", null);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello, {Name}!", "World"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
@@ -244,9 +244,9 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":jl", "{\"Name\":\"World\"}")]
         public void AppliesJsonFormattingToMessageStructuresWhenSpecified(string format, string expected)
         {
-            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", null);
+            MessageTemplateTextFormatter formatter = new("{Message" + format + "}", null);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("{@Obj}", new { Name = "World" }));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
@@ -258,9 +258,9 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":jl", "{\"Name\":\"World\"}")]
         public void AppliesJsonFormattingToPropertiesTokenWhenSpecified(string format, string expected)
         {
-            var formatter = new MessageTemplateTextFormatter("{Properties" + format + "}", null);
+            MessageTemplateTextFormatter formatter = new("{Properties" + format + "}", null);
             var evt = DelegatingSink.GetLogEvent(l => l.ForContext("Name", "World").Information("Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }
@@ -268,9 +268,9 @@ namespace Serilog.Tests.Formatting.Display
         [Fact]
         public void AnEmptyPropertiesTokenIsAnEmptyStructureValueWithDefaultFormatting()
         {
-            var formatter = new MessageTemplateTextFormatter("{Properties}", null);
+            MessageTemplateTextFormatter formatter = new("{Properties}", null);
             var evt = DelegatingSink.GetLogEvent(l => l.Information("Hello"));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
 
             var expected = new StructureValue(Enumerable.Empty<LogEventProperty>()).ToString();
@@ -285,10 +285,10 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":l", true)]
         public void FormatProviderWithScalarProperties(string format, bool shouldUseCustomFormatter)
         {
-            var frenchFormatProvider = new CultureInfo("fr-FR");
+            CultureInfo frenchFormatProvider = new("fr-FR");
             var defaultFormatProvider = CultureInfo.InvariantCulture;
 
-            var date = new DateTime(2018, 01, 01);
+            DateTime date = new(2018, 01, 01);
             var number = 12.345;
 
             var expectedFormattedDate = shouldUseCustomFormatter
@@ -298,12 +298,12 @@ namespace Serilog.Tests.Formatting.Display
                 ? number.ToString(frenchFormatProvider)
                 : number.ToString(defaultFormatProvider);
 
-            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", frenchFormatProvider);
+            MessageTemplateTextFormatter formatter = new("{Message" + format + "}", frenchFormatProvider);
             var evt = DelegatingSink.GetLogEvent(l =>
             {
                 l.Information("{MyDate}{MyNumber}", date, number);
             });
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
 
             Assert.Contains(expectedFormattedDate, sw.ToString());
@@ -318,10 +318,10 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(":l", true)]
         public void FormatProviderWithDestructuredProperties(string format, bool shouldUseCustomFormatter)
         {
-            var frenchFormatProvider = new CultureInfo("fr-FR");
+            CultureInfo frenchFormatProvider = new("fr-FR");
             var defaultFormatProvider = CultureInfo.InvariantCulture;
 
-            var date = new DateTime(2018, 01, 01);
+            DateTime date = new(2018, 01, 01);
             var number = 12.345;
 
             var expectedFormattedDate = shouldUseCustomFormatter
@@ -331,7 +331,7 @@ namespace Serilog.Tests.Formatting.Display
                 ? number.ToString(frenchFormatProvider)
                 : number.ToString(defaultFormatProvider);
 
-            var formatter = new MessageTemplateTextFormatter("{Message" + format + "}", frenchFormatProvider);
+            MessageTemplateTextFormatter formatter = new("{Message" + format + "}", frenchFormatProvider);
             var evt = DelegatingSink.GetLogEvent(l =>
             {
                 l.Information("{@Item}", new
@@ -340,7 +340,7 @@ namespace Serilog.Tests.Formatting.Display
                     MyNumber = number
                 });
             });
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
 
             Assert.Contains(expectedFormattedDate, sw.ToString());
@@ -353,10 +353,10 @@ namespace Serilog.Tests.Formatting.Display
         [InlineData(15, ",-5", "15   ")]
         public void PaddingIsApplied(int n, string format, string expected)
         {
-            var formatter = new MessageTemplateTextFormatter("{ThreadId" + format + "}", null);
+            MessageTemplateTextFormatter formatter = new("{ThreadId" + format + "}", null);
             var evt = Some.InformationEvent();
             evt.AddOrUpdateProperty(new LogEventProperty("ThreadId", new ScalarValue(n)));
-            var sw = new StringWriter();
+            StringWriter sw = new();
             formatter.Format(evt, sw);
             Assert.Equal(expected, sw.ToString());
         }

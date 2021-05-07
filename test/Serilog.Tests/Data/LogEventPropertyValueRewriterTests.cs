@@ -27,7 +27,7 @@ namespace Serilog.Tests.Data
         [Fact]
         public void StatePropagatesAndNestedStructuresAreRewritten()
         {
-            var value = new SequenceValue(new[]
+            SequenceValue value = new(new[]
             {
                 new StructureValue(new[]
                 {
@@ -35,7 +35,7 @@ namespace Serilog.Tests.Data
                 })
             });
 
-            var limiter = new LimitingRewriter();
+            LimitingRewriter limiter = new();
             var limited = limiter.LimitStringLength(value, 3);
 
             var seq = limited as SequenceValue;
@@ -56,14 +56,14 @@ namespace Serilog.Tests.Data
         [Fact]
         public void WhenNoRewritingTakesPlaceAllElementsAreUnchanged()
         {
-            var value = new SequenceValue(new[]
+            SequenceValue value = new(new[]
             {
                 new StructureValue(new[]
                 {
                     new LogEventProperty("S", new ScalarValue("abcde"))
                 })
             });
-            var limiter = new LimitingRewriter();
+            LimitingRewriter limiter = new();
             var unchanged = limiter.LimitStringLength(value, 10);
             Assert.Same(value, unchanged);
         }

@@ -18,7 +18,7 @@ namespace Serilog.Tests
         [Fact]
         public void DisposesTheLogger()
         {
-            var disposableLogger = new DisposableLogger();
+            DisposableLogger disposableLogger = new();
             Log.Logger = disposableLogger;
             Log.CloseAndFlush();
             Assert.True(disposableLogger.Disposed);

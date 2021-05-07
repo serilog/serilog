@@ -115,7 +115,7 @@ namespace Serilog.Configuration
         {
             if (transformation == null) throw new ArgumentNullException(nameof(transformation));
 
-            var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
+            ProjectedDestructuringPolicy policy = new(t => t == typeof(TValue),
                                                           o => transformation((TValue)o));
             return With(policy);
         }
@@ -140,7 +140,7 @@ namespace Serilog.Configuration
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
             if (transformation == null) throw new ArgumentNullException(nameof(transformation));
 
-            var policy = new ProjectedDestructuringPolicy(predicate,
+            ProjectedDestructuringPolicy policy = new(predicate,
                                                           o => transformation((TValue)o));
             return With(policy);
         }

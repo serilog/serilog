@@ -10,14 +10,14 @@ namespace Serilog.Tests.Events
         [Fact]
         public void ADictionaryValueRendersAsMappingOfKeysToValues()
         {
-            var dict = new DictionaryValue(new[] {
+            DictionaryValue dict = new(new[] {
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                     new ScalarValue(1), new ScalarValue("hello")),
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(
                     new ScalarValue("world"), new SequenceValue(new [] { new ScalarValue(1.2) }))
             });
 
-            var sw = new StringWriter();
+            StringWriter sw = new();
             dict.Render(sw);
 
             var rendered = sw.ToString();

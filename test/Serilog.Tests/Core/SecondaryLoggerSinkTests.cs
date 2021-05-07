@@ -10,7 +10,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void ModifyingCopiesPassedThroughTheSinkPreservesOriginal()
         {
-            var secondary = new CollectingSink();
+            CollectingSink secondary = new();
             var secondaryLogger = new LoggerConfiguration()
                 .WriteTo.Sink(secondary)
                 .CreateLogger();
@@ -31,7 +31,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void WhenOwnedByCallerSecondaryLoggerIsNotDisposed()
         {
-            var secondary = new DisposeTrackingSink();
+            DisposeTrackingSink secondary = new();
             var secondaryLogger = new LoggerConfiguration()
                 .WriteTo.Sink(secondary)
                 .CreateLogger();
@@ -47,7 +47,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void WhenOwnedByPrimaryLoggerSecondaryIsDisposed()
         {
-            var secondary = new DisposeTrackingSink();
+            DisposeTrackingSink secondary = new();
 
             new LoggerConfiguration()
                 .WriteTo.Logger(lc => lc.WriteTo.Sink(secondary))
@@ -60,7 +60,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void ChildLoggerInheritsParentLevelByDefault()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -76,7 +76,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void ChildLoggerCanOverrideInheritedLevel()
         {
-            var sink = new CollectingSink();
+            CollectingSink sink = new();
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Debug))

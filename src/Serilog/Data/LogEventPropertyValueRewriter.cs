@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serilog Contributors
+// Copyright 2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ namespace Serilog.Data
                     for (var k = i; k < properties.Length; ++k)
                     {
                         var property = structure.Properties[k];
-                        properties[k] = new LogEventProperty(property.Name, Visit(state, property.Value));
+                        properties[k] = new(property.Name, Visit(state, property.Value));
                     }
 
                     return new StructureValue(properties, structure.TypeTag);
@@ -130,7 +130,7 @@ namespace Serilog.Data
             {
                 if (!ReferenceEquals(original.Value, Visit(state, original.Value)))
                 {
-                    var elements = new Dictionary<ScalarValue, LogEventPropertyValue>(dictionary.Elements.Count);
+                    Dictionary<ScalarValue, LogEventPropertyValue> elements = new(dictionary.Elements.Count);
                     foreach (var element in dictionary.Elements)
                     {
                         elements[element.Key] = Visit(state, element.Value);

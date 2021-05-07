@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Serilog.Core;
 using Serilog.Tests.Support;
 using Xunit;
 
@@ -76,7 +77,7 @@ namespace Serilog.Tests.Core
         [Fact]
         public void SinkIsDisposedWhenLoggerDisposed()
         {
-            var tracker = new DisposeTrackingSink();
+            DisposeTrackingSink tracker = new();
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(tracker)
                 .CreateLogger();

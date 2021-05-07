@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Support
+namespace Serilog.Tests.Support
 {
     public interface IAmAnInterface
     {
@@ -14,7 +14,7 @@
         {
         }
 
-        public static ConcreteImpl Instance { get; } = new ConcreteImpl();
+        public static ConcreteImpl Instance { get; } = new();
     }
 
     public class ClassWithStaticAccessors

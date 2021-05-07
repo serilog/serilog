@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Serilog.Events;
 using Xunit;
 using MessageTemplateParser = Serilog.Parsing.MessageTemplateParser;
 
@@ -25,7 +26,7 @@ namespace Serilog.Tests.Core
         {
             // ReSharper disable UnusedMember.Local
             public decimal Sum => 12.345m;
-            public DateTime When => new DateTime(2013, 5, 20, 16, 39, 0);
+            public DateTime When => new(2013, 5, 20, 16, 39, 0);
             // ReSharper restore UnusedMember.Local
             public override string ToString() => "a receipt";
         }
@@ -143,10 +144,10 @@ namespace Serilog.Tests.Core
         static string Render(IFormatProvider formatProvider, string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
-            var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
+            PropertyBinder binder = new(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
             var props = binder.ConstructProperties(mt, properties);
-            var output = new StringBuilder();
-            var writer = new StringWriter(output);
+            StringBuilder output = new();
+            StringWriter writer = new(output);
             mt.Render(props.ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);
             writer.Flush();
             return output.ToString();

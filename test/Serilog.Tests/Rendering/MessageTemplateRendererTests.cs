@@ -10,7 +10,7 @@ namespace Serilog.Tests.Rendering
 {
     public class MessageTemplateRendererTests
     {
-        readonly MessageTemplateParser _messageTemplateParser = new MessageTemplateParser();
+        readonly MessageTemplateParser _messageTemplateParser = new();
 
         [Theory]
         [InlineData("{Number}", null, "16")]
@@ -20,9 +20,9 @@ namespace Serilog.Tests.Rendering
         public void PropertyTokenFormatsAreApplied(string template, string appliedFormat, string expected)
         {
             var eventTemplate = _messageTemplateParser.Parse(template);
-            var properties = new Dictionary<string, LogEventPropertyValue>{["Number"] = new ScalarValue(16)};
+            Dictionary<string, LogEventPropertyValue> properties = new() { ["Number"] = new ScalarValue(16)};
 
-            var output = new StringWriter();
+            StringWriter output = new();
             MessageTemplateRenderer.Render(eventTemplate, properties, output, appliedFormat, CultureInfo.InvariantCulture);
 
             Assert.Equal(expected, output.ToString());

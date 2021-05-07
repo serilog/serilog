@@ -54,7 +54,7 @@ namespace Serilog.Configuration
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            var uniqueSettings = new Dictionary<string, string>();
+            Dictionary<string, string> uniqueSettings = new();
             foreach (var kvp in settings)
             {
                 uniqueSettings[kvp.Key] = kvp.Value;

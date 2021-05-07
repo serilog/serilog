@@ -145,7 +145,7 @@ namespace Serilog.Core
             // It'd be nice to do the destructuring lazily, but unfortunately `value` may be mutated between
             // now and the first log event written.
             var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
-            var enricher = new FixedPropertyEnricher(new EventProperty(propertyName, propertyValue));
+            FixedPropertyEnricher enricher = new(new EventProperty(propertyName, propertyValue));
 
             var minimumLevel = _minimumLevel;
             var levelSwitch = _levelSwitch;
@@ -371,7 +371,7 @@ namespace Serilog.Core
             var logTimestamp = DateTimeOffset.Now;
             _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-            var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
+            LogEvent logEvent = new(logTimestamp, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
         }
 

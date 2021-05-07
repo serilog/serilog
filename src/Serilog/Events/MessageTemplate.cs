@@ -32,7 +32,7 @@ namespace Serilog.Events
         /// <summary>
         /// Represents the empty message template.
         /// </summary>
-        public static MessageTemplate Empty { get; } = new MessageTemplate(Enumerable.Empty<MessageTemplateToken>());
+        public static MessageTemplate Empty { get; } = new(Enumerable.Empty<MessageTemplateToken>());
 
         readonly MessageTemplateToken[] _tokens;
 
@@ -93,7 +93,7 @@ namespace Serilog.Events
         static TResult[] GetElementsOfTypeToArray<TResult>(MessageTemplateToken[] tokens)
             where TResult : class
         {
-            var result = new List<TResult>(tokens.Length / 2);
+            List<TResult> result = new(tokens.Length / 2);
             for (var i = 0; i < tokens.Length; i++)
             {
                 if (tokens[i] is TResult token)
@@ -138,7 +138,7 @@ namespace Serilog.Events
         /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
         public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider formatProvider = null)
         {
-            var writer = new StringWriter(formatProvider);
+            StringWriter writer = new(formatProvider);
             Render(properties, writer, formatProvider);
             return writer.ToString();
         }

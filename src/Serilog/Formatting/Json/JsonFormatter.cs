@@ -443,7 +443,7 @@ namespace Serilog.Formatting.Json
         {
             if (s == null) return null;
 
-            var escapedResult = new StringWriter();
+            StringWriter escapedResult = new();
             JsonValueFormatter.WriteQuotedJsonString(s, escapedResult);
             var quoted = escapedResult.ToString();
             return quoted.Substring(1, quoted.Length - 2);

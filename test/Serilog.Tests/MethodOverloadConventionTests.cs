@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using TestDummies;
 using Xunit;
 using Xunit.Sdk;
 
@@ -263,7 +264,7 @@ namespace Serilog.Tests
 
                 var signatureMatchAndInvokeSuccess = false;
 
-                var report = new StringBuilder();
+                StringBuilder report = new();
 
                 foreach (var testMethod in testMethods)
                 {
@@ -476,7 +477,7 @@ namespace Serilog.Tests
 
             var logger = GetLogger(method.DeclaringType);
 
-            var logEnricher = new TestDummies.DummyThreadIdEnricher();
+            DummyThreadIdEnricher logEnricher = new();
 
             var enrichedLogger = InvokeMethod(method, logger, new object[] { logEnricher });
 
@@ -508,7 +509,7 @@ namespace Serilog.Tests
 
             var logger = GetLogger(method.DeclaringType);
 
-            var logEnricher = new TestDummies.DummyThreadIdEnricher();
+            DummyThreadIdEnricher logEnricher = new();
 
             var enrichedLogger = InvokeMethod(method, logger,
                 new object[] { new ILogEventEnricher[] { logEnricher, logEnricher } });
@@ -689,7 +690,7 @@ namespace Serilog.Tests
 
                 var signatureMatchAndInvokeSuccess = false;
 
-                var report = new StringBuilder();
+                StringBuilder report = new();
 
                 foreach (var testMethod in testMethods)
                 {
@@ -876,7 +877,7 @@ namespace Serilog.Tests
             {
                 level = LogEventLevel.Information;
 
-                var paramList = new List<object> { level };
+                List<object> paramList = new() { level };
 
                 paramList.AddRange(parameters);
 
@@ -1033,7 +1034,7 @@ namespace Serilog.Tests
 
             if (loggerType == typeof(Logger) || loggerType == typeof(ILogger))
             {
-                sink = new CollectingSink();
+                sink = new();
 
                 return new LoggerConfiguration()
                     .MinimumLevel.Is(level)
@@ -1043,7 +1044,7 @@ namespace Serilog.Tests
 
             if (loggerType == typeof(Log))
             {
-                sink = new CollectingSink();
+                sink = new();
 
                 Log.CloseAndFlush();
 

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ namespace Serilog.Capturing
                 var storedDepth = _currentDepth;
 
                 var result = DefaultIfMaximumDepth(storedDepth) ??
-                    _propertyValueConverter.CreatePropertyValue(value, destructuring, storedDepth + 1);
+                             _propertyValueConverter.CreatePropertyValue(value, destructuring, storedDepth + 1);
 
                 _currentDepth = storedDepth;
 
@@ -59,7 +59,7 @@ namespace Serilog.Capturing
                 var storedDepth = _currentDepth;
 
                 var result = DefaultIfMaximumDepth(storedDepth) ??
-                    _propertyValueConverter.CreatePropertyValue(value, destructureObjects, storedDepth + 1);
+                             _propertyValueConverter.CreatePropertyValue(value, destructureObjects, storedDepth + 1);
 
                 _currentDepth = storedDepth;
 

@@ -13,7 +13,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             public string Format(object literal)
             {
-                var output = new StringWriter();
+                StringWriter output = new();
                 FormatLiteralValue(literal, output);
                 return output.ToString();
             }
@@ -41,7 +41,7 @@ namespace Serilog.Tests.Formatting.Json
         [InlineData(null, "null")]
         public void JsonLiteralTypesAreFormatted(object value, string expectedJson)
         {
-            var formatter = new JsonLiteralValueFormatter();
+            JsonLiteralValueFormatter formatter = new();
             Assert.Equal(expectedJson, formatter.Format(value));
         }
 
@@ -132,8 +132,8 @@ namespace Serilog.Tests.Formatting.Json
 
         static string Format(LogEventPropertyValue value)
         {
-            var formatter = new JsonValueFormatter();
-            var output = new StringWriter();
+            JsonValueFormatter formatter = new();
+            StringWriter output = new();
             formatter.Format(value, output);
             return output.ToString();
         }
@@ -155,7 +155,7 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void StructuresFormatAsAnObject()
         {
-            var structure = new StructureValue(new[] { new LogEventProperty("A", new ScalarValue(123)) }, "T");
+            StructureValue structure = new(new[] { new LogEventProperty("A", new ScalarValue(123)) }, "T");
             var f = Format(structure);
             Assert.Equal("{\"A\":123,\"_typeTag\":\"T\"}", f);
         }
@@ -163,7 +163,7 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void DictionaryWithScalarKeyFormatsAsAnObject()
         {
-            var dict = new DictionaryValue(new Dictionary<ScalarValue, LogEventPropertyValue> {
+            DictionaryValue dict = new(new Dictionary<ScalarValue, LogEventPropertyValue> {
                 { new ScalarValue(12), new ScalarValue(345) }
             });
 
@@ -174,7 +174,7 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void SequencesOfSequencesAreFormatted()
         {
-            var s = new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) });
+            SequenceValue s = new(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) });
 
             var f = Format(s);
             Assert.Equal("[[\"Hello\"]]", f);
@@ -183,9 +183,9 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void TypeTagCanBeOverridden()
         {
-            var structure = new StructureValue(new LogEventProperty[0], "T");
-            var formatter = new JsonValueFormatter("$type");
-            var output = new StringWriter();
+            StructureValue structure = new(new LogEventProperty[0], "T");
+            JsonValueFormatter formatter = new("$type");
+            StringWriter output = new();
             formatter.Format(structure, output);
             var f = output.ToString();
             Assert.Equal("{\"$type\":\"T\"}", f);
@@ -194,9 +194,9 @@ namespace Serilog.Tests.Formatting.Json
         [Fact]
         public void WhenNullNoTypeTagIsWritten()
         {
-            var structure = new StructureValue(new LogEventProperty[0], "T");
-            var formatter = new JsonValueFormatter(null);
-            var output = new StringWriter();
+            StructureValue structure = new(new LogEventProperty[0], "T");
+            JsonValueFormatter formatter = new(null);
+            StringWriter output = new();
             formatter.Format(structure, output);
             var f = output.ToString();
             Assert.Equal("{}", f);
