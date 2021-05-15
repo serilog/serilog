@@ -14,7 +14,7 @@
         {
         }
 
-        public static ConcreteImpl Instance { get; } = new ConcreteImpl();
+        public static ConcreteImpl Instance { get; } = new();
     }
 
     public class ClassWithStaticAccessors

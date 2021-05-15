@@ -1,6 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using System.Globalization;
-using System.IO;
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.PerformanceTests.Support;
@@ -16,9 +15,9 @@ namespace Serilog.PerformanceTests
     {
         const string DefaultFileOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";
         static readonly LogEvent HelloWorldEvent = Some.InformationEvent("Hello, {Name}", "World");
-        static readonly MessageTemplateTextFormatter Formatter = new MessageTemplateTextFormatter(DefaultFileOutputTemplate, CultureInfo.InvariantCulture);
+        static readonly MessageTemplateTextFormatter Formatter = new(DefaultFileOutputTemplate, CultureInfo.InvariantCulture);
 
-        readonly TextWriter _output = new NullTextWriter();
+        readonly NullTextWriter _output = new();
 
         [Benchmark]
         public void FormatToOutput()

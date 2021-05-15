@@ -27,7 +27,7 @@ namespace Serilog.Configuration
 
         internal LoggerAuditSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
         {
-            _sinkConfiguration = new LoggerSinkConfiguration(loggerConfiguration, addSink);
+            _sinkConfiguration = new(loggerConfiguration, addSink);
         }
 
         /// <summary>

@@ -7,9 +7,9 @@ namespace Serilog.PerformanceTests.Support
 {
     class NoOpMessageTemplateParser : IMessageTemplateParser
     {
-        public static readonly NoOpMessageTemplateParser Instance = new NoOpMessageTemplateParser();
+        public static readonly NoOpMessageTemplateParser Instance = new();
 
-        static readonly MessageTemplate ConstTemplate = new MessageTemplate("text", Enumerable.Empty<MessageTemplateToken>());
+        static readonly MessageTemplate ConstTemplate = new("text", Enumerable.Empty<MessageTemplateToken>());
 
         public MessageTemplate Parse(string messageTemplate) => ConstTemplate;
     }

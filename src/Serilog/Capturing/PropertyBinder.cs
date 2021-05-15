@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,14 +114,14 @@ namespace Serilog.Capturing
             for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)
             {
                 var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
-                result[i] = new EventProperty("__" + i, value);
+                result[i] = new("__" + i, value);
             }
             return result;
         }
 
         EventProperty ConstructProperty(PropertyToken propertyToken, object value)
         {
-            return new EventProperty(
+            return new(
                         propertyToken.PropertyName,
                         _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring));
         }

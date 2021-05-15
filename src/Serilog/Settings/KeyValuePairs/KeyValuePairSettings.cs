@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ namespace Serilog.Settings.KeyValuePairs
             DestructureDirective
         };
 
-        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
+        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new()
         {
             ["audit-to"] = typeof(LoggerAuditSinkConfiguration),
             ["write-to"] = typeof(LoggerSinkConfiguration),
@@ -67,7 +67,7 @@ namespace Serilog.Settings.KeyValuePairs
             ["destructure"] = typeof(LoggerDestructuringConfiguration),
         };
 
-        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new Dictionary<Type, Func<LoggerConfiguration, object>>
+        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new()
         {
             [typeof(LoggerAuditSinkConfiguration)] = lc => lc.AuditTo,
             [typeof(LoggerSinkConfiguration)] = lc => lc.WriteTo,
@@ -193,12 +193,12 @@ namespace Serilog.Settings.KeyValuePairs
                 LoggingLevelSwitch newSwitch;
                 if (string.IsNullOrEmpty(switchInitialLevel))
                 {
-                    newSwitch = new LoggingLevelSwitch();
+                    newSwitch = new();
                 }
                 else
                 {
                     var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
-                    newSwitch = new LoggingLevelSwitch(initialLevel);
+                    newSwitch = new(initialLevel);
                 }
                 namedSwitches.Add(switchName, newSwitch);
             }

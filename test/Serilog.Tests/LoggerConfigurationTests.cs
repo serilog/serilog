@@ -400,7 +400,7 @@ namespace Serilog.Tests
 
             public override string ToString()
             {
-                return new string('#', _toStringOfLength);
+                return new('#', _toStringOfLength);
             }
         }
 

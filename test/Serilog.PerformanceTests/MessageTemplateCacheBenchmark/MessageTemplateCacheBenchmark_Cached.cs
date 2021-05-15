@@ -30,9 +30,9 @@ namespace Serilog.PerformanceTests
         {
             _templateList = Enumerable.Range(0, Items).Select(_ => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
 
-            _concurrentCache = new ConcurrentDictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance);
-            _dictionaryCache = new DictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance);
-            _hashtableCache = new MessageTemplateCache(NoOpMessageTemplateParser.Instance);
+            _concurrentCache = new(NoOpMessageTemplateParser.Instance);
+            _dictionaryCache = new(NoOpMessageTemplateParser.Instance);
+            _hashtableCache = new(NoOpMessageTemplateParser.Instance);
 
             foreach (var t in _templateList)
             {

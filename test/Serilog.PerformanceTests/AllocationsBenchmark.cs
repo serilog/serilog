@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -24,11 +24,11 @@ namespace Serilog.PerformanceTests
 
             _enrichedLogger = _logger.ForContext(new PropertyEnricher("Prop", "Value"));
 
-            _emptyEvent = new LogEvent(
+            _emptyEvent = new(
                 DateTimeOffset.Now,
                 LogEventLevel.Information,
                 null,
-                new MessageTemplate(Enumerable.Empty<MessageTemplateToken>()),
+                new(Enumerable.Empty<MessageTemplateToken>()),
                 Enumerable.Empty<LogEventProperty>());
 
             _anonymousObject = new
