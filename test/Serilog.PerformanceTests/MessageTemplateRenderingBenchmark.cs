@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using System.IO;
+using BenchmarkDotNet.Attributes;
 using Serilog.Events;
 using Serilog.PerformanceTests.Support;
 
@@ -18,7 +17,7 @@ namespace Serilog.PerformanceTests
             Some.InformationEvent("Processed {@Position} for {Task} in {Elapsed:000} ms",
                 new { Latitude = 25, Longitude = 134 }, "Benchmark", 34);
 
-        readonly TextWriter _output = new NullTextWriter();
+        readonly NullTextWriter _output = new();
 
         [Benchmark]
         public void TemplateWithNoProperties()

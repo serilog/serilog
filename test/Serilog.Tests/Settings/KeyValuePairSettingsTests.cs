@@ -24,9 +24,9 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>("enrich:with-property:App", "InitialValue"),
-                    new KeyValuePair<string, string>("enrich:with-property:App", "OverridenValue"),
-                    new KeyValuePair<string, string>("enrich:with-property:App", "FinalValue")
+                    new("enrich:with-property:App", "InitialValue"),
+                    new("enrich:with-property:App", "OverridenValue"),
+                    new("enrich:with-property:App", "FinalValue")
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();

@@ -42,7 +42,7 @@ namespace Serilog.Core.Sinks
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                    exceptions ??= new List<Exception>();
+                    exceptions ??= new();
                     exceptions.Add(ex);
                 }
             }

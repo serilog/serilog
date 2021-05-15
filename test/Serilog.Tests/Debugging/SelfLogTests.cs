@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Serilog.Debugging;
 using Xunit;
@@ -13,10 +13,10 @@ namespace Serilog.Tests.Debugging
         [Fact]
         public void MessagesAreWrittenWhenOutputIsSet()
         {
-            Messages = new List<string>();
+            Messages = new();
             SelfLog.Enable(m =>
             {
-                Messages = Messages ?? new List<string>();
+                Messages = Messages ?? new();
                 Messages.Add(m);
             });
 
