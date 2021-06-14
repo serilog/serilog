@@ -1,4 +1,4 @@
-using Serilog.Context;
+﻿using Serilog.Context;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Serilog.Tests.Support;
@@ -13,6 +13,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
 using Xunit;
+using System.Security;
+using System.Security.Permissions;
 
 namespace Serilog.Tests.Context
 {
@@ -295,13 +297,17 @@ namespace Serilog.Tests.Context
                 (_, e) => remotingException = e.Exception is RemotingException re ? re : remotingException;
 
             var logger = new LoggerConfiguration().Enrich.FromLogContext().CreateLogger();
-            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
+
+            // Set the minimum permissions needed to run code in the new AppDomain
+            var permSet = new PermissionSet(PermissionState.None);
+            permSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
+            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation, permSet);
 
             try
             {
                 using (LogContext.PushProperty("Prop", 42))
                 {
-                    remote.DoCallBack(CallFromRemote);
+                    remote.DoCallBack(RemoteCallbackHelpers.Sleep);
 #pragma warning disable Serilog003
                     logger.Information("Prop = {Prop}");
 #pragma warning restore Serilog003
@@ -313,8 +319,6 @@ namespace Serilog.Tests.Context
             }
 
             Assert.Null(remotingException);
-
-            static void CallFromRemote() => Thread.Sleep(200);
         }
 
         [Fact]
@@ -323,17 +327,20 @@ namespace Serilog.Tests.Context
             var tracker = new InMemoryRemoteObjectTracker();
             TrackingServices.RegisterTrackingHandler(tracker);
 
-            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
+            // Set the minimum permissions needed to run code in the new AppDomain
+            var permSet = new PermissionSet(PermissionState.None);
+            permSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
+            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation, permSet);
 
             try
             {
                 using (LogContext.PushProperty("Prop1", 42))
                 {
-                    remote.DoCallBack(CallFromRemote);
+                    remote.DoCallBack(RemoteCallbackHelpers.DoNothing);
 
                     using (LogContext.PushProperty("Prop2", 24))
                     {
-                        remote.DoCallBack(CallFromRemote);
+                        remote.DoCallBack(RemoteCallbackHelpers.DoNothing);
                     }
                 }
             }
@@ -347,8 +354,6 @@ namespace Serilog.Tests.Context
             // This is intermittently 2 or 3 (now, 4), depending on the moods of the test runner;
             // I think "at least two" is what we're concerned about, here.
             Assert.InRange(tracker.DisconnectCount, 2, 4);
-
-            static void CallFromRemote() { }
         }
 #endif
 
@@ -401,6 +406,17 @@ namespace Serilog.Tests.Context
 
             return 42.Equals(lastEvent.Properties["Number"].LiteralValue());
         }
+    }
+
+    // Organize static callback methods into a publicly accessible type and publicly accessible
+    // methods so that the new sandbox AppDomain does not need special Reflection permissions
+    public static class RemoteCallbackHelpers
+    {
+        public static void DoNothing()
+        {
+        }
+
+        public static void Sleep() => Thread.Sleep(200);
     }
 #endif
 
