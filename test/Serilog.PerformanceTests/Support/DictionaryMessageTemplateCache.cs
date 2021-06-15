@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
@@ -27,7 +27,7 @@ namespace Serilog.PerformanceTests.Support
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);
 
-            MessageTemplate result;
+            MessageTemplate? result;
             lock (_templatesLock)
                 if (_templates.TryGetValue(messageTemplate, out result))
                     return result;

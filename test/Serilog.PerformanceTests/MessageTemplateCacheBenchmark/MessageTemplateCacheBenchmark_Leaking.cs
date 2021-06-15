@@ -14,7 +14,7 @@ namespace Serilog.PerformanceTests
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
         const int MaxCacheItems = 1000;
 
-        List<string> _templateList;
+        List<string> _templateList = null!;
 
         [Params(10000)]
         public int Items { get; set; }
