@@ -13,11 +13,11 @@ namespace Serilog.PerformanceTests
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
-        List<string> _templateList;
+        List<string> _templateList = null!;
 
-        ConcurrentDictionaryMessageTemplateCache _concurrentCache;
-        DictionaryMessageTemplateCache _dictionaryCache;
-        MessageTemplateCache _hashtableCache;
+        ConcurrentDictionaryMessageTemplateCache _concurrentCache = null!;
+        DictionaryMessageTemplateCache _dictionaryCache = null!;
+        MessageTemplateCache _hashtableCache = null!;
 
         [Params(10, 20, 50, 100, 1000)]
         public int Items { get; set; }

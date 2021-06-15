@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 
 namespace Serilog.PerformanceTests.Support
@@ -15,7 +15,7 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override void Write(char[] buffer)
+        public override void Write(char[]? buffer)
         {
         }
 
@@ -39,7 +39,7 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override void Write(object value)
+        public override void Write(object? value)
         {
         }
 
@@ -47,23 +47,23 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override void Write(string value)
+        public override void Write(string? value)
         {
         }
 
-        public override void Write(string format, object arg0)
+        public override void Write(string format, object? arg0)
         {
         }
 
-        public override void Write(string format, object arg0, object arg1)
+        public override void Write(string format, object? arg0, object? arg1)
         {
         }
 
-        public override void Write(string format, object arg0, object arg1, object arg2)
+        public override void Write(string format, object? arg0, object? arg1, object? arg2)
         {
         }
 
-        public override void Write(string format, params object[] arg)
+        public override void Write(string format, params object?[] arg)
         {
         }
 
@@ -93,7 +93,7 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override void WriteLine(char[] buffer)
+        public override void WriteLine(char[]? buffer)
         {
         }
 
@@ -117,7 +117,7 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override void WriteLine(object value)
+        public override void WriteLine(object? value)
         {
         }
 
@@ -125,23 +125,23 @@ namespace Serilog.PerformanceTests.Support
         {
         }
 
-        public override void WriteLine(string value)
+        public override void WriteLine(string? value)
         {
         }
 
-        public override void WriteLine(string format, object arg0)
+        public override void WriteLine(string format, object? arg0)
         {
         }
 
-        public override void WriteLine(string format, object arg0, object arg1)
+        public override void WriteLine(string format, object? arg0, object? arg1)
         {
         }
 
-        public override void WriteLine(string format, object arg0, object arg1, object arg2)
+        public override void WriteLine(string format, object? arg0, object? arg1, object? arg2)
         {
         }
 
-        public override void WriteLine(string format, params object[] arg)
+        public override void WriteLine(string format, params object?[] arg)
         {
         }
 
