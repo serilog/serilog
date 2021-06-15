@@ -1,3 +1,4 @@
+#nullable enable
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;
@@ -71,8 +72,8 @@ namespace Serilog.Tests
                     (OpCodes.Ldsfld, OpCodes.Ldsfld)
                 }.ToLookup(x => x.Item1.Value, el => el.Item2.Value);
 
-                var ifaceBytes = ifaceMethod.GetMethodBody().GetILAsByteArray().AsSpan();
-                var classBytes = classMethod.GetMethodBody().GetILAsByteArray().AsSpan();
+                var ifaceBytes = ifaceMethod.GetMethodBody()!.GetILAsByteArray().AsSpan();
+                var classBytes = classMethod.GetMethodBody()!.GetILAsByteArray().AsSpan();
 
                 while (ifaceBytes[0] == OpCodes.Nop.Value)
                 {
@@ -305,13 +306,13 @@ namespace Serilog.Tests
             var method = loggerType.GetMethod("BindMessageTemplate");
 
             Assert.NotNull(method);
-            Assert.Equal(typeof(bool), method.ReturnType);
+            Assert.Equal(typeof(bool), method!.ReturnType);
             Assert.True(method.IsPublic);
 
             var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
             Assert.NotNull(messageTemplateAttr);
-            Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, MessageTemplate);
+            Assert.Equal(messageTemplateAttr!.MessageTemplateParameterName, MessageTemplate);
 
             var parameters = method.GetParameters();
             var index = 0;
@@ -335,7 +336,7 @@ namespace Serilog.Tests
 
             var logger = GetLogger(loggerType);
 
-            var args = new object[]
+            var args = new object?[]
             {
                 "Processed {value0}, {value1}", new object[] { "value0", "value1" }, null, null
             };
@@ -351,7 +352,7 @@ namespace Serilog.Tests
             Assert.True(result as bool?);
 
             //test null arg path
-            var falseResult = InvokeMethod(method, logger, new object[] { null, null, null, null });
+            var falseResult = InvokeMethod(method, logger, new object?[] { null, null, null, null });
 
             Assert.IsType<bool>(falseResult);
             Assert.False(falseResult as bool?);
@@ -367,7 +368,7 @@ namespace Serilog.Tests
             var method = loggerType.GetMethod("BindProperty");
 
             Assert.NotNull(method);
-            Assert.Equal(typeof(bool), method.ReturnType);
+            Assert.Equal(typeof(bool), method!.ReturnType);
             Assert.True(method.IsPublic);
 
             var parameters = method.GetParameters();
@@ -391,7 +392,7 @@ namespace Serilog.Tests
 
             var logger = GetLogger(loggerType);
 
-            var args = new object[]
+            var args = new object?[]
             {
                 "SomeString", "someString", false, null
             };
@@ -407,7 +408,7 @@ namespace Serilog.Tests
             Assert.True(result as bool?);
 
             //test null arg path/ invalid property name
-            var falseResult = InvokeMethod(method, logger, new object[] { " ", null, false, null });
+            var falseResult = InvokeMethod(method, logger, new object?[] { " ", null, false, null });
 
             Assert.IsType<bool>(falseResult);
             Assert.False(falseResult as bool?);
@@ -423,7 +424,7 @@ namespace Serilog.Tests
             var method = loggerType.GetMethod("IsEnabled");
 
             Assert.NotNull(method);
-            Assert.True(method.IsPublic);
+            Assert.True(method!.IsPublic);
             Assert.Equal(typeof(bool), method.ReturnType);
 
             var parameters = method.GetParameters();
@@ -474,7 +475,7 @@ namespace Serilog.Tests
                 throw;
             }
 
-            var logger = GetLogger(method.DeclaringType);
+            var logger = GetLogger(method.DeclaringType!);
 
             var logEnricher = new TestDummies.DummyThreadIdEnricher();
 
@@ -506,7 +507,7 @@ namespace Serilog.Tests
                 throw;
             }
 
-            var logger = GetLogger(method.DeclaringType);
+            var logger = GetLogger(method.DeclaringType!);
 
             var logEnricher = new TestDummies.DummyThreadIdEnricher();
 
@@ -545,7 +546,7 @@ namespace Serilog.Tests
                 throw;
             }
 
-            var logger = GetLogger(method.DeclaringType);
+            var logger = GetLogger(method.DeclaringType!);
 
             var propertyName = "SomeString";
             var propertyValue = "someString";
@@ -562,7 +563,7 @@ namespace Serilog.Tests
             Assert.NotSame(logger, enrichedLogger);
 
             //invalid args path
-            var sameLogger = InvokeMethod(method, logger, new object[] { null, null, false });
+            var sameLogger = InvokeMethod(method, logger, new object?[] { null, null, false });
 
             Assert.NotNull(sameLogger);
             Assert.True(sameLogger is ILogger);
@@ -595,7 +596,7 @@ namespace Serilog.Tests
                 throw;
             }
 
-            var logger = GetLogger(method.DeclaringType);
+            var logger = GetLogger(method.DeclaringType!);
 
             var enrichedLogger = InvokeMethod(method, logger, null, new[] { typeof(object) });
 
@@ -624,7 +625,7 @@ namespace Serilog.Tests
                 throw;
             }
 
-            var logger = GetLogger(method.DeclaringType);
+            var logger = GetLogger(method.DeclaringType!);
 
             var enrichedLogger = InvokeMethod(method, logger, new object[] { typeof(object) });
 
@@ -632,7 +633,7 @@ namespace Serilog.Tests
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        static void TestForContextResult(MethodInfo method, ILogger logger, object normalResult)
+        static void TestForContextResult(MethodInfo method, ILogger? logger, object normalResult)
         {
             Assert.NotNull(normalResult);
             Assert.True(normalResult is ILogger);
@@ -643,7 +644,7 @@ namespace Serilog.Tests
             Assert.NotSame(logger, normalResult);
 
             //if invoked with null args it should return the same instance
-            var sameLogger = InvokeMethod(method, logger, new object[] { null });
+            var sameLogger = InvokeMethod(method, logger, new object?[] { null });
 
             Assert.NotNull(sameLogger);
 
@@ -684,7 +685,7 @@ namespace Serilog.Tests
                     var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
                     Assert.NotNull(messageTemplateAttr);
-                    Assert.Equal(messageTemplateAttr.MessageTemplateParameterName, MessageTemplate);
+                    Assert.Equal(messageTemplateAttr!.MessageTemplateParameterName, MessageTemplate);
                 }
 
                 var signatureMatchAndInvokeSuccess = false;
@@ -729,7 +730,7 @@ namespace Serilog.Tests
         }
 
         // Method0 (string messageTemplate) : void
-        void ValidateMethod0(MethodInfo method, Action<MethodInfo, Type[], object[]> invokeMethod)
+        void ValidateMethod0(MethodInfo method, Action<MethodInfo, Type[]?, object[]> invokeMethod)
         {
             VerifyMethodSignature(method);
 
@@ -781,7 +782,7 @@ namespace Serilog.Tests
         }
 
         // Method4 (string messageTemplate, params object[] propertyValues) : void
-        void ValidateMethod4(MethodInfo method, Action<MethodInfo, Type[], object[]> invokeMethod)
+        void ValidateMethod4(MethodInfo method, Action<MethodInfo, Type[]?, object[]> invokeMethod)
         {
             VerifyMethodSignature(method, expectedArgCount: 2);
 
@@ -794,7 +795,7 @@ namespace Serilog.Tests
         }
 
         // Method5 (Exception exception, string messageTemplate) : void
-        void ValidateMethod5(MethodInfo method, Action<MethodInfo, Type[], object[]> invokeMethod)
+        void ValidateMethod5(MethodInfo method, Action<MethodInfo, Type[]?, object[]> invokeMethod)
         {
             VerifyMethodSignature(method, hasExceptionArg: true, expectedArgCount: 2);
 
@@ -849,7 +850,7 @@ namespace Serilog.Tests
         }
 
         // Method9 (Exception exception, string messageTemplate, params object[] propertyValues) : void
-        void ValidateMethod9(MethodInfo method, Action<MethodInfo, Type[], object[]> invokeMethod)
+        void ValidateMethod9(MethodInfo method, Action<MethodInfo, Type[]?, object[]> invokeMethod)
         {
             VerifyMethodSignature(method, hasExceptionArg: true, expectedArgCount: 3);
 
@@ -868,9 +869,9 @@ namespace Serilog.Tests
             Type[] typeArgs,
             object[] parameters,
             out LogEventLevel level,
-            out CollectingSink sink)
+            out CollectingSink? sink)
         {
-            var logger = GetLogger(method.DeclaringType, out sink);
+            var logger = GetLogger(method.DeclaringType!, out sink);
 
             if (method.Name == Write)
             {
@@ -996,27 +997,28 @@ namespace Serilog.Tests
 
         static object InvokeMethod(
             MethodInfo method,
-            ILogger instance,
-            object[] parameters,
-            Type[] typeArgs = null)
+            ILogger? instance,
+            object?[]? parameters,
+            Type[]? typeArgs = null)
         {
             if (method.IsStatic)
             {
                 if (method.IsGenericMethod)
-                    return method.MakeGenericMethod(typeArgs).Invoke(null, parameters);
+                    return method.MakeGenericMethod(typeArgs!).Invoke(null, parameters)!;
 
-                return method.Invoke(null, parameters);
+                return method.Invoke(null, parameters)!;
             }
 
             if (method.IsGenericMethod)
-                return method.MakeGenericMethod(typeArgs).Invoke(instance, parameters);
+                return method.MakeGenericMethod(typeArgs!).Invoke(instance, parameters)!;
 
-            return method.Invoke(instance, parameters);
+            return method.Invoke(instance, parameters)!;
         }
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        static void EvaluateSingleResult(LogEventLevel level, CollectingSink results)
+        static void EvaluateSingleResult(LogEventLevel level, CollectingSink? results)
         {
+            if (results == null) throw new ArgumentNullException(nameof(results), $"Invalid test state. {nameof(results)} should have a value here.");
             //evaluate single log event
             Assert.Single(results.Events);
 
@@ -1025,9 +1027,9 @@ namespace Serilog.Tests
             Assert.Equal(level, evt.Level);
         }
 
-        static ILogger GetLogger(Type loggerType) => GetLogger(loggerType, out _);
+        static ILogger? GetLogger(Type loggerType) => GetLogger(loggerType, out _);
 
-        static ILogger GetLogger(Type loggerType, out CollectingSink sink, LogEventLevel level = LogEventLevel.Verbose)
+        static ILogger? GetLogger(Type loggerType, out CollectingSink? sink, LogEventLevel level = LogEventLevel.Verbose)
         {
             sink = null;
 
