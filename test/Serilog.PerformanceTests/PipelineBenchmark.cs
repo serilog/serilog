@@ -24,8 +24,8 @@ namespace Serilog.PerformanceTests
     [MemoryDiagnoser]
     public class PipelineBenchmark
     {
-        ILogger _log;
-        Exception _exception;
+        ILogger _log = null!;
+        Exception _exception = null!;
 
         [GlobalSetup]
         public void Setup()

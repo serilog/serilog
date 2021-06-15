@@ -10,7 +10,7 @@ namespace Serilog.PerformanceTests
     /// </summary>
     public class LevelControlBenchmark
     {
-        ILogger _off, _levelSwitchOff, _minLevel, _levelSwitch;
+        ILogger _off = null!, _levelSwitchOff = null!, _minLevel = null!, _levelSwitch = null!;
         readonly LogEvent _event = Some.InformationEvent();
 
         [GlobalSetup]
