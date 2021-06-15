@@ -1,5 +1,6 @@
-﻿#if FEATURE_DEFAULT_INTERFACE
+#if FEATURE_DEFAULT_INTERFACE
 
+#nullable enable
 using System;
 using Serilog.Events;
 
@@ -18,7 +19,7 @@ namespace Serilog.Tests.Support
 
         public void Dispose() => Disposed = true;
 
-        public void Write(LogEvent logEvent) => _inner.Write(logEvent);
+        public void Write(LogEvent? logEvent) => _inner.Write(logEvent);
     }
 }
 
