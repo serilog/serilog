@@ -9,7 +9,7 @@ namespace Serilog.PerformanceTests
     [MemoryDiagnoser]
     public class MessageTemplateParsingBenchmark
     {
-        MessageTemplateParser _parser;
+        MessageTemplateParser _parser = null!;
         const string _DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
         [GlobalSetup]

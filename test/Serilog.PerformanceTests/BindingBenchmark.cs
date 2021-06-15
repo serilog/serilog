@@ -30,8 +30,8 @@ namespace Serilog.PerformanceTests
             MT1 = "Zero{A}one",
             MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
 
-        ILogger _log;
-        object[] _zero, _one, _five;
+        ILogger _log = null!;
+        object[] _zero= null!, _one= null!, _five = null!;
 
         [GlobalSetup]
         public void Setup()
