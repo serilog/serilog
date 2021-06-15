@@ -19,7 +19,7 @@ namespace Serilog.Tests.Support
 
         public void Dispose() => Disposed = true;
 
-        public void Write(LogEvent? logEvent) => _inner.Write(logEvent);
+        public void Write(LogEvent logEvent) => _inner.Write(logEvent);
     }
 }
 
