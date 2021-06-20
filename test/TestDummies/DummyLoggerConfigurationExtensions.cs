@@ -20,8 +20,8 @@ namespace TestDummies
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = null,
-            IFormatProvider formatProvider = null)
+            string? outputTemplate = null,
+            IFormatProvider? formatProvider = null)
         {
             return loggerSinkConfiguration.Sink(new DummyRollingFileSink(), restrictedToMinimumLevel);
         }
@@ -45,7 +45,7 @@ namespace TestDummies
         public static LoggerConfiguration DummyWithLevelSwitch(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch controlLevelSwitch = null)
+            LoggingLevelSwitch? controlLevelSwitch = null)
         {
             return loggerSinkConfiguration.Sink(new DummyWithLevelSwitchSink(controlLevelSwitch), restrictedToMinimumLevel);
         }
@@ -53,7 +53,7 @@ namespace TestDummies
         public static LoggerConfiguration DummyConsole(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            ConsoleTheme theme = null)
+            ConsoleTheme? theme = null)
         {
             return loggerSinkConfiguration.Sink(new DummyConsoleSink(theme), restrictedToMinimumLevel);
         }
