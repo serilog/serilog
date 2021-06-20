@@ -28,7 +28,7 @@ namespace Serilog.Core.Pipeline
         {
         }
 
-        public ILogger ForContext(ILogEventEnricher? enricher) => this;
+        public ILogger ForContext(ILogEventEnricher enricher) => this;
 
         public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers) => this;
 

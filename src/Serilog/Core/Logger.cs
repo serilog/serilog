@@ -100,7 +100,7 @@ namespace Serilog.Core
         /// </summary>
         /// <param name="enricher">Enricher that applies in the context.</param>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public ILogger ForContext(ILogEventEnricher? enricher)
+        public ILogger ForContext(ILogEventEnricher enricher)
         {
             if (enricher == null)
                 return this; // No context here, so little point writing to SelfLog.

@@ -51,7 +51,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        ILogger ForContext(ILogEventEnricher? enricher)
+        ILogger ForContext(ILogEventEnricher enricher)
 #if FEATURE_DEFAULT_INTERFACE
             => new LoggerConfiguration()
                 .MinimumLevel.Is(LevelAlias.Minimum)

@@ -16,7 +16,7 @@ namespace Serilog.Tests.Support
             Disposed = true;
         }
 
-        public ILogger ForContext(ILogEventEnricher? enricher)
+        public ILogger ForContext(ILogEventEnricher enricher)
         {
             throw new NotImplementedException();
         }
