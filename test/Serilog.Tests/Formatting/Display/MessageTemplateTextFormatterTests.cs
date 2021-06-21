@@ -183,7 +183,7 @@ namespace Serilog.Tests.Formatting.Display
                 if (arg is IFormattable formattable)
                     return formattable.ToString(format, _innerFormatProvider);
 
-                return arg.ToString();
+                return arg.ToString()!;
             }
         }
 
