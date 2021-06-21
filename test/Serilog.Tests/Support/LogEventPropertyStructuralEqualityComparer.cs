@@ -8,13 +8,13 @@ namespace Serilog.Tests.Support
         readonly IEqualityComparer<LogEventPropertyValue> _valueEqualityComparer;
 
         public LogEventPropertyStructuralEqualityComparer(
-            IEqualityComparer<LogEventPropertyValue> valueEqualityComparer = null)
+            IEqualityComparer<LogEventPropertyValue>? valueEqualityComparer = null)
         {
             _valueEqualityComparer =
                 valueEqualityComparer ?? new LogEventPropertyValueComparer(EqualityComparer<object>.Default);
         }
 
-        public bool Equals(LogEventProperty x, LogEventProperty y)
+        public bool Equals(LogEventProperty? x, LogEventProperty? y)
         {
             if (x == null || y == null)
                 return false; // throw new Exception($"the comparer doesn't support nulls, x={x}, y={y}");

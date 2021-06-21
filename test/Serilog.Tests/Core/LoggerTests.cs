@@ -112,8 +112,8 @@ namespace Serilog.Tests.Core
 
             Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
 
-            Assert.Equal("Hello, {Name}!", template.Text);
-            Assert.Equal("World", properties.Single().Value.LiteralValue());
+            Assert.Equal("Hello, {Name}!", template!.Text);
+            Assert.Equal("World", properties!.Single().Value.LiteralValue());
         }
 
         [Theory]
@@ -127,7 +127,7 @@ namespace Serilog.Tests.Core
 
             Assert.True(log.BindProperty("Name", "World", false, out var property));
 
-            Assert.Equal("Name", property.Name);
+            Assert.Equal("Name", property!.Name);
             Assert.Equal("World", property.Value.LiteralValue());
         }
 
@@ -200,7 +200,7 @@ namespace Serilog.Tests.Core
             Assert.Equal(42, collectingSink.SingleEvent.Properties["number"].LiteralValue());
             Assert.Equal(
                 expected: new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2), new ScalarValue(3) }),
-                actual: (collectingSink.SingleEvent.Properties["values"] as SequenceValue),
+                actual: (SequenceValue)collectingSink.SingleEvent.Properties["values"],
                 comparer: new LogEventPropertyValueComparer());
 
             levelSwitch.MinimumLevel = LogEventLevel.Fatal;

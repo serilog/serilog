@@ -1,4 +1,4 @@
-﻿using Serilog.Configuration;
+using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -20,7 +20,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void LastValueIsTakenWhenKeysAreDuplicate()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
                 {
@@ -49,7 +49,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void PropertyEnrichmentIsApplied()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -107,7 +107,7 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["write-to:DummyRollingFile.pathFormat"] = "C:\\"
             };
 
@@ -129,7 +129,7 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["audit-to:DummyRollingFile.pathFormat"] = "C:\\"
             };
 
@@ -154,7 +154,7 @@ namespace Serilog.Tests.Settings
                 ["minimum-level:override:System"] = "Warning",
             };
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
 
             var log = new LoggerConfiguration()
                  .ReadFrom.KeyValuePairs(settings)
@@ -219,7 +219,7 @@ namespace Serilog.Tests.Settings
                 ["minimum-level:controlled-by"] = "$switch1",
             };
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
 
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(settings)
@@ -258,11 +258,11 @@ namespace Serilog.Tests.Settings
             {
                 ["level-switch:$switch1"] = "Information",
                 ["minimum-level:controlled-by"] = "$switch1",
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$switch1"
             };
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
 
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(settings)
@@ -277,7 +277,7 @@ namespace Serilog.Tests.Settings
             log.Write(Some.DebugEvent());
             Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
 
-            controlSwitch.MinimumLevel = LogEventLevel.Debug;
+            controlSwitch!.MinimumLevel = LogEventLevel.Debug;
             log.Write(Some.DebugEvent());
             Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
         }
@@ -289,7 +289,7 @@ namespace Serilog.Tests.Settings
             {
                 ["level-switch:$switch1"] = "Information",
                 ["minimum-level:controlled-by"] = "$switch1",
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$switch2"
             };
 
@@ -309,11 +309,11 @@ namespace Serilog.Tests.Settings
                 ["minimum-level"] = "Debug",
                 ["level-switch:$specificSwitch"] = "Warning",
                 ["minimum-level:override:System"] = "$specificSwitch",
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["write-to:DummyWithLevelSwitch.controlLevelSwitch"] = "$specificSwitch"
             };
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
 
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(settings)
@@ -336,7 +336,7 @@ namespace Serilog.Tests.Settings
             evt = null;
             var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
 
-            controlSwitch.MinimumLevel = LogEventLevel.Information;
+            controlSwitch!.MinimumLevel = LogEventLevel.Information;
             systemLogger.Write(Some.InformationEvent());
             Assert.False(evt is null, "LoggingLevelSwitch level was changed to Information for logger System.*. It should now log Information events for SourceContext System.Bar.");
             // ReSharper restore HeuristicUnreachableCode
@@ -347,7 +347,7 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["write-to:DummyConsole.theme"] = "Serilog.Tests.Support.CustomConsoleTheme, Serilog.Tests"
             };
 
@@ -366,7 +366,7 @@ namespace Serilog.Tests.Settings
         {
             var settings = new Dictionary<string, string>
             {
-                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                 ["write-to:DummyConsole.theme"] = "TestDummies.Console.Themes.ConsoleThemes::Theme1, TestDummies"
             };
 
@@ -382,7 +382,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringToMaximumDepthIsApplied()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -415,7 +415,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringToMaximumStringLengthIsApplied()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -433,7 +433,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringToMaximumCollectionCountIsApplied()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -453,11 +453,11 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringWithCustomExtensionMethodIsApplied()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                     ["destructure:WithDummyHardCodedString.hardCodedString"] = "hardcoded"
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
@@ -472,7 +472,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringAsScalarIsAppliedWithShortTypeName()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -490,11 +490,11 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringAsScalarIsAppliedWithAssemblyQualifiedName()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["destructure:AsScalar.scalarType"] = typeof(Version).AssemblyQualifiedName
+                    ["destructure:AsScalar.scalarType"] = typeof(Version).AssemblyQualifiedName!
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
@@ -508,12 +508,12 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringWithIsAppliedWithCustomDestructuringPolicy()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["destructure:With.policy"] = typeof(DummyReduceVersionToMajorPolicy).AssemblyQualifiedName
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["destructure:With.policy"] = typeof(DummyReduceVersionToMajorPolicy).AssemblyQualifiedName!
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
@@ -531,8 +531,8 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName!
                 })
                 .CreateLogger();
 
@@ -548,8 +548,8 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName!,
                     ["write-to:Sink.restrictedToMinimumLevel"] = "Warning"
                 })
                 .CreateLogger();
@@ -567,9 +567,9 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                     ["level-switch:$switch1"] = "Warning",
-                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["write-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName!,
                     ["write-to:Sink.levelSwitch"] = "$switch1"
                 })
                 .CreateLogger();
@@ -587,8 +587,8 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName!
                 })
                 .CreateLogger();
 
@@ -604,8 +604,8 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName!,
                     ["audit-to:Sink.restrictedToMinimumLevel"] = "Warning"
                 })
                 .CreateLogger();
@@ -623,9 +623,9 @@ namespace Serilog.Tests.Settings
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
                     ["level-switch:$switch1"] = "Warning",
-                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName,
+                    ["audit-to:Sink.sink"] = typeof(DummyRollingFileSink).AssemblyQualifiedName!,
                     ["audit-to:Sink.levelSwitch"] = "$switch1"
                 })
                 .CreateLogger();
@@ -640,12 +640,12 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void EnrichWithIsAppliedWithCustomEnricher()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["enrich:With.enricher"] = typeof(DummyThreadIdEnricher).AssemblyQualifiedName
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["enrich:With.enricher"] = typeof(DummyThreadIdEnricher).AssemblyQualifiedName!
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();
@@ -659,12 +659,12 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void FilterWithIsAppliedWithCustomFilter()
         {
-            LogEvent evt = null;
+            LogEvent evt = null!;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
-                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName,
-                    ["filter:With.filter"] = typeof(DummyAnonymousUserFilter).AssemblyQualifiedName
+                    ["using:TestDummies"] = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly.FullName!,
+                    ["filter:With.filter"] = typeof(DummyAnonymousUserFilter).AssemblyQualifiedName!
                 })
                 .WriteTo.Sink(new DelegatingSink(e => evt = e))
                 .CreateLogger();

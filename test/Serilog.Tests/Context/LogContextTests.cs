@@ -38,7 +38,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void PushedPropertiesAreAvailableToLoggers()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -60,7 +60,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void LogContextCanBeCloned()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -83,7 +83,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void ClonedLogContextCanSharedAcrossThreads()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -113,7 +113,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void MultipleNestedPropertiesOverrideLessNestedOnes()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -177,7 +177,7 @@ namespace Serilog.Tests.Context
         {
             await TestWithSyncContext(async () =>
             {
-                LogEvent lastEvent = null;
+                LogEvent lastEvent = null!;
 
                 var log = new LoggerConfiguration()
                     .Enrich.FromLogContext()
@@ -206,7 +206,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task ContextEnrichersInAsyncScopeCanBeCleared()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -233,7 +233,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task ContextEnrichersCanBeTemporarilyCleared()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -265,7 +265,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void DoesNotPreventCrossDomainCalls()
         {
-            AppDomain domain = null;
+            AppDomain? domain = null;
             try
             {
                 domain = AppDomain.CreateDomain("LogContextTests", null, AppDomain.CurrentDomain.SetupInformation);
@@ -289,7 +289,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
         {
-            RemotingException remotingException = null;
+            RemotingException? remotingException = null;
 
             AppDomain.CurrentDomain.FirstChanceException +=
                 (_, e) => remotingException = e.Exception is RemotingException re ? re : remotingException;
@@ -389,7 +389,7 @@ namespace Serilog.Tests.Context
     {
         public bool IsCallable()
         {
-            LogEvent lastEvent = null;
+            LogEvent lastEvent = null!;
 
             var log = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
@@ -406,6 +406,6 @@ namespace Serilog.Tests.Context
 
     class ForceNewThreadSyncContext : SynchronizationContext
     {
-        public override void Post(SendOrPostCallback d, object state) => new Thread(x => d(x)) { IsBackground = true }.Start(state);
+        public override void Post(SendOrPostCallback d, object? state) => new Thread(x => d(x)) { IsBackground = true }.Start(state);
     }
 }
