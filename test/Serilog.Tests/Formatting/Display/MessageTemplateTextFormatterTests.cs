@@ -172,6 +172,11 @@ namespace Serilog.Tests.Formatting.Display
 
             public string Format(string? format, object? arg, IFormatProvider? formatProvider)
             {
+                if (arg == null)
+                {
+                    throw new ArgumentNullException(nameof(arg));
+                }
+
                 if (arg is Size size)
                     return size == Size.Large ? "Huge" : size.ToString();
 
