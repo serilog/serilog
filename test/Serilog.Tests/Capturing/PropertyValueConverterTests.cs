@@ -113,13 +113,13 @@ namespace Serilog.Tests.Capturing
 
         class A
         {
-            public B B { get; set; } = null!;
+            public B? B { get; set; }
         }
 
         class B
         {
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-            public A A { get; set; } = null!;
+            public A? A { get; set; }
 // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Capturing
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public IList<C?> C { get; set; } = null!;
+            public IList<C?>? C { get; set; }
         }
 
         [Fact]
@@ -237,16 +237,16 @@ namespace Serilog.Tests.Capturing
 
         public class BaseWithProps
         {
-            public string PropA { get; set; } = null!;
-            public virtual string PropB { get; set; } = null!;
-            public string PropC { get; set; } = null!;
+            public string? PropA { get; set; }
+            public virtual string? PropB { get; set; }
+            public string? PropC { get; set; }
         }
 
         public class DerivedWithOverrides : BaseWithProps
         {
-            public new string PropA { get; set; } = null!;
-            public override string PropB { get; set; } = null!;
-            public string PropD { get; set; } = null!;
+            public new string? PropA { get; set; }
+            public override string? PropB { get; set; }
+            public string? PropD { get; set; }
         }
 
         [Fact]
