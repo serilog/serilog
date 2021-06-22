@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serilog Contributors
+// Copyright 2016 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -178,8 +178,7 @@ namespace Serilog.Formatting.Json
 
             if (value is ValueType)
             {
-                if (value is int || value is uint || value is long || value is ulong || value is decimal ||
-                    value is byte || value is sbyte || value is short || value is ushort)
+                if (value is int or uint or long or ulong or decimal or byte or sbyte or short or ushort)
                 {
                     FormatExactNumericValue((IFormattable)value, output);
                     return;
@@ -209,7 +208,7 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-                if (value is DateTime || value is DateTimeOffset)
+                if (value is DateTime or DateTimeOffset)
                 {
                     FormatDateTimeValue((IFormattable)value, output);
                     return;
@@ -303,7 +302,7 @@ namespace Serilog.Formatting.Json
             for (var i = 0; i < str.Length; ++i)
             {
                 var c = str[i];
-                if (c < (char)32 || c == '\\' || c == '"')
+                if (c is < (char)32 or '\\' or '"')
                 {
                     anyEscaped = true;
 
