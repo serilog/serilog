@@ -20,7 +20,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void LastValueIsTakenWhenKeysAreDuplicate()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new List<KeyValuePair<string, string>>
                 {
@@ -49,7 +49,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void PropertyEnrichmentIsApplied()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -382,7 +382,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringToMaximumDepthIsApplied()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -406,6 +406,7 @@ namespace Serilog.Tests.Settings
             };
 
             log.Information("Destructuring a big graph {@DeeplyNested}", nestedObject);
+            Assert.NotNull(evt);
             var formattedProperty = evt.Properties["DeeplyNested"].ToString();
 
             Assert.Contains("C", formattedProperty);
@@ -415,7 +416,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringToMaximumStringLengthIsApplied()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -425,6 +426,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             log.Information("Destructuring a long string {@LongString}", "ABCDEFGH");
+            Assert.NotNull(evt);
             var formattedProperty = evt.Properties["LongString"].ToString();
 
             Assert.Equal("\"AB…\"", formattedProperty);
@@ -433,7 +435,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringToMaximumCollectionCountIsApplied()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -444,6 +446,7 @@ namespace Serilog.Tests.Settings
 
             var collection = new[] { 1, 2, 3, 4, 5, 6 };
             log.Information("Destructuring a big collection {@BigCollection}", collection);
+            Assert.NotNull(evt);
             var formattedProperty = evt.Properties["BigCollection"].ToString();
 
             Assert.Contains("3", formattedProperty);
@@ -453,7 +456,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringWithCustomExtensionMethodIsApplied()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -464,6 +467,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             log.Information("Destructuring with hard-coded policy {@Input}", new { Foo = "Bar" });
+            Assert.NotNull(evt);
             var formattedProperty = evt.Properties["Input"].ToString();
 
             Assert.Equal("\"hardcoded\"", formattedProperty);
@@ -472,7 +476,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringAsScalarIsAppliedWithShortTypeName()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -482,6 +486,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
+            Assert.NotNull(evt);
             var prop = evt.Properties["Scalarized"];
 
             Assert.IsType<ScalarValue>(prop);
@@ -490,7 +495,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringAsScalarIsAppliedWithAssemblyQualifiedName()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -500,6 +505,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
+            Assert.NotNull(evt);
             var prop = evt.Properties["Scalarized"];
 
             Assert.IsType<ScalarValue>(prop);
@@ -508,7 +514,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void DestructuringWithIsAppliedWithCustomDestructuringPolicy()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -519,6 +525,7 @@ namespace Serilog.Tests.Settings
                 .CreateLogger();
 
             log.Information("Destructuring with policy {@Version}", new Version(2, 3));
+            Assert.NotNull(evt);
             var prop = evt.Properties["Version"];
 
             Assert.IsType<ScalarValue>(prop);
@@ -640,7 +647,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void EnrichWithIsAppliedWithCustomEnricher()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
@@ -659,7 +666,7 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void FilterWithIsAppliedWithCustomFilter()
         {
-            LogEvent evt = null!;
+            LogEvent? evt = null;
             var log = new LoggerConfiguration()
                 .ReadFrom.KeyValuePairs(new Dictionary<string, string>
                 {
