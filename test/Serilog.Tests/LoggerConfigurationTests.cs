@@ -246,7 +246,7 @@ namespace Serilog.Tests
 
             logger.Write(Some.InformationEvent());
 
-            Assert.True(!eventReceived);
+            Assert.False(eventReceived);
         }
 
         [Fact]
