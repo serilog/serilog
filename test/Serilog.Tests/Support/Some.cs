@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace Serilog.Tests.Support
 
         public static decimal Decimal() => Int() + 0.123m;
 
-        public static string String(string tag = null) => (tag ?? "") + "__" + Int();
+        public static string String(string? tag = null) => (tag ?? "") + "__" + Int();
 
         public static TimeSpan TimeSpan() => System.TimeSpan.FromMinutes(Int());
 

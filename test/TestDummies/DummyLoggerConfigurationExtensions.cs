@@ -74,7 +74,7 @@ namespace TestDummies
             this LoggerSinkConfiguration loggerSinkConfiguration,
             Action<LoggerSinkConfiguration> wrappedSinkAction,
             LogEventLevel logEventLevel,
-            LoggingLevelSwitch levelSwitch)
+            LoggingLevelSwitch? levelSwitch)
         {
             return LoggerSinkConfiguration.Wrap(
                 loggerSinkConfiguration,

@@ -32,8 +32,7 @@ namespace Serilog.Tests.Core
 
         class ToStringReturnsNull
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            public override string ToString() => null;
+            public override string? ToString() => null;
         }
 
         class ToStringThrows
@@ -140,7 +139,7 @@ namespace Serilog.Tests.Core
             return Render(null, messageTemplate, properties);
         }
 
-        static string Render(IFormatProvider formatProvider, string messageTemplate, params object[] properties)
+        static string Render(IFormatProvider? formatProvider, string messageTemplate, params object[] properties)
         {
             var mt = new MessageTemplateParser().Parse(messageTemplate);
             var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
