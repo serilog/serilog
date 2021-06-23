@@ -52,21 +52,21 @@ namespace Serilog.PerformanceTests
         public (MessageTemplate, int) BindZero()
         {
             _log.BindMessageTemplate(MT0, _zero, out var mt, out var p);
-            return (mt, p.Count());
+            return (mt, p!.Count())!;
         }
 
         [Benchmark]
         public (MessageTemplate, int) BindOne()
         {
             _log.BindMessageTemplate(MT1, _one, out var mt, out var p);
-            return (mt, p.Count());
+            return (mt, p!.Count())!;
         }
 
         [Benchmark]
         public (MessageTemplate, int) BindFive()
         {
             _log.BindMessageTemplate(MT5, _five, out var mt, out var p);
-            return (mt, p.Count());
+            return (mt, p!.Count())!;
         }
     }
 }

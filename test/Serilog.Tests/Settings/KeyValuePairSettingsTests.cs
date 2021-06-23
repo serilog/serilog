@@ -34,7 +34,7 @@ namespace Serilog.Tests.Settings
             log.Information("Has a test property");
 
             Assert.NotNull(evt);
-            Assert.Equal("FinalValue", evt.Properties["App"].LiteralValue());
+            Assert.Equal("FinalValue", evt!.Properties["App"].LiteralValue());
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace Serilog.Tests.Settings
             log.Information("Has a test property");
 
             Assert.NotNull(evt);
-            Assert.Equal("Test", evt.Properties["App"].LiteralValue());
+            Assert.Equal("Test", evt!.Properties["App"].LiteralValue());
         }
 
         [Fact]
@@ -407,7 +407,7 @@ namespace Serilog.Tests.Settings
 
             log.Information("Destructuring a big graph {@DeeplyNested}", nestedObject);
             Assert.NotNull(evt);
-            var formattedProperty = evt.Properties["DeeplyNested"].ToString();
+            var formattedProperty = evt!.Properties["DeeplyNested"].ToString();
 
             Assert.Contains("C", formattedProperty);
             Assert.DoesNotContain("D", formattedProperty);
@@ -427,7 +427,7 @@ namespace Serilog.Tests.Settings
 
             log.Information("Destructuring a long string {@LongString}", "ABCDEFGH");
             Assert.NotNull(evt);
-            var formattedProperty = evt.Properties["LongString"].ToString();
+            var formattedProperty = evt!.Properties["LongString"].ToString();
 
             Assert.Equal("\"AB…\"", formattedProperty);
         }
@@ -447,7 +447,7 @@ namespace Serilog.Tests.Settings
             var collection = new[] { 1, 2, 3, 4, 5, 6 };
             log.Information("Destructuring a big collection {@BigCollection}", collection);
             Assert.NotNull(evt);
-            var formattedProperty = evt.Properties["BigCollection"].ToString();
+            var formattedProperty = evt!.Properties["BigCollection"].ToString();
 
             Assert.Contains("3", formattedProperty);
             Assert.DoesNotContain("4", formattedProperty);
@@ -468,7 +468,7 @@ namespace Serilog.Tests.Settings
 
             log.Information("Destructuring with hard-coded policy {@Input}", new { Foo = "Bar" });
             Assert.NotNull(evt);
-            var formattedProperty = evt.Properties["Input"].ToString();
+            var formattedProperty = evt!.Properties["Input"].ToString();
 
             Assert.Equal("\"hardcoded\"", formattedProperty);
         }
@@ -487,7 +487,7 @@ namespace Serilog.Tests.Settings
 
             log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
             Assert.NotNull(evt);
-            var prop = evt.Properties["Scalarized"];
+            var prop = evt!.Properties["Scalarized"];
 
             Assert.IsType<ScalarValue>(prop);
         }
@@ -506,7 +506,7 @@ namespace Serilog.Tests.Settings
 
             log.Information("Destructuring as scalar {@Scalarized}", new Version(2, 3));
             Assert.NotNull(evt);
-            var prop = evt.Properties["Scalarized"];
+            var prop = evt!.Properties["Scalarized"];
 
             Assert.IsType<ScalarValue>(prop);
         }
@@ -526,7 +526,7 @@ namespace Serilog.Tests.Settings
 
             log.Information("Destructuring with policy {@Version}", new Version(2, 3));
             Assert.NotNull(evt);
-            var prop = evt.Properties["Version"];
+            var prop = evt!.Properties["Version"];
 
             Assert.IsType<ScalarValue>(prop);
             Assert.Equal(2, (prop as ScalarValue)?.Value);
@@ -660,7 +660,7 @@ namespace Serilog.Tests.Settings
             log.Write(Some.InformationEvent());
 
             Assert.NotNull(evt);
-            Assert.True(evt.Properties.ContainsKey("ThreadId"), "Event should have enriched property ThreadId");
+            Assert.True(evt!.Properties.ContainsKey("ThreadId"), "Event should have enriched property ThreadId");
         }
 
         [Fact]

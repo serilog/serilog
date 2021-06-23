@@ -69,7 +69,7 @@ namespace Serilog
         ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
 #if FEATURE_DEFAULT_INTERFACE
         {
-            if (enrichers == null)
+            if (enrichers == null!)
                 return this; // No context here, so little point writing to SelfLog.
 
             return ForContext(new Core.Enrichers.SafeAggregateEnricher(enrichers));
@@ -120,7 +120,7 @@ namespace Serilog
         ILogger ForContext(Type source)
 #if FEATURE_DEFAULT_INTERFACE
         {
-            if (source == null)
+            if (source == null!)
                 return this; // Little point in writing to SelfLog here because we don't have any contextual information
 
             return ForContext(Constants.SourceContextPropertyName, source.FullName);
@@ -331,7 +331,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         {
             if (!IsEnabled(level)) return;
-            if (messageTemplate == null) return;
+            if (messageTemplate == null!) return;
 
             // Catch a common pitfall when a single non-object array is cast to object[]
             if (propertyValues != null &&
@@ -1341,7 +1341,8 @@ namespace Serilog
         [CustomDefaultMethodImplementation]
 #endif
         bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues,
-                                 [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
+            [MaybeNullWhen(false)] out MessageTemplate parsedTemplate,
+            [MaybeNullWhen(false)] out IEnumerable<LogEventProperty> boundProperties)
 #if FEATURE_DEFAULT_INTERFACE
             => DefaultLoggerImpl.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties)
 #endif

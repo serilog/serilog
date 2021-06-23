@@ -474,7 +474,7 @@ namespace Serilog.Tests
 
             log.Information($"{{{destructuringSymbol}X}}", x);
             Assert.NotNull(evt);
-            return evt.Properties["X"].ToString();
+            return evt!.Properties["X"].ToString();
         }
 
         [Fact]
