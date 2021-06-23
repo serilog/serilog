@@ -51,7 +51,7 @@ namespace Serilog.Tests.Context
             {
                 log.Write(Some.InformationEvent());
                 Assert.NotNull(lastEvent);
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
                 Assert.Equal(3, lastEvent.Properties["C"].LiteralValue());
                 Assert.Equal(4, lastEvent.Properties["D"].LiteralValue());
@@ -78,7 +78,7 @@ namespace Serilog.Tests.Context
             {
                 log.Write(Some.InformationEvent());
                 Assert.NotNull(lastEvent);
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
             }
         }
 
@@ -110,7 +110,7 @@ namespace Serilog.Tests.Context
             t.Join();
 
             Assert.NotNull(lastEvent);
-            Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
         }
 
         [Fact]
@@ -127,7 +127,7 @@ namespace Serilog.Tests.Context
             {
                 log.Write(Some.InformationEvent());
                 Assert.NotNull(lastEvent);
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
 
                 using (LogContext.PushProperty("A", 2))
                 {
@@ -157,7 +157,7 @@ namespace Serilog.Tests.Context
             {
                 log.Write(Some.InformationEvent());
                 Assert.NotNull(lastEvent);
-                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.Equal(1, lastEvent!.Properties["A1"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
                 using (LogContext.Push(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
@@ -199,7 +199,7 @@ namespace Serilog.Tests.Context
 
                     log.Write(Some.InformationEvent());
                     Assert.NotNull(lastEvent);
-                    Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                    Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
 
                     Assert.False(Thread.CurrentThread.IsThreadPoolThread);
                     Assert.True(Thread.CurrentThread.IsBackground);
@@ -228,7 +228,7 @@ namespace Serilog.Tests.Context
                 });
 
                 Assert.NotNull(lastEvent);
-                Assert.Empty(lastEvent.Properties);
+                Assert.Empty(lastEvent!.Properties);
 
                 // Reset should only work for current async scope, outside of it previous Context
                 // instance should be available again.
@@ -257,7 +257,7 @@ namespace Serilog.Tests.Context
                     });
 
                     Assert.NotNull(lastEvent);
-                    Assert.Empty(lastEvent.Properties);
+                    Assert.Empty(lastEvent!.Properties);
                 }
 
                 // Suspend should only work for scope of using. After calling Dispose all enrichers
@@ -408,7 +408,7 @@ namespace Serilog.Tests.Context
                 log.Information("Hello");
 
             Assert.NotNull(lastEvent);
-            return 42.Equals(lastEvent.Properties["Number"].LiteralValue());
+            return 42.Equals(lastEvent!.Properties["Number"].LiteralValue());
         }
     }
 #endif
