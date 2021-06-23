@@ -56,7 +56,7 @@ namespace Serilog.Formatting.Display
         public static string GetLevelMoniker(LogEventLevel value, string format = null)
         {
             var index = (int)value;
-            if (index < 0 || index > (int)LogEventLevel.Fatal)
+            if (index is < 0 or > (int)LogEventLevel.Fatal)
                 return Casing.Format(value.ToString(), format);
 
             if (format == null || format.Length != 2 && format.Length != 3)

@@ -252,11 +252,14 @@ namespace Serilog.Capturing
                 definition == typeof(ValueTuple<,,,,,,>))
 #else
             // ReSharper disable once PossibleNullReferenceException
-            var defn = definition.FullName;
-            if (defn == "System.ValueTuple`1" || defn == "System.ValueTuple`2" ||
-                defn == "System.ValueTuple`3" || defn == "System.ValueTuple`4" ||
-                defn == "System.ValueTuple`5" || defn == "System.ValueTuple`6" ||
-                defn == "System.ValueTuple`7")
+            if (definition.FullName is
+                "System.ValueTuple`1" or
+                "System.ValueTuple`2" or
+                "System.ValueTuple`3" or
+                "System.ValueTuple`4" or
+                "System.ValueTuple`5" or
+                "System.ValueTuple`6" or
+                "System.ValueTuple`7")
 #endif
             {
                 var elements = new List<LogEventPropertyValue>();

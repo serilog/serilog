@@ -239,8 +239,7 @@ namespace Serilog.Parsing
 
         static bool IsValidInDestructuringHint(char c)
         {
-            return c == '@' ||
-                   c == '$';
+            return c is '@' or '$';
         }
 
         static bool IsValidInAlignment(char c)
@@ -254,8 +253,7 @@ namespace Serilog.Parsing
             return c != '}' &&
                 (char.IsLetterOrDigit(c) ||
                  char.IsPunctuation(c) ||
-                 c == ' ' ||
-                 c == '+');
+                 c is ' ' or '+');
         }
 
         static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
