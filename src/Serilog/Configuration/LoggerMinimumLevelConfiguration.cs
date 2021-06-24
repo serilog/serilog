@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using Serilog.Core;
 using Serilog.Events;
@@ -114,7 +115,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
         /// <exception cref="ArgumentException">When a trimmed <paramref name="source"/> is empty</exception>
-        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception> 
+        /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
         public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
