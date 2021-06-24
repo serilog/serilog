@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using Serilog.Core;
 using Serilog.Events;
@@ -30,7 +31,7 @@ namespace Serilog.Filters
         /// <returns>A predicate for matching events.</returns>
         public static Func<LogEvent, bool> FromSource<TSource>()
         {
-            return WithProperty(Constants.SourceContextPropertyName, typeof(TSource).FullName);
+            return WithProperty(Constants.SourceContextPropertyName, typeof(TSource).FullName!);
         }
 
         /// <summary>
