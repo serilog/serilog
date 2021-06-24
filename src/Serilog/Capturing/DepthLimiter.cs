@@ -43,7 +43,7 @@ namespace Serilog.Capturing
                 _currentDepth = depth;
             }
 
-            public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+            public LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring)
             {
                 var storedDepth = _currentDepth;
 
