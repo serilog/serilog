@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace Serilog
         readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
         readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
         LogEventLevel _minimumLevel = LogEventLevel.Information;
-        LoggingLevelSwitch _levelSwitch;
+        LoggingLevelSwitch? _levelSwitch;
         int _maximumDestructuringDepth = 10;
         int _maximumStringLength = int.MaxValue;
         int _maximumCollectionCount = int.MaxValue;
@@ -176,7 +177,7 @@ namespace Serilog
                     break;
             }
 
-            LevelOverrideMap overrideMap = null;
+            LevelOverrideMap? overrideMap = null;
             if (_overrides.Count != 0)
             {
                 overrideMap = new(_overrides, _minimumLevel, _levelSwitch);

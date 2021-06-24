@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
-            List<Exception> exceptions = null;
+            List<Exception>? exceptions = null;
             foreach (var sink in _sinks)
             {
                 try

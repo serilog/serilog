@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
 using Xunit;
@@ -34,7 +34,7 @@ namespace Serilog.Tests.Core
             if (overrideExpected)
             {
                 Assert.NotNull(overriddenSwitch);
-                Assert.Equal(expected, overriddenSwitch.MinimumLevel);
+                Assert.Equal(expected, overriddenSwitch!.MinimumLevel);
                 Assert.Equal(LevelAlias.Minimum, overriddenLevel);
             }
             else

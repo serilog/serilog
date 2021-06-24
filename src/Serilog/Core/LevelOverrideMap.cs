@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Serilog.Core
     class LevelOverrideMap
     {
         readonly LogEventLevel _defaultMinimumLevel;
-        readonly LoggingLevelSwitch _defaultLevelSwitch;
+        readonly LoggingLevelSwitch? _defaultLevelSwitch;
 
         struct LevelOverride
         {
@@ -48,7 +49,7 @@ namespace Serilog.Core
         public LevelOverrideMap(
             IDictionary<string, LoggingLevelSwitch> overrides,
             LogEventLevel defaultMinimumLevel,
-            LoggingLevelSwitch defaultLevelSwitch)
+            LoggingLevelSwitch? defaultLevelSwitch)
         {
             if (overrides == null) throw new ArgumentNullException(nameof(overrides));
 
@@ -69,7 +70,7 @@ namespace Serilog.Core
             string context,
 #endif
             out LogEventLevel minimumLevel,
-            out LoggingLevelSwitch levelSwitch)
+            out LoggingLevelSwitch? levelSwitch)
         {
             foreach (var levelOverride in _overrides)
             {

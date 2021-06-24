@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+
 // Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +13,9 @@ using System.Collections.Generic;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -33,7 +35,7 @@ namespace Serilog.Events
         /// structure. Can be <code>null</code>.</param>
         /// <param name="properties">The properties of the structure.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-        public StructureValue(IEnumerable<LogEventProperty> properties, string typeTag = null)
+        public StructureValue(IEnumerable<LogEventProperty> properties, string? typeTag = null)
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
 
@@ -45,7 +47,7 @@ namespace Serilog.Events
         /// A piece of metadata describing the "type" of the
         /// structure, or null.
         /// </summary>
-        public string TypeTag { get; }
+        public string? TypeTag { get; }
 
         /// <summary>
         /// The properties of the structure.
@@ -63,7 +65,7 @@ namespace Serilog.Events
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
@@ -90,7 +92,7 @@ namespace Serilog.Events
             output.Write(" }");
         }
 
-        static void Render(TextWriter output, LogEventProperty property, IFormatProvider formatProvider = null)
+        static void Render(TextWriter output, LogEventProperty property, IFormatProvider? formatProvider = null)
         {
             output.Write(property.Name);
             output.Write(": ");

@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Serilog.Core;
@@ -86,17 +88,17 @@ namespace Serilog.Capturing
             _depthLimiter = new(maximumDestructuringDepth, this);
         }
 
-        public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
+        public LogEventProperty CreateProperty(string? name, object? value, bool destructureObjects = false)
         {
             return new(name, CreatePropertyValue(value, destructureObjects));
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        public LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects = false)
         {
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        public LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring)
         {
             try
             {
@@ -113,7 +115,7 @@ namespace Serilog.Capturing
             }
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
+        LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects, int depth)
         {
             return CreatePropertyValue(
                 value,
@@ -123,7 +125,7 @@ namespace Serilog.Capturing
                 depth);
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
+        LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring, int depth)
         {
             if (value == null)
                 return new ScalarValue(null);
@@ -175,7 +177,7 @@ namespace Serilog.Capturing
             return new ScalarValue(value.ToString() ?? "");
         }
 
-        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
             if (value is IEnumerable enumerable)
             {
@@ -234,7 +236,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
             if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
             {
@@ -281,7 +283,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
             if (destructuring == Destructuring.Destructure)
             {
@@ -316,7 +318,7 @@ namespace Serilog.Capturing
             return text;
         }
 
-        static bool TryGetDictionary(object value, Type valueType, out IDictionary dictionary)
+        static bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
         {
             if (valueType.IsConstructedGenericType &&
                 valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
@@ -343,7 +345,7 @@ namespace Serilog.Capturing
                 object propValue;
                 try
                 {
-                    propValue = prop.GetValue(value);
+                    propValue = prop.GetValue(value)!;
                 }
                 catch (TargetParameterCountException)
                 {

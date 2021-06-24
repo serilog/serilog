@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Serilog.Capturing
             while (currentTypeInfo.AsType() != typeof(object))
             {
                 var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
-                    p.GetMethod.IsPublic && !p.GetMethod.IsStatic &&
+                    p.GetMethod!.IsPublic && !p.GetMethod.IsStatic &&
                     (p.Name != "Item" || p.GetIndexParameters().Length == 0) && !seenNames.Contains(p.Name));
 
                 foreach (var propertyInfo in unseenProperties)

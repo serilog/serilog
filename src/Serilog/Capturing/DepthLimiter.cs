@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 
 using Serilog.Core;
@@ -42,7 +43,7 @@ namespace Serilog.Capturing
                 _currentDepth = depth;
             }
 
-            public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+            public LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring)
             {
                 var storedDepth = _currentDepth;
 
@@ -66,7 +67,7 @@ namespace Serilog.Capturing
                 return result;
             }
 
-            LogEventPropertyValue DefaultIfMaximumDepth(int depth)
+            LogEventPropertyValue? DefaultIfMaximumDepth(int depth)
             {
                 if (depth == _maximumDestructuringDepth)
                 {
