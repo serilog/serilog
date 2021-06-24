@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.IO;
 using Serilog.Events;
@@ -32,7 +33,7 @@ namespace Serilog.Formatting.Display
     /// </summary>
     public class MessageTemplateTextFormatter : ITextFormatter
     {
-        readonly IFormatProvider _formatProvider;
+        readonly IFormatProvider? _formatProvider;
         readonly MessageTemplate _outputTemplate;
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace Serilog.Formatting.Display
         /// output messages.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="outputTemplate"/> is <code>null</code></exception>
-        public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider formatProvider = null)
+        public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider? formatProvider = null)
         {
             if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
 
