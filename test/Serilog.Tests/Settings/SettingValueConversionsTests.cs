@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
@@ -43,6 +43,15 @@ namespace Serilog.Tests.Settings
         {
             var result = (LogEventLevel)SettingValueConversions.ConvertToType("Information", typeof(LogEventLevel));
             Assert.Equal(LogEventLevel.Information, result);
+        }
+
+        [Fact]
+        public void ValuesConvertToStringArray()
+        {
+            var result = (string[])SettingValueConversions.ConvertToType("key1=value1,key2=value2", typeof(string[]));
+            Assert.Equal(2, result.Length);
+            Assert.Equal("key1=value1", result[0]);
+            Assert.Equal("key2=value2", result[1]);
         }
 
         [Fact]
