@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using Serilog.Core;
 using Serilog.Policies;
 
@@ -69,6 +70,23 @@ namespace Serilog.Configuration
         /// <typeparam name="TScalar">Type to treat as scalar.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration AsScalar<TScalar>() => AsScalar(typeof(TScalar));
+
+        /// <summary>
+        /// When destructuring objects that inherit from Dictionary, serialise them as dictionaries.
+        /// </summary>
+        /// <typeparam name="T">Type to destructure as Dictionary.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration AsDictionary<T>() where T : IDictionary
+        {
+            TypeInfo typeInfo = typeof(T).GetTypeInfo();
+            Type keyType = typeInfo.GenericTypeArguments[0];
+            Type valType = typeInfo.GenericTypeArguments[1];
+            Type listType = typeof(DictionaryDestructuringPolicy<,>);
+            Type genericType = listType.MakeGenericType(keyType, valType);
+            var policy = (IDestructuringPolicy)Activator.CreateInstance(genericType);
+
+            return With(policy);
+        }
 
         /// <summary>
         /// When destructuring objects, transform instances with the provided policies.
