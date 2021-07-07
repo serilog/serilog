@@ -844,5 +844,62 @@ namespace Serilog.Tests
             var error = Assert.Single(enricher.Events);
             Assert.True(error.Level == LogEventLevel.Error);
         }
+
+        class MyDictionary<TKey, TVal> : Dictionary<string, string>{}
+
+        [Fact]
+        public void DestructureAsDictionaryCausesChildrenOfDictionaryToBeSerialisedAsDictionaries()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .Destructure.AsDictionary<MyDictionary<string, string>>()
+                .CreateLogger();
+
+            logger.Information("{@Instance}", new Dictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evBase = events[events.Count - 1];
+            var propBase = evBase.Properties["Instance"];
+
+            logger.Information("{@Instance}", new MyDictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evChild = events[events.Count - 1];
+            var propChild = evChild.Properties["Instance"];
+
+            Assert.Equal(propBase.ToString(), propChild.ToString());
+        }
+
+        [Fact]
+        public void ByDefaultChildrenOfDictionaryAreNotSerialisedAsDictionaries()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Information("{@Instance}", new Dictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evBase = events[events.Count - 1];
+            var propBase = evBase.Properties["Instance"];
+
+            logger.Information("{@Instance}", new MyDictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evChild = events[events.Count - 1];
+            var propChild = evChild.Properties["Instance"];
+
+            Assert.NotEqual(propBase.ToString(), propChild.ToString());
+        }
     }
 }
