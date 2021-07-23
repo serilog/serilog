@@ -20,7 +20,7 @@ using System.Text.RegularExpressions;
 
 namespace Serilog.Settings.KeyValuePairs
 {
-    internal class SettingValueConversions
+    class SettingValueConversions
     {
         // should match "The.NameSpace.TypeName::MemberName" optionally followed by
         // usual assembly qualifiers like :
