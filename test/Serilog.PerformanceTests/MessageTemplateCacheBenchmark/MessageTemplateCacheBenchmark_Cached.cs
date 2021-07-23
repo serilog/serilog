@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +13,11 @@ namespace Serilog.PerformanceTests
     {
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
-        List<string> _templateList;
+        List<string> _templateList = null!;
 
-        ConcurrentDictionaryMessageTemplateCache _concurrentCache;
-        DictionaryMessageTemplateCache _dictionaryCache;
-        MessageTemplateCache _hashtableCache;
+        ConcurrentDictionaryMessageTemplateCache _concurrentCache = null!;
+        DictionaryMessageTemplateCache _dictionaryCache = null!;
+        MessageTemplateCache _hashtableCache = null!;
 
         [Params(10, 20, 50, 100, 1000)]
         public int Items { get; set; }
@@ -28,11 +28,11 @@ namespace Serilog.PerformanceTests
         [GlobalSetup]
         public void Setup()
         {
-            _templateList = Enumerable.Range(0, Items).Select(x => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
+            _templateList = Enumerable.Range(0, Items).Select(_ => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
 
-            _concurrentCache = new ConcurrentDictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance);
-            _dictionaryCache = new DictionaryMessageTemplateCache(NoOpMessageTemplateParser.Instance);
-            _hashtableCache = new MessageTemplateCache(NoOpMessageTemplateParser.Instance);
+            _concurrentCache = new(NoOpMessageTemplateParser.Instance);
+            _dictionaryCache = new(NoOpMessageTemplateParser.Instance);
+            _hashtableCache = new(NoOpMessageTemplateParser.Instance);
 
             foreach (var t in _templateList)
             {

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace Serilog.Capturing
     // writing a log event (roughly) in control of the cost of recording that event.
     partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
-        static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
+        static readonly HashSet<Type> BuiltInScalarTypes = new()
         {
             typeof(bool),
             typeof(char),
@@ -83,12 +83,12 @@ namespace Serilog.Capturing
                 })
                 .ToArray();
 
-            _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
+            _depthLimiter = new(maximumDestructuringDepth, this);
         }
 
         public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
         {
-            return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
+            return new(name, CreatePropertyValue(value, destructureObjects));
         }
 
         public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
@@ -252,11 +252,14 @@ namespace Serilog.Capturing
                 definition == typeof(ValueTuple<,,,,,,>))
 #else
             // ReSharper disable once PossibleNullReferenceException
-            var defn = definition.FullName;
-            if (defn == "System.ValueTuple`1" || defn == "System.ValueTuple`2" ||
-                defn == "System.ValueTuple`3" || defn == "System.ValueTuple`4" ||
-                defn == "System.ValueTuple`5" || defn == "System.ValueTuple`6" ||
-                defn == "System.ValueTuple`7")
+            if (definition.FullName is
+                "System.ValueTuple`1" or
+                "System.ValueTuple`2" or
+                "System.ValueTuple`3" or
+                "System.ValueTuple`4" or
+                "System.ValueTuple`5" or
+                "System.ValueTuple`6" or
+                "System.ValueTuple`7")
 #endif
             {
                 var elements = new List<LogEventPropertyValue>();

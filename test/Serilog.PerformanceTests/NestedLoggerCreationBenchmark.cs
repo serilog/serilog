@@ -9,7 +9,7 @@ namespace Serilog.PerformanceTests
     [MemoryDiagnoser]
     public class NestedLoggerCreationBenchmark
     {
-        ILogger log;
+        ILogger log = null!;
 
         [GlobalSetup]
         public void Setup()

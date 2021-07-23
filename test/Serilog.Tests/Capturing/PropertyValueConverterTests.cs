@@ -1,4 +1,4 @@
-﻿using Serilog.Capturing;
+using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -17,7 +17,7 @@ namespace Serilog.Tests.Capturing
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter =
-            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         [Fact]
         public async Task MaximumDepthIsEffectiveAndThreadSafe()
@@ -55,7 +55,7 @@ namespace Serilog.Tests.Capturing
 
             await Task.WhenAll(t1, t2, t3);
 
-            void DoThreadTest(object logObject, Action<string> assertAction)
+            void DoThreadTest(object logObject, Action<string?> assertAction)
             {
                 for (var i = 0; i < 100; ++i)
                 {
@@ -113,13 +113,13 @@ namespace Serilog.Tests.Capturing
 
         class A
         {
-            public B B { get; set; }
+            public B? B { get; set; }
         }
 
         class B
         {
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-            public A A { get; set; }
+            public A? A { get; set; }
 // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Capturing
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public IList<C?> C { get; set; }
+            public IList<C?>? C { get; set; }
         }
 
         [Fact]
@@ -237,16 +237,16 @@ namespace Serilog.Tests.Capturing
 
         public class BaseWithProps
         {
-            public string PropA { get; set; }
-            public virtual string PropB { get; set; }
-            public string PropC { get; set; }
+            public string? PropA { get; set; }
+            public virtual string? PropB { get; set; }
+            public string? PropC { get; set; }
         }
 
         public class DerivedWithOverrides : BaseWithProps
         {
-            public new string PropA { get; set; }
-            public override string PropB { get; set; }
-            public string PropD { get; set; }
+            public new string? PropA { get; set; }
+            public override string? PropB { get; set; }
+            public string? PropD { get; set; }
         }
 
         [Fact]

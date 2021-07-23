@@ -28,7 +28,7 @@ namespace Serilog.Formatting.Display
     /// </summary>
     public static class OutputProperties
     {
-        static readonly LiteralStringValue LiteralNewLine = new LiteralStringValue(Environment.NewLine);
+        static readonly LiteralStringValue LiteralNewLine = new(Environment.NewLine);
 
         /// <summary>
         /// The message rendered from the log event.

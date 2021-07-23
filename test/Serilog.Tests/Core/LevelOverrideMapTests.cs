@@ -21,10 +21,10 @@ namespace Serilog.Tests.Core
         {
             var overrides = new Dictionary<string, LoggingLevelSwitch>
             {
-                ["MyApp"] = new LoggingLevelSwitch(LogEventLevel.Debug),
-                ["MyApp.Api.Controllers"] = new LoggingLevelSwitch(LogEventLevel.Information),
-                ["MyApp.Api.Controllers.HomeController"] = new LoggingLevelSwitch(LogEventLevel.Warning),
-                ["MyApp.Api"] = new LoggingLevelSwitch(LogEventLevel.Error)
+                ["MyApp"] = new(LogEventLevel.Debug),
+                ["MyApp.Api.Controllers"] = new(LogEventLevel.Information),
+                ["MyApp.Api.Controllers.HomeController"] = new(LogEventLevel.Warning),
+                ["MyApp.Api"] = new(LogEventLevel.Error)
             };
 
             var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);

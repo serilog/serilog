@@ -165,20 +165,25 @@ namespace Serilog.Tests.Formatting.Display
                 _innerFormatProvider = innerFormatProvider;
             }
 
-            public object GetFormat(Type formatType)
+            public object? GetFormat(Type? formatType)
             {
                 return formatType == typeof(ICustomFormatter) ? this : _innerFormatProvider.GetFormat(formatType);
             }
 
-            public string Format(string format, object arg, IFormatProvider formatProvider)
+            public string Format(string? format, object? arg, IFormatProvider? formatProvider)
             {
+                if (arg == null)
+                {
+                    throw new ArgumentNullException(nameof(arg));
+                }
+
                 if (arg is Size size)
                     return size == Size.Large ? "Huge" : size.ToString();
 
                 if (arg is IFormattable formattable)
                     return formattable.ToString(format, _innerFormatProvider);
 
-                return arg.ToString();
+                return arg.ToString()!;
             }
         }
 

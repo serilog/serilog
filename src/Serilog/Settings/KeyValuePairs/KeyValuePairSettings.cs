@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Settings.KeyValuePairs
@@ -58,7 +59,7 @@ namespace Serilog.Settings.KeyValuePairs
             DestructureDirective
         };
 
-        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new Dictionary<string, Type>
+        static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new()
         {
             ["audit-to"] = typeof(LoggerAuditSinkConfiguration),
             ["write-to"] = typeof(LoggerSinkConfiguration),
@@ -67,7 +68,7 @@ namespace Serilog.Settings.KeyValuePairs
             ["destructure"] = typeof(LoggerDestructuringConfiguration),
         };
 
-        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new Dictionary<Type, Func<LoggerConfiguration, object>>
+        static readonly Dictionary<Type, Func<LoggerConfiguration, object>> CallableDirectiveReceivers = new()
         {
             [typeof(LoggerAuditSinkConfiguration)] = lc => lc.AuditTo,
             [typeof(LoggerSinkConfiguration)] = lc => lc.WriteTo,
@@ -193,12 +194,12 @@ namespace Serilog.Settings.KeyValuePairs
                 LoggingLevelSwitch newSwitch;
                 if (string.IsNullOrEmpty(switchInitialLevel))
                 {
-                    newSwitch = new LoggingLevelSwitch();
+                    newSwitch = new();
                 }
                 else
                 {
                     var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
-                    newSwitch = new LoggingLevelSwitch(initialLevel);
+                    newSwitch = new(initialLevel);
                 }
                 namedSwitches.Add(switchName, newSwitch);
             }
@@ -230,7 +231,12 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 var target = SelectConfigurationMethod(configurationMethods, directiveInfo.Key, directiveInfo);
 
-                if (target != null)
+                if (target == null)
+                {
+                    SelfLog.WriteLine("Setting \"{0}\" could not be matched to an implementation in any of the loaded assemblies. " +
+                        "To use settings from additional assemblies, specify them with the \"serilog:using\" key.", directiveInfo.Key);
+                }
+                else
                 {
                     var call = (from p in target.GetParameters().Skip(1)
                                 let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)

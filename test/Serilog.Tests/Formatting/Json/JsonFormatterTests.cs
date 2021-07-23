@@ -43,7 +43,7 @@ namespace Serilog.Tests.Formatting.Json
         {
             var output = FormatToJson(@event);
             var serializer = new JsonSerializer { DateParseHandling = DateParseHandling.None };
-            return serializer.Deserialize(new JsonTextReader(new StringReader(output)));
+            return serializer.Deserialize(new JsonTextReader(new StringReader(output)))!;
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Serilog.Tests.Formatting.Json
             var f = new StringWriter();
             j.Format(e, f);
 
-            return JsonConvert.DeserializeObject<dynamic>(f.ToString());
+            return JsonConvert.DeserializeObject<dynamic>(f.ToString())!;
         }
 
         [Fact]

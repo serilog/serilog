@@ -3,7 +3,7 @@
     <Description>Simple .NET logging with fully-structured events</Description>
     <VersionPrefix>2.10.1</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46;net5.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Serilog</AssemblyName>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
@@ -41,6 +41,10 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
   </ItemGroup>
@@ -55,6 +59,7 @@
   <ItemGroup>
     <None Include="..\..\assets\icon.png" Pack="true" Visible="false" PackagePath="" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
