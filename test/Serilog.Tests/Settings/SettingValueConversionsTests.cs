@@ -55,6 +55,13 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
+        public void ValuesConvertToStringArrayEmpty()
+        {
+            var result = (string[])SettingValueConversions.ConvertToType("", typeof(string[]));
+            Assert.Empty(result);
+        }
+
+        [Fact]
         public void ValuesConvertToTypeFromQualifiedName()
         {
             var result = (Type)SettingValueConversions.ConvertToType("System.Version", typeof(Type));
