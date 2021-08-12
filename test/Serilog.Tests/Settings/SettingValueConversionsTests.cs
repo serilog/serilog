@@ -62,6 +62,22 @@ namespace Serilog.Tests.Settings
         }
 
         [Fact]
+        public void ValuesConvertToIntArray()
+        {
+            var result = (int[])SettingValueConversions.ConvertToType("1,2", typeof(int[]));
+            Assert.Equal(2, result.Length);
+            Assert.Equal(1, result[0]);
+            Assert.Equal(2, result[1]);
+        }
+
+        [Fact]
+        public void ValuesConvertToIntArrayEmpty()
+        {
+            var result = (int[])SettingValueConversions.ConvertToType("", typeof(int[]));
+            Assert.Empty(result);
+        }
+
+        [Fact]
         public void ValuesConvertToTypeFromQualifiedName()
         {
             var result = (Type)SettingValueConversions.ConvertToType("System.Version", typeof(Type));

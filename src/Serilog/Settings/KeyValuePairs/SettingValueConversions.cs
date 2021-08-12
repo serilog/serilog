@@ -114,10 +114,28 @@ namespace Serilog.Settings.KeyValuePairs
             if (toType == typeof(String[]))
             {
                 if (string.IsNullOrEmpty(value))
-                    return new String[] { };
+                    return new String[] {};
 
                 var items = value.Split(',');
                 return items;
+            }
+
+            if (toType == typeof(int[]))
+            {
+                if (string.IsNullOrEmpty(value))
+                    return new int[] {};
+
+                var list = new List<int>();
+                var items = value.Split(',');
+                foreach(var item in items)
+                {
+                    if(int.TryParse(item, out int result))
+                    {
+                        list.Add(result);
+                    }
+
+                }
+                return list.ToArray();
             }
 
             return Convert.ChangeType(value, toType);
