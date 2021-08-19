@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace Serilog.Rendering
         static readonly JsonValueFormatter JsonValueFormatter = new("$type");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Render(MessageTemplate messageTemplate, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        public static void Render(MessageTemplate messageTemplate, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
         {
             bool isLiteral = false, isJson = false;
 
@@ -62,7 +63,7 @@ namespace Serilog.Rendering
             output.Write(tt.Text);
         }
 
-        public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider, bool isLiteral, bool isJson)
+        public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider, bool isLiteral, bool isJson)
         {
             if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
             {
@@ -89,7 +90,7 @@ namespace Serilog.Rendering
             Padding.Apply(output, value, pt.Alignment.Value);
         }
 
-        static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string format, IFormatProvider formatProvider)
+        static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string format, IFormatProvider? formatProvider)
         {
             if (literal && propertyValue is ScalarValue sv && sv.Value is string str)
             {

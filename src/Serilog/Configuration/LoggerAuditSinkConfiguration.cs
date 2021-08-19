@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using Serilog.Core;
 using Serilog.Events;
@@ -43,7 +44,7 @@ namespace Serilog.Configuration
             ILogEventSink logEventSink,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             // ReSharper disable once MethodOverloadWithOptionalParameter
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null)
         {
             return _sinkConfiguration.Sink(logEventSink, restrictedToMinimumLevel, levelSwitch);
         }
@@ -59,7 +60,7 @@ namespace Serilog.Configuration
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration Sink<TSink>(
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null)
             where TSink : ILogEventSink, new()
         {
             return _sinkConfiguration.Sink<TSink>(restrictedToMinimumLevel, levelSwitch);
@@ -80,7 +81,7 @@ namespace Serilog.Configuration
         public LoggerConfiguration Logger(
             Action<LoggerConfiguration> configureLogger,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null)
         {
             return _sinkConfiguration.Logger(configureLogger, restrictedToMinimumLevel, levelSwitch);
         }

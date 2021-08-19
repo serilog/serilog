@@ -208,13 +208,13 @@ namespace Serilog.Tests.Formatting.Json
             public int[]? Legs => null;
             public override string ToString() => "a chair";
         }
-        
+
         class ToStringReturnsNull
         {
             public string AProp => "";
             public override string? ToString() => null;
         }
-        
+
         class ToStringThrows
         {
             public string AProp => "";
