@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,6 +108,30 @@ namespace Serilog.Settings.KeyValuePairs
                     var call = ctor.GetParameters().Select(pi => pi.DefaultValue).ToArray();
                     return ctor.Invoke(call);
                 }
+            }
+
+            if (toType.IsArray && toType.GetArrayRank() == 1)
+            {
+                var elementType = toType.GetElementType();
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    return Array.CreateInstance(elementType, 0);
+                }
+
+                var items = value?.Split(',');
+                var length = items?.Length ?? 0;
+                var result = Array.CreateInstance(elementType, length);
+                if (items != null)
+                {
+                    for (var i = 0; i < length; ++i)
+                    {
+                        var item = items[i];
+                        var element = ConvertToType(item, elementType);
+                        result.SetValue(element, i);
+                    }
+                }
+                return result;
             }
 
             return Convert.ChangeType(value, toType);
