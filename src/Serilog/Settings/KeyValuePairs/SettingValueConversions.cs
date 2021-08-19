@@ -25,7 +25,6 @@ namespace Serilog.Settings.KeyValuePairs
         // should match "The.NameSpace.TypeName::MemberName" optionally followed by
         // usual assembly qualifiers like :
         // ", MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-
         static Regex StaticMemberAccessorRegex = new("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
 
         static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new()
