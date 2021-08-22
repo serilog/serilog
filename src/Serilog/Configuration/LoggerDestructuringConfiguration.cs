@@ -15,7 +15,10 @@
 #nullable enable
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Policies;
 
 namespace Serilog.Configuration
@@ -70,6 +73,45 @@ namespace Serilog.Configuration
         /// <typeparam name="TScalar">Type to treat as scalar.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>
         public LoggerConfiguration AsScalar<TScalar>() => AsScalar(typeof(TScalar));
+
+        /// <summary>
+        /// When destructuring objects that implement <see cref="IDictionary"/> or <see cref="IDictionary{TKey, TValue}"/>, serialise them as dictionaries.
+        /// </summary>
+        /// <typeparam name="T">Type to destructure as <see cref="DictionaryValue"/>.</typeparam>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public LoggerConfiguration AsDictionary<T>()
+        {
+            if (!ImplementsNonGenericIDictionary<T>() && !ImplementsGenericIDictionary<T>())
+                throw new ArgumentException("Type must implement either IDictionary or IDictionary<TKey, TValue>.");
+
+            return With(new DictionaryDestructuringPolicy());
+        }
+
+        /// <summary>
+        /// Checks whether type implements <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        /// <typeparam name="T">Type to check.</typeparam>
+        /// <returns>True if type implements <see cref="IDictionary{TKey, TValue}"/>; otherwise false.</returns>
+        private bool ImplementsGenericIDictionary<T>()
+        {
+            return typeof(T)
+                .GetInterfaces()
+                .Any(x =>
+                    x.IsGenericType &&
+                    x.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+        }
+
+        /// <summary>
+        /// Checks whether type implements <see cref="IDictionary"/>.
+        /// </summary>
+        /// <typeparam name="T">Type to check.</typeparam>
+        /// <returns>True if type implements <see cref="IDictionary"/>; otherwise false.</returns>
+        private bool ImplementsNonGenericIDictionary<T>()
+        {
+            return typeof(T)
+                .GetInterfaces()
+                .Any(x => x == typeof(IDictionary));
+        }
 
         /// <summary>
         /// When destructuring objects, transform instances with the provided policies.

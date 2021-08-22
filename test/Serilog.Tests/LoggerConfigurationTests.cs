@@ -3,6 +3,7 @@ using Serilog.Core.Filters;
 using Serilog.Events;
 using Serilog.Tests.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -843,6 +844,108 @@ namespace Serilog.Tests
 
             var error = Assert.Single(enricher.Events);
             Assert.True(error.Level == LogEventLevel.Error);
+        }
+
+        [Fact]
+        public void DestructureAsDictionaryCausesChildrenOfNonGenericDictionaryToBeSerialisedAsDictionaries()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .Destructure.AsDictionary<SortedList>() // SortedList implements IDictionary
+                .CreateLogger();
+
+            logger.Information("{@Instance}", new Dictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evBase = events[events.Count - 1];
+            var propBase = evBase.Properties["Instance"];
+
+            // SortedList implements IDictionary
+            var sortedList = new SortedList(){
+                {"TestKey", "TestValue"}
+            };
+
+            logger.Information("{@Instance}", sortedList);
+
+            var evChild = events[events.Count - 1];
+            var propChild = evChild.Properties["Instance"];
+
+            Assert.Equal(propBase.ToString(), propChild.ToString());
+        }
+
+        private class MyDictionary<TKey, TVal> : Dictionary<string, string>{}
+
+        [Fact]
+        public void DestructureAsDictionaryCausesChildrenOfGenericDictionaryToBeSerialisedAsDictionaries()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .Destructure.AsDictionary<MyDictionary<string, string>>()
+                .CreateLogger();
+
+            logger.Information("{@Instance}", new Dictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evBase = events[events.Count - 1];
+            var propBase = evBase.Properties["Instance"];
+
+            logger.Information("{@Instance}", new MyDictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evChild = events[events.Count - 1];
+            var propChild = evChild.Properties["Instance"];
+
+            Assert.Equal(propBase.ToString(), propChild.ToString());
+        }
+
+        [Fact]
+        public void DestructureAsDictionaryThrowsIfPassedAnIncompatibleType()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            Assert.Throws<ArgumentException>(() =>
+                new LoggerConfiguration()
+                    .WriteTo.Sink(sink)
+                    .Destructure.AsDictionary<List<KeyValuePair<string, string>>>()
+                    .CreateLogger()
+            );
+        }
+
+        [Fact]
+        public void ByDefaultChildrenOfDictionaryAreNotSerialisedAsDictionaries()
+        {
+            var events = new List<LogEvent>();
+            var sink = new DelegatingSink(events.Add);
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
+            logger.Information("{@Instance}", new Dictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evBase = events[events.Count - 1];
+            var propBase = evBase.Properties["Instance"];
+
+            logger.Information("{@Instance}", new MyDictionary<string, string>{
+                {"TestKey", "TestValue"}
+            });
+
+            var evChild = events[events.Count - 1];
+            var propChild = evChild.Properties["Instance"];
+
+            Assert.NotEqual(propBase.ToString(), propChild.ToString());
         }
     }
 }
