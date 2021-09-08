@@ -1,0 +1,4 @@
+contact_links:
+  - name: Ask for help
+    url: https://github.com/serilog/serilog/wiki/Usage-help
+    about: Ask the community for help on how to use Serilog
