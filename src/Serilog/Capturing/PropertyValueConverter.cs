@@ -1,4 +1,4 @@
-// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2021 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,7 +74,10 @@ namespace Serilog.Capturing
             {
                 new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
                 new EnumScalarConversionPolicy(),
-                new ByteArrayScalarConversionPolicy()
+                new ByteArrayScalarConversionPolicy(),
+#if FEATURE_SPAN
+                new ByteMemoryScalarConversionPolicy(),
+#endif
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
@@ -362,6 +365,15 @@ namespace Serilog.Capturing
                         throw;
 
                     propValue = "The property accessor threw an exception: " + ex.InnerException?.GetType().Name;
+                }
+                catch (NotSupportedException)
+                {
+                    SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", prop);
+
+                    if (_propagateExceptions)
+                        throw;
+
+                    propValue = "Accessing this property is not supported via Reflection API";
                 }
                 yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
             }
