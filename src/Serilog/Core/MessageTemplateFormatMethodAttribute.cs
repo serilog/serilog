@@ -8,7 +8,7 @@ namespace Serilog.Core
     /// </summary>
     /// <example>
     /// <code>
-    /// [LoggerMethod("messageTemplate")]
+    /// [MessageTemplateFormatMethod("messageTemplate")]
     /// public void Information(string messageTemplate, params object[] propertyValues)
     /// {
     ///     // Do something
