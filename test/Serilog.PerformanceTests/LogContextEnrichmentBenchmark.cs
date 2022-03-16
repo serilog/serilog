@@ -7,7 +7,7 @@ namespace Serilog.PerformanceTests
 {
     public class LogContextEnrichmentBenchmark
     {
-        ILogger _bare, _enriched;
+        ILogger _bare = null!, _enriched = null!;
         readonly LogEvent _event = Some.InformationEvent();
 
         [GlobalSetup]

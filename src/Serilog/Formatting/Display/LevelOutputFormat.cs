@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using Serilog.Events;
 using Serilog.Rendering;
@@ -53,10 +54,10 @@ namespace Serilog.Formatting.Display
             new []{ "F", "FA", "FTL", "FATL", "FATAL" }
         };
 
-        public static string GetLevelMoniker(LogEventLevel value, string format = null)
+        public static string GetLevelMoniker(LogEventLevel value, string? format = null)
         {
             var index = (int)value;
-            if (index < 0 || index > (int)LogEventLevel.Fatal)
+            if (index is < 0 or > (int)LogEventLevel.Fatal)
                 return Casing.Format(value.ToString(), format);
 
             if (format == null || format.Length != 2 && format.Length != 3)

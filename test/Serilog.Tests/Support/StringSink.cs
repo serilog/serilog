@@ -9,7 +9,7 @@ namespace Serilog.Tests.Support
 {
     public class StringSink : ILogEventSink
     {
-        readonly StringWriter _sw = new StringWriter();
+        readonly StringWriter _sw = new();
         readonly ITextFormatter _formatter;
 
         const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}";

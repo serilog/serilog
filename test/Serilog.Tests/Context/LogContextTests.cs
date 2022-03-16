@@ -38,7 +38,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void PushedPropertiesAreAvailableToLoggers()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -50,7 +50,8 @@ namespace Serilog.Tests.Context
             using (LogContext.Push(new PropertyEnricher("C", 3), new PropertyEnricher("D", 4))) // Different overload
             {
                 log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.NotNull(lastEvent);
+                Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
                 Assert.Equal(3, lastEvent.Properties["C"].LiteralValue());
                 Assert.Equal(4, lastEvent.Properties["D"].LiteralValue());
@@ -60,7 +61,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void LogContextCanBeCloned()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -76,14 +77,15 @@ namespace Serilog.Tests.Context
             using (LogContext.Push(clonedContext))
             {
                 log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.NotNull(lastEvent);
+                Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
             }
         }
 
         [Fact]
         public void ClonedLogContextCanSharedAcrossThreads()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -107,13 +109,14 @@ namespace Serilog.Tests.Context
             t.Start();
             t.Join();
 
-            Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+            Assert.NotNull(lastEvent);
+            Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
         }
 
         [Fact]
         public void MoreNestedPropertiesOverrideLessNestedOnes()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -123,7 +126,8 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperty("A", 1))
             {
                 log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                Assert.NotNull(lastEvent);
+                Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
 
                 using (LogContext.PushProperty("A", 2))
                 {
@@ -142,7 +146,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void MultipleNestedPropertiesOverrideLessNestedOnes()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -152,7 +156,8 @@ namespace Serilog.Tests.Context
             using (LogContext.Push(new PropertyEnricher("A1", 1), new PropertyEnricher("A2", 2)))
             {
                 log.Write(Some.InformationEvent());
-                Assert.Equal(1, lastEvent.Properties["A1"].LiteralValue());
+                Assert.NotNull(lastEvent);
+                Assert.Equal(1, lastEvent!.Properties["A1"].LiteralValue());
                 Assert.Equal(2, lastEvent.Properties["A2"].LiteralValue());
 
                 using (LogContext.Push(new PropertyEnricher("A1", 10), new PropertyEnricher("A2", 20)))
@@ -177,7 +182,7 @@ namespace Serilog.Tests.Context
         {
             await TestWithSyncContext(async () =>
             {
-                LogEvent lastEvent = null;
+                LogEvent? lastEvent = null;
 
                 var log = new LoggerConfiguration()
                     .Enrich.FromLogContext()
@@ -193,7 +198,8 @@ namespace Serilog.Tests.Context
                     var post = Thread.CurrentThread.ManagedThreadId;
 
                     log.Write(Some.InformationEvent());
-                    Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
+                    Assert.NotNull(lastEvent);
+                    Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
 
                     Assert.False(Thread.CurrentThread.IsThreadPoolThread);
                     Assert.True(Thread.CurrentThread.IsBackground);
@@ -206,7 +212,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task ContextEnrichersInAsyncScopeCanBeCleared()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -221,7 +227,8 @@ namespace Serilog.Tests.Context
                     log.Write(Some.InformationEvent());
                 });
 
-                Assert.Empty(lastEvent.Properties);
+                Assert.NotNull(lastEvent);
+                Assert.Empty(lastEvent!.Properties);
 
                 // Reset should only work for current async scope, outside of it previous Context
                 // instance should be available again.
@@ -233,7 +240,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public async Task ContextEnrichersCanBeTemporarilyCleared()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -249,7 +256,8 @@ namespace Serilog.Tests.Context
                         log.Write(Some.InformationEvent());
                     });
 
-                    Assert.Empty(lastEvent.Properties);
+                    Assert.NotNull(lastEvent);
+                    Assert.Empty(lastEvent!.Properties);
                 }
 
                 // Suspend should only work for scope of using. After calling Dispose all enrichers
@@ -265,7 +273,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void DoesNotPreventCrossDomainCalls()
         {
-            AppDomain domain = null;
+            AppDomain? domain = null;
             try
             {
                 domain = AppDomain.CreateDomain("LogContextTests", null, AppDomain.CurrentDomain.SetupInformation);
@@ -289,7 +297,7 @@ namespace Serilog.Tests.Context
         [Fact]
         public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
         {
-            RemotingException remotingException = null;
+            RemotingException? remotingException = null;
 
             AppDomain.CurrentDomain.FirstChanceException +=
                 (_, e) => remotingException = e.Exception is RemotingException re ? re : remotingException;
@@ -389,7 +397,7 @@ namespace Serilog.Tests.Context
     {
         public bool IsCallable()
         {
-            LogEvent lastEvent = null;
+            LogEvent? lastEvent = null;
 
             var log = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
@@ -399,13 +407,14 @@ namespace Serilog.Tests.Context
             using (LogContext.PushProperty("Number", 42))
                 log.Information("Hello");
 
-            return 42.Equals(lastEvent.Properties["Number"].LiteralValue());
+            Assert.NotNull(lastEvent);
+            return 42.Equals(lastEvent!.Properties["Number"].LiteralValue());
         }
     }
 #endif
 
     class ForceNewThreadSyncContext : SynchronizationContext
     {
-        public override void Post(SendOrPostCallback d, object state) => new Thread(x => d(x)) { IsBackground = true }.Start(state);
+        public override void Post(SendOrPostCallback d, object? state) => new Thread(x => d(x)) { IsBackground = true }.Start(state);
     }
 }

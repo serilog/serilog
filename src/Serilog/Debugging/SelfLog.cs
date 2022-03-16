@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.IO;
 
@@ -23,7 +24,7 @@ namespace Serilog.Debugging
     /// </summary>
     public static class SelfLog
     {
-        static Action<string> _output;
+        static Action<string>? _output;
 
         /// <summary>
         /// The output mechanism for self-log messages.
@@ -33,7 +34,7 @@ namespace Serilog.Debugging
         /// </example>
         // ReSharper disable once MemberCanBePrivate.Global, UnusedAutoPropertyAccessor.Global
         [Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
-        public static TextWriter Out
+        public static TextWriter? Out
         {
             set
             {
@@ -93,7 +94,7 @@ namespace Serilog.Debugging
         /// The name is historical; because this is used from third-party sink packages, removing the "Line"
         /// suffix as would seem sensible isn't worth the breakage.
         /// </remarks>
-        public static void WriteLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
+        public static void WriteLine(string format, object? arg0 = null, object? arg1 = null, object? arg2 = null)
         {
             var o = _output;
 

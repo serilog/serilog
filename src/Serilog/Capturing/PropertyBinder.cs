@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -39,7 +40,7 @@ namespace Serilog.Capturing
         /// represented in the message template.</param>
         /// <returns>A list of properties; if the template is malformed then
         /// this will be empty.</returns>
-        public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object[] messageTemplateParameters)
+        public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters)
         {
             if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
             {
@@ -52,10 +53,10 @@ namespace Serilog.Capturing
             if (messageTemplate.PositionalProperties != null)
                 return ConstructPositionalProperties(messageTemplate, messageTemplateParameters);
 
-            return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
+            return ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
         }
 
-        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object[] messageTemplateParameters)
+        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters)
         {
             var positionalProperties = template.PositionalProperties;
 
@@ -114,14 +115,14 @@ namespace Serilog.Capturing
             for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)
             {
                 var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
-                result[i] = new EventProperty("__" + i, value);
+                result[i] = new("__" + i, value);
             }
             return result;
         }
 
-        EventProperty ConstructProperty(PropertyToken propertyToken, object value)
+        EventProperty ConstructProperty(PropertyToken propertyToken, object? value)
         {
-            return new EventProperty(
+            return new(
                         propertyToken.PropertyName,
                         _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring));
         }

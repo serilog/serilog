@@ -38,7 +38,7 @@ namespace Serilog.Context
             _top = top;
         }
 
-        public Enumerator GetEnumerator() => new Enumerator(this);
+        public Enumerator GetEnumerator() => new(this);
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
 
@@ -46,11 +46,11 @@ namespace Serilog.Context
 
         public int Count { get; }
 
-        public static ImmutableStack<T> Empty { get; } = new ImmutableStack<T>();
+        public static ImmutableStack<T> Empty { get; } = new();
 
         public bool IsEmpty => _under == null;
 
-        public ImmutableStack<T> Push(T t) => new ImmutableStack<T>(this, t);
+        public ImmutableStack<T> Push(T t) => new(this, t);
 
         public T Top => _top;
 

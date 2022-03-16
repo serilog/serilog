@@ -1,5 +1,6 @@
-﻿#if FEATURE_DEFAULT_INTERFACE
+#if FEATURE_DEFAULT_INTERFACE
 
+#nullable enable
 using System;
 using Serilog.Events;
 

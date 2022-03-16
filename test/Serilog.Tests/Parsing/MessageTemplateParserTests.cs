@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Serilog.Parsing;
 using System.Linq;
 using Xunit;
@@ -7,7 +7,7 @@ namespace Serilog.Tests.Parsing
 {
     public class MessageTemplateParserTests
     {
-        static MessageTemplateToken[] Parse(string messageTemplate)
+        static MessageTemplateToken[] Parse(string? messageTemplate)
         {
             return new MessageTemplateParser().Parse(messageTemplate).Tokens.ToArray();
         }

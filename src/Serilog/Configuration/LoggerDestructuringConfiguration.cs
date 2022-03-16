@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections;
 using Serilog.Core;
@@ -49,7 +50,7 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Treat objects of the specified type as scalar values, i.e., don't break
-        /// them down into properties event when destructuring complex types.
+        /// them down into properties even when destructuring complex types.
         /// </summary>
         /// <param name="scalarType">Type to treat as scalar.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
@@ -64,7 +65,7 @@ namespace Serilog.Configuration
 
         /// <summary>
         /// Treat objects of the specified type as scalar values, i.e., don't break
-        /// them down into properties event when destructuring complex types.
+        /// them down into properties even when destructuring complex types.
         /// </summary>
         /// <typeparam name="TScalar">Type to treat as scalar.</typeparam>
         /// <returns>Configuration object allowing method chaining.</returns>

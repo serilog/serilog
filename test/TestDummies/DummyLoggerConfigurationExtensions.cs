@@ -1,9 +1,9 @@
-﻿using Serilog;
+using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting;
 using System;
+using Serilog.Formatting;
 using TestDummies.Console;
 using TestDummies.Console.Themes;
 
@@ -20,8 +20,8 @@ namespace TestDummies
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string pathFormat,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = null,
-            IFormatProvider formatProvider = null)
+            string? outputTemplate = null,
+            IFormatProvider? formatProvider = null)
         {
             return loggerSinkConfiguration.Sink(new DummyRollingFileSink(), restrictedToMinimumLevel);
         }
@@ -37,10 +37,7 @@ namespace TestDummies
 
         public static LoggerConfiguration DummyRollingFile(
             this LoggerAuditSinkConfiguration loggerSinkConfiguration,
-            string pathFormat,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            string outputTemplate = null,
-            IFormatProvider formatProvider = null)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             return loggerSinkConfiguration.Sink(new DummyRollingFileAuditSink(), restrictedToMinimumLevel);
         }
@@ -48,7 +45,7 @@ namespace TestDummies
         public static LoggerConfiguration DummyWithLevelSwitch(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch controlLevelSwitch = null)
+            LoggingLevelSwitch? controlLevelSwitch = null)
         {
             return loggerSinkConfiguration.Sink(new DummyWithLevelSwitchSink(controlLevelSwitch), restrictedToMinimumLevel);
         }
@@ -56,7 +53,7 @@ namespace TestDummies
         public static LoggerConfiguration DummyConsole(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            ConsoleTheme theme = null)
+            ConsoleTheme? theme = null)
         {
             return loggerSinkConfiguration.Sink(new DummyConsoleSink(theme), restrictedToMinimumLevel);
         }
@@ -77,7 +74,7 @@ namespace TestDummies
             this LoggerSinkConfiguration loggerSinkConfiguration,
             Action<LoggerSinkConfiguration> wrappedSinkAction,
             LogEventLevel logEventLevel,
-            LoggingLevelSwitch levelSwitch)
+            LoggingLevelSwitch? levelSwitch)
         {
             return LoggerSinkConfiguration.Wrap(
                 loggerSinkConfiguration,

@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
 using Serilog.Debugging;
+using Serilog.Tests.Support;
+using System;
+using System.Collections.Generic;
+using TestDummies;
 using Xunit;
 
 namespace Serilog.Tests.Debugging
@@ -8,15 +10,15 @@ namespace Serilog.Tests.Debugging
     public class SelfLogTests
     {
         [ThreadStatic]
-        static List<string> Messages;
+        static List<string>? Messages;
 
         [Fact]
         public void MessagesAreWrittenWhenOutputIsSet()
         {
-            Messages = new List<string>();
+            Messages = new();
             SelfLog.Enable(m =>
             {
-                Messages = Messages ?? new List<string>();
+                Messages = Messages ?? new();
                 Messages.Add(m);
             });
 
@@ -29,6 +31,35 @@ namespace Serilog.Tests.Debugging
             SelfLog.Disable();
             SelfLog.WriteLine("Unwritten");
             Assert.Equal(Messages.Count, count);
+        }
+
+        [Fact]
+        public void WritingToUndeclaredSinkWritesToSelfLog()
+        {
+            Messages = new();
+            SelfLog.Enable(m =>
+            {
+                Messages = Messages ?? new();
+                Messages.Add(m);
+            });
+
+            var settings = new Dictionary<string, string>
+            {
+                ["write-to:DummyRollingFile.pathFormat"] = "C:\\"
+            };
+
+            var log = new LoggerConfiguration()
+                .ReadFrom.KeyValuePairs(settings)
+                .CreateLogger();
+
+            DummyRollingFileSink.Reset();
+            DummyRollingFileAuditSink.Reset();
+
+            log.Write(Some.InformationEvent());
+
+            Assert.Single(Messages);
+            Assert.Contains(Messages, m => m.EndsWith("Setting \"DummyRollingFile\" could not be matched to an implementation in any of the loaded assemblies. " +
+                "To use settings from additional assemblies, specify them with the \"serilog:using\" key."));
         }
     }
 }

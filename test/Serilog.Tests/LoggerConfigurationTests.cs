@@ -4,6 +4,7 @@ using Serilog.Events;
 using Serilog.Tests.Support;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Serilog.Configuration;
@@ -157,7 +158,7 @@ namespace Serilog.Tests
                 _projection = projection ?? throw new ArgumentNullException(nameof(projection));
             }
 
-            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+            public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
 
@@ -182,7 +183,7 @@ namespace Serilog.Tests
             var logger = new LoggerConfiguration()
                 .Destructure.With(new ProjectedDestructuringPolicy(
                     canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
-                    projection: o => ((Type)o).AssemblyQualifiedName))
+                    projection: o => ((Type)o).AssemblyQualifiedName!))
                 .WriteTo.Sink(sink)
                 .CreateLogger();
 
@@ -225,7 +226,7 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Logger(l => l
-                    .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
+                    .WriteTo.Sink(new DelegatingSink(_ => eventReceived = true)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -241,12 +242,12 @@ namespace Serilog.Tests
             var logger = new LoggerConfiguration()
                 .WriteTo.Logger(l => l
                     .MinimumLevel.Fatal()
-                    .WriteTo.Sink(new DelegatingSink(e => eventReceived = true)))
+                    .WriteTo.Sink(new DelegatingSink(_ => eventReceived = true)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
 
-            Assert.True(!eventReceived);
+            Assert.False(eventReceived);
         }
 
         [Fact]
@@ -257,8 +258,8 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new StringSink())
-                .Enrich.With(new DelegatingEnricher((e, f) => e.AddPropertyIfAbsent(property)))
-                .Enrich.With(new DelegatingEnricher((e, f) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
+                .Enrich.With(new DelegatingEnricher((e, _) => e.AddPropertyIfAbsent(property)))
+                .Enrich.With(new DelegatingEnricher((e, _) => enrichedPropertySeen = e.Properties.ContainsKey(property.Name)))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -400,7 +401,7 @@ namespace Serilog.Tests
 
             public override string ToString()
             {
-                return new string('#', _toStringOfLength);
+                return new('#', _toStringOfLength);
             }
         }
 
@@ -465,14 +466,15 @@ namespace Serilog.Tests
 
         static string LogAndGetAsString(object x, Func<LoggerConfiguration, LoggerConfiguration> conf, string destructuringSymbol = "")
         {
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var logConf = new LoggerConfiguration()
                 .WriteTo.Sink(new DelegatingSink(e => evt = e));
             logConf = conf(logConf);
             var log = logConf.CreateLogger();
 
             log.Information($"{{{destructuringSymbol}X}}", x);
-            return evt.Properties["X"].ToString();
+            Assert.NotNull(evt);
+            return evt!.Properties["X"].ToString();
         }
 
         [Fact]
@@ -483,7 +485,7 @@ namespace Serilog.Tests
 
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(
-                    new DelegatingSink(e => eventsReceived++),
+                    new DelegatingSink(_ => eventsReceived++),
                     levelSwitch: levelSwitch)
                 .CreateLogger();
 
@@ -566,7 +568,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownBySinksAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
+                .WriteTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -579,7 +581,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
-                .WriteTo.Sink(new DelegatingSink(e => throw new Exception("Boom!")))
+                .WriteTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -591,7 +593,7 @@ namespace Serilog.Tests
         public void ExceptionsThrownByFiltersAreNotPropagated()
         {
             var logger = new LoggerConfiguration()
-                .Filter.ByExcluding(e => throw new Exception("Boom!"))
+                .Filter.ByExcluding(_ => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Write(Some.InformationEvent());
@@ -606,7 +608,7 @@ namespace Serilog.Tests
         {
             var logger = new LoggerConfiguration()
                 .WriteTo.Sink(new CollectingSink())
-                .Destructure.ByTransforming<Value>(v => throw new Exception("Boom!"))
+                .Destructure.ByTransforming<Value>(_ => throw new Exception("Boom!"))
                 .CreateLogger();
 
             logger.Information("{@Value}", new Value());
