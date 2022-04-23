@@ -192,29 +192,29 @@ namespace Serilog.Formatting.Json
         [Obsolete(ExtensionPointObsoletionMessage)]
         protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
         {
-            var rdelim = "";
-            foreach (var ptoken in tokensWithFormat)
+            var propertyDelimiter = "";
+            foreach (var propertyFormats in tokensWithFormat)
             {
-                output.Write(rdelim);
-                rdelim = ",";
+                output.Write(propertyDelimiter);
+                propertyDelimiter = ",";
                 output.Write("\"");
-                output.Write(ptoken.Key);
+                output.Write(propertyFormats.Key);
                 output.Write("\":[");
 
-                var fdelim = "";
-                foreach (var format in ptoken)
+                var formatDelimiter = "";
+                foreach (var format in propertyFormats)
                 {
-                    output.Write(fdelim);
-                    fdelim = ",";
+                    output.Write(formatDelimiter);
+                    formatDelimiter = ",";
 
                     output.Write("{");
-                    var eldelim = "";
+                    var elementDelimiter = "";
 
-                    WriteJsonProperty("Format", format.Format, ref eldelim, output);
+                    WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
 
                     var sw = new StringWriter();
                     MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
-                    WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+                    WriteJsonProperty("Rendering", sw.ToString(), ref elementDelimiter, output);
 
                     output.Write("}");
                 }
