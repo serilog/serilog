@@ -1341,8 +1341,8 @@ namespace Serilog
         [CustomDefaultMethodImplementation]
 #endif
         bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues,
-            [MaybeNullWhen(false)] out MessageTemplate parsedTemplate,
-            [MaybeNullWhen(false)] out IEnumerable<LogEventProperty> boundProperties)
+            [NotNullWhen(true)] out MessageTemplate? parsedTemplate,
+            [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
 #if FEATURE_DEFAULT_INTERFACE
             => DefaultLoggerImpl.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties)
 #endif

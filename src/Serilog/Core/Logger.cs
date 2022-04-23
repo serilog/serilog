@@ -1328,7 +1328,9 @@ namespace Serilog.Core
         /// }
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        public bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues, [MaybeNullWhen(false)] out MessageTemplate parsedTemplate, [MaybeNullWhen(false)] out IEnumerable<LogEventProperty> boundProperties)
+        public bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues,
+            [NotNullWhen(true)] out MessageTemplate? parsedTemplate,
+            [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             if (messageTemplate == null!)
             {
