@@ -88,7 +88,7 @@ namespace Serilog
         /// Create a logger that enriches log events with the specified property.
         /// </summary>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
+        public static ILogger ForContext(string propertyName, object? value, bool destructureObjects = false)
         {
             return Logger.ForContext(propertyName, value, destructureObjects);
         }
@@ -1170,7 +1170,8 @@ namespace Serilog
         /// }
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues, [MaybeNullWhen(false)] out MessageTemplate? parsedTemplate, [MaybeNullWhen(false)] out IEnumerable<LogEventProperty>? boundProperties)
+        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues,
+            [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             return Logger.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
         }
