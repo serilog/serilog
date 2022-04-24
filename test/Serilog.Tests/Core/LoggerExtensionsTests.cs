@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Serilog.Events;
 using Serilog.Tests.Support;
 using Xunit;
@@ -49,7 +49,7 @@ namespace Serilog.Tests.Core
             logger.ForContext(propertyLogLevel, propKey, propValue)
                 .Write(logMinLevel, string.Empty);
 
-            Assert.True(!sink.SingleEvent.Properties.ContainsKey(propKey));
+            Assert.False(sink.SingleEvent.Properties.ContainsKey(propKey));
         }
     }
 }

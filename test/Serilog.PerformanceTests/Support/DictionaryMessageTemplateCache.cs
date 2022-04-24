@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
@@ -8,9 +8,9 @@ namespace Serilog.PerformanceTests.Support
     class DictionaryMessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
-        readonly object _templatesLock = new object();
+        readonly object _templatesLock = new();
 
-        readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string, MessageTemplate>();
+        readonly Dictionary<string, MessageTemplate> _templates = new();
 
         const int MaxCacheItems = 1000;
         const int MaxCachedTemplateLength = 1024;
@@ -27,7 +27,7 @@ namespace Serilog.PerformanceTests.Support
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);
 
-            MessageTemplate result;
+            MessageTemplate? result;
             lock (_templatesLock)
                 if (_templates.TryGetValue(messageTemplate, out result))
                     return result;

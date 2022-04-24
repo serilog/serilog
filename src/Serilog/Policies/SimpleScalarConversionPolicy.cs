@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Serilog.Policies
 
         public SimpleScalarConversionPolicy(IEnumerable<Type> scalarTypes)
         {
-            _scalarTypes = new HashSet<Type>(scalarTypes);
+            _scalarTypes = new(scalarTypes);
         }
 
         public bool TryConvertToScalar(object value, out ScalarValue result)

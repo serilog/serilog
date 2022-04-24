@@ -1,4 +1,4 @@
-﻿using Serilog.Capturing;
+using Serilog.Capturing;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -17,7 +17,7 @@ namespace Serilog.Tests.Capturing
     public class PropertyValueConverterTests
     {
         readonly PropertyValueConverter _converter =
-            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+            new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         [Fact]
         public async Task MaximumDepthIsEffectiveAndThreadSafe()
@@ -55,7 +55,7 @@ namespace Serilog.Tests.Capturing
 
             await Task.WhenAll(t1, t2, t3);
 
-            void DoThreadTest(object logObject, Action<string> assertAction)
+            void DoThreadTest(object logObject, Action<string?> assertAction)
             {
                 for (var i = 0; i < 100; ++i)
                 {
@@ -113,13 +113,13 @@ namespace Serilog.Tests.Capturing
 
         class A
         {
-            public B B { get; set; }
+            public B? B { get; set; }
         }
 
         class B
         {
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-            public A A { get; set; }
+            public A? A { get; set; }
 // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
@@ -142,7 +142,7 @@ namespace Serilog.Tests.Capturing
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public IList<C?> C { get; set; }
+            public IList<C?>? C { get; set; }
         }
 
         [Fact]
@@ -200,6 +200,58 @@ namespace Serilog.Tests.Capturing
             Assert.EndsWith("(1025 bytes)", lv);
         }
 
+#if FEATURE_SPAN
+        [Fact]
+        public void ByteSpansAreConvertedToStrings()
+        {
+            var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray().AsMemory();
+            var pv = _converter.CreatePropertyValue(bytes);
+            var lv = (string)pv.LiteralValue();
+            Assert.Equal("00010203040506070809", lv);
+        }
+
+        [Fact]
+        public void ByteSpansLargerThan1kAreLimitedAndConvertedToStrings()
+        {
+            var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray().AsMemory();
+            var pv = _converter.CreatePropertyValue(bytes);
+            var lv = (string)pv.LiteralValue();
+            Assert.EndsWith("(1025 bytes)", lv);
+        }
+
+        [Theory]
+        [InlineData(10)]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        public void ByteSpansAreConvertedToTheSameStringsAsArrays(int length)
+        {
+            var bytes = Enumerable.Range(0, length).Select(b => (byte)b).ToArray();
+            var bytesSpan = bytes.AsMemory();
+
+            var bytesResult = _converter.CreatePropertyValue(bytes).LiteralValue();
+            var bytesSpanResult = _converter.CreatePropertyValue(bytesSpan).LiteralValue();
+
+            Assert.Equal(bytesResult, bytesSpanResult);
+        }
+
+        [Fact]
+        public void FailsGracefullyWhenAccessingPropertiesViaReflectionThrows()
+        {
+            var thrower = new int[] { 1, 2, 3 }.AsMemory();
+
+            var pv = _converter.CreatePropertyValue(thrower, Destructuring.Destructure);
+            var sv = (StructureValue)pv;
+            Assert.Equal(3, sv.Properties.Count);
+            var t = sv.Properties.Single(m => m.Name == "Span");
+            Assert.Equal("Accessing this property is not supported via Reflection API", t.Value.LiteralValue());
+            var l = sv.Properties.Single(m => m.Name == "Length");
+            Assert.Equal(3, l.Value.LiteralValue());
+            var k = sv.Properties.Single(m => m.Name == "IsEmpty");
+            Assert.False((bool)k.Value.LiteralValue());
+            var s = sv.Properties.Single(m => m.Name == "Span");
+        }
+#endif
+
         public class Thrower
         {
             public string Throws => throw new NotSupportedException();
@@ -237,16 +289,16 @@ namespace Serilog.Tests.Capturing
 
         public class BaseWithProps
         {
-            public string PropA { get; set; }
-            public virtual string PropB { get; set; }
-            public string PropC { get; set; }
+            public string? PropA { get; set; }
+            public virtual string? PropB { get; set; }
+            public string? PropC { get; set; }
         }
 
         public class DerivedWithOverrides : BaseWithProps
         {
-            public new string PropA { get; set; }
-            public override string PropB { get; set; }
-            public string PropD { get; set; }
+            public new string? PropA { get; set; }
+            public override string? PropB { get; set; }
+            public string? PropD { get; set; }
         }
 
         [Fact]

@@ -10,7 +10,7 @@ namespace Serilog.Tests.Rendering
 {
     public class MessageTemplateRendererTests
     {
-        readonly MessageTemplateParser _messageTemplateParser = new MessageTemplateParser();
+        readonly MessageTemplateParser _messageTemplateParser = new();
 
         [Theory]
         [InlineData("{Number}", null, "16")]

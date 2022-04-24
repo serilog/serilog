@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Serilog.Core;
 using Serilog.Core.Pipeline;
@@ -86,7 +88,7 @@ namespace Serilog
         /// Create a logger that enriches log events with the specified property.
         /// </summary>
         /// <returns>A logger that will enrich log events as specified.</returns>
-        public static ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
+        public static ILogger ForContext(string propertyName, object? value, bool destructureObjects = false)
         {
             return Logger.ForContext(propertyName, value, destructureObjects);
         }
@@ -1168,7 +1170,8 @@ namespace Serilog
         /// }
         /// </example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        public static bool BindMessageTemplate(string messageTemplate, object[] propertyValues,
+            [NotNullWhen(true)] out MessageTemplate? parsedTemplate, [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
         {
             return Logger.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties);
         }
@@ -1184,7 +1187,7 @@ namespace Serilog
         /// <param name="property">The resulting property.</param>
         /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// methods never throw exceptions).</returns>
-        public static bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        public static bool BindProperty(string propertyName, object value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             return Logger.BindProperty(propertyName, value, destructureObjects, out property);
         }

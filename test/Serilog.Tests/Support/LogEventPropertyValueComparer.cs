@@ -9,12 +9,12 @@ namespace Serilog.Tests.Support
     {
         readonly IEqualityComparer<object> _objectEqualityComparer;
 
-        public LogEventPropertyValueComparer(IEqualityComparer<object> objectEqualityComparer = null)
+        public LogEventPropertyValueComparer(IEqualityComparer<object>? objectEqualityComparer = null)
         {
             _objectEqualityComparer = objectEqualityComparer ?? EqualityComparer<object>.Default;
         }
 
-        public bool Equals(LogEventPropertyValue x, LogEventPropertyValue y)
+        public bool Equals(LogEventPropertyValue? x, LogEventPropertyValue? y)
         {
             if (x is ScalarValue scalarX && y is ScalarValue scalarY)
             {

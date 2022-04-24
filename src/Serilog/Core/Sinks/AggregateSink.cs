@@ -1,4 +1,4 @@
-﻿// Copyright 2016-2020 Serilog Contributors
+// Copyright 2016-2020 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Serilog.Core.Sinks
 
         public void Emit(LogEvent logEvent)
         {
-            List<Exception> exceptions = null;
+            List<Exception>? exceptions = null;
             foreach (var sink in _sinks)
             {
                 try
@@ -43,7 +44,7 @@ namespace Serilog.Core.Sinks
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                    exceptions ??= new List<Exception>();
+                    exceptions ??= new();
                     exceptions.Add(ex);
                 }
             }

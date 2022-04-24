@@ -9,7 +9,7 @@ namespace Serilog.PerformanceTests
     /// </summary>
     public class NestedLoggerLatencyBenchmark
     {
-        ILogger _log, _nested;
+        ILogger _log = null!, _nested = null!;
         readonly LogEvent _event = Some.InformationEvent();
 
         [GlobalSetup]

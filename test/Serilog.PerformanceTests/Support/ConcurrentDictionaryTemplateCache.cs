@@ -9,7 +9,7 @@ namespace Serilog.PerformanceTests.Support
     {
         readonly IMessageTemplateParser _innerParser;
 
-        readonly ConcurrentDictionary<string, MessageTemplate> _templates = new ConcurrentDictionary<string, MessageTemplate>();
+        readonly ConcurrentDictionary<string, MessageTemplate> _templates = new();
 
         const int MaxCacheItems = 1000;
         const int MaxCachedTemplateLength = 1024;

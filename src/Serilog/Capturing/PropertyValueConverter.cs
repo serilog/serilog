@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2021 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Serilog.Core;
@@ -32,7 +34,7 @@ namespace Serilog.Capturing
     // writing a log event (roughly) in control of the cost of recording that event.
     partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
     {
-        static readonly HashSet<Type> BuiltInScalarTypes = new HashSet<Type>
+        static readonly HashSet<Type> BuiltInScalarTypes = new()
         {
             typeof(bool),
             typeof(char),
@@ -72,7 +74,10 @@ namespace Serilog.Capturing
             {
                 new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
                 new EnumScalarConversionPolicy(),
-                new ByteArrayScalarConversionPolicy()
+                new ByteArrayScalarConversionPolicy(),
+#if FEATURE_SPAN
+                new ByteMemoryScalarConversionPolicy(),
+#endif
             };
 
             _destructuringPolicies = additionalDestructuringPolicies
@@ -83,20 +88,20 @@ namespace Serilog.Capturing
                 })
                 .ToArray();
 
-            _depthLimiter = new DepthLimiter(maximumDestructuringDepth, this);
+            _depthLimiter = new(maximumDestructuringDepth, this);
         }
 
-        public LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false)
+        public LogEventProperty CreateProperty(string? name, object? value, bool destructureObjects = false)
         {
-            return new LogEventProperty(name, CreatePropertyValue(value, destructureObjects));
+            return new(name, CreatePropertyValue(value, destructureObjects));
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false)
+        public LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects = false)
         {
             return CreatePropertyValue(value, destructureObjects, 1);
         }
 
-        public LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring)
+        public LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring)
         {
             try
             {
@@ -113,7 +118,7 @@ namespace Serilog.Capturing
             }
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects, int depth)
+        LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects, int depth)
         {
             return CreatePropertyValue(
                 value,
@@ -123,7 +128,7 @@ namespace Serilog.Capturing
                 depth);
         }
 
-        LogEventPropertyValue CreatePropertyValue(object value, Destructuring destructuring, int depth)
+        LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring, int depth)
         {
             if (value == null)
                 return new ScalarValue(null);
@@ -175,7 +180,7 @@ namespace Serilog.Capturing
             return new ScalarValue(value.ToString() ?? "");
         }
 
-        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        bool TryConvertEnumerable(object value, Destructuring destructuring, Type valueType, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
             if (value is IEnumerable enumerable)
             {
@@ -234,7 +239,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        bool TryConvertValueTuple(object value, Destructuring destructuring, Type valueType, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
             if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
             {
@@ -252,11 +257,14 @@ namespace Serilog.Capturing
                 definition == typeof(ValueTuple<,,,,,,>))
 #else
             // ReSharper disable once PossibleNullReferenceException
-            var defn = definition.FullName;
-            if (defn == "System.ValueTuple`1" || defn == "System.ValueTuple`2" ||
-                defn == "System.ValueTuple`3" || defn == "System.ValueTuple`4" ||
-                defn == "System.ValueTuple`5" || defn == "System.ValueTuple`6" ||
-                defn == "System.ValueTuple`7")
+            if (definition.FullName is
+                "System.ValueTuple`1" or
+                "System.ValueTuple`2" or
+                "System.ValueTuple`3" or
+                "System.ValueTuple`4" or
+                "System.ValueTuple`5" or
+                "System.ValueTuple`6" or
+                "System.ValueTuple`7")
 #endif
             {
                 var elements = new List<LogEventPropertyValue>();
@@ -278,7 +286,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, out LogEventPropertyValue result)
+        bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, Type valueType, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
             if (destructuring == Destructuring.Destructure)
             {
@@ -313,7 +321,7 @@ namespace Serilog.Capturing
             return text;
         }
 
-        static bool TryGetDictionary(object value, Type valueType, out IDictionary dictionary)
+        static bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
         {
             if (valueType.IsConstructedGenericType &&
                 valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
@@ -340,7 +348,7 @@ namespace Serilog.Capturing
                 object propValue;
                 try
                 {
-                    propValue = prop.GetValue(value);
+                    propValue = prop.GetValue(value)!;
                 }
                 catch (TargetParameterCountException)
                 {
@@ -358,6 +366,15 @@ namespace Serilog.Capturing
 
                     propValue = "The property accessor threw an exception: " + ex.InnerException?.GetType().Name;
                 }
+                catch (NotSupportedException)
+                {
+                    SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", prop);
+
+                    if (_propagateExceptions)
+                        throw;
+
+                    propValue = "Accessing this property is not supported via Reflection API";
+                }
                 yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
             }
         }
@@ -369,7 +386,7 @@ namespace Serilog.Capturing
             var typeName = type.Name;
 
             // C# Anonymous types always start with "<>" and VB's start with "VB$"
-            return typeInfo.IsGenericType && typeInfo.IsSealed && typeInfo.IsNotPublic && type.Namespace == null
+            return typeInfo.IsGenericType && typeInfo.IsSealed && type.Namespace == null
                 && (typeName[0] == '<'
                     || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }

@@ -16,7 +16,7 @@ namespace Serilog.PerformanceTests
     {
         readonly LevelOverrideMap _levelOverrideMap;
         readonly Logger _loggerWithOverrides;
-        readonly List<ILogger> _loggersWithFilters = new List<ILogger>();
+        readonly List<ILogger> _loggersWithFilters = new();
         readonly LogEvent _event = Some.InformationEvent();
         readonly string[] _contexts;
 
@@ -37,13 +37,13 @@ namespace Serilog.PerformanceTests
 
             var overrides = new Dictionary<string, LoggingLevelSwitch>
             {
-                ["MyApp"] = new LoggingLevelSwitch(LogEventLevel.Debug),
-                ["MyApp.Api.Controllers"] = new LoggingLevelSwitch(LogEventLevel.Information),
-                ["MyApp.Api.Controllers.HomeController"] = new LoggingLevelSwitch(LogEventLevel.Warning),
-                ["MyApp.Api"] = new LoggingLevelSwitch(LogEventLevel.Error)
+                ["MyApp"] = new(LogEventLevel.Debug),
+                ["MyApp.Api.Controllers"] = new(LogEventLevel.Information),
+                ["MyApp.Api.Controllers.HomeController"] = new(LogEventLevel.Warning),
+                ["MyApp.Api"] = new(LogEventLevel.Error)
             };
 
-            _levelOverrideMap = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
+            _levelOverrideMap = new(overrides, LogEventLevel.Fatal, null);
 
             var loggerConfiguration = new LoggerConfiguration().MinimumLevel.Fatal();
 

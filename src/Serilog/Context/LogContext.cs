@@ -52,7 +52,7 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new AsyncLocal<ImmutableStack<ILogEventEnricher>>();
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new();
 #elif REMOTING
         static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51

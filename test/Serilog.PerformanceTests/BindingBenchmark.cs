@@ -30,8 +30,8 @@ namespace Serilog.PerformanceTests
             MT1 = "Zero{A}one",
             MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
 
-        ILogger _log;
-        object[] _zero, _one, _five;
+        ILogger _log = null!;
+        object[] _zero= null!, _one= null!, _five = null!;
 
         [GlobalSetup]
         public void Setup()
@@ -52,21 +52,21 @@ namespace Serilog.PerformanceTests
         public (MessageTemplate, int) BindZero()
         {
             _log.BindMessageTemplate(MT0, _zero, out var mt, out var p);
-            return (mt, p.Count());
+            return (mt, p!.Count())!;
         }
 
         [Benchmark]
         public (MessageTemplate, int) BindOne()
         {
             _log.BindMessageTemplate(MT1, _one, out var mt, out var p);
-            return (mt, p.Count());
+            return (mt, p!.Count())!;
         }
 
         [Benchmark]
         public (MessageTemplate, int) BindFive()
         {
             _log.BindMessageTemplate(MT5, _five, out var mt, out var p);
-            return (mt, p.Count());
+            return (mt, p!.Count())!;
         }
     }
 }

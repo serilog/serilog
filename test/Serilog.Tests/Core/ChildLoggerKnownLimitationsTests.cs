@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
@@ -65,16 +65,16 @@ namespace Serilog.Tests.Core
                             outputs.FirstOrDefault() ?? "");
         }
 
-        public static IEnumerable<object[]> GetMinimumLevelOverrideInheritanceTestCases()
+        public static IEnumerable<object?[]> GetMinimumLevelOverrideInheritanceTestCases()
         {
             // Visualizing the pipeline from left to right ....
             //
             //   Event  --> Root Logger --> Child Logger
             //    lvl       override/lvl    override/levl
             //
-            object[] T(string rs, int? rl, string cs, int? cl)
+            static object?[] T(string? rs, int? rl, string cs, int? cl)
             {
-                return new object[] { rs, rl, cs, cl };
+                return new object?[] { rs, rl, cs, cl };
             }
             // numbers are relative to incoming event level
             // Information + 1 = Warning
@@ -102,16 +102,16 @@ namespace Serilog.Tests.Core
         [Theory]
         [MemberData(nameof(GetMinimumLevelOverrideInheritanceTestCases))]
         public void WriteToLoggerWithConfigCallbackMinimumLevelOverrideInheritanceNotSupportedScenarios(
-            string rootOverrideSource,
+            string? rootOverrideSource,
             int rootOverrideLevelIncrement,
-            string childOverrideSource,
+            string? childOverrideSource,
             int childOverrideLevelIncrement)
         {
             var incomingEventLevel = Information;
             var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var rootLoggerConfig = new LoggerConfiguration()
@@ -147,14 +147,14 @@ namespace Serilog.Tests.Core
         public void WriteToLoggerMinimumLevelOverrideInheritanceNotSupportedScenarios(
             string rootOverrideSource,
             int rootOverrideLevelIncrement,
-            string childOverrideSource,
+            string? childOverrideSource,
             int childOverrideLevelIncrement)
         {
             var incomingEventLevel = Information;
             var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
             var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
-            LogEvent evt = null;
+            LogEvent? evt = null;
             var sink = new DelegatingSink(e => evt = e);
 
             var childLoggerConfig = new LoggerConfiguration()

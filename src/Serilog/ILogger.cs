@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -23,14 +24,14 @@ namespace Serilog
     /// <summary>
     /// The core Serilog logging API, used for writing log events.
     /// </summary>
-    /// <example>
+    /// <example><code>
     /// var log = new LoggerConfiguration()
     ///     .WriteTo.Console()
     ///     .CreateLogger();
     ///
     /// var thing = "World";
     /// log.Information("Hello, {Thing}!", thing);
-    /// </example>
+    /// </code></example>
     /// <remarks>
     /// The methods on <see cref="ILogger"/> (and its static sibling <see cref="Log"/>) are guaranteed
     /// never to throw exceptions. Methods on all other types may.
@@ -68,7 +69,7 @@ namespace Serilog
         ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
 #if FEATURE_DEFAULT_INTERFACE
         {
-            if (enrichers == null)
+            if (enrichers == null!)
                 return this; // No context here, so little point writing to SelfLog.
 
             return ForContext(new Core.Enrichers.SafeAggregateEnricher(enrichers));
@@ -88,7 +89,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
+        ILogger ForContext(string propertyName, object? value, bool destructureObjects = false)
 #if FEATURE_DEFAULT_INTERFACE
             => new LoggerConfiguration()
                 .MinimumLevel.Is(LevelAlias.Minimum)
@@ -119,7 +120,7 @@ namespace Serilog
         ILogger ForContext(Type source)
 #if FEATURE_DEFAULT_INTERFACE
         {
-            if (source == null)
+            if (source == null!)
                 return this; // Little point in writing to SelfLog here because we don't have any contextual information
 
             return ForContext(Constants.SourceContextPropertyName, source.FullName);
@@ -166,7 +167,7 @@ namespace Serilog
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, messageTemplate, new object[] { propertyValue });
+                Write(level, messageTemplate, new object?[] { propertyValue });
             }
         }
 #else
@@ -187,7 +188,7 @@ namespace Serilog
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, messageTemplate, new object[] { propertyValue0, propertyValue1 });
+                Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
             }
         }
 #else
@@ -209,7 +210,7 @@ namespace Serilog
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
+                Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
             }
         }
 #else
@@ -223,9 +224,9 @@ namespace Serilog
         /// <param name="messageTemplate"></param>
         /// <param name="propertyValues"></param>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        void Write(LogEventLevel level, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Write(level, (Exception)null, messageTemplate, propertyValues)
+            => Write(level, (Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -236,7 +237,7 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Write(LogEventLevel level, Exception exception, string messageTemplate)
+        void Write(LogEventLevel level, Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
         {
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
@@ -257,13 +258,13 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
+        void Write<T>(LogEventLevel level, Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
         {
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, exception, messageTemplate, new object[] { propertyValue });
+                Write(level, exception, messageTemplate, new object?[] { propertyValue });
             }
         }
 #else
@@ -279,13 +280,13 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Write<T0, T1>(LogEventLevel level, Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
         {
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, exception, messageTemplate, new object[] { propertyValue0, propertyValue1 });
+                Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
             }
         }
 #else
@@ -302,13 +303,13 @@ namespace Serilog
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Write<T0, T1, T2>(LogEventLevel level, Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
         {
             // Avoid the array allocation and any boxing allocations when the level isn't enabled
             if (IsEnabled(level))
             {
-                Write(level, exception, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
+                Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
             }
         }
 #else
@@ -326,11 +327,11 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        void Write(LogEventLevel level, Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
         {
             if (!IsEnabled(level)) return;
-            if (messageTemplate == null) return;
+            if (messageTemplate == null!) return;
 
             // Catch a common pitfall when a single non-object array is cast to object[]
             if (propertyValues != null &&
@@ -365,9 +366,9 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Verbose"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Verbose(string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
@@ -380,9 +381,9 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Verbose<T>(string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
@@ -396,9 +397,9 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
@@ -413,9 +414,9 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
@@ -428,13 +429,13 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose("Staring into space, wondering if we're alone.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Verbose(string messageTemplate, params object[] propertyValues)
+        void Verbose(string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Verbose((Exception)null, messageTemplate, propertyValues)
+            => Verbose((Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -443,11 +444,11 @@ namespace Serilog
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Verbose(Exception exception, string messageTemplate)
+        void Verbose(Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Verbose, exception, messageTemplate, NoPropertyValues)
 #endif
@@ -459,11 +460,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
+        void Verbose<T>(Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValue)
 #endif
@@ -476,11 +477,11 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Verbose<T0, T1>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValue0, propertyValue1)
 #endif
@@ -494,11 +495,11 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Verbose<T0, T1, T2>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2)
 #endif
@@ -510,11 +511,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Verbose(ex, "Staring into space, wondering where this comet came from.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
+        void Verbose(Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Verbose, exception, messageTemplate, propertyValues)
 #endif
@@ -524,9 +525,9 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Debug"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Debug(string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
@@ -539,9 +540,9 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Debug<T>(string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
@@ -555,9 +556,9 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
@@ -572,9 +573,9 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
@@ -587,13 +588,13 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug("Starting up at {StartedAt}.", DateTime.Now);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Debug(string messageTemplate, params object[] propertyValues)
+        void Debug(string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Debug((Exception)null, messageTemplate, propertyValues)
+            => Debug((Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -602,11 +603,11 @@ namespace Serilog
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug(ex, "Swallowing a mundane exception.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Debug(Exception exception, string messageTemplate)
+        void Debug(Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Debug, exception, messageTemplate, NoPropertyValues)
 #endif
@@ -618,11 +619,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug(ex, "Swallowing a mundane exception.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Debug<T>(Exception exception, string messageTemplate, T propertyValue)
+        void Debug<T>(Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Debug, exception, messageTemplate, propertyValue)
 #endif
@@ -635,11 +636,11 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug(ex, "Swallowing a mundane exception.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Debug<T0, T1>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Debug, exception, messageTemplate, propertyValue0, propertyValue1)
 #endif
@@ -653,11 +654,11 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug(ex, "Swallowing a mundane exception.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Debug<T0, T1, T2>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Debug, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2)
 #endif
@@ -669,11 +670,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Debug(ex, "Swallowing a mundane exception.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
+        void Debug(Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Debug, exception, messageTemplate, propertyValues)
 #endif
@@ -683,9 +684,9 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Information"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Information(string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
@@ -698,9 +699,9 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Information<T>(string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
@@ -714,9 +715,9 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
@@ -731,9 +732,9 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
@@ -746,13 +747,13 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information("Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Information(string messageTemplate, params object[] propertyValues)
+        void Information(string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Information((Exception)null, messageTemplate, propertyValues)
+            => Information((Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -761,11 +762,11 @@ namespace Serilog
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Information(Exception exception, string messageTemplate)
+        void Information(Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Information, exception, messageTemplate, NoPropertyValues)
 #endif
@@ -777,11 +778,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Information<T>(Exception exception, string messageTemplate, T propertyValue)
+        void Information<T>(Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Information, exception, messageTemplate, propertyValue)
 #endif
@@ -794,11 +795,11 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Information<T0, T1>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Information, exception, messageTemplate, propertyValue0, propertyValue1)
 #endif
@@ -812,11 +813,11 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Information<T0, T1, T2>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Information, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2)
 #endif
@@ -828,11 +829,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Information(ex, "Processed {RecordCount} records in {TimeMS}.", records.Length, sw.ElapsedMilliseconds);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Information(Exception exception, string messageTemplate, params object[] propertyValues)
+        void Information(Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Information, exception, messageTemplate, propertyValues)
 #endif
@@ -842,9 +843,9 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Warning"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Warning(string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
@@ -857,9 +858,9 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Warning<T>(string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
@@ -873,9 +874,9 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
@@ -890,9 +891,9 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
@@ -905,13 +906,13 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning("Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Warning(string messageTemplate, params object[] propertyValues)
+        void Warning(string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Warning((Exception)null, messageTemplate, propertyValues)
+            => Warning((Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -920,11 +921,11 @@ namespace Serilog
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Warning(Exception exception, string messageTemplate)
+        void Warning(Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Warning, exception, messageTemplate, NoPropertyValues)
 #endif
@@ -936,11 +937,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Warning<T>(Exception exception, string messageTemplate, T propertyValue)
+        void Warning<T>(Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Warning, exception, messageTemplate, propertyValue)
 #endif
@@ -953,11 +954,11 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Warning<T0, T1>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Warning, exception, messageTemplate, propertyValue0, propertyValue1)
 #endif
@@ -971,11 +972,11 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Warning<T0, T1, T2>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Warning, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2)
 #endif
@@ -987,11 +988,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Warning(ex, "Skipped {SkipCount} records.", skippedRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
+        void Warning(Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Warning, exception, messageTemplate, propertyValues)
 #endif
@@ -1001,9 +1002,9 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Error"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Error(string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1016,9 +1017,9 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Error<T>(string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1032,9 +1033,9 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1049,9 +1050,9 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1064,13 +1065,13 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error("Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Error(string messageTemplate, params object[] propertyValues)
+        void Error(string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Error((Exception)null, messageTemplate, propertyValues)
+            => Error((Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -1079,11 +1080,11 @@ namespace Serilog
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Error(Exception exception, string messageTemplate)
+        void Error(Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Error, exception, messageTemplate, NoPropertyValues)
 #endif
@@ -1095,11 +1096,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Error<T>(Exception exception, string messageTemplate, T propertyValue)
+        void Error<T>(Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Error, exception, messageTemplate, propertyValue)
 #endif
@@ -1112,11 +1113,11 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Error<T0, T1>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Error, exception, messageTemplate, propertyValue0, propertyValue1)
 #endif
@@ -1130,11 +1131,11 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Error<T0, T1, T2>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Error, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2)
 #endif
@@ -1146,11 +1147,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Error(ex, "Failed {ErrorCount} records.", brokenRecords.Length);
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Error(Exception exception, string messageTemplate, params object[] propertyValues)
+        void Error(Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Error, exception, messageTemplate, propertyValues)
 #endif
@@ -1160,9 +1161,9 @@ namespace Serilog
         /// Write a log event with the <see cref="LogEventLevel.Fatal"/> level.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal("Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Fatal(string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1175,9 +1176,9 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal("Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Fatal<T>(string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1191,9 +1192,9 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal("Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1208,9 +1209,9 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal("Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
         void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
@@ -1223,13 +1224,13 @@ namespace Serilog
         /// </summary>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal("Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Fatal(string messageTemplate, params object[] propertyValues)
+        void Fatal(string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
-            => Fatal((Exception)null, messageTemplate, propertyValues)
+            => Fatal((Exception?)null, messageTemplate, propertyValues)
 #endif
             ;
 
@@ -1238,11 +1239,11 @@ namespace Serilog
         /// </summary>
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal(ex, "Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Fatal(Exception exception, string messageTemplate)
+        void Fatal(Exception? exception, string messageTemplate)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Fatal, exception, messageTemplate, NoPropertyValues)
 #endif
@@ -1254,11 +1255,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal(ex, "Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
+        void Fatal<T>(Exception? exception, string messageTemplate, T propertyValue)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValue)
 #endif
@@ -1271,11 +1272,11 @@ namespace Serilog
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal(ex, "Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        void Fatal<T0, T1>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValue0, propertyValue1)
 #endif
@@ -1289,11 +1290,11 @@ namespace Serilog
         /// <param name="propertyValue0">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue1">Object positionally formatted into the message template.</param>
         /// <param name="propertyValue2">Object positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal(ex, "Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        void Fatal<T0, T1, T2>(Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValue0, propertyValue1, propertyValue2)
 #endif
@@ -1305,11 +1306,11 @@ namespace Serilog
         /// <param name="exception">Exception related to the event.</param>
         /// <param name="messageTemplate">Message template describing the event.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <example>
+        /// <example><code>
         /// Log.Fatal(ex, "Process terminating.");
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
-        void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
+        void Fatal(Exception? exception, string messageTemplate, params object?[]? propertyValues)
 #if FEATURE_DEFAULT_INTERFACE
             => Write(LogEventLevel.Fatal, exception, messageTemplate, propertyValues)
 #endif
@@ -1325,22 +1326,23 @@ namespace Serilog
         /// <param name="parsedTemplate">The internal representation of the template, which may be used to
         /// render the <paramref name="boundProperties"/> as text.</param>
         /// <param name="boundProperties">Captured properties from the template and <paramref name="propertyValues"/>.</param>
-        /// <example>
+        /// <example><code>
         /// MessageTemplate template;
-        /// IEnumerable&lt;LogEventProperty&gt; properties>;
+        /// IEnumerable&lt;LogEventProperty&gt; properties;
         /// if (Log.BindMessageTemplate("Hello, {Name}!", new[] { "World" }, out template, out properties)
         /// {
         ///     var propsByName = properties.ToDictionary(p => p.Name, p => p.Value);
         ///     Console.WriteLine(template.Render(propsByName, null));
         ///     // -> "Hello, World!"
         /// }
-        /// </example>
+        /// </code></example>
         [MessageTemplateFormatMethod("messageTemplate")]
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        bool BindMessageTemplate(string messageTemplate, object[] propertyValues,
-                                 out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues,
+            [NotNullWhen(true)] out MessageTemplate? parsedTemplate,
+            [NotNullWhen(true)] out IEnumerable<LogEventProperty>? boundProperties)
 #if FEATURE_DEFAULT_INTERFACE
             => DefaultLoggerImpl.BindMessageTemplate(messageTemplate, propertyValues, out parsedTemplate, out boundProperties)
 #endif
@@ -1360,7 +1362,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        bool BindProperty(string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
 #if FEATURE_DEFAULT_INTERFACE
             => DefaultLoggerImpl.BindProperty(propertyName, value, destructureObjects, out property)
 #endif

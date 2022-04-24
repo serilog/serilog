@@ -26,12 +26,12 @@ namespace Serilog.Core.Pipeline
     class MessageTemplateCache : IMessageTemplateParser
     {
         readonly IMessageTemplateParser _innerParser;
-        readonly object _templatesLock = new object();
+        readonly object _templatesLock = new();
 
 #if HASHTABLE
-        readonly Hashtable _templates = new Hashtable();
+        readonly Hashtable _templates = new();
 #else
-        readonly Dictionary<string, MessageTemplate> _templates = new Dictionary<string, MessageTemplate>();
+        readonly Dictionary<string, MessageTemplate> _templates = new();
 #endif
 
         const int MaxCacheItems = 1000;
