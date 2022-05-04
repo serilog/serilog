@@ -1362,7 +1362,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        bool BindProperty(string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+        bool BindProperty(string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
 #if FEATURE_DEFAULT_INTERFACE
             => DefaultLoggerImpl.BindProperty(propertyName, value, destructureObjects, out property)
 #endif

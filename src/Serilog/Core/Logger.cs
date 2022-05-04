@@ -1358,7 +1358,7 @@ namespace Serilog.Core
         /// <param name="property">The resulting property.</param>
         /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
         /// methods never throw exceptions).</returns>
-        public bool BindProperty(string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+        public bool BindProperty(string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
         {
             if (!LogEventProperty.IsValidName(propertyName))
             {

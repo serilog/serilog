@@ -38,7 +38,7 @@ namespace Serilog.Capturing
             properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters);
         }
 
-        public LogEventProperty CreateProperty(string? name, object? value, bool destructureObjects = false)
+        public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)
         {
             return _propertyValueConverter.CreateProperty(name, value, destructureObjects);
         }
