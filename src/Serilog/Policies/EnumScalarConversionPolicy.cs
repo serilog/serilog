@@ -17,7 +17,6 @@ using Serilog.Core;
 using Serilog.Events;
 using System.Reflection;
 
-#nullable enable
 namespace Serilog.Policies
 {
     class EnumScalarConversionPolicy : IScalarConversionPolicy

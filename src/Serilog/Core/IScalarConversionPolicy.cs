@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Serilog.Events;
 
 namespace Serilog.Core

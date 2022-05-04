@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using Serilog.Core;
 using Serilog.Core.Filters;
