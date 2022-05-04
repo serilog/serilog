@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Events;
 
 namespace Serilog.Core
@@ -29,6 +31,6 @@ namespace Serilog.Core
         /// <param name="propertyValueFactory">Recursively apply policies to destructure additional values.</param>
         /// <param name="result">The destructured value, or null.</param>
         /// <returns>True if the value could be destructured under this policy.</returns>
-        bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result);
+        bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result);
     }
 }

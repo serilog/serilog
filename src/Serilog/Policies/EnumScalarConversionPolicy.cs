@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 using System.Reflection;
 
+#nullable enable
 namespace Serilog.Policies
 {
     class EnumScalarConversionPolicy : IScalarConversionPolicy
     {
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
         {
             if (value.GetType().GetTypeInfo().IsEnum)
             {
