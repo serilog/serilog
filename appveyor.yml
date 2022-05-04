@@ -1,7 +1,7 @@
 version: '{build}'
 skip_tags: true
 image:
-  - Visual Studio 2019
+  - Visual Studio 2022
   - Ubuntu
 configuration: Release
 test: off
