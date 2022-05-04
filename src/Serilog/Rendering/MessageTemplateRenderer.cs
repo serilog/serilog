@@ -90,7 +90,7 @@ namespace Serilog.Rendering
             Padding.Apply(output, value, pt.Alignment.Value);
         }
 
-        static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string format, IFormatProvider? formatProvider)
+        static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string? format, IFormatProvider? formatProvider)
         {
             if (literal && propertyValue is ScalarValue sv && sv.Value is string str)
             {

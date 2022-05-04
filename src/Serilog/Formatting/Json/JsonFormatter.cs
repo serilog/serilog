@@ -350,7 +350,7 @@ namespace Serilog.Formatting.Json
         /// Writes out a json property with the specified value on output writer
         /// </summary>
         [Obsolete(ExtensionPointObsoletionMessage)]
-        protected virtual void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
+        protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
         {
             output.Write(precedingDelimiter);
             output.Write("\"");
