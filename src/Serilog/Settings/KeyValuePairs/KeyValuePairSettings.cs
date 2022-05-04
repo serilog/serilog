@@ -199,7 +199,7 @@ namespace Serilog.Settings.KeyValuePairs
                 }
                 else
                 {
-                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
+                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel))!;
                     newSwitch = new(initialLevel);
                 }
                 namedSwitches.Add(switchName, newSwitch);
@@ -217,7 +217,7 @@ namespace Serilog.Settings.KeyValuePairs
             throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
         }
 
-        static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
+        static object? ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
         {
             if (type == typeof(LoggingLevelSwitch))
             {

@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -31,11 +33,16 @@ namespace Serilog.Settings.KeyValuePairs
         {
                 { typeof(Uri), s => new Uri(s) },
                 { typeof(TimeSpan), s => TimeSpan.Parse(s) },
-                { typeof(Type), s => Type.GetType(s, throwOnError: true) },
+                { typeof(Type), s => Type.GetType(s, throwOnError: true)! },
             };
 
-        public static object ConvertToType(string value, Type toType)
+        public static object? ConvertToType(string? value, Type toType)
         {
+            if (value == null)
+            {
+                return null;
+            }
+
             var toTypeInfo = toType.GetTypeInfo();
             if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
@@ -64,13 +71,13 @@ namespace Serilog.Settings.KeyValuePairs
                 // like "Namespace.TypeName::StaticProperty, AssemblyName"
                 if (TryParseStaticMemberAccessor(value, out var accessorTypeName, out var memberName))
                 {
-                    var accessorType = Type.GetType(accessorTypeName, throwOnError: true);
+                    var accessorType = Type.GetType(accessorTypeName, throwOnError: true)!;
                     // is there a public static property with that name ?
                     var publicStaticPropertyInfo = accessorType.GetTypeInfo().DeclaredProperties
                         .Where(x => x.Name == memberName)
                         .Where(x => x.GetMethod != null)
-                        .Where(x => x.GetMethod.IsPublic)
-                        .FirstOrDefault(x => x.GetMethod.IsStatic);
+                        .Where(x => x.GetMethod!.IsPublic)
+                        .FirstOrDefault(x => x.GetMethod!.IsStatic);
 
                     if (publicStaticPropertyInfo != null)
                     {
@@ -112,7 +119,7 @@ namespace Serilog.Settings.KeyValuePairs
 
             if (toType.IsArray && toType.GetArrayRank() == 1)
             {
-                var elementType = toType.GetElementType();
+                var elementType = toType.GetElementType()!;
 
                 if (string.IsNullOrEmpty(value))
                 {
@@ -137,7 +144,7 @@ namespace Serilog.Settings.KeyValuePairs
             return Convert.ChangeType(value, toType);
         }
 
-        internal static bool TryParseStaticMemberAccessor(string input, out string accessorTypeName, out string memberName)
+        internal static bool TryParseStaticMemberAccessor(string? input, [NotNullWhen(true)] out string? accessorTypeName, [NotNullWhen(true)] out string? memberName)
         {
             if (input == null)
             {
