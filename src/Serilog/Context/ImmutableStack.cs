@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,9 +24,10 @@ using System.Collections.Generic;
 namespace Serilog.Context
 {
     class ImmutableStack<T> : IEnumerable<T>
+        where T : class
     {
-        readonly ImmutableStack<T> _under;
-        readonly T _top;
+        readonly ImmutableStack<T> _under = null!;
+        readonly T _top = null!;
 
         ImmutableStack()
         {
@@ -58,7 +60,7 @@ namespace Serilog.Context
         {
             readonly ImmutableStack<T> _stack;
             ImmutableStack<T> _top;
-            T _current;
+            T? _current;
 
             public Enumerator(ImmutableStack<T> stack)
             {
@@ -82,9 +84,9 @@ namespace Serilog.Context
                 _current = default;
             }
 
-            public T Current => _current;
+            public T Current => _current!;
 
-            object IEnumerator.Current => _current;
+            object IEnumerator.Current => _current!;
 
             public void Dispose()
             {
