@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -91,7 +90,7 @@ namespace Serilog.Capturing
             _depthLimiter = new(maximumDestructuringDepth, this);
         }
 
-        public LogEventProperty CreateProperty(string? name, object? value, bool destructureObjects = false)
+        public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)
         {
             return new(name, CreatePropertyValue(value, destructureObjects));
         }

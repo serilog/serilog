@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,7 +89,7 @@ namespace Serilog.Rendering
             Padding.Apply(output, value, pt.Alignment.Value);
         }
 
-        static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string format, IFormatProvider? formatProvider)
+        static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string? format, IFormatProvider? formatProvider)
         {
             if (literal && propertyValue is ScalarValue sv && sv.Value is string str)
             {

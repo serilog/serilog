@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -1362,7 +1361,7 @@ namespace Serilog
 #if FEATURE_DEFAULT_INTERFACE
         [CustomDefaultMethodImplementation]
 #endif
-        bool BindProperty(string? propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+        bool BindProperty(string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
 #if FEATURE_DEFAULT_INTERFACE
             => DefaultLoggerImpl.BindProperty(propertyName, value, destructureObjects, out property)
 #endif

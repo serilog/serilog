@@ -28,7 +28,7 @@ namespace Serilog.Events
         /// value.
         /// </summary>
         /// <param name="value">The value, which may be <code>null</code>.</param>
-        public ScalarValue(object value)
+        public ScalarValue(object? value)
         {
             Value = value;
         }
@@ -36,7 +36,7 @@ namespace Serilog.Events
         /// <summary>
         /// The value, which may be <code>null</code>.
         /// </summary>
-        public object Value { get; }
+        public object? Value { get; }
 
         /// <summary>
         /// Render the value to the output.
@@ -46,13 +46,13 @@ namespace Serilog.Events
         /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
         /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
         {
             Render(Value, output, format, formatProvider);
         }
 
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        internal static void Render(object value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        internal static void Render(object? value, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
         {
             if (output == null) throw new ArgumentNullException(nameof(output));
 
@@ -77,14 +77,11 @@ namespace Serilog.Events
                 return;
             }
 
-            if (formatProvider != null)
+            var custom = (ICustomFormatter?) formatProvider?.GetFormat(typeof(ICustomFormatter));
+            if (custom != null)
             {
-                var custom = (ICustomFormatter)formatProvider.GetFormat(typeof(ICustomFormatter));
-                if (custom != null)
-                {
-                    output.Write(custom.Format(format, value, formatProvider));
-                    return;
-                }
+                output.Write(custom.Format(format, value, formatProvider));
+                return;
             }
 
             if (value is IFormattable f)
@@ -102,7 +99,7 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="obj">The instance to compare with.</param>
         /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is ScalarValue sv && Equals(Value, sv.Value);
         }

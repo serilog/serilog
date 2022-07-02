@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +25,7 @@ namespace Serilog.Formatting.Display
     {
         static readonly JsonValueFormatter JsonValueFormatter = new("$type");
 
-        public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string format, IFormatProvider? formatProvider = null)
+        public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string? format, IFormatProvider? formatProvider = null)
         {
             if (format?.Contains("j") == true)
             {

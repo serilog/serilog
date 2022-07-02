@@ -1,4 +1,3 @@
-#nullable enable
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;

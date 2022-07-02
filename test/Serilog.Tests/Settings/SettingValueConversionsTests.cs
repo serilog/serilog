@@ -41,14 +41,14 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToEnumMembers()
         {
-            var result = (LogEventLevel)SettingValueConversions.ConvertToType("Information", typeof(LogEventLevel));
+            var result = (LogEventLevel)SettingValueConversions.ConvertToType("Information", typeof(LogEventLevel))!;
             Assert.Equal(LogEventLevel.Information, result);
         }
 
         [Fact]
         public void ValuesConvertToStringArray()
         {
-            var result = (string[])SettingValueConversions.ConvertToType("key1=value1,key2=value2", typeof(string[]));
+            var result = (string[])SettingValueConversions.ConvertToType("key1=value1,key2=value2", typeof(string[]))!;
             Assert.Equal(2, result.Length);
             Assert.Equal("key1=value1", result[0]);
             Assert.Equal("key2=value2", result[1]);
@@ -57,14 +57,14 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToStringArrayEmpty()
         {
-            var result = (string[])SettingValueConversions.ConvertToType("", typeof(string[]));
+            var result = (string[])SettingValueConversions.ConvertToType("", typeof(string[]))!;
             Assert.Empty(result);
         }
 
         [Fact]
         public void ValuesConvertToIntArray()
         {
-            var result = (int[])SettingValueConversions.ConvertToType("1,2", typeof(int[]));
+            var result = (int[])SettingValueConversions.ConvertToType("1,2", typeof(int[]))!;
             Assert.Equal(2, result.Length);
             Assert.Equal(1, result[0]);
             Assert.Equal(2, result[1]);
@@ -73,14 +73,14 @@ namespace Serilog.Tests.Settings
         [Fact]
         public void ValuesConvertToIntArrayEmpty()
         {
-            var result = (int[])SettingValueConversions.ConvertToType("", typeof(int[]));
+            var result = (int[])SettingValueConversions.ConvertToType("", typeof(int[]))!;
             Assert.Empty(result);
         }
 
         [Fact]
         public void ValuesConvertToTypeFromQualifiedName()
         {
-            var result = (Type)SettingValueConversions.ConvertToType("System.Version", typeof(Type));
+            var result = (Type?)SettingValueConversions.ConvertToType("System.Version", typeof(Type));
             Assert.Equal(typeof(Version), result);
         }
 
@@ -88,7 +88,7 @@ namespace Serilog.Tests.Settings
         public void ValuesConvertToTypeFromAssemblyQualifiedName()
         {
             var assemblyQualifiedName = typeof(Version).AssemblyQualifiedName;
-            var result = (Type)SettingValueConversions.ConvertToType(assemblyQualifiedName, typeof(Type));
+            var result = (Type)SettingValueConversions.ConvertToType(assemblyQualifiedName, typeof(Type))!;
             Assert.Equal(typeof(Version), result);
         }
 
@@ -154,7 +154,7 @@ namespace Serilog.Tests.Settings
         // a full-qualified type name should not be considered a static member accessor
         [InlineData("My.NameSpace.Class, MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
             null, null)]
-        public void TryParseStaticMemberAccessorReturnsExpectedResults(string input, string expectedAccessorType, string expectedPropertyName)
+        public void TryParseStaticMemberAccessorReturnsExpectedResults(string input, string? expectedAccessorType, string expectedPropertyName)
         {
             var actual = SettingValueConversions.TryParseStaticMemberAccessor(input,
                 out var actualAccessorType,

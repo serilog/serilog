@@ -55,7 +55,7 @@ namespace Serilog.Parsing
         /// <param name="startIndex">The token's start index in the template.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
         /// <exception cref="ArgumentNullException">When <paramref name="rawText"/> is <code>null</code></exception>
-        public PropertyToken(string propertyName, string rawText, string format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
+        public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
             : base(startIndex)
         {
             PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
@@ -84,7 +84,7 @@ namespace Serilog.Parsing
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
         /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider formatProvider = null)
+        public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
         {
             if (properties == null) throw new ArgumentNullException(nameof(properties));
             if (output == null) throw new ArgumentNullException(nameof(output));
@@ -105,7 +105,7 @@ namespace Serilog.Parsing
         /// <summary>
         /// Format applied to the property.
         /// </summary>
-        public string Format { get; }
+        public string? Format { get; }
 
         /// <summary>
         /// Alignment applied to the property.
@@ -143,7 +143,7 @@ namespace Serilog.Parsing
         /// true if the specified object  is equal to the current object; otherwise, false.
         /// </returns>
         /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is PropertyToken pt &&
                 pt.Destructuring == Destructuring &&

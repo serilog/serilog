@@ -52,12 +52,12 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new();
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>?> Data = new();
 #elif REMOTING
         static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
         [ThreadStatic]
-        static ImmutableStack<ILogEventEnricher> Data;
+        static ImmutableStack<ILogEventEnricher>? Data;
 #endif
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Serilog.Context
 
 #if ASYNCLOCAL
 
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get => Data.Value;
             set => Data.Value = value;
@@ -223,7 +223,7 @@ namespace Serilog.Context
 
 #elif REMOTING
 
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get
             {
@@ -233,6 +233,11 @@ namespace Serilog.Context
             }
             set
             {
+                if (value == null)
+                {
+                    throw new ArgumentException();
+                }
+
                 if (CallContext.LogicalGetData(DataSlotName) is IDisposable oldHandle)
                 {
                     oldHandle.Dispose();
@@ -251,7 +256,7 @@ namespace Serilog.Context
             {
             }
 
-            public override object InitializeLifetimeService()
+            public override object? InitializeLifetimeService()
             {
                 var lease = base.InitializeLifetimeService() as ILease;
                 lease?.Register(LifeTimeSponsor);
@@ -269,7 +274,7 @@ namespace Serilog.Context
 
 #else // DOTNET_51
 
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get => Data;
             set => Data = value;

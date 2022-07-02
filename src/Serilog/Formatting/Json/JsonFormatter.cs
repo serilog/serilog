@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -350,7 +349,7 @@ namespace Serilog.Formatting.Json
         /// Writes out a json property with the specified value on output writer
         /// </summary>
         [Obsolete(ExtensionPointObsoletionMessage)]
-        protected virtual void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
+        protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
         {
             output.Write(precedingDelimiter);
             output.Write("\"");

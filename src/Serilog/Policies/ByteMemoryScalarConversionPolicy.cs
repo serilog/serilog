@@ -15,7 +15,7 @@
 #if FEATURE_SPAN
 
 using System;
-
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -29,7 +29,7 @@ namespace Serilog.Policies
         const int MaximumByteArrayLength = 1024;
         const int MaxTake = 16;
 
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
         {
             if (value is ReadOnlyMemory<byte> x)
             {
