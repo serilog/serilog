@@ -79,6 +79,25 @@ namespace Serilog.Context
         }
 
         /// <summary>
+        /// Push a property onto the context using a delegate, returning an <see cref="IDisposable"/>
+        /// that must later be used to remove the property, along with any others that
+        /// may have been pushed on top of it and not yet popped. The property must
+        /// be popped from the same thread/logical call context.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The delegate to the property.</param>
+        /// <returns>A handle to later remove the property from the context.</returns>
+        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+        /// then the value will be converted to a structure; otherwise, unknown types will
+        /// be converted to scalars, which are generally stored as strings.</param>
+        /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
+        public static IDisposable PushProperty<T>(string name, Func<T> value, bool destructureObjects = false)
+        {
+            return Serilog.Context.LogContext.Push(new FunctionPropertyEnricher<T>(name, value, destructureObjects));
+        }
+
+
+        /// <summary>
         /// Push an enricher onto the context, returning an <see cref="IDisposable"/>
         /// that must later be used to remove the property, along with any others that
         /// may have been pushed on top of it and not yet popped. The property must
