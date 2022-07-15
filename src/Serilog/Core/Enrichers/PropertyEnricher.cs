@@ -32,7 +32,6 @@ namespace Serilog.Core.Enrichers
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        /// <returns>A handle to later remove the property from the context.</returns>
         /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
