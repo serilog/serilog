@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
+
 using Serilog.Events;
 
 namespace Serilog.Core
@@ -31,6 +33,6 @@ namespace Serilog.Core
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
         /// <returns>Created <see cref="LogEventProperty"/> instance.</returns>
-        LogEventProperty CreateProperty(string name, object value, bool destructureObjects = false);
+        LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false);
     }
 }
