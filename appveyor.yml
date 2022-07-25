@@ -1,13 +1,12 @@
 version: '{build}'
 skip_tags: true
 image:
-  - Visual Studio 2019
+  - Visual Studio 2022
   - Ubuntu
 configuration: Release
 test: off
 build_script:
   - ps: ./Build.ps1
-  - ps: ./BuildNativeUWP.ps1
 for:
 -
   matrix:
