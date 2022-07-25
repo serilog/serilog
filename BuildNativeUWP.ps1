@@ -5,7 +5,7 @@ param(
 
 echo "build: running .NET Native toolchain for UWP test project"
 
-$msbuild = $(cmd /c where /R 'C:\Program Files (x86)\Microsoft Visual Studio\2022' msbuild.exe | select -First 1)
+$msbuild = $(cmd /c where /R 'C:\Program Files\Microsoft Visual Studio\2022' msbuild.exe | select -First 1)
 
 if ($customLogger) {
     & $msbuild $proj /logger:"$customLogger" /verbosity:minimal /t:Restore
