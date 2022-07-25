@@ -30,7 +30,41 @@ namespace Serilog.Tests.Formatting.Json
                 "2013-03-11T15:59:00.1230000+10:00",
                 (string)formatted.Timestamp);
         }
+#if NET6_0_OR_GREATER
 
+        [Fact]
+        public void JsonFormattedDateOnly()
+        {
+            var @event = new LogEvent(
+                DateTimeOffset.MaxValue,
+                LogEventLevel.Information,
+                null,
+                Some.MessageTemplate(),
+                new[] {new LogEventProperty("name", new ScalarValue(DateOnly.MaxValue))});
+
+            var formatted = FormatJson(@event);
+            Assert.Equal(
+                "9999-12-31",
+                (string) formatted.Properties.name);
+        }
+
+        [Fact]
+        public void JsonFormattedTimeOnly()
+        {
+            var @event = new LogEvent(
+                DateTimeOffset.MaxValue,
+                LogEventLevel.Information,
+                null,
+                Some.MessageTemplate(),
+                new[] {new LogEventProperty("name", new ScalarValue(TimeOnly.MaxValue))});
+
+            var formatted = FormatJson(@event);
+            Assert.Equal(
+                "23:59:59.9999999",
+                (string) formatted.Properties.name);
+        }
+
+#endif
         static string FormatToJson(LogEvent @event)
         {
             var formatter = new JsonFormatter();

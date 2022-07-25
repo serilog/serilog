@@ -104,7 +104,8 @@ namespace Serilog.Formatting.Json
                 { typeof(DateTime), (v, _, w) => WriteDateTime((DateTime)v, w) },
                 { typeof(DateTimeOffset), (v, _, w) => WriteOffset((DateTimeOffset)v, w) },
 #if NET6_0_OR_GREATER
-                
+                { typeof(DateOnly), (v, _, w) => WriteDateOnly((DateOnly)v, w) },
+                { typeof(TimeOnly), (v, _, w) => WriteTimeOnly((TimeOnly)v, w) },
 #endif
                 { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w, q) },
                 { typeof(SequenceValue), (v, _, w) => WriteSequence(((SequenceValue)v).Elements, w) },
@@ -431,6 +432,22 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString("o"));
             output.Write("\"");
         }
+
+#if NET6_0_OR_GREATER
+        static void WriteDateOnly(DateOnly value, TextWriter output)
+        {
+            output.Write("\"");
+            output.Write(value.ToString("yyyy-MM-dd"));
+            output.Write("\"");
+        }
+
+        static void WriteTimeOnly(TimeOnly value, TextWriter output)
+        {
+            output.Write("\"");
+            output.Write(value.ToString("O"));
+            output.Write("\"");
+        }
+#endif
 
         static void WriteString(string value, TextWriter output)
         {
