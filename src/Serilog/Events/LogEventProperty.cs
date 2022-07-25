@@ -39,6 +39,32 @@ namespace Serilog.Events
             Value = value;
         }
 
+#if NET6_0
+        /// <inheritdoc />
+        public LogEventProperty(string name, TimeOnly value) : this(name, new ScalarValue(value))
+        {
+        }
+        /// <inheritdoc />
+        public LogEventProperty(string name, DateOnly value) : this(name, new ScalarValue(value))
+        {
+        }
+#endif
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, DateTime value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, DateTimeOffset value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, TimeSpan value) : this(name, new ScalarValue(value))
+        {
+        }
+
         /// <inheritdoc />
         public LogEventProperty(string name, Guid value) : this(name, new ScalarValue(value))
         {
