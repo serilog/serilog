@@ -39,7 +39,7 @@ namespace Serilog.Events
             Value = value;
         }
 
-#if NET6_0
+#if NET6_0_OR_GREATER
         /// <inheritdoc />
         public LogEventProperty(string name, TimeOnly value) : this(name, new ScalarValue(value))
         {
