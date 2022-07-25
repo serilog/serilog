@@ -43,7 +43,7 @@ namespace Serilog.Capturing
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
             typeof(Guid), typeof(Uri),
-            #if NET6_OR_GREATER
+            #if FEATURE_DATE_AND_TIME_ONLY
             typeof(TimeOnly), typeof(DateOnly)
             #endif
         };
