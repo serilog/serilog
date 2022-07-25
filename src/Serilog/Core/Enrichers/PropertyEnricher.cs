@@ -24,7 +24,7 @@ namespace Serilog.Core.Enrichers
     public class PropertyEnricher : ILogEventEnricher
     {
         readonly string _name;
-        readonly object _value;
+        readonly object? _value;
         readonly bool _destructureObjects;
 
         /// <summary>
@@ -32,14 +32,12 @@ namespace Serilog.Core.Enrichers
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        /// <returns>A handle to later remove the property from the context.</returns>
         /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
         /// then the value will be converted to a structure; otherwise, unknown types will
         /// be converted to scalars, which are generally stored as strings.</param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
         /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
-        public PropertyEnricher(string name, object value, bool destructureObjects = false)
+        public PropertyEnricher(string name, object? value, bool destructureObjects = false)
         {
             LogEventProperty.EnsureValidName(name);
 
