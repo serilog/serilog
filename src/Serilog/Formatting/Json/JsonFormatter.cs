@@ -103,6 +103,9 @@ namespace Serilog.Formatting.Json
                 { typeof(string), (v, _, w) => WriteString((string)v, w) },
                 { typeof(DateTime), (v, _, w) => WriteDateTime((DateTime)v, w) },
                 { typeof(DateTimeOffset), (v, _, w) => WriteOffset((DateTimeOffset)v, w) },
+#if NET6_0_OR_GREATER
+                
+#endif
                 { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w, q) },
                 { typeof(SequenceValue), (v, _, w) => WriteSequence(((SequenceValue)v).Elements, w) },
                 { typeof(DictionaryValue), (v, _, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },

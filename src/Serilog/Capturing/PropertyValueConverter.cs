@@ -42,7 +42,10 @@ namespace Serilog.Capturing
             typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
             typeof(string),
             typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
-            typeof(Guid), typeof(Uri)
+            typeof(Guid), typeof(Uri),
+            #if NET6_OR_GREATER
+            typeof(TimeOnly), typeof(DateOnly)
+            #endif
         };
 
         readonly IDestructuringPolicy[] _destructuringPolicies;
