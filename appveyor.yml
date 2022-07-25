@@ -7,7 +7,6 @@ configuration: Release
 test: off
 build_script:
   - ps: ./Build.ps1
-  - ps: ./BuildNativeUWP.ps1
 for:
 -
   matrix:
