@@ -220,7 +220,7 @@ namespace Serilog.Formatting.Json
                     return;
                 }
 
-#if NET6_0_OR_GREATER
+#if FEATURE_DATE_AND_TIME_ONLY
                 if (value is DateOnly dateOnly)
                 {
                     FormatDateOnlyValue(dateOnly, output);
@@ -284,7 +284,8 @@ namespace Serilog.Formatting.Json
             output.Write('\"');
         }
 
-#if NET6_0_OR_GREATER
+#if FEATURE_DATE_AND_TIME_ONLY
+
         static void FormatDateOnlyValue(DateOnly value, TextWriter output)
         {
             output.Write('\"');
@@ -298,6 +299,7 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString("O"));
             output.Write('\"');
         }
+
 #endif
 
         static void FormatLiteralObjectValue(object value, TextWriter output)

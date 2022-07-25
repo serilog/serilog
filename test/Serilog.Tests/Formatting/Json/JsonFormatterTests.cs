@@ -30,7 +30,8 @@ namespace Serilog.Tests.Formatting.Json
                 "2013-03-11T15:59:00.1230000+10:00",
                 (string)formatted.Timestamp);
         }
-#if NET6_0_OR_GREATER
+
+#if FEATURE_DATE_AND_TIME_ONLY
 
         [Fact]
         public void JsonFormattedDateOnly()
@@ -65,6 +66,7 @@ namespace Serilog.Tests.Formatting.Json
         }
 
 #endif
+
         static string FormatToJson(LogEvent @event)
         {
             var formatter = new JsonFormatter();

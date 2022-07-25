@@ -103,7 +103,7 @@ namespace Serilog.Formatting.Json
                 { typeof(string), (v, _, w) => WriteString((string)v, w) },
                 { typeof(DateTime), (v, _, w) => WriteDateTime((DateTime)v, w) },
                 { typeof(DateTimeOffset), (v, _, w) => WriteOffset((DateTimeOffset)v, w) },
-#if NET6_0_OR_GREATER
+#if FEATURE_DATE_AND_TIME_ONLY
                 { typeof(DateOnly), (v, _, w) => WriteDateOnly((DateOnly)v, w) },
                 { typeof(TimeOnly), (v, _, w) => WriteTimeOnly((TimeOnly)v, w) },
 #endif
@@ -433,7 +433,8 @@ namespace Serilog.Formatting.Json
             output.Write("\"");
         }
 
-#if NET6_0_OR_GREATER
+#if FEATURE_DATE_AND_TIME_ONLY
+
         static void WriteDateOnly(DateOnly value, TextWriter output)
         {
             output.Write("\"");
@@ -447,6 +448,7 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString("O"));
             output.Write("\"");
         }
+
 #endif
 
         static void WriteString(string value, TextWriter output)
