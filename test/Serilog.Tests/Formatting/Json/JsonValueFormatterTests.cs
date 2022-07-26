@@ -51,6 +51,22 @@ namespace Serilog.Tests.Formatting.Json
             JsonLiteralTypesAreFormatted(new DateTime(2016, 01, 01, 13, 13, 13, DateTimeKind.Utc), "\"2016-01-01T13:13:13.0000000Z\"");
         }
 
+#if FEATURE_DATE_AND_TIME_ONLY
+
+        [Fact]
+        public void DateOnly()
+        {
+            JsonLiteralTypesAreFormatted(new DateOnly(2016, 01, 01), "\"2016-01-01\"");
+        }
+
+        [Fact]
+        public void TimeOnly()
+        {
+            JsonLiteralTypesAreFormatted(new TimeOnly(13, 01, 01, 999), "\"13:01:01.9990000\"");
+        }
+
+#endif
+
         [Fact]
         public void DoubleFormatsAsNumber()
         {

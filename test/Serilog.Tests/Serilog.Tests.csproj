@@ -40,6 +40,6 @@
     <DefineConstants>$(DefineConstants);ASYNCLOCAL;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <DefineConstants>$(DefineConstants);ASYNCLOCAL;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY</DefineConstants>
   </PropertyGroup>
 </Project>

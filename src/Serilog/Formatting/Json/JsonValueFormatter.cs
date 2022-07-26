@@ -219,6 +219,20 @@ namespace Serilog.Formatting.Json
                     FormatTimeSpanValue(timeSpan, output);
                     return;
                 }
+
+#if FEATURE_DATE_AND_TIME_ONLY
+                if (value is DateOnly dateOnly)
+                {
+                    FormatDateOnlyValue(dateOnly, output);
+                    return;
+                }
+
+                if (value is TimeOnly timeOnly)
+                {
+                    FormatTimeOnlyValue(timeOnly, output);
+                    return;
+                }
+#endif
             }
 
             FormatLiteralObjectValue(value, output);
@@ -269,6 +283,24 @@ namespace Serilog.Formatting.Json
             output.Write(value.ToString());
             output.Write('\"');
         }
+
+#if FEATURE_DATE_AND_TIME_ONLY
+
+        static void FormatDateOnlyValue(DateOnly value, TextWriter output)
+        {
+            output.Write('\"');
+            output.Write(value.ToString("yyyy-MM-dd"));
+            output.Write('\"');
+        }
+
+        static void FormatTimeOnlyValue(TimeOnly value, TextWriter output)
+        {
+            output.Write('\"');
+            output.Write(value.ToString("O"));
+            output.Write('\"');
+        }
+
+#endif
 
         static void FormatLiteralObjectValue(object value, TextWriter output)
         {
