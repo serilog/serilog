@@ -14,12 +14,7 @@
 
 using System;
 using Serilog.Events;
-
-#if HASHTABLE
 using System.Collections;
-#else
-using System.Collections.Generic;
-#endif
 
 namespace Serilog.Core.Pipeline
 {
@@ -28,11 +23,7 @@ namespace Serilog.Core.Pipeline
         readonly IMessageTemplateParser _innerParser;
         readonly object _templatesLock = new();
 
-#if HASHTABLE
         readonly Hashtable _templates = new();
-#else
-        readonly Dictionary<string, MessageTemplate> _templates = new();
-#endif
 
         const int MaxCacheItems = 1000;
         const int MaxCachedTemplateLength = 1024;
@@ -49,18 +40,11 @@ namespace Serilog.Core.Pipeline
             if (messageTemplate.Length > MaxCachedTemplateLength)
                 return _innerParser.Parse(messageTemplate);
 
-#if HASHTABLE
             // ReSharper disable once InconsistentlySynchronizedField
             // ignored warning because this is by design
             var result = (MessageTemplate)_templates[messageTemplate];
             if (result != null)
                 return result;
-#else
-            MessageTemplate result;
-            lock (_templatesLock)
-                if (_templates.TryGetValue(messageTemplate, out result))
-                    return result;
-#endif
 
             result = _innerParser.Parse(messageTemplate);
 
