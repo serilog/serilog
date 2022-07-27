@@ -27,9 +27,8 @@ namespace Serilog.Settings.KeyValuePairs
         {
             var methods = configurationAssemblies
                 .SelectMany(a => a.ExportedTypes
-                    .Select(t => t.GetTypeInfo())
                     .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
-                .SelectMany(t => t.DeclaredMethods)
+                .SelectMany(t => t.GetTypeInfo().DeclaredMethods)
                 .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
                 .Where(m => m.GetParameters()[0].ParameterType == configType)
                 .ToList();
