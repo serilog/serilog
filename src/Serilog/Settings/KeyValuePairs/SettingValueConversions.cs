@@ -51,7 +51,7 @@ namespace Serilog.Settings.KeyValuePairs
                 return Enum.Parse(toType, value);
 
             var convertor = ExtendedTypeConversions
-                .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
+                .Where(t => t.Key.IsAssignableFrom(toTypeInfo))
                 .Select(t => t.Value)
                 .FirstOrDefault();
 

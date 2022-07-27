@@ -341,7 +341,7 @@ namespace Serilog.Capturing
         static bool IsValidDictionaryKeyType(Type valueType)
         {
             return BuiltInScalarTypes.Contains(valueType) ||
-                   valueType.GetTypeInfo().IsEnum;
+                   valueType.IsEnum;
         }
 
         IEnumerable<LogEventProperty> GetProperties(object value)
