@@ -46,7 +46,7 @@ namespace Serilog.Capturing
                     yield break;
                 }
 
-                currentType = baseType.GetTypeInfo();
+                currentType = baseType;
             }
         }
     }
