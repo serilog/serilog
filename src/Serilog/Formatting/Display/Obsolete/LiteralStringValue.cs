@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.IO;
 using Serilog.Events;
@@ -31,12 +32,12 @@ namespace Serilog.Formatting.Display.Obsolete
             _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
         {
             output.Write(Casing.Format(_value, format));
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is LiteralStringValue sv && Equals(_value, sv._value);
         }

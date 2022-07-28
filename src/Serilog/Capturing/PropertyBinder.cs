@@ -51,15 +51,13 @@ namespace Serilog.Capturing
             }
 
             if (messageTemplate.PositionalProperties != null)
-                return ConstructPositionalProperties(messageTemplate, messageTemplateParameters);
+                return ConstructPositionalProperties(messageTemplate, messageTemplateParameters, messageTemplate.PositionalProperties);
 
             return ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
         }
 
-        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters)
+        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters, PropertyToken[] positionalProperties)
         {
-            var positionalProperties = template.PositionalProperties;
-
             if (positionalProperties.Length != messageTemplateParameters.Length)
                 SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
 
@@ -107,7 +105,7 @@ namespace Serilog.Capturing
             var result = new EventProperty[messageTemplateParameters.Length];
             for (var i = 0; i < matchedRun; ++i)
             {
-                var property = template.NamedProperties[i];
+                var property = namedProperties[i];
                 var value = messageTemplateParameters[i];
                 result[i] = ConstructProperty(property, value);
             }
