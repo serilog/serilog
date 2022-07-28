@@ -11,7 +11,7 @@ namespace Serilog.PerformanceTests.Support
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
             logger.BindMessageTemplate(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 #pragma warning restore Serilog004 // Constant MessageTemplate verifier
-            return new LogEvent(DateTime.Now, LogEventLevel.Information, null, parsedTemplate, boundProperties);
+            return new LogEvent(DateTime.Now, LogEventLevel.Information, null, parsedTemplate!, boundProperties!);
         }
     }
 }
