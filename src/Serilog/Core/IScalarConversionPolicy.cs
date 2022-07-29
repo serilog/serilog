@@ -1,4 +1,6 @@
-﻿using Serilog.Events;
+﻿#nullable enable
+using System.Diagnostics.CodeAnalysis;
+using Serilog.Events;
 
 namespace Serilog.Core
 {
@@ -14,6 +16,6 @@ namespace Serilog.Core
         /// <param name="value">The value to convert.</param>
         /// <param name="result">The converted value, or null.</param>
         /// <returns>True if the value could be converted under this policy.</returns>
-        bool TryConvertToScalar(object value, out ScalarValue result);
+        bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result);
     }
 }

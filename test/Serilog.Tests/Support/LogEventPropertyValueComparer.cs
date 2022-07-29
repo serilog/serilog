@@ -18,6 +18,16 @@ namespace Serilog.Tests.Support
         {
             if (x is ScalarValue scalarX && y is ScalarValue scalarY)
             {
+                if (scalarX.Value is null && scalarY.Value is null)
+                {
+                    return true;
+                }
+
+                if (scalarX.Value is null || scalarY.Value is null)
+                {
+                    return false;
+                }
+
                 return _objectEqualityComparer.Equals(scalarX.Value, scalarY.Value);
             }
 
