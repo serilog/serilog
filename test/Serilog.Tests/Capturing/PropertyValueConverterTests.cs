@@ -187,7 +187,7 @@ namespace Serilog.Tests.Capturing
         {
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string)pv.LiteralValue();
+            var lv = (string?)pv.LiteralValue();
             Assert.Equal("00010203040506070809", lv);
         }
 
@@ -196,7 +196,7 @@ namespace Serilog.Tests.Capturing
         {
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string)pv.LiteralValue();
+            var lv = (string?)pv.LiteralValue();
             Assert.EndsWith("(1025 bytes)", lv);
         }
 
@@ -206,7 +206,7 @@ namespace Serilog.Tests.Capturing
         {
             var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray().AsMemory();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string)pv.LiteralValue();
+            var lv = (string?)pv.LiteralValue();
             Assert.Equal("00010203040506070809", lv);
         }
 
@@ -215,7 +215,7 @@ namespace Serilog.Tests.Capturing
         {
             var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray().AsMemory();
             var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string)pv.LiteralValue();
+            var lv = (string?)pv.LiteralValue();
             Assert.EndsWith("(1025 bytes)", lv);
         }
 
@@ -247,7 +247,7 @@ namespace Serilog.Tests.Capturing
             var l = sv.Properties.Single(m => m.Name == "Length");
             Assert.Equal(3, l.Value.LiteralValue());
             var k = sv.Properties.Single(m => m.Name == "IsEmpty");
-            Assert.False((bool)k.Value.LiteralValue());
+            Assert.False((bool?)k.Value.LiteralValue());
             var s = sv.Properties.Single(m => m.Name == "Span");
         }
 #endif
