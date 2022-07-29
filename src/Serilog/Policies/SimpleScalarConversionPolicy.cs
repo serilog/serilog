@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -28,7 +30,7 @@ namespace Serilog.Policies
             _scalarTypes = new(scalarTypes);
         }
 
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
         {
             if (_scalarTypes.Contains(value.GetType()))
             {
