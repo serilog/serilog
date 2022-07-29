@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -137,29 +138,26 @@ namespace Serilog.Settings.KeyValuePairs
                                       select new
                                       {
                                           ReceiverType = CallableDirectiveReceiverTypes[match.Groups["directive"].Value],
-                                          Call = new ConfigurationMethodCall
-                                          {
-                                              MethodName = match.Groups["method"].Value,
-                                              ArgumentName = match.Groups["argument"].Value,
-                                              Value = wt.Value
-                                          }
+                                          Call = new ConfigurationMethodCall(
+                                              match.Groups["method"].Value,
+                                              match.Groups["argument"].Value,
+                                              wt.Value)
                                       }).ToList();
 
-            if (callableDirectives.Any())
+            if (!callableDirectives.Any()) return;
+
+            var configurationAssemblies = LoadConfigurationAssemblies(directives).ToList();
+
+            foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))
             {
-                var configurationAssemblies = LoadConfigurationAssemblies(directives).ToList();
+                var methods = CallableConfigurationMethodFinder.FindConfigurationMethods(configurationAssemblies, receiverGroup.Key);
 
-                foreach (var receiverGroup in callableDirectives.GroupBy(d => d.ReceiverType))
-                {
-                    var methods = CallableConfigurationMethodFinder.FindConfigurationMethods(configurationAssemblies, receiverGroup.Key);
+                var calls = receiverGroup
+                    .Select(d => d.Call)
+                    .GroupBy(call => call.MethodName)
+                    .ToList();
 
-                    var calls = receiverGroup
-                        .Select(d => d.Call)
-                        .GroupBy(call => call.MethodName)
-                        .ToList();
-
-                    ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredLevelSwitches);
-                }
+                ApplyDirectives(calls, methods, CallableDirectiveReceivers[receiverGroup.Key](loggerConfiguration), declaredLevelSwitches);
             }
         }
 
@@ -249,11 +247,13 @@ namespace Serilog.Settings.KeyValuePairs
             }
         }
 
-        internal static MethodInfo SelectConfigurationMethod(IEnumerable<MethodInfo> candidateMethods, string name, IEnumerable<ConfigurationMethodCall> suppliedArgumentValues)
+        internal static MethodInfo? SelectConfigurationMethod(IEnumerable<MethodInfo> candidateMethods, string name, IEnumerable<ConfigurationMethodCall> suppliedArgumentValues)
         {
             return candidateMethods
                 .Where(m => m.Name == name &&
-                            m.GetParameters().Skip(1).All(p => p.HasDefaultValue || suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
+                            m.GetParameters().Skip(1)
+                                .All(p => p.HasDefaultValue ||
+                                          suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
                 .OrderByDescending(m => m.GetParameters().Count(p => suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
                 .FirstOrDefault();
         }
@@ -276,11 +276,18 @@ namespace Serilog.Settings.KeyValuePairs
 
         internal class ConfigurationMethodCall
         {
-            public string MethodName { get; set; }
+            public ConfigurationMethodCall(string methodName, string argumentName, string value)
+            {
+                MethodName = methodName;
+                ArgumentName = argumentName;
+                Value = value;
+            }
 
-            public string ArgumentName { get; set; }
+            public string MethodName { get; }
 
-            public string Value { get; set; }
+            public string ArgumentName { get; }
+
+            public string Value { get; }
         }
     }
 }

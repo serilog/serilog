@@ -112,24 +112,21 @@ namespace Serilog.Settings.KeyValuePairs
 
             if (toType.IsArray && toType.GetArrayRank() == 1)
             {
-                var elementType = toType.GetElementType();
+                var elementType = toType.GetElementType()!;
 
                 if (string.IsNullOrEmpty(value))
                 {
                     return Array.CreateInstance(elementType, 0);
                 }
 
-                var items = value?.Split(',');
-                var length = items?.Length ?? 0;
-                var result = Array.CreateInstance(elementType, length);
-                if (items != null)
+                var items = value.Split(',');
+                var length = items.Length;
+                var result = Array.CreateInstance(elementType, items.Length);
+                for (var i = 0; i < length; ++i)
                 {
-                    for (var i = 0; i < length; ++i)
-                    {
-                        var item = items[i];
-                        var element = ConvertToType(item, elementType);
-                        result.SetValue(element, i);
-                    }
+                    var item = items[i];
+                    var element = ConvertToType(item, elementType);
+                    result.SetValue(element, i);
                 }
                 return result;
             }
