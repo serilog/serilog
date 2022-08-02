@@ -196,9 +196,10 @@ namespace Serilog.Settings.KeyValuePairs
                 }
                 else
                 {
-                    var initialLevel = (LogEventLevel)SettingValueConversions.ConvertToType(switchInitialLevel, typeof(LogEventLevel));
+                    var initialLevel = (LogEventLevel) Enum.Parse(typeof(LogEventLevel), switchInitialLevel);
                     newSwitch = new(initialLevel);
                 }
+
                 namedSwitches.Add(switchName, newSwitch);
             }
             return namedSwitches;
@@ -220,7 +221,7 @@ namespace Serilog.Settings.KeyValuePairs
             {
                 return LookUpSwitchByName(valueOrSwitchName, declaredSwitches);
             }
-            return SettingValueConversions.ConvertToType(valueOrSwitchName, type);
+            return SettingValueConversions.ConvertToType(valueOrSwitchName, type)!;
         }
 
         static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
