@@ -2,12 +2,6 @@ using Serilog.Context;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Serilog.Tests.Support;
-#if REMOTING
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Lifetime;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Remoting.Services;
-#endif
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,23 +12,6 @@ namespace Serilog.Tests.Context
 {
     public class LogContextTests
     {
-        static LogContextTests()
-        {
-#if REMOTING
-            LifetimeServices.LeaseTime = TimeSpan.FromMilliseconds(100);
-            LifetimeServices.LeaseManagerPollTime = TimeSpan.FromMilliseconds(10);
-#endif
-        }
-
-        public LogContextTests()
-        {
-#if REMOTING
-            // ReSharper disable AssignNullToNotNullAttribute
-            CallContext.LogicalSetData(typeof(LogContext).FullName, null);
-            // ReSharper restore AssignNullToNotNullAttribute
-#endif
-        }
-
         [Fact]
         public void PushedPropertiesAreAvailableToLoggers()
         {
@@ -293,73 +270,6 @@ namespace Serilog.Tests.Context
         }
 #endif
 
-#if APPDOMAIN && REMOTING
-        [Fact]
-        public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
-        {
-            RemotingException? remotingException = null;
-
-            AppDomain.CurrentDomain.FirstChanceException +=
-                (_, e) => remotingException = e.Exception is RemotingException re ? re : remotingException;
-
-            var logger = new LoggerConfiguration().Enrich.FromLogContext().CreateLogger();
-            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
-
-            try
-            {
-                using (LogContext.PushProperty("Prop", 42))
-                {
-                    remote.DoCallBack(CallFromRemote);
-#pragma warning disable Serilog003
-                    logger.Information("Prop = {Prop}");
-#pragma warning restore Serilog003
-                }
-            }
-            finally
-            {
-                AppDomain.Unload(remote);
-            }
-
-            Assert.Null(remotingException);
-
-            static void CallFromRemote() => Thread.Sleep(200);
-        }
-
-        [Fact]
-        public async Task DisconnectRemoteObjectsAfterCrossDomainCallsOnDispose()
-        {
-            var tracker = new InMemoryRemoteObjectTracker();
-            TrackingServices.RegisterTrackingHandler(tracker);
-
-            var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
-
-            try
-            {
-                using (LogContext.PushProperty("Prop1", 42))
-                {
-                    remote.DoCallBack(CallFromRemote);
-
-                    using (LogContext.PushProperty("Prop2", 24))
-                    {
-                        remote.DoCallBack(CallFromRemote);
-                    }
-                }
-            }
-            finally
-            {
-                AppDomain.Unload(remote);
-            }
-
-            await Task.Delay(200);
-
-            // This is intermittently 2 or 3 (now, 4), depending on the moods of the test runner;
-            // I think "at least two" is what we're concerned about, here.
-            Assert.InRange(tracker.DisconnectCount, 2, 4);
-
-            static void CallFromRemote() { }
-        }
-#endif
-
         static async Task TestWithSyncContext(Func<Task> testAction, SynchronizationContext syncContext)
         {
             var prevCtx = SynchronizationContext.Current;
@@ -378,19 +288,6 @@ namespace Serilog.Tests.Context
             await t;
         }
     }
-
-#if REMOTING
-    class InMemoryRemoteObjectTracker : ITrackingHandler
-    {
-        public int DisconnectCount { get; set; }
-
-        public void DisconnectedObject(object obj) => DisconnectCount++;
-
-        public void MarshaledObject(object obj, ObjRef or) { }
-
-        public void UnmarshaledObject(object obj, ObjRef or) { }
-    }
-#endif
 
 #if APPDOMAIN
     public class RemotelyCallable : MarshalByRefObject

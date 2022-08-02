@@ -36,29 +36,27 @@ namespace Serilog.Settings.KeyValuePairs
 
         public static object ConvertToType(string value, Type toType)
         {
-            var toTypeInfo = toType.GetTypeInfo();
-            if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 if (string.IsNullOrEmpty(value))
                     return null;
 
                 // unwrap Nullable<> type since we're not handling null situations
-                toType = toTypeInfo.GenericTypeArguments[0];
-                toTypeInfo = toType.GetTypeInfo();
+                toType = toType.GenericTypeArguments[0];
             }
 
-            if (toTypeInfo.IsEnum)
+            if (toType.IsEnum)
                 return Enum.Parse(toType, value);
 
             var convertor = ExtendedTypeConversions
-                .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
+                .Where(t => t.Key.IsAssignableFrom(toType))
                 .Select(t => t.Value)
                 .FirstOrDefault();
 
             if (convertor != null)
                 return convertor(value);
 
-            if ((toTypeInfo.IsInterface || toTypeInfo.IsAbstract) && !string.IsNullOrWhiteSpace(value))
+            if ((toType.IsInterface || toType.IsAbstract) && !string.IsNullOrWhiteSpace(value))
             {
                 // check if value looks like a static property or field directive
                 // like "Namespace.TypeName::StaticProperty, AssemblyName"

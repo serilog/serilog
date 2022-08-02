@@ -24,7 +24,7 @@ namespace Serilog.Policies
     {
         public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
         {
-            if (value.GetType().GetTypeInfo().IsEnum)
+            if (value.GetType().IsEnum)
             {
                 result = new ScalarValue(value);
                 return true;

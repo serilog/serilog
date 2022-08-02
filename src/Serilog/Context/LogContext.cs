@@ -12,19 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.ComponentModel;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
 
-#if ASYNCLOCAL
 using System.Threading;
-#elif REMOTING
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Lifetime;
-using System.Runtime.Remoting.Messaging;
-#endif
 
 namespace Serilog.Context
 {
@@ -51,14 +46,7 @@ namespace Serilog.Context
     /// (and so is preserved across async/await calls).</remarks>
     public static class LogContext
     {
-#if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>> Data = new();
-#elif REMOTING
-        static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
-#else // DOTNET_51
-        [ThreadStatic]
-        static ImmutableStack<ILogEventEnricher> Data;
-#endif
+        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>?> Data = new();
 
         /// <summary>
         /// Push a property onto the context, returning an <see cref="IDisposable"/>
@@ -213,67 +201,10 @@ namespace Serilog.Context
             }
         }
 
-#if ASYNCLOCAL
-
-        static ImmutableStack<ILogEventEnricher> Enrichers
+        static ImmutableStack<ILogEventEnricher>? Enrichers
         {
             get => Data.Value;
             set => Data.Value = value;
         }
-
-#elif REMOTING
-
-        static ImmutableStack<ILogEventEnricher> Enrichers
-        {
-            get
-            {
-                var objectHandle = CallContext.LogicalGetData(DataSlotName) as ObjectHandle;
-
-                return objectHandle?.Unwrap() as ImmutableStack<ILogEventEnricher>;
-            }
-            set
-            {
-                if (CallContext.LogicalGetData(DataSlotName) is IDisposable oldHandle)
-                {
-                    oldHandle.Dispose();
-                }
-
-                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
-            }
-        }
-
-        sealed class DisposableObjectHandle : ObjectHandle, IDisposable
-        {
-            static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
-
-            public DisposableObjectHandle(object o)
-                : base(o)
-            {
-            }
-
-            public override object InitializeLifetimeService()
-            {
-                var lease = base.InitializeLifetimeService() as ILease;
-                lease?.Register(LifeTimeSponsor);
-                return lease;
-            }
-
-            public void Dispose()
-            {
-                if (GetLifetimeService() is ILease lease)
-                {
-                    lease.Unregister(LifeTimeSponsor);
-                }
-            }
-        }
-
-#else // DOTNET_51
-
-        static ImmutableStack<ILogEventEnricher> Enrichers
-        {
-            get => Data;
-            set => Data = value;
-        }
-#endif
     }
 }

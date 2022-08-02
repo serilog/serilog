@@ -341,7 +341,7 @@ namespace Serilog.Capturing
         static bool IsValidDictionaryKeyType(Type valueType)
         {
             return BuiltInScalarTypes.Contains(valueType) ||
-                   valueType.GetTypeInfo().IsEnum;
+                   valueType.IsEnum;
         }
 
         IEnumerable<LogEventProperty> GetProperties(object value)
@@ -385,13 +385,12 @@ namespace Serilog.Capturing
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool IsCompilerGeneratedType(Type type)
         {
-            var typeInfo = type.GetTypeInfo();
             var typeName = type.Name;
 
             // C# Anonymous types always start with "<>" and VB's start with "VB$"
-            return typeInfo.IsGenericType && typeInfo.IsSealed && type.Namespace == null
-                && (typeName[0] == '<'
-                    || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
+            return type.IsGenericType && type.IsSealed && type.Namespace == null
+                   && (typeName[0] == '<'
+                       || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
         }
     }
 }

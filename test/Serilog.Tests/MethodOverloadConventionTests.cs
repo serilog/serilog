@@ -950,7 +950,7 @@ namespace Serilog.Tests
                         {
                             Assert.Equal(genericTypeArgs[i].Name, $"T{i}");
 
-                            var genericConstraints = genericTypeArgs[i].GetTypeInfo().GetGenericParameterConstraints();
+                            var genericConstraints = genericTypeArgs[i].GetGenericParameterConstraints();
 
                             Assert.Empty(genericConstraints);
                             Assert.Equal(parameters[index].Name, $"propertyValue{i}");
@@ -963,7 +963,7 @@ namespace Serilog.Tests
 
                         Assert.Equal("T", genericTypeArg.Name);
 
-                        var genericConstraints = genericTypeArg.GetTypeInfo().GetGenericParameterConstraints();
+                        var genericConstraints = genericTypeArg.GetGenericParameterConstraints();
 
                         Assert.Empty(genericConstraints);
                         Assert.Equal("propertyValue", parameters[index].Name);

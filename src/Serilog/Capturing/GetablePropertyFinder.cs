@@ -26,11 +26,11 @@ namespace Serilog.Capturing
         {
             var seenNames = new HashSet<string>();
 
-            var currentTypeInfo = type.GetTypeInfo();
+            var currentType = type;
 
-            while (currentTypeInfo.AsType() != typeof(object))
+            while (currentType != typeof(object))
             {
-                var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
+                var unseenProperties = currentType.GetTypeInfo().DeclaredProperties.Where(p => p.CanRead &&
                     p.GetMethod!.IsPublic && !p.GetMethod.IsStatic &&
                     (p.Name != "Item" || p.GetIndexParameters().Length == 0) && !seenNames.Contains(p.Name));
 
@@ -40,13 +40,13 @@ namespace Serilog.Capturing
                     yield return propertyInfo;
                 }
 
-                var baseType = currentTypeInfo.BaseType;
+                var baseType = currentType.BaseType;
                 if (baseType == null)
                 {
                     yield break;
                 }
 
-                currentTypeInfo = baseType.GetTypeInfo();
+                currentType = baseType;
             }
         }
     }
