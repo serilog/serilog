@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using Serilog.Core;
 using Serilog.Events;
 
