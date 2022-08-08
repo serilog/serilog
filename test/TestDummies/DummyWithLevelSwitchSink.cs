@@ -3,26 +3,25 @@ using System.Collections.Generic;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace TestDummies
+namespace TestDummies;
+
+public class DummyWithLevelSwitchSink : ILogEventSink
 {
-    public class DummyWithLevelSwitchSink : ILogEventSink
+    public DummyWithLevelSwitchSink(LoggingLevelSwitch? loggingControlLevelSwitch)
     {
-        public DummyWithLevelSwitchSink(LoggingLevelSwitch? loggingControlLevelSwitch)
-        {
-            ControlLevelSwitch = loggingControlLevelSwitch;
-        }
+        ControlLevelSwitch = loggingControlLevelSwitch;
+    }
 
-        [ThreadStatic]
-        public static LoggingLevelSwitch? ControlLevelSwitch;
+    [ThreadStatic]
+    public static LoggingLevelSwitch? ControlLevelSwitch;
 
-        [ThreadStatic]
-        // ReSharper disable ThreadStaticFieldHasInitializer
-        public static List<LogEvent> Emitted = new();
-        // ReSharper restore ThreadStaticFieldHasInitializer
+    [ThreadStatic]
+    // ReSharper disable ThreadStaticFieldHasInitializer
+    public static List<LogEvent> Emitted = new();
+    // ReSharper restore ThreadStaticFieldHasInitializer
 
-        public void Emit(LogEvent logEvent)
-        {
-            Emitted.Add(logEvent);
-        }
+    public void Emit(LogEvent logEvent)
+    {
+        Emitted.Add(logEvent);
     }
 }
