@@ -7,7 +7,7 @@ namespace Serilog.Tests.Parsing
 {
     public class MessageTemplateParserTests
     {
-        static MessageTemplateToken[] Parse(string? messageTemplate)
+        static MessageTemplateToken[] Parse(string messageTemplate)
         {
             return new MessageTemplateParser().Parse(messageTemplate).Tokens.ToArray();
         }
@@ -24,7 +24,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void MessageTemplateIsRequired()
         {
-            Assert.Throws<ArgumentNullException>(() => Parse(null));
+            Assert.Throws<ArgumentNullException>(() => Parse(null!));
         }
 
         [Fact]
@@ -308,7 +308,7 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
-        public void FormatInFrontOfAlignmentWillHaveTheAlignmentBeConsidredPartOfTheFormat()
+        public void FormatInFrontOfAlignmentWillHaveTheAlignmentBeConsideredPartOfTheFormat()
         {
             var prop1 = (PropertyToken)Parse("{Hello:000,-5}").Single();
             Assert.Equal("Hello", prop1.PropertyName);
