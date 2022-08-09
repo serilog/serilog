@@ -140,8 +140,6 @@ namespace Serilog.Tests.Settings
                     null, null)]
         [InlineData("ThereIsNoMemberHere::",
                     null, null)]
-        [InlineData(null,
-                    null, null)]
         [InlineData(" ",
                     null, null)]
         // a full-qualified type name should not be considered a static member accessor
