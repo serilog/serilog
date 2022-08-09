@@ -28,7 +28,6 @@ namespace Serilog.Parsing
     /// </summary>
     public sealed class PropertyToken : MessageTemplateToken
     {
-        readonly string _rawText;
         readonly int? _position;
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace Serilog.Parsing
             PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
             Format = format;
             Destructuring = destructuring;
-            _rawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
+            RawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
             Alignment = alignment;
 
             if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out var position) &&
@@ -75,7 +74,7 @@ namespace Serilog.Parsing
         /// <summary>
         /// The token's length.
         /// </summary>
-        public override int Length => _rawText.Length;
+        public override int Length => RawText.Length;
 
         /// <summary>
         /// Render the token to the output.
@@ -118,7 +117,7 @@ namespace Serilog.Parsing
         /// </summary>
         public bool IsPositional => _position.HasValue;
 
-        internal string RawText => _rawText;
+        internal string RawText { get; }
 
         /// <summary>
         /// Try to get the integer value represented by the property name.
@@ -150,7 +149,7 @@ namespace Serilog.Parsing
                 pt.Destructuring == Destructuring &&
                 pt.Format == Format &&
                 pt.PropertyName == PropertyName &&
-                pt._rawText == _rawText;
+                pt.RawText == RawText;
         }
 
         /// <summary>
@@ -169,6 +168,6 @@ namespace Serilog.Parsing
         /// A string that represents the current object.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override string ToString() => _rawText;
+        public override string ToString() => RawText;
     }
 }

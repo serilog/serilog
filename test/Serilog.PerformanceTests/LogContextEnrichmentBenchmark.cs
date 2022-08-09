@@ -3,56 +3,55 @@ using Serilog.Context;
 using Serilog.Events;
 using Serilog.PerformanceTests.Support;
 
-namespace Serilog.PerformanceTests
+namespace Serilog.PerformanceTests;
+
+public class LogContextEnrichmentBenchmark
 {
-    public class LogContextEnrichmentBenchmark
+    ILogger _bare = null!, _enriched = null!;
+    readonly LogEvent _event = Some.InformationEvent();
+
+    [GlobalSetup]
+    public void Setup()
     {
-        ILogger _bare = null!, _enriched = null!;
-        readonly LogEvent _event = Some.InformationEvent();
+        _bare = new LoggerConfiguration()
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger();
 
-        [GlobalSetup]
-        public void Setup()
+        _enriched = new LoggerConfiguration()
+            .WriteTo.Sink(new NullSink())
+            .Enrich.FromLogContext()
+            .CreateLogger();
+    }
+
+    [Benchmark(Baseline = true)]
+    public void Bare()
+    {
+        _bare.Write(_event);
+    }
+
+    [Benchmark]
+    public void PushProperty()
+    {
+        using (LogContext.PushProperty("A", "B"))
         {
-            _bare = new LoggerConfiguration()
-                .WriteTo.Sink(new NullSink())
-                .CreateLogger();
-
-            _enriched = new LoggerConfiguration()
-                .WriteTo.Sink(new NullSink())
-                .Enrich.FromLogContext()
-                .CreateLogger();
         }
+    }
 
-        [Benchmark(Baseline = true)]
-        public void Bare()
+    [Benchmark]
+    public void PushPropertyNested()
+    {
+        using (LogContext.PushProperty("A", "B"))
+        using (LogContext.PushProperty("C", "D"))
         {
-            _bare.Write(_event);
         }
+    }
 
-        [Benchmark]
-        public void PushProperty()
+    [Benchmark]
+    public void PushPropertyEnriched()
+    {
+        using (LogContext.PushProperty("A", "B"))
         {
-            using (LogContext.PushProperty("A", "B"))
-            {
-            }
-        }
-
-        [Benchmark]
-        public void PushPropertyNested()
-        {
-            using (LogContext.PushProperty("A", "B"))
-            using (LogContext.PushProperty("C", "D"))
-            {
-            }
-        }
-
-        [Benchmark]
-        public void PushPropertyEnriched()
-        {
-            using (LogContext.PushProperty("A", "B"))
-            {
-                _enriched.Write(_event);
-            }
+            _enriched.Write(_event);
         }
     }
 }

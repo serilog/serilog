@@ -7,7 +7,7 @@ namespace Serilog.Tests.Parsing
 {
     public class MessageTemplateParserTests
     {
-        static MessageTemplateToken[] Parse(string? messageTemplate)
+        static MessageTemplateToken[] Parse(string messageTemplate)
         {
             return new MessageTemplateParser().Parse(messageTemplate).Tokens.ToArray();
         }
@@ -24,7 +24,7 @@ namespace Serilog.Tests.Parsing
         [Fact]
         public void MessageTemplateIsRequired()
         {
-            Assert.Throws<ArgumentNullException>(() => Parse(null));
+            Assert.Throws<ArgumentNullException>(() => Parse(null!));
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Serilog.Tests.Parsing
             AssertParsedAs("Nice }}-: mo",
                 new TextToken("Nice }-: mo"));
         }
-        
+
         [Fact]
         public void DoubledRightBracketsAfterOneLeftIsParsedAPropertyTokenAndATextToken()
         {
@@ -104,7 +104,7 @@ namespace Serilog.Tests.Parsing
         {
             AssertParsedAs("{{Hi}}",
                 new TextToken("{Hi}"));
-            
+
             AssertParsedAs("Hello, {{worl@d}}!",
                 new TextToken("Hello, {worl@d}!"));
         }
@@ -117,7 +117,7 @@ namespace Serilog.Tests.Parsing
 
             AssertParsedAs("{0 space",
                 new TextToken("{0 space"));
-            
+
             AssertParsedAs("{0_space",
                 new TextToken("{0_space"));
         }
@@ -139,7 +139,7 @@ namespace Serilog.Tests.Parsing
                 new PropertyToken("0_", "{0_}"),
                 new TextToken("}space}"));
         }
-        
+
         [Fact]
         public void AMessageWithAMalformedPropertyTagIsParsedAsManyTextTokens()
         {
@@ -186,7 +186,7 @@ namespace Serilog.Tests.Parsing
             Assert.True(prop1.IsPositional);
             Assert.Equal(0, prop1.StartIndex);
             Assert.Equal(3, prop1.Length);
-            
+
             var prop2 = (TextToken)parsed[1];
             Assert.Equal(", ", prop2.Text);
             Assert.Equal(3, prop2.StartIndex);
@@ -198,7 +198,7 @@ namespace Serilog.Tests.Parsing
             Assert.True(prop3.IsPositional);
             Assert.Equal(5, prop3.StartIndex);
             Assert.Equal(3, prop3.Length);
-            
+
             var prop4 = (TextToken)parsed[3];
             Assert.Equal(", ", prop4.Text);
             Assert.Equal(8, prop4.StartIndex);
@@ -211,7 +211,6 @@ namespace Serilog.Tests.Parsing
             Assert.Equal(10, prop5.StartIndex);
             Assert.Equal(3, prop5.Length);
         }
-
 
         [Fact]
         public void InvalidIntegerPropertyNameIsParsedAsText()
@@ -280,7 +279,6 @@ namespace Serilog.Tests.Parsing
             Assert.Equal(new Alignment(AlignmentDirection.Right, 50), prop2.Alignment);
         }
 
-
         [Fact]
         public void PropertiesCanHaveAlignmentAndFormat()
         {
@@ -310,7 +308,7 @@ namespace Serilog.Tests.Parsing
         }
 
         [Fact]
-        public void FormatInFrontOfAlignmentWillHaveTheAlignmentBeConsidredPartOfTheFormat()
+        public void FormatInFrontOfAlignmentWillHaveTheAlignmentBeConsideredPartOfTheFormat()
         {
             var prop1 = (PropertyToken)Parse("{Hello:000,-5}").Single();
             Assert.Equal("Hello", prop1.PropertyName);
