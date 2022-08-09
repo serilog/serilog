@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Serilog.Core;
 using Serilog.Events;
@@ -152,7 +154,7 @@ namespace Serilog.Parsing
                 first);
         }
 
-        static bool TrySplitTagContent(string tagContent, out string propertyNameAndDestructuring, out string format, out string alignment)
+        static bool TrySplitTagContent(string tagContent, [NotNullWhen(true)] out string? propertyNameAndDestructuring, out string? format, out string? alignment)
         {
             var formatDelim = tagContent.IndexOf(':');
             var alignmentDelim = tagContent.IndexOf(',');
@@ -161,46 +163,43 @@ namespace Serilog.Parsing
                 propertyNameAndDestructuring = tagContent;
                 format = null;
                 alignment = null;
+                return true;
             }
-            else
+
+            if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
             {
-                if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
-                {
-                    propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
-                    format = formatDelim == tagContent.Length - 1 ?
-                        null :
-                        tagContent.Substring(formatDelim + 1);
-                    alignment = null;
-                }
-                else
-                {
-                    propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
-                    if (formatDelim == -1)
-                    {
-                        if (alignmentDelim == tagContent.Length - 1)
-                        {
-                            alignment = format = null;
-                            return false;
-                        }
-
-                        format = null;
-                        alignment = tagContent.Substring(alignmentDelim + 1);
-                    }
-                    else
-                    {
-                        if (alignmentDelim == formatDelim - 1)
-                        {
-                            alignment = format = null;
-                            return false;
-                        }
-
-                        alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
-                        format = formatDelim == tagContent.Length - 1 ?
-                            null :
-                            tagContent.Substring(formatDelim + 1);
-                    }
-                }
+                propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
+                format = formatDelim == tagContent.Length - 1 ?
+                    null :
+                    tagContent.Substring(formatDelim + 1);
+                alignment = null;
+                return true;
             }
+
+            propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
+            if (formatDelim == -1)
+            {
+                if (alignmentDelim == tagContent.Length - 1)
+                {
+                    alignment = format = null;
+                    return false;
+                }
+
+                format = null;
+                alignment = tagContent.Substring(alignmentDelim + 1);
+                return true;
+            }
+
+            if (alignmentDelim == formatDelim - 1)
+            {
+                alignment = format = null;
+                return false;
+            }
+
+            alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
+            format = formatDelim == tagContent.Length - 1 ?
+                null :
+                tagContent.Substring(formatDelim + 1);
 
             return true;
         }

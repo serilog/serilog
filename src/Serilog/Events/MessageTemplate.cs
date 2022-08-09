@@ -35,8 +35,6 @@ namespace Serilog.Events
         /// </summary>
         public static MessageTemplate Empty { get; } = new(Enumerable.Empty<MessageTemplateToken>());
 
-        readonly MessageTemplateToken[] _tokens;
-
         /// <summary>
         /// Construct a message template using manually-defined text and property tokens.
         /// </summary>
@@ -59,9 +57,9 @@ namespace Serilog.Events
         public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
         {
             Text = text ?? throw new ArgumentNullException(nameof(text));
-            _tokens = (tokens ?? throw new ArgumentNullException(nameof(tokens))).ToArray();
+            TokenArray = (tokens ?? throw new ArgumentNullException(nameof(tokens))).ToArray();
 
-            var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(_tokens);
+            var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(TokenArray);
             if (propertyTokens.Length != 0)
             {
                 var allPositional = true;
@@ -119,9 +117,9 @@ namespace Serilog.Events
         /// <summary>
         /// The tokens parsed from the template.
         /// </summary>
-        public IEnumerable<MessageTemplateToken> Tokens => _tokens;
+        public IEnumerable<MessageTemplateToken> Tokens => TokenArray;
 
-        internal MessageTemplateToken[] TokenArray => _tokens;
+        internal MessageTemplateToken[] TokenArray { get; }
 
         internal PropertyToken[]? NamedProperties { get; }
 

@@ -312,7 +312,7 @@ namespace Serilog.Tests
             var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
             Assert.NotNull(messageTemplateAttr);
-            Assert.Equal(messageTemplateAttr!.MessageTemplateParameterName, MessageTemplate);
+            Assert.Equal(MessageTemplate, messageTemplateAttr!.MessageTemplateParameterName);
 
             var parameters = method.GetParameters();
             var index = 0;
@@ -326,12 +326,12 @@ namespace Serilog.Tests
             index++;
 
             Assert.Equal("parsedTemplate", parameters[index].Name);
-            Assert.Equal(parameters[index].ParameterType, typeof(MessageTemplate).MakeByRefType());
+            Assert.Equal(typeof(MessageTemplate).MakeByRefType(), parameters[index].ParameterType);
             Assert.True(parameters[index].IsOut);
             index++;
 
             Assert.Equal("boundProperties", parameters[index].Name);
-            Assert.Equal(parameters[index].ParameterType, typeof(IEnumerable<LogEventProperty>).MakeByRefType());
+            Assert.Equal(typeof(IEnumerable<LogEventProperty>).MakeByRefType(), parameters[index].ParameterType);
             Assert.True(parameters[index].IsOut);
 
             var logger = GetLogger(loggerType);
@@ -685,7 +685,7 @@ namespace Serilog.Tests
                     var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
                     Assert.NotNull(messageTemplateAttr);
-                    Assert.Equal(messageTemplateAttr!.MessageTemplateParameterName, MessageTemplate);
+                    Assert.Equal(MessageTemplate, messageTemplateAttr!.MessageTemplateParameterName);
                 }
 
                 var signatureMatchAndInvokeSuccess = false;
@@ -934,7 +934,7 @@ namespace Serilog.Tests
 
                 //check for message template string argument
                 Assert.Equal(typeof(string), parameters[index].ParameterType);
-                Assert.Equal(parameters[index].Name, MessageTemplate);
+                Assert.Equal(MessageTemplate, parameters[index].Name);
                 index++;
 
                 if (isGeneric) //validate type arguments, generic parameters, and cross-reference
@@ -948,13 +948,13 @@ namespace Serilog.Tests
                     {
                         for (var i = 0; i < genericTypeArgs.Length; i++, index++)
                         {
-                            Assert.Equal(genericTypeArgs[i].Name, $"T{i}");
+                            Assert.Equal($"T{i}", genericTypeArgs[i].Name);
 
                             var genericConstraints = genericTypeArgs[i].GetTypeInfo().GetGenericParameterConstraints();
 
                             Assert.Empty(genericConstraints);
-                            Assert.Equal(parameters[index].Name, $"propertyValue{i}");
-                            Assert.Equal(parameters[index].ParameterType, genericTypeArgs[i]);
+                            Assert.Equal($"propertyValue{i}", parameters[index].Name);
+                            Assert.Equal(genericTypeArgs[i], parameters[index].ParameterType);
                         }
                     }
                     else //single generic argument convention T : T propertyValue

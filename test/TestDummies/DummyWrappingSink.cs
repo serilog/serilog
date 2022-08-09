@@ -3,31 +3,30 @@ using Serilog.Core;
 using Serilog.Events;
 using System.Collections.Generic;
 
-namespace TestDummies
+namespace TestDummies;
+
+public class DummyWrappingSink : ILogEventSink
 {
-    public class DummyWrappingSink : ILogEventSink
+    [ThreadStatic]
+    static List<LogEvent>? _emitted;
+
+    public static List<LogEvent> Emitted => _emitted ?? (_emitted = new());
+
+    readonly ILogEventSink _sink;
+
+    public DummyWrappingSink(ILogEventSink sink)
     {
-        [ThreadStatic]
-        static List<LogEvent>? _emitted;
+        _sink = sink;
+    }
 
-        public static List<LogEvent> Emitted => _emitted ?? (_emitted = new());
+    public void Emit(LogEvent logEvent)
+    {
+        Emitted.Add(logEvent);
+        _sink.Emit(logEvent);
+    }
 
-        readonly ILogEventSink _sink;
-
-        public DummyWrappingSink(ILogEventSink sink)
-        {
-            _sink = sink;
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            Emitted.Add(logEvent);
-            _sink.Emit(logEvent);
-        }
-
-        public static void Reset()
-        {
-            _emitted = null;
-        }
+    public static void Reset()
+    {
+        _emitted = null;
     }
 }

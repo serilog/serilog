@@ -347,7 +347,7 @@ namespace Serilog.Tests.Capturing
         {
             var indexed = new HasItem();
             var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
-            Assert.Equal(1, pv.Properties.Count);
+            Assert.Single(pv.Properties);
             var item = pv.Properties.Single();
             Assert.Equal("Item", item.Name);
         }
@@ -374,7 +374,7 @@ namespace Serilog.Tests.Capturing
             Assert.Equal(new ScalarValue(1), sequenceValue.Elements[0]);
             Assert.Equal(new ScalarValue("A"), sequenceValue.Elements[1]);
             var nested = Assert.IsType<SequenceValue>(sequenceValue.Elements[2]);
-            Assert.Equal(1, nested.Elements.Count);
+            Assert.Single(nested.Elements);
             Assert.Equal(new ScalarValue("B"), nested.Elements[0]);
         }
 

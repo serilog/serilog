@@ -1,7 +1,6 @@
-namespace TestDummies.Console.Themes
+namespace TestDummies.Console.Themes;
+
+public abstract class ConsoleTheme
 {
-    public abstract class ConsoleTheme
-    {
-        public static ConsoleTheme None { get; } = new EmptyConsoleTheme();
-    }
+    public static ConsoleTheme None { get; } = new EmptyConsoleTheme();
 }
