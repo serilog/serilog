@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
 using Serilog.Events;
 
@@ -52,7 +53,7 @@ namespace Serilog.Core.Pipeline
 #if HASHTABLE
             // ReSharper disable once InconsistentlySynchronizedField
             // ignored warning because this is by design
-            var result = (MessageTemplate)_templates[messageTemplate];
+            var result = (MessageTemplate?)_templates[messageTemplate];
             if (result != null)
                 return result;
 #else

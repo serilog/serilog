@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -13,7 +14,7 @@ public class DummyHardCodedStringDestructuringPolicy : IDestructuringPolicy
         _hardCodedString = hardCodedString ?? throw new ArgumentNullException(nameof(hardCodedString));
     }
 
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         result = new ScalarValue(_hardCodedString);
         return true;
