@@ -81,11 +81,8 @@ namespace Serilog.Filters
             if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
 
             var scalar = new ScalarValue(scalarValue);
-            return e =>
-            {
-                return e.Properties.TryGetValue(propertyName, out var propertyValue) &&
-                    scalar.Equals(propertyValue);
-            };
+            return e => e.Properties.TryGetValue(propertyName, out var propertyValue) &&
+                        scalar.Equals(propertyValue);
         }
 
         /// <summary>
