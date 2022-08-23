@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Serilog.Core;
 
 // General-purpose type; not all features are used here.
 // ReSharper disable MemberCanBePrivate.Global
@@ -22,16 +23,16 @@ using System.Collections.Generic;
 
 namespace Serilog.Context
 {
-    class ImmutableStack<T> : IEnumerable<T>
+    class EnricherStack: IEnumerable<ILogEventEnricher>
     {
-        readonly ImmutableStack<T> _under;
-        readonly T _top;
+        readonly EnricherStack _under;
+        readonly ILogEventEnricher _top;
 
-        ImmutableStack()
+        EnricherStack()
         {
         }
 
-        ImmutableStack(ImmutableStack<T> under, T top)
+        EnricherStack(EnricherStack under, ILogEventEnricher top)
         {
             _under = under ?? throw new ArgumentNullException(nameof(under));
             Count = under.Count + 1;
@@ -40,27 +41,27 @@ namespace Serilog.Context
 
         public Enumerator GetEnumerator() => new(this);
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
+        IEnumerator<ILogEventEnricher> IEnumerable<ILogEventEnricher>.GetEnumerator() => new Enumerator(this);
 
         IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
         public int Count { get; }
 
-        public static ImmutableStack<T> Empty { get; } = new();
+        public static EnricherStack Empty { get; } = new();
 
         public bool IsEmpty => _under == null;
 
-        public ImmutableStack<T> Push(T t) => new(this, t);
+        public EnricherStack Push(ILogEventEnricher t) => new(this, t);
 
-        public T Top => _top;
+        public ILogEventEnricher Top => _top;
 
-        internal struct Enumerator : IEnumerator<T>
+        internal struct Enumerator : IEnumerator<ILogEventEnricher>
         {
-            readonly ImmutableStack<T> _stack;
-            ImmutableStack<T> _top;
-            T _current;
+            readonly EnricherStack _stack;
+            EnricherStack _top;
+            ILogEventEnricher _current;
 
-            public Enumerator(ImmutableStack<T> stack)
+            public Enumerator(EnricherStack stack)
             {
                 _stack = stack;
                 _top = stack;
@@ -82,7 +83,7 @@ namespace Serilog.Context
                 _current = default;
             }
 
-            public T Current => _current;
+            public ILogEventEnricher Current => _current;
 
             object IEnumerator.Current => _current;
 
