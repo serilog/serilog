@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Serilog.Events
@@ -67,7 +69,7 @@ namespace Serilog.Events
         /// </summary>
         /// <param name="name">The name to check.</param>
         /// <returns>True if the name is valid; otherwise, false.</returns>
-        public static bool IsValidName(string name) => !string.IsNullOrWhiteSpace(name);
+        public static bool IsValidName([NotNullWhen(true)] string? name) => !string.IsNullOrWhiteSpace(name);
 
         /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
         /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
