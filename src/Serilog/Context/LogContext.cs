@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using System;
 using System.ComponentModel;
 using Serilog.Core;
@@ -53,12 +52,12 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<ImmutableStack<ILogEventEnricher>?> Data = new();
+        static readonly AsyncLocal<EnricherStack> Data = new();
 #elif REMOTING
         static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
         [ThreadStatic]
-        static ImmutableStack<ILogEventEnricher>? Data;
+        static EnricherStack Data;
 #endif
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace Serilog.Context
             var stack = GetOrCreateEnricherStack();
             var bookmark = new ContextStackBookmark(stack);
 
-            Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+            Enrichers = EnricherStack.Empty;
 
             return bookmark;
         }
@@ -170,18 +169,18 @@ namespace Serilog.Context
         /// </summary>
         public static void Reset()
         {
-            if (Enrichers != null && Enrichers != ImmutableStack<ILogEventEnricher>.Empty)
+            if (Enrichers != null && Enrichers != EnricherStack.Empty)
             {
-                Enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+                Enrichers = EnricherStack.Empty;
             }
         }
 
-        static ImmutableStack<ILogEventEnricher> GetOrCreateEnricherStack()
+        static EnricherStack GetOrCreateEnricherStack()
         {
             var enrichers = Enrichers;
             if (enrichers == null)
             {
-                enrichers = ImmutableStack<ILogEventEnricher>.Empty;
+                enrichers = EnricherStack.Empty;
                 Enrichers = enrichers;
             }
             return enrichers;
@@ -190,7 +189,7 @@ namespace Serilog.Context
         internal static void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             var enrichers = Enrichers;
-            if (enrichers == null || enrichers == ImmutableStack<ILogEventEnricher>.Empty)
+            if (enrichers == null || enrichers == EnricherStack.Empty)
                 return;
 
             foreach (var enricher in enrichers)
@@ -201,9 +200,9 @@ namespace Serilog.Context
 
         sealed class ContextStackBookmark : IDisposable
         {
-            readonly ImmutableStack<ILogEventEnricher> _bookmark;
+            readonly EnricherStack _bookmark;
 
-            public ContextStackBookmark(ImmutableStack<ILogEventEnricher> bookmark)
+            public ContextStackBookmark(EnricherStack bookmark)
             {
                 _bookmark = bookmark;
             }
@@ -216,7 +215,7 @@ namespace Serilog.Context
 
 #if ASYNCLOCAL
 
-        static ImmutableStack<ILogEventEnricher>? Enrichers
+        static EnricherStack Enrichers
         {
             get => Data.Value;
             set => Data.Value = value;
@@ -224,13 +223,13 @@ namespace Serilog.Context
 
 #elif REMOTING
 
-        static ImmutableStack<ILogEventEnricher>? Enrichers
+        static EnricherStack Enrichers
         {
             get
             {
                 var objectHandle = CallContext.LogicalGetData(DataSlotName) as ObjectHandle;
 
-                return objectHandle?.Unwrap() as ImmutableStack<ILogEventEnricher>;
+                return objectHandle?.Unwrap() as EnricherStack;
             }
             set
             {
@@ -239,10 +238,7 @@ namespace Serilog.Context
                     oldHandle.Dispose();
                 }
 
-                if (value != null)
-                {
-                    CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
-                }
+                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
             }
         }
 
@@ -255,7 +251,7 @@ namespace Serilog.Context
             {
             }
 
-            public override object? InitializeLifetimeService()
+            public override object InitializeLifetimeService()
             {
                 var lease = base.InitializeLifetimeService() as ILease;
                 lease?.Register(LifeTimeSponsor);
@@ -273,7 +269,7 @@ namespace Serilog.Context
 
 #else // DOTNET_51
 
-        static ImmutableStack<ILogEventEnricher>? Enrichers
+        static EnricherStack Enrichers
         {
             get => Data;
             set => Data = value;
