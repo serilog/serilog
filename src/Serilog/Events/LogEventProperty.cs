@@ -39,6 +39,113 @@ namespace Serilog.Events
             Value = value;
         }
 
+#if NET6_0_OR_GREATER
+        /// <inheritdoc />
+        public LogEventProperty(string name, TimeOnly value) : this(name, new ScalarValue(value))
+        {
+        }
+        /// <inheritdoc />
+        public LogEventProperty(string name, DateOnly value) : this(name, new ScalarValue(value))
+        {
+        }
+#endif
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, DateTime value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, DateTimeOffset value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, TimeSpan value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, Guid value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, string value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, sbyte value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, byte value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, short value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, ushort value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, int value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, uint value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, long value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, ulong value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, nint value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, nuint value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, float value) : this(name, new ScalarValue(value))
+        {
+        }
+
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, double value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, bool value) : this(name, new ScalarValue(value))
+        {
+        }
+
+        /// <inheritdoc />
+        public LogEventProperty(string name, char value) : this(name, new ScalarValue(value))
+        {
+        }
+
         /// <summary>
         /// Construct a <see cref="LogEventProperty"/> from an existing <see cref="EventProperty"/> instance.
         /// </summary>
