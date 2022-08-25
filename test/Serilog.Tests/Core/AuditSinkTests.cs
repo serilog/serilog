@@ -11,7 +11,7 @@ namespace Serilog.Tests.Core
         public void ExceptionsThrownByAuditSinksArePropagated()
         {
             var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new DelegatingSink(_ => { throw new Exception("Boom!"); }))
+                .AuditTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
                 .CreateLogger();
 
             Assert.Throws<AggregateException>(() => logger.Write(Some.InformationEvent()));
@@ -22,7 +22,7 @@ namespace Serilog.Tests.Core
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new DelegatingSink(_ => { }))
-                .Filter.ByExcluding(_ => { throw new Exception("Boom!"); })
+                .Filter.ByExcluding(_ => throw new Exception("Boom!"))
                 .CreateLogger();
 
             Assert.Throws<Exception>(() => logger.Write(Some.InformationEvent()));
@@ -32,7 +32,7 @@ namespace Serilog.Tests.Core
         public void ExceptionsThrownByAuditSinksArePropagatedFromChildLoggers()
         {
             var logger = new LoggerConfiguration()
-                .AuditTo.Sink(new DelegatingSink(_ => { throw new Exception("Boom!"); }))
+                .AuditTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
                 .CreateLogger();
 
             Assert.Throws<AggregateException>(() => logger
@@ -45,7 +45,7 @@ namespace Serilog.Tests.Core
         {
             var logger = new LoggerConfiguration()
                 .AuditTo.Sink(new CollectingSink())
-                .Destructure.ByTransforming<Value>(_ => { throw new Exception("Boom!"); })
+                .Destructure.ByTransforming<Value>(_ => throw new Exception("Boom!"))
                 .CreateLogger();
 
             Assert.Throws<Exception>(() => logger.Information("{@Value}", new Value()));
