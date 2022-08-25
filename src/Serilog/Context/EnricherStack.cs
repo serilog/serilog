@@ -25,8 +25,8 @@ namespace Serilog.Context
 {
     class EnricherStack: IEnumerable<ILogEventEnricher>
     {
-        readonly EnricherStack _under;
-        readonly ILogEventEnricher _top;
+        readonly EnricherStack? _under;
+        readonly ILogEventEnricher? _top;
 
         EnricherStack()
         {
@@ -53,19 +53,19 @@ namespace Serilog.Context
 
         public EnricherStack Push(ILogEventEnricher t) => new(this, t);
 
-        public ILogEventEnricher Top => _top;
+        public ILogEventEnricher Top => _top!;
 
         internal struct Enumerator : IEnumerator<ILogEventEnricher>
         {
             readonly EnricherStack _stack;
             EnricherStack _top;
-            ILogEventEnricher _current;
+            ILogEventEnricher? _current;
 
             public Enumerator(EnricherStack stack)
             {
                 _stack = stack;
                 _top = stack;
-                _current = default;
+                _current = null;
             }
 
             public bool MoveNext()
@@ -73,19 +73,19 @@ namespace Serilog.Context
                 if (_top.IsEmpty)
                     return false;
                 _current = _top.Top;
-                _top = _top._under;
+                _top = _top._under!;
                 return true;
             }
 
             public void Reset()
             {
                 _top = _stack;
-                _current = default;
+                _current = null;
             }
 
-            public ILogEventEnricher Current => _current;
+            public ILogEventEnricher Current => _current!;
 
-            object IEnumerator.Current => _current;
+            object IEnumerator.Current => _current!;
 
             public void Dispose()
             {

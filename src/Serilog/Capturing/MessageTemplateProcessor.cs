@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
 using Serilog.Core;
 using Serilog.Core.Pipeline;
 using Serilog.Events;
@@ -38,7 +37,7 @@ namespace Serilog.Capturing
             properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters);
         }
 
-        public LogEventProperty CreateProperty(string? name, object? value, bool destructureObjects = false)
+        public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)
         {
             return _propertyValueConverter.CreateProperty(name, value, destructureObjects);
         }
