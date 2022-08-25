@@ -18,7 +18,7 @@ namespace Serilog.Tests.Debugging
             Messages = new();
             SelfLog.Enable(m =>
             {
-                Messages = Messages ?? new();
+                Messages ??= new();
                 Messages.Add(m);
             });
 
@@ -39,7 +39,7 @@ namespace Serilog.Tests.Debugging
             Messages = new();
             SelfLog.Enable(m =>
             {
-                Messages = Messages ?? new();
+                Messages ??= new();
                 Messages.Add(m);
             });
 

@@ -10,7 +10,7 @@ public class DummyWrappingSink : ILogEventSink
     [ThreadStatic]
     static List<LogEvent>? _emitted;
 
-    public static List<LogEvent> Emitted => _emitted ?? (_emitted = new());
+    public static List<LogEvent> Emitted => _emitted ??= new();
 
     readonly ILogEventSink _sink;
 
