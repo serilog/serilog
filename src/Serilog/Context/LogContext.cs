@@ -52,12 +52,12 @@ namespace Serilog.Context
     public static class LogContext
     {
 #if ASYNCLOCAL
-        static readonly AsyncLocal<EnricherStack> Data = new();
+        static readonly AsyncLocal<EnricherStack?> Data = new();
 #elif REMOTING
         static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
         [ThreadStatic]
-        static EnricherStack Data;
+        static EnricherStack? Data;
 #endif
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Serilog.Context
 
 #if ASYNCLOCAL
 
-        static EnricherStack Enrichers
+        static EnricherStack? Enrichers
         {
             get => Data.Value;
             set => Data.Value = value;
@@ -223,7 +223,7 @@ namespace Serilog.Context
 
 #elif REMOTING
 
-        static EnricherStack Enrichers
+        static EnricherStack? Enrichers
         {
             get
             {
@@ -238,7 +238,10 @@ namespace Serilog.Context
                     oldHandle.Dispose();
                 }
 
-                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
+                if (value != null)
+                {
+                    CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
+                }
             }
         }
 
@@ -251,7 +254,7 @@ namespace Serilog.Context
             {
             }
 
-            public override object InitializeLifetimeService()
+            public override object? InitializeLifetimeService()
             {
                 var lease = base.InitializeLifetimeService() as ILease;
                 lease?.Register(LifeTimeSponsor);
@@ -269,7 +272,7 @@ namespace Serilog.Context
 
 #else // DOTNET_51
 
-        static EnricherStack Enrichers
+        static EnricherStack? Enrichers
         {
             get => Data;
             set => Data = value;
