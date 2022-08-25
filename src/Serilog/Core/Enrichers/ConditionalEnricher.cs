@@ -15,28 +15,27 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Enrichers
+namespace Serilog.Core.Enrichers;
+
+class ConditionalEnricher : ILogEventEnricher, IDisposable
 {
-    class ConditionalEnricher : ILogEventEnricher, IDisposable
+    readonly ILogEventEnricher _wrapped;
+    readonly Func<LogEvent, bool> _condition;
+
+    public ConditionalEnricher(ILogEventEnricher wrapped, Func<LogEvent, bool> condition)
     {
-        readonly ILogEventEnricher _wrapped;
-        readonly Func<LogEvent, bool> _condition;
+        _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
+        _condition = condition ?? throw new ArgumentNullException(nameof(condition));
+    }
 
-        public ConditionalEnricher(ILogEventEnricher wrapped, Func<LogEvent, bool> condition)
-        {
-            _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
-            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
-        }
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
+        if (_condition(logEvent))
+            _wrapped.Enrich(logEvent, propertyFactory);
+    }
 
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            if (_condition(logEvent))
-                _wrapped.Enrich(logEvent, propertyFactory);
-        }
-
-        public void Dispose()
-        {
-            (_wrapped as IDisposable)?.Dispose();
-        }
+    public void Dispose()
+    {
+        (_wrapped as IDisposable)?.Dispose();
     }
 }

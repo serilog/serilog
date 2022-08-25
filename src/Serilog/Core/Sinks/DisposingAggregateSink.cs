@@ -18,53 +18,52 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
 
-namespace Serilog.Core.Sinks
+namespace Serilog.Core.Sinks;
+
+class DisposingAggregateSink : ILogEventSink, IDisposable
 {
-    class DisposingAggregateSink : ILogEventSink, IDisposable
+    readonly ILogEventSink[] _sinks;
+
+    public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
     {
-        readonly ILogEventSink[] _sinks;
+        if (sinks == null) throw new ArgumentNullException(nameof(sinks));
+        _sinks = sinks.ToArray();
+    }
 
-        public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
+    public void Emit(LogEvent logEvent)
+    {
+        List<Exception>? exceptions = null;
+        foreach (var sink in _sinks)
         {
-            if (sinks == null) throw new ArgumentNullException(nameof(sinks));
-            _sinks = sinks.ToArray();
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            List<Exception>? exceptions = null;
-            foreach (var sink in _sinks)
+            try
             {
-                try
-                {
-                    sink.Emit(logEvent);
-                }
-                catch (Exception ex)
-                {
-                    SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                    exceptions ??= new();
-                    exceptions.Add(ex);
-                }
+                sink.Emit(logEvent);
             }
-
-            if (exceptions != null)
-                throw new AggregateException("Failed to emit a log event.", exceptions);
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
+                exceptions ??= new();
+                exceptions.Add(ex);
+            }
         }
 
-        public void Dispose()
-        {
-            foreach (var sink in _sinks)
-            {
-                if (!(sink is IDisposable disposable)) continue;
+        if (exceptions != null)
+            throw new AggregateException("Failed to emit a log event.", exceptions);
+    }
 
-                try
-                {
-                    disposable.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
-                }
+    public void Dispose()
+    {
+        foreach (var sink in _sinks)
+        {
+            if (!(sink is IDisposable disposable)) continue;
+
+            try
+            {
+                disposable.Dispose();
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
             }
         }
     }

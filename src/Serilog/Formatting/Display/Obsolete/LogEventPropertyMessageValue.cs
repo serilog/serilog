@@ -17,23 +17,22 @@ using System.Collections.Generic;
 using System.IO;
 using Serilog.Events;
 
-namespace Serilog.Formatting.Display.Obsolete
+namespace Serilog.Formatting.Display.Obsolete;
+
+[Obsolete("Not used by the current output formatting implementation.")]
+class LogEventPropertyMessageValue : LogEventPropertyValue
 {
-    [Obsolete("Not used by the current output formatting implementation.")]
-    class LogEventPropertyMessageValue : LogEventPropertyValue
+    readonly MessageTemplate _template;
+    readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
+
+    public LogEventPropertyMessageValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
     {
-        readonly MessageTemplate _template;
-        readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
+        _template = template;
+        _properties = properties;
+    }
 
-        public LogEventPropertyMessageValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties)
-        {
-            _template = template;
-            _properties = properties;
-        }
-
-        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
-        {
-            _template.Render(_properties, output, formatProvider);
-        }
+    public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+    {
+        _template.Render(_properties, output, formatProvider);
     }
 }

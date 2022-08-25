@@ -12,24 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Serilog.Events
+namespace Serilog.Events;
+
+/// <summary>
+/// Descriptive aliases for <see cref="LogEventLevel"/>.
+/// </summary>
+/// <remarks>These do not appear as members of the enumeration
+/// as duplicated underlying values result in issues when presenting
+/// enum values with <see cref="object.ToString()"/>.</remarks>
+public static class LevelAlias
 {
     /// <summary>
-    /// Descriptive aliases for <see cref="LogEventLevel"/>.
+    /// The least significant level of event.
     /// </summary>
-    /// <remarks>These do not appear as members of the enumeration
-    /// as duplicated underlying values result in issues when presenting
-    /// enum values with <see cref="object.ToString()"/>.</remarks>
-    public static class LevelAlias
-    {
-        /// <summary>
-        /// The least significant level of event.
-        /// </summary>
-        public const LogEventLevel Minimum = LogEventLevel.Verbose;
+    public const LogEventLevel Minimum = LogEventLevel.Verbose;
 
-        /// <summary>
-        /// The most significant level of event.
-        /// </summary>
-        public const LogEventLevel Maximum = LogEventLevel.Fatal;
-    }
+    /// <summary>
+    /// The most significant level of event.
+    /// </summary>
+    public const LogEventLevel Maximum = LogEventLevel.Fatal;
 }

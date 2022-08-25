@@ -15,13 +15,12 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Context
+namespace Serilog.Context;
+
+sealed class LogContextEnricher : ILogEventEnricher
 {
-    sealed class LogContextEnricher : ILogEventEnricher
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            LogContext.Enrich(logEvent, propertyFactory);
-        }
+        LogContext.Enrich(logEvent, propertyFactory);
     }
 }

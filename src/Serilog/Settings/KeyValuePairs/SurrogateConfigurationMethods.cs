@@ -20,92 +20,91 @@ using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Settings.KeyValuePairs
+namespace Serilog.Settings.KeyValuePairs;
+
+/// <summary>
+/// Contains "fake extension" methods for the Serilog configuration API.
+/// By default the settings knows how to find extension methods, but some configuration
+/// are actually "regular" method calls and would not be found otherwise.
+///
+/// This static class contains internal methods that can be used instead.
+///
+/// See also <seealso cref="CallableConfigurationMethodFinder"/>
+/// </summary>
+static class SurrogateConfigurationMethods
 {
-    /// <summary>
-    /// Contains "fake extension" methods for the Serilog configuration API.
-    /// By default the settings knows how to find extension methods, but some configuration
-    /// are actually "regular" method calls and would not be found otherwise.
-    ///
-    /// This static class contains internal methods that can be used instead.
-    ///
-    /// See also <seealso cref="CallableConfigurationMethodFinder"/>
-    /// </summary>
-    static class SurrogateConfigurationMethods
+    static readonly Dictionary<Type, MethodInfo[]> SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods)
+        .GetTypeInfo().DeclaredMethods
+        .GroupBy(m => m.GetParameters().First().ParameterType)
+        .ToDictionary(g => g.Key, g => g.ToArray());
+
+    internal static readonly MethodInfo[] WriteTo = SurrogateMethodCandidates[typeof(LoggerSinkConfiguration)];
+    internal static readonly MethodInfo[] AuditTo = SurrogateMethodCandidates[typeof(LoggerAuditSinkConfiguration)];
+    internal static readonly MethodInfo[] Enrich = SurrogateMethodCandidates[typeof(LoggerEnrichmentConfiguration)];
+    internal static readonly MethodInfo[] Destructure = SurrogateMethodCandidates[typeof(LoggerDestructuringConfiguration)];
+    internal static readonly MethodInfo[] Filter = SurrogateMethodCandidates[typeof(LoggerFilterConfiguration)];
+
+    internal static LoggerConfiguration Sink(
+        LoggerSinkConfiguration loggerSinkConfiguration,
+        ILogEventSink sink,
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
     {
-        static readonly Dictionary<Type, MethodInfo[]> SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods)
-            .GetTypeInfo().DeclaredMethods
-            .GroupBy(m => m.GetParameters().First().ParameterType)
-            .ToDictionary(g => g.Key, g => g.ToArray());
+        return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
+    }
 
-        internal static readonly MethodInfo[] WriteTo = SurrogateMethodCandidates[typeof(LoggerSinkConfiguration)];
-        internal static readonly MethodInfo[] AuditTo = SurrogateMethodCandidates[typeof(LoggerAuditSinkConfiguration)];
-        internal static readonly MethodInfo[] Enrich = SurrogateMethodCandidates[typeof(LoggerEnrichmentConfiguration)];
-        internal static readonly MethodInfo[] Destructure = SurrogateMethodCandidates[typeof(LoggerDestructuringConfiguration)];
-        internal static readonly MethodInfo[] Filter = SurrogateMethodCandidates[typeof(LoggerFilterConfiguration)];
+    internal static LoggerConfiguration Sink(
+        LoggerAuditSinkConfiguration auditSinkConfiguration,
+        ILogEventSink sink,
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
+    {
+        return auditSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
+    }
 
-        internal static LoggerConfiguration Sink(
-            LoggerSinkConfiguration loggerSinkConfiguration,
-            ILogEventSink sink,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch? levelSwitch = null)
-        {
-            return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
-        }
+    internal static LoggerConfiguration With(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, ILogEventEnricher enricher)
+    {
+        return loggerEnrichmentConfiguration.With(enricher);
+    }
 
-        internal static LoggerConfiguration Sink(
-            LoggerAuditSinkConfiguration auditSinkConfiguration,
-            ILogEventSink sink,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            LoggingLevelSwitch? levelSwitch = null)
-        {
-            return auditSinkConfiguration.Sink(sink, restrictedToMinimumLevel, levelSwitch);
-        }
+    internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
+    {
+        return loggerEnrichmentConfiguration.FromLogContext();
+    }
 
-        internal static LoggerConfiguration With(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, ILogEventEnricher enricher)
-        {
-            return loggerEnrichmentConfiguration.With(enricher);
-        }
+    internal static LoggerConfiguration With(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+        IDestructuringPolicy policy)
+    {
+        return loggerDestructuringConfiguration.With(policy);
+    }
 
-        internal static LoggerConfiguration FromLogContext(LoggerEnrichmentConfiguration loggerEnrichmentConfiguration)
-        {
-            return loggerEnrichmentConfiguration.FromLogContext();
-        }
+    internal static LoggerConfiguration AsScalar(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+        Type scalarType)
+    {
+        return loggerDestructuringConfiguration.AsScalar(scalarType);
+    }
 
-        internal static LoggerConfiguration With(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            IDestructuringPolicy policy)
-        {
-            return loggerDestructuringConfiguration.With(policy);
-        }
+    internal static LoggerConfiguration ToMaximumCollectionCount(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+        int maximumCollectionCount)
+    {
+        return loggerDestructuringConfiguration.ToMaximumCollectionCount(maximumCollectionCount);
+    }
 
-        internal static LoggerConfiguration AsScalar(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            Type scalarType)
-        {
-            return loggerDestructuringConfiguration.AsScalar(scalarType);
-        }
+    internal static LoggerConfiguration ToMaximumDepth(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+        int maximumDestructuringDepth)
+    {
+        return loggerDestructuringConfiguration.ToMaximumDepth(maximumDestructuringDepth);
+    }
 
-        internal static LoggerConfiguration ToMaximumCollectionCount(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            int maximumCollectionCount)
-        {
-            return loggerDestructuringConfiguration.ToMaximumCollectionCount(maximumCollectionCount);
-        }
+    internal static LoggerConfiguration ToMaximumStringLength(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+        int maximumStringLength)
+    {
+        return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
+    }
 
-        internal static LoggerConfiguration ToMaximumDepth(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            int maximumDestructuringDepth)
-        {
-            return loggerDestructuringConfiguration.ToMaximumDepth(maximumDestructuringDepth);
-        }
-
-        internal static LoggerConfiguration ToMaximumStringLength(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-            int maximumStringLength)
-        {
-            return loggerDestructuringConfiguration.ToMaximumStringLength(maximumStringLength);
-        }
-
-        internal static LoggerConfiguration With(LoggerFilterConfiguration loggerFilterConfiguration,
-            ILogEventFilter filter)
-        {
-            return loggerFilterConfiguration.With(filter);
-        }
+    internal static LoggerConfiguration With(LoggerFilterConfiguration loggerFilterConfiguration,
+        ILogEventFilter filter)
+    {
+        return loggerFilterConfiguration.With(filter);
     }
 }

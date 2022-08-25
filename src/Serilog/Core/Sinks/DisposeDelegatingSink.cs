@@ -15,27 +15,26 @@
 using Serilog.Events;
 using System;
 
-namespace Serilog.Core.Sinks
+namespace Serilog.Core.Sinks;
+
+class DisposeDelegatingSink : ILogEventSink, IDisposable
 {
-    class DisposeDelegatingSink : ILogEventSink, IDisposable
+    readonly ILogEventSink _sink;
+    readonly IDisposable _disposable;
+
+    public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
     {
-        readonly ILogEventSink _sink;
-        readonly IDisposable _disposable;
+        _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+        _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
+    }
 
-        public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
-        {
-            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-            _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
-        }
+    public void Dispose()
+    {
+        _disposable.Dispose();
+    }
 
-        public void Dispose()
-        {
-            _disposable.Dispose();
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            _sink.Emit(logEvent);
-        }
+    public void Emit(LogEvent logEvent)
+    {
+        _sink.Emit(logEvent);
     }
 }

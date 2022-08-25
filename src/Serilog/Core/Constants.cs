@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Serilog.Core
+namespace Serilog.Core;
+
+/// <summary>
+/// Constants used in the core logging pipeline and associated types.
+/// </summary>
+public static class Constants
 {
     /// <summary>
-    /// Constants used in the core logging pipeline and associated types.
+    /// The name of the property included in the emitted log events
+    /// when <code>ForContext&lt;T&gt;()</code> and overloads are
+    /// applied.
     /// </summary>
-    public static class Constants
-    {
-        /// <summary>
-        /// The name of the property included in the emitted log events
-        /// when <code>ForContext&lt;T&gt;()</code> and overloads are
-        /// applied.
-        /// </summary>
-        public const string SourceContextPropertyName = "SourceContext";
-    }
+    public const string SourceContextPropertyName = "SourceContext";
 }

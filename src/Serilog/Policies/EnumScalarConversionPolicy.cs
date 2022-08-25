@@ -17,20 +17,19 @@ using Serilog.Core;
 using Serilog.Events;
 using System.Reflection;
 
-namespace Serilog.Policies
-{
-    class EnumScalarConversionPolicy : IScalarConversionPolicy
-    {
-        public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
-        {
-            if (value.GetType().GetTypeInfo().IsEnum)
-            {
-                result = new ScalarValue(value);
-                return true;
-            }
+namespace Serilog.Policies;
 
-            result = null;
-            return false;
+class EnumScalarConversionPolicy : IScalarConversionPolicy
+{
+    public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
+    {
+        if (value.GetType().GetTypeInfo().IsEnum)
+        {
+            result = new ScalarValue(value);
+            return true;
         }
+
+        result = null;
+        return false;
     }
 }

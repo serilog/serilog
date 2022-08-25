@@ -15,24 +15,23 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Enrichers
+namespace Serilog.Core.Enrichers;
+
+class FixedPropertyEnricher : ILogEventEnricher
 {
-    class FixedPropertyEnricher : ILogEventEnricher
+    readonly EventProperty _eventProperty;
+
+    public FixedPropertyEnricher(in EventProperty eventProperty)
     {
-        readonly EventProperty _eventProperty;
+        if (eventProperty.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(eventProperty));
 
-        public FixedPropertyEnricher(in EventProperty eventProperty)
-        {
-            if (eventProperty.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(eventProperty));
+        _eventProperty = eventProperty;
+    }
 
-            _eventProperty = eventProperty;
-        }
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
+        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-
-            logEvent.AddPropertyIfAbsent(_eventProperty);
-        }
+        logEvent.AddPropertyIfAbsent(_eventProperty);
     }
 }
