@@ -3,45 +3,44 @@ using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
-namespace Serilog.Tests.Core
+namespace Serilog.Tests.Core;
+
+public class LevelOverrideMapTests
 {
-    public class LevelOverrideMapTests
+    [Theory]
+    [InlineData("Serilog", false, LevelAlias.Minimum)]
+    [InlineData("MyApp", true, LogEventLevel.Debug)]
+    [InlineData("MyAppSomething", false, LevelAlias.Minimum)]
+    [InlineData("MyOtherApp", false, LevelAlias.Minimum)]
+    [InlineData("MyApp.Something", true, LogEventLevel.Debug)]
+    [InlineData("MyApp.Api.Models.Person", true, LogEventLevel.Error)]
+    [InlineData("MyApp.Api.Controllers.AboutController", true, LogEventLevel.Information)]
+    [InlineData("MyApp.Api.Controllers.HomeController", true, LogEventLevel.Warning)]
+    [InlineData("Api.Controllers.HomeController", false, LevelAlias.Minimum)]
+    public void OverrideScenarios(string context, bool overrideExpected, LogEventLevel expected)
     {
-        [Theory]
-        [InlineData("Serilog", false, LevelAlias.Minimum)]
-        [InlineData("MyApp", true, LogEventLevel.Debug)]
-        [InlineData("MyAppSomething", false, LevelAlias.Minimum)]
-        [InlineData("MyOtherApp", false, LevelAlias.Minimum)]
-        [InlineData("MyApp.Something", true, LogEventLevel.Debug)]
-        [InlineData("MyApp.Api.Models.Person", true, LogEventLevel.Error)]
-        [InlineData("MyApp.Api.Controllers.AboutController", true, LogEventLevel.Information)]
-        [InlineData("MyApp.Api.Controllers.HomeController", true, LogEventLevel.Warning)]
-        [InlineData("Api.Controllers.HomeController", false, LevelAlias.Minimum)]
-        public void OverrideScenarios(string context, bool overrideExpected, LogEventLevel expected)
+        var overrides = new Dictionary<string, LoggingLevelSwitch>
         {
-            var overrides = new Dictionary<string, LoggingLevelSwitch>
-            {
-                ["MyApp"] = new(LogEventLevel.Debug),
-                ["MyApp.Api.Controllers"] = new(LogEventLevel.Information),
-                ["MyApp.Api.Controllers.HomeController"] = new(LogEventLevel.Warning),
-                ["MyApp.Api"] = new(LogEventLevel.Error)
-            };
+            ["MyApp"] = new(LogEventLevel.Debug),
+            ["MyApp.Api.Controllers"] = new(LogEventLevel.Information),
+            ["MyApp.Api.Controllers.HomeController"] = new(LogEventLevel.Warning),
+            ["MyApp.Api"] = new(LogEventLevel.Error)
+        };
 
-            var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
+        var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
 
-            lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
+        lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
 
-            if (overrideExpected)
-            {
-                Assert.NotNull(overriddenSwitch);
-                Assert.Equal(expected, overriddenSwitch!.MinimumLevel);
-                Assert.Equal(LevelAlias.Minimum, overriddenLevel);
-            }
-            else
-            {
-                Assert.Equal(LogEventLevel.Fatal, overriddenLevel);
-                Assert.Null(overriddenSwitch);
-            }
+        if (overrideExpected)
+        {
+            Assert.NotNull(overriddenSwitch);
+            Assert.Equal(expected, overriddenSwitch!.MinimumLevel);
+            Assert.Equal(LevelAlias.Minimum, overriddenLevel);
+        }
+        else
+        {
+            Assert.Equal(LogEventLevel.Fatal, overriddenLevel);
+            Assert.Null(overriddenSwitch);
         }
     }
 }

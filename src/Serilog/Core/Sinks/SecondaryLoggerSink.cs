@@ -15,40 +15,39 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Sinks
+namespace Serilog.Core.Sinks;
+
+/// <summary>
+/// Forwards log events to another logging pipeline. Copies the events so
+/// that mutations performed on the copies do not affect the originals.
+/// </summary>
+/// <remarks>The properties dictionary is copied, however the values within
+/// the dictionary (of type <see cref="LogEventProperty"/> are expected to
+/// be immutable.</remarks>
+class SecondaryLoggerSink : ILogEventSink, IDisposable
 {
-    /// <summary>
-    /// Forwards log events to another logging pipeline. Copies the events so
-    /// that mutations performed on the copies do not affect the originals.
-    /// </summary>
-    /// <remarks>The properties dictionary is copied, however the values within
-    /// the dictionary (of type <see cref="LogEventProperty"/> are expected to
-    /// be immutable.</remarks>
-    class SecondaryLoggerSink : ILogEventSink, IDisposable
+    readonly ILogger _logger;
+    readonly bool _attemptDispose;
+
+    public SecondaryLoggerSink(ILogger logger, bool attemptDispose = false)
     {
-        readonly ILogger _logger;
-        readonly bool _attemptDispose;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _attemptDispose = attemptDispose;
+    }
 
-        public SecondaryLoggerSink(ILogger logger, bool attemptDispose = false)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _attemptDispose = attemptDispose;
-        }
+    public void Emit(LogEvent logEvent)
+    {
+        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-        public void Emit(LogEvent logEvent)
-        {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        var copy = logEvent.Copy();
+        _logger.Write(copy);
+    }
 
-            var copy = logEvent.Copy();
-            _logger.Write(copy);
-        }
+    public void Dispose()
+    {
+        if (!_attemptDispose)
+            return;
 
-        public void Dispose()
-        {
-            if (!_attemptDispose)
-                return;
-
-            (_logger as IDisposable)?.Dispose();
-        }
+        (_logger as IDisposable)?.Dispose();
     }
 }

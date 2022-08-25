@@ -15,21 +15,20 @@
 using System.Diagnostics.CodeAnalysis;
 using Serilog.Events;
 
-namespace Serilog.Core
+namespace Serilog.Core;
+
+/// <summary>
+/// Determine how, when destructuring, a supplied value is represented
+/// as a complex log event property.
+/// </summary>
+public interface IDestructuringPolicy
 {
     /// <summary>
-    /// Determine how, when destructuring, a supplied value is represented
-    /// as a complex log event property.
+    /// If supported, destructure the provided value.
     /// </summary>
-    public interface IDestructuringPolicy
-    {
-        /// <summary>
-        /// If supported, destructure the provided value.
-        /// </summary>
-        /// <param name="value">The value to destructure.</param>
-        /// <param name="propertyValueFactory">Recursively apply policies to destructure additional values.</param>
-        /// <param name="result">The destructured value, or null.</param>
-        /// <returns>True if the value could be destructured under this policy.</returns>
-        bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result);
-    }
+    /// <param name="value">The value to destructure.</param>
+    /// <param name="propertyValueFactory">Recursively apply policies to destructure additional values.</param>
+    /// <param name="result">The destructured value, or null.</param>
+    /// <returns>True if the value could be destructured under this policy.</returns>
+    bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result);
 }

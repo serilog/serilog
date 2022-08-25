@@ -20,81 +20,80 @@ using Serilog.Formatting.Display.Obsolete;
 
 #pragma warning disable 618
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Formatting.Display;
+
+/// <summary>
+/// Describes the properties available in standard message template-based
+/// output format strings.
+/// </summary>
+public static class OutputProperties
 {
+    static readonly LiteralStringValue LiteralNewLine = new(Environment.NewLine);
+
     /// <summary>
-    /// Describes the properties available in standard message template-based
-    /// output format strings.
+    /// The message rendered from the log event.
     /// </summary>
-    public static class OutputProperties
+    public const string MessagePropertyName = "Message";
+
+    /// <summary>
+    /// The timestamp of the log event.
+    /// </summary>
+    public const string TimestampPropertyName = "Timestamp";
+
+    /// <summary>
+    /// The level of the log event.
+    /// </summary>
+    public const string LevelPropertyName = "Level";
+
+    /// <summary>
+    /// A new line.
+    /// </summary>
+    public const string NewLinePropertyName = "NewLine";
+
+    /// <summary>
+    /// The exception associated with the log event.
+    /// </summary>
+    public const string ExceptionPropertyName = "Exception";
+
+    /// <summary>
+    /// The properties of the log event.
+    /// </summary>
+    public const string PropertiesPropertyName = "Properties";
+
+    /// <summary>
+    /// Create properties from the provided log event.
+    /// </summary>
+    /// <param name="logEvent">The log event.</param>
+    /// <returns>A dictionary with properties representing the log event.</returns>
+    [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
+    public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
     {
-        static readonly LiteralStringValue LiteralNewLine = new(Environment.NewLine);
+        return GetOutputProperties(logEvent, MessageTemplate.Empty);
+    }
 
-        /// <summary>
-        /// The message rendered from the log event.
-        /// </summary>
-        public const string MessagePropertyName = "Message";
+    /// <summary>
+    /// Create properties from the provided log event.
+    /// </summary>
+    /// <param name="logEvent">The log event.</param>
+    /// <param name="outputTemplate">The output template.</param>
+    /// <returns>A dictionary with properties representing the log event.</returns>
+    internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
+    {
+        var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-        /// <summary>
-        /// The timestamp of the log event.
-        /// </summary>
-        public const string TimestampPropertyName = "Timestamp";
+        // "Special" output properties like Message will override any properties with the same name
+        // when used in format strings; this doesn't affect the rendering of the message template,
+        // which uses only the log event properties.
 
-        /// <summary>
-        /// The level of the log event.
-        /// </summary>
-        public const string LevelPropertyName = "Level";
+        result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
+        result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
+        result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
+        result[NewLinePropertyName] = LiteralNewLine;
+        result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties, outputTemplate);
 
-        /// <summary>
-        /// A new line.
-        /// </summary>
-        public const string NewLinePropertyName = "NewLine";
+        var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
+        result[ExceptionPropertyName] = new LiteralStringValue(exception);
 
-        /// <summary>
-        /// The exception associated with the log event.
-        /// </summary>
-        public const string ExceptionPropertyName = "Exception";
-
-        /// <summary>
-        /// The properties of the log event.
-        /// </summary>
-        public const string PropertiesPropertyName = "Properties";
-
-        /// <summary>
-        /// Create properties from the provided log event.
-        /// </summary>
-        /// <param name="logEvent">The log event.</param>
-        /// <returns>A dictionary with properties representing the log event.</returns>
-        [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
-        public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
-        {
-            return GetOutputProperties(logEvent, MessageTemplate.Empty);
-        }
-
-        /// <summary>
-        /// Create properties from the provided log event.
-        /// </summary>
-        /// <param name="logEvent">The log event.</param>
-        /// <param name="outputTemplate">The output template.</param>
-        /// <returns>A dictionary with properties representing the log event.</returns>
-        internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
-        {
-            var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            // "Special" output properties like Message will override any properties with the same name
-            // when used in format strings; this doesn't affect the rendering of the message template,
-            // which uses only the log event properties.
-
-            result[MessagePropertyName] = new LogEventPropertyMessageValue(logEvent.MessageTemplate, logEvent.Properties);
-            result[TimestampPropertyName] = new ScalarValue(logEvent.Timestamp);
-            result[LevelPropertyName] = new LogEventLevelValue(logEvent.Level);
-            result[NewLinePropertyName] = LiteralNewLine;
-            result[PropertiesPropertyName] = new LogEventPropertiesValue(logEvent.MessageTemplate, logEvent.Properties, outputTemplate);
-
-            var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
-            result[ExceptionPropertyName] = new LiteralStringValue(exception);
-
-            return result;
-        }
+        return result;
     }
 }

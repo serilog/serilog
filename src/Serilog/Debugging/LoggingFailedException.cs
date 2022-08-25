@@ -14,21 +14,20 @@
 
 using System;
 
-namespace Serilog.Debugging
+namespace Serilog.Debugging;
+
+/// <summary>
+/// May be thrown by log event sinks when a failure occurs. Should not be used in cases
+/// where the exception would propagate out to callers.
+/// </summary>
+public class LoggingFailedException : Exception
 {
     /// <summary>
-    /// May be thrown by log event sinks when a failure occurs. Should not be used in cases
-    /// where the exception would propagate out to callers.
+    /// Construct a <see cref="LoggingFailedException"/> to communicate a logging failure.
     /// </summary>
-    public class LoggingFailedException : Exception
+    /// <param name="message">A message describing the logging failure.</param>
+    public LoggingFailedException(string message)
+        : base(message)
     {
-        /// <summary>
-        /// Construct a <see cref="LoggingFailedException"/> to communicate a logging failure.
-        /// </summary>
-        /// <param name="message">A message describing the logging failure.</param>
-        public LoggingFailedException(string message)
-            : base(message)
-        {
-        }
     }
 }

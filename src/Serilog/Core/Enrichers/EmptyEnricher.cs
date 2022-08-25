@@ -14,12 +14,11 @@
 
 using Serilog.Events;
 
-namespace Serilog.Core.Enrichers
+namespace Serilog.Core.Enrichers;
+
+class EmptyEnricher : ILogEventEnricher
 {
-    class EmptyEnricher : ILogEventEnricher
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-        }
     }
 }

@@ -18,22 +18,21 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Policies
-{
-    class ReflectionTypesScalarDestructuringPolicy : IDestructuringPolicy
-    {
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
-        {
-            // These types and their subclasses are property-laden and deep;
-            // most sinks will convert them to strings.
-            if (value is Type or MemberInfo)
-            {
-                result = new ScalarValue(value);
-                return true;
-            }
+namespace Serilog.Policies;
 
-            result = null;
-            return false;
+class ReflectionTypesScalarDestructuringPolicy : IDestructuringPolicy
+{
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    {
+        // These types and their subclasses are property-laden and deep;
+        // most sinks will convert them to strings.
+        if (value is Type or MemberInfo)
+        {
+            result = new ScalarValue(value);
+            return true;
         }
+
+        result = null;
+        return false;
     }
 }

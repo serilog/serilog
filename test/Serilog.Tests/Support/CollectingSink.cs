@@ -3,17 +3,16 @@ using Serilog.Events;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Serilog.Tests.Support
+namespace Serilog.Tests.Support;
+
+class CollectingSink : ILogEventSink
 {
-    class CollectingSink : ILogEventSink
+    public List<LogEvent> Events { get; } = new();
+
+    public LogEvent SingleEvent => Events.Single();
+
+    public void Emit(LogEvent logEvent)
     {
-        public List<LogEvent> Events { get; } = new();
-
-        public LogEvent SingleEvent => Events.Single();
-
-        public void Emit(LogEvent logEvent)
-        {
-            Events.Add(logEvent);
-        }
+        Events.Add(logEvent);
     }
 }
