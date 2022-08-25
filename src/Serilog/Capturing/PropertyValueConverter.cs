@@ -241,7 +241,7 @@ namespace Serilog.Capturing
             return false;
         }
 
-#if VALUETUPLE_INDEXER
+#if IVALUETUPLE
 
         bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {

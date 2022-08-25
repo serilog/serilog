@@ -396,7 +396,7 @@ namespace Serilog.Tests.Capturing
                 Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
         }
 
-#if !VALUETUPLE_INDEXER
+#if !IVALUETUPLE
 
         [Fact]
         public void EightPlusValueTupleElementsAreIgnoredByCapturing()
