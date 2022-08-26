@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Serilog.Core;
-using Serilog.Events;
-
 namespace Serilog.Policies;
 
 // Byte arrays, when logged, need to be copied so that they are

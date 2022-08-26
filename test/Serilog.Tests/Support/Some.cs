@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Parsing;
-
 namespace Serilog.Tests.Support;
 
 static class Some

@@ -12,13 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-using Serilog.Core;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Parsing;
-
 namespace Serilog.Capturing;
 
 partial class PropertyValueConverter

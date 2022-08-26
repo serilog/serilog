@@ -1,10 +1,3 @@
-using System.Collections.Generic;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using Xunit;
-using static Serilog.Events.LogEventLevel;
-
 namespace Serilog.Tests.Core;
 
 public class ChildLoggerTests

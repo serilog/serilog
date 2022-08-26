@@ -1,8 +1,4 @@
-﻿using Serilog.Capturing;
-using Xunit;
-using System.Linq;
-
-namespace Serilog.Tests.Capturing;
+﻿namespace Serilog.Tests.Capturing;
 
 public class GetablePropertyFinderTests
 {

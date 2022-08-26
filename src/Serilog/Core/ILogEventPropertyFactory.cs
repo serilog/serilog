@@ -13,8 +13,6 @@
 // limitations under the License.
 
 
-using Serilog.Events;
-
 namespace Serilog.Core;
 
 /// <summary>

@@ -12,15 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Context;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
-using Serilog.Debugging;
-using Serilog.Events;
-
 namespace Serilog.Configuration;
 
 /// <summary>

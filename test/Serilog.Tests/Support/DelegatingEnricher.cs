@@ -1,8 +1,4 @@
-﻿using System;
-using Serilog.Core;
-using Serilog.Events;
-
-namespace Serilog.Tests.Support;
+﻿namespace Serilog.Tests.Support;
 
 class DelegatingEnricher : ILogEventEnricher
 {

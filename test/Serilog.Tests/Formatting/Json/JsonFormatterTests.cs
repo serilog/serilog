@@ -1,14 +1,4 @@
 using Newtonsoft.Json;
-using Serilog.Events;
-using Serilog.Formatting.Json;
-using Serilog.Parsing;
-using Serilog.Tests.Support;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Xunit;
 
 namespace Serilog.Tests.Formatting.Json;
 

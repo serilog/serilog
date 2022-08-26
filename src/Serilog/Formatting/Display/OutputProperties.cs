@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Events;
-using Serilog.Formatting.Display.Obsolete;
-
 #pragma warning disable 618
 
 namespace Serilog.Formatting.Display;

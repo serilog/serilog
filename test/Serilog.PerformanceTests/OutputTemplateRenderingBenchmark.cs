@@ -1,9 +1,3 @@
-using BenchmarkDotNet.Attributes;
-using System.Globalization;
-using Serilog.Events;
-using Serilog.Formatting.Display;
-using Serilog.PerformanceTests.Support;
-
 namespace Serilog.PerformanceTests;
 
 /// <summary>

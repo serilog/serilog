@@ -1,8 +1,3 @@
-using Serilog.Data;
-using Serilog.Events;
-using System.Linq;
-using Xunit;
-
 namespace Serilog.Tests.Data;
 
 class LimitingRewriter : LogEventPropertyValueRewriter<int>

@@ -1,18 +1,3 @@
-using Serilog.Configuration;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Formatting;
-using Serilog.Settings.KeyValuePairs;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using TestDummies;
-using TestDummies.Console;
-using TestDummies.Console.Themes;
-using Xunit;
-
 namespace Serilog.Tests.Settings;
 
 public class KeyValuePairSettingsTests

@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Parsing;
-
 namespace Serilog.Capturing;
 
 // Performance relevant - on the hot path when creating log events from existing templates.

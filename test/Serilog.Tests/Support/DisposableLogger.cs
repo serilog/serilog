@@ -1,9 +1,4 @@
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Serilog.Core;
-using Serilog.Events;
 
 namespace Serilog.Tests.Support;
 

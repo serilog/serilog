@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using BenchmarkDotNet.Running;
-using Xunit;
-
 namespace Serilog.PerformanceTests;
 
 /// <summary>

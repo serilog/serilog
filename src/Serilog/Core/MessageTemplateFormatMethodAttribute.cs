@@ -1,5 +1,3 @@
-using System;
-
 namespace Serilog.Core;
 
 /// <summary>

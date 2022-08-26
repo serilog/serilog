@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
-using Serilog.Core;
-using Serilog.Events;
-using System.Reflection;
-
 namespace Serilog.Policies;
 
 class EnumScalarConversionPolicy : IScalarConversionPolicy

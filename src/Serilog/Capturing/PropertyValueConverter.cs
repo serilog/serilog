@@ -12,19 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using Serilog.Core;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Parsing;
-using Serilog.Policies;
-using System.Runtime.CompilerServices;
-
 namespace Serilog.Capturing;
 
 // Values in Serilog are simplified down into a lowest-common-denominator internal

@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Serilog.Events;
-using Serilog.Formatting.Json;
-using Xunit;
-
 namespace Serilog.Tests.Formatting.Json;
 
 public class JsonValueFormatterTests

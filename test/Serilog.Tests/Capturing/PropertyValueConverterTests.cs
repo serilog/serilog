@@ -1,15 +1,3 @@
-using Serilog.Capturing;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Parsing;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
-
 // ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local
 
 namespace Serilog.Tests.Capturing;

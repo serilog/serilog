@@ -1,10 +1,4 @@
-using BenchmarkDotNet.Attributes;
 using Serilog.Core.Enrichers;
-using Serilog.Events;
-using Serilog.Parsing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Serilog.PerformanceTests;
 

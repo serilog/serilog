@@ -1,6 +1,3 @@
-using Serilog.Core;
-using Serilog.Events;
-
 namespace TestDummies;
 
 public class DummyThreadIdEnricher : ILogEventEnricher

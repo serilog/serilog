@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Serilog.Debugging;
-
-namespace Serilog.Tests.Support;
+﻿namespace Serilog.Tests.Support;
 
 public class TemporarySelfLog : IDisposable
 {

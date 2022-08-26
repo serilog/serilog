@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-using Serilog.Events;
-using Serilog.Parsing;
-using Serilog.Rendering;
-
 namespace Serilog.Formatting.Display;
 
 /// <summary>

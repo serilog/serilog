@@ -1,8 +1,3 @@
-using System;
-using Serilog.Core;
-using Serilog.Events;
-using System.Collections.Generic;
-
 namespace TestDummies;
 
 public class DummyWrappingSink : ILogEventSink

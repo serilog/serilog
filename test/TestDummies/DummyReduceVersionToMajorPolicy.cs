@@ -1,8 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using Serilog.Core;
-using Serilog.Events;
-
 namespace TestDummies;
 
 public class DummyReduceVersionToMajorPolicy : IDestructuringPolicy

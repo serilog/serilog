@@ -1,8 +1,3 @@
-using System;
-using Serilog.Core;
-using Serilog.Events;
-using Xunit;
-
 namespace Serilog.Tests.Support;
 
 public class DelegatingSink : ILogEventSink

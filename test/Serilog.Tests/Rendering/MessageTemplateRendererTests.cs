@@ -1,12 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using Serilog.Events;
-using Serilog.Parsing;
-using Serilog.Rendering;
-using Xunit;
-
-namespace Serilog.Tests.Rendering;
+﻿namespace Serilog.Tests.Rendering;
 
 public class MessageTemplateRendererTests
 {

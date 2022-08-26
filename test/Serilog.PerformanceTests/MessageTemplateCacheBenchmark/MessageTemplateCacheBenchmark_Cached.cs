@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BenchmarkDotNet.Attributes;
-using Serilog.Core;
-using Serilog.Core.Pipeline;
-using Serilog.PerformanceTests.Support;
-
 namespace Serilog.PerformanceTests;
 
 public class MessageTemplateCacheBenchmark_Cached

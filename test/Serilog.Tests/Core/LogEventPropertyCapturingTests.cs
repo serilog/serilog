@@ -1,15 +1,4 @@
-﻿using Serilog.Capturing;
-using Serilog.Core;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Parsing;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
-
-namespace Serilog.Tests.Core;
+﻿namespace Serilog.Tests.Core;
 
 public class LogEventPropertyCapturingTests
 {

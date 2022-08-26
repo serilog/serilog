@@ -1,8 +1,3 @@
-using BenchmarkDotNet.Attributes;
-using Serilog.Context;
-using Serilog.Events;
-using Serilog.PerformanceTests.Support;
-
 namespace Serilog.PerformanceTests;
 
 public class LogContextEnrichmentBenchmark

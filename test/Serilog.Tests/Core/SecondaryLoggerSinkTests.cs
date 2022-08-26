@@ -1,9 +1,4 @@
-﻿using Serilog.Core;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using Xunit;
-
-namespace Serilog.Tests.Core;
+﻿namespace Serilog.Tests.Core;
 
 public class SecondaryLoggerSinkTests
 {
