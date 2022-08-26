@@ -241,7 +241,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return false;
     }
 
-#if IVALUETUPLE
+#if ITUPLE
 
     bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {

@@ -396,7 +396,7 @@ public class PropertyValueConverterTests
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
 
-#if !IVALUETUPLE
+#if !ITUPLE
 
     [Fact]
     public void EightPlusValueTupleElementsAreIgnoredByCapturing()
