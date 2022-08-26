@@ -15,21 +15,20 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Filters
+namespace Serilog.Core.Filters;
+
+class DelegateFilter : ILogEventFilter
 {
-    class DelegateFilter : ILogEventFilter
+    readonly Func<LogEvent, bool> _isEnabled;
+
+    public DelegateFilter(Func<LogEvent, bool> isEnabled)
     {
-        readonly Func<LogEvent, bool> _isEnabled;
+        _isEnabled = isEnabled ?? throw new ArgumentNullException(nameof(isEnabled));
+    }
 
-        public DelegateFilter(Func<LogEvent, bool> isEnabled)
-        {
-            _isEnabled = isEnabled ?? throw new ArgumentNullException(nameof(isEnabled));
-        }
-
-        public bool IsEnabled(LogEvent logEvent)
-        {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            return _isEnabled(logEvent);
-        }
+    public bool IsEnabled(LogEvent logEvent)
+    {
+        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        return _isEnabled(logEvent);
     }
 }

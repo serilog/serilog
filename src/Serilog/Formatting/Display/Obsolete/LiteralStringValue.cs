@@ -17,30 +17,29 @@ using System.IO;
 using Serilog.Events;
 using Serilog.Rendering;
 
-namespace Serilog.Formatting.Display.Obsolete
+namespace Serilog.Formatting.Display.Obsolete;
+
+// A special case (non-null) string value for use in output
+// templates. Does not apply "quoted" formatting by default.
+[Obsolete("Not used by the current output formatting implementation.")]
+class LiteralStringValue : LogEventPropertyValue
 {
-    // A special case (non-null) string value for use in output
-    // templates. Does not apply "quoted" formatting by default.
-    [Obsolete("Not used by the current output formatting implementation.")]
-    class LiteralStringValue : LogEventPropertyValue
+    readonly string _value;
+
+    public LiteralStringValue(string value)
     {
-        readonly string _value;
-
-        public LiteralStringValue(string value)
-        {
-            _value = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
-        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
-        {
-            output.Write(Casing.Format(_value, format));
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is LiteralStringValue sv && Equals(_value, sv._value);
-        }
-
-        public override int GetHashCode() => _value.GetHashCode();
+        _value = value ?? throw new ArgumentNullException(nameof(value));
     }
+
+    public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+    {
+        output.Write(Casing.Format(_value, format));
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is LiteralStringValue sv && Equals(_value, sv._value);
+    }
+
+    public override int GetHashCode() => _value.GetHashCode();
 }

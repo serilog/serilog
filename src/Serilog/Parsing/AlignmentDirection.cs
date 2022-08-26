@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Serilog.Parsing
+namespace Serilog.Parsing;
+
+/// <summary>
+/// Defines the direction of the alignment.
+/// </summary>
+public enum AlignmentDirection
 {
     /// <summary>
-    /// Defines the direction of the alignment.
+    /// Text will be left-aligned.
     /// </summary>
-    public enum AlignmentDirection
-    {
-        /// <summary>
-        /// Text will be left-aligned.
-        /// </summary>
-        Left,
+    Left,
 
-        /// <summary>
-        /// Text will be right-aligned.
-        /// </summary>
-        Right
-    }
+    /// <summary>
+    /// Text will be right-aligned.
+    /// </summary>
+    Right
 }

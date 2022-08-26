@@ -2,20 +2,19 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Tests.Support
+namespace Serilog.Tests.Support;
+
+class DelegatingEnricher : ILogEventEnricher
 {
-    class DelegatingEnricher : ILogEventEnricher
+    readonly Action<LogEvent, ILogEventPropertyFactory> _enrich;
+
+    public DelegatingEnricher(Action<LogEvent, ILogEventPropertyFactory> enrich)
     {
-        readonly Action<LogEvent, ILogEventPropertyFactory> _enrich;
+        _enrich = enrich ?? throw new ArgumentNullException(nameof(enrich));
+    }
 
-        public DelegatingEnricher(Action<LogEvent, ILogEventPropertyFactory> enrich)
-        {
-            _enrich = enrich ?? throw new ArgumentNullException(nameof(enrich));
-        }
-
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            _enrich(logEvent, propertyFactory);
-        }
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
+        _enrich(logEvent, propertyFactory);
     }
 }

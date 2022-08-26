@@ -1,41 +1,40 @@
 using System;
 
-namespace Serilog.Core
+namespace Serilog.Core;
+
+/// <summary>
+/// Indicates that the marked method logs data using a message template and (optional) arguments.
+/// The name of the parameter which contains the message template should be given in the constructor.
+/// </summary>
+/// <example>
+/// <code>
+/// [MessageTemplateFormatMethod("messageTemplate")]
+/// public void Information(string messageTemplate, params object[] propertyValues)
+/// {
+///     // Do something
+/// }
+///
+/// public void Foo()
+/// {
+///     Information("Hello, {Name}!") // Warning: Non-existing argument in message template.
+/// }
+/// </code>
+/// </example>
+[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
+public sealed class MessageTemplateFormatMethodAttribute : Attribute
 {
     /// <summary>
-    /// Indicates that the marked method logs data using a message template and (optional) arguments.
-    /// The name of the parameter which contains the message template should be given in the constructor.
+    /// Initializes a new instance of the <see cref="MessageTemplateFormatMethodAttribute"/> class.
     /// </summary>
-    /// <example>
-    /// <code>
-    /// [MessageTemplateFormatMethod("messageTemplate")]
-    /// public void Information(string messageTemplate, params object[] propertyValues)
-    /// {
-    ///     // Do something
-    /// }
-    ///
-    /// public void Foo()
-    /// {
-    ///     Information("Hello, {Name}!") // Warning: Non-existing argument in message template.
-    /// }
-    /// </code>
-    /// </example>
-    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
-    public sealed class MessageTemplateFormatMethodAttribute : Attribute
+    /// <param name="messageTemplateParameterName">Name of the message template parameter.</param>
+    public MessageTemplateFormatMethodAttribute(string messageTemplateParameterName)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MessageTemplateFormatMethodAttribute"/> class.
-        /// </summary>
-        /// <param name="messageTemplateParameterName">Name of the message template parameter.</param>
-        public MessageTemplateFormatMethodAttribute(string messageTemplateParameterName)
-        {
-            MessageTemplateParameterName = messageTemplateParameterName;
-        }
-
-        /// <summary>
-        /// Gets the name of the message template parameter.
-        /// </summary>
-        /// <value>The name of the message template parameter.</value>
-        public string MessageTemplateParameterName { get; private set; }
+        MessageTemplateParameterName = messageTemplateParameterName;
     }
+
+    /// <summary>
+    /// Gets the name of the message template parameter.
+    /// </summary>
+    /// <value>The name of the message template parameter.</value>
+    public string MessageTemplateParameterName { get; private set; }
 }

@@ -15,32 +15,31 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Sinks
+namespace Serilog.Core.Sinks;
+
+class RestrictedSink : ILogEventSink, IDisposable
 {
-    class RestrictedSink : ILogEventSink, IDisposable
+    readonly ILogEventSink _sink;
+    readonly LoggingLevelSwitch _levelSwitch;
+
+    public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
     {
-        readonly ILogEventSink _sink;
-        readonly LoggingLevelSwitch _levelSwitch;
+        _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+        _levelSwitch = levelSwitch ?? throw new ArgumentNullException(nameof(levelSwitch));
+    }
 
-        public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
-        {
-            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-            _levelSwitch = levelSwitch ?? throw new ArgumentNullException(nameof(levelSwitch));
-        }
+    public void Emit(LogEvent logEvent)
+    {
+        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
 
-        public void Emit(LogEvent logEvent)
-        {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
+            return;
 
-            if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
-                return;
+        _sink.Emit(logEvent);
+    }
 
-            _sink.Emit(logEvent);
-        }
-
-        public void Dispose()
-        {
-           (_sink as IDisposable)?.Dispose();
-        }
+    public void Dispose()
+    {
+        (_sink as IDisposable)?.Dispose();
     }
 }

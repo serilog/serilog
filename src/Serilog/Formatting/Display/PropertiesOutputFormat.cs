@@ -19,74 +19,73 @@ using System.Linq;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 
-namespace Serilog.Formatting.Display
+namespace Serilog.Formatting.Display;
+
+static class PropertiesOutputFormat
 {
-    static class PropertiesOutputFormat
+    static readonly JsonValueFormatter JsonValueFormatter = new("$type");
+
+    public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string? format, IFormatProvider? formatProvider = null)
     {
-        static readonly JsonValueFormatter JsonValueFormatter = new("$type");
-
-        public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string? format, IFormatProvider? formatProvider = null)
+        if (format?.Contains("j") == true)
         {
-            if (format?.Contains("j") == true)
-            {
-                var sv = new StructureValue(properties
-                    .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
-                                    TemplateContainsPropertyName(outputTemplate, kvp.Key)))
-                    .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
-                JsonValueFormatter.Format(sv, output);
-                return;
-            }
-
-            output.Write("{ ");
-
-            var delim = "";
-            foreach (var kvp in properties)
-            {
-                if (TemplateContainsPropertyName(template, kvp.Key) ||
-                    TemplateContainsPropertyName(outputTemplate, kvp.Key))
-                {
-                    continue;
-                }
-
-                output.Write(delim);
-                delim = ", ";
-                output.Write(kvp.Key);
-                output.Write(": ");
-                kvp.Value.Render(output, null, formatProvider);
-            }
-
-            output.Write(" }");
+            var sv = new StructureValue(properties
+                .Where(kvp => !(TemplateContainsPropertyName(template, kvp.Key) ||
+                                TemplateContainsPropertyName(outputTemplate, kvp.Key)))
+                .Select(kvp => new LogEventProperty(kvp.Key, kvp.Value)));
+            JsonValueFormatter.Format(sv, output);
+            return;
         }
 
-        static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
-        {
-            if (template.PositionalProperties != null)
-            {
-                for (var i = 0; i < template.PositionalProperties.Length; i++)
-                {
-                    var token = template.PositionalProperties[i];
-                    if (token.PropertyName == propertyName)
-                    {
-                        return true;
-                    }
-                }
+        output.Write("{ ");
 
-                return false;
+        var delim = "";
+        foreach (var kvp in properties)
+        {
+            if (TemplateContainsPropertyName(template, kvp.Key) ||
+                TemplateContainsPropertyName(outputTemplate, kvp.Key))
+            {
+                continue;
             }
 
-            if (template.NamedProperties != null)
+            output.Write(delim);
+            delim = ", ";
+            output.Write(kvp.Key);
+            output.Write(": ");
+            kvp.Value.Render(output, null, formatProvider);
+        }
+
+        output.Write(" }");
+    }
+
+    static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
+    {
+        if (template.PositionalProperties != null)
+        {
+            for (var i = 0; i < template.PositionalProperties.Length; i++)
             {
-                for (var i = 0; i < template.NamedProperties.Length; i++)
+                var token = template.PositionalProperties[i];
+                if (token.PropertyName == propertyName)
                 {
-                    var namedProperty = template.NamedProperties[i];
-                    if (namedProperty.PropertyName == propertyName)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
             return false;
         }
+
+        if (template.NamedProperties != null)
+        {
+            for (var i = 0; i < template.NamedProperties.Length; i++)
+            {
+                var namedProperty = template.NamedProperties[i];
+                if (namedProperty.PropertyName == propertyName)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

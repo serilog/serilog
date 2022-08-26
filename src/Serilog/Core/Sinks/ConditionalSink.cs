@@ -15,28 +15,27 @@
 using System;
 using Serilog.Events;
 
-namespace Serilog.Core.Sinks
+namespace Serilog.Core.Sinks;
+
+class ConditionalSink : ILogEventSink, IDisposable
 {
-    class ConditionalSink : ILogEventSink, IDisposable
+    readonly ILogEventSink _wrapped;
+    readonly Func<LogEvent, bool> _condition;
+
+    public ConditionalSink(ILogEventSink wrapped, Func<LogEvent, bool> condition)
     {
-        readonly ILogEventSink _wrapped;
-        readonly Func<LogEvent, bool> _condition;
+        _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
+        _condition = condition ?? throw new ArgumentNullException(nameof(condition));
+    }
 
-        public ConditionalSink(ILogEventSink wrapped, Func<LogEvent, bool> condition)
-        {
-            _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
-            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
-        }
+    public void Emit(LogEvent logEvent)
+    {
+        if (_condition(logEvent))
+            _wrapped.Emit(logEvent);
+    }
 
-        public void Emit(LogEvent logEvent)
-        {
-            if (_condition(logEvent))
-                _wrapped.Emit(logEvent);
-        }
-
-        public void Dispose()
-        {
-            (_wrapped as IDisposable)?.Dispose();
-        }
+    public void Dispose()
+    {
+        (_wrapped as IDisposable)?.Dispose();
     }
 }

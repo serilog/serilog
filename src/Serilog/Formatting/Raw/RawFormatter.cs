@@ -16,33 +16,32 @@ using System;
 using System.IO;
 using Serilog.Events;
 
-namespace Serilog.Formatting.Raw
+namespace Serilog.Formatting.Raw;
+
+/// <summary>
+/// Formats log events as a raw dump of the message template and properties.
+/// </summary>
+[Obsolete("A JSON-based formatter such as `Serilog.Formatting.Compact.CompactJsonFormatter` is recommended for this task.")]
+public class RawFormatter : ITextFormatter
 {
     /// <summary>
-    /// Formats log events as a raw dump of the message template and properties.
+    /// Format the log event into the output.
     /// </summary>
-    [Obsolete("A JSON-based formatter such as `Serilog.Formatting.Compact.CompactJsonFormatter` is recommended for this task.")]
-    public class RawFormatter : ITextFormatter
+    /// <param name="logEvent">The event to format.</param>
+    /// <param name="output">The output.</param>
+    public void Format(LogEvent logEvent, TextWriter output)
     {
-        /// <summary>
-        /// Format the log event into the output.
-        /// </summary>
-        /// <param name="logEvent">The event to format.</param>
-        /// <param name="output">The output.</param>
-        public void Format(LogEvent logEvent, TextWriter output)
+        output.Write("[" + logEvent.Timestamp + "] " + logEvent.Level + ": \"");
+        output.Write(logEvent.MessageTemplate);
+        output.WriteLine("\"");
+        if (logEvent.Exception != null)
+            output.WriteLine(logEvent.Exception);
+        foreach (var property in logEvent.Properties)
         {
-            output.Write("[" + logEvent.Timestamp + "] " + logEvent.Level + ": \"");
-            output.Write(logEvent.MessageTemplate);
-            output.WriteLine("\"");
-            if (logEvent.Exception != null)
-                output.WriteLine(logEvent.Exception);
-            foreach (var property in logEvent.Properties)
-            {
-                output.Write(property.Key + " = ");
-                property.Value.Render(output);
-                output.WriteLine();
-            }
+            output.Write(property.Key + " = ");
+            property.Value.Render(output);
             output.WriteLine();
         }
+        output.WriteLine();
     }
 }
