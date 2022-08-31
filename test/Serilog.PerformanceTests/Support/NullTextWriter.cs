@@ -1,6 +1,3 @@
-using System.IO;
-using System.Text;
-
 namespace Serilog.PerformanceTests.Support;
 
 class NullTextWriter : TextWriter

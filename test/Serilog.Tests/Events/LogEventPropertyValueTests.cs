@@ -12,16 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Capturing;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Parsing;
-using Serilog.Tests.Support;
-using System;
-using System.Globalization;
-using System.Linq;
-using Xunit;
-
 namespace Serilog.Tests.Events;
 
 public class LogEventPropertyValueTests

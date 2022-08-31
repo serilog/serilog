@@ -1,7 +1,3 @@
-using Serilog.Filters;
-using Serilog.Tests.Support;
-using Xunit;
-
 namespace Serilog.Tests.Filters;
 
 public class MatchingTests

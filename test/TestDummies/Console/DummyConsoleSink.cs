@@ -1,8 +1,3 @@
-using System;
-using Serilog.Core;
-using Serilog.Events;
-using TestDummies.Console.Themes;
-
 namespace TestDummies.Console;
 
 public class DummyConsoleSink : ILogEventSink

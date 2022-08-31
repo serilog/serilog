@@ -1,8 +1,5 @@
 #if FEATURE_DEFAULT_INTERFACE
 
-using System;
-using Serilog.Events;
-
 namespace Serilog.Tests.Support;
 
 public class DelegatingLogger : ILogger, IDisposable

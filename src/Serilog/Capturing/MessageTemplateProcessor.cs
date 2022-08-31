@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Core;
-using Serilog.Core.Pipeline;
-using Serilog.Events;
-using Serilog.Parsing;
-
 namespace Serilog.Capturing;
 
 class MessageTemplateProcessor : ILogEventPropertyFactory

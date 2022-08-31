@@ -1,14 +1,3 @@
-using Serilog.Core;
-using Serilog.Core.Enrichers;
-using Serilog.Core.Pipeline;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using TestDummies;
-using Xunit;
-
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 #pragma warning disable Serilog003 // Property binding verifier
 

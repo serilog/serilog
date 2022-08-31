@@ -1,13 +1,3 @@
-using System.Collections.Generic;
-
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Filters;
-using Serilog.PerformanceTests.Support;
-
 namespace Serilog.PerformanceTests;
 
 [SimpleJob(RuntimeMoniker.NetCoreApp21, baseline: true)]

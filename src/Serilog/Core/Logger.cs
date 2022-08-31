@@ -12,16 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Serilog.Capturing;
-using Serilog.Core.Enrichers;
-using Serilog.Core.Pipeline;
-using Serilog.Debugging;
-using Serilog.Events;
-
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 
 namespace Serilog.Core;

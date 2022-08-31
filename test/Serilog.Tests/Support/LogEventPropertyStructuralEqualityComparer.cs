@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Serilog.Events;
-
 namespace Serilog.Tests.Support;
 
 class LogEventPropertyStructuralEqualityComparer : IEqualityComparer<LogEventProperty>

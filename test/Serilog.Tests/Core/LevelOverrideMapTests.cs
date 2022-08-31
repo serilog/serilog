@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using Serilog.Core;
-using Serilog.Events;
-using Xunit;
-
 namespace Serilog.Tests.Core;
 
 public class LevelOverrideMapTests

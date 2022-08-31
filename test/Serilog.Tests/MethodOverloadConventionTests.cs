@@ -1,22 +1,6 @@
 #nullable enable
-using Serilog.Core;
-using Serilog.Core.Pipeline;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using Xunit;
-using Xunit.Sdk;
 
-#if FEATURE_DEFAULT_INTERFACE
-using System.Reflection.Emit;
 // ReSharper disable PossibleNullReferenceException
-#endif
-
 // ReSharper disable PossibleMultipleEnumeration
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
@@ -477,7 +461,7 @@ public class MethodOverloadConventionTests
 
         var logger = GetLogger(method.DeclaringType!);
 
-        var logEnricher = new TestDummies.DummyThreadIdEnricher();
+        var logEnricher = new DummyThreadIdEnricher();
 
         var enrichedLogger = InvokeMethod(method, logger, new object[] { logEnricher });
 
@@ -509,7 +493,7 @@ public class MethodOverloadConventionTests
 
         var logger = GetLogger(method.DeclaringType!);
 
-        var logEnricher = new TestDummies.DummyThreadIdEnricher();
+        var logEnricher = new DummyThreadIdEnricher();
 
         var enrichedLogger = InvokeMethod(method, logger,
             new object[] { new ILogEventEnricher[] { logEnricher, logEnricher } });

@@ -1,9 +1,4 @@
-﻿using Serilog.Events;
-using System.Collections.Generic;
-using System.IO;
-using Xunit;
-
-namespace Serilog.Tests.Events;
+﻿namespace Serilog.Tests.Events;
 
 public class DictionaryValueTests
 {

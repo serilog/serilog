@@ -1,10 +1,3 @@
-using Serilog.Debugging;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using TestDummies;
-using Xunit;
-
 namespace Serilog.Tests.Debugging;
 
 public class SelfLogTests

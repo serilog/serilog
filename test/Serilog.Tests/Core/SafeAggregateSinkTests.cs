@@ -1,8 +1,3 @@
-using Serilog.Core.Sinks;
-using Serilog.Tests.Support;
-using System;
-using Xunit;
-
 namespace Serilog.Tests.Core;
 
 public class SafeAggregateSinkTests

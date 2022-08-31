@@ -1,6 +1,3 @@
-using BenchmarkDotNet.Attributes;
-using Serilog.Parsing;
-
 namespace Serilog.PerformanceTests;
 
 /// <summary>

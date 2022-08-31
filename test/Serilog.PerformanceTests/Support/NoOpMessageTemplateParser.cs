@@ -1,8 +1,3 @@
-using System.Linq;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Parsing;
-
 namespace Serilog.PerformanceTests.Support;
 
 class NoOpMessageTemplateParser : IMessageTemplateParser

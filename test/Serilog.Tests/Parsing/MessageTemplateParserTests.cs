@@ -1,7 +1,4 @@
-using System;
-using Serilog.Parsing;
-using System.Linq;
-using Xunit;
+using PropertyToken = Serilog.Parsing.PropertyToken;
 
 namespace Serilog.Tests.Parsing;
 

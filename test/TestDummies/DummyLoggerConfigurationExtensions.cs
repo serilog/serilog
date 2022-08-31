@@ -1,12 +1,3 @@
-using Serilog;
-using Serilog.Configuration;
-using Serilog.Core;
-using Serilog.Events;
-using System;
-using Serilog.Formatting;
-using TestDummies.Console;
-using TestDummies.Console.Themes;
-
 namespace TestDummies;
 
 public static class DummyLoggerConfigurationExtensions

@@ -12,13 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Serilog.Events;
-
 #if HASHTABLE
-using System.Collections;
-#else
-using System.Collections.Generic;
 #endif
 
 namespace Serilog.Core.Pipeline;

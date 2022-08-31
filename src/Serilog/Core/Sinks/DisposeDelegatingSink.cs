@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Events;
-using System;
-
 namespace Serilog.Core.Sinks;
 
 class DisposeDelegatingSink : ILogEventSink, IDisposable

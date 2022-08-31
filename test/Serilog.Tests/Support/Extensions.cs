@@ -1,6 +1,4 @@
-﻿using Serilog.Events;
-
-namespace Serilog.Tests.Support;
+﻿namespace Serilog.Tests.Support;
 
 public static class Extensions
 {

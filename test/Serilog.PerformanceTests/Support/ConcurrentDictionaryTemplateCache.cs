@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using Serilog.Core;
-using Serilog.Events;
-
 namespace Serilog.PerformanceTests.Support;
 
 class ConcurrentDictionaryMessageTemplateCache : IMessageTemplateParser

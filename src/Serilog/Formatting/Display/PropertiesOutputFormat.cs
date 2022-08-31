@@ -12,13 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Serilog.Events;
-using Serilog.Formatting.Json;
-
 namespace Serilog.Formatting.Display;
 
 static class PropertiesOutputFormat

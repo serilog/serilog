@@ -1,7 +1,3 @@
-using System;
-using Serilog.Events;
-using Xunit;
-
 namespace Serilog.Tests.Support;
 
 public class LogEventPropertyStructuralEqualityComparerTests

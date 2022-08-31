@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Serilog.Core;
+
 
 // General-purpose type; not all features are used here.
 // ReSharper disable MemberCanBePrivate.Global

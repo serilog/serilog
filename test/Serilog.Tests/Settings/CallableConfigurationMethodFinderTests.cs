@@ -1,11 +1,4 @@
-﻿using Serilog.Configuration;
-using Serilog.Settings.KeyValuePairs;
-using System.Linq;
-using System.Reflection;
-using TestDummies;
-using Xunit;
-
-namespace Serilog.Tests.Settings;
+﻿namespace Serilog.Tests.Settings;
 
 public class CallableConfigurationMethodFinderTests
 {

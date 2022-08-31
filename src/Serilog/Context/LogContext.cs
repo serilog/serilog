@@ -12,20 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.ComponentModel;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
-using Serilog.Events;
-
-#if ASYNCLOCAL
-using System.Threading;
-#elif REMOTING
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Lifetime;
-using System.Runtime.Remoting.Messaging;
-#endif
-
 namespace Serilog.Context;
 
 /// <summary>

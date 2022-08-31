@@ -1,8 +1,3 @@
-using System;
-using System.Reflection;
-using Serilog.Tests.Support;
-using Xunit;
-
 namespace Serilog.Tests.Core;
 
 public class AuditSinkTests

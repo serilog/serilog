@@ -1,11 +1,3 @@
-using System;
-using Serilog.Events;
-using Serilog.Formatting;
-using Serilog.Formatting.Json;
-using Serilog.Settings.KeyValuePairs;
-using Serilog.Tests.Support;
-using Xunit;
-
 namespace Serilog.Tests.Settings;
 
 public class SettingValueConversionsTests

@@ -1,11 +1,3 @@
-using Serilog.Events;
-using Serilog.Formatting.Display;
-using Serilog.Tests.Support;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using Xunit;
 
 namespace Serilog.Tests.Formatting.Display;
 

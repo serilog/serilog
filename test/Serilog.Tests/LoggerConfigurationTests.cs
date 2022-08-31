@@ -1,17 +1,3 @@
-using Serilog.Core;
-using Serilog.Core.Filters;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using Serilog.Configuration;
-using Serilog.Core.Enrichers;
-using TestDummies;
-using Xunit;
-
 // ReSharper disable PossibleNullReferenceException
 
 namespace Serilog.Tests;

@@ -1,8 +1,3 @@
-using System;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using Xunit;
-
 namespace Serilog.Tests.Core;
 
 public class LoggerExtensionsTests

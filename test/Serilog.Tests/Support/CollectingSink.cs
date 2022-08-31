@@ -1,9 +1,4 @@
-﻿using Serilog.Core;
-using Serilog.Events;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Serilog.Tests.Support;
+﻿namespace Serilog.Tests.Support;
 
 class CollectingSink : ILogEventSink
 {

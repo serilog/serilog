@@ -1,6 +1,3 @@
-using System;
-using Serilog.Events;
-
 namespace Serilog.PerformanceTests.Support;
 
 static class Some
