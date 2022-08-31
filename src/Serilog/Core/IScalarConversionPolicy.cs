@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Serilog.Events;
-
-namespace Serilog.Core;
+﻿namespace Serilog.Core;
 
 /// <summary>
 /// Determine how a simple value is carried through the logging
