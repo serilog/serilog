@@ -384,12 +384,16 @@ public class PropertyValueConverterTests
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
 
+#if !ITUPLE
+
     [Fact]
     public void EightPlusValueTupleElementsAreIgnoredByCapturing()
     {
         var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
         Assert.IsType<ScalarValue>(scalar);
     }
+
+#endif
 
     [Fact]
     public void ValueTupleDestructuringIsTransitivelyApplied()

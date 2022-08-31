@@ -1,4 +1,6 @@
-#nullable enable
+using System;
+using Serilog.Events;
+
 namespace Serilog;
 
 /// <summary>
