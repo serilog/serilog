@@ -12,7 +12,7 @@ public class JsonFormatterTests
             LogEventLevel.Information,
             null,
             Some.MessageTemplate(),
-            new LogEventProperty[0]);
+            Array.Empty<LogEventProperty>());
 
         var formatted = FormatJson(@event);
 

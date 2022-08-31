@@ -63,7 +63,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void UnderDestructuringAByteArrayIsAScalarValue()
     {
-        var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
+        var pv = _converter.CreatePropertyValue(Array.Empty<byte>(), Destructuring.Destructure);
         Assert.IsType<ScalarValue>(pv);
         Assert.IsType<string>(((ScalarValue)pv).Value);
     }
@@ -79,7 +79,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void UnderDestructuringAnIntegerArrayIsASequenceValue()
     {
-        var pv = _converter.CreatePropertyValue(new int[0], Destructuring.Destructure);
+        var pv = _converter.CreatePropertyValue(Array.Empty<int>(), Destructuring.Destructure);
         Assert.IsType<SequenceValue>(pv);
     }
 

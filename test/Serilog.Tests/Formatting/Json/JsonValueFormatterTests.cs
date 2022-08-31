@@ -192,7 +192,7 @@ public class JsonValueFormatterTests
     [Fact]
     public void TypeTagCanBeOverridden()
     {
-        var structure = new StructureValue(new LogEventProperty[0], "T");
+        var structure = new StructureValue(Array.Empty<LogEventProperty>(), "T");
         var formatter = new JsonValueFormatter("$type");
         var output = new StringWriter();
         formatter.Format(structure, output);
@@ -203,7 +203,7 @@ public class JsonValueFormatterTests
     [Fact]
     public void WhenNullNoTypeTagIsWritten()
     {
-        var structure = new StructureValue(new LogEventProperty[0], "T");
+        var structure = new StructureValue(Array.Empty<LogEventProperty>(), "T");
         var formatter = new JsonValueFormatter(null);
         var output = new StringWriter();
         formatter.Format(structure, output);
