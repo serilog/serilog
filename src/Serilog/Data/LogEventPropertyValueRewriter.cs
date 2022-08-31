@@ -101,7 +101,7 @@ public abstract class LogEventPropertyValueRewriter<TState> : LogEventPropertyVa
                 for (var k = i; k < properties.Length; ++k)
                 {
                     var property = structure.Properties[k];
-                    properties[k] = new LogEventProperty(property.Name, Visit(state, property.Value));
+                    properties[k] = new(property.Name, Visit(state, property.Value));
                 }
 
                 return new StructureValue(properties, structure.TypeTag);

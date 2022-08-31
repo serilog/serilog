@@ -258,7 +258,7 @@ class KeyValuePairSettings : ILoggerSettings
             if (string.IsNullOrWhiteSpace(usingDirective.Value))
                 throw new InvalidOperationException("A zero-length or whitespace assembly name was supplied to a serilog:using configuration statement.");
 
-            configurationAssemblies.Add(Assembly.Load(new AssemblyName(usingDirective.Value)));
+            configurationAssemblies.Add(Assembly.Load(new(usingDirective.Value)));
         }
 
         return configurationAssemblies.Distinct();

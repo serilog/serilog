@@ -114,7 +114,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void DestructuringACyclicStructureDoesNotStackOverflow()
     {
-        var ab = new A { B = new B() };
+        var ab = new A { B = new() };
         ab.B.A = ab;
 
         var pv = _converter.CreatePropertyValue(ab, true);
@@ -136,7 +136,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void CollectionsAndCustomPoliciesInCyclesDoNotStackOverflow()
     {
-        var cd = new C { D = new D() };
+        var cd = new C { D = new() };
         cd.D.C = new List<C?> { cd };
 
         var pv = _converter.CreatePropertyValue(cd, true);

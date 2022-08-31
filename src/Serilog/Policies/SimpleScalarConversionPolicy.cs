@@ -27,7 +27,7 @@ class SimpleScalarConversionPolicy : IScalarConversionPolicy
     {
         if (_scalarTypes.Contains(value.GetType()))
         {
-            result = new ScalarValue(value);
+            result = new(value);
             return true;
         }
 

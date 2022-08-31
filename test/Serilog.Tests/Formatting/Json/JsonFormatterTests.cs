@@ -8,7 +8,7 @@ public class JsonFormatterTests
     public void JsonFormattedEventsIncludeTimestamp()
     {
         var @event = new LogEvent(
-            new DateTimeOffset(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
+            new(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
             LogEventLevel.Information,
             null,
             Some.MessageTemplate(),
@@ -78,7 +78,7 @@ public class JsonFormatterTests
         var name = Some.String();
         var value = Some.Int();
         var @event = Some.InformationEvent();
-        @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+        @event.AddOrUpdateProperty(new(name, new ScalarValue(value)));
 
         var formatted = FormatJson(@event);
 
@@ -91,7 +91,7 @@ public class JsonFormatterTests
         var name = Some.String();
         const bool value = true;
         var @event = Some.InformationEvent();
-        @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+        @event.AddOrUpdateProperty(new(name, new ScalarValue(value)));
 
         var formatted = FormatJson(@event);
 
@@ -104,7 +104,7 @@ public class JsonFormatterTests
         var name = Some.String();
         const char value = 'c';
         var @event = Some.InformationEvent();
-        @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+        @event.AddOrUpdateProperty(new(name, new ScalarValue(value)));
 
         var formatted = FormatJson(@event);
 
@@ -117,7 +117,7 @@ public class JsonFormatterTests
         var name = Some.String();
         const decimal value = 123.45m;
         var @event = Some.InformationEvent();
-        @event.AddOrUpdateProperty(new LogEventProperty(name, new ScalarValue(value)));
+        @event.AddOrUpdateProperty(new(name, new ScalarValue(value)));
 
         var formatted = FormatJson(@event);
 
@@ -131,7 +131,7 @@ public class JsonFormatterTests
         var ints = new[]{ Some.Int(), Some.Int() };
         var value = new SequenceValue(ints.Select(i => new ScalarValue(i)));
         var @event = Some.InformationEvent();
-        @event.AddOrUpdateProperty(new LogEventProperty(name, value));
+        @event.AddOrUpdateProperty(new(name, value));
 
         var formatted = FormatJson(@event);
         var result = new List<int>();

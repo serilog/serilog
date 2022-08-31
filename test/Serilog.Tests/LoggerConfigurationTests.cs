@@ -31,7 +31,7 @@ public class LoggerConfigurationTests
         static (ILogger, WeakReference) CreateLogger()
         {
             var loggerConfiguration = new LoggerConfiguration();
-            return (loggerConfiguration.CreateLogger(), new WeakReference(loggerConfiguration));
+            return (loggerConfiguration.CreateLogger(), new(loggerConfiguration));
         }
     }
 
@@ -490,7 +490,7 @@ public class LoggerConfigurationTests
         var sink = new CollectingSink();
 
         var logger = new LoggerConfiguration()
-            .WriteTo.Sink(sink, LogEventLevel.Fatal, new LoggingLevelSwitch())
+            .WriteTo.Sink(sink, LogEventLevel.Fatal, new())
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -504,7 +504,7 @@ public class LoggerConfigurationTests
         var sink = new CollectingSink();
 
         var logger = new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Fatal))
+            .MinimumLevel.ControlledBy(new(LogEventLevel.Fatal))
             .MinimumLevel.Debug()
             .WriteTo.Sink(sink)
             .CreateLogger();
@@ -554,7 +554,7 @@ public class LoggerConfigurationTests
     public void ExceptionsThrownBySinksAreNotPropagated()
     {
         var logger = new LoggerConfiguration()
-            .WriteTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
+            .WriteTo.Sink(new DelegatingSink(_ => throw new("Boom!")))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -567,7 +567,7 @@ public class LoggerConfigurationTests
     {
         var logger = new LoggerConfiguration()
             .AuditTo.Sink(new CollectingSink())
-            .WriteTo.Sink(new DelegatingSink(_ => throw new Exception("Boom!")))
+            .WriteTo.Sink(new DelegatingSink(_ => throw new("Boom!")))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -579,7 +579,7 @@ public class LoggerConfigurationTests
     public void ExceptionsThrownByFiltersAreNotPropagated()
     {
         var logger = new LoggerConfiguration()
-            .Filter.ByExcluding(_ => throw new Exception("Boom!"))
+            .Filter.ByExcluding(_ => throw new("Boom!"))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -594,7 +594,7 @@ public class LoggerConfigurationTests
     {
         var logger = new LoggerConfiguration()
             .WriteTo.Sink(new CollectingSink())
-            .Destructure.ByTransforming<Value>(_ => throw new Exception("Boom!"))
+            .Destructure.ByTransforming<Value>(_ => throw new("Boom!"))
             .CreateLogger();
 
         logger.Information("{@Value}", new Value());
@@ -605,7 +605,7 @@ public class LoggerConfigurationTests
     class ThrowingProperty
     {
         // ReSharper disable once UnusedMember.Local
-        public string Property => throw new Exception("Boom!");
+        public string Property => throw new("Boom!");
     }
 
     [Fact]
@@ -705,7 +705,7 @@ public class LoggerConfigurationTests
         var logger = new LoggerConfiguration()
             .WriteTo.DummyWrap(
                 w => w.Sink(sink), LogEventLevel.Verbose,
-                new LoggingLevelSwitch(LogEventLevel.Error))
+                new(LogEventLevel.Error))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -722,7 +722,7 @@ public class LoggerConfigurationTests
         var logger = new LoggerConfiguration()
             .WriteTo.DummyWrap(
                 w => w.Sink(sink), LogEventLevel.Error,
-                new LoggingLevelSwitch(LogEventLevel.Verbose))
+                new(LogEventLevel.Verbose))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());

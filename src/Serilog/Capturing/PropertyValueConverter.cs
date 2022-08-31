@@ -392,7 +392,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
                 propValue = "Accessing this property is not supported via Reflection API";
             }
-            yield return new LogEventProperty(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+            yield return new(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
         }
     }
 
