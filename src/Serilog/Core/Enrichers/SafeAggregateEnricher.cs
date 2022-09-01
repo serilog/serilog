@@ -20,7 +20,7 @@ class SafeAggregateEnricher : ILogEventEnricher
 
     public SafeAggregateEnricher(IEnumerable<ILogEventEnricher> enrichers)
     {
-        if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
+        Guard.AgainstNull(enrichers);
 
         _enrichers = enrichers.ToArray();
     }

@@ -23,7 +23,7 @@ public class LoggerSettingsConfiguration
 
     internal LoggerSettingsConfiguration(LoggerConfiguration loggerConfiguration)
     {
-        _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class LoggerSettingsConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
     public LoggerConfiguration Settings(ILoggerSettings settings)
     {
-        if (settings == null) throw new ArgumentNullException(nameof(settings));
+        Guard.AgainstNull(settings);
 
         settings.Configure(_loggerConfiguration);
         return _loggerConfiguration;
@@ -48,7 +48,7 @@ public class LoggerSettingsConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
     public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
     {
-        if (settings == null) throw new ArgumentNullException(nameof(settings));
+        Guard.AgainstNull(settings);
 
         var uniqueSettings = new Dictionary<string, string>();
         foreach (var kvp in settings)

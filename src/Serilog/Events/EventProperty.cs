@@ -46,7 +46,7 @@ readonly struct EventProperty
     /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
     public EventProperty(string name, LogEventPropertyValue value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
+        Guard.AgainstNull(value);
         LogEventProperty.EnsureValidName(name);
 
         Name = name;

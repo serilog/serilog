@@ -50,7 +50,7 @@ public class ScalarValue : LogEventPropertyValue
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     internal static void Render(object? value, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(output);
 
         if (value == null)
         {

@@ -31,7 +31,7 @@ public class StructureValue : LogEventPropertyValue
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     public StructureValue(IEnumerable<LogEventProperty> properties, string? typeTag = null)
     {
-        if (properties == null) throw new ArgumentNullException(nameof(properties));
+        Guard.AgainstNull(properties);
 
         TypeTag = typeTag;
         _properties = properties.ToArray();
@@ -61,7 +61,7 @@ public class StructureValue : LogEventPropertyValue
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(output);
 
         if (TypeTag != null)
         {

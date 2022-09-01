@@ -47,8 +47,8 @@ public class MessageTemplate
     /// <exception cref="ArgumentNullException">When <paramref name="tokens"/> is <code>null</code></exception>
     public MessageTemplate(string text, IEnumerable<MessageTemplateToken> tokens)
     {
-        Text = text ?? throw new ArgumentNullException(nameof(text));
-        TokenArray = (tokens ?? throw new ArgumentNullException(nameof(tokens))).ToArray();
+        Text = Guard.AgainstNull(text);
+        TokenArray = Guard.AgainstNull(tokens).ToArray();
 
         var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(TokenArray);
         if (propertyTokens.Length != 0)
@@ -146,8 +146,8 @@ public class MessageTemplate
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        if (properties == null) throw new ArgumentNullException(nameof(properties));
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(properties);
+        Guard.AgainstNull(output);
 
         MessageTemplateRenderer.Render(this, properties, output, null, formatProvider);
     }

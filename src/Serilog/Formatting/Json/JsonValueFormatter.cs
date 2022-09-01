@@ -57,7 +57,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     /// <exception cref="ArgumentNullException">When <paramref name="scalar"/> is <code>null</code></exception>
     protected override bool VisitScalarValue(TextWriter state, ScalarValue scalar)
     {
-        if (scalar == null) throw new ArgumentNullException(nameof(scalar));
+        Guard.AgainstNull(scalar);
 
         FormatLiteralValue(scalar.Value, state);
         return false;
@@ -72,7 +72,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     /// <exception cref="ArgumentNullException">When <paramref name="sequence"/> is <code>null</code></exception>
     protected override bool VisitSequenceValue(TextWriter state, SequenceValue sequence)
     {
-        if (sequence == null) throw new ArgumentNullException(nameof(sequence));
+        Guard.AgainstNull(sequence);
 
         state.Write('[');
         var delim = "";
@@ -298,7 +298,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatLiteralObjectValue(object value, TextWriter output)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
+        Guard.AgainstNull(value);
 
         FormatStringValue(value.ToString() ?? "", output);
     }

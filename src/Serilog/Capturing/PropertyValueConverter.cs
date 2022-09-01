@@ -49,8 +49,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
         bool propagateExceptions)
     {
-        if (additionalScalarTypes == null) throw new ArgumentNullException(nameof(additionalScalarTypes));
-        if (additionalDestructuringPolicies == null) throw new ArgumentNullException(nameof(additionalDestructuringPolicies));
+        Guard.AgainstNull(additionalScalarTypes);
+        Guard.AgainstNull(additionalDestructuringPolicies);
         if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
         if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength));
         if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));

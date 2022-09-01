@@ -22,10 +22,8 @@ class FilteringSink : ILogEventSink
 
     public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters, bool propagateExceptions)
     {
-        if (filters == null) throw new ArgumentNullException(nameof(filters));
-        _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-
-        _filters = filters.ToArray();
+        _sink = Guard.AgainstNull(sink);
+        _filters = Guard.AgainstNull(filters).ToArray();
         _propagateExceptions = propagateExceptions;
     }
 

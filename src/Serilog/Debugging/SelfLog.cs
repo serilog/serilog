@@ -50,7 +50,7 @@ public static class SelfLog
     // ReSharper disable once MemberCanBePrivate.Global
     public static void Enable(TextWriter output)
     {
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(output);
 
         Enable(m =>
         {
@@ -67,7 +67,7 @@ public static class SelfLog
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public static void Enable(Action<string> output)
     {
-        _output = output ?? throw new ArgumentNullException(nameof(output));
+        _output = Guard.AgainstNull(output);
     }
 
     /// <summary>

@@ -379,7 +379,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 
     void ILogEventSink.Emit(LogEvent logEvent)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        Guard.AgainstNull(logEvent);
 
         // Bypasses the level check so that child loggers
         // using this one as a sink can increase verbosity.

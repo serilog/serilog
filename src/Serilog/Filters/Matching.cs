@@ -38,7 +38,7 @@ public static class Matching
     /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <code>null</code></exception>
     public static Func<LogEvent, bool> FromSource(string source)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        Guard.AgainstNull(source);
 
         return WithProperty<string>(
             Constants.SourceContextPropertyName,
@@ -58,7 +58,7 @@ public static class Matching
     /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
     public static Func<LogEvent, bool> WithProperty(string propertyName)
     {
-        if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+        Guard.AgainstNull(propertyName);
 
         return e => e.Properties.ContainsKey(propertyName);
     }
@@ -73,7 +73,7 @@ public static class Matching
     /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
     public static Func<LogEvent, bool> WithProperty(string propertyName, object scalarValue)
     {
-        if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+        Guard.AgainstNull(propertyName);
 
         var scalar = new ScalarValue(scalarValue);
         return e => e.Properties.TryGetValue(propertyName, out var propertyValue) &&
@@ -91,8 +91,8 @@ public static class Matching
     /// <exception cref="ArgumentNullException">When <paramref name="predicate"/> is <code>null</code></exception>
     public static Func<LogEvent, bool> WithProperty<TScalar>(string propertyName, Func<TScalar, bool> predicate)
     {
-        if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
-        if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+        Guard.AgainstNull(propertyName);
+        Guard.AgainstNull(predicate);
 
         return e =>
         {

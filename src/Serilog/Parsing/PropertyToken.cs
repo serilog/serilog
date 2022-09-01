@@ -49,10 +49,10 @@ public sealed class PropertyToken : MessageTemplateToken
     public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
         : base(startIndex)
     {
-        PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
+        PropertyName = Guard.AgainstNull(propertyName);
         Format = format;
         Destructuring = destructuring;
-        RawText = rawText ?? throw new ArgumentNullException(nameof(rawText));
+        RawText = Guard.AgainstNull(rawText);
         Alignment = alignment;
 
         if (int.TryParse(PropertyName, NumberStyles.None, CultureInfo.InvariantCulture, out var position) &&
@@ -77,8 +77,8 @@ public sealed class PropertyToken : MessageTemplateToken
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        if (properties == null) throw new ArgumentNullException(nameof(properties));
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(properties);
+        Guard.AgainstNull(output);
 
         MessageTemplateRenderer.RenderPropertyToken(this, properties, output, formatProvider, isLiteral: false, isJson: false);
     }

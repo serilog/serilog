@@ -75,7 +75,7 @@ public static class LogContext
     /// <exception cref="ArgumentNullException">When <paramref name="enricher"/> is <code>null</code></exception>
     public static IDisposable Push(ILogEventEnricher enricher)
     {
-        if (enricher == null) throw new ArgumentNullException(nameof(enricher));
+        Guard.AgainstNull(enricher);
 
         var stack = GetOrCreateEnricherStack();
         var bookmark = new ContextStackBookmark(stack);
@@ -97,7 +97,7 @@ public static class LogContext
     /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
     public static IDisposable Push(params ILogEventEnricher[] enrichers)
     {
-        if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
+        Guard.AgainstNull(enrichers);
 
         var stack = GetOrCreateEnricherStack();
         var bookmark = new ContextStackBookmark(stack);

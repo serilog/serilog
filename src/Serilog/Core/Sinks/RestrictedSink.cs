@@ -21,13 +21,13 @@ class RestrictedSink : ILogEventSink, IDisposable
 
     public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
     {
-        _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-        _levelSwitch = levelSwitch ?? throw new ArgumentNullException(nameof(levelSwitch));
+        _sink = Guard.AgainstNull(sink);
+        _levelSwitch = Guard.AgainstNull(levelSwitch);
     }
 
     public void Emit(LogEvent logEvent)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        Guard.AgainstNull(logEvent);
 
         if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
             return;

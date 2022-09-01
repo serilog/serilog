@@ -28,7 +28,7 @@ public class SequenceValue : LogEventPropertyValue
     /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
     public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
     {
-        if (elements == null) throw new ArgumentNullException(nameof(elements));
+        Guard.AgainstNull(elements);
 
         _elements = elements.ToArray();
     }
@@ -48,7 +48,7 @@ public class SequenceValue : LogEventPropertyValue
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(output);
 
         output.Write('[');
         var allButLast = _elements.Length - 1;

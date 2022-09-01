@@ -21,13 +21,13 @@ class ProjectedDestructuringPolicy : IDestructuringPolicy
 
     public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
     {
-        _canApply = canApply ?? throw new ArgumentNullException(nameof(canApply));
-        _projection = projection ?? throw new ArgumentNullException(nameof(projection));
+        _canApply = Guard.AgainstNull(canApply);
+        _projection = Guard.AgainstNull(projection);
     }
 
     public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
+        Guard.AgainstNull(value);
 
         if (!_canApply(value.GetType()))
         {

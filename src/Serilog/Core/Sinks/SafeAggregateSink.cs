@@ -20,7 +20,7 @@ class SafeAggregateSink : ILogEventSink
 
     public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
     {
-        if (sinks == null) throw new ArgumentNullException(nameof(sinks));
+        Guard.AgainstNull(sinks);
         _sinks = sinks.ToArray();
     }
 

@@ -6,7 +6,7 @@ class DelegatingEnricher : ILogEventEnricher
 
     public DelegatingEnricher(Action<LogEvent, ILogEventPropertyFactory> enrich)
     {
-        _enrich = enrich ?? throw new ArgumentNullException(nameof(enrich));
+        _enrich = Guard.AgainstNull(enrich);
     }
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)

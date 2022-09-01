@@ -27,10 +27,10 @@ public class LoggerMinimumLevelConfiguration
     internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum,
         Action<LoggingLevelSwitch> setLevelSwitch, Action<string, LoggingLevelSwitch> addOverride)
     {
-        _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
-        _setMinimum = setMinimum ?? throw new ArgumentNullException(nameof(setMinimum));
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+        _setMinimum = Guard.AgainstNull(setMinimum);
         _setLevelSwitch = setLevelSwitch;
-        _addOverride = addOverride ?? throw new ArgumentNullException(nameof(addOverride));
+        _addOverride = Guard.AgainstNull(addOverride);
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public class LoggerMinimumLevelConfiguration
     // ReSharper disable once UnusedMethodReturnValue.Global
     public LoggerConfiguration ControlledBy(LoggingLevelSwitch levelSwitch)
     {
-        if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+        Guard.AgainstNull(levelSwitch);
 
         _setLevelSwitch(levelSwitch);
         return _loggerConfiguration;
@@ -113,8 +113,8 @@ public class LoggerMinimumLevelConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
     public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
-        if (levelSwitch == null) throw new ArgumentNullException(nameof(levelSwitch));
+        Guard.AgainstNull(source);
+        Guard.AgainstNull(levelSwitch);
 
         var trimmed = source.Trim();
         if (trimmed.Length == 0) throw new ArgumentException($"A source {nameof(source)} must be provided.", nameof(source));

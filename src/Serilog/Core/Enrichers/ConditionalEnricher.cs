@@ -21,8 +21,8 @@ class ConditionalEnricher : ILogEventEnricher, IDisposable
 
     public ConditionalEnricher(ILogEventEnricher wrapped, Func<LogEvent, bool> condition)
     {
-        _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
-        _condition = condition ?? throw new ArgumentNullException(nameof(condition));
+        _wrapped = Guard.AgainstNull(wrapped);
+        _condition = Guard.AgainstNull(condition);
     }
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
