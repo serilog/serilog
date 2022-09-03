@@ -98,9 +98,8 @@ public static class Matching
         {
             if (!e.Properties.TryGetValue(propertyName, out var propertyValue)) return false;
 
-            return propertyValue is ScalarValue s &&
-                   ((s.Value is TScalar value) &&
-                    predicate(value));
+            return propertyValue is ScalarValue {Value: TScalar value} &&
+                   predicate(value);
         };
     }
 }

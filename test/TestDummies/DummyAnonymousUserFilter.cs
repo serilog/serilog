@@ -8,7 +8,7 @@ public class DummyAnonymousUserFilter : ILogEventFilter
         {
             if (logEvent.Properties["User"] is ScalarValue sv)
             {
-                if (sv.Value is string s && s == "anonymous")
+                if (sv.Value is "anonymous")
                 {
                     return false;
                 }

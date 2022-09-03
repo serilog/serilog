@@ -178,7 +178,7 @@ public class LoggerEnrichmentConfiguration
         var wrappedEnricher = wrapEnricher(enclosed);
 
         // ReSharper disable once SuspiciousTypeConversion.Global
-        if (!(wrappedEnricher is IDisposable))
+        if (wrappedEnricher is not IDisposable)
         {
             SelfLog.WriteLine("Wrapping enricher {0} does not implement IDisposable; to ensure " +
                               "wrapped enrichers are properly disposed, wrappers should dispose " +
