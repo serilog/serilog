@@ -65,7 +65,7 @@ public interface ILogger
         if (enrichers == null)
             return this; // No context here, so little point writing to SelfLog.
 
-        return ForContext(new Core.Enrichers.SafeAggregateEnricher(enrichers));
+        return ForContext(new SafeAggregateEnricher(enrichers));
     }
 #else
         ;

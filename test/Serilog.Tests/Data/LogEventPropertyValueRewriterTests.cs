@@ -9,8 +9,7 @@ class LimitingRewriter : LogEventPropertyValueRewriter<int>
 
     protected override LogEventPropertyValue VisitScalarValue(int state, ScalarValue scalar)
     {
-        var str = scalar.Value as string;
-        if (str == null || str.Length <= state)
+        if (scalar.Value is not string str || str.Length <= state)
             return scalar;
 
         return new ScalarValue(str.Substring(0, state));
