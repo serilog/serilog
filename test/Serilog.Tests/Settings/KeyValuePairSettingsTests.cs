@@ -262,7 +262,7 @@ public class KeyValuePairSettingsTests
         log.Write(Some.DebugEvent());
         Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
 
-        controlSwitch!.MinimumLevel = LogEventLevel.Debug;
+        controlSwitch!.MinimumLevel = Debug;
         log.Write(Some.DebugEvent());
         Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
     }
@@ -321,7 +321,7 @@ public class KeyValuePairSettingsTests
         evt = null;
         var controlSwitch = DummyWithLevelSwitchSink.ControlLevelSwitch;
 
-        controlSwitch!.MinimumLevel = LogEventLevel.Information;
+        controlSwitch!.MinimumLevel = Information;
         systemLogger.Write(Some.InformationEvent());
         Assert.False(evt is null, "LoggingLevelSwitch level was changed to Information for logger System.*. It should now log Information events for SourceContext System.Bar.");
         // ReSharper restore HeuristicUnreachableCode

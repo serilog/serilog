@@ -74,7 +74,7 @@ public class SecondaryLoggerSinkTests
         var sink = new CollectingSink();
 
         var logger = new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Debug))
+            .MinimumLevel.ControlledBy(new(Debug))
             .WriteTo.Logger(lc => lc
                 .MinimumLevel.Error()
                 .WriteTo.Sink(sink))

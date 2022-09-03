@@ -9,7 +9,7 @@ public class JsonFormatterTests
     {
         var @event = new LogEvent(
             new DateTimeOffset(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
-            LogEventLevel.Information,
+            Information,
             null,
             Some.MessageTemplate(),
             new LogEventProperty[0]);
@@ -28,7 +28,7 @@ public class JsonFormatterTests
     {
         var @event = new LogEvent(
             DateTimeOffset.MaxValue,
-            LogEventLevel.Information,
+            Information,
             null,
             Some.MessageTemplate(),
             new[] {new LogEventProperty("name", new ScalarValue(DateOnly.MaxValue))});
@@ -44,7 +44,7 @@ public class JsonFormatterTests
     {
         var @event = new LogEvent(
             DateTimeOffset.MaxValue,
-            LogEventLevel.Information,
+            Information,
             null,
             Some.MessageTemplate(),
             new[] {new LogEventProperty("name", new ScalarValue(TimeOnly.MaxValue))});
@@ -202,7 +202,7 @@ public class JsonFormatterTests
     public void PropertyTokensWithFormatStringsAreIncludedAsRenderings()
     {
         var p = new MessageTemplateParser();
-        var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+        var e = new LogEvent(Some.OffsetInstant(), Information, null,
             p.Parse("{AProperty:000}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
 
         var d = FormatEvent(e);
@@ -230,7 +230,7 @@ public class JsonFormatterTests
     public void PropertyTokensWithoutFormatStringsAreNotIncludedAsRenderings()
     {
         var p = new MessageTemplateParser();
-        var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+        var e = new LogEvent(Some.OffsetInstant(), Information, null,
             p.Parse("{AProperty}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
 
         var d = FormatEvent(e);
@@ -243,7 +243,7 @@ public class JsonFormatterTests
     public void SequencesOfSequencesAreSerialized()
     {
         var p = new MessageTemplateParser();
-        var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+        var e = new LogEvent(Some.OffsetInstant(), Information, null,
             p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
 
         var d = FormatEvent(e);
