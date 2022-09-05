@@ -958,12 +958,12 @@ public class MethodOverloadConventionTests
 
             //check for params argument: params object[] propertyValues
             //params argument currently has to be the last argument, and generic methods don't have params argument
-            if (!isGeneric && (parameters.Length - index) == 1)
+            if (!isGeneric && parameters.Length - index == 1)
             {
                 var paramsArrayArg = parameters[index];
 
                 // params array attribute should never have derived/inherited classes
-                var paramsAttr = parameters[index].GetCustomAttribute(typeof(ParamArrayAttribute), inherit: false);
+                var paramsAttr = paramsArrayArg.GetCustomAttribute(typeof(ParamArrayAttribute), inherit: false);
 
                 Assert.NotNull(paramsAttr);
                 Assert.Equal(typeof(object[]), paramsArrayArg.ParameterType);
