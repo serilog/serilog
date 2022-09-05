@@ -3,11 +3,11 @@ namespace Serilog.Tests.Core;
 public class LoggerExtensionsTests
 {
     [Theory]
-    [InlineData(LogEventLevel.Debug, LogEventLevel.Debug)]
-    [InlineData(LogEventLevel.Debug, LogEventLevel.Information)]
-    [InlineData(LogEventLevel.Debug, LogEventLevel.Error)]
-    [InlineData(LogEventLevel.Debug, LogEventLevel.Fatal)]
-    [InlineData(LogEventLevel.Debug, LogEventLevel.Warning)]
+    [InlineData(Debug, Debug)]
+    [InlineData(Debug, Information)]
+    [InlineData(Debug, Error)]
+    [InlineData(Debug, Fatal)]
+    [InlineData(Debug, Warning)]
     public void ShouldEnrichLogEventWhenLevelIsSameOrHigherThanMinLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
     {
         var propValue = Guid.NewGuid();
@@ -26,11 +26,11 @@ public class LoggerExtensionsTests
     }
 
     [Theory]
-    [InlineData(LogEventLevel.Debug, LogEventLevel.Verbose)]
-    [InlineData(LogEventLevel.Information, LogEventLevel.Debug)]
-    [InlineData(LogEventLevel.Warning, LogEventLevel.Information)]
-    [InlineData(LogEventLevel.Error, LogEventLevel.Warning)]
-    [InlineData(LogEventLevel.Fatal, LogEventLevel.Error)]
+    [InlineData(Debug, Verbose)]
+    [InlineData(Information, Debug)]
+    [InlineData(Warning, Information)]
+    [InlineData(Error, Warning)]
+    [InlineData(Fatal, Error)]
     public void ShouldNotEnrichLogEventsWhenMinLevelIsHigherThanProvidedLogLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
     {
         var propValue = Guid.NewGuid();

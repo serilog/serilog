@@ -147,7 +147,7 @@ public class LoggerSinkConfiguration
     {
         if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-        if (logger is Logger concreteLogger && concreteLogger.HasOverrideMap)
+        if (logger is Logger {HasOverrideMap: true})
         {
             SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
                               "and may be removed completely in a future version.");
@@ -240,7 +240,7 @@ public class LoggerSinkConfiguration
             new DisposingAggregateSink(sinksToWrap);
 
         var wrappedSink = wrapSink(enclosed);
-        if (!(wrappedSink is IDisposable) && enclosed is IDisposable target)
+        if (wrappedSink is not IDisposable && enclosed is IDisposable target)
         {
             wrappedSink = new DisposeDelegatingSink(wrappedSink, target);
         }

@@ -58,7 +58,7 @@ public class MatchingTests
             .Filter.ByExcluding(Matching.FromSource("Serilog.Tests"))
             .WriteTo.Sink(new DelegatingSink(_ => written = true))
             .CreateLogger()
-            .ForContext(Serilog.Core.Constants.SourceContextPropertyName, "Serilog.TestsLong");
+            .ForContext(Constants.SourceContextPropertyName, "Serilog.TestsLong");
 
         log.Write(Some.InformationEvent());
         Assert.True(written);

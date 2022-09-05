@@ -164,7 +164,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void DelegatesAreConvertedToScalarStringsWhenDestructuring()
     {
-        Action del = DelegatesAreConvertedToScalarStringsWhenDestructuring;
+        var del = DelegatesAreConvertedToScalarStringsWhenDestructuring;
         var pv = _converter.CreatePropertyValue(del, Destructuring.Destructure);
         Assert.IsType<ScalarValue>(pv);
         Assert.IsType<string>(pv.LiteralValue());
@@ -236,7 +236,6 @@ public class PropertyValueConverterTests
             Assert.Equal(3, l.Value.LiteralValue());
             var k = sv.Properties.Single(m => m.Name == "IsEmpty");
             Assert.False((bool?)k.Value.LiteralValue());
-            var s = sv.Properties.Single(m => m.Name == "Span");
         }
 #endif
 
@@ -266,13 +265,13 @@ public class PropertyValueConverterTests
     }
 
 #if GETCURRENTMETHOD
-        [Fact]
-        public void SurvivesDestructuringMethodBase()
-        {
-            var theMethod = System.Reflection.MethodBase.GetCurrentMethod();
-            var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
-            Assert.Equal(theMethod, pv.LiteralValue());
-        }
+    [Fact]
+    public void SurvivesDestructuringMethodBase()
+    {
+        var theMethod = MethodBase.GetCurrentMethod();
+        var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
+        Assert.Equal(theMethod, pv.LiteralValue());
+    }
 #endif
 
     public class BaseWithProps

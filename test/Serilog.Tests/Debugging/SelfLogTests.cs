@@ -11,7 +11,6 @@ public class SelfLogTests
         Messages = new();
         SelfLog.Enable(m =>
         {
-            Messages ??= new();
             Messages.Add(m);
         });
 
@@ -32,7 +31,6 @@ public class SelfLogTests
         Messages = new();
         SelfLog.Enable(m =>
         {
-            Messages ??= new();
             Messages.Add(m);
         });
 

@@ -16,14 +16,14 @@ static class Some
 
     public static DateTimeOffset OffsetInstant() => new(Instant());
 
-    public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
+    public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = Information)
     {
         return new(timestamp ?? OffsetInstant(), level,
             null, MessageTemplate(),
             new List<LogEventProperty> { new(Constants.SourceContextPropertyName, new ScalarValue(sourceContext)) });
     }
 
-    public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = LogEventLevel.Information)
+    public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = Information)
     {
         return new(timestamp ?? OffsetInstant(), level,
             null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
@@ -31,17 +31,17 @@ static class Some
 
     public static LogEvent InformationEvent(DateTimeOffset? timestamp = null)
     {
-        return LogEvent(timestamp, LogEventLevel.Information);
+        return LogEvent(timestamp, Information);
     }
 
     public static LogEvent DebugEvent(DateTimeOffset? timestamp = null)
     {
-        return LogEvent(timestamp, LogEventLevel.Debug);
+        return LogEvent(timestamp, Debug);
     }
 
     public static LogEvent WarningEvent(DateTimeOffset? timestamp = null)
     {
-        return LogEvent(timestamp, LogEventLevel.Warning);
+        return LogEvent(timestamp, Warning);
     }
 
     public static LogEventProperty LogEventProperty()

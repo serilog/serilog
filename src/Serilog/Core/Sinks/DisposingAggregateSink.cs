@@ -49,7 +49,7 @@ class DisposingAggregateSink : ILogEventSink, IDisposable
     {
         foreach (var sink in _sinks)
         {
-            if (!(sink is IDisposable disposable)) continue;
+            if (sink is not IDisposable disposable) continue;
 
             try
             {

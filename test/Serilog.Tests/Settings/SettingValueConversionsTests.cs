@@ -27,7 +27,7 @@ public class SettingValueConversionsTests
     public void ValuesConvertToEnumMembers()
     {
         var result = (LogEventLevel)SettingValueConversions.ConvertToType("Information", typeof(LogEventLevel))!;
-        Assert.Equal(LogEventLevel.Information, result);
+        Assert.Equal(Information, result);
     }
 
     [Fact]
