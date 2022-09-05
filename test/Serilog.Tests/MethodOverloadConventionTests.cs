@@ -145,12 +145,12 @@ public class MethodOverloadConventionTests
 
     [Theory]
     [InlineData(Write)]
-    [InlineData(nameof(LogEventLevel.Verbose))]
-    [InlineData(nameof(LogEventLevel.Debug))]
-    [InlineData(nameof(LogEventLevel.Information))]
-    [InlineData(nameof(LogEventLevel.Warning))]
-    [InlineData(nameof(LogEventLevel.Error))]
-    [InlineData(nameof(LogEventLevel.Fatal))]
+    [InlineData(nameof(Verbose))]
+    [InlineData(nameof(Debug))]
+    [InlineData(nameof(Information))]
+    [InlineData(nameof(Warning))]
+    [InlineData(nameof(Error))]
+    [InlineData(nameof(Fatal))]
     public void ILoggerValidateConventions(string setName)
     {
         ValidateConventionForMethodSet(setName, typeof(ILogger));
@@ -158,12 +158,12 @@ public class MethodOverloadConventionTests
 
     [Theory]
     [InlineData(Write)]
-    [InlineData(nameof(LogEventLevel.Verbose))]
-    [InlineData(nameof(LogEventLevel.Debug))]
-    [InlineData(nameof(LogEventLevel.Information))]
-    [InlineData(nameof(LogEventLevel.Warning))]
-    [InlineData(nameof(LogEventLevel.Error))]
-    [InlineData(nameof(LogEventLevel.Fatal))]
+    [InlineData(nameof(Verbose))]
+    [InlineData(nameof(Debug))]
+    [InlineData(nameof(Information))]
+    [InlineData(nameof(Warning))]
+    [InlineData(nameof(Error))]
+    [InlineData(nameof(Fatal))]
     public void LoggerValidateConventions(string setName)
     {
         ValidateConventionForMethodSet(setName, typeof(Logger));
@@ -171,12 +171,12 @@ public class MethodOverloadConventionTests
 
     [Theory]
     [InlineData(Write)]
-    [InlineData(nameof(LogEventLevel.Verbose))]
-    [InlineData(nameof(LogEventLevel.Debug))]
-    [InlineData(nameof(LogEventLevel.Information))]
-    [InlineData(nameof(LogEventLevel.Warning))]
-    [InlineData(nameof(LogEventLevel.Error))]
-    [InlineData(nameof(LogEventLevel.Fatal))]
+    [InlineData(nameof(Verbose))]
+    [InlineData(nameof(Debug))]
+    [InlineData(nameof(Information))]
+    [InlineData(nameof(Warning))]
+    [InlineData(nameof(Error))]
+    [InlineData(nameof(Fatal))]
     public void LogValidateConventions(string setName)
     {
         ValidateConventionForMethodSet(setName, typeof(Log));
@@ -184,12 +184,12 @@ public class MethodOverloadConventionTests
 
     [Theory]
     [InlineData(Write)]
-    [InlineData(nameof(LogEventLevel.Verbose))]
-    [InlineData(nameof(LogEventLevel.Debug))]
-    [InlineData(nameof(LogEventLevel.Information))]
-    [InlineData(nameof(LogEventLevel.Warning))]
-    [InlineData(nameof(LogEventLevel.Error))]
-    [InlineData(nameof(LogEventLevel.Fatal))]
+    [InlineData(nameof(Verbose))]
+    [InlineData(nameof(Debug))]
+    [InlineData(nameof(Information))]
+    [InlineData(nameof(Warning))]
+    [InlineData(nameof(Error))]
+    [InlineData(nameof(Fatal))]
     public void SilentLoggerValidateConventions(string setName)
     {
         ValidateConventionForMethodSet(setName, typeof(SilentLogger),
@@ -214,7 +214,7 @@ public class MethodOverloadConventionTests
         Assert.True(writeMethod.IsPublic);
         Assert.Equal(typeof(void), writeMethod.ReturnType);
 
-        var level = LogEventLevel.Information;
+        var level = Information;
 
         var logger = GetLogger(loggerType, out var sink);
 
@@ -420,14 +420,14 @@ public class MethodOverloadConventionTests
         Assert.Equal("level", parameter.Name);
         Assert.Equal(typeof(LogEventLevel), parameter.ParameterType);
 
-        var logger = GetLogger(loggerType, out _, LogEventLevel.Information);
+        var logger = GetLogger(loggerType, out _, Information);
 
-        var falseResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Verbose });
+        var falseResult = InvokeMethod(method, logger, new object[] { Verbose });
 
         Assert.IsType<bool>(falseResult);
         Assert.False(falseResult as bool?);
 
-        var trueResult = InvokeMethod(method, logger, new object[] { LogEventLevel.Warning });
+        var trueResult = InvokeMethod(method, logger, new object[] { Warning });
 
         Assert.IsType<bool>(trueResult);
 
@@ -859,7 +859,7 @@ public class MethodOverloadConventionTests
 
         if (method.Name == Write)
         {
-            level = LogEventLevel.Information;
+            level = Information;
 
             var paramList = new List<object> { level };
 
@@ -1013,7 +1013,7 @@ public class MethodOverloadConventionTests
 
     static ILogger? GetLogger(Type loggerType) => GetLogger(loggerType, out _);
 
-    static ILogger? GetLogger(Type loggerType, out CollectingSink? sink, LogEventLevel level = LogEventLevel.Verbose)
+    static ILogger? GetLogger(Type loggerType, out CollectingSink? sink, LogEventLevel level = Verbose)
     {
         sink = null;
 

@@ -476,9 +476,9 @@ public class LoggerConfigurationTests
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
-        levelSwitch.MinimumLevel = LogEventLevel.Warning;
+        levelSwitch.MinimumLevel = Warning;
         logger.Write(Some.InformationEvent());
-        levelSwitch.MinimumLevel = LogEventLevel.Verbose;
+        levelSwitch.MinimumLevel = Verbose;
         logger.Write(Some.InformationEvent());
 
         Assert.Equal(2, eventsReceived);
@@ -490,7 +490,7 @@ public class LoggerConfigurationTests
         var sink = new CollectingSink();
 
         var logger = new LoggerConfiguration()
-            .WriteTo.Sink(sink, LogEventLevel.Fatal, new LoggingLevelSwitch())
+            .WriteTo.Sink(sink, Fatal, new LoggingLevelSwitch())
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -504,7 +504,7 @@ public class LoggerConfigurationTests
         var sink = new CollectingSink();
 
         var logger = new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(new LoggingLevelSwitch(LogEventLevel.Fatal))
+            .MinimumLevel.ControlledBy(new LoggingLevelSwitch(Fatal))
             .MinimumLevel.Debug()
             .WriteTo.Sink(sink)
             .CreateLogger();
@@ -521,7 +521,7 @@ public class LoggerConfigurationTests
 
         var logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
+            .MinimumLevel.Override("Microsoft", Error)
             .WriteTo.Sink(sink)
             .CreateLogger();
 
@@ -539,7 +539,7 @@ public class LoggerConfigurationTests
 
         var logger = new LoggerConfiguration()
             .MinimumLevel.Error()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+            .MinimumLevel.Override("Microsoft", Debug)
             .WriteTo.Sink(sink)
             .CreateLogger();
 
@@ -688,7 +688,7 @@ public class LoggerConfigurationTests
         DummyWrappingSink.Reset();
         var sink = new CollectingSink();
         var logger = new LoggerConfiguration()
-            .WriteTo.DummyWrap(w => w.Sink(sink), LogEventLevel.Error, null)
+            .WriteTo.DummyWrap(w => w.Sink(sink), Error, null)
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -704,8 +704,8 @@ public class LoggerConfigurationTests
         var sink = new CollectingSink();
         var logger = new LoggerConfiguration()
             .WriteTo.DummyWrap(
-                w => w.Sink(sink), LogEventLevel.Verbose,
-                new LoggingLevelSwitch(LogEventLevel.Error))
+                w => w.Sink(sink), Verbose,
+                new LoggingLevelSwitch(Error))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -721,8 +721,8 @@ public class LoggerConfigurationTests
         var sink = new CollectingSink();
         var logger = new LoggerConfiguration()
             .WriteTo.DummyWrap(
-                w => w.Sink(sink), LogEventLevel.Error,
-                new LoggingLevelSwitch(LogEventLevel.Verbose))
+                w => w.Sink(sink), Error,
+                new LoggingLevelSwitch(Verbose))
             .CreateLogger();
 
         logger.Write(Some.InformationEvent());
@@ -737,7 +737,7 @@ public class LoggerConfigurationTests
         var matching = new CollectingSink();
         var logger = new LoggerConfiguration()
             .WriteTo.Conditional(
-                le => le.Level == LogEventLevel.Warning,
+                le => le.Level == Warning,
                 w => w.Sink(matching))
             .CreateLogger();
 
@@ -746,7 +746,7 @@ public class LoggerConfigurationTests
         logger.Error("Error");
 
         var evt = Assert.Single(matching.Events);
-        Assert.Equal(LogEventLevel.Warning, evt.Level);
+        Assert.Equal(Warning, evt.Level);
     }
 
     [Fact]
@@ -757,7 +757,7 @@ public class LoggerConfigurationTests
         var configuration = new LoggerConfiguration();
         LoggerEnrichmentConfiguration.Wrap(
             configuration.Enrich,
-            e => new ConditionalEnricher(e, le => le.Level == LogEventLevel.Warning),
+            e => new ConditionalEnricher(e, le => le.Level == Warning),
             enrich => enrich.With(enricher));
 
         var logger = configuration.CreateLogger();
@@ -766,7 +766,7 @@ public class LoggerConfigurationTests
         logger.Error("Error");
 
         var evt = Assert.Single(enricher.Events);
-        Assert.Equal(LogEventLevel.Warning, evt.Level);
+        Assert.Equal(Warning, evt.Level);
     }
 
     [Fact]
@@ -775,7 +775,7 @@ public class LoggerConfigurationTests
         var enricher = new CollectingEnricher();
 
         var logger = new LoggerConfiguration()
-            .Enrich.When(le => le.Level == LogEventLevel.Warning, enrich => enrich.With(enricher))
+            .Enrich.When(le => le.Level == Warning, enrich => enrich.With(enricher))
             .CreateLogger();
 
         logger.Information("Information");
@@ -783,7 +783,7 @@ public class LoggerConfigurationTests
         logger.Error("Error");
 
         var evt = Assert.Single(enricher.Events);
-        Assert.Equal(LogEventLevel.Warning, evt.Level);
+        Assert.Equal(Warning, evt.Level);
     }
 
     [Fact]
@@ -792,7 +792,7 @@ public class LoggerConfigurationTests
         var enricher = new CollectingEnricher();
 
         var logger = new LoggerConfiguration()
-            .Enrich.AtLevel(LogEventLevel.Warning, enrich => enrich.With(enricher))
+            .Enrich.AtLevel(Warning, enrich => enrich.With(enricher))
             .CreateLogger();
 
         logger.Information("Information");
@@ -800,14 +800,14 @@ public class LoggerConfigurationTests
         logger.Error("Error");
 
         Assert.Equal(2, enricher.Events.Count);
-        Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
+        Assert.All(enricher.Events, e => Assert.True(e.Level >= Warning));
     }
 
     [Fact]
     public void LeveledEnrichersCheckLevelSwitch()
     {
         var enricher = new CollectingEnricher();
-        var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+        var levelSwitch = new LoggingLevelSwitch(Warning);
 
         var logger = new LoggerConfiguration()
             .Enrich.AtLevel(levelSwitch, enrich => enrich.With(enricher))
@@ -818,16 +818,16 @@ public class LoggerConfigurationTests
         logger.Error("Error");
 
         Assert.Equal(2, enricher.Events.Count);
-        Assert.All(enricher.Events, e => Assert.True(e.Level >= LogEventLevel.Warning));
+        Assert.All(enricher.Events, e => Assert.True(e.Level >= Warning));
 
         enricher.Events.Clear();
-        levelSwitch.MinimumLevel = LogEventLevel.Error;
+        levelSwitch.MinimumLevel = Error;
 
         logger.Information("Information");
         logger.Warning("Warning");
         logger.Error("Error");
 
         var error = Assert.Single(enricher.Events);
-        Assert.True(error.Level == LogEventLevel.Error);
+        Assert.True(error.Level == Error);
     }
 }

@@ -22,7 +22,7 @@ public class LogEventPropertyValueTests
     [Fact]
     public void AnEnumIsConvertedToANonStringScalarValue()
     {
-        var value = _converter.CreatePropertyValue(LogEventLevel.Debug, Destructuring.Default);
+        var value = _converter.CreatePropertyValue(Debug, Destructuring.Default);
         Assert.IsType<ScalarValue>(value);
         var sv = (ScalarValue)value;
         Assert.NotNull(sv.Value);

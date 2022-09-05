@@ -80,7 +80,7 @@ public class LoggerTests
         log.Warning("Emitted");
 
         // Change the level
-        levelSwitch.MinimumLevel = LogEventLevel.Error;
+        levelSwitch.MinimumLevel = Error;
 
         log.Warning("Suppressed");
         log.Error("Emitted");
@@ -179,10 +179,10 @@ public class LoggerTests
         log.Debug("suppressed");
         Assert.Empty(collectingSink.Events);
 
-        log.Write(LogEventLevel.Warning, new Exception("warn"), "emit some {prop} with {values}", "message", new[] { 1, 2, 3 });
+        log.Write(Warning, new Exception("warn"), "emit some {prop} with {values}", "message", new[] { 1, 2, 3 });
 
         Assert.Single(collectingSink.Events);
-        Assert.Equal(LogEventLevel.Warning, collectingSink.SingleEvent.Level);
+        Assert.Equal(Warning, collectingSink.SingleEvent.Level);
         Assert.Equal("warn", collectingSink.SingleEvent.Exception?.Message);
         Assert.Equal("string", collectingSink.SingleEvent.Properties["type"].LiteralValue());
         Assert.Equal("message", collectingSink.SingleEvent.Properties["prop"].LiteralValue());
@@ -192,7 +192,7 @@ public class LoggerTests
             actual: (SequenceValue)collectingSink.SingleEvent.Properties["values"],
             comparer: new LogEventPropertyValueComparer());
 
-        levelSwitch.MinimumLevel = LogEventLevel.Fatal;
+        levelSwitch.MinimumLevel = Fatal;
         collectingSink.Events.Clear();
 
         log.Error("error");

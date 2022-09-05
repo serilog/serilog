@@ -4,25 +4,25 @@ public class LevelOverrideMapTests
 {
     [Theory]
     [InlineData("Serilog", false, LevelAlias.Minimum)]
-    [InlineData("MyApp", true, LogEventLevel.Debug)]
+    [InlineData("MyApp", true, Debug)]
     [InlineData("MyAppSomething", false, LevelAlias.Minimum)]
     [InlineData("MyOtherApp", false, LevelAlias.Minimum)]
-    [InlineData("MyApp.Something", true, LogEventLevel.Debug)]
-    [InlineData("MyApp.Api.Models.Person", true, LogEventLevel.Error)]
-    [InlineData("MyApp.Api.Controllers.AboutController", true, LogEventLevel.Information)]
-    [InlineData("MyApp.Api.Controllers.HomeController", true, LogEventLevel.Warning)]
+    [InlineData("MyApp.Something", true, Debug)]
+    [InlineData("MyApp.Api.Models.Person", true, Error)]
+    [InlineData("MyApp.Api.Controllers.AboutController", true, Information)]
+    [InlineData("MyApp.Api.Controllers.HomeController", true, Warning)]
     [InlineData("Api.Controllers.HomeController", false, LevelAlias.Minimum)]
     public void OverrideScenarios(string context, bool overrideExpected, LogEventLevel expected)
     {
         var overrides = new Dictionary<string, LoggingLevelSwitch>
         {
-            ["MyApp"] = new(LogEventLevel.Debug),
-            ["MyApp.Api.Controllers"] = new(LogEventLevel.Information),
-            ["MyApp.Api.Controllers.HomeController"] = new(LogEventLevel.Warning),
-            ["MyApp.Api"] = new(LogEventLevel.Error)
+            ["MyApp"] = new(Debug),
+            ["MyApp.Api.Controllers"] = new(Information),
+            ["MyApp.Api.Controllers.HomeController"] = new(Warning),
+            ["MyApp.Api"] = new(Error)
         };
 
-        var lom = new LevelOverrideMap(overrides, LogEventLevel.Fatal, null);
+        var lom = new LevelOverrideMap(overrides, Fatal, null);
 
         lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
 
@@ -34,7 +34,7 @@ public class LevelOverrideMapTests
         }
         else
         {
-            Assert.Equal(LogEventLevel.Fatal, overriddenLevel);
+            Assert.Equal(Fatal, overriddenLevel);
             Assert.Null(overriddenSwitch);
         }
     }
