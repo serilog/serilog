@@ -60,7 +60,7 @@ public class MessageTemplateCacheBenchmark_Cached
         Parallel.For(
             0,
             iterations,
-            new ParallelOptions { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
+            new() { MaxDegreeOfParallelism = MaxDegreeOfParallelism },
             idx => cache.Parse(_templateList[idx % Items]));
     }
 }

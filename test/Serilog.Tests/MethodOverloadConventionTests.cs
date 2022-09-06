@@ -1019,7 +1019,7 @@ public class MethodOverloadConventionTests
 
         if (loggerType == typeof(Logger) || loggerType == typeof(ILogger))
         {
-            sink = new CollectingSink();
+            sink = new();
 
             return new LoggerConfiguration()
                 .MinimumLevel.Is(level)
@@ -1029,7 +1029,7 @@ public class MethodOverloadConventionTests
 
         if (loggerType == typeof(Log))
         {
-            sink = new CollectingSink();
+            sink = new();
 
             Log.CloseAndFlush();
 

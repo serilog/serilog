@@ -9,7 +9,7 @@ public class SafeAggregateSinkTests
 
         var s = new SafeAggregateSink(new[] { new DelegatingSink(_ => {
             thrown = true;
-            throw new Exception("No go, pal.");
+            throw new("No go, pal.");
         }) });
 
         s.Emit(Some.InformationEvent());
@@ -24,7 +24,7 @@ public class SafeAggregateSinkTests
 
         var s = new SafeAggregateSink(new[] {
             new DelegatingSink(_ => called1 = true),
-            new DelegatingSink(_ => throw new Exception("No go, pal.")),
+            new DelegatingSink(_ => throw new("No go, pal.")),
             new DelegatingSink(_ => called2 = true)
         });
 

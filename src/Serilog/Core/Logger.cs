@@ -136,7 +136,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // It'd be nice to do the destructuring lazily, but unfortunately `value` may be mutated between
         // now and the first log event written.
         var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
-        var enricher = new FixedPropertyEnricher(new EventProperty(propertyName, propertyValue));
+        var enricher = new FixedPropertyEnricher(new(propertyName, propertyValue));
 
         var minimumLevel = _minimumLevel;
         var levelSwitch = _levelSwitch;

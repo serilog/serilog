@@ -71,7 +71,7 @@ public class LoggerSinkConfiguration
         }
         else if (restrictedToMinimumLevel > LevelAlias.Minimum)
         {
-            sink = new RestrictedSink(sink, new LoggingLevelSwitch(restrictedToMinimumLevel));
+            sink = new RestrictedSink(sink, new(restrictedToMinimumLevel));
         }
 
         _addSink(sink);

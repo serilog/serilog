@@ -33,7 +33,7 @@ public class MessageTemplateParser : IMessageTemplateParser
     {
         if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
 
-        return new MessageTemplate(messageTemplate, Tokenize(messageTemplate));
+        return new(messageTemplate, Tokenize(messageTemplate));
     }
 
     static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
@@ -285,6 +285,6 @@ public class MessageTemplateParser : IMessageTemplateParser
         } while (startAt < messageTemplate.Length);
 
         next = startAt;
-        return new TextToken(accum.ToString(), first);
+        return new(accum.ToString(), first);
     }
 }
