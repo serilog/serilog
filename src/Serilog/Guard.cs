@@ -26,7 +26,9 @@ namespace JetBrains.Annotations
 
 static class Guard
 {
-    public static T AgainstNull<T>([NoEnumeration][NotNull] T? argument, [CallerArgumentExpression("argument")] string? paramName = null)
+    public static T AgainstNull<T>(
+        [NoEnumeration][NotNull] T? argument,
+        [CallerArgumentExpression("argument")] string? paramName = null)
         where T : class
     {
         if (argument is null)
