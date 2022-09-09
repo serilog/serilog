@@ -1,6 +1,6 @@
 ﻿namespace Serilog.Tests.Support;
 
-class DisposeTrackingSink : ILogEventSink, IDisposable
+sealed class DisposeTrackingSink : ILogEventSink, IDisposable
 {
     public bool IsDisposed { get; set; }
 

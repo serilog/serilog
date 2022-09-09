@@ -15,6 +15,9 @@
 namespace Serilog.Core.Sinks;
 
 class DisposingAggregateSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
     readonly ILogEventSink[] _sinks;
 
@@ -57,8 +60,44 @@ class DisposingAggregateSink : ILogEventSink, IDisposable
             }
             catch (Exception ex)
             {
-                SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
+                ReportDisposingException(sink, ex);
             }
         }
+    }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var sink in _sinks)
+        {
+            if (sink is IAsyncDisposable asyncDisposable)
+            {
+                try
+                {
+                    await asyncDisposable.DisposeAsync();
+                }
+                catch (Exception ex)
+                {
+                    ReportDisposingException(sink, ex);
+                }
+            }
+            else if (sink is IDisposable disposable)
+            {
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    ReportDisposingException(sink, ex);
+                }
+            }
+        }
+    }
+#endif
+
+    static void ReportDisposingException(ILogEventSink sink, Exception ex)
+    {
+        SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
     }
 }

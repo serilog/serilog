@@ -190,7 +190,7 @@ public class LoggerSinkConfiguration
         Func<ILogEventSink, ILogEventSink> wrapSink,
         Action<LoggerSinkConfiguration> configureWrappedSink)
     {
-        return Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LogEventLevel.Verbose, null);
+        return Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LevelAlias.Minimum, null);
     }
 
     /// <summary>
@@ -239,12 +239,20 @@ public class LoggerSinkConfiguration
             sinksToWrap.Single() :
             new DisposingAggregateSink(sinksToWrap);
 
-        var wrappedSink = wrapSink(enclosed);
-        if (wrappedSink is not IDisposable && enclosed is IDisposable target)
+        var wrapper = wrapSink(enclosed);
+        if (wrapper is not IDisposable && enclosed is IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+                or IAsyncDisposable
+#endif
+                )
         {
-            wrappedSink = new DisposeDelegatingSink(wrappedSink, target);
+            wrapper = new DisposeDelegatingSink(wrapper, enclosed as IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+                , enclosed as IAsyncDisposable
+#endif
+                );
         }
 
-        return loggerSinkConfiguration.Sink(wrappedSink, restrictedToMinimumLevel, levelSwitch);
+        return loggerSinkConfiguration.Sink(wrapper, restrictedToMinimumLevel, levelSwitch);
     }
 }

@@ -259,4 +259,120 @@ public class LoggerTests
         Assert.True(sinkA.IsDisposed);
         Assert.True(sinkB.IsDisposed);
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+
+    [Fact]
+    public async Task ASingleSinkIsDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sink = new DisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sink.IsDisposed);
+    }
+
+    [Fact]
+    public void ASingleAsyncSinkIsDisposedWhenLoggerIsDisposed()
+    {
+        var sink = new DisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        log.Dispose();
+
+        Assert.True(sink.IsDisposed);
+    }
+
+    [Fact]
+    public async Task ASingleAsyncSinkIsDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sink = new AsyncDisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sink.IsDisposedAsync);
+    }
+
+    [Fact]
+    public async Task AggregatedSinksAreDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sinkA = new DisposeTrackingSink();
+        var sinkB = new DisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sinkA)
+            .WriteTo.Sink(sinkB)
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sinkA.IsDisposed);
+        Assert.True(sinkB.IsDisposed);
+    }
+
+    [Fact]
+    public async Task AggregatedAsyncSinksAreDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sinkA = new DisposeTrackingSink();
+        var sinkB = new AsyncDisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sinkA)
+            .WriteTo.Sink(sinkB)
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sinkA.IsDisposed);
+        Assert.True(sinkB.IsDisposedAsync);
+    }
+
+    [Fact]
+    public async Task WrappedSinksAreDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sink = new DisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sink.IsDisposed);
+    }
+
+    [Fact]
+    public async Task WrappedAsyncSinksAreDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sink = new AsyncDisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sink.IsDisposedAsync);
+    }
+
+    [Fact]
+    public async Task WrappedAggregatedAsyncSinksAreDisposedWhenLoggerIsDisposedAsync()
+    {
+        var sinkA = new DisposeTrackingSink();
+        var sinkB = new AsyncDisposeTrackingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
+            .CreateLogger();
+
+        await log.DisposeAsync();
+
+        Assert.True(sinkA.IsDisposed);
+        Assert.True(sinkB.IsDisposedAsync);
+    }
+
+#endif
 }

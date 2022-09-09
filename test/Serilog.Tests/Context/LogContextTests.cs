@@ -4,7 +4,7 @@ public class LogContextTests
 {
     static LogContextTests()
     {
-#if REMOTING
+#if FEATURE_REMOTING
         LifetimeServices.LeaseTime = TimeSpan.FromMilliseconds(100);
         LifetimeServices.LeaseManagerPollTime = TimeSpan.FromMilliseconds(10);
 #endif
@@ -12,7 +12,7 @@ public class LogContextTests
 
     public LogContextTests()
     {
-#if REMOTING
+#if FEATURE_REMOTING
         // ReSharper disable AssignNullToNotNullAttribute
         CallContext.LogicalSetData(typeof(LogContext).FullName, null);
         // ReSharper restore AssignNullToNotNullAttribute
@@ -251,7 +251,7 @@ public class LogContextTests
         }
     }
 
-#if APPDOMAIN
+#if TEST_FEATURE_APPDOMAIN
     // Must not actually try to pass context across domains,
     // since user property types may not be serializable.
     [Fact]
@@ -277,7 +277,7 @@ public class LogContextTests
     }
 #endif
 
-#if APPDOMAIN && REMOTING
+#if TEST_FEATURE_APPDOMAIN && FEATURE_REMOTING
     [Fact]
     public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
     {
@@ -363,7 +363,7 @@ public class LogContextTests
     }
 }
 
-#if REMOTING
+#if FEATURE_REMOTING
 class InMemoryRemoteObjectTracker : ITrackingHandler
 {
     public int DisconnectCount { get; set; }
@@ -376,7 +376,7 @@ class InMemoryRemoteObjectTracker : ITrackingHandler
 }
 #endif
 
-#if APPDOMAIN
+#if TEST_FEATURE_APPDOMAIN
 public class RemotelyCallable : MarshalByRefObject
 {
     public bool IsCallable()

@@ -14,21 +14,47 @@
 
 namespace Serilog.Core.Sinks;
 
-class DisposeDelegatingSink : ILogEventSink, IDisposable
+sealed class DisposeDelegatingSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
     readonly ILogEventSink _sink;
-    readonly IDisposable _disposable;
+    readonly IDisposable? _disposable;
 
-    public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
+#if FEATURE_ASYNCDISPOSABLE
+    readonly IAsyncDisposable? _asyncDisposable;
+#endif
+
+    public DisposeDelegatingSink(ILogEventSink sink, IDisposable? disposable
+#if FEATURE_ASYNCDISPOSABLE
+        , IAsyncDisposable? asyncDisposable
+#endif
+        )
     {
-        _sink = Guard.AgainstNull(sink);
-        _disposable = Guard.AgainstNull(disposable);
+        _sink = sink;
+        _disposable = disposable;
+
+#if FEATURE_ASYNCDISPOSABLE
+        _asyncDisposable = asyncDisposable;
+#endif
     }
 
     public void Dispose()
     {
-        _disposable.Dispose();
+        _disposable?.Dispose();
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public ValueTask DisposeAsync()
+    {
+        if (_asyncDisposable != null)
+            return _asyncDisposable.DisposeAsync();
+
+        Dispose();
+        return default;
+    }
+#endif
 
     public void Emit(LogEvent logEvent)
     {
