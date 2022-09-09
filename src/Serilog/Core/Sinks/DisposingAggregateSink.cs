@@ -14,7 +14,7 @@
 
 namespace Serilog.Core.Sinks;
 
-class DisposingAggregateSink : ILogEventSink, IDisposable
+sealed class DisposingAggregateSink : ILogEventSink, IDisposable
 #if FEATURE_ASYNCDISPOSABLE
     , IAsyncDisposable
 #endif
