@@ -3,13 +3,26 @@
 namespace Serilog.Tests.Support;
 
 public class DisposableLogger : ILogger, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
-    public bool Disposed { get; set; }
+    public bool IsDisposed { get; set; }
+    public bool IsDisposedAsync { get; set; }
 
     public void Dispose()
     {
-        Disposed = true;
+        IsDisposed = true;
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        IsDisposedAsync = true;
+        return default;
+    }
+#endif
 
     public ILogger ForContext(ILogEventEnricher enricher)
     {

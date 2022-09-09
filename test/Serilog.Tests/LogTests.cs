@@ -17,7 +17,7 @@ public class LogTests
         var disposableLogger = new DisposableLogger();
         Log.Logger = disposableLogger;
         Log.CloseAndFlush();
-        Assert.True(disposableLogger.Disposed);
+        Assert.True(disposableLogger.IsDisposed);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class LogTests
         var disposableLogger = new DisposableLogger();
         Log.Logger = disposableLogger;
         await Log.CloseAndFlushAsync();
-        Assert.True(disposableLogger.Disposed);
+        Assert.True(disposableLogger.IsDisposedAsync);
     }
 
     [Fact]
