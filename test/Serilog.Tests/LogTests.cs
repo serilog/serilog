@@ -12,7 +12,7 @@ public class LogTests
     }
 
     [Fact]
-    public void DisposesTheLogger()
+    public void CloseAndFlushDisposesTheLogger()
     {
         var disposableLogger = new DisposableLogger();
         Log.Logger = disposableLogger;
@@ -21,10 +21,31 @@ public class LogTests
     }
 
     [Fact]
-    public void ResetsLoggerToSilentLogger()
+    public void CloseAndFlushResetsLoggerToSilentLogger()
     {
         Log.Logger = new DisposableLogger();
         Log.CloseAndFlush();
         Assert.IsType<SilentLogger>(Log.Logger);
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+
+    [Fact]
+    public async Task CloseAndFlushAsyncDisposesTheLogger()
+    {
+        var disposableLogger = new DisposableLogger();
+        Log.Logger = disposableLogger;
+        await Log.CloseAndFlushAsync();
+        Assert.True(disposableLogger.Disposed);
+    }
+
+    [Fact]
+    public async Task CloseAndFlushAsyncResetsLoggerToSilentLogger()
+    {
+        Log.Logger = new DisposableLogger();
+        await Log.CloseAndFlushAsync();
+        Assert.IsType<SilentLogger>(Log.Logger);
+    }
+
+#endif
 }
