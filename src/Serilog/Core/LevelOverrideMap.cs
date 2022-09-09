@@ -45,7 +45,7 @@ class LevelOverrideMap
         LogEventLevel defaultMinimumLevel,
         LoggingLevelSwitch? defaultLevelSwitch)
     {
-        if (overrides == null) throw new ArgumentNullException(nameof(overrides));
+        Guard.AgainstNull(overrides);
 
         _defaultLevelSwitch = defaultLevelSwitch;
         _defaultMinimumLevel = defaultLevelSwitch != null ? LevelAlias.Minimum : defaultMinimumLevel;

@@ -28,13 +28,13 @@ class SecondaryLoggerSink : ILogEventSink, IDisposable
 
     public SecondaryLoggerSink(ILogger logger, bool attemptDispose = false)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = Guard.AgainstNull(logger);
         _attemptDispose = attemptDispose;
     }
 
     public void Emit(LogEvent logEvent)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        Guard.AgainstNull(logEvent);
 
         var copy = logEvent.Copy();
         _logger.Write(copy);

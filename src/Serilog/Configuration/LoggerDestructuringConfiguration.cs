@@ -34,12 +34,12 @@ public class LoggerDestructuringConfiguration
         Action<int> setMaximumStringLength,
         Action<int> setMaximumCollectionCount)
     {
-        _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
-        _addScalar = addScalar ?? throw new ArgumentNullException(nameof(addScalar));
-        _addPolicy = addPolicy ?? throw new ArgumentNullException(nameof(addPolicy));
-        _setMaximumDepth = setMaximumDepth ?? throw new ArgumentNullException(nameof(setMaximumDepth));
-        _setMaximumStringLength = setMaximumStringLength ?? throw new ArgumentNullException(nameof(setMaximumStringLength));
-        _setMaximumCollectionCount = setMaximumCollectionCount ?? throw new ArgumentNullException(nameof(setMaximumCollectionCount));
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+        _addScalar = Guard.AgainstNull(addScalar);
+        _addPolicy = Guard.AgainstNull(addPolicy);
+        _setMaximumDepth = Guard.AgainstNull(setMaximumDepth);
+        _setMaximumStringLength = Guard.AgainstNull(setMaximumStringLength);
+        _setMaximumCollectionCount = Guard.AgainstNull(setMaximumCollectionCount);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class LoggerDestructuringConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="scalarType"/> is <code>null</code></exception>
     public LoggerConfiguration AsScalar(Type scalarType)
     {
-        if (scalarType == null) throw new ArgumentNullException(nameof(scalarType));
+        Guard.AgainstNull(scalarType);
 
         _addScalar(scalarType);
         return _loggerConfiguration;
@@ -75,7 +75,7 @@ public class LoggerDestructuringConfiguration
     // ReSharper disable once MemberCanBePrivate.Global
     public LoggerConfiguration With(params IDestructuringPolicy[] destructuringPolicies)
     {
-        if (destructuringPolicies == null) throw new ArgumentNullException(nameof(destructuringPolicies));
+        Guard.AgainstNull(destructuringPolicies);
 
         foreach (var destructuringPolicy in destructuringPolicies)
         {
@@ -108,7 +108,7 @@ public class LoggerDestructuringConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="transformation"/> is <code>null</code></exception>
     public LoggerConfiguration ByTransforming<TValue>(Func<TValue, object> transformation)
     {
-        if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+        Guard.AgainstNull(transformation);
 
         var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
             o => transformation((TValue)o));
@@ -132,8 +132,8 @@ public class LoggerDestructuringConfiguration
         Func<Type, bool> predicate,
         Func<TValue, object> transformation)
     {
-        if (predicate == null) throw new ArgumentNullException(nameof(predicate));
-        if (transformation == null) throw new ArgumentNullException(nameof(transformation));
+        Guard.AgainstNull(predicate);
+        Guard.AgainstNull(transformation);
 
         var policy = new ProjectedDestructuringPolicy(predicate,
             o => transformation((TValue)o));

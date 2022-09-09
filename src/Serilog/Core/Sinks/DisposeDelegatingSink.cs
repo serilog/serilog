@@ -21,8 +21,8 @@ class DisposeDelegatingSink : ILogEventSink, IDisposable
 
     public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
     {
-        _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-        _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
+        _sink = Guard.AgainstNull(sink);
+        _disposable = Guard.AgainstNull(disposable);
     }
 
     public void Dispose()

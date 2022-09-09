@@ -42,7 +42,7 @@ public static class Log
     public static ILogger Logger
     {
         get => _logger;
-        set => _logger = value ?? throw new ArgumentNullException(nameof(value));
+        set => _logger = Guard.AgainstNull(value);
     }
 
     /// <summary>

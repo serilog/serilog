@@ -51,8 +51,8 @@ public class PropertyEnricher : ILogEventEnricher
     /// <exception cref="ArgumentNullException">When <paramref name="propertyFactory"/> is <code>null</code></exception>
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-        if (propertyFactory == null) throw new ArgumentNullException(nameof(propertyFactory));
+        Guard.AgainstNull(logEvent);
+        Guard.AgainstNull(propertyFactory);
 
         var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
         logEvent.AddPropertyIfAbsent(property);

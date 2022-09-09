@@ -38,7 +38,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
     /// <exception cref="ArgumentNullException">When <paramref name="outputTemplate"/> is <code>null</code></exception>
     public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider? formatProvider = null)
     {
-        if (outputTemplate == null) throw new ArgumentNullException(nameof(outputTemplate));
+        Guard.AgainstNull(outputTemplate);
 
         _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
         _formatProvider = formatProvider;
@@ -53,8 +53,8 @@ public class MessageTemplateTextFormatter : ITextFormatter
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public void Format(LogEvent logEvent, TextWriter output)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(logEvent);
+        Guard.AgainstNull(output);
 
         foreach (var token in _outputTemplate.Tokens)
         {

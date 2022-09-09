@@ -14,7 +14,7 @@ public class TemporarySelfLog : IDisposable
 
     public static IDisposable SaveTo(List<string> target)
     {
-        if (target == null) throw new ArgumentNullException(nameof(target));
+        Guard.AgainstNull(target);
         return new TemporarySelfLog(target.Add);
     }
 }

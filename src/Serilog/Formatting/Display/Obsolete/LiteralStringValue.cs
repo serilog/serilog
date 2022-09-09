@@ -23,7 +23,7 @@ class LiteralStringValue : LogEventPropertyValue
 
     public LiteralStringValue(string value)
     {
-        _value = value ?? throw new ArgumentNullException(nameof(value));
+        _value = Guard.AgainstNull(value);
     }
 
     public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)

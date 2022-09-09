@@ -111,8 +111,8 @@ public class JsonFormatter : ITextFormatter
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public void Format(LogEvent logEvent, TextWriter output)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(logEvent);
+        Guard.AgainstNull(output);
 
         if (!_omitEnclosingObject)
             output.Write("{");
@@ -161,8 +161,8 @@ public class JsonFormatter : ITextFormatter
     [Obsolete(ExtensionPointObsoletionMessage)]
     protected void AddLiteralWriter(Type type, Action<object, TextWriter> writer)
     {
-        if (type == null) throw new ArgumentNullException(nameof(type));
-        if (writer == null) throw new ArgumentNullException(nameof(writer));
+        Guard.AgainstNull(type);
+        Guard.AgainstNull(writer);
 
         _literalWriters[type] = (v, _, w) => writer(v, w);
     }

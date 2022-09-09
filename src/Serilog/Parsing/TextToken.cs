@@ -28,7 +28,7 @@ public sealed class TextToken : MessageTemplateToken
     public TextToken(string text, int startIndex = -1)
         : base(startIndex)
     {
-        Text = text ?? throw new ArgumentNullException(nameof(text));
+        Text = Guard.AgainstNull(text);
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public sealed class TextToken : MessageTemplateToken
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
     public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        Guard.AgainstNull(output);
 
         MessageTemplateRenderer.RenderTextToken(this, output);
     }

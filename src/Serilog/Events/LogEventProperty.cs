@@ -29,7 +29,7 @@ public class LogEventProperty
     /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
     public LogEventProperty(string name, LogEventPropertyValue value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
+        Guard.AgainstNull(value);
         EnsureValidName(name);
 
         Name = name;
@@ -71,7 +71,7 @@ public class LogEventProperty
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void EnsureValidName(string name)
     {
-        if (name == null) throw new ArgumentNullException(nameof(name));
+        Guard.AgainstNull(name);
         if (!IsValidName(name)) throw new ArgumentException($"Property {nameof(name)} must not be empty or whitespace.", nameof(name));
     }
 }

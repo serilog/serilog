@@ -31,7 +31,7 @@ class EnricherStack: IEnumerable<ILogEventEnricher>
 
     EnricherStack(EnricherStack under, ILogEventEnricher top)
     {
-        _under = under ?? throw new ArgumentNullException(nameof(under));
+        _under = Guard.AgainstNull(under);
         Count = under.Count + 1;
         _top = top;
     }

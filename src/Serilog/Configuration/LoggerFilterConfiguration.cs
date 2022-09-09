@@ -26,8 +26,8 @@ public class LoggerFilterConfiguration
         LoggerConfiguration loggerConfiguration,
         Action<ILogEventFilter> addFilter)
     {
-        _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
-        _addFilter = addFilter ?? throw new ArgumentNullException(nameof(addFilter));
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+        _addFilter = Guard.AgainstNull(addFilter);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public class LoggerFilterConfiguration
     /// <exception cref="ArgumentException">When any element of <paramref name="filters"/> is <code>null</code></exception>
     public LoggerConfiguration With(params ILogEventFilter[] filters)
     {
-        if (filters == null) throw new ArgumentNullException(nameof(filters));
+        Guard.AgainstNull(filters);
 
         foreach (var logEventFilter in filters)
         {

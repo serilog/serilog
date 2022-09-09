@@ -164,10 +164,7 @@ public class MessageTemplateTextFormatterTests
 
         public string Format(string? format, object? arg, IFormatProvider? formatProvider)
         {
-            if (arg == null)
-            {
-                throw new ArgumentNullException(nameof(arg));
-            }
+            Guard.AgainstNull(arg);
 
             if (arg is Size size)
                 return size == Size.Large ? "Huge" : size.ToString();

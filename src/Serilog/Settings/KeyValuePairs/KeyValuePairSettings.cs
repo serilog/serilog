@@ -71,12 +71,12 @@ class KeyValuePairSettings : ILoggerSettings
 
     public KeyValuePairSettings(IReadOnlyDictionary<string, string> settings)
     {
-        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        _settings = Guard.AgainstNull(settings);
     }
 
     public void Configure(LoggerConfiguration loggerConfiguration)
     {
-        if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+        Guard.AgainstNull(loggerConfiguration);
 
         var directives = _settings
             .Where(kvp => _supportedDirectives.Any(kvp.Key.StartsWith))

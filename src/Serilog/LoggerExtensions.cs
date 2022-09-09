@@ -24,8 +24,7 @@ public static class LoggerExtensions
         TValue value,
         bool destructureObjects = false)
     {
-        if (logger == null)
-            throw new ArgumentNullException(nameof(logger));
+        Guard.AgainstNull(logger);
 
         return logger.IsEnabled(level)
             ? logger.ForContext(propertyName, value, destructureObjects)

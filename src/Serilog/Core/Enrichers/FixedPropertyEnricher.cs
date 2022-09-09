@@ -27,7 +27,7 @@ class FixedPropertyEnricher : ILogEventEnricher
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        Guard.AgainstNull(logEvent);
 
         logEvent.AddPropertyIfAbsent(_eventProperty);
     }

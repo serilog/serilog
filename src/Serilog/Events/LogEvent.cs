@@ -26,8 +26,8 @@ public class LogEvent
         Timestamp = timestamp;
         Level = level;
         Exception = exception;
-        MessageTemplate = messageTemplate ?? throw new ArgumentNullException(nameof(messageTemplate));
-        _properties = properties ?? throw new ArgumentNullException(nameof(properties));
+        MessageTemplate = Guard.AgainstNull(messageTemplate);
+        _properties = Guard.AgainstNull(properties);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class LogEvent
     public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
         : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>())
     {
-        if (properties == null) throw new ArgumentNullException(nameof(properties));
+        Guard.AgainstNull(properties);
 
         foreach (var property in properties)
             AddOrUpdateProperty(property);
@@ -60,7 +60,7 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
-        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(properties?.Length ?? throw new ArgumentNullException(nameof(properties))))
+        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(Guard.AgainstNull(properties).Length))
     {
         for (var i = 0; i < properties.Length; ++i)
             _properties[properties[i].Name] = properties[i].Value;
@@ -119,7 +119,7 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
     public void AddOrUpdateProperty(LogEventProperty property)
     {
-        if (property == null) throw new ArgumentNullException(nameof(property));
+        Guard.AgainstNull(property);
 
         _properties[property.Name] = property.Value;
     }
@@ -143,7 +143,7 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
     public void AddPropertyIfAbsent(LogEventProperty property)
     {
-        if (property == null) throw new ArgumentNullException(nameof(property));
+        Guard.AgainstNull(property);
 
         if (!_properties.ContainsKey(property.Name))
             _properties.Add(property.Name, property.Value);

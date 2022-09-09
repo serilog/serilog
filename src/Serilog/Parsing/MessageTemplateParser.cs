@@ -31,7 +31,7 @@ public class MessageTemplateParser : IMessageTemplateParser
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     public MessageTemplate Parse(string messageTemplate)
     {
-        if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+        Guard.AgainstNull(messageTemplate);
 
         return new(messageTemplate, Tokenize(messageTemplate));
     }

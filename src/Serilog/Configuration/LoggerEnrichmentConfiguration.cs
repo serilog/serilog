@@ -26,8 +26,8 @@ public class LoggerEnrichmentConfiguration
         LoggerConfiguration loggerConfiguration,
         Action<ILogEventEnricher> addEnricher)
     {
-        _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
-        _addEnricher = addEnricher ?? throw new ArgumentNullException(nameof(addEnricher));
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+        _addEnricher = Guard.AgainstNull(addEnricher);
     }
 
     /// <summary>
@@ -41,11 +41,11 @@ public class LoggerEnrichmentConfiguration
     /// <exception cref="ArgumentException">When any element of <paramref name="enrichers"/> is <code>null</code></exception>
     public LoggerConfiguration With(params ILogEventEnricher[] enrichers)
     {
-        if (enrichers == null) throw new ArgumentNullException(nameof(enrichers));
+        Guard.AgainstNull(enrichers);
 
         foreach (var logEventEnricher in enrichers)
         {
-            if (logEventEnricher == null)  throw new ArgumentException("Null enricher is not allowed.");
+            Guard.AgainstNull(logEventEnricher);
 
             _addEnricher(logEventEnricher);
         }
@@ -96,8 +96,8 @@ public class LoggerEnrichmentConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
     public LoggerConfiguration When(Func<LogEvent, bool> condition, Action<LoggerEnrichmentConfiguration> configureEnricher)
     {
-        if (condition == null) throw new ArgumentNullException(nameof(condition));
-        if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+        Guard.AgainstNull(condition);
+        Guard.AgainstNull(configureEnricher);
 
         return Wrap(this, e => new ConditionalEnricher(e, condition), configureEnricher);
     }
@@ -113,7 +113,7 @@ public class LoggerEnrichmentConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
     public LoggerConfiguration AtLevel(LogEventLevel enrichFromLevel, Action<LoggerEnrichmentConfiguration> configureEnricher)
     {
-        if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+        Guard.AgainstNull(configureEnricher);
 
         return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= enrichFromLevel), configureEnricher);
     }
@@ -129,7 +129,7 @@ public class LoggerEnrichmentConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="configureEnricher"/> is <code>null</code></exception>
     public LoggerConfiguration AtLevel(LoggingLevelSwitch levelSwitch, Action<LoggerEnrichmentConfiguration> configureEnricher)
     {
-        if (configureEnricher == null) throw new ArgumentNullException(nameof(configureEnricher));
+        Guard.AgainstNull(configureEnricher);
 
         return Wrap(this, e => new ConditionalEnricher(e, le => le.Level >= levelSwitch.MinimumLevel), configureEnricher);
     }
@@ -150,9 +150,9 @@ public class LoggerEnrichmentConfiguration
         Func<ILogEventEnricher, ILogEventEnricher> wrapEnricher,
         Action<LoggerEnrichmentConfiguration> configureWrappedEnricher)
     {
-        if (loggerEnrichmentConfiguration == null) throw new ArgumentNullException(nameof(loggerEnrichmentConfiguration));
-        if (wrapEnricher == null) throw new ArgumentNullException(nameof(wrapEnricher));
-        if (configureWrappedEnricher == null) throw new ArgumentNullException(nameof(configureWrappedEnricher));
+        Guard.AgainstNull(loggerEnrichmentConfiguration);
+        Guard.AgainstNull(wrapEnricher);
+        Guard.AgainstNull(configureWrappedEnricher);
 
         var enrichersToWrap = new List<ILogEventEnricher>();
 

@@ -6,7 +6,7 @@ public class DelegatingSink : ILogEventSink
 
     public DelegatingSink(Action<LogEvent> write)
     {
-        _write = write ?? throw new ArgumentNullException(nameof(write));
+        _write = Guard.AgainstNull(write);
     }
 
     public void Emit(LogEvent logEvent)

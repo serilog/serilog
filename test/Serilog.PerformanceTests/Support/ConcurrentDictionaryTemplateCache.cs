@@ -11,12 +11,12 @@ class ConcurrentDictionaryMessageTemplateCache : IMessageTemplateParser
 
     public ConcurrentDictionaryMessageTemplateCache(IMessageTemplateParser innerParser)
     {
-        _innerParser = innerParser ?? throw new ArgumentNullException(nameof(innerParser));
+        _innerParser = Guard.AgainstNull(innerParser);
     }
 
     public MessageTemplate Parse(string messageTemplate)
     {
-        if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+        Guard.AgainstNull(messageTemplate);
 
         if (messageTemplate.Length > MaxCachedTemplateLength)
             return _innerParser.Parse(messageTemplate);

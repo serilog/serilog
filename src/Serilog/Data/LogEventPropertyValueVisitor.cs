@@ -44,7 +44,7 @@ public abstract class LogEventPropertyValueVisitor<TState, TResult>
     /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
     protected virtual TResult Visit(TState state, LogEventPropertyValue value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
+        Guard.AgainstNull(value);
 
         if (value is ScalarValue sv)
             return VisitScalarValue(state, sv);
@@ -104,7 +104,7 @@ public abstract class LogEventPropertyValueVisitor<TState, TResult>
     // ReSharper disable once UnusedParameter.Global
     protected virtual TResult VisitUnsupportedValue(TState state, LogEventPropertyValue value)
     {
-        if (value == null) throw new ArgumentNullException(nameof(value));
+        Guard.AgainstNull(value);
         throw new NotSupportedException($"The value {value} is not of a type supported by this visitor.");
     }
 }

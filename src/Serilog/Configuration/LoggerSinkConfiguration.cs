@@ -24,8 +24,8 @@ public class LoggerSinkConfiguration
 
     internal LoggerSinkConfiguration(LoggerConfiguration loggerConfiguration, Action<ILogEventSink> addSink)
     {
-        _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
-        _addSink = addSink ?? throw new ArgumentNullException(nameof(addSink));
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+        _addSink = Guard.AgainstNull(addSink);
     }
 
     /// <summary>
@@ -113,7 +113,7 @@ public class LoggerSinkConfiguration
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
         LoggingLevelSwitch? levelSwitch = null)
     {
-        if (configureLogger == null) throw new ArgumentNullException(nameof(configureLogger));
+        Guard.AgainstNull(configureLogger);
 
         var lc = new LoggerConfiguration().MinimumLevel.Is(LevelAlias.Minimum);
         configureLogger(lc);
@@ -145,7 +145,7 @@ public class LoggerSinkConfiguration
         ILogger logger,
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
     {
-        if (logger == null) throw new ArgumentNullException(nameof(logger));
+        Guard.AgainstNull(logger);
 
         if (logger is Logger {HasOverrideMap: true})
         {
@@ -168,8 +168,8 @@ public class LoggerSinkConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="configureSink"/> is <code>null</code></exception>
     public LoggerConfiguration Conditional(Func<LogEvent, bool> condition, Action<LoggerSinkConfiguration> configureSink)
     {
-        if (condition == null) throw new ArgumentNullException(nameof(condition));
-        if (configureSink == null) throw new ArgumentNullException(nameof(configureSink));
+        Guard.AgainstNull(condition);
+        Guard.AgainstNull(configureSink);
 
         // Level aliases and so on don't need to be accepted here; if the user wants both a condition and leveling, they
         // can specify `restrictedToMinimumLevel` etc in the wrapped sink configuration.
@@ -215,9 +215,9 @@ public class LoggerSinkConfiguration
         LogEventLevel restrictedToMinimumLevel,
         LoggingLevelSwitch? levelSwitch)
     {
-        if (loggerSinkConfiguration == null) throw new ArgumentNullException(nameof(loggerSinkConfiguration));
-        if (wrapSink == null) throw new ArgumentNullException(nameof(wrapSink));
-        if (configureWrappedSink == null) throw new ArgumentNullException(nameof(configureWrappedSink));
+        Guard.AgainstNull(loggerSinkConfiguration);
+        Guard.AgainstNull(wrapSink);
+        Guard.AgainstNull(configureWrappedSink);
 
         var sinksToWrap = new List<ILogEventSink>();
 

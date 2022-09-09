@@ -20,12 +20,12 @@ class DelegateFilter : ILogEventFilter
 
     public DelegateFilter(Func<LogEvent, bool> isEnabled)
     {
-        _isEnabled = isEnabled ?? throw new ArgumentNullException(nameof(isEnabled));
+        _isEnabled = Guard.AgainstNull(isEnabled);
     }
 
     public bool IsEnabled(LogEvent logEvent)
     {
-        if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+        Guard.AgainstNull(logEvent);
         return _isEnabled(logEvent);
     }
 }
