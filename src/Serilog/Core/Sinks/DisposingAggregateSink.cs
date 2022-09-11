@@ -74,7 +74,7 @@ sealed class DisposingAggregateSink : ILogEventSink, IDisposable
             {
                 try
                 {
-                    await asyncDisposable.DisposeAsync();
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

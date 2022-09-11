@@ -196,7 +196,7 @@ public class LoggerConfiguration
             {
                 if (disposable is IAsyncDisposable asyncDisposable)
                 {
-                    await asyncDisposable.DisposeAsync();
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                 }
                 else
                 {
