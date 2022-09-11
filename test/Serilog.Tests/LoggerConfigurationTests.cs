@@ -749,6 +749,21 @@ public class LoggerConfigurationTests
         Assert.Equal(Warning, evt.Level);
     }
 
+#if FEATURE_ASYNCDISPOSABLE
+    [Fact]
+    public async Task ConditionalSinksAreDisposedAsyncWithLogger()
+    {
+        var sink = new AsyncDisposeTrackingSink();
+        var logger = new LoggerConfiguration()
+            .WriteTo.Conditional(_ => true, w => w.Sink(sink))
+            .CreateLogger();
+
+        await logger.DisposeAsync();
+
+        Assert.True(sink.IsDisposedAsync);
+    }
+#endif
+
     [Fact]
     public void EnrichersCanBeWrapped()
     {

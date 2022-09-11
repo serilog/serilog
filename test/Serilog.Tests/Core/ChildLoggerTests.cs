@@ -140,7 +140,7 @@ public class ChildLoggerTests
         // Visualizing the pipeline from left to right ....
         //
         //   Event  --> Root Logger --> Child Logger -> YES or
-        //    lvl       override/lvl    override/levl     NO ?
+        //    lvl       override/lvl    override/lvl     NO ?
         //
         static object?[] T(string? rs, int? rl, string? cs, int? cl, bool r, LogEventLevel dl = LevelAlias.Minimum)
         {
@@ -194,7 +194,7 @@ public class ChildLoggerTests
         int childOverrideLevelIncrement,
         bool eventShouldGetToChild)
     {
-        var incomingEventLevel = Information;
+        const LogEventLevel incomingEventLevel = Information;
         var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
         var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 
@@ -244,7 +244,7 @@ public class ChildLoggerTests
         int childOverrideLevelIncrement,
         bool eventShouldGetToChild)
     {
-        var incomingEventLevel = Information;
+        const LogEventLevel incomingEventLevel = Information;
         var rootOverrideLevel = incomingEventLevel + rootOverrideLevelIncrement;
         var childOverrideLevel = incomingEventLevel + childOverrideLevelIncrement;
 

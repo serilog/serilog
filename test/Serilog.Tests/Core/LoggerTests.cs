@@ -374,5 +374,18 @@ public class LoggerTests
         Assert.True(sinkB.IsDisposedAsync);
     }
 
+    [Fact]
+    public async Task RestrictedSinksAreDisposedAsyncWhenLoggerIsDisposedAsync()
+    {
+        var sink = new AsyncDisposeTrackingSink();
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink, Error)
+            .CreateLogger();
+
+        await logger.DisposeAsync();
+
+        Assert.True(sink.IsDisposedAsync);
+    }
+
 #endif
 }
