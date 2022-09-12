@@ -264,7 +264,7 @@ public class PropertyValueConverterTests
         Assert.Equal(typeof(string), pv.LiteralValue());
     }
 
-#if GETCURRENTMETHOD
+#if FEATURE_GETCURRENTMETHOD
     [Fact]
     public void SurvivesDestructuringMethodBase()
     {
@@ -383,7 +383,7 @@ public class PropertyValueConverterTests
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
 
-#if !ITUPLE
+#if !FEATURE_ITUPLE
 
     [Fact]
     public void EightPlusValueTupleElementsAreIgnoredByCapturing()

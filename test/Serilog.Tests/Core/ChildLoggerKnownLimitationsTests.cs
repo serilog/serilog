@@ -137,7 +137,7 @@ public class ChildLoggerKnownLimitationsTests
     [Theory]
     [MemberData(nameof(GetMinimumLevelOverrideInheritanceTestCases))]
     public void WriteToLoggerMinimumLevelOverrideInheritanceNotSupportedScenarios(
-        string rootOverrideSource,
+        string? rootOverrideSource,
         int rootOverrideLevelIncrement,
         string? childOverrideSource,
         int childOverrideLevelIncrement)

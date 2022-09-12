@@ -1042,7 +1042,7 @@ public class MethodOverloadConventionTests
         }
 
         if (loggerType == typeof(SilentLogger))
-            return SilentLogger.Instance;
+            return new SilentLogger();
 
         throw new ArgumentException($"Logger Type of {loggerType} is not supported");
     }

@@ -172,17 +172,49 @@ public class LoggerConfiguration
             overrideMap = new(_overrides, _minimumLevel, _levelSwitch);
         }
 
-        var disposableSinks = _logEventSinks.Concat(_auditSinks).OfType<IDisposable>().ToArray();
+        var disposableSinks = _logEventSinks
+            .Concat(_auditSinks)
+            .Where(s => s is IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+                or IAsyncDisposable
+#endif
+                )
+            .ToArray();
+
         void Dispose()
         {
             foreach (var disposable in disposableSinks)
             {
-                disposable.Dispose();
+                (disposable as IDisposable)?.Dispose();
             }
         }
 
-        return _levelSwitch == null ?
-            new(processor, _minimumLevel, sink, enricher, Dispose, overrideMap) :
-            new(processor, _levelSwitch, sink, enricher, Dispose, overrideMap);
+#if FEATURE_ASYNCDISPOSABLE
+        async ValueTask DisposeAsync()
+        {
+            foreach (var disposable in disposableSinks)
+            {
+                if (disposable is IAsyncDisposable asyncDisposable)
+                {
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    ((IDisposable)disposable).Dispose();
+                }
+            }
+        }
+#endif
+
+        return new(
+            processor,
+            _levelSwitch != null ? LevelAlias.Minimum : _minimumLevel, _levelSwitch,
+            sink,
+            enricher,
+            Dispose,
+#if FEATURE_ASYNCDISPOSABLE
+            DisposeAsync,
+#endif
+            overrideMap);
     }
 }

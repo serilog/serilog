@@ -228,7 +228,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return false;
     }
 
-#if ITUPLE
+#if FEATURE_ITUPLE
 
     bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
@@ -264,7 +264,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         var definition = valueType.GetGenericTypeDefinition();
 
         // Ignore the 8+ value case for now.
-#if VALUETUPLE
+#if FEATURE_VALUETUPLE
         if (definition == typeof(ValueTuple<>) || definition == typeof(ValueTuple<,>) ||
             definition == typeof(ValueTuple<,,>) || definition == typeof(ValueTuple<,,,>) ||
             definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||

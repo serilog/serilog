@@ -22,6 +22,9 @@ namespace Serilog.Core;
 /// code should depend on <see cref="ILogger"/>, not this class.
 /// </summary>
 public sealed class Logger : ILogger, ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
     static readonly object[] NoPropertyValues = new object[0];
     static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
@@ -29,6 +32,9 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     readonly MessageTemplateProcessor _messageTemplateProcessor;
     readonly ILogEventSink _sink;
     readonly Action? _dispose;
+#if FEATURE_ASYNCDISPOSABLE
+    readonly Func<ValueTask>? _disposeAsync;
+#endif
     readonly ILogEventEnricher _enricher;
 
     // It's important that checking minimum level is a very
@@ -43,40 +49,22 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     internal Logger(
         MessageTemplateProcessor messageTemplateProcessor,
         LogEventLevel minimumLevel,
+        LoggingLevelSwitch? levelSwitch,
         ILogEventSink sink,
         ILogEventEnricher enricher,
-        Action? dispose = null,
-        LevelOverrideMap? overrideMap = null)
-        : this(messageTemplateProcessor, minimumLevel, sink, enricher, dispose, null, overrideMap)
-    {
-    }
-
-    internal Logger(
-        MessageTemplateProcessor messageTemplateProcessor,
-        LoggingLevelSwitch levelSwitch,
-        ILogEventSink sink,
-        ILogEventEnricher enricher,
-        Action? dispose = null,
-        LevelOverrideMap? overrideMap = null)
-        : this(messageTemplateProcessor, LevelAlias.Minimum, sink, enricher, dispose, levelSwitch, overrideMap)
-    {
-    }
-
-    // The messageTemplateProcessor, sink and enricher are required. Argument checks are dropped because
-    // throwing from here breaks the logger's no-throw contract, and callers are all in this file anyway.
-    Logger(
-        MessageTemplateProcessor messageTemplateProcessor,
-        LogEventLevel minimumLevel,
-        ILogEventSink sink,
-        ILogEventEnricher enricher,
-        Action? dispose = null,
-        LoggingLevelSwitch? levelSwitch = null,
-        LevelOverrideMap? overrideMap = null)
+        Action? dispose,
+#if FEATURE_ASYNCDISPOSABLE
+        Func<ValueTask>? disposeAsync,
+#endif
+        LevelOverrideMap? overrideMap)
     {
         _messageTemplateProcessor = messageTemplateProcessor;
         _minimumLevel = minimumLevel;
         _sink = sink;
         _dispose = dispose;
+#if FEATURE_ASYNCDISPOSABLE
+        _disposeAsync = disposeAsync;
+#endif
         _levelSwitch = levelSwitch;
         _overrideMap = overrideMap;
         _enricher = enricher;
@@ -97,10 +85,13 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         return new Logger(
             _messageTemplateProcessor,
             _minimumLevel,
+            _levelSwitch,
             this,
             enricher,
             null,
-            _levelSwitch,
+#if FEATURE_ASYNCDISPOSABLE
+            null,
+#endif
             _overrideMap);
     }
 
@@ -149,10 +140,13 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         return new Logger(
             _messageTemplateProcessor,
             minimumLevel,
+            levelSwitch,
             this,
             enricher,
             null,
-            levelSwitch,
+#if FEATURE_ASYNCDISPOSABLE
+            null,
+#endif
             _overrideMap);
     }
 
@@ -1368,8 +1362,18 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         _dispose?.Invoke();
     }
 
+#if FEATURE_ASYNCDISPOSABLE
+    /// <summary>
+    /// Close and flush the logging pipeline.
+    /// </summary>
+    public ValueTask DisposeAsync()
+    {
+        return _disposeAsync?.Invoke() ?? default;
+    }
+#endif
+
     /// <summary>
     /// An <see cref="ILogger"/> instance that efficiently ignores all method calls.
     /// </summary>
-    public static ILogger None { get; } = SilentLogger.Instance;
+    public static ILogger None { get; } = new SilentLogger();
 }

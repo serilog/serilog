@@ -33,7 +33,7 @@ namespace Serilog;
 /// </remarks>
 public static class Log
 {
-    static ILogger _logger = SilentLogger.Instance;
+    static ILogger _logger = Serilog.Core.Logger.None;
 
     /// <summary>
     /// The globally-shared logger.
@@ -50,10 +50,22 @@ public static class Log
     /// </summary>
     public static void CloseAndFlush()
     {
-        var logger = Interlocked.Exchange(ref _logger, SilentLogger.Instance);
+        var logger = Interlocked.Exchange(ref _logger, Serilog.Core.Logger.None);
 
         (logger as IDisposable)?.Dispose();
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+    /// <summary>
+    /// Resets <see cref="Logger"/> to the default and disposes the original if possible
+    /// </summary>
+    public static ValueTask CloseAndFlushAsync()
+    {
+        var logger = Interlocked.Exchange(ref _logger, Serilog.Core.Logger.None);
+
+        return (logger as IAsyncDisposable)?.DisposeAsync() ?? default;
+    }
+#endif
 
     /// <summary>
     /// Create a logger that enriches log events via the provided enrichers.

@@ -53,7 +53,7 @@ public class SecondaryLoggerSinkTests
     }
 
     [Fact]
-    public void ChildLoggerInheritsParentLevelByDefault()
+    public void SecondaryLoggerInheritsPrimaryLevelByDefault()
     {
         var sink = new CollectingSink();
 
@@ -69,7 +69,7 @@ public class SecondaryLoggerSinkTests
     }
 
     [Fact]
-    public void ChildLoggerCanOverrideInheritedLevel()
+    public void SecondaryLoggerCanOverrideInheritedLevel()
     {
         var sink = new CollectingSink();
 
@@ -84,4 +84,38 @@ public class SecondaryLoggerSinkTests
 
         Assert.Empty(sink.Events);
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+    [Fact]
+    public async Task OwnedSecondaryLoggerIsDisposedAsyncWhenPrimaryIsDisposedAsync()
+    {
+        var sink = new AsyncDisposeTrackingSink();
+
+        var root = new LoggerConfiguration()
+            .WriteTo.Logger(lc => lc.WriteTo.Sink(sink))
+            .CreateLogger();
+
+        await root.DisposeAsync();
+
+        Assert.True(sink.IsDisposedAsync);
+    }
+
+    [Fact]
+    public async Task IndependentChildLoggerIsNotDisposedWhenPrimaryIsDisposedAsync()
+    {
+        var sink = new AsyncDisposeTrackingSink();
+        var child = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        var root = new LoggerConfiguration()
+            .WriteTo.Logger(child)
+            .CreateLogger();
+
+        await root.DisposeAsync();
+
+        Assert.False(sink.IsDisposed);
+        Assert.False(sink.IsDisposedAsync);
+    }
+#endif
 }

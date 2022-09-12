@@ -14,7 +14,10 @@
 
 namespace Serilog.Core.Sinks;
 
-class RestrictedSink : ILogEventSink, IDisposable
+sealed class RestrictedSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
     readonly ILogEventSink _sink;
     readonly LoggingLevelSwitch _levelSwitch;
@@ -39,4 +42,15 @@ class RestrictedSink : ILogEventSink, IDisposable
     {
         (_sink as IDisposable)?.Dispose();
     }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public ValueTask DisposeAsync()
+    {
+        if (_sink is IAsyncDisposable asyncDisposable)
+            return asyncDisposable.DisposeAsync();
+
+        Dispose();
+        return default;
+    }
+#endif
 }

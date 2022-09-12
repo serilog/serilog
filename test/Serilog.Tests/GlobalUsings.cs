@@ -31,7 +31,7 @@ global using Xunit;
 global using Xunit.Sdk;
 global using static Serilog.Events.LogEventLevel;
 
-#if REMOTING
+#if FEATURE_REMOTING
 global using System.Runtime.Remoting;
 global using System.Runtime.Remoting.Lifetime;
 global using System.Runtime.Remoting.Messaging;

@@ -37,9 +37,9 @@ namespace Serilog.Context;
 /// (and so is preserved across async/await calls).</remarks>
 public static class LogContext
 {
-#if ASYNCLOCAL
+#if FEATURE_ASYNCLOCAL
     static readonly AsyncLocal<EnricherStack?> Data = new();
-#elif REMOTING
+#elif FEATURE_REMOTING
     static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
     [ThreadStatic]
@@ -199,7 +199,7 @@ public static class LogContext
         }
     }
 
-#if ASYNCLOCAL
+#if FEATURE_ASYNCLOCAL
 
     static EnricherStack? Enrichers
     {
@@ -207,7 +207,7 @@ public static class LogContext
         set => Data.Value = value;
     }
 
-#elif REMOTING
+#elif FEATURE_REMOTING
 
     static EnricherStack? Enrichers
     {
