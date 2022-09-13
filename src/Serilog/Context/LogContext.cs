@@ -59,7 +59,7 @@ public static class LogContext
     /// then the value will be converted to a structure; otherwise, unknown types will
     /// be converted to scalars, which are generally stored as strings.</param>
     /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
-    public static IDisposable PushProperty(string name, object value, bool destructureObjects = false)
+    public static IDisposable PushProperty(string name, object? value, bool destructureObjects = false)
     {
         return Push(new PropertyEnricher(name, value, destructureObjects));
     }
