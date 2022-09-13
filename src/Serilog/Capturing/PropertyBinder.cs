@@ -12,119 +12,110 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Parsing;
+namespace Serilog.Capturing;
 
-namespace Serilog.Capturing
+// Performance relevant - on the hot path when creating log events from existing templates.
+class PropertyBinder
 {
-    // Performance relevant - on the hot path when creating log events from existing templates.
-    class PropertyBinder
+    readonly PropertyValueConverter _valueConverter;
+
+    static readonly EventProperty[] NoProperties = new EventProperty[0];
+
+    public PropertyBinder(PropertyValueConverter valueConverter)
     {
-        readonly PropertyValueConverter _valueConverter;
+        _valueConverter = valueConverter;
+    }
 
-        static readonly EventProperty[] NoProperties = new EventProperty[0];
-
-        public PropertyBinder(PropertyValueConverter valueConverter)
+    /// <summary>
+    /// Create properties based on an ordered list of provided values.
+    /// </summary>
+    /// <param name="messageTemplate">The template that the parameters apply to.</param>
+    /// <param name="messageTemplateParameters">Objects corresponding to the properties
+    /// represented in the message template.</param>
+    /// <returns>A list of properties; if the template is malformed then
+    /// this will be empty.</returns>
+    public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters)
+    {
+        if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
         {
-            _valueConverter = valueConverter;
+            if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
+                SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
+
+            return NoProperties;
         }
 
-        /// <summary>
-        /// Create properties based on an ordered list of provided values.
-        /// </summary>
-        /// <param name="messageTemplate">The template that the parameters apply to.</param>
-        /// <param name="messageTemplateParameters">Objects corresponding to the properties
-        /// represented in the message template.</param>
-        /// <returns>A list of properties; if the template is malformed then
-        /// this will be empty.</returns>
-        public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters)
+        if (messageTemplate.PositionalProperties != null)
+            return ConstructPositionalProperties(messageTemplate, messageTemplateParameters, messageTemplate.PositionalProperties);
+
+        return ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
+    }
+
+    EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters, PropertyToken[] positionalProperties)
+    {
+        if (positionalProperties.Length != messageTemplateParameters.Length)
+            SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
+
+        var result = new EventProperty[messageTemplateParameters.Length];
+        foreach (var property in positionalProperties)
         {
-            if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
+            if (property.TryGetPositionalValue(out var position))
             {
-                if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
-                    SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
-
-                return NoProperties;
+                if (position < 0 || position >= messageTemplateParameters.Length)
+                    SelfLog.WriteLine("Unassigned positional value {0} in: {1}", position, template);
+                else
+                    result[position] = ConstructProperty(property, messageTemplateParameters[position]);
             }
-
-            if (messageTemplate.PositionalProperties != null)
-                return ConstructPositionalProperties(messageTemplate, messageTemplateParameters);
-
-            return ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
         }
 
-        EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters)
+        var next = 0;
+        for (var i = 0; i < result.Length; ++i)
         {
-            var positionalProperties = template.PositionalProperties;
-
-            if (positionalProperties.Length != messageTemplateParameters.Length)
-                SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
-
-            var result = new EventProperty[messageTemplateParameters.Length];
-            foreach (var property in positionalProperties)
+            if (!result[i].Equals(EventProperty.None))
             {
-                if (property.TryGetPositionalValue(out var position))
-                {
-                    if (position < 0 || position >= messageTemplateParameters.Length)
-                        SelfLog.WriteLine("Unassigned positional value {0} in: {1}", position, template);
-                    else
-                        result[position] = ConstructProperty(property, messageTemplateParameters[position]);
-                }
+                result[next] = result[i];
+                ++next;
             }
-
-            var next = 0;
-            for (var i = 0; i < result.Length; ++i)
-            {
-                if (!result[i].Equals(EventProperty.None))
-                {
-                    result[next] = result[i];
-                    ++next;
-                }
-            }
-
-            if (next != result.Length)
-                Array.Resize(ref result, next);
-
-            return result;
         }
 
-        EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
+        if (next != result.Length)
+            Array.Resize(ref result, next);
+
+        return result;
+    }
+
+    EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
+    {
+        var namedProperties = template.NamedProperties;
+        if (namedProperties == null)
+            return NoProperties;
+
+        var matchedRun = namedProperties.Length;
+        if (namedProperties.Length != messageTemplateParameters.Length)
         {
-            var namedProperties = template.NamedProperties;
-            if (namedProperties == null)
-                return NoProperties;
-
-            var matchedRun = namedProperties.Length;
-            if (namedProperties.Length != messageTemplateParameters.Length)
-            {
-                matchedRun = Math.Min(namedProperties.Length, messageTemplateParameters.Length);
-                SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
-            }
-
-            var result = new EventProperty[messageTemplateParameters.Length];
-            for (var i = 0; i < matchedRun; ++i)
-            {
-                var property = template.NamedProperties[i];
-                var value = messageTemplateParameters[i];
-                result[i] = ConstructProperty(property, value);
-            }
-
-            for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)
-            {
-                var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
-                result[i] = new("__" + i, value);
-            }
-            return result;
+            matchedRun = Math.Min(namedProperties.Length, messageTemplateParameters.Length);
+            SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
         }
 
-        EventProperty ConstructProperty(PropertyToken propertyToken, object? value)
+        var result = new EventProperty[messageTemplateParameters.Length];
+        for (var i = 0; i < matchedRun; ++i)
         {
-            return new(
-                        propertyToken.PropertyName,
-                        _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring));
+            var property = namedProperties[i];
+            var value = messageTemplateParameters[i];
+            result[i] = ConstructProperty(property, value);
         }
+
+        for (var i = matchedRun; i < messageTemplateParameters.Length; ++i)
+        {
+            var value = _valueConverter.CreatePropertyValue(messageTemplateParameters[i]);
+            result[i] = new("__" + i, value);
+        }
+        return result;
+    }
+
+    EventProperty ConstructProperty(PropertyToken propertyToken, object? value)
+    {
+        return new(
+            propertyToken.PropertyName,
+            _valueConverter.CreatePropertyValue(value, propertyToken.Destructuring));
     }
 }

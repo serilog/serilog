@@ -12,31 +12,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using Serilog.Events;
-using System;
+namespace Serilog.Core.Sinks;
 
-namespace Serilog.Core.Sinks
+sealed class DisposeDelegatingSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
-    class DisposeDelegatingSink : ILogEventSink, IDisposable
+    readonly ILogEventSink _sink;
+    readonly IDisposable? _disposable;
+
+#if FEATURE_ASYNCDISPOSABLE
+    readonly IAsyncDisposable? _asyncDisposable;
+#endif
+
+    public DisposeDelegatingSink(ILogEventSink sink, IDisposable? disposable
+#if FEATURE_ASYNCDISPOSABLE
+        , IAsyncDisposable? asyncDisposable
+#endif
+        )
     {
-        readonly ILogEventSink _sink;
-        readonly IDisposable _disposable;
+        _sink = sink;
+        _disposable = disposable;
 
-        public DisposeDelegatingSink(ILogEventSink sink, IDisposable disposable)
-        {
-            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-            _disposable = disposable ?? throw new ArgumentNullException(nameof(disposable));
-        }
+#if FEATURE_ASYNCDISPOSABLE
+        _asyncDisposable = asyncDisposable;
+#endif
+    }
 
-        public void Dispose()
-        {
-            _disposable.Dispose();
-        }
+    public void Dispose()
+    {
+        _disposable?.Dispose();
+    }
 
-        public void Emit(LogEvent logEvent)
-        {
-            _sink.Emit(logEvent);
-        }
+#if FEATURE_ASYNCDISPOSABLE
+    public ValueTask DisposeAsync()
+    {
+        if (_asyncDisposable != null)
+            return _asyncDisposable.DisposeAsync();
+
+        Dispose();
+        return default;
+    }
+#endif
+
+    public void Emit(LogEvent logEvent)
+    {
+        _sink.Emit(logEvent);
     }
 }

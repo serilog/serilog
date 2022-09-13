@@ -1,13 +1,12 @@
 version: '{build}'
 skip_tags: true
 image:
-  - Visual Studio 2019
+  - Visual Studio 2022
   - Ubuntu
 configuration: Release
 test: off
 build_script:
   - ps: ./Build.ps1
-  - ps: ./BuildNativeUWP.ps1
 for:
 -
   matrix:
@@ -21,7 +20,7 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: Koq5UhgDHkK7NgoFMwKE+NH8l3E/YmRSgnokN9lTGJ38gJ62VWyiXauHi7KLQ3sH
+    secure: 45/vGyNCdoOvWSorcVX6qYM3oC/mCBj0CDRXNZP4twlIrBiZ9sKtKMdHwufm4ogS
   on:
     branch: /^(main|dev)$/
 - provider: GitHub

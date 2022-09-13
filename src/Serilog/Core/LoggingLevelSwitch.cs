@@ -12,38 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using Serilog.Events;
+namespace Serilog.Core;
 
-namespace Serilog.Core
+/// <summary>
+/// Dynamically controls logging level.
+/// </summary>
+public class LoggingLevelSwitch
 {
+    volatile LogEventLevel _minimumLevel;
+
     /// <summary>
-    /// Dynamically controls logging level.
+    /// Create a <see cref="LoggingLevelSwitch"/> at the initial
+    /// minimum level.
     /// </summary>
-    public class LoggingLevelSwitch
+    /// <param name="initialMinimumLevel">The initial level to which the switch is set.</param>
+    public LoggingLevelSwitch(LogEventLevel initialMinimumLevel = LogEventLevel.Information)
     {
-        volatile LogEventLevel _minimumLevel;
+        _minimumLevel = initialMinimumLevel;
+    }
 
-        /// <summary>
-        /// Create a <see cref="LoggingLevelSwitch"/> at the initial
-        /// minimum level.
-        /// </summary>
-        /// <param name="initialMinimumLevel">The initial level to which the switch is set.</param>
-        public LoggingLevelSwitch(LogEventLevel initialMinimumLevel = LogEventLevel.Information)
-        {
-            _minimumLevel = initialMinimumLevel;
-        }
-
-        /// <summary>
-        /// The current minimum level, below which no events
-        /// should be generated.
-        /// </summary>
-        // Reading this property generates a memory barrier,
-        // so needs to be used judiciously in the logging pipeline.
-        public LogEventLevel MinimumLevel
-        {
-            get { return _minimumLevel; }
-            set { _minimumLevel = value; }
-        }
+    /// <summary>
+    /// The current minimum level, below which no events
+    /// should be generated.
+    /// </summary>
+    // Reading this property generates a memory barrier,
+    // so needs to be used judiciously in the logging pipeline.
+    public LogEventLevel MinimumLevel
+    {
+        get { return _minimumLevel; }
+        set { _minimumLevel = value; }
     }
 }

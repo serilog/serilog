@@ -12,32 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using Serilog.Core;
-using Serilog.Events;
+namespace Serilog.Policies;
 
-namespace Serilog.Policies
+class SimpleScalarConversionPolicy : IScalarConversionPolicy
 {
-    class SimpleScalarConversionPolicy : IScalarConversionPolicy
+    readonly HashSet<Type> _scalarTypes;
+
+    public SimpleScalarConversionPolicy(IEnumerable<Type> scalarTypes)
     {
-        readonly HashSet<Type> _scalarTypes;
+        _scalarTypes = new(scalarTypes);
+    }
 
-        public SimpleScalarConversionPolicy(IEnumerable<Type> scalarTypes)
+    public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
+    {
+        if (_scalarTypes.Contains(value.GetType()))
         {
-            _scalarTypes = new(scalarTypes);
+            result = new(value);
+            return true;
         }
 
-        public bool TryConvertToScalar(object value, out ScalarValue result)
-        {
-            if (_scalarTypes.Contains(value.GetType()))
-            {
-                result = new ScalarValue(value);
-                return true;
-            }
-
-            result = null;
-            return false;
-        }
+        result = null;
+        return false;
     }
 }

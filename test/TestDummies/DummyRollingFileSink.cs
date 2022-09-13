@@ -1,25 +1,19 @@
-using System;
-using System.Collections.Generic;
-using Serilog.Core;
-using Serilog.Events;
+namespace TestDummies;
 
-namespace TestDummies
+public class DummyRollingFileSink : ILogEventSink
 {
-    public class DummyRollingFileSink : ILogEventSink
+    [ThreadStatic]
+    static List<LogEvent>? _emitted;
+
+    public static List<LogEvent> Emitted => _emitted ??= new();
+
+    public void Emit(LogEvent logEvent)
     {
-        [ThreadStatic]
-        static List<LogEvent>? _emitted;
+        Emitted.Add(logEvent);
+    }
 
-        public static List<LogEvent> Emitted => _emitted ?? (_emitted = new());
-
-        public void Emit(LogEvent logEvent)
-        {
-            Emitted.Add(logEvent);
-        }
-
-        public static void Reset()
-        {
-            _emitted = null;
-        }
+    public static void Reset()
+    {
+        _emitted = null;
     }
 }

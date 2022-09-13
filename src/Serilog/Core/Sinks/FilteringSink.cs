@@ -12,49 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Debugging;
-using Serilog.Events;
+namespace Serilog.Core.Sinks;
 
-namespace Serilog.Core.Sinks
+class FilteringSink : ILogEventSink
 {
-    class FilteringSink : ILogEventSink
+    readonly ILogEventSink _sink;
+    readonly bool _propagateExceptions;
+    readonly ILogEventFilter[] _filters;
+
+    public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters, bool propagateExceptions)
     {
-        readonly ILogEventSink _sink;
-        readonly bool _propagateExceptions;
-        readonly ILogEventFilter[] _filters;
+        _sink = Guard.AgainstNull(sink);
+        _filters = Guard.AgainstNull(filters).ToArray();
+        _propagateExceptions = propagateExceptions;
+    }
 
-        public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters, bool propagateExceptions)
+    public void Emit(LogEvent logEvent)
+    {
+        try
         {
-            if (filters == null) throw new ArgumentNullException(nameof(filters));
-            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+            foreach (var logEventFilter in _filters)
+            {
+                if (!logEventFilter.IsEnabled(logEvent))
+                    return;
+            }
 
-            _filters = filters.ToArray();
-            _propagateExceptions = propagateExceptions;
+            _sink.Emit(logEvent);
         }
-
-        public void Emit(LogEvent logEvent)
+        catch (Exception ex)
         {
-            try
-            {
-                foreach (var logEventFilter in _filters)
-                {
-                    if (!logEventFilter.IsEnabled(logEvent))
-                        return;
-                }
+            SelfLog.WriteLine("Caught exception while applying filters: {0}", ex);
 
-                _sink.Emit(logEvent);
-            }
-            catch (Exception ex)
-            {
-                SelfLog.WriteLine("Caught exception while applying filters: {0}", ex);
-
-                if (_propagateExceptions)
-                    throw;
-            }
+            if (_propagateExceptions)
+                throw;
         }
     }
 }

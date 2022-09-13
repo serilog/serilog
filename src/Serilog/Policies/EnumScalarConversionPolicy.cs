@@ -12,24 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Core;
-using Serilog.Events;
-using System.Reflection;
+namespace Serilog.Policies;
 
-namespace Serilog.Policies
+class EnumScalarConversionPolicy : IScalarConversionPolicy
 {
-    class EnumScalarConversionPolicy : IScalarConversionPolicy
+    public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
     {
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        if (value.GetType().GetTypeInfo().IsEnum)
         {
-            if (value.GetType().GetTypeInfo().IsEnum)
-            {
-                result = new ScalarValue(value);
-                return true;
-            }
-
-            result = null;
-            return false;
+            result = new ScalarValue(value);
+            return true;
         }
+
+        result = null;
+        return false;
     }
 }

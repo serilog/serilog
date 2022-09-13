@@ -21,7 +21,7 @@ Unlike other logging libraries, Serilog is built from the ground up to record _s
 var position = new { Latitude = 25, Longitude = 134 };
 var elapsedMs = 34;
 
-log.Information("Processed {@Position} in {Elapsed} ms.", position, elapsedMs);
+log.Information("Processed {@Position} in {Elapsed} ms", position, elapsedMs);
 ```
 
 Serilog uses [message templates](https://messagetemplates.org), a simple DSL that extends .NET format strings with _named_ as well as positional parameters. Instead of formatting events immediately into text, Serilog captures the values associated with each named parameter.
@@ -61,9 +61,9 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
 Serilog is installed from NuGet. To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing console sink, and a rolling file set:
 
 ```
-Install-Package Serilog
-Install-Package Serilog.Sinks.Console
-Install-Package Serilog.Sinks.File
+dotnet add package Serilog
+dotnet add package Serilog.Sinks.Console
+dotnet add package Serilog.Sinks.File
 ```
 
 The simplest way to set up Serilog is using the static `Log` class. A `LoggerConfiguration` is used to create and assign the default logger.

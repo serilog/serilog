@@ -12,20 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Events;
+namespace Serilog.Core;
 
-namespace Serilog.Core
+/// <summary>
+/// Applied during logging to add additional information to log events.
+/// </summary>
+public interface ILogEventEnricher
 {
     /// <summary>
-    /// Applied during logging to add additional information to log events.
+    /// Enrich the log event.
     /// </summary>
-    public interface ILogEventEnricher
-    {
-        /// <summary>
-        /// Enrich the log event.
-        /// </summary>
-        /// <param name="logEvent">The log event to enrich.</param>
-        /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
-        void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory);
-    }
+    /// <param name="logEvent">The log event to enrich.</param>
+    /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+    void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory);
 }

@@ -12,36 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Serilog.Core;
-using Serilog.Events;
+namespace Serilog.Policies;
 
-namespace Serilog.Policies
+class ProjectedDestructuringPolicy : IDestructuringPolicy
 {
-    class ProjectedDestructuringPolicy : IDestructuringPolicy
+    readonly Func<Type, bool> _canApply;
+    readonly Func<object, object> _projection;
+
+    public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
     {
-        readonly Func<Type, bool> _canApply;
-        readonly Func<object, object> _projection;
+        _canApply = Guard.AgainstNull(canApply);
+        _projection = Guard.AgainstNull(projection);
+    }
 
-        public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    {
+        Guard.AgainstNull(value);
+
+        if (!_canApply(value.GetType()))
         {
-            _canApply = canApply ?? throw new ArgumentNullException(nameof(canApply));
-            _projection = projection ?? throw new ArgumentNullException(nameof(projection));
+            result = null;
+            return false;
         }
 
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
-        {
-            if (value == null) throw new ArgumentNullException(nameof(value));
-
-            if (!_canApply(value.GetType()))
-            {
-                result = null;
-                return false;
-            }
-
-            var projected = _projection(value);
-            result = propertyValueFactory.CreatePropertyValue(projected, destructureObjects: true);
-            return true;
-        }
+        var projected = _projection(value);
+        result = propertyValueFactory.CreatePropertyValue(projected, destructureObjects: true);
+        return true;
     }
 }

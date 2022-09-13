@@ -12,56 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using Serilog.Events;
+namespace Serilog.Core.Enrichers;
 
-namespace Serilog.Core.Enrichers
+/// <summary>
+/// Adds a new property enricher to the log event.
+/// </summary>
+public class PropertyEnricher : ILogEventEnricher
 {
+    readonly string _name;
+    readonly object? _value;
+    readonly bool _destructureObjects;
+
     /// <summary>
-    /// Adds a new property enricher to the log event.
+    /// Create a new property enricher.
     /// </summary>
-    public class PropertyEnricher : ILogEventEnricher
+    /// <param name="name">The name of the property.</param>
+    /// <param name="value">The value of the property.</param>
+    /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+    /// then the value will be converted to a structure; otherwise, unknown types will
+    /// be converted to scalars, which are generally stored as strings.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
+    public PropertyEnricher(string name, object? value, bool destructureObjects = false)
     {
-        readonly string _name;
-        readonly object _value;
-        readonly bool _destructureObjects;
+        LogEventProperty.EnsureValidName(name);
 
-        /// <summary>
-        /// Create a new property enricher.
-        /// </summary>
-        /// <param name="name">The name of the property.</param>
-        /// <param name="value">The value of the property.</param>
-        /// <returns>A handle to later remove the property from the context.</returns>
-        /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
-        /// then the value will be converted to a structure; otherwise, unknown types will
-        /// be converted to scalars, which are generally stored as strings.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
-        /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
-        public PropertyEnricher(string name, object value, bool destructureObjects = false)
-        {
-            LogEventProperty.EnsureValidName(name);
+        _name = name;
+        _value = value;
+        _destructureObjects = destructureObjects;
+    }
 
-            _name = name;
-            _value = value;
-            _destructureObjects = destructureObjects;
-        }
+    /// <summary>
+    /// Enrich the log event.
+    /// </summary>
+    /// <param name="logEvent">The log event to enrich.</param>
+    /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="logEvent"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="propertyFactory"/> is <code>null</code></exception>
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
+        Guard.AgainstNull(logEvent);
+        Guard.AgainstNull(propertyFactory);
 
-        /// <summary>
-        /// Enrich the log event.
-        /// </summary>
-        /// <param name="logEvent">The log event to enrich.</param>
-        /// <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
-        /// <exception cref="ArgumentNullException">When <paramref name="logEvent"/> is <code>null</code></exception>
-        /// <exception cref="ArgumentNullException">When <paramref name="propertyFactory"/> is <code>null</code></exception>
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            if (propertyFactory == null) throw new ArgumentNullException(nameof(propertyFactory));
-
-            var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
-            logEvent.AddPropertyIfAbsent(property);
-        }
+        var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
+        logEvent.AddPropertyIfAbsent(property);
     }
 }

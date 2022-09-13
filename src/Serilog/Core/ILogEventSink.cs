@@ -12,19 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Events;
+namespace Serilog.Core;
 
-namespace Serilog.Core
+/// <summary>
+/// A destination for log events.
+/// </summary>
+public interface ILogEventSink
 {
     /// <summary>
-    /// A destination for log events.
+    /// Emit the provided log event to the sink.
     /// </summary>
-    public interface ILogEventSink
-    {
-        /// <summary>
-        /// Emit the provided log event to the sink.
-        /// </summary>
-        /// <param name="logEvent">The log event to write.</param>
-        void Emit(LogEvent logEvent);
-    }
+    /// <param name="logEvent">The log event to write.</param>
+    void Emit(LogEvent logEvent);
 }

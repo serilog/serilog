@@ -12,29 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
+namespace Serilog.Formatting.Display.Obsolete;
 
-using Serilog.Events;
-
-namespace Serilog.Formatting.Display.Obsolete
+[Obsolete("Not used by the current output formatting implementation.")]
+class LogEventLevelValue : LogEventPropertyValue
 {
-    [Obsolete("Not used by the current output formatting implementation.")]
-    class LogEventLevelValue : LogEventPropertyValue
+    readonly LogEventLevel _value;
+
+    public LogEventLevelValue(LogEventLevel value)
     {
-        readonly LogEventLevel _value;
+        _value = value;
+    }
 
-        public LogEventLevelValue(LogEventLevel value)
-        {
-            _value = value;
-        }
-
-        /// <summary>
-        /// This method will apply only upper or lower case formatting, not fixed width
-        /// </summary>
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
-        {
-            output.Write(LevelOutputFormat.GetLevelMoniker(_value, format));
-        }
+    /// <summary>
+    /// This method will apply only upper or lower case formatting, not fixed width
+    /// </summary>
+    public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+    {
+        output.Write(LevelOutputFormat.GetLevelMoniker(_value, format));
     }
 }

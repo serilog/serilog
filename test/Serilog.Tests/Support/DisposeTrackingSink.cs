@@ -1,20 +1,15 @@
-﻿using System;
-using Serilog.Core;
-using Serilog.Events;
+﻿namespace Serilog.Tests.Support;
 
-namespace Serilog.Tests.Support
+sealed class DisposeTrackingSink : ILogEventSink, IDisposable
 {
-    class DisposeTrackingSink : ILogEventSink, IDisposable
+    public bool IsDisposed { get; set; }
+
+    public void Emit(LogEvent logEvent)
     {
-        public bool IsDisposed { get; set; }
+    }
 
-        public void Emit(LogEvent logEvent)
-        {
-        }
-
-        public void Dispose()
-        {
-            IsDisposed = true;
-        }
+    public void Dispose()
+    {
+        IsDisposed = true;
     }
 }

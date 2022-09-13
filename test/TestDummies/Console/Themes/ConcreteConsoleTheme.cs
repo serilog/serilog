@@ -1,6 +1,5 @@
-namespace TestDummies.Console.Themes
+namespace TestDummies.Console.Themes;
+
+class ConcreteConsoleTheme : ConsoleTheme
 {
-    class ConcreteConsoleTheme : ConsoleTheme
-    {
-    }
 }

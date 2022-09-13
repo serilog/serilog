@@ -12,61 +12,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using BenchmarkDotNet.Attributes;
-using System.Linq;
-using Serilog.Events;
-using Serilog.PerformanceTests.Support;
+namespace Serilog.PerformanceTests;
 
-namespace Serilog.PerformanceTests
+/// <summary>
+/// Tests the cost of writing through the logging pipeline.
+/// </summary>
+[MemoryDiagnoser]
+public class BindingBenchmark
 {
-    /// <summary>
-    /// Tests the cost of writing through the logging pipeline.
-    /// </summary>
-    [MemoryDiagnoser]
-    public class BindingBenchmark
+    const string
+        MT0 = "Zero",
+        MT1 = "Zero{A}one",
+        MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
+
+    ILogger _log = null!;
+    object[] _zero= null!, _one= null!, _five = null!;
+
+    [GlobalSetup]
+    public void Setup()
     {
-        const string
-            MT0 = "Zero",
-            MT1 = "Zero{A}one",
-            MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
+        _log = new LoggerConfiguration()
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger();
 
-        ILogger _log = null!;
-        object[] _zero= null!, _one= null!, _five = null!;
+        _zero = new object[0];
+        _one = new object[] { 1 };
+        _five = new object[] { 1, 2, 3, 4, 5 };
+    }
 
-        [GlobalSetup]
-        public void Setup()
-        {
-            _log = new LoggerConfiguration()
-                .WriteTo.Sink(new NullSink())
-                .CreateLogger();
+    // The benchmarks run p.Count() to force enumeration; this will be representative of how the API
+    // is consumed (there's not much point benchmarking time to return a lazy enumerator).
 
-            _zero = new object[0];
-            _one = new object[] { 1 };
-            _five = new object[] { 1, 2, 3, 4, 5 };
-        }
+    [Benchmark(Baseline = true)]
+    public (MessageTemplate, int) BindZero()
+    {
+        _log.BindMessageTemplate(MT0, _zero, out var mt, out var p);
+        return (mt, p!.Count())!;
+    }
 
-        // The benchmarks run p.Count() to force enumeration; this will be representative of how the API
-        // is consumed (there's not much point benchmarking time to return a lazy enumerator).
+    [Benchmark]
+    public (MessageTemplate, int) BindOne()
+    {
+        _log.BindMessageTemplate(MT1, _one, out var mt, out var p);
+        return (mt, p!.Count())!;
+    }
 
-        [Benchmark(Baseline = true)]
-        public (MessageTemplate, int) BindZero()
-        {
-            _log.BindMessageTemplate(MT0, _zero, out var mt, out var p);
-            return (mt, p!.Count())!;
-        }
-
-        [Benchmark]
-        public (MessageTemplate, int) BindOne()
-        {
-            _log.BindMessageTemplate(MT1, _one, out var mt, out var p);
-            return (mt, p!.Count())!;
-        }
-
-        [Benchmark]
-        public (MessageTemplate, int) BindFive()
-        {
-            _log.BindMessageTemplate(MT5, _five, out var mt, out var p);
-            return (mt, p!.Count())!;
-        }
+    [Benchmark]
+    public (MessageTemplate, int) BindFive()
+    {
+        _log.BindMessageTemplate(MT5, _five, out var mt, out var p);
+        return (mt, p!.Count())!;
     }
 }

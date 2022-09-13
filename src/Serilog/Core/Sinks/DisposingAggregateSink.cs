@@ -12,61 +12,92 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using Serilog.Debugging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Events;
+namespace Serilog.Core.Sinks;
 
-namespace Serilog.Core.Sinks
+sealed class DisposingAggregateSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
-    class DisposingAggregateSink : ILogEventSink, IDisposable
-    {
-        readonly ILogEventSink[] _sinks;
+    readonly ILogEventSink[] _sinks;
 
-        public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
+    public DisposingAggregateSink(IEnumerable<ILogEventSink> sinks)
+    {
+        Guard.AgainstNull(sinks);
+        _sinks = sinks.ToArray();
+    }
+
+    public void Emit(LogEvent logEvent)
+    {
+        List<Exception>? exceptions = null;
+        foreach (var sink in _sinks)
         {
-            if (sinks == null) throw new ArgumentNullException(nameof(sinks));
-            _sinks = sinks.ToArray();
+            try
+            {
+                sink.Emit(logEvent);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
+                exceptions ??= new();
+                exceptions.Add(ex);
+            }
         }
 
-        public void Emit(LogEvent logEvent)
+        if (exceptions != null)
+            throw new AggregateException("Failed to emit a log event.", exceptions);
+    }
+
+    public void Dispose()
+    {
+        foreach (var sink in _sinks)
         {
-            List<Exception>? exceptions = null;
-            foreach (var sink in _sinks)
+            if (sink is not IDisposable disposable) continue;
+
+            try
+            {
+                disposable.Dispose();
+            }
+            catch (Exception ex)
+            {
+                ReportDisposingException(sink, ex);
+            }
+        }
+    }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var sink in _sinks)
+        {
+            if (sink is IAsyncDisposable asyncDisposable)
             {
                 try
                 {
-                    sink.Emit(logEvent);
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                    exceptions ??= new();
-                    exceptions.Add(ex);
+                    ReportDisposingException(sink, ex);
                 }
             }
-
-            if (exceptions != null)
-                throw new AggregateException("Failed to emit a log event.", exceptions);
-        }
-
-        public void Dispose()
-        {
-            foreach (var sink in _sinks)
+            else if (sink is IDisposable disposable)
             {
-                if (!(sink is IDisposable disposable)) continue;
-
                 try
                 {
                     disposable.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
+                    ReportDisposingException(sink, ex);
                 }
             }
         }
+    }
+#endif
+
+    static void ReportDisposingException(ILogEventSink sink, Exception ex)
+    {
+        SelfLog.WriteLine("Caught exception while disposing sink {0}: {1}", sink, ex);
     }
 }

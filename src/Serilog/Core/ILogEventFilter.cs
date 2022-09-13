@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Events;
+namespace Serilog.Core;
 
-namespace Serilog.Core
+/// <summary>
+/// Provides filtering of the log event stream.
+/// </summary>
+public interface ILogEventFilter
 {
     /// <summary>
-    /// Provides filtering of the log event stream.
+    /// Returns true if the provided event is enabled. Otherwise, false.
     /// </summary>
-    public interface ILogEventFilter
-    {
-        /// <summary>
-        /// Returns true if the provided event is enabled. Otherwise, false.
-        /// </summary>
-        /// <param name="logEvent">The event to test.</param>
-        /// <returns>True if the event is enabled by this filter. If false
-        /// is returned, the event will not be emitted.</returns>
-        bool IsEnabled(LogEvent logEvent);
-    }
+    /// <param name="logEvent">The event to test.</param>
+    /// <returns>True if the event is enabled by this filter. If false
+    /// is returned, the event will not be emitted.</returns>
+    bool IsEnabled(LogEvent logEvent);
 }
