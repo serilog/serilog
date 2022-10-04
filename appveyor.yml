@@ -2,6 +2,7 @@ version: '{build}'
 skip_tags: true
 image:
   - Visual Studio 2022
+  - macOS
   - Ubuntu
 configuration: Release
 test: off
@@ -12,6 +13,7 @@ for:
   matrix:
     only:
       - image: Ubuntu
+      - image: macOS
   build_script:
   - sh build.sh
 artifacts:
