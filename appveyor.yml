@@ -2,6 +2,7 @@ version: '{build}'
 skip_tags: true
 image:
   - Visual Studio 2022
+  - macOS
   - Ubuntu
 configuration: Release
 test: off
