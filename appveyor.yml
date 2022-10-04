@@ -9,15 +9,15 @@ build_script:
 - pwsh: |
     if ($isWindows) {
       Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
-      ./dotnet-install.ps1 -Architecture x64 -InstallDir 'C:\Program Files\dotnet'
+      ./dotnet-install.ps1 -JSonFile src/global.json -Architecture x64 -InstallDir 'C:\Program Files\dotnet'
     }
     else {
       Invoke-WebRequest "https://dot.net/v1/dotnet-install.sh" -OutFile "./dotnet-install.sh"
       sudo chmod u+x dotnet-install.sh
       if ($isMacOS) {
-        sudo ./dotnet-install.sh --architecture x64 --install-dir '/usr/local/share/dotnet'
+        sudo ./dotnet-install.sh --jsonfile src/global.json --architecture x64 --install-dir '/usr/local/share/dotnet'
       } else {
-        sudo ./dotnet-install.sh --architecture x64 --install-dir '/usr/share/dotnet'
+        sudo ./dotnet-install.sh --jsonfile src/global.json --architecture x64 --install-dir '/usr/share/dotnet'
       }
     }
 - ps: ./Build.ps1
