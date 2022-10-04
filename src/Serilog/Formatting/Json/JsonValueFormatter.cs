@@ -172,7 +172,11 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
         if (value is ValueType)
         {
-            if (value is int or uint or long or ulong or decimal or byte or sbyte or short or ushort)
+            if (value is int or uint or long or ulong or decimal or byte or sbyte or short or ushort
+#if FEATURE_HALF
+                or Half
+#endif
+                )
             {
                 FormatExactNumericValue((IFormattable)value, output);
                 return;
