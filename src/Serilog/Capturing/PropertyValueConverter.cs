@@ -30,7 +30,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
         typeof(Guid), typeof(Uri),
 #if FEATURE_DATE_AND_TIME_ONLY
-            typeof(TimeOnly), typeof(DateOnly)
+        typeof(TimeOnly), typeof(DateOnly),
+#endif
+#if FEATURE_INT128
+        typeof(Int128), typeof(UInt128)
 #endif
     };
 
