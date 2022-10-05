@@ -6,14 +6,27 @@ image:
 configuration: Release
 test: off
 build_script:
-  - ps: ./Build.ps1
-for:
--
-  matrix:
-    only:
-      - image: Ubuntu
-  build_script:
-  - sh build.sh
+- pwsh: |
+    if ($isWindows)
+    {
+      Invoke-WebRequest https://dot.net/v1/dotnet-install.ps1 -OutFile ./dotnet-install.ps1
+      ./dotnet-install.ps1 -InstallDir 'C:\Program Files\dotnet'
+    }
+    else
+    {
+      Invoke-WebRequest https://dot.net/v1/dotnet-install.sh -OutFile ./dotnet-install.sh
+      sudo chmod u+x dotnet-install.sh
+      if ($isMacOS)
+      {
+        sudo ./dotnet-install.sh --install-dir /usr/local/share/dotnet
+      }
+      else
+      {
+        sudo ./dotnet-install.sh --install-dir /usr/share/dotnet
+      }
+    }
+- dotnet build --configuration Release --nologo
+- dotnet test --configuration Release --no-build --no-restore --nologo
 artifacts:
 - path: artifacts/Serilog.*.nupkg
 - path: artifacts/Serilog.*.snupkg
