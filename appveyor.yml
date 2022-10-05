@@ -25,8 +25,8 @@ build_script:
         sudo ./dotnet-install.sh --install-dir /usr/share/dotnet
       }
     }
-- dotnet build src --configuration Release --nologo
-- dotnet test src --configuration Release --no-build --no-restore --nologo
+- dotnet build --configuration Release --nologo
+- dotnet test --configuration Release --no-build --no-restore --nologo
 artifacts:
 - path: artifacts/Serilog.*.nupkg
 - path: artifacts/Serilog.*.snupkg
