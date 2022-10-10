@@ -172,15 +172,19 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
         if (value is ValueType)
         {
-            if (value is int or uint or long or ulong or decimal or byte or sbyte or short or ushort
-#if FEATURE_HALF
-                or Half
-#endif
-                )
+            if (value is int or uint or long or ulong or decimal or byte or sbyte or short or ushort)
             {
                 FormatExactNumericValue((IFormattable)value, output);
                 return;
             }
+
+#if FEATURE_HALF
+            if (value is Half h)
+            {
+                FormatHalfValue(h, output);
+                return;
+            }
+#endif
 
             if (value is double d)
             {
@@ -262,6 +266,19 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
         output.Write(value.ToString("R", CultureInfo.InvariantCulture));
     }
+
+#if FEATURE_HALF
+    static void FormatHalfValue(Half value, TextWriter output)
+    {
+        if (Half.IsNaN(value) || Half.IsInfinity(value))
+        {
+            FormatStringValue(value.ToString(CultureInfo.InvariantCulture), output);
+            return;
+        }
+
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+    }
+#endif
 
     static void FormatExactNumericValue(IFormattable value, TextWriter output)
     {
