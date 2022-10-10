@@ -85,6 +85,9 @@ public class JsonFormatter : ITextFormatter
             { typeof(uint), WriteToString },
             { typeof(long), WriteToString },
             { typeof(ulong), WriteToString },
+#if FEATURE_HALF
+            { typeof(Half), WriteToString },
+#endif
             { typeof(float), (v, _, w) => WriteSingle((float)v, w) },
             { typeof(double), (v, _, w) => WriteDouble((double)v, w) },
             { typeof(decimal), WriteToString },
