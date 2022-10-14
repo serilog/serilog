@@ -11,6 +11,8 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <TreatSpecificWarningsAsErrors />
+    <IsTrimmable>true</IsTrimmable>
+    <NoWarn>$(NoWarn);CS1437;CS1570</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">

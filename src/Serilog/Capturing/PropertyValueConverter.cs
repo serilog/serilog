@@ -358,7 +358,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                valueType.GetTypeInfo().IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value)
+    IEnumerable<LogEventProperty> GetProperties<
+#if NET6_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+#endif
+    T>(T value) where T : notnull
     {
         foreach (var prop in value.GetType().GetPropertiesRecursive())
         {

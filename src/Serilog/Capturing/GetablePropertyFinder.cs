@@ -12,10 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
+
 namespace Serilog.Capturing;
 
 static class GetablePropertyFinder
 {
+#if NET5_0_OR_GREATER
+    internal static IEnumerable<PropertyInfo> GetPropertiesRecursive(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] this Type type)
+    {
+        return type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(
+            p => (p.Name != "Item" || p.GetIndexParameters().Length == 0));
+    }
+#else
     internal static IEnumerable<PropertyInfo> GetPropertiesRecursive(this Type type)
     {
         var seenNames = new HashSet<string>();
@@ -43,4 +55,5 @@ static class GetablePropertyFinder
             currentTypeInfo = baseType.GetTypeInfo();
         }
     }
+#endif
 }

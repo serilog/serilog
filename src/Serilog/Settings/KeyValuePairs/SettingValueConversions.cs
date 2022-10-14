@@ -25,9 +25,18 @@ class SettingValueConversions
     {
         { typeof(Uri), s => new Uri(s) },
         { typeof(TimeSpan), s => TimeSpan.Parse(s) },
-        { typeof(Type), s => Type.GetType(s, throwOnError: true)! },
+        { typeof(Type), 
+#if NET6_0_OR_GREATER
+            // Suppress this trimming warning. We'll annotate all the users of this dictionary instead
+            [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2057")]
+#endif
+            (s) => Type.GetType(s, throwOnError: true)!
+        },
     };
 
+#if NET5_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds accessors by name")]
+#endif
     public static object? ConvertToType(string value, Type toType)
     {
         var toTypeInfo = toType.GetTypeInfo();
