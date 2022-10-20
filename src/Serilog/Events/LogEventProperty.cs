@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,11 +64,34 @@ public class LogEventProperty
     /// </summary>
     /// <param name="name">The name to check.</param>
     /// <returns>True if the name is valid; otherwise, false.</returns>
-    public static bool IsValidName([NotNullWhen(true)] string? name) => !string.IsNullOrWhiteSpace(name);
+    public static bool IsValidName([NotNullWhen(true)] string? name) =>
+#if !NET35
+        !string.IsNullOrWhiteSpace(name);
+#else
+        IsNullOrWhiteSpace(name);
 
+    /// <summary>
+    /// Checks if a string is null or whitespace.
+    /// </summary>
+    /// <param name="value">the value.</param>
+    public static bool IsNullOrWhiteSpace(string? value)
+    {
+        if (value == null) return true;
+
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (!char.IsWhiteSpace(value[i])) return false;
+        }
+
+        return true;
+    }
+
+#endif
     /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
     /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
+#if !NET35 && !NET40
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
     internal static void EnsureValidName(string name)
     {
         Guard.AgainstNull(name);

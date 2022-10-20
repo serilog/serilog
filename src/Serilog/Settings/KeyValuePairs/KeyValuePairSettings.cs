@@ -67,9 +67,21 @@ class KeyValuePairSettings : ILoggerSettings
         [typeof(LoggerDestructuringConfiguration)] = lc => lc.Destructure,
     };
 
-    readonly IReadOnlyDictionary<string, string> _settings;
+    readonly 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, string> _settings;
 
-    public KeyValuePairSettings(IReadOnlyDictionary<string, string> settings)
+    public KeyValuePairSettings(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, string> settings)
     {
         _settings = Guard.AgainstNull(settings);
     }
@@ -83,9 +95,32 @@ class KeyValuePairSettings : ILoggerSettings
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         var declaredLevelSwitches = ParseNamedLevelSwitchDeclarationDirectives(directives);
+#if NET35
+        LogEventLevel minimumLevel = default;
+        bool parsed = true;
+        var tryGetValue = directives.TryGetValue(MinimumLevelDirective, out var minimumLevelDirective);
+        try
+        {
+            if (!string.IsNullOrEmpty(minimumLevelDirective))
+            {
+                minimumLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel), minimumLevelDirective!);
+            }
+            else
+            {
+                parsed = false;
+            }
+        }
+        catch
+        {
+            parsed = false;
+        }
 
+        if (tryGetValue && parsed)
+#else
         if (directives.TryGetValue(MinimumLevelDirective, out var minimumLevelDirective) &&
             Enum.TryParse(minimumLevelDirective, out LogEventLevel minimumLevel))
+#endif
+
         {
             loggerConfiguration.MinimumLevel.Is(minimumLevel);
         }
@@ -108,7 +143,21 @@ class KeyValuePairSettings : ILoggerSettings
         {
             var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
 
+#if NET35
+            LogEventLevel overriddenLevel = default;
+            bool b = true;
+            try
+            {
+                overriddenLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel),minimumLevelOverrideDirective.Value);
+            }
+            catch
+            {
+                b = false;
+            }
+            if (b)
+#else
             if (Enum.TryParse(minimumLevelOverrideDirective.Value, out LogEventLevel overriddenLevel))
+#endif
             {
                 loggerConfiguration.MinimumLevel.Override(namespacePrefix, overriddenLevel);
             }
@@ -155,7 +204,19 @@ class KeyValuePairSettings : ILoggerSettings
         return Regex.IsMatch(input, LevelSwitchNameRegex);
     }
 
-    static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
+    static 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, string> directives)
     {
         var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
 
@@ -194,7 +255,13 @@ class KeyValuePairSettings : ILoggerSettings
         return namedSwitches;
     }
 
-    static LoggingLevelSwitch LookUpSwitchByName(string switchName, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredLevelSwitches)
+    static LoggingLevelSwitch LookUpSwitchByName(string switchName, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LoggingLevelSwitch> declaredLevelSwitches)
     {
         if (declaredLevelSwitches.TryGetValue(switchName, out var levelSwitch))
         {
@@ -204,7 +271,13 @@ class KeyValuePairSettings : ILoggerSettings
         throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
     }
 
-    static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
+    static object ConvertOrLookupByName(string valueOrSwitchName, Type type, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LoggingLevelSwitch> declaredSwitches)
     {
         if (type == typeof(LoggingLevelSwitch))
         {
@@ -213,7 +286,13 @@ class KeyValuePairSettings : ILoggerSettings
         return SettingValueConversions.ConvertToType(valueOrSwitchName, type)!;
     }
 
-    static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
+    static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LoggingLevelSwitch> declaredSwitches)
     {
         foreach (var directiveInfo in directives)
         {
@@ -242,20 +321,39 @@ class KeyValuePairSettings : ILoggerSettings
         return candidateMethods
             .Where(m => m.Name == name &&
                         m.GetParameters().Skip(1)
-                            .All(p => p.HasDefaultValue ||
+                            .All(p =>
+#if !NET35 && !NET40
+                                p.HasDefaultValue ||
+#else
+                                p.DefaultValue!=DBNull.Value ||
+#endif
                                       suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
             .OrderByDescending(m => m.GetParameters().Count(p => suppliedArgumentValues.Any(s => s.ArgumentName == p.Name)))
             .FirstOrDefault();
     }
 
-    internal static IEnumerable<Assembly> LoadConfigurationAssemblies(IReadOnlyDictionary<string, string> directives)
+    internal static IEnumerable<Assembly> LoadConfigurationAssemblies(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, string> directives)
     {
-        var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
+        var configurationAssemblies = new List<Assembly> { typeof(ILogger)
+#if !NET35 && !NET40
+            .GetTypeInfo()
+#endif
+            .Assembly };
 
         foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
                                                              d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
         {
+#if !NET35
             if (string.IsNullOrWhiteSpace(usingDirective.Value))
+#else
+            if (LogEventProperty.IsNullOrWhiteSpace(usingDirective.Value))
+#endif
                 throw new InvalidOperationException("A zero-length or whitespace assembly name was supplied to a serilog:using configuration statement.");
 
             var assemblyName = new AssemblyName(usingDirective.Value);

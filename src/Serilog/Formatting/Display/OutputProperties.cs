@@ -60,7 +60,13 @@ public static class OutputProperties
     /// <param name="logEvent">The log event.</param>
     /// <returns>A dictionary with properties representing the log event.</returns>
     [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
-    public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
+    public static 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
     {
         return GetOutputProperties(logEvent, MessageTemplate.Empty);
     }
@@ -71,7 +77,13 @@ public static class OutputProperties
     /// <param name="logEvent">The log event.</param>
     /// <param name="outputTemplate">The output template.</param>
     /// <returns>A dictionary with properties representing the log event.</returns>
-    internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
+    internal static 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)
     {
         var result = logEvent.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 

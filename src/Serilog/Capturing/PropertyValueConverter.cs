@@ -255,7 +255,13 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         var valueType = value.GetType();
-        if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
+        if (!(value is IStructuralEquatable &&
+#if !NET40 && !NET35
+            valueType.IsConstructedGenericType
+#else
+            valueType.IsGenericType && !valueType.IsGenericTypeDefinition
+#endif
+              ))
         {
             result = null;
             return false;
@@ -282,7 +288,13 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #endif
         {
             var elements = new List<LogEventPropertyValue>();
-            foreach (var field in valueType.GetTypeInfo().DeclaredFields)
+            foreach (var field in valueType
+#if !NET35 && !NET40
+                         .GetTypeInfo().DeclaredFields
+#else
+                         .GetFields()
+#endif
+                         )
             {
                 if (field.IsPublic && !field.IsStatic)
                 {
@@ -340,9 +352,20 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     static bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (valueType.IsConstructedGenericType &&
+        if (
+#if !NET40 && !NET35
+            valueType.IsConstructedGenericType &&
+#else
+            valueType.IsGenericType && !valueType.IsGenericTypeDefinition &&
+#endif
             valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-            IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+            IsValidDictionaryKeyType(valueType.
+#if !NET35 && !NET40
+                    GenericTypeArguments[0]
+#else
+                    GetGenericArguments()[0]
+#endif
+            ))
         {
             dictionary = (IDictionary)value;
             return true;
@@ -355,7 +378,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     static bool IsValidDictionaryKeyType(Type valueType)
     {
         return BuiltInScalarTypes.Contains(valueType) ||
-               valueType.GetTypeInfo().IsEnum;
+               valueType
+#if !NET35 && !NET40
+                   .GetTypeInfo()
+#endif
+                   .IsEnum;
     }
 
     IEnumerable<LogEventProperty> GetProperties(object value)
@@ -365,7 +392,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             object propValue;
             try
             {
+#if NET35 || NET40
+                propValue = prop.GetValue(value, new object[0])!;
+# else
                 propValue = prop.GetValue(value)!;
+#endif
             }
             catch (TargetParameterCountException)
             {
@@ -396,10 +427,17 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         }
     }
 
+#if !NET35 && !NET40
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
     internal static bool IsCompilerGeneratedType(Type type)
     {
-        var typeInfo = type.GetTypeInfo();
+#if !NET35 && !NET40
+        var typeInfo = type
+            .GetTypeInfo();
+#else
+        var typeInfo = type;
+#endif
         var typeName = type.Name;
 
         // C# Anonymous types always start with "<>" and VB's start with "VB$"

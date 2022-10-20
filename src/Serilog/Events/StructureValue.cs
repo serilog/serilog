@@ -49,7 +49,13 @@ public class StructureValue : LogEventPropertyValue
     /// <remarks>Not presented as a dictionary because dictionary construction is
     /// relatively expensive; it is cheaper to build a dictionary over properties only
     /// when the structure is of interest.</remarks>
-    public IReadOnlyList<LogEventProperty> Properties => _properties;
+    public 
+#if NET35 || NET40
+    IList
+#else
+    IReadOnlyList
+#endif
+        <LogEventProperty> Properties => _properties;
 
     /// <summary>
     /// Render the value to the output.

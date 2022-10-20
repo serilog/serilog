@@ -126,7 +126,13 @@ public class MessageTemplate
     /// properties are mismatched with the template, the template will be
     /// returned with incomplete substitution.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-    public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider? formatProvider = null)
+    public string Render(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, IFormatProvider? formatProvider = null)
     {
         var writer = new StringWriter(formatProvider);
         Render(properties, writer, formatProvider);
@@ -144,7 +150,13 @@ public class MessageTemplate
     /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-    public void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
+    public void Render(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
         Guard.AgainstNull(properties);
         Guard.AgainstNull(output);

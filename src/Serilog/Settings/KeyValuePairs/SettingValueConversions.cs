@@ -30,29 +30,46 @@ class SettingValueConversions
 
     public static object? ConvertToType(string value, Type toType)
     {
+#if !NET35 && !NET40
         var toTypeInfo = toType.GetTypeInfo();
+#else
+        var toTypeInfo = toType;
+#endif
         if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
             if (value == String.Empty)
                 return null;
 
             // unwrap Nullable<> type since we're not handling null situations
+#if !NET35 && !NET40
             toType = toTypeInfo.GenericTypeArguments[0];
             toTypeInfo = toType.GetTypeInfo();
+#else
+            toType = toTypeInfo.GetGenericArguments()[0];
+            toTypeInfo = toType;
+#endif
         }
 
         if (toTypeInfo.IsEnum)
             return Enum.Parse(toType, value);
 
         var convertor = ExtendedTypeConversions
+#if !NET35 && !NET40
             .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
+#else
+            .Where(t => t.Key.IsAssignableFrom(toTypeInfo))
+#endif
             .Select(t => t.Value)
             .FirstOrDefault();
 
         if (convertor != null)
             return convertor(value);
 
+#if !NET35
         if ((toTypeInfo.IsInterface || toTypeInfo.IsAbstract) && !string.IsNullOrWhiteSpace(value))
+#else
+        if ((toTypeInfo.IsInterface || toTypeInfo.IsAbstract) && !LogEventProperty.IsNullOrWhiteSpace(value))
+#endif
         {
             // check if value looks like a static property or field directive
             // like "Namespace.TypeName::StaticProperty, AssemblyName"
@@ -60,19 +77,35 @@ class SettingValueConversions
             {
                 var accessorType = Type.GetType(accessorTypeName, throwOnError: true)!;
                 // is there a public static property with that name ?
+#if !NET35 && !NET40
                 var publicStaticPropertyInfo = accessorType.GetTypeInfo().DeclaredProperties
                     .Where(x => x.Name == memberName)
                     .Where(x => x.GetMethod != null)
                     .Where(x => x.GetMethod!.IsPublic)
                     .FirstOrDefault(x => x.GetMethod!.IsStatic);
+#else
+                var publicStaticPropertyInfo = accessorType.GetProperties()
+                    .Where(x => x.Name == memberName)
+                    .Where(x => x.GetGetMethod() != null)
+                    .Where(x => x.GetGetMethod()!.IsPublic)
+                    .FirstOrDefault(x => x.GetGetMethod()!.IsStatic);
+#endif
 
                 if (publicStaticPropertyInfo != null)
                 {
+#if !NET35 && !NET40
                     return publicStaticPropertyInfo.GetValue(null); // static property, no instance to pass
+#else
+                    return publicStaticPropertyInfo.GetValue(null, new object[0]); // static property, no instance to pass
+#endif
                 }
 
                 // no property ? look for a public static field
+#if !NET35 && !NET40
                 var publicStaticFieldInfo = accessorType.GetTypeInfo().DeclaredFields
+#else
+                var publicStaticFieldInfo = accessorType.GetFields()
+#endif
                     .Where(x => x.Name == memberName)
                     .Where(x => x.IsPublic)
                     .FirstOrDefault(x => x.IsStatic);
@@ -90,10 +123,19 @@ class SettingValueConversions
             var type = Type.GetType(value.Trim(), throwOnError: false);
             if (type != null)
             {
+#if !NET35 && !NET40
                 var ctor = type.GetTypeInfo().DeclaredConstructors.FirstOrDefault(ci =>
+#else
+                var ctor = type.GetConstructors().FirstOrDefault(ci =>
+#endif
                 {
                     var parameters = ci.GetParameters();
-                    return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
+                    return parameters.Length == 0
+#if !NET35 && !NET40
+                           || parameters.All(pi => pi.HasDefaultValue);
+#else
+                           || parameters.All(pi => pi.DefaultValue != DBNull.Value);
+#endif
                 });
 
                 if (ctor == null)

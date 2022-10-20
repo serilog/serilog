@@ -75,7 +75,13 @@ public sealed class PropertyToken : MessageTemplateToken
     /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-    public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
+    public override void Render(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
         Guard.AgainstNull(properties);
         Guard.AgainstNull(output);

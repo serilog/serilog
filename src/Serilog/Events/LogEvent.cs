@@ -105,7 +105,13 @@ public class LogEvent
     /// <summary>
     /// Properties associated with the event, including those presented in <see cref="LogEvent.MessageTemplate"/>.
     /// </summary>
-    public IReadOnlyDictionary<string, LogEventPropertyValue> Properties => _properties;
+    public 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> Properties => _properties;
 
     /// <summary>
     /// An exception associated with the event, or null.

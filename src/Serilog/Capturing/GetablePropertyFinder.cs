@@ -20,12 +20,32 @@ static class GetablePropertyFinder
     {
         var seenNames = new HashSet<string>();
 
-        var currentTypeInfo = type.GetTypeInfo();
-
-        while (currentTypeInfo.AsType() != typeof(object))
+#if !NET35 && !NET40
+        var currentTypeInfo = type
+            .GetTypeInfo();
+#else
+        var currentTypeInfo = type;
+#endif
+        while (
+#if !NET35 && !NET40
+            currentTypeInfo.AsType()
+#else
+            currentTypeInfo
+#endif
+            != typeof(object))
         {
-            var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
+            var unseenProperties = currentTypeInfo
+#if !NET35 && !NET40
+                .DeclaredProperties
+#else
+                .GetProperties()
+#endif
+                .Where(p => p.CanRead &&
+#if !NET35 && !NET40
                                                                                  p.GetMethod!.IsPublic && !p.GetMethod.IsStatic &&
+#else
+                                                                                 p.GetGetMethod()!.IsPublic && !p.GetGetMethod().IsStatic &&
+#endif
                                                                                  (p.Name != "Item" || p.GetIndexParameters().Length == 0) && !seenNames.Contains(p.Name));
 
             foreach (var propertyInfo in unseenProperties)
@@ -40,7 +60,12 @@ static class GetablePropertyFinder
                 yield break;
             }
 
-            currentTypeInfo = baseType.GetTypeInfo();
+#if !NET35 && !NET40
+            currentTypeInfo = baseType
+                .GetTypeInfo();
+#else
+            currentTypeInfo = baseType;
+#endif
         }
     }
 }

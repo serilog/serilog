@@ -34,7 +34,13 @@ public class DictionaryValue : LogEventPropertyValue
     /// <summary>
     /// The dictionary mapping.
     /// </summary>
-    public IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> Elements { get; }
+    public 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <ScalarValue, LogEventPropertyValue> Elements { get; }
 
     /// <summary>
     /// Render the value to the output.

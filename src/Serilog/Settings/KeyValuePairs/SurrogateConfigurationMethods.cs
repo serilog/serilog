@@ -26,7 +26,11 @@ namespace Serilog.Settings.KeyValuePairs;
 static class SurrogateConfigurationMethods
 {
     static readonly Dictionary<Type, MethodInfo[]> SurrogateMethodCandidates = typeof(SurrogateConfigurationMethods)
+#if !NET35 && !NET40
         .GetTypeInfo().DeclaredMethods
+#else
+        .GetMethods()
+#endif
         .GroupBy(m => m.GetParameters().First().ParameterType)
         .ToDictionary(g => g.Key, g => g.ToArray());
 

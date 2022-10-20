@@ -58,7 +58,13 @@ public class LoggerSettingsConfiguration
         return KeyValuePairs(uniqueSettings);
     }
 
-    LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
+    LoggerConfiguration KeyValuePairs(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, string> settings)
     {
         return Settings(new KeyValuePairSettings(settings));
     }

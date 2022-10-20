@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,19 @@ static class CallableConfigurationMethodFinder
 {
     internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
     {
+#if NET35 || NET40
+        var methods = new List<MethodInfo>();
+        foreach (var assembly in configurationAssemblies)
+        {
+            foreach (var currentType in assembly.GetTypes()
+                         .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
+            {
+                methods.AddRange(currentType.GetMethods()
+                    .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
+                    .Where(m => m.GetParameters()[0].ParameterType == configType));
+            }
+        }
+#else
         var methods = configurationAssemblies
             .SelectMany(a => a.ExportedTypes
                 .Select(t => t.GetTypeInfo())
@@ -26,6 +39,7 @@ static class CallableConfigurationMethodFinder
             .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
             .Where(m => m.GetParameters()[0].ParameterType == configType)
             .ToList();
+#endif
 
         // some configuration methods are not extension methods. They are added manually
         // so they can be discovered

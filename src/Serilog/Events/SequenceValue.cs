@@ -36,7 +36,13 @@ public class SequenceValue : LogEventPropertyValue
     /// <summary>
     /// The elements of the sequence.
     /// </summary>
-    public IReadOnlyList<LogEventPropertyValue> Elements => _elements;
+    public 
+#if NET35 || NET40
+    IList
+#else
+    IReadOnlyList
+#endif
+        <LogEventPropertyValue> Elements => _elements;
 
     /// <summary>
     /// Render the value to the output.

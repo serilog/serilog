@@ -18,10 +18,22 @@ namespace Serilog.Formatting.Display.Obsolete;
 class LogEventPropertiesValue : LogEventPropertyValue
 {
     readonly MessageTemplate _template;
-    readonly IReadOnlyDictionary<string, LogEventPropertyValue> _properties;
+    readonly 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> _properties;
     readonly MessageTemplate _outputTemplate;
 
-    public LogEventPropertiesValue(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate)
+    public LogEventPropertiesValue(MessageTemplate template, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, MessageTemplate outputTemplate)
     {
         _template = template;
         _properties = properties;

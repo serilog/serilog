@@ -18,7 +18,13 @@ static class PropertiesOutputFormat
 {
     static readonly JsonValueFormatter JsonValueFormatter = new("$type");
 
-    public static void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string? format, IFormatProvider? formatProvider = null)
+    public static void Render(MessageTemplate template, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, MessageTemplate outputTemplate, TextWriter output, string? format, IFormatProvider? formatProvider = null)
     {
         if (format?.Contains("j") == true)
         {

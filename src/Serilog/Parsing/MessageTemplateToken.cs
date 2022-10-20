@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,5 +46,11 @@ public abstract class MessageTemplateToken
     /// <param name="output">Output for the rendered string.</param>
     /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
     // ReSharper disable once UnusedMemberInSuper.Global
-    public abstract void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null);
+    public abstract void Render(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null);
 }

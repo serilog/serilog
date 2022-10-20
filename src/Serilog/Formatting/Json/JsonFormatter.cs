@@ -171,7 +171,13 @@ public class JsonFormatter : ITextFormatter
     /// Writes out individual renderings of attached properties
     /// </summary>
     [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output)
     {
         output.Write(",\"{0}\":{{", "Renderings");
         WriteRenderingsValues(tokensWithFormat, properties, output);
@@ -182,7 +188,13 @@ public class JsonFormatter : ITextFormatter
     /// Writes out the values of individual renderings of attached properties
     /// </summary>
     [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output)
     {
         var propertyDelimiter = "";
         foreach (var propertyFormats in tokensWithFormat)
@@ -219,7 +231,13 @@ public class JsonFormatter : ITextFormatter
     /// Writes out the attached properties
     /// </summary>
     [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    protected virtual void WriteProperties(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output)
     {
         output.Write(",\"{0}\":{{", "Properties");
         WritePropertiesValues(properties, output);
@@ -230,7 +248,13 @@ public class JsonFormatter : ITextFormatter
     /// Writes out the attached properties values
     /// </summary>
     [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    protected virtual void WritePropertiesValues(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output)
     {
         var precedingDelimiter = "";
         foreach (var property in properties)
@@ -323,7 +347,13 @@ public class JsonFormatter : ITextFormatter
     /// Writes out a dictionary
     /// </summary>
     [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
+    protected virtual void WriteDictionary(
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <ScalarValue, LogEventPropertyValue> elements, TextWriter output)
     {
         output.Write("{");
         var delim = "";

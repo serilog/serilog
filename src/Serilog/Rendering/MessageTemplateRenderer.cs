@@ -17,9 +17,16 @@ namespace Serilog.Rendering;
 static class MessageTemplateRenderer
 {
     static readonly JsonValueFormatter JsonValueFormatter = new("$type");
-
+#if !NET35 && !NET40
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Render(MessageTemplate messageTemplate, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+#endif
+    public static void Render(MessageTemplate messageTemplate, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
         bool isLiteral = false, isJson = false;
 
@@ -54,7 +61,13 @@ static class MessageTemplateRenderer
         output.Write(tt.Text);
     }
 
-    public static void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider, bool isLiteral, bool isJson)
+    public static void RenderPropertyToken(PropertyToken pt, 
+#if NET35 || NET40
+    IDictionary
+#else
+    IReadOnlyDictionary
+#endif
+        <string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider, bool isLiteral, bool isJson)
     {
         if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
         {

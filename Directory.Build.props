@@ -15,6 +15,10 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="all" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' and '$(TargetFramework)' != 'net35' ">
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
+
 </Project>
