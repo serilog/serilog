@@ -22,15 +22,15 @@ public class LoggerMinimumLevelConfiguration
     readonly LoggerConfiguration _loggerConfiguration;
     readonly Action<LogEventLevel> _setMinimum;
     readonly Action<LoggingLevelSwitch> _setLevelSwitch;
-    readonly Action<string, LoggingLevelSwitch> _addOverride;
+    readonly LevelOverrideMapWrapper _wrapper;
 
     internal LoggerMinimumLevelConfiguration(LoggerConfiguration loggerConfiguration, Action<LogEventLevel> setMinimum,
-        Action<LoggingLevelSwitch> setLevelSwitch, Action<string, LoggingLevelSwitch> addOverride)
+        Action<LoggingLevelSwitch> setLevelSwitch, LevelOverrideMapWrapper wrapper)
     {
         _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
         _setMinimum = Guard.AgainstNull(setMinimum);
         _setLevelSwitch = setLevelSwitch;
-        _addOverride = Guard.AgainstNull(addOverride);
+        _wrapper = Guard.AgainstNull(wrapper);
     }
 
     /// <summary>
@@ -113,15 +113,12 @@ public class LoggerMinimumLevelConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="levelSwitch"/> is <code>null</code></exception>
     public LoggerConfiguration Override(string source, LoggingLevelSwitch levelSwitch)
     {
-        Guard.AgainstNull(source);
-        Guard.AgainstNull(levelSwitch);
-
-        var trimmed = source.Trim();
-        if (trimmed.Length == 0) throw new ArgumentException($"A source {nameof(source)} must be provided.", nameof(source));
-
-        _addOverride(trimmed, levelSwitch);
+        Overrides.Add(source, levelSwitch);
         return _loggerConfiguration;
     }
+
+    /// <summary/>
+    public LoggerMinimumLevelOverridesConfiguration Overrides  => new(_loggerConfiguration, _wrapper);
 
     /// <summary>
     /// Override the minimum level for events from a specific namespace or type name.

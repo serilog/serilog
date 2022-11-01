@@ -44,7 +44,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     // to its lower limit and fall through to the secondary check.
     readonly LogEventLevel _minimumLevel;
     readonly LoggingLevelSwitch? _levelSwitch;
-    readonly LevelOverrideMap? _overrideMap;
+    readonly LevelOverrideMapWrapper _overrideMap;
 
     internal Logger(
         MessageTemplateProcessor messageTemplateProcessor,
@@ -56,7 +56,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 #if FEATURE_ASYNCDISPOSABLE
         Func<ValueTask>? disposeAsync,
 #endif
-        LevelOverrideMap? overrideMap)
+        LevelOverrideMapWrapper overrideMap)
     {
         _messageTemplateProcessor = messageTemplateProcessor;
         _minimumLevel = minimumLevel;
@@ -70,7 +70,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         _enricher = enricher;
     }
 
-    internal bool HasOverrideMap => _overrideMap != null;
+    internal bool HasOverrideMap => _overrideMap.Map != null;
 
     /// <summary>
     /// Create a logger that enriches log events via the provided enrichers.
@@ -131,10 +131,10 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 
         var minimumLevel = _minimumLevel;
         var levelSwitch = _levelSwitch;
-        if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
+        if (_overrideMap.Map != null && propertyName == Constants.SourceContextPropertyName)
         {
             if (value is string context)
-                _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+                _overrideMap.Map.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
         }
 
         return new Logger(

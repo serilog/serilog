@@ -25,7 +25,7 @@ public class LoggerConfiguration
     readonly List<ILogEventFilter> _filters = new();
     readonly List<Type> _additionalScalarTypes = new();
     readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
-    readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
+    readonly LevelOverrideMapWrapper _overrideWrapper = new();
     LogEventLevel _minimumLevel = LogEventLevel.Information;
     LoggingLevelSwitch? _levelSwitch;
     int _maximumDestructuringDepth = 10;
@@ -77,7 +77,7 @@ public class LoggerConfiguration
                     _levelSwitch = null;
                 },
                 sw => _levelSwitch = sw,
-                (s, lls) => _overrides[s] = lls);
+                _overrideWrapper);
         }
     }
 
@@ -166,11 +166,7 @@ public class LoggerConfiguration
                 break;
         }
 
-        LevelOverrideMap? overrideMap = null;
-        if (_overrides.Count != 0)
-        {
-            overrideMap = new(_overrides, _minimumLevel, _levelSwitch);
-        }
+        _overrideWrapper.EnsureMap(_minimumLevel, _levelSwitch);
 
         var disposableSinks = _logEventSinks
             .Concat(_auditSinks)
@@ -215,6 +211,6 @@ public class LoggerConfiguration
 #if FEATURE_ASYNCDISPOSABLE
             DisposeAsync,
 #endif
-            overrideMap);
+            _overrideWrapper);
     }
 }

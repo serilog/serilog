@@ -57,6 +57,11 @@ class LevelOverrideMap
             .ToArray();
     }
 
+    internal LevelOverrideMap WithOverrides(IDictionary<string, LoggingLevelSwitch> overrides)
+    {
+        return new LevelOverrideMap(overrides, _defaultMinimumLevel, _defaultLevelSwitch);
+    }
+
     public void GetEffectiveLevel(
 #if FEATURE_SPAN
         ReadOnlySpan<char> context,
