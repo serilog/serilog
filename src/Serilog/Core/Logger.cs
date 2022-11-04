@@ -42,9 +42,10 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     // we keep a separate field from the switch, which may
     // not be specified. If it is, we'll set _minimumLevel
     // to its lower limit and fall through to the secondary check.
-    readonly LogEventLevel _minimumLevel;
-    readonly LoggingLevelSwitch? _levelSwitch;
+    LogEventLevel _minimumLevel;
+    LoggingLevelSwitch? _levelSwitch;
     readonly LevelOverrideMapWrapper _overrideMap;
+    readonly string? _contextName;
 
     internal Logger(
         MessageTemplateProcessor messageTemplateProcessor,
@@ -56,18 +57,40 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 #if FEATURE_ASYNCDISPOSABLE
         Func<ValueTask>? disposeAsync,
 #endif
-        LevelOverrideMapWrapper overrideMap)
+        LevelOverrideMapWrapper overrideMap,
+        string? contextName)
     {
         _messageTemplateProcessor = messageTemplateProcessor;
         _minimumLevel = minimumLevel;
         _sink = sink;
-        _dispose = dispose;
-#if FEATURE_ASYNCDISPOSABLE
-        _disposeAsync = disposeAsync;
-#endif
         _levelSwitch = levelSwitch;
         _overrideMap = overrideMap;
+        _contextName = contextName;
         _enricher = enricher;
+
+        _overrideMap.OverridesChanged += OnOverridesChanged;
+
+        _dispose = () =>
+        {
+            _overrideMap.OverridesChanged -= OnOverridesChanged;
+            dispose?.Invoke();
+        };
+
+#if FEATURE_ASYNCDISPOSABLE
+        _disposeAsync = () =>
+        {
+            _overrideMap.OverridesChanged -= OnOverridesChanged;
+            return disposeAsync?.Invoke() ?? new ValueTask();
+        };
+#endif
+    }
+
+    void OnOverridesChanged(object? sender, EventArgs args)
+    {
+        if (_contextName != null)
+        {
+            _overrideMap.Map?.GetEffectiveLevel(_contextName, out _minimumLevel, out _levelSwitch);
+        }
     }
 
     internal bool HasOverrideMap => _overrideMap.Map != null;
@@ -92,7 +115,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 #if FEATURE_ASYNCDISPOSABLE
             null,
 #endif
-            _overrideMap);
+            _overrideMap,
+            _contextName);
     }
 
     /// <summary>
@@ -147,7 +171,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 #if FEATURE_ASYNCDISPOSABLE
             null,
 #endif
-            _overrideMap);
+            _overrideMap,
+            value as string);
     }
 
     /// <summary>

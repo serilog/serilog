@@ -7,6 +7,8 @@ class LevelOverrideMapWrapper
 
     public LevelOverrideMap? Map => _map;
 
+    public event EventHandler? OverridesChanged;
+
     public void Add(string source, LoggingLevelSwitch levelSwitch)
     {
         _overrides[source] = levelSwitch;
@@ -22,6 +24,7 @@ class LevelOverrideMapWrapper
     public void RefreshMap()
     {
         _map = _map?.WithOverrides(_overrides);
+        OverridesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void EnsureMap(LogEventLevel defaultMinimumLevel, LoggingLevelSwitch? defaultLevelSwitch)

@@ -211,6 +211,7 @@ public class LoggerConfiguration
 #if FEATURE_ASYNCDISPOSABLE
             DisposeAsync,
 #endif
-            _overrideWrapper);
+            _overrideWrapper,
+            null);
     }
 }
