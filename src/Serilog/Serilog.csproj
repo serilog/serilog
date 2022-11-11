@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
     <VersionPrefix>2.12.1</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46;net47;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46;net47;net5.0;net6.0;net7.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
@@ -45,6 +45,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+  </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
 
