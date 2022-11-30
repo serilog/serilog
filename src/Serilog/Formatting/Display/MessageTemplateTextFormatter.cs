@@ -56,7 +56,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
         Guard.AgainstNull(logEvent);
         Guard.AgainstNull(output);
 
-        foreach (var token in _outputTemplate.Tokens)
+        foreach (var token in _outputTemplate.TokenArray)
         {
             if (token is TextToken tt)
             {
