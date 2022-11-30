@@ -83,7 +83,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
             {
                 // In this block, `writer` may be used to buffer output so that
                 // padding can be applied.
-                var writer = pt.Alignment.HasValue ? new StringWriter() : output;
+                var writer = pt.Alignment.HasValue ? ReusableStringWriter.GetOrCreate() : output;
 
                 if (pt.PropertyName == OutputProperties.MessagePropertyName)
                 {
@@ -118,7 +118,10 @@ public class MessageTemplateTextFormatter : ITextFormatter
                 }
 
                 if (pt.Alignment.HasValue)
+                {
                     Padding.Apply(output, ((StringWriter)writer).ToString(), pt.Alignment);
+                    writer.Dispose();
+                }
             }
         }
     }

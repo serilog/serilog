@@ -204,7 +204,7 @@ public class JsonFormatter : ITextFormatter
 
                 WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
 
-                var sw = new StringWriter();
+                using var sw = ReusableStringWriter.GetOrCreate();
                 MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
                 WriteJsonProperty("Rendering", sw.ToString(), ref elementDelimiter, output);
 
@@ -454,7 +454,7 @@ public class JsonFormatter : ITextFormatter
     {
         if (s == null) return null;
 
-        var escapedResult = new StringWriter();
+        using var escapedResult = ReusableStringWriter.GetOrCreate();
         JsonValueFormatter.WriteQuotedJsonString(s, escapedResult);
         var quoted = escapedResult.ToString();
         return quoted.Substring(1, quoted.Length - 2);
