@@ -19,19 +19,19 @@ namespace Serilog.Events;
 /// </summary>
 public class LogEvent
 {
-    readonly Dictionary<string, LogEventPropertyValue> _properties;
+    static readonly object _poolLock = new();
+    static readonly Stack<LogEvent> _pool = new();
 
-    LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> properties)
+    static LogEvent GetOrCreate()
     {
-        Timestamp = timestamp;
-        Level = level;
-        Exception = exception;
-        MessageTemplate = Guard.AgainstNull(messageTemplate);
-        _properties = Guard.AgainstNull(properties);
+        lock (_poolLock)
+        {
+            return _pool.Count > 0 ? _pool.Pop() : new LogEvent();
+        }
     }
 
     /// <summary>
-    /// Construct a new <seealso cref="LogEvent"/>.
+    /// Construct a new <seealso cref="LogEvent"/> or fetches an existing one from the internal pool.
     /// </summary>
     /// <param name="timestamp">The time at which the event occurred.</param>
     /// <param name="level">The level of the event.</param>
@@ -40,17 +40,18 @@ public class LogEvent
     /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-    public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
-        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>())
+    public static LogEvent GetOrCreate(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
     {
         Guard.AgainstNull(properties);
+        var result = GetOrCreate(timestamp, level, exception, messageTemplate);
 
         foreach (var property in properties)
-            AddOrUpdateProperty(property);
+            result.AddOrUpdateProperty(property);
+        return result;
     }
 
     /// <summary>
-    /// Construct a new <seealso cref="LogEvent"/>.
+    /// Construct a new <seealso cref="LogEvent"/> or fetches an existing one from the internal pool.
     /// </summary>
     /// <param name="timestamp">The time at which the event occurred.</param>
     /// <param name="level">The level of the event.</param>
@@ -59,27 +60,41 @@ public class LogEvent
     /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
-        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(Guard.AgainstNull(properties).Length))
+    internal static LogEvent GetOrCreate(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
     {
+        var result = GetOrCreate(timestamp, level, exception, messageTemplate);
+
         for (var i = 0; i < properties.Length; ++i)
-            _properties[properties[i].Name] = properties[i].Value;
+            result._properties[properties[i].Name] = properties[i].Value;
+        return result;
     }
+
+    static LogEvent GetOrCreate(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate)
+    {
+        var result = GetOrCreate();
+        result.Timestamp = timestamp;
+        result.Level = level;
+        result.Exception = exception;
+        result.MessageTemplate = Guard.AgainstNull(messageTemplate);
+        return result;
+    }
+
+    readonly Dictionary<string, LogEventPropertyValue> _properties = new();
 
     /// <summary>
     /// The time at which the event occurred.
     /// </summary>
-    public DateTimeOffset Timestamp { get; }
+    public DateTimeOffset Timestamp { get; private set; }
 
     /// <summary>
     /// The level of the event.
     /// </summary>
-    public LogEventLevel Level { get; }
+    public LogEventLevel Level { get; private set; }
 
     /// <summary>
     /// The message template describing the event.
     /// </summary>
-    public MessageTemplate MessageTemplate { get; }
+    public MessageTemplate MessageTemplate { get; private set; } = MessageTemplate.Empty;
 
     /// <summary>
     /// Render the message template to the specified output, given the properties associated
@@ -110,7 +125,7 @@ public class LogEvent
     /// <summary>
     /// An exception associated with the event, or null.
     /// </summary>
-    public Exception? Exception { get; }
+    public Exception? Exception { get; private set; }
 
     /// <summary>
     /// Add a property to the event if not already present, otherwise, update its value.
@@ -174,15 +189,11 @@ public class LogEvent
 
     internal LogEvent Copy()
     {
-        var properties = new Dictionary<string, LogEventPropertyValue>(Properties.Count);
-        foreach (var key in _properties.Keys)
-            properties.Add(key, _properties[key]);
+        var result = GetOrCreate(Timestamp, Level, Exception, MessageTemplate);
 
-        return new LogEvent(
-            Timestamp,
-            Level,
-            Exception,
-            MessageTemplate,
-            properties);
+        foreach (var key in _properties.Keys)
+            result._properties.Add(key, _properties[key]);
+
+        return result;
     }
 }

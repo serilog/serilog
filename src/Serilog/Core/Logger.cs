@@ -356,7 +356,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
+        var logEvent = LogEvent.GetOrCreate(logTimestamp, level, exception, parsedTemplate, boundProperties);
         Dispatch(logEvent);
     }
 

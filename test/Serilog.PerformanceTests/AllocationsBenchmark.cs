@@ -18,11 +18,11 @@ public class AllocationsBenchmark
 
         _enrichedLogger = _logger.ForContext(new PropertyEnricher("Prop", "Value"));
 
-        _emptyEvent = new(
+        _emptyEvent = LogEvent.GetOrCreate(
             DateTimeOffset.Now,
             LogEventLevel.Information,
             null,
-            new(Enumerable.Empty<MessageTemplateToken>()),
+            new MessageTemplate(Enumerable.Empty<MessageTemplateToken>()),
             Enumerable.Empty<LogEventProperty>());
 
         _anonymousObject = new
@@ -93,6 +93,6 @@ public class AllocationsBenchmark
     [Benchmark]
     public void LogAnonymous()
     {
-        _logger.Information("Template: {@AnonymousObject}.", _anonymousObject);
+        _logger.Information("Template: {@AnonymousObject}", _anonymousObject);
     }
 }

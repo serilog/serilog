@@ -8,6 +8,6 @@ static class Some
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
         logger.BindMessageTemplate(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 #pragma warning restore Serilog004 // Constant MessageTemplate verifier
-        return new LogEvent(DateTime.Now, LogEventLevel.Information, null, parsedTemplate!, boundProperties!);
+        return LogEvent.GetOrCreate(DateTime.Now, LogEventLevel.Information, null, parsedTemplate!, boundProperties!);
     }
 }

@@ -18,14 +18,14 @@ static class Some
 
     public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = Information)
     {
-        return new(timestamp ?? OffsetInstant(), level,
+        return Serilog.Events.LogEvent.GetOrCreate(timestamp ?? OffsetInstant(), level,
             null, MessageTemplate(),
             new List<LogEventProperty> { new(Constants.SourceContextPropertyName, new ScalarValue(sourceContext)) });
     }
 
     public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = Information)
     {
-        return new(timestamp ?? OffsetInstant(), level,
+        return Serilog.Events.LogEvent.GetOrCreate(timestamp ?? OffsetInstant(), level,
             null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
     }
 
