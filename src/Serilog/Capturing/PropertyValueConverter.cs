@@ -120,7 +120,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring, int depth)
     {
         if (value == null)
-            return new ScalarValue(null);
+            return ScalarValue.Null;
 
         if (destructuring == Destructuring.Stringify)
         {

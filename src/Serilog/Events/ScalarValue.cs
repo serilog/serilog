@@ -20,6 +20,11 @@ namespace Serilog.Events;
 public class ScalarValue : LogEventPropertyValue
 {
     /// <summary>
+    /// Scalar value representing <see langword="null"/>.
+    /// </summary>
+    public static readonly ScalarValue Null = new(null);
+
+    /// <summary>
     /// Construct a <see cref="ScalarValue"/> with the specified
     /// value.
     /// </summary>
