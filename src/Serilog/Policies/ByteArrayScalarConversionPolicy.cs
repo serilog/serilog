@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,13 +31,22 @@ class ByteArrayScalarConversionPolicy : IScalarConversionPolicy
 
         if (bytes.Length > MaximumByteArrayLength)
         {
+#if NET5_0_OR_GREATER
+
+            var start = Convert.ToHexString(bytes, 0, 16);
+#else
             var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
+#endif
             var description = start + "... (" + bytes.Length + " bytes)";
             result = new ScalarValue(description);
         }
         else
         {
+#if NET5_0_OR_GREATER
+            result = new ScalarValue(Convert.ToHexString(bytes));
+#else
             result = new ScalarValue(string.Concat(bytes.Select(b => b.ToString("X2"))));
+#endif
         }
 
         return true;
