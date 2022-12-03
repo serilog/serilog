@@ -133,7 +133,7 @@ public class JsonFormatter : ITextFormatter
         if (logEvent.Properties.Count != 0)
             WriteProperties(logEvent.Properties, output);
 
-        var tokensWithFormat = logEvent.MessageTemplate.Tokens
+        var tokensWithFormat = logEvent.MessageTemplate.TokenArray
             .OfType<PropertyToken>()
             .Where(pt => pt.Format != null)
             .GroupBy(pt => pt.PropertyName)
