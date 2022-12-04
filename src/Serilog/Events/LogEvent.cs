@@ -57,7 +57,7 @@ public class LogEvent
     /// <param name="exception">An exception associated with the event, or null.</param>
     /// <param name="messageTemplate">The message template describing the event.</param>
     /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
-    /// <param name="propertiesLength">The real length of <paramref name="properties"/>, that shoyld be used in case of pooled arrays.</param>
+    /// <param name="propertiesLength">The real length of <paramref name="properties"/>, that should be used in case of pooled arrays.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, int propertiesLength)

@@ -168,7 +168,7 @@ public class LogEventPropertyCapturingTests
         var mt = new MessageTemplateParser().Parse(messageTemplate);
         var binder = new PropertyBinder(
             new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
-        var props = binder.ConstructProperties(mt, properties, out int length);
+        var props = binder.ConstructProperties(mt, properties, out int length, out bool pooled);
         return props.Take(length).Select(p => new LogEventProperty(p.Name, p.Value));
     }
 }

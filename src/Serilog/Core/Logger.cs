@@ -354,10 +354,10 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             propertyValues = new object[] { propertyValues };
 
         var logTimestamp = DateTimeOffset.Now;
-        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties, out var boundEventPropertiesLength);
-
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, boundEventPropertiesLength);
-        PropertyBinder.Return(boundProperties);
+        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties, out int boundPropertiesLength, out bool pooled);
+        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, boundPropertiesLength);
+        if (pooled)
+            PropertyBinder.Return(boundProperties);
         Dispatch(logEvent);
     }
 
@@ -1324,11 +1324,19 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             return false;
         }
 
-        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties, out var boundEventPropertiesLength);
-        boundProperties = boundEventPropertiesLength == 0 ?
-            NoProperties :
-            boundEventProperties.Take(boundEventPropertiesLength).Select(p => new LogEventProperty(p));
-        PropertyBinder.Return(boundEventProperties);
+        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties, out var boundEventPropertiesLength, out var pooled);
+        if (pooled)
+        {
+            boundProperties = boundEventPropertiesLength == 0 ?
+                NoProperties :
+                boundEventProperties.Take(boundEventPropertiesLength).Select(p => new LogEventProperty(p)).ToArray();
+        }
+        else
+        {
+            boundProperties = boundEventProperties.Length == 0 ?
+                NoProperties :
+                boundEventProperties.Select(p => new LogEventProperty(p));
+        }
 
         return true;
     }

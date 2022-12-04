@@ -26,10 +26,10 @@ class MessageTemplateProcessor : ILogEventPropertyFactory
         _propertyBinder = new(_propertyValueConverter);
     }
 
-    public void Process(string messageTemplate, object?[]? messageTemplateParameters, out MessageTemplate parsedTemplate, out EventProperty[] properties, out int length)
+    public void Process(string messageTemplate, object?[]? messageTemplateParameters, out MessageTemplate parsedTemplate, out EventProperty[] properties, out int length, out bool pooled)
     {
         parsedTemplate = _parser.Parse(messageTemplate);
-        properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters, out length);
+        properties = _propertyBinder.ConstructProperties(parsedTemplate, messageTemplateParameters, out length, out pooled);
     }
 
     public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)

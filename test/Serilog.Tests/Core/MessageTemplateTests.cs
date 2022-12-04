@@ -135,7 +135,7 @@ public class MessageTemplateTests
     {
         var mt = new MessageTemplateParser().Parse(messageTemplate);
         var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
-        var props = binder.ConstructProperties(mt, properties, out var length);
+        var props = binder.ConstructProperties(mt, properties, out var length, out var pooled);
         var output = new StringBuilder();
         var writer = new StringWriter(output);
         mt.Render(props.Take(length).ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);
