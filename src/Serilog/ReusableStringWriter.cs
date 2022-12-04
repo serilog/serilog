@@ -5,8 +5,8 @@
 /// </summary>
 public class ReusableStringWriter: StringWriter
 {
-    static readonly object _poolLock = new();
-    static readonly Dictionary<IFormatProvider, Stack<ReusableStringWriter>> _writerPools = new();
+    [ThreadStatic]
+    static ReusableStringWriter? _pooledWriter;
 
     /// <summary>
     /// Gets already created StringWriter if there is one available or creates a new one.
@@ -14,17 +14,19 @@ public class ReusableStringWriter: StringWriter
     /// <param name="formatProvider"></param>
     public static StringWriter GetOrCreate(IFormatProvider? formatProvider = null)
     {
-        formatProvider ??= CultureInfo.CurrentCulture;
-        lock (_poolLock)
+        var fmtProvider = formatProvider ?? CultureInfo.CurrentCulture;
+        var writer = _pooledWriter;
+        _pooledWriter = null;
+        if (writer == null || !Equals(writer.FormatProvider, fmtProvider))
         {
-            if (!_writerPools.TryGetValue(formatProvider, out var writerPool))
-            {
-                writerPool = new Stack<ReusableStringWriter>();
-                _writerPools[formatProvider] = writerPool;
-            }
-
-            return writerPool.Count > 0 ? writerPool.Pop() : new ReusableStringWriter(formatProvider);
+            writer = formatProvider == null ? new ReusableStringWriter() : new ReusableStringWriter(formatProvider);
         }
+
+        return writer;
+    }
+
+    ReusableStringWriter()
+    {
     }
 
     ReusableStringWriter(IFormatProvider formatProvider) : base(formatProvider)
@@ -39,9 +41,6 @@ public class ReusableStringWriter: StringWriter
         // We don't call base.Dispose because all it does is mark the writer as closed so it can't be
         // written to and we want to keep it open as reusable writer.
         GetStringBuilder().Clear();
-        lock (_poolLock)
-        {
-            _writerPools[FormatProvider].Push(this);
-        }
+        _pooledWriter = this;
     }
 }
