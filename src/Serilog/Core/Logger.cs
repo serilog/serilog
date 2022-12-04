@@ -46,6 +46,10 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     readonly LoggingLevelSwitch? _levelSwitch;
     readonly LevelOverrideMap? _overrideMap;
 
+    private object?[]? _reusableArrayOf1;
+    private object?[]? _reusableArrayOf2;
+    private object?[]? _reusableArrayOf3;
+
     internal Logger(
         MessageTemplateProcessor messageTemplateProcessor,
         LogEventLevel minimumLevel,
@@ -199,7 +203,12 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, messageTemplate, new object?[] { propertyValue });
+            var array = Interlocked.Exchange(ref _reusableArrayOf1, null) ?? new object?[1];
+            array[0] = propertyValue;
+
+            Write(level, messageTemplate, array);
+
+            Interlocked.CompareExchange(ref _reusableArrayOf1, array, null);
         }
     }
 
@@ -216,7 +225,13 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+            var array = Interlocked.Exchange(ref _reusableArrayOf2, null) ?? new object?[2];
+            array[0] = propertyValue0;
+            array[1] = propertyValue1;
+
+            Write(level, messageTemplate, array);
+
+            Interlocked.CompareExchange(ref _reusableArrayOf2, array, null);
         }
     }
 
@@ -234,7 +249,14 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+            var array = Interlocked.Exchange(ref _reusableArrayOf3, null) ?? new object?[3];
+            array[0] = propertyValue0;
+            array[1] = propertyValue1;
+            array[2] = propertyValue2;
+
+            Write(level, messageTemplate, array);
+
+            Interlocked.CompareExchange(ref _reusableArrayOf3, array, null);
         }
     }
 
@@ -294,7 +316,12 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, exception, messageTemplate, new object?[] { propertyValue });
+            var array = Interlocked.Exchange(ref _reusableArrayOf1, null) ?? new object?[1];
+            array[0] = propertyValue;
+
+            Write(level, exception, messageTemplate, array);
+
+            Interlocked.CompareExchange(ref _reusableArrayOf1, array, null);
         }
     }
 
@@ -312,7 +339,13 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+            var array = Interlocked.Exchange(ref _reusableArrayOf2, null) ?? new object?[2];
+            array[0] = propertyValue0;
+            array[1] = propertyValue1;
+
+            Write(level, exception, messageTemplate, array);
+
+            Interlocked.CompareExchange(ref _reusableArrayOf2, array, null);
         }
     }
 
@@ -331,7 +364,14 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+            var array = Interlocked.Exchange(ref _reusableArrayOf3, null) ?? new object?[3];
+            array[0] = propertyValue0;
+            array[1] = propertyValue1;
+            array[2] = propertyValue2;
+
+            Write(level, exception, messageTemplate, array);
+
+            Interlocked.CompareExchange(ref _reusableArrayOf3, array, null);
         }
     }
 
