@@ -3,7 +3,7 @@
 /// <summary>
 /// Class that provides reusable StringWriters to reduce memory allocations
 /// </summary>
-public class ReusableStringWriter: StringWriter
+internal class ReusableStringWriter: StringWriter
 {
     [ThreadStatic]
     static ReusableStringWriter? _pooledWriter;
