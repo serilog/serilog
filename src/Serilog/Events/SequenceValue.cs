@@ -33,6 +33,13 @@ public class SequenceValue : LogEventPropertyValue
         _elements = elements.ToArray();
     }
 
+    internal SequenceValue(LogEventPropertyValue[] elements)
+    {
+        Guard.AgainstNull(elements);
+
+        _elements = elements;
+    }
+
     /// <summary>
     /// The elements of the sequence.
     /// </summary>
