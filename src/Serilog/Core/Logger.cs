@@ -356,9 +356,28 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
-        Dispatch(logEvent);
+        if (CreateFunc == null) // ~ zero-cost check
+        {
+            var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
+            Dispatch(logEvent);
+        }
+        else
+        {
+            var logEvent = CreateFunc(logTimestamp, level, exception, parsedTemplate, boundProperties);
+            Dispatch(logEvent);
+            ReturnFunc?.Invoke(logEvent);
+        }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Func<DateTimeOffset, LogEventLevel, Exception?, MessageTemplate, EventProperty[], LogEvent>? CreateFunc { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Action<LogEvent>? ReturnFunc { get; set; }
 
     /// <summary>
     /// Write an event to the log.

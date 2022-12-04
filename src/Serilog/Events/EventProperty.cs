@@ -1,4 +1,4 @@
-﻿// Copyright 2019 Serilog Contributors
+// Copyright 2019 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ namespace Serilog.Events;
 /// </summary>
 /// <remarks>This type is currently internal, while we consider future directions for the logging pipeline, but should end up public
 /// in future.</remarks>
-readonly struct EventProperty
+public readonly struct EventProperty
 {
     /// <summary>
     /// No property.

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28917.182
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,8 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		global.json = global.json
 		NuGet.config = NuGet.config
 		README.md = README.md
-		run_perf_tests.sh = run_perf_tests.sh
 		RunPerfTests.ps1 = RunPerfTests.ps1
+		run_perf_tests.sh = run_perf_tests.sh
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
 EndProject
@@ -29,6 +29,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Tests", "test\Serilog.Tests\Serilog.Tests.csproj", "{B11B911D-977A-42CE-900A-596CF59F6FFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.PerformanceTests", "test\Serilog.PerformanceTests\Serilog.PerformanceTests.csproj", "{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoolRunner", "test\PoolRunner\PoolRunner.csproj", "{3018E261-73CC-4B25-AC4B-6B999FB27E89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,18 @@ Global
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}.Release|x64.Build.0 = Release|Any CPU
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}.Release|x86.ActiveCfg = Release|Any CPU
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}.Release|x86.Build.0 = Release|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Debug|x64.Build.0 = Debug|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Debug|x86.Build.0 = Debug|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Release|x64.ActiveCfg = Release|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Release|x64.Build.0 = Release|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Release|x86.ActiveCfg = Release|Any CPU
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +111,7 @@ Global
 		{37EF0B5E-0363-4A47-AF3E-51FA6E79E3CF} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{B11B911D-977A-42CE-900A-596CF59F6FFA} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
+		{3018E261-73CC-4B25-AC4B-6B999FB27E89} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {268F5761-DAC2-4ECA-9AEC-59663B84854C}
