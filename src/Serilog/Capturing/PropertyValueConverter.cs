@@ -206,7 +206,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
             }
 
-            // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements
+            // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements.
+            // Allocation free for empty sequence.
             if (enumerable is IList list && list.Count <= _maximumCollectionCount)
             {
                 if (list.Count == 0)
