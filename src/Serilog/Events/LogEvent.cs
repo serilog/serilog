@@ -63,6 +63,7 @@ public class LogEvent
     internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, int propertiesLength)
         : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(propertiesLength))
     {
+        Guard.AgainstNull(properties);
         for (var i = 0; i < propertiesLength; ++i)
             _properties[properties[i].Name] = properties[i].Value;
     }
