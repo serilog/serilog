@@ -8,7 +8,7 @@ test: off
 install:
 - ps: $RequiredDotnetVersion =  $(Get-Content ./global.json | ConvertFrom-Json).sdk.version
 - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
-- ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
+- ps: mkdir $env:DOTNET_INSTALL_DIR -f | Out-Null
 - ps: Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "$($env:DOTNET_INSTALL_DIR)/dotnet-install.ps1"
 - ps: '& "$($env:DOTNET_INSTALL_DIR)/dotnet-install.ps1" -Version $RequiredDotnetVersion -InstallDir $env:DOTNET_INSTALL_DIR'
 - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
