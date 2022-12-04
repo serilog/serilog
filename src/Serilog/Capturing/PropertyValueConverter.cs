@@ -209,10 +209,17 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements
             if (enumerable is IList list && list.Count <= _maximumCollectionCount)
             {
-                var array = new LogEventPropertyValue[list.Count];
-                for (int i = 0; i < list.Count; ++i)
-                    array[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
-                result = new SequenceValue(array);
+                if (list.Count == 0)
+                {
+                    result = SequenceValue.Empty;
+                }
+                else
+                {
+                    var array = new LogEventPropertyValue[list.Count];
+                    for (int i = 0; i < list.Count; ++i)
+                        array[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
+                    result = new SequenceValue(array);
+                }
             }
             else
             {
