@@ -135,10 +135,10 @@ public class MessageTemplateTests
     {
         var mt = new MessageTemplateParser().Parse(messageTemplate);
         var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
-        var props = binder.ConstructProperties(mt, properties);
+        var props = binder.ConstructProperties(mt, properties, out var length);
         var output = new StringBuilder();
         var writer = new StringWriter(output);
-        mt.Render(props.ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);
+        mt.Render(props.Take(length).ToDictionary(p => p.Name, p => p.Value), writer, formatProvider);
         writer.Flush();
         return output.ToString();
     }

@@ -354,9 +354,10 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             propertyValues = new object[] { propertyValues };
 
         var logTimestamp = DateTimeOffset.Now;
-        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
+        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties, out var boundEventPropertiesLength);
 
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
+        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, boundEventPropertiesLength);
+        PropertyBinder.Return(boundProperties);
         Dispatch(logEvent);
     }
 
@@ -1323,10 +1324,11 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             return false;
         }
 
-        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
-        boundProperties = boundEventProperties.Length == 0 ?
+        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties, out var boundEventPropertiesLength);
+        boundProperties = boundEventPropertiesLength == 0 ?
             NoProperties :
-            boundEventProperties.Select(p => new LogEventProperty(p));
+            boundEventProperties.Take(boundEventPropertiesLength).Select(p => new LogEventProperty(p));
+        PropertyBinder.Return(boundEventProperties);
 
         return true;
     }

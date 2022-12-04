@@ -91,9 +91,16 @@ class PropertyBinder
         return result;
     }
 
-#if NETSTANDARD2_1_OR_GREATER
-    private readonly System.Buffers.ArrayPool<EventProperty> _eventPropertyPool = System.Buffers.ArrayPool<EventProperty>.Shared;
+#if NETSTANDARD2_1 || NET5_0_OR_GREATER
+    private readonly static System.Buffers.ArrayPool<EventProperty> _eventPropertyPool = System.Buffers.ArrayPool<EventProperty>.Shared;
 #endif
+
+    internal static void Return(EventProperty[] array)
+    {
+#if NETSTANDARD2_1 || NET5_0_OR_GREATER
+        _eventPropertyPool.Return(array, clearArray: true);
+#endif
+    }
 
     EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
     {
@@ -108,7 +115,7 @@ class PropertyBinder
             SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
         }
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1 || NET5_0_OR_GREATER
         var result = _eventPropertyPool.Rent(messageTemplateParameters.Length);
 #else
         var result = new EventProperty[messageTemplateParameters.Length];
