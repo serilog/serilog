@@ -22,6 +22,11 @@ public class SequenceValue : LogEventPropertyValue
     readonly LogEventPropertyValue[] _elements;
 
     /// <summary>
+    /// Empty sequence of values.
+    /// </summary>
+    public static SequenceValue Empty { get; } = new SequenceValue(new LogEventPropertyValue[0]);
+
+    /// <summary>
     /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
     /// </summary>
     /// <param name="elements">The elements of the sequence.</param>
