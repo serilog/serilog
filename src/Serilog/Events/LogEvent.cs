@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,12 +57,13 @@ public class LogEvent
     /// <param name="exception">An exception associated with the event, or null.</param>
     /// <param name="messageTemplate">The message template describing the event.</param>
     /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+    /// <param name="propertiesLength">The real length of <paramref name="properties"/>, that shoyld be used in case of pooled arrays.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
-        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(Guard.AgainstNull(properties).Length))
+    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, int propertiesLength)
+        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(propertiesLength))
     {
-        for (var i = 0; i < properties.Length; ++i)
+        for (var i = 0; i < propertiesLength; ++i)
             _properties[properties[i].Name] = properties[i].Value;
     }
 

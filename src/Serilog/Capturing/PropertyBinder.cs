@@ -32,22 +32,30 @@ class PropertyBinder
     /// <param name="messageTemplate">The template that the parameters apply to.</param>
     /// <param name="messageTemplateParameters">Objects corresponding to the properties
     /// represented in the message template.</param>
+    /// <param name="length">The real length of the returned array, that shoyld be used in case of pooled arrays.</param>
     /// <returns>A list of properties; if the template is malformed then
     /// this will be empty.</returns>
-    public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters)
+    public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters, out int length)
     {
         if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
         {
             if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
                 SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
 
+            length = 0;
             return NoProperties;
         }
 
         if (messageTemplate.PositionalProperties != null)
-            return ConstructPositionalProperties(messageTemplate, messageTemplateParameters, messageTemplate.PositionalProperties);
+        {
+            var array1 = ConstructPositionalProperties(messageTemplate, messageTemplateParameters, messageTemplate.PositionalProperties);
+            length = array1.Length;
+            return array1;
+        }
 
-        return ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
+        var array2 = ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
+        length = messageTemplateParameters!.Length;
+        return array2;
     }
 
     EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters, PropertyToken[] positionalProperties)
@@ -83,6 +91,10 @@ class PropertyBinder
         return result;
     }
 
+#if NETSTANDARD2_1_OR_GREATER
+    private readonly System.Buffers.ArrayPool<EventProperty> _eventPropertyPool = System.Buffers.ArrayPool<EventProperty>.Shared;
+#endif
+
     EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
     {
         var namedProperties = template.NamedProperties;
@@ -96,7 +108,11 @@ class PropertyBinder
             SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
         }
 
+#if NETSTANDARD2_1_OR_GREATER
+        var result = _eventPropertyPool.Rent(messageTemplateParameters.Length);
+#else
         var result = new EventProperty[messageTemplateParameters.Length];
+#endif
         for (var i = 0; i < matchedRun; ++i)
         {
             var property = namedProperties[i];

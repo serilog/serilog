@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Core;
+namespace Serilog.Tests.Core;
 
 public class LogEventPropertyCapturingTests
 {
@@ -168,6 +168,7 @@ public class LogEventPropertyCapturingTests
         var mt = new MessageTemplateParser().Parse(messageTemplate);
         var binder = new PropertyBinder(
             new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
-        return binder.ConstructProperties(mt, properties).Select(p => new LogEventProperty(p.Name, p.Value));
+        var props = binder.ConstructProperties(mt, properties, out int length);
+        return props.Take(length).Select(p => new LogEventProperty(p.Name, p.Value));
     }
 }
