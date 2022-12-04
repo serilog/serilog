@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Serilog.ApprovalTests;
 
-/// <summary> Tests for checking changes to the public API. </summary>
+/// <summary>Tests for checking changes to the public API.</summary>
 /// <see href="https://github.com/JakeGinnivan/ApiApprover"/>
 public class ApiApprovalTests
 {
