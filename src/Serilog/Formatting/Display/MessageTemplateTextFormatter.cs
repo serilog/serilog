@@ -118,7 +118,13 @@ public class MessageTemplateTextFormatter : ITextFormatter
                 }
 
                 if (pt.Alignment.HasValue)
+                {
+#if FEATURE_WRITE_STRINGBUILDER
+                    Padding.Apply(output, ((StringWriter)writer).GetStringBuilder(), pt.Alignment);
+#else
                     Padding.Apply(output, ((StringWriter)writer).ToString(), pt.Alignment);
+#endif
+                }
             }
         }
     }
