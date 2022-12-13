@@ -1,3 +1,4 @@
 # Auto detect text files and perform LF normalization
 
 * text=auto
+*.approved.txt text eol=lf

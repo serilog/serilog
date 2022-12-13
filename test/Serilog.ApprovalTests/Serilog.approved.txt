@@ -1,0 +1,940 @@
+namespace Serilog.Configuration
+{
+    public interface ILoggerSettings
+    {
+        void Configure(Serilog.LoggerConfiguration loggerConfiguration);
+    }
+    public class LoggerAuditSinkConfiguration
+    {
+        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0) { }
+        public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
+            where TSink : Serilog.Core.ILogEventSink, new () { }
+    }
+    public class LoggerDestructuringConfiguration
+    {
+        public Serilog.LoggerConfiguration AsScalar(System.Type scalarType) { }
+        public Serilog.LoggerConfiguration AsScalar<TScalar>() { }
+        public Serilog.LoggerConfiguration ByTransforming<TValue>(System.Func<TValue, object> transformation) { }
+        public Serilog.LoggerConfiguration ByTransformingWhere<TValue>(System.Func<System.Type, bool> predicate, System.Func<TValue, object> transformation) { }
+        public Serilog.LoggerConfiguration ToMaximumCollectionCount(int maximumCollectionCount) { }
+        public Serilog.LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth) { }
+        public Serilog.LoggerConfiguration ToMaximumStringLength(int maximumStringLength) { }
+        public Serilog.LoggerConfiguration With(params Serilog.Core.IDestructuringPolicy[] destructuringPolicies) { }
+        public Serilog.LoggerConfiguration With<TDestructuringPolicy>()
+            where TDestructuringPolicy : Serilog.Core.IDestructuringPolicy, new () { }
+    }
+    public class LoggerEnrichmentConfiguration
+    {
+        public Serilog.LoggerConfiguration AtLevel(Serilog.Core.LoggingLevelSwitch levelSwitch, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureEnricher) { }
+        public Serilog.LoggerConfiguration AtLevel(Serilog.Events.LogEventLevel enrichFromLevel, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureEnricher) { }
+        public Serilog.LoggerConfiguration FromLogContext() { }
+        public Serilog.LoggerConfiguration When(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureEnricher) { }
+        public Serilog.LoggerConfiguration With(params Serilog.Core.ILogEventEnricher[] enrichers) { }
+        public Serilog.LoggerConfiguration With<TEnricher>()
+            where TEnricher : Serilog.Core.ILogEventEnricher, new () { }
+        public Serilog.LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false) { }
+        public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, System.Func<Serilog.Core.ILogEventEnricher, Serilog.Core.ILogEventEnricher> wrapEnricher, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureWrappedEnricher) { }
+    }
+    public class LoggerFilterConfiguration
+    {
+        public Serilog.LoggerConfiguration ByExcluding(System.Func<Serilog.Events.LogEvent, bool> exclusionPredicate) { }
+        public Serilog.LoggerConfiguration ByIncludingOnly(System.Func<Serilog.Events.LogEvent, bool> inclusionPredicate) { }
+        public Serilog.LoggerConfiguration With(params Serilog.Core.ILogEventFilter[] filters) { }
+        public Serilog.LoggerConfiguration With<TFilter>()
+            where TFilter : Serilog.Core.ILogEventFilter, new () { }
+    }
+    public class LoggerMinimumLevelConfiguration
+    {
+        public Serilog.LoggerConfiguration ControlledBy(Serilog.Core.LoggingLevelSwitch levelSwitch) { }
+        public Serilog.LoggerConfiguration Debug() { }
+        public Serilog.LoggerConfiguration Error() { }
+        public Serilog.LoggerConfiguration Fatal() { }
+        public Serilog.LoggerConfiguration Information() { }
+        public Serilog.LoggerConfiguration Is(Serilog.Events.LogEventLevel minimumLevel) { }
+        public Serilog.LoggerConfiguration Override(string source, Serilog.Core.LoggingLevelSwitch levelSwitch) { }
+        public Serilog.LoggerConfiguration Override(string source, Serilog.Events.LogEventLevel minimumLevel) { }
+        public Serilog.LoggerConfiguration Verbose() { }
+        public Serilog.LoggerConfiguration Warning() { }
+    }
+    public class LoggerSettingsConfiguration
+    {
+        public Serilog.LoggerConfiguration KeyValuePairs(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> settings) { }
+        public Serilog.LoggerConfiguration Settings(Serilog.Configuration.ILoggerSettings settings) { }
+    }
+    public class LoggerSinkConfiguration
+    {
+        public Serilog.LoggerConfiguration Conditional(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink) { }
+        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0) { }
+        public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
+            where TSink : Serilog.Core.ILogEventSink, new () { }
+        [System.Obsolete("Please use `LoggerConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configure" +
+            "WrappedSink, restrictedToMinimumLevel, levelSwitch)` instead.")]
+        public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink) { }
+        public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel, Serilog.Core.LoggingLevelSwitch? levelSwitch) { }
+    }
+}
+namespace Serilog.Context
+{
+    public static class LogContext
+    {
+        public static Serilog.Core.ILogEventEnricher Clone() { }
+        public static System.IDisposable Push(Serilog.Core.ILogEventEnricher enricher) { }
+        public static System.IDisposable Push(params Serilog.Core.ILogEventEnricher[] enrichers) { }
+        [System.Obsolete("Please use `LogContext.Push(properties)` instead.")]
+        public static System.IDisposable PushProperties(params Serilog.Core.ILogEventEnricher[] properties) { }
+        public static System.IDisposable PushProperty(string name, object? value, bool destructureObjects = false) { }
+        public static void Reset() { }
+        public static System.IDisposable Suspend() { }
+    }
+}
+namespace Serilog.Core
+{
+    public static class Constants
+    {
+        public const string SourceContextPropertyName = "SourceContext";
+    }
+    public interface IDestructuringPolicy
+    {
+        bool TryDestructure(object value, Serilog.Core.ILogEventPropertyValueFactory propertyValueFactory, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventPropertyValue? result);
+    }
+    public interface ILogEventEnricher
+    {
+        void Enrich(Serilog.Events.LogEvent logEvent, Serilog.Core.ILogEventPropertyFactory propertyFactory);
+    }
+    public interface ILogEventFilter
+    {
+        bool IsEnabled(Serilog.Events.LogEvent logEvent);
+    }
+    public interface ILogEventPropertyFactory
+    {
+        Serilog.Events.LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false);
+    }
+    public interface ILogEventPropertyValueFactory
+    {
+        Serilog.Events.LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false);
+    }
+    public interface ILogEventSink
+    {
+        void Emit(Serilog.Events.LogEvent logEvent);
+    }
+    public sealed class Logger : Serilog.Core.ILogEventSink, Serilog.ILogger, System.IAsyncDisposable, System.IDisposable
+    {
+        public static Serilog.ILogger None { get; }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties) { }
+        public bool BindProperty(string? propertyName, object? value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Debug<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public void Dispose() { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Error<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Fatal<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public Serilog.ILogger ForContext(Serilog.Core.ILogEventEnricher enricher) { }
+        public Serilog.ILogger ForContext(System.Collections.Generic.IEnumerable<Serilog.Core.ILogEventEnricher> enrichers) { }
+        public Serilog.ILogger ForContext(System.Type source) { }
+        public Serilog.ILogger ForContext(string propertyName, object? value, bool destructureObjects = false) { }
+        public Serilog.ILogger ForContext<TSource>() { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Information<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public bool IsEnabled(Serilog.Events.LogEventLevel level) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Verbose<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Warning<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public void Write(Serilog.Events.LogEvent logEvent) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write(Serilog.Events.LogEventLevel level, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write(Serilog.Events.LogEventLevel level, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write<T>(Serilog.Events.LogEventLevel level, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write<T>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write<T0, T1>(Serilog.Events.LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write<T0, T1>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+    }
+    public class LoggingLevelSwitch
+    {
+        public LoggingLevelSwitch(Serilog.Events.LogEventLevel initialMinimumLevel = 2) { }
+        public Serilog.Events.LogEventLevel MinimumLevel { get; set; }
+    }
+    [System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method)]
+    public sealed class MessageTemplateFormatMethodAttribute : System.Attribute
+    {
+        public MessageTemplateFormatMethodAttribute(string messageTemplateParameterName) { }
+        public string MessageTemplateParameterName { get; }
+    }
+}
+namespace Serilog.Core.Enrichers
+{
+    public class PropertyEnricher : Serilog.Core.ILogEventEnricher
+    {
+        public PropertyEnricher(string name, object? value, bool destructureObjects = false) { }
+        public void Enrich(Serilog.Events.LogEvent logEvent, Serilog.Core.ILogEventPropertyFactory propertyFactory) { }
+    }
+}
+namespace Serilog.Data
+{
+    public abstract class LogEventPropertyValueRewriter<TState> : Serilog.Data.LogEventPropertyValueVisitor<TState, Serilog.Events.LogEventPropertyValue>
+    {
+        protected LogEventPropertyValueRewriter() { }
+        protected override Serilog.Events.LogEventPropertyValue VisitDictionaryValue(TState state, Serilog.Events.DictionaryValue dictionary) { }
+        protected override Serilog.Events.LogEventPropertyValue VisitScalarValue(TState state, Serilog.Events.ScalarValue scalar) { }
+        protected override Serilog.Events.LogEventPropertyValue VisitSequenceValue(TState state, Serilog.Events.SequenceValue sequence) { }
+        protected override Serilog.Events.LogEventPropertyValue VisitStructureValue(TState state, Serilog.Events.StructureValue structure) { }
+        protected override Serilog.Events.LogEventPropertyValue VisitUnsupportedValue(TState state, Serilog.Events.LogEventPropertyValue value) { }
+    }
+    public abstract class LogEventPropertyValueVisitor<TState, TResult>
+    {
+        protected LogEventPropertyValueVisitor() { }
+        protected virtual TResult Visit(TState state, Serilog.Events.LogEventPropertyValue value) { }
+        protected abstract TResult VisitDictionaryValue(TState state, Serilog.Events.DictionaryValue dictionary);
+        protected abstract TResult VisitScalarValue(TState state, Serilog.Events.ScalarValue scalar);
+        protected abstract TResult VisitSequenceValue(TState state, Serilog.Events.SequenceValue sequence);
+        protected abstract TResult VisitStructureValue(TState state, Serilog.Events.StructureValue structure);
+        protected virtual TResult VisitUnsupportedValue(TState state, Serilog.Events.LogEventPropertyValue value) { }
+    }
+}
+namespace Serilog.Debugging
+{
+    public class LoggingFailedException : System.Exception
+    {
+        public LoggingFailedException(string message) { }
+    }
+    public static class SelfLog
+    {
+        [System.Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
+        public static System.IO.TextWriter? Out { set; }
+        public static void Disable() { }
+        public static void Enable(System.Action<string> output) { }
+        public static void Enable(System.IO.TextWriter output) { }
+        public static void WriteLine(string format, object? arg0 = null, object? arg1 = null, object? arg2 = null) { }
+    }
+}
+namespace Serilog.Events
+{
+    public class DictionaryValue : Serilog.Events.LogEventPropertyValue
+    {
+        public DictionaryValue(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue>> elements) { }
+        public System.Collections.Generic.IReadOnlyDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue> Elements { get; }
+        public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
+    }
+    public static class LevelAlias
+    {
+        public const Serilog.Events.LogEventLevel Maximum = 5;
+        public const Serilog.Events.LogEventLevel Minimum = 0;
+    }
+    public class LogEvent
+    {
+        public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties) { }
+        public System.Exception? Exception { get; }
+        public Serilog.Events.LogEventLevel Level { get; }
+        public Serilog.Events.MessageTemplate MessageTemplate { get; }
+        public System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> Properties { get; }
+        public System.DateTimeOffset Timestamp { get; }
+        public void AddOrUpdateProperty(Serilog.Events.LogEventProperty property) { }
+        public void AddPropertyIfAbsent(Serilog.Events.LogEventProperty property) { }
+        public void RemovePropertyIfPresent(string propertyName) { }
+        public string RenderMessage(System.IFormatProvider? formatProvider = null) { }
+        public void RenderMessage(System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+    }
+    public enum LogEventLevel
+    {
+        Verbose = 0,
+        Debug = 1,
+        Information = 2,
+        Warning = 3,
+        Error = 4,
+        Fatal = 5,
+    }
+    public class LogEventProperty
+    {
+        public LogEventProperty(string name, Serilog.Events.LogEventPropertyValue value) { }
+        public string Name { get; }
+        public Serilog.Events.LogEventPropertyValue Value { get; }
+        public static bool IsValidName([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name) { }
+    }
+    public abstract class LogEventPropertyValue : System.IFormattable
+    {
+        protected LogEventPropertyValue() { }
+        public abstract void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null);
+        public override string ToString() { }
+        public string ToString(string? format, System.IFormatProvider? formatProvider) { }
+    }
+    public class MessageTemplate
+    {
+        public MessageTemplate(System.Collections.Generic.IEnumerable<Serilog.Parsing.MessageTemplateToken> tokens) { }
+        public MessageTemplate(string text, System.Collections.Generic.IEnumerable<Serilog.Parsing.MessageTemplateToken> tokens) { }
+        public string Text { get; }
+        public System.Collections.Generic.IEnumerable<Serilog.Parsing.MessageTemplateToken> Tokens { get; }
+        public static Serilog.Events.MessageTemplate Empty { get; }
+        public string Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IFormatProvider? formatProvider = null) { }
+        public void Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+        public override string ToString() { }
+    }
+    public class ScalarValue : Serilog.Events.LogEventPropertyValue
+    {
+        public ScalarValue(object? value) { }
+        public object? Value { get; }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+        public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
+    }
+    public class SequenceValue : Serilog.Events.LogEventPropertyValue
+    {
+        public SequenceValue(System.Collections.Generic.IEnumerable<Serilog.Events.LogEventPropertyValue> elements) { }
+        public System.Collections.Generic.IReadOnlyList<Serilog.Events.LogEventPropertyValue> Elements { get; }
+        public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
+    }
+    public class StructureValue : Serilog.Events.LogEventPropertyValue
+    {
+        public StructureValue(System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, string? typeTag = null) { }
+        public System.Collections.Generic.IReadOnlyList<Serilog.Events.LogEventProperty> Properties { get; }
+        public string? TypeTag { get; }
+        public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
+    }
+}
+namespace Serilog.Filters
+{
+    public static class Matching
+    {
+        public static System.Func<Serilog.Events.LogEvent, bool> FromSource(string source) { }
+        public static System.Func<Serilog.Events.LogEvent, bool> FromSource<TSource>() { }
+        public static System.Func<Serilog.Events.LogEvent, bool> WithProperty(string propertyName) { }
+        public static System.Func<Serilog.Events.LogEvent, bool> WithProperty(string propertyName, object scalarValue) { }
+        public static System.Func<Serilog.Events.LogEvent, bool> WithProperty<TScalar>(string propertyName, System.Func<TScalar, bool> predicate) { }
+    }
+}
+namespace Serilog.Formatting.Display
+{
+    public class MessageTemplateTextFormatter : Serilog.Formatting.ITextFormatter
+    {
+        public MessageTemplateTextFormatter(string outputTemplate, System.IFormatProvider? formatProvider = null) { }
+        public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
+    }
+    public static class OutputProperties
+    {
+        public const string ExceptionPropertyName = "Exception";
+        public const string LevelPropertyName = "Level";
+        public const string MessagePropertyName = "Message";
+        public const string NewLinePropertyName = "NewLine";
+        public const string PropertiesPropertyName = "Properties";
+        public const string TimestampPropertyName = "Timestamp";
+        [System.Obsolete("These implementation details of output formatting will not be exposed in a future" +
+            " version.")]
+        public static System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> GetOutputProperties(Serilog.Events.LogEvent logEvent) { }
+    }
+}
+namespace Serilog.Formatting
+{
+    public interface ITextFormatter
+    {
+        void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output);
+    }
+}
+namespace Serilog.Formatting.Json
+{
+    public class JsonFormatter : Serilog.Formatting.ITextFormatter
+    {
+        public JsonFormatter(string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
+        [System.Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Ser" +
+            "ilog version.")]
+        public JsonFormatter(bool omitEnclosingObject, string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected void AddLiteralWriter(System.Type type, System.Action<object, System.IO.TextWriter> writer) { }
+        public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteDictionary(System.Collections.Generic.IReadOnlyDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue> elements, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteException(System.Exception exception, ref string delim, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteLevel(Serilog.Events.LogEventLevel level, ref string delim, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteLiteralValue(object value, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteMessageTemplate(string template, ref string delim, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteProperties(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WritePropertiesValues(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteRenderedMessage(string message, ref string delim, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteRenderings(System.Linq.IGrouping<string, Serilog.Parsing.PropertyToken>[] tokensWithFormat, System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteRenderingsValues(System.Linq.IGrouping<string, Serilog.Parsing.PropertyToken>[] tokensWithFormat, System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteSequence(System.Collections.IEnumerable elements, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteStructure(string? typeTag, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, System.IO.TextWriter output) { }
+        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
+            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
+            "ad. See https://github.com/serilog/serilog/pull/819.")]
+        protected virtual void WriteTimestamp(System.DateTimeOffset timestamp, ref string delim, System.IO.TextWriter output) { }
+        [System.Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead.")]
+        public static string? Escape(string? s) { }
+    }
+    public class JsonValueFormatter : Serilog.Data.LogEventPropertyValueVisitor<System.IO.TextWriter, bool>
+    {
+        public JsonValueFormatter(string? typeTagName = "_typeTag") { }
+        public void Format(Serilog.Events.LogEventPropertyValue value, System.IO.TextWriter output) { }
+        protected virtual void FormatLiteralValue(object? value, System.IO.TextWriter output) { }
+        protected override bool VisitDictionaryValue(System.IO.TextWriter state, Serilog.Events.DictionaryValue dictionary) { }
+        protected override bool VisitScalarValue(System.IO.TextWriter state, Serilog.Events.ScalarValue scalar) { }
+        protected override bool VisitSequenceValue(System.IO.TextWriter state, Serilog.Events.SequenceValue sequence) { }
+        protected override bool VisitStructureValue(System.IO.TextWriter state, Serilog.Events.StructureValue structure) { }
+        public static void WriteQuotedJsonString(string str, System.IO.TextWriter output) { }
+    }
+}
+namespace Serilog.Formatting.Raw
+{
+    [System.Obsolete("A JSON-based formatter such as `Serilog.Formatting.Compact.CompactJsonFormatter` " +
+        "is recommended for this task.")]
+    public class RawFormatter : Serilog.Formatting.ITextFormatter
+    {
+        public RawFormatter() { }
+        public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
+    }
+}
+namespace Serilog
+{
+    public interface ILogger
+    {
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties);
+        bool BindProperty(string? propertyName, object? value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug(string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug(System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug(string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug(System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug<T>(string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug<T>(System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Debug<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error(string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error(System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error(string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error(System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error<T>(string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error<T>(System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Error<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal(string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal(System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal(string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal(System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal<T>(string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal<T>(System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Fatal<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        Serilog.ILogger ForContext(Serilog.Core.ILogEventEnricher enricher);
+        Serilog.ILogger ForContext(System.Collections.Generic.IEnumerable<Serilog.Core.ILogEventEnricher> enrichers);
+        Serilog.ILogger ForContext(System.Type source);
+        Serilog.ILogger ForContext(string propertyName, object? value, bool destructureObjects = false);
+        Serilog.ILogger ForContext<TSource>();
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information(string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information(System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information(string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information(System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information<T>(string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information<T>(System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Information<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        bool IsEnabled(Serilog.Events.LogEventLevel level);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose(string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose(System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose(string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose(System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose<T>(string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose<T>(System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Verbose<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning(string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning(System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning(string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning(System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning<T>(string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning<T>(System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Warning<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        void Write(Serilog.Events.LogEvent logEvent);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write(Serilog.Events.LogEventLevel level, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write(Serilog.Events.LogEventLevel level, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, params object?[]? propertyValues);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write<T>(Serilog.Events.LogEventLevel level, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write<T>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T propertyValue);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write<T0, T1>(Serilog.Events.LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write<T0, T1>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2);
+    }
+    public static class Log
+    {
+        public static Serilog.ILogger Logger { get; set; }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static bool BindMessageTemplate(string messageTemplate, object?[] propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties) { }
+        public static bool BindProperty(string propertyName, object value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property) { }
+        public static void CloseAndFlush() { }
+        public static System.Threading.Tasks.ValueTask CloseAndFlushAsync() { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Debug<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Error<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Fatal<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public static Serilog.ILogger ForContext(Serilog.Core.ILogEventEnricher enricher) { }
+        public static Serilog.ILogger ForContext(Serilog.Core.ILogEventEnricher[] enrichers) { }
+        public static Serilog.ILogger ForContext(System.Type source) { }
+        public static Serilog.ILogger ForContext(string propertyName, object? value, bool destructureObjects = false) { }
+        public static Serilog.ILogger ForContext<TSource>() { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Information<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public static bool IsEnabled(Serilog.Events.LogEventLevel level) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Verbose<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning(string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning(System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning(string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning(System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning<T>(string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning<T>(System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning<T0, T1>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Warning<T0, T1, T2>(System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        public static void Write(Serilog.Events.LogEvent logEvent) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write(Serilog.Events.LogEventLevel level, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write(Serilog.Events.LogEventLevel level, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, params object?[]? propertyValues) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write<T>(Serilog.Events.LogEventLevel level, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write<T>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T propertyValue) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write<T0, T1>(Serilog.Events.LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write<T0, T1>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+        [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
+        public static void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
+    }
+    public class LoggerConfiguration
+    {
+        public LoggerConfiguration() { }
+        public Serilog.Configuration.LoggerAuditSinkConfiguration AuditTo { get; }
+        public Serilog.Configuration.LoggerDestructuringConfiguration Destructure { get; }
+        public Serilog.Configuration.LoggerEnrichmentConfiguration Enrich { get; }
+        public Serilog.Configuration.LoggerFilterConfiguration Filter { get; }
+        public Serilog.Configuration.LoggerMinimumLevelConfiguration MinimumLevel { get; }
+        public Serilog.Configuration.LoggerSettingsConfiguration ReadFrom { get; }
+        public Serilog.Configuration.LoggerSinkConfiguration WriteTo { get; }
+        public Serilog.Core.Logger CreateLogger() { }
+    }
+    public static class LoggerExtensions
+    {
+        public static Serilog.ILogger ForContext<TValue>(this Serilog.ILogger logger, Serilog.Events.LogEventLevel level, string propertyName, TValue value, bool destructureObjects = false) { }
+    }
+}
+namespace Serilog.Parsing
+{
+    public struct Alignment
+    {
+        public Alignment(Serilog.Parsing.AlignmentDirection direction, int width) { }
+        public Serilog.Parsing.AlignmentDirection Direction { get; }
+        public int Width { get; }
+    }
+    public enum AlignmentDirection
+    {
+        Left = 0,
+        Right = 1,
+    }
+    public enum Destructuring
+    {
+        Default = 0,
+        Stringify = 1,
+        Destructure = 2,
+    }
+    public class MessageTemplateParser
+    {
+        public MessageTemplateParser() { }
+        public Serilog.Events.MessageTemplate Parse(string messageTemplate) { }
+    }
+    public abstract class MessageTemplateToken
+    {
+        protected MessageTemplateToken(int startIndex) { }
+        public abstract int Length { get; }
+        public int StartIndex { get; }
+        public abstract void Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output, System.IFormatProvider? formatProvider = null);
+    }
+    public sealed class PropertyToken : Serilog.Parsing.MessageTemplateToken
+    {
+        [System.Obsolete("Use named arguments with this method to guarantee forwards-compatibility.")]
+        public PropertyToken(string propertyName, string rawText, string formatObsolete, Serilog.Parsing.Destructuring destructuringObsolete) { }
+        public PropertyToken(string propertyName, string rawText, string? format = null, Serilog.Parsing.Alignment? alignment = default, Serilog.Parsing.Destructuring destructuring = 0, int startIndex = -1) { }
+        public Serilog.Parsing.Alignment? Alignment { get; }
+        public Serilog.Parsing.Destructuring Destructuring { get; }
+        public string? Format { get; }
+        public bool IsPositional { get; }
+        public override int Length { get; }
+        public string PropertyName { get; }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+        public override void Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+        public override string ToString() { }
+        public bool TryGetPositionalValue(out int position) { }
+    }
+    public sealed class TextToken : Serilog.Parsing.MessageTemplateToken
+    {
+        public TextToken(string text, int startIndex = -1) { }
+        public override int Length { get; }
+        public string Text { get; }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+        public override void Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+        public override string ToString() { }
+    }
+}
