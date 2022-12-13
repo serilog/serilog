@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
     <VersionPrefix>3.0.0</VersionPrefix>
@@ -37,11 +37,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
