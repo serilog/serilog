@@ -301,7 +301,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
             return;
         }
 
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -320,7 +320,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
             return;
         }
 
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -333,7 +333,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(int value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -346,7 +346,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(uint value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -359,7 +359,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(long value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -372,7 +372,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(ulong value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -385,7 +385,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(decimal value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -398,7 +398,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(byte value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -411,7 +411,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(sbyte value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -424,7 +424,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(short value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -437,7 +437,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
     static void FormatExactNumericValue(ushort value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -452,7 +452,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
         output.Write('\"');
 
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, format: "O"))
             output.Write(buffer.Slice(0, written));
@@ -469,7 +469,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
         output.Write('\"');
 
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, format: "O"))
             output.Write(buffer.Slice(0, written));
@@ -485,7 +485,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     static void FormatTimeSpanValue(TimeSpan value, TextWriter output)
     {
         output.Write('\"');
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written))
             output.Write(buffer.Slice(0, written));
@@ -563,7 +563,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
             {
                 anyEscaped = true;
 
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
                 output.Write(str.AsSpan().Slice(cleanSegmentStart, i - cleanSegmentStart));
 #else
                 output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
@@ -615,7 +615,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
         if (anyEscaped)
         {
             if (cleanSegmentStart != str.Length)
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
                 output.Write(str.AsSpan().Slice(cleanSegmentStart));
 #else
                 output.Write(str.Substring(cleanSegmentStart));

@@ -399,7 +399,7 @@ public class JsonFormatter : ITextFormatter
 
     static void WriteSingle(float value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -412,7 +412,7 @@ public class JsonFormatter : ITextFormatter
 
     static void WriteDouble(double value, TextWriter output)
     {
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
@@ -426,7 +426,7 @@ public class JsonFormatter : ITextFormatter
     static void WriteOffset(DateTimeOffset value, TextWriter output)
     {
         output.Write("\"");
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, format: "o"))
             output.Write(buffer.Slice(0, written));
@@ -441,7 +441,7 @@ public class JsonFormatter : ITextFormatter
     static void WriteDateTime(DateTime value, TextWriter output)
     {
         output.Write("\"");
-#if NET5_0_OR_GREATER
+#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out int written, format: "o"))
             output.Write(buffer.Slice(0, written));
