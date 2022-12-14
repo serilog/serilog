@@ -401,6 +401,7 @@ namespace Serilog.Events
     {
         public ScalarValue(object? value) { }
         public object? Value { get; }
+        public static Serilog.Events.ScalarValue Null { get; }
         public override bool Equals(object? obj) { }
         public override int GetHashCode() { }
         public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
@@ -409,6 +410,7 @@ namespace Serilog.Events
     {
         public SequenceValue(System.Collections.Generic.IEnumerable<Serilog.Events.LogEventPropertyValue> elements) { }
         public System.Collections.Generic.IReadOnlyList<Serilog.Events.LogEventPropertyValue> Elements { get; }
+        public static Serilog.Events.SequenceValue Empty { get; }
         public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
     }
     public class StructureValue : Serilog.Events.LogEventPropertyValue
