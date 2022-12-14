@@ -92,13 +92,13 @@ class PropertyBinder
         return result;
     }
 
-#if NETSTANDARD2_1 || NET5_0_OR_GREATER
+#if FEATURE_ARRAYPOOL
     private readonly static System.Buffers.ArrayPool<EventProperty> _eventPropertyPool = System.Buffers.ArrayPool<EventProperty>.Shared;
 #endif
 
     internal static void Return(EventProperty[] array)
     {
-#if NETSTANDARD2_1 || NET5_0_OR_GREATER
+#if FEATURE_ARRAYPOOL
         _eventPropertyPool.Return(array, clearArray: true);
 #endif
     }
@@ -120,7 +120,7 @@ class PropertyBinder
             SelfLog.WriteLine("Named property count does not match parameter count: {0}", template);
         }
 
-#if NETSTANDARD2_1 || NET5_0_OR_GREATER
+#if FEATURE_ARRAYPOOL
         var result = _eventPropertyPool.Rent(messageTemplateParameters.Length);
         pooled = true;
 #else
