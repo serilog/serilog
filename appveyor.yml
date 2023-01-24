@@ -6,7 +6,22 @@ image:
 configuration: Release
 test: off
 build_script:
-  - ps: ./Build.ps1
+- pwsh: |
+    if ($isWindows) {
+      Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
+      ./dotnet-install.ps1 -JSonFile global.json -Architecture x64 -InstallDir 'C:\Program Files\dotnet'
+    }
+    if ($isMacOS) {
+      Invoke-WebRequest "https://dot.net/v1/dotnet-install.sh" -OutFile "./dotnet-install.sh"
+      sudo chmod u+x dotnet-install.sh
+      sudo ./dotnet-install.sh --jsonfile global.json --architecture x64 --install-dir '/usr/local/share/dotnet'
+    }
+    if ($isLinux) {
+      Invoke-WebRequest "https://dot.net/v1/dotnet-install.sh" -OutFile "./dotnet-install.sh"
+      sudo chmod u+x dotnet-install.sh
+      sudo ./dotnet-install.sh --jsonfile global.json --architecture x64 --install-dir '/usr/share/dotnet'
+    }
+- ps: ./Build.ps1
 for:
 -
   matrix:
