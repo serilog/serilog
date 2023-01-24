@@ -443,20 +443,4 @@ public class JsonFormatter : ITextFormatter
     {
         JsonValueFormatter.WriteQuotedJsonString(value, output);
     }
-
-    /// <summary>
-    /// Perform simple JSON string escaping on <paramref name="s"/>.
-    /// </summary>
-    /// <param name="s">A raw string.</param>
-    /// <returns>A JSON-escaped version of <paramref name="s"/>.</returns>
-    [Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead."), EditorBrowsable(EditorBrowsableState.Never)]
-    public static string? Escape(string? s)
-    {
-        if (s == null) return null;
-
-        var escapedResult = new StringWriter();
-        JsonValueFormatter.WriteQuotedJsonString(s, escapedResult);
-        var quoted = escapedResult.ToString();
-        return quoted.Substring(1, quoted.Length - 2);
-    }
 }

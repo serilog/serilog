@@ -174,16 +174,6 @@ public class JsonFormatterTests
     }
 
     [Fact]
-    public void LegacyEscapeMethodDelegatesCorrectly()
-    {
-        const string s = "\\\"\t\r\n\f";
-#pragma warning disable CS0618 // Type or member is obsolete
-        var escaped = JsonFormatter.Escape(s);
-#pragma warning restore CS0618 // Type or member is obsolete
-        Assert.Equal("\\\\\\\"\\t\\r\\n\\f", escaped);
-    }
-
-    [Fact]
     public void DictionariesAreDestructuredViaDictionaryValue()
     {
         var dict = new Dictionary<string, object> {
