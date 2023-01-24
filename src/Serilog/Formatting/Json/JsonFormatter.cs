@@ -20,10 +20,6 @@ namespace Serilog.Formatting.Json;
 /// </summary>
 public class JsonFormatter : ITextFormatter
 {
-    const string ExtensionPointObsoletionMessage = "Extension of JsonFormatter by subclassing is obsolete and will " +
-                                                   "be removed in a future Serilog version. Write a custom formatter " +
-                                                   "based on JsonValueFormatter instead. See https://github.com/serilog/serilog/pull/819.";
-
     // Ignore obsoletion errors
 #pragma warning disable 618
 
@@ -158,8 +154,7 @@ public class JsonFormatter : ITextFormatter
     /// <param name="writer">The function, which writes the values.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="type"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="writer"/> is <code>null</code></exception>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected void AddLiteralWriter(Type type, Action<object, TextWriter> writer)
+    void AddLiteralWriter(Type type, Action<object, TextWriter> writer)
     {
         Guard.AgainstNull(type);
         Guard.AgainstNull(writer);
@@ -170,8 +165,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out individual renderings of attached properties
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
         output.Write(",\"{0}\":{{", "Renderings");
         WriteRenderingsValues(tokensWithFormat, properties, output);
@@ -181,8 +175,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the values of individual renderings of attached properties
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
         var propertyDelimiter = "";
         foreach (var propertyFormats in tokensWithFormat)
@@ -218,8 +211,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the attached properties
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
         output.Write(",\"{0}\":{{", "Properties");
         WritePropertiesValues(properties, output);
@@ -229,8 +221,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the attached properties values
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+    void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
         var precedingDelimiter = "";
         foreach (var property in properties)
@@ -242,8 +233,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the attached exception
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteException(Exception exception, ref string delim, TextWriter output)
+    void WriteException(Exception exception, ref string delim, TextWriter output)
     {
         WriteJsonProperty("Exception", exception, ref delim, output);
     }
@@ -251,8 +241,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// (Optionally) writes out the rendered message
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteRenderedMessage(string message, ref string delim, TextWriter output)
+    void WriteRenderedMessage(string message, ref string delim, TextWriter output)
     {
         WriteJsonProperty("RenderedMessage", message, ref delim, output);
     }
@@ -260,8 +249,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the message template for the logevent.
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteMessageTemplate(string template, ref string delim, TextWriter output)
+    void WriteMessageTemplate(string template, ref string delim, TextWriter output)
     {
         WriteJsonProperty("MessageTemplate", template, ref delim, output);
     }
@@ -269,8 +257,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the log level
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
+    void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
     {
         WriteJsonProperty("Level", level, ref delim, output);
     }
@@ -278,8 +265,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the log timestamp
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
+    void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
     {
         WriteJsonProperty("Timestamp", timestamp, ref delim, output);
     }
@@ -287,8 +273,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out a structure property
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteStructure(string? typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
+    void WriteStructure(string? typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
     {
         output.Write('{');
 
@@ -305,8 +290,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out a sequence property
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteSequence(IEnumerable elements, TextWriter output)
+    void WriteSequence(IEnumerable elements, TextWriter output)
     {
         output.Write('[');
         var delim = "";
@@ -322,8 +306,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out a dictionary
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
+    void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
     {
         output.Write('{');
         var delim = "";
@@ -341,8 +324,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out a json property with the specified value on output writer
     /// </summary>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
+    void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
     {
         output.Write(precedingDelimiter);
         output.Write('"');
@@ -357,8 +339,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     /// <param name="value">The value to be written as a json construct</param>
     /// <param name="output">The writer to write on</param>
-    [Obsolete(ExtensionPointObsoletionMessage)]
-    protected virtual void WriteLiteralValue(object value, TextWriter output)
+    static void WriteLiteralValue(object value, TextWriter output)
     {
         WriteString(value.ToString() ?? "", output);
     }
