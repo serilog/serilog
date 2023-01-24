@@ -22,11 +22,6 @@ namespace Serilog.Events;
 public class MessageTemplate
 {
     /// <summary>
-    /// Represents the empty message template.
-    /// </summary>
-    public static MessageTemplate Empty { get; } = new(Enumerable.Empty<MessageTemplateToken>());
-
-    /// <summary>
     /// Construct a message template using manually-defined text and property tokens.
     /// </summary>
     /// <param name="tokens">The text and property tokens defining the template.</param>
