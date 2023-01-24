@@ -467,67 +467,7 @@ namespace Serilog.Formatting.Json
         [System.Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Ser" +
             "ilog version.")]
         public JsonFormatter(bool omitEnclosingObject, string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected void AddLiteralWriter(System.Type type, System.Action<object, System.IO.TextWriter> writer) { }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteDictionary(System.Collections.Generic.IReadOnlyDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue> elements, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteException(System.Exception exception, ref string delim, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteLevel(Serilog.Events.LogEventLevel level, ref string delim, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteLiteralValue(object value, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteMessageTemplate(string template, ref string delim, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteProperties(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WritePropertiesValues(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteRenderedMessage(string message, ref string delim, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteRenderings(System.Linq.IGrouping<string, Serilog.Parsing.PropertyToken>[] tokensWithFormat, System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteRenderingsValues(System.Linq.IGrouping<string, Serilog.Parsing.PropertyToken>[] tokensWithFormat, System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteSequence(System.Collections.IEnumerable elements, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteStructure(string? typeTag, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, System.IO.TextWriter output) { }
-        [System.Obsolete("Extension of JsonFormatter by subclassing is obsolete and will be removed in a fu" +
-            "ture Serilog version. Write a custom formatter based on JsonValueFormatter inste" +
-            "ad. See https://github.com/serilog/serilog/pull/819.")]
-        protected virtual void WriteTimestamp(System.DateTimeOffset timestamp, ref string delim, System.IO.TextWriter output) { }
         [System.Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead.")]
         public static string? Escape(string? s) { }
     }
