@@ -5,7 +5,7 @@ image:
   - Ubuntu
 configuration: Release
 test: off
-build_script:
+before_build:
 - pwsh: |
     if ($isWindows) {
       Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
@@ -21,7 +21,8 @@ build_script:
       sudo chmod u+x dotnet-install.sh
       sudo ./dotnet-install.sh --jsonfile global.json --architecture x64 --install-dir '/usr/share/dotnet'
     }
-- ps: ./Build.ps1
+build_script:
+  - ps: ./Build.ps1
 for:
 -
   matrix:
