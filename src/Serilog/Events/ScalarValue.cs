@@ -67,9 +67,9 @@ public class ScalarValue : LogEventPropertyValue
         {
             if (format != "l")
             {
-                output.Write("\"");
+                output.Write('"');
                 output.Write(s.Replace("\"", "\\\""));
-                output.Write("\"");
+                output.Write('"');
             }
             else
             {
