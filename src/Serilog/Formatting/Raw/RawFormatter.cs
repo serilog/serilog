@@ -29,7 +29,7 @@ public class RawFormatter : ITextFormatter
     {
         output.Write("[" + logEvent.Timestamp + "] " + logEvent.Level + ": \"");
         output.Write(logEvent.MessageTemplate);
-        output.WriteLine("\"");
+        output.WriteLine('"');
         if (logEvent.Exception != null)
             output.WriteLine(logEvent.Exception);
         foreach (var property in logEvent.Properties)

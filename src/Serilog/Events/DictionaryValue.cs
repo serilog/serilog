@@ -57,7 +57,7 @@ public class DictionaryValue : LogEventPropertyValue
             kvp.Key.Render(output, null, formatProvider);
             output.Write(": ");
             kvp.Value.Render(output, null, formatProvider);
-            output.Write(")");
+            output.Write(')');
         }
 
         output.Write(']');

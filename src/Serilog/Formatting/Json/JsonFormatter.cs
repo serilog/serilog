@@ -115,7 +115,7 @@ public class JsonFormatter : ITextFormatter
         Guard.AgainstNull(output);
 
         if (!_omitEnclosingObject)
-            output.Write("{");
+            output.Write('{');
 
         var delim = "";
         WriteTimestamp(logEvent.Timestamp, ref delim, output);
@@ -146,7 +146,7 @@ public class JsonFormatter : ITextFormatter
 
         if (!_omitEnclosingObject)
         {
-            output.Write("}");
+            output.Write('}');
             output.Write(_closingDelimiter);
         }
     }
@@ -175,7 +175,7 @@ public class JsonFormatter : ITextFormatter
     {
         output.Write(",\"{0}\":{{", "Renderings");
         WriteRenderingsValues(tokensWithFormat, properties, output);
-        output.Write("}");
+        output.Write('}');
     }
 
     /// <summary>
@@ -189,7 +189,7 @@ public class JsonFormatter : ITextFormatter
         {
             output.Write(propertyDelimiter);
             propertyDelimiter = ",";
-            output.Write("\"");
+            output.Write('"');
             output.Write(propertyFormats.Key);
             output.Write("\":[");
 
@@ -199,7 +199,7 @@ public class JsonFormatter : ITextFormatter
                 output.Write(formatDelimiter);
                 formatDelimiter = ",";
 
-                output.Write("{");
+                output.Write('{');
                 var elementDelimiter = "";
 
                 WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
@@ -208,10 +208,10 @@ public class JsonFormatter : ITextFormatter
                 MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
                 WriteJsonProperty("Rendering", sw.ToString(), ref elementDelimiter, output);
 
-                output.Write("}");
+                output.Write('}');
             }
 
-            output.Write("]");
+            output.Write(']');
         }
     }
 
@@ -223,7 +223,7 @@ public class JsonFormatter : ITextFormatter
     {
         output.Write(",\"{0}\":{{", "Properties");
         WritePropertiesValues(properties, output);
-        output.Write("}");
+        output.Write('}');
     }
 
     /// <summary>
@@ -290,7 +290,7 @@ public class JsonFormatter : ITextFormatter
     [Obsolete(ExtensionPointObsoletionMessage)]
     protected virtual void WriteStructure(string? typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
     {
-        output.Write("{");
+        output.Write('{');
 
         var delim = "";
         if (typeTag != null)
@@ -299,7 +299,7 @@ public class JsonFormatter : ITextFormatter
         foreach (var property in properties)
             WriteJsonProperty(property.Name, property.Value, ref delim, output);
 
-        output.Write("}");
+        output.Write('}');
     }
 
     /// <summary>
@@ -308,7 +308,7 @@ public class JsonFormatter : ITextFormatter
     [Obsolete(ExtensionPointObsoletionMessage)]
     protected virtual void WriteSequence(IEnumerable elements, TextWriter output)
     {
-        output.Write("[");
+        output.Write('[');
         var delim = "";
         foreach (var value in elements)
         {
@@ -316,7 +316,7 @@ public class JsonFormatter : ITextFormatter
             delim = ",";
             WriteLiteral(value, output);
         }
-        output.Write("]");
+        output.Write(']');
     }
 
     /// <summary>
@@ -325,17 +325,17 @@ public class JsonFormatter : ITextFormatter
     [Obsolete(ExtensionPointObsoletionMessage)]
     protected virtual void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
     {
-        output.Write("{");
+        output.Write('{');
         var delim = "";
         foreach (var element in elements)
         {
             output.Write(delim);
             delim = ",";
             WriteLiteral(element.Key, output, forceQuotation: true);
-            output.Write(":");
+            output.Write(':');
             WriteLiteral(element.Value, output);
         }
-        output.Write("}");
+        output.Write('}');
     }
 
     /// <summary>
@@ -345,7 +345,7 @@ public class JsonFormatter : ITextFormatter
     protected virtual void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
     {
         output.Write(precedingDelimiter);
-        output.Write("\"");
+        output.Write('"');
         output.Write(name);
         output.Write("\":");
         WriteLiteral(value, output);
@@ -409,32 +409,32 @@ public class JsonFormatter : ITextFormatter
 
     static void WriteOffset(DateTimeOffset value, TextWriter output)
     {
-        output.Write("\"");
+        output.Write('"');
         output.Write(value.ToString("o"));
-        output.Write("\"");
+        output.Write('"');
     }
 
     static void WriteDateTime(DateTime value, TextWriter output)
     {
-        output.Write("\"");
+        output.Write('"');
         output.Write(value.ToString("o"));
-        output.Write("\"");
+        output.Write('"');
     }
 
 #if FEATURE_DATE_AND_TIME_ONLY
 
     static void WriteDateOnly(DateOnly value, TextWriter output)
     {
-        output.Write("\"");
+        output.Write('"');
         output.Write(value.ToString("yyyy-MM-dd"));
-        output.Write("\"");
+        output.Write('"');
     }
 
     static void WriteTimeOnly(TimeOnly value, TextWriter output)
     {
-        output.Write("\"");
+        output.Write('"');
         output.Write(value.ToString("O"));
-        output.Write("\"");
+        output.Write('"');
     }
 
 #endif
