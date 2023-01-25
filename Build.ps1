@@ -1,7 +1,6 @@
 Write-Output "build: Build started"
 
 & dotnet --info
-& dotnet --list-sdks
 
 Push-Location $PSScriptRoot
 
