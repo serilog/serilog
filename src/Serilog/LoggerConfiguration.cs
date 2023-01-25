@@ -155,6 +155,7 @@ public class LoggerConfiguration
             // Should be a rare case, so no problem making that extra interface dispatch.
             0 => new EmptyEnricher(),
             1 => _enrichers[0],
+            // Enrichment failures are not considered blocking for auditing purposes.
             _ => new SafeAggregateEnricher(_enrichers)
         };
 
