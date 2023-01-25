@@ -56,4 +56,23 @@ public class GetablePropertyFinderTests
         [System.ServiceModel.OperationContract]
         string Get();
     }
+
+    [Fact]
+    public void ShouldOnlyGetInheritedProperty()
+    {
+        var property = typeof(InheritedClass).GetPropertiesRecursive().Single();
+
+        Assert.Equal(typeof(InheritedClass).GetProperty("Property"), property);
+    }
+
+    public class InheritedClass :
+        BaseClass
+    {
+        public new string Property { get; set; } = null!;
+    }
+
+    public class BaseClass
+    {
+        public string Property { get; set; } = null!;
+    }
 }
