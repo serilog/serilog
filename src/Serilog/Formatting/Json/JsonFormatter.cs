@@ -416,7 +416,7 @@ public class JsonFormatter : ITextFormatter
 #else
         output.Write(value.ToString("o"));
 #endif
-        output.Write('"';
+        output.Write('"');
     }
 
     static void WriteDateTime(DateTime value, TextWriter output)
