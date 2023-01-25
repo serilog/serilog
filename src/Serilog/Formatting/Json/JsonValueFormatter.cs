@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Serilog.Formatting.Json;
 
 /// <summary>
@@ -172,9 +174,57 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
         if (value is ValueType)
         {
-            if (value is int or uint or long or ulong or decimal or byte or sbyte or short or ushort)
+            if (value is int i)
             {
-                FormatExactNumericValue((IFormattable)value, output);
+                FormatExactNumericValue(i, output);
+                return;
+            }
+
+            if (value is uint ui)
+            {
+                FormatExactNumericValue(ui, output);
+                return;
+            }
+
+            if (value is long l)
+            {
+                FormatExactNumericValue(l, output);
+                return;
+            }
+
+            if (value is ulong ul)
+            {
+                FormatExactNumericValue(ul, output);
+                return;
+            }
+
+            if (value is decimal dc)
+            {
+                FormatExactNumericValue(dc, output);
+                return;
+            }
+
+            if (value is byte bt)
+            {
+                FormatExactNumericValue(bt, output);
+                return;
+            }
+
+            if (value is sbyte sb)
+            {
+                FormatExactNumericValue(sb, output);
+                return;
+            }
+
+            if (value is short s)
+            {
+                FormatExactNumericValue(s, output);
+                return;
+            }
+
+            if (value is ushort us)
+            {
+                FormatExactNumericValue(us, output);
                 return;
             }
 
@@ -202,9 +252,15 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
                 return;
             }
 
-            if (value is DateTime or DateTimeOffset)
+            if (value is DateTime dt)
             {
-                FormatDateTimeValue((IFormattable)value, output);
+                FormatDateTimeValue(dt, output);
+                return;
+            }
+
+            if (value is DateTimeOffset dto)
+            {
+                FormatDateTimeOffsetValue(dto, output);
                 return;
             }
 
@@ -245,7 +301,15 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
             return;
         }
 
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, "R", CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#else
         output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#endif
     }
 
     static void FormatDoubleValue(double value, TextWriter output)
@@ -256,25 +320,180 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
             return;
         }
 
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, "R", CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#else
         output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#endif
     }
 
-    static void FormatExactNumericValue(IFormattable value, TextWriter output)
+    static void FormatExactNumericValue(int value, TextWriter output)
     {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
         output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
     }
 
-    static void FormatDateTimeValue(IFormattable value, TextWriter output)
+    static void FormatExactNumericValue(uint value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(long value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(ulong value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(decimal value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(byte value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(sbyte value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(short value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatExactNumericValue(ushort value, TextWriter output)
+    {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString(null, CultureInfo.InvariantCulture));
+#endif
+    }
+
+    static void FormatDateTimeValue(DateTime value, TextWriter output)
     {
         output.Write('\"');
+
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, format: "O"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("O", CultureInfo.InvariantCulture));
+#else
         output.Write(value.ToString("O", CultureInfo.InvariantCulture));
+#endif
+
+        output.Write('\"');
+    }
+
+    static void FormatDateTimeOffsetValue(DateTimeOffset value, TextWriter output)
+    {
+        output.Write('\"');
+
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, format: "O"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("O", CultureInfo.InvariantCulture));
+#else
+        output.Write(value.ToString("O", CultureInfo.InvariantCulture));
+#endif
+
         output.Write('\"');
     }
 
     static void FormatTimeSpanValue(TimeSpan value, TextWriter output)
     {
         output.Write('\"');
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString());
+#else
         output.Write(value.ToString());
+#endif
         output.Write('\"');
     }
 
@@ -283,14 +502,26 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     static void FormatDateOnlyValue(DateOnly value, TextWriter output)
     {
         output.Write('\"');
-        output.Write(value.ToString("yyyy-MM-dd"));
+
+        Span<char> buffer = stackalloc char[10];
+        if (value.TryFormat(buffer, out int written, format: "yyyy-MM-dd"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("yyyy-MM-dd"));
+
         output.Write('\"');
     }
 
     static void FormatTimeOnlyValue(TimeOnly value, TextWriter output)
     {
         output.Write('\"');
-        output.Write(value.ToString("O"));
+
+        Span<char> buffer = stackalloc char[16];
+        if (value.TryFormat(buffer, out int written, format: "O"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("O"));
+
         output.Write('\"');
     }
 
@@ -332,7 +563,11 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
             {
                 anyEscaped = true;
 
+#if FEATURE_SPAN
+                output.Write(str.AsSpan().Slice(cleanSegmentStart, i - cleanSegmentStart));
+#else
                 output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
+#endif
                 cleanSegmentStart = i + 1;
 
                 switch (c)
@@ -380,7 +615,11 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
         if (anyEscaped)
         {
             if (cleanSegmentStart != str.Length)
+#if FEATURE_SPAN
+                output.Write(str.AsSpan().Slice(cleanSegmentStart));
+#else
                 output.Write(str.Substring(cleanSegmentStart));
+#endif
         }
         else
         {
