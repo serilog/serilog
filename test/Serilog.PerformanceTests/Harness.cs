@@ -16,10 +16,10 @@ namespace Serilog.PerformanceTests;
 
 /// <summary>
 /// Wrappers that make it easy to run benchmark suites through the <c>dotnet test</c> runner.
+/// Run the following command from ~\test\Serilog.PerformanceTests folder and wait for the results:
+///   dotnet test -c Release -f net7.0 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"
+/// Results will be written to ~\test\Serilog.PerformanceTests\bin\Release\net7.0\BenchmarkDotNet.Artifacts\results folder.
 /// </summary>
-/// <example>
-/// <code>dotnet test -c Release -f netcoreapp3.1 --filter "FullyQualifiedName=Serilog.PerformanceTests.Harness.Allocations"</code>
-/// </example>
 public class Harness
 {
     [Fact]

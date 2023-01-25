@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28917.182
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,11 +10,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5
 		build.sh = build.sh
 		CHANGES.md = CHANGES.md
 		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 		global.json = global.json
 		NuGet.config = NuGet.config
 		README.md = README.md
-		run_perf_tests.sh = run_perf_tests.sh
 		RunPerfTests.ps1 = RunPerfTests.ps1
+		run_perf_tests.sh = run_perf_tests.sh
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
 EndProject
@@ -30,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Tests", "test\Seril
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.PerformanceTests", "test\Serilog.PerformanceTests\Serilog.PerformanceTests.csproj", "{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.ApprovalTests", "test\Serilog.ApprovalTests\Serilog.ApprovalTests.csproj", "{7669BB99-A118-436B-8C58-1D8E8989A775}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.ApprovalTests", "test\Serilog.ApprovalTests\Serilog.ApprovalTests.csproj", "{7669BB99-A118-436B-8C58-1D8E8989A775}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
