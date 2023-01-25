@@ -15,32 +15,32 @@
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net47' ">
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE;FEATURE_VALUETUPLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_VALUETUPLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE;FEATURE_VALUETUPLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_VALUETUPLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
