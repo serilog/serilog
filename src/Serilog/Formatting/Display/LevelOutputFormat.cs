@@ -70,17 +70,13 @@ static class LevelOutputFormat
         if (width < 1)
             return string.Empty;
 
-        switch (format[0])
+        return format[0] switch
         {
-            case 'w':
-                return GetLevelMoniker(_lowerCaseLevelMap, index, width);
-            case 'u':
-                return GetLevelMoniker(_upperCaseLevelMap, index, width);
-            case 't':
-                return GetLevelMoniker(_titleCaseLevelMap, index, width);
-            default:
-                return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format);
-        }
+            'w' => GetLevelMoniker(_lowerCaseLevelMap, index, width),
+            'u' => GetLevelMoniker(_upperCaseLevelMap, index, width),
+            't' => GetLevelMoniker(_titleCaseLevelMap, index, width),
+            _ => Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format)
+        };
     }
 
     static string GetLevelMoniker(string[][] caseLevelMap, int index, int width)
