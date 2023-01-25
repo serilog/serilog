@@ -29,7 +29,7 @@ public class LevelOverrideMapTests
         if (overrideExpected)
         {
             Assert.NotNull(overriddenSwitch);
-            Assert.Equal(expected, overriddenSwitch!.MinimumLevel);
+            Assert.Equal(expected, overriddenSwitch.MinimumLevel);
             Assert.Equal(LevelAlias.Minimum, overriddenLevel);
         }
         else

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>2.12.1</VersionPrefix>
+    <VersionPrefix>3.0.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.3;netstandard1.0;net45;net46;net47;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net46;net47;net5.0;net6.0;net7.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,11 +11,6 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <TreatSpecificWarningsAsErrors />
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <DefineConstants>$(DefineConstants);FEATURE_REMOTING;FEATURE_HASHTABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
@@ -28,10 +23,6 @@
     <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_VALUETUPLE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_VALUETUPLE</DefineConstants>
   </PropertyGroup>
@@ -41,16 +32,16 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_ARRAYPOOL</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_VALUETUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_ARRAYPOOL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_ARRAYPOOL</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_ARRAYPOOL</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_ASYNCLOCAL;FEATURE_HASHTABLE;FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_VALUETUPLE;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;FEATURE_ARRAYPOOL</DefineConstants>
+  </PropertyGroup>
 
   <PropertyGroup>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
