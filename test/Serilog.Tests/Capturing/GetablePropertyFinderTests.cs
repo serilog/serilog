@@ -58,6 +58,20 @@ public class GetablePropertyFinderTests
     }
 
     [Fact]
+    public void ShouldOnlyGetInheritedNewProperty()
+    {
+        var property = typeof(InheritedNewClass).GetPropertiesRecursive().Single();
+
+        Assert.Equal(typeof(InheritedNewClass).GetProperty("Property"), property);
+    }
+
+    public class InheritedNewClass :
+        BaseClass
+    {
+        public new string Property { get; set; } = null!;
+    }
+
+    [Fact]
     public void ShouldOnlyGetInheritedProperty()
     {
         var property = typeof(InheritedClass).GetPropertiesRecursive().Single();
@@ -68,11 +82,11 @@ public class GetablePropertyFinderTests
     public class InheritedClass :
         BaseClass
     {
-        public new string Property { get; set; } = null!;
+        public override string Property { get; set; } = null!;
     }
 
     public class BaseClass
     {
-        public string Property { get; set; } = null!;
+        public virtual string Property { get; set; } = null!;
     }
 }
