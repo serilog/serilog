@@ -68,14 +68,10 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration Conditional(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink) { }
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0) { }
         public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
-        public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.ILogEventSink, new () { }
-        [System.Obsolete("Please use `LoggerConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configure" +
-            "WrappedSink, restrictedToMinimumLevel, levelSwitch)` instead.")]
-        public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink) { }
-        public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel, Serilog.Core.LoggingLevelSwitch? levelSwitch) { }
+        public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
     }
 }
 namespace Serilog.Context
@@ -447,9 +443,6 @@ namespace Serilog.Formatting.Display
         public const string NewLinePropertyName = "NewLine";
         public const string PropertiesPropertyName = "Properties";
         public const string TimestampPropertyName = "Timestamp";
-        [System.Obsolete("These implementation details of output formatting will not be exposed in a future" +
-            " version.")]
-        public static System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> GetOutputProperties(Serilog.Events.LogEvent logEvent) { }
     }
 }
 namespace Serilog.Formatting
@@ -468,8 +461,6 @@ namespace Serilog.Formatting.Json
             "ilog version.")]
         public JsonFormatter(bool omitEnclosingObject, string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
-        [System.Obsolete("Use JsonValueFormatter.WriteQuotedJsonString() instead.")]
-        public static string? Escape(string? s) { }
     }
     public class JsonValueFormatter : Serilog.Data.LogEventPropertyValueVisitor<System.IO.TextWriter, bool>
     {
@@ -481,16 +472,6 @@ namespace Serilog.Formatting.Json
         protected override bool VisitSequenceValue(System.IO.TextWriter state, Serilog.Events.SequenceValue sequence) { }
         protected override bool VisitStructureValue(System.IO.TextWriter state, Serilog.Events.StructureValue structure) { }
         public static void WriteQuotedJsonString(string str, System.IO.TextWriter output) { }
-    }
-}
-namespace Serilog.Formatting.Raw
-{
-    [System.Obsolete("A JSON-based formatter such as `Serilog.Formatting.Compact.CompactJsonFormatter` " +
-        "is recommended for this task.")]
-    public class RawFormatter : Serilog.Formatting.ITextFormatter
-    {
-        public RawFormatter() { }
-        public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
     }
 }
 namespace Serilog
