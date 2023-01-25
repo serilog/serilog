@@ -58,17 +58,6 @@ public static class OutputProperties
     /// Create properties from the provided log event.
     /// </summary>
     /// <param name="logEvent">The log event.</param>
-    /// <returns>A dictionary with properties representing the log event.</returns>
-    [Obsolete("These implementation details of output formatting will not be exposed in a future version.")]
-    public static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent)
-    {
-        return GetOutputProperties(logEvent, MessageTemplate.Empty);
-    }
-
-    /// <summary>
-    /// Create properties from the provided log event.
-    /// </summary>
-    /// <param name="logEvent">The log event.</param>
     /// <param name="outputTemplate">The output template.</param>
     /// <returns>A dictionary with properties representing the log event.</returns>
     internal static IReadOnlyDictionary<string, LogEventPropertyValue> GetOutputProperties(LogEvent logEvent, MessageTemplate outputTemplate)

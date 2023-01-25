@@ -179,7 +179,7 @@ class KeyValuePairSettings : ILoggerSettings
                 throw new FormatException($"\"{switchName}\" is not a valid name for a Level Switch declaration. Level switch must be declared with a '$' sign, like \"level-switch:$switchName\"");
             }
             LoggingLevelSwitch newSwitch;
-            if (switchInitialLevel == String.Empty)
+            if (switchInitialLevel == string.Empty)
             {
                 newSwitch = new();
             }

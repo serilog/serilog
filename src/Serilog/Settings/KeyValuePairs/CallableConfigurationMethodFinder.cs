@@ -23,8 +23,10 @@ static class CallableConfigurationMethodFinder
                 .Select(t => t.GetTypeInfo())
                 .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
             .SelectMany(t => t.DeclaredMethods)
-            .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
-            .Where(m => m.GetParameters()[0].ParameterType == configType)
+            .Where(m => m.IsStatic &&
+                        m.IsPublic &&
+                        m.IsDefined(typeof(ExtensionAttribute), false) &&
+                        m.GetParameters()[0].ParameterType == configType)
             .ToList();
 
         // some configuration methods are not extension methods. They are added manually
