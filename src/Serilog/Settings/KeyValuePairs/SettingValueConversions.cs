@@ -33,7 +33,7 @@ class SettingValueConversions
         var toTypeInfo = toType.GetTypeInfo();
         if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-            if (value == String.Empty)
+            if (value == string.Empty)
                 return null;
 
             // unwrap Nullable<> type since we're not handling null situations
