@@ -19,9 +19,6 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_REMOTING;FEATURE_GETCURRENTMETHOD</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ASYNCLOCAL;FEATURE_GETCURRENTMETHOD</DefineConstants>
   </PropertyGroup>

@@ -2,23 +2,6 @@ namespace Serilog.Tests.Context;
 
 public class LogContextTests
 {
-    static LogContextTests()
-    {
-#if FEATURE_REMOTING
-        LifetimeServices.LeaseTime = TimeSpan.FromMilliseconds(100);
-        LifetimeServices.LeaseManagerPollTime = TimeSpan.FromMilliseconds(10);
-#endif
-    }
-
-    public LogContextTests()
-    {
-#if FEATURE_REMOTING
-        // ReSharper disable AssignNullToNotNullAttribute
-        CallContext.LogicalSetData(typeof(LogContext).FullName, null);
-        // ReSharper restore AssignNullToNotNullAttribute
-#endif
-    }
-
     [Fact]
     public void PushedPropertiesAreAvailableToLoggers()
     {
@@ -277,7 +260,7 @@ public class LogContextTests
     }
 #endif
 
-#if TEST_FEATURE_APPDOMAIN && FEATURE_REMOTING
+#if TEST_FEATURE_APPDOMAIN
     [Fact]
     public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
     {
@@ -362,19 +345,6 @@ public class LogContextTests
         await t;
     }
 }
-
-#if FEATURE_REMOTING
-class InMemoryRemoteObjectTracker : ITrackingHandler
-{
-    public int DisconnectCount { get; set; }
-
-    public void DisconnectedObject(object obj) => DisconnectCount++;
-
-    public void MarshaledObject(object obj, ObjRef or) { }
-
-    public void UnmarshaledObject(object obj, ObjRef or) { }
-}
-#endif
 
 #if TEST_FEATURE_APPDOMAIN
 public class RemotelyCallable : MarshalByRefObject
