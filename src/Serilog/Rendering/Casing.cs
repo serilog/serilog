@@ -23,14 +23,11 @@ static class Casing
     /// <returns>The provided <paramref name="value"/> with formatting applied</returns>
     public static string Format(string value, string? format = null)
     {
-        switch (format)
+        return format switch
         {
-            case "u":
-                return value.ToUpperInvariant();
-            case "w":
-                return value.ToLowerInvariant();
-            default:
-                return value;
-        }
+            "u" => value.ToUpperInvariant(),
+            "w" => value.ToLowerInvariant(),
+            _ => value
+        };
     }
 }

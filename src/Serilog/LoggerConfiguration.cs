@@ -150,21 +150,14 @@ public class LoggerConfiguration
             auditing);
         var processor = new MessageTemplateProcessor(converter);
 
-        ILogEventEnricher enricher;
-        switch (_enrichers.Count)
+        var enricher = _enrichers.Count switch
         {
-            case 0:
-                // Should be a rare case, so no problem making that extra interface dispatch.
-                enricher = new EmptyEnricher();
-                break;
-            case 1:
-                enricher = _enrichers[0];
-                break;
-            default:
-                // Enrichment failures are not considered blocking for auditing purposes.
-                enricher = new SafeAggregateEnricher(_enrichers);
-                break;
-        }
+            // Should be a rare case, so no problem making that extra interface dispatch.
+            0 => new EmptyEnricher(),
+            1 => _enrichers[0],
+            // Enrichment failures are not considered blocking for auditing purposes.
+            _ => new SafeAggregateEnricher(_enrichers)
+        };
 
         LevelOverrideMap? overrideMap = null;
         if (_overrides.Count != 0)
