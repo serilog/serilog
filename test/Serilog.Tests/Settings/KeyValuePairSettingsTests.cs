@@ -262,7 +262,7 @@ public class KeyValuePairSettingsTests
         log.Write(Some.DebugEvent());
         Assert.True(evt is null, "LoggingLevelSwitch initial level was information. It should not log Debug messages");
 
-        controlSwitch!.MinimumLevel = Debug;
+        controlSwitch.MinimumLevel = Debug;
         log.Write(Some.DebugEvent());
         Assert.True(evt != null, "LoggingLevelSwitch level was changed to Debug. It should log Debug messages");
     }

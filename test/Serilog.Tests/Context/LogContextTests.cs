@@ -183,7 +183,7 @@ public class LogContextTests
 
                     log.Write(Some.InformationEvent());
                     Assert.NotNull(lastEvent);
-                    Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
+                    Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                     Assert.False(Thread.CurrentThread.IsThreadPoolThread);
                     Assert.True(Thread.CurrentThread.IsBackground);
