@@ -250,7 +250,7 @@ class KeyValuePairSettings : ILoggerSettings
 
     internal static IEnumerable<Assembly> LoadConfigurationAssemblies(IReadOnlyDictionary<string, string> directives)
     {
-        var configurationAssemblies = new List<Assembly> { typeof(ILogger).GetTypeInfo().Assembly };
+        var configurationAssemblies = new List<Assembly> { typeof(ILogger).Assembly };
 
         foreach (var usingDirective in directives.Where(d => d.Key.Equals(UsingDirective) ||
                                                              d.Key.StartsWith(UsingDirectiveFullFormPrefix)))
