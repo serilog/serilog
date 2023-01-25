@@ -32,7 +32,6 @@ class ByteArrayScalarConversionPolicy : IScalarConversionPolicy
         if (bytes.Length > MaximumByteArrayLength)
         {
 #if FEATURE_TOHEXSTRING
-
             var start = Convert.ToHexString(bytes, 0, 16);
 #else
             var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
