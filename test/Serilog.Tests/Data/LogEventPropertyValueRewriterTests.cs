@@ -35,16 +35,16 @@ public class LogEventPropertyValueRewriterTests
         var seq = limited as SequenceValue;
         Assert.NotNull(seq);
 
-        var str = seq!.Elements.Single() as StructureValue;
+        var str = seq.Elements.Single() as StructureValue;
         Assert.NotNull(str);
 
-        var prop = str!.Properties.Single();
+        var prop = str.Properties.Single();
         Assert.Equal("S", prop.Name);
 
         var sca = prop.Value as ScalarValue;
         Assert.NotNull(sca);
 
-        Assert.Equal("abc", sca!.Value);
+        Assert.Equal("abc", sca.Value);
     }
 
     [Fact]

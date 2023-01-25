@@ -20,6 +20,6 @@ public class ApiApprovalTests
             ExcludeAttributes = new[] { "System.Diagnostics.DebuggerDisplayAttribute" },
         });
 
-        publicApi.ShouldMatchApproved(options => options!.WithFilenameGenerator((testMethodInfo, discriminator, fileType, fileExtension) => $"{type.Assembly.GetName().Name!}.{fileType}.{fileExtension}"));
+        publicApi.ShouldMatchApproved(options => options.WithFilenameGenerator((testMethodInfo, discriminator, fileType, fileExtension) => $"{type.Assembly.GetName().Name!}.{fileType}.{fileExtension}"));
     }
 }
