@@ -12,22 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if FEATURE_HASHTABLE
-#endif
-
 namespace Serilog.Core.Pipeline;
 
 class MessageTemplateCache : IMessageTemplateParser
 {
     readonly IMessageTemplateParser _innerParser;
     readonly object _templatesLock = new();
-
-#if FEATURE_HASHTABLE
     readonly Hashtable _templates = new();
-#else
-    readonly Dictionary<string, MessageTemplate> _templates = new();
-#endif
-
     const int MaxCacheItems = 1000;
     const int MaxCachedTemplateLength = 1024;
 
@@ -43,18 +34,11 @@ class MessageTemplateCache : IMessageTemplateParser
         if (messageTemplate.Length > MaxCachedTemplateLength)
             return _innerParser.Parse(messageTemplate);
 
-#if FEATURE_HASHTABLE
         // ReSharper disable once InconsistentlySynchronizedField
         // ignored warning because this is by design
         var result = (MessageTemplate?)_templates[messageTemplate];
         if (result != null)
             return result;
-#else
-        MessageTemplate result;
-        lock (_templatesLock)
-            if (_templates.TryGetValue(messageTemplate, out result))
-                return result;
-#endif
 
         result = _innerParser.Parse(messageTemplate);
 
