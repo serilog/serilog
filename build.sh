@@ -3,7 +3,6 @@
 set -e
 
 dotnet --info
-dotnet --list-sdks
 dotnet restore
 
 echo "🤖 Attempting to build..."

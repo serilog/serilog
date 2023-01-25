@@ -24,9 +24,3 @@ global using Serilog.Parsing;
 global using Serilog.Policies;
 global using Serilog.Rendering;
 global using Serilog.Settings.KeyValuePairs;
-
-#if FEATURE_REMOTING
-global using System.Runtime.Remoting;
-global using System.Runtime.Remoting.Lifetime;
-global using System.Runtime.Remoting.Messaging;
-#endif

@@ -39,8 +39,6 @@ public static class LogContext
 {
 #if FEATURE_ASYNCLOCAL
     static readonly AsyncLocal<EnricherStack?> Data = new();
-#elif FEATURE_REMOTING
-    static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
 #else // DOTNET_51
     [ThreadStatic]
     static EnricherStack? Data;
@@ -205,55 +203,6 @@ public static class LogContext
     {
         get => Data.Value;
         set => Data.Value = value;
-    }
-
-#elif FEATURE_REMOTING
-
-    static EnricherStack? Enrichers
-    {
-        get
-        {
-            var objectHandle = CallContext.LogicalGetData(DataSlotName) as ObjectHandle;
-
-            return objectHandle?.Unwrap() as EnricherStack;
-        }
-        set
-        {
-            if (CallContext.LogicalGetData(DataSlotName) is IDisposable oldHandle)
-            {
-                oldHandle.Dispose();
-            }
-
-            if (value != null)
-            {
-                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
-            }
-        }
-    }
-
-    sealed class DisposableObjectHandle : ObjectHandle, IDisposable
-    {
-        static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
-
-        public DisposableObjectHandle(object o)
-            : base(o)
-        {
-        }
-
-        public override object? InitializeLifetimeService()
-        {
-            var lease = base.InitializeLifetimeService() as ILease;
-            lease?.Register(LifeTimeSponsor);
-            return lease;
-        }
-
-        public void Dispose()
-        {
-            if (GetLifetimeService() is ILease lease)
-            {
-                lease.Unregister(LifeTimeSponsor);
-            }
-        }
     }
 
 #else // DOTNET_51
