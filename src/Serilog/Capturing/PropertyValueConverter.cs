@@ -413,7 +413,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool IsCompilerGeneratedType(Type type)
+    static bool IsCompilerGeneratedType(Type type)
     {
         var name = type.Name;
 
