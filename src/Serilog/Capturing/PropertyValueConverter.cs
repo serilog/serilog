@@ -415,11 +415,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool IsCompilerGeneratedType(Type type)
     {
-        var typeInfo = type.GetTypeInfo();
         var typeName = type.Name;
 
         // C# Anonymous types always start with "<>" and VB's start with "VB$"
-        return typeInfo.IsGenericType && typeInfo.IsSealed && type.Namespace == null
+        return type.IsGenericType && type.IsSealed && type.Namespace == null
                && (typeName[0] == '<'
                    || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
     }
