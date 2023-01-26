@@ -381,10 +381,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     {
         foreach (var prop in value.GetType().GetPropertiesRecursive())
         {
-            object propValue;
+            object? propValue;
             try
             {
-                propValue = prop.GetValue(value)!;
+                propValue = prop.GetValue(value);
             }
             catch (TargetParameterCountException)
             {

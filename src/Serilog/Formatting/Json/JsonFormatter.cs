@@ -380,25 +380,57 @@ public class JsonFormatter : ITextFormatter
 
     static void WriteSingle(float value, TextWriter output)
     {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#else
         output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#endif
     }
 
     static void WriteDouble(double value, TextWriter output)
     {
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#else
         output.Write(value.ToString("R", CultureInfo.InvariantCulture));
+#endif
     }
 
     static void WriteOffset(DateTimeOffset value, TextWriter output)
     {
         output.Write('"');
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, format: "o"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("o"));
+#else
         output.Write(value.ToString("o"));
+#endif
         output.Write('"');
     }
 
     static void WriteDateTime(DateTime value, TextWriter output)
     {
         output.Write('"');
+#if FEATURE_SPAN
+        Span<char> buffer = stackalloc char[64];
+        if (value.TryFormat(buffer, out int written, format: "o"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("o"));
+#else
         output.Write(value.ToString("o"));
+#endif
         output.Write('"');
     }
 
@@ -407,14 +439,25 @@ public class JsonFormatter : ITextFormatter
     static void WriteDateOnly(DateOnly value, TextWriter output)
     {
         output.Write('"');
-        output.Write(value.ToString("yyyy-MM-dd"));
+        Span<char> buffer = stackalloc char[10];
+        if (value.TryFormat(buffer, out int written, format: "yyyy-MM-dd"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("yyyy-MM-dd"));
+
         output.Write('"');
     }
 
     static void WriteTimeOnly(TimeOnly value, TextWriter output)
     {
         output.Write('"');
-        output.Write(value.ToString("O"));
+
+        Span<char> buffer = stackalloc char[16];
+        if (value.TryFormat(buffer, out int written, format: "O"))
+            output.Write(buffer.Slice(0, written));
+        else
+            output.Write(value.ToString("O"));
+
         output.Write('"');
     }
 

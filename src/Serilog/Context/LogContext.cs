@@ -37,12 +37,7 @@ namespace Serilog.Context;
 /// (and so is preserved across async/await calls).</remarks>
 public static class LogContext
 {
-#if FEATURE_ASYNCLOCAL
     static readonly AsyncLocal<EnricherStack?> Data = new();
-#else // DOTNET_51
-    [ThreadStatic]
-    static EnricherStack? Data;
-#endif
 
     /// <summary>
     /// Push a property onto the context, returning an <see cref="IDisposable"/>
@@ -197,21 +192,10 @@ public static class LogContext
         }
     }
 
-#if FEATURE_ASYNCLOCAL
-
     static EnricherStack? Enrichers
     {
         get => Data.Value;
         set => Data.Value = value;
     }
-
-#else // DOTNET_51
-
-    static EnricherStack? Enrichers
-    {
-        get => Data;
-        set => Data = value;
-    }
-#endif
 }
 
