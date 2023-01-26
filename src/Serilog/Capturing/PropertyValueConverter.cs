@@ -301,14 +301,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #endif
         {
             var elements = new List<LogEventPropertyValue>();
-            foreach (var field in valueType.GetTypeInfo().DeclaredFields)
+            foreach (var field in valueType.GetFields(BindingFlags.Instance | BindingFlags.Public))
             {
-                if (field.IsPublic && !field.IsStatic)
-                {
-                    var fieldValue = field.GetValue(value);
-                    var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
-                    elements.Add(propertyValue);
-                }
+                var fieldValue = field.GetValue(value);
+                var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
+                elements.Add(propertyValue);
             }
 
             result = new SequenceValue(elements);
@@ -374,7 +371,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     static bool IsValidDictionaryKeyType(Type valueType)
     {
         return BuiltInScalarTypes.Contains(valueType) ||
-               valueType.GetTypeInfo().IsEnum;
+               valueType.IsEnum;
     }
 
     IEnumerable<LogEventProperty> GetProperties(object value)
