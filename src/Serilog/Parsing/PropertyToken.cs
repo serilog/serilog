@@ -26,20 +26,6 @@ public sealed class PropertyToken : MessageTemplateToken
     /// </summary>
     /// <param name="propertyName">The name of the property.</param>
     /// <param name="rawText">The token as it appears in the message template.</param>
-    /// <param name="formatObsolete">The format applied to the property, if any.</param>
-    /// <param name="destructuringObsolete">The destructuring strategy applied to the property, if any.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
-    public PropertyToken(string propertyName, string rawText, string formatObsolete, Destructuring destructuringObsolete)
-        : this(propertyName, rawText, formatObsolete, null, destructuringObsolete)
-    {
-    }
-
-    /// <summary>
-    /// Construct a <see cref="PropertyToken"/>.
-    /// </summary>
-    /// <param name="propertyName">The name of the property.</param>
-    /// <param name="rawText">The token as it appears in the message template.</param>
     /// <param name="format">The format applied to the property, if any.</param>
     /// <param name="alignment">The alignment applied to the property, if any.</param>
     /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>

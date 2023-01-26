@@ -835,8 +835,6 @@ namespace Serilog.Parsing
     }
     public sealed class PropertyToken : Serilog.Parsing.MessageTemplateToken
     {
-        [System.Obsolete("Use named arguments with this method to guarantee forwards-compatibility.")]
-        public PropertyToken(string propertyName, string rawText, string formatObsolete, Serilog.Parsing.Destructuring destructuringObsolete) { }
         public PropertyToken(string propertyName, string rawText, string? format = null, Serilog.Parsing.Alignment? alignment = default, Serilog.Parsing.Destructuring destructuring = 0, int startIndex = -1) { }
         public Serilog.Parsing.Alignment? Alignment { get; }
         public Serilog.Parsing.Destructuring Destructuring { get; }
