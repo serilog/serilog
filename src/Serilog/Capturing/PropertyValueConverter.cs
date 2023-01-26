@@ -283,22 +283,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         var definition = valueType.GetGenericTypeDefinition();
 
         // Ignore the 8+ value case for now.
-#if FEATURE_VALUETUPLE
         if (definition == typeof(ValueTuple<>) || definition == typeof(ValueTuple<,>) ||
             definition == typeof(ValueTuple<,,>) || definition == typeof(ValueTuple<,,,>) ||
             definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||
             definition == typeof(ValueTuple<,,,,,,>))
-#else
-        // ReSharper disable once PossibleNullReferenceException
-        if (definition.FullName is
-            "System.ValueTuple`1" or
-            "System.ValueTuple`2" or
-            "System.ValueTuple`3" or
-            "System.ValueTuple`4" or
-            "System.ValueTuple`5" or
-            "System.ValueTuple`6" or
-            "System.ValueTuple`7")
-#endif
         {
             var elements = new List<LogEventPropertyValue>();
             foreach (var field in valueType.GetTypeInfo().DeclaredFields)
