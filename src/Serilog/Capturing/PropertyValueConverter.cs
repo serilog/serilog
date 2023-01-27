@@ -301,14 +301,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #endif
         {
             var elements = new List<LogEventPropertyValue>();
-            foreach (var field in valueType.GetTypeInfo().DeclaredFields)
+            foreach (var field in valueType.GetFields(BindingFlags.Instance | BindingFlags.Public))
             {
-                if (field.IsPublic && !field.IsStatic)
-                {
-                    var fieldValue = field.GetValue(value);
-                    var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
-                    elements.Add(propertyValue);
-                }
+                var fieldValue = field.GetValue(value);
+                var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
+                elements.Add(propertyValue);
             }
 
             result = new SequenceValue(elements);
@@ -374,7 +371,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     static bool IsValidDictionaryKeyType(Type valueType)
     {
         return BuiltInScalarTypes.Contains(valueType) ||
-               valueType.GetTypeInfo().IsEnum;
+               valueType.IsEnum;
     }
 
     IEnumerable<LogEventProperty> GetProperties(object value)
@@ -416,14 +413,16 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool IsCompilerGeneratedType(Type type)
+    static bool IsCompilerGeneratedType(Type type)
     {
-        var typeInfo = type.GetTypeInfo();
-        var typeName = type.Name;
+        if (!type.IsGenericType || !type.IsSealed || type.Namespace != null)
+        {
+            return false;
+        }
 
         // C# Anonymous types always start with "<>" and VB's start with "VB$"
-        return typeInfo.IsGenericType && typeInfo.IsSealed && type.Namespace == null
-               && (typeName[0] == '<'
-                   || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
+        var name = type.Name;
+        return name[0] == '<'
+               || (name.Length > 2 && name[0] == 'V' && name[1] == 'B' && name[2] == '$');
     }
 }
