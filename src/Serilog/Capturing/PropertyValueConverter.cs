@@ -155,22 +155,21 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
         }
 
-        if (TryConvertEnumerable(value, destructuring, out var enumerableResult))
+        var type = value.GetType();
+        if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
             return enumerableResult;
 
-        if (TryConvertValueTuple(value, destructuring, out var tupleResult))
+        if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-        if (TryConvertCompilerGeneratedType(value, destructuring, out var compilerGeneratedResult))
+        if (TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
             return compilerGeneratedResult;
 
         return new ScalarValue(value.ToString() ?? "");
     }
 
-    bool TryConvertEnumerable(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertEnumerable(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        var valueType = value.GetType();
-
         if (value is IEnumerable enumerable)
         {
             // Only dictionaries with 'scalar' keys are permitted, as
@@ -181,7 +180,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             // Only actual dictionaries are supported, as arbitrary types
             // can implement multiple IDictionary interfaces and thus introduce
             // multiple different interpretations.
-            if (TryGetDictionary(value, valueType, out var dictionary))
+            if (TryGetDictionary(value, type, out var dictionary))
             {
                 result = new DictionaryValue(MapToDictionaryElements(dictionary, destructuring));
                 return true;
@@ -249,7 +248,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #if FEATURE_ITUPLE
 
-    bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is not ITuple tuple)
         {
@@ -271,16 +270,15 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #else
 
-    bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        var valueType = value.GetType();
-        if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
+        if (!(value is IStructuralEquatable && type.IsConstructedGenericType))
         {
             result = null;
             return false;
         }
 
-        var definition = valueType.GetGenericTypeDefinition();
+        var definition = type.GetGenericTypeDefinition();
 
         // Ignore the 8+ value case for now.
 #if FEATURE_VALUETUPLE
@@ -301,7 +299,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #endif
         {
             var elements = new List<LogEventPropertyValue>();
-            foreach (var field in valueType.GetFields(BindingFlags.Instance | BindingFlags.Public))
+            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
             {
                 var fieldValue = field.GetValue(value);
                 var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
@@ -318,18 +316,17 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #endif
 
-    bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertCompilerGeneratedType(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        var valueType = value.GetType();
         if (destructuring == Destructuring.Destructure)
         {
-            var typeTag = valueType.Name;
-            if (typeTag.Length <= 0 || IsCompilerGeneratedType(valueType))
+            var typeTag = type.Name;
+            if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
             {
                 typeTag = null;
             }
 
-            result = new StructureValue(GetProperties(value), typeTag);
+            result = new StructureValue(GetProperties(value, type), typeTag);
             return true;
         }
 
@@ -374,9 +371,9 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                valueType.IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value)
+    IEnumerable<LogEventProperty> GetProperties(object value, Type type)
     {
-        foreach (var prop in value.GetType().GetPropertiesRecursive())
+        foreach (var prop in type.GetPropertiesRecursive())
         {
             object? propValue;
             try
