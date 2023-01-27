@@ -110,8 +110,7 @@ public class LoggerDestructuringConfiguration
     {
         Guard.AgainstNull(transformation);
 
-        var policy = new ProjectedDestructuringPolicy(t => t == typeof(TValue),
-            o => transformation((TValue)o));
+        var policy = new ProjectedDestructuringPolicy<TValue>(null, transformation);
         return With(policy);
     }
 
@@ -135,8 +134,7 @@ public class LoggerDestructuringConfiguration
         Guard.AgainstNull(predicate);
         Guard.AgainstNull(transformation);
 
-        var policy = new ProjectedDestructuringPolicy(predicate,
-            o => transformation((TValue)o));
+        var policy = new ProjectedDestructuringPolicy<TValue>(predicate, transformation);
         return With(policy);
     }
 

@@ -93,6 +93,9 @@ public class LoggerConfigurationTests
         public int A { get; set; }
         public int B { get; set; }
     }
+    class InheritedAB : AB
+    {
+    }
 
 // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
@@ -197,6 +200,29 @@ public class LoggerConfigurationTests
             .CreateLogger();
 
         logger.Information("{@AB}", new AB());
+
+        var ev = events.Single();
+        var prop = ev.Properties["AB"];
+        var sv = (StructureValue)prop;
+        var c = sv.Properties.Single();
+        Assert.Equal("C", c.Name);
+    }
+
+    [Fact]
+    public void InheritedTransformationsAreAppliedToEventProperties()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.ByTransforming<AB>(ab => new
+            {
+                C = ab.B
+            })
+            .CreateLogger();
+
+        logger.Information("{@AB}", new InheritedAB());
 
         var ev = events.Single();
         var prop = ev.Properties["AB"];

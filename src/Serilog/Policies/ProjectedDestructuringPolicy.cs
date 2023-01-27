@@ -14,14 +14,14 @@
 
 namespace Serilog.Policies;
 
-class ProjectedDestructuringPolicy : IDestructuringPolicy
+class ProjectedDestructuringPolicy<T> : IDestructuringPolicy
 {
-    readonly Func<Type, bool> _canApply;
-    readonly Func<object, object> _projection;
+    readonly Func<Type, bool>? _canApply;
+    readonly Func<T, object> _projection;
 
-    public ProjectedDestructuringPolicy(Func<Type, bool> canApply, Func<object, object> projection)
+    public ProjectedDestructuringPolicy(Func<Type, bool>? canApply, Func<T, object> projection)
     {
-        _canApply = Guard.AgainstNull(canApply);
+        _canApply = canApply;
         _projection = Guard.AgainstNull(projection);
     }
 
@@ -29,14 +29,28 @@ class ProjectedDestructuringPolicy : IDestructuringPolicy
     {
         Guard.AgainstNull(value);
 
-        if (!_canApply(value.GetType()))
+        if (value is T typed)
         {
-            result = null;
-            return false;
+            if (_canApply == null)
+            {
+                Convert(propertyValueFactory, out result, typed);
+                return true;
+            }
+
+            if (_canApply(typed.GetType()))
+            {
+                Convert(propertyValueFactory, out result, typed);
+                return true;
+            }
         }
 
-        var projected = _projection(value);
+        result = null;
+        return false;
+    }
+
+    void Convert(ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result, T typed)
+    {
+        var projected = _projection(typed);
         result = propertyValueFactory.CreatePropertyValue(projected, destructureObjects: true);
-        return true;
     }
 }
