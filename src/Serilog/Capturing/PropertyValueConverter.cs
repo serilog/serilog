@@ -256,12 +256,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             return false;
         }
 
-        var elements = new List<LogEventPropertyValue>();
+        var elements = new LogEventPropertyValue[tuple.Length];
         for (var i = 0; i < tuple.Length; i++)
         {
             var fieldValue = tuple[i];
-            var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
-            elements.Add(propertyValue);
+            elements[i] = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
         }
 
         result = new SequenceValue(elements);
@@ -298,12 +297,14 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             "System.ValueTuple`7")
 #endif
         {
-            var elements = new List<LogEventPropertyValue>();
-            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+            var elements = new LogEventPropertyValue[fields.Length];
+            for (var index = 0; index < fields.Length; index++)
             {
+                var field = fields[index];
                 var fieldValue = field.GetValue(value);
                 var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
-                elements.Add(propertyValue);
+                elements[index] = propertyValue;
             }
 
             result = new SequenceValue(elements);
