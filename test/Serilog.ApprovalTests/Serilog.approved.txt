@@ -81,8 +81,6 @@ namespace Serilog.Context
         public static Serilog.Core.ILogEventEnricher Clone() { }
         public static System.IDisposable Push(Serilog.Core.ILogEventEnricher enricher) { }
         public static System.IDisposable Push(params Serilog.Core.ILogEventEnricher[] enrichers) { }
-        [System.Obsolete("Please use `LogContext.Push(properties)` instead.")]
-        public static System.IDisposable PushProperties(params Serilog.Core.ILogEventEnricher[] properties) { }
         public static System.IDisposable PushProperty(string name, object? value, bool destructureObjects = false) { }
         public static void Reset() { }
         public static System.IDisposable Suspend() { }
@@ -326,8 +324,6 @@ namespace Serilog.Debugging
     }
     public static class SelfLog
     {
-        [System.Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
-        public static System.IO.TextWriter? Out { set; }
         public static void Disable() { }
         public static void Enable(System.Action<string> output) { }
         public static void Enable(System.IO.TextWriter output) { }
@@ -473,9 +469,6 @@ namespace Serilog.Formatting.Json
     public class JsonFormatter : Serilog.Formatting.ITextFormatter
     {
         public JsonFormatter(string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
-        [System.Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Ser" +
-            "ilog version.")]
-        public JsonFormatter(bool omitEnclosingObject, string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
     }
     public class JsonValueFormatter : Serilog.Data.LogEventPropertyValueVisitor<System.IO.TextWriter, bool>

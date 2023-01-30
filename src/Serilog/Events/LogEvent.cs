@@ -191,8 +191,12 @@ public class LogEvent
     {
         Guard.AgainstNull(property);
 
+#if FEATURE_DICTIONARYTRYADD
+        _properties.TryAdd(property.Name, property.Value);
+#else
         if (!_properties.ContainsKey(property.Name))
             _properties.Add(property.Name, property.Value);
+#endif
     }
 
     /// <summary>
@@ -204,8 +208,12 @@ public class LogEvent
     {
         if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
 
+#if FEATURE_DICTIONARYTRYADD
+        _properties.TryAdd(property.Name, property.Value);
+#else
         if (!_properties.ContainsKey(property.Name))
             _properties.Add(property.Name, property.Value);
+#endif
     }
 
     /// <summary>
@@ -220,9 +228,7 @@ public class LogEvent
 
     internal LogEvent Copy()
     {
-        var properties = new Dictionary<string, LogEventPropertyValue>(Properties.Count);
-        foreach (var key in _properties.Keys)
-            properties.Add(key, _properties[key]);
+        var properties = new Dictionary<string, LogEventPropertyValue>(_properties);
 
         return new LogEvent(
             Timestamp,
