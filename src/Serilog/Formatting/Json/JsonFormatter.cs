@@ -23,7 +23,6 @@ public class JsonFormatter : ITextFormatter
     // Ignore obsoletion errors
 #pragma warning disable 618
 
-    readonly bool _omitEnclosingObject;
     readonly string _closingDelimiter;
     readonly bool _renderMessage;
     readonly IFormatProvider? _formatProvider;
@@ -41,30 +40,7 @@ public class JsonFormatter : ITextFormatter
         string? closingDelimiter = null,
         bool renderMessage = false,
         IFormatProvider? formatProvider = null)
-        : this(false, closingDelimiter, renderMessage, formatProvider)
     {
-    }
-
-    /// <summary>
-    /// Construct a <see cref="JsonFormatter"/>.
-    /// </summary>
-    /// <param name="omitEnclosingObject">If true, the properties of the event will be written to
-    /// the output without enclosing braces. Otherwise, if false, each event will be written as a well-formed
-    /// JSON object.</param>
-    /// <param name="closingDelimiter">A string that will be written after each log event is formatted.
-    /// If null, <see cref="Environment.NewLine"/> will be used. Ignored if <paramref name="omitEnclosingObject"/>
-    /// is true.</param>
-    /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
-    /// property named RenderedMessage.</param>
-    /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-    [Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Serilog version.")]
-    public JsonFormatter(
-        bool omitEnclosingObject,
-        string? closingDelimiter = null,
-        bool renderMessage = false,
-        IFormatProvider? formatProvider = null)
-    {
-        _omitEnclosingObject = omitEnclosingObject;
         _closingDelimiter = closingDelimiter ?? Environment.NewLine;
         _renderMessage = renderMessage;
         _formatProvider = formatProvider;
@@ -110,8 +86,7 @@ public class JsonFormatter : ITextFormatter
         Guard.AgainstNull(logEvent);
         Guard.AgainstNull(output);
 
-        if (!_omitEnclosingObject)
-            output.Write('{');
+        output.Write('{');
 
         var delim = "";
         WriteTimestamp(logEvent.Timestamp, ref delim, output);
@@ -140,11 +115,8 @@ public class JsonFormatter : ITextFormatter
             WriteRenderings(tokensWithFormat, logEvent.Properties, output);
         }
 
-        if (!_omitEnclosingObject)
-        {
-            output.Write('}');
-            output.Write(_closingDelimiter);
-        }
+        output.Write('}');
+        output.Write(_closingDelimiter);
     }
 
     /// <summary>

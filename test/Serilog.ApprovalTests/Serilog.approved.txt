@@ -455,9 +455,6 @@ namespace Serilog.Formatting.Json
     public class JsonFormatter : Serilog.Formatting.ITextFormatter
     {
         public JsonFormatter(string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
-        [System.Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Ser" +
-            "ilog version.")]
-        public JsonFormatter(bool omitEnclosingObject, string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
     }
     public class JsonValueFormatter : Serilog.Data.LogEventPropertyValueVisitor<System.IO.TextWriter, bool>
