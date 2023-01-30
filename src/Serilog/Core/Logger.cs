@@ -258,11 +258,11 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// <returns>True if the level is enabled; otherwise, false.</returns>
     public bool IsEnabled(LogEventLevel level)
     {
-        if ((int)level < (int)_minimumLevel)
+        if (level < _minimumLevel)
             return false;
 
         return _levelSwitch == null ||
-               (int)level >= (int)_levelSwitch.MinimumLevel;
+               level >= _levelSwitch.MinimumLevel;
     }
 
     /// <summary>
