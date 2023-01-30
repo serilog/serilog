@@ -23,7 +23,6 @@ public class JsonFormatter : ITextFormatter
     // Ignore obsoletion errors
 #pragma warning disable 618
 
-    readonly bool _omitEnclosingObject;
     readonly string _closingDelimiter;
     readonly bool _renderMessage;
     readonly IFormatProvider? _formatProvider;
@@ -41,30 +40,7 @@ public class JsonFormatter : ITextFormatter
         string? closingDelimiter = null,
         bool renderMessage = false,
         IFormatProvider? formatProvider = null)
-        : this(false, closingDelimiter, renderMessage, formatProvider)
     {
-    }
-
-    /// <summary>
-    /// Construct a <see cref="JsonFormatter"/>.
-    /// </summary>
-    /// <param name="omitEnclosingObject">If true, the properties of the event will be written to
-    /// the output without enclosing braces. Otherwise, if false, each event will be written as a well-formed
-    /// JSON object.</param>
-    /// <param name="closingDelimiter">A string that will be written after each log event is formatted.
-    /// If null, <see cref="Environment.NewLine"/> will be used. Ignored if <paramref name="omitEnclosingObject"/>
-    /// is true.</param>
-    /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
-    /// property named RenderedMessage.</param>
-    /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-    [Obsolete("The omitEnclosingObject parameter is obsolete and will be removed in a future Serilog version.")]
-    public JsonFormatter(
-        bool omitEnclosingObject,
-        string? closingDelimiter = null,
-        bool renderMessage = false,
-        IFormatProvider? formatProvider = null)
-    {
-        _omitEnclosingObject = omitEnclosingObject;
         _closingDelimiter = closingDelimiter ?? Environment.NewLine;
         _renderMessage = renderMessage;
         _formatProvider = formatProvider;
@@ -110,10 +86,9 @@ public class JsonFormatter : ITextFormatter
         Guard.AgainstNull(logEvent);
         Guard.AgainstNull(output);
 
-        if (!_omitEnclosingObject)
-            output.Write('{');
+        output.Write('{');
 
-        var delim = "";
+        char? delim = null;
         WriteTimestamp(logEvent.Timestamp, ref delim, output);
         WriteLevel(logEvent.Level, ref delim, output);
         WriteMessageTemplate(logEvent.MessageTemplate.Text, ref delim, output);
@@ -140,11 +115,8 @@ public class JsonFormatter : ITextFormatter
             WriteRenderings(tokensWithFormat, logEvent.Properties, output);
         }
 
-        if (!_omitEnclosingObject)
-        {
-            output.Write('}');
-            output.Write(_closingDelimiter);
-        }
+        output.Write('}');
+        output.Write(_closingDelimiter);
     }
 
     /// <summary>
@@ -167,7 +139,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        output.Write(",\"{0}\":{{", "Renderings");
+        output.Write(",\"Renderings\":{");
         WriteRenderingsValues(tokensWithFormat, properties, output);
         output.Write('}');
     }
@@ -177,11 +149,15 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        var propertyDelimiter = "";
+        char? propertyDelimiter = null;
         foreach (var propertyFormats in tokensWithFormat)
         {
-            output.Write(propertyDelimiter);
-            propertyDelimiter = ",";
+            if (propertyDelimiter != null)
+            {
+                output.Write(propertyDelimiter.Value);
+            }
+
+            propertyDelimiter = ',';
             output.Write('"');
             output.Write(propertyFormats.Key);
             output.Write("\":[");
@@ -193,7 +169,7 @@ public class JsonFormatter : ITextFormatter
                 formatDelimiter = ",";
 
                 output.Write('{');
-                var elementDelimiter = "";
+                char? elementDelimiter = null;
 
                 WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
 
@@ -213,7 +189,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        output.Write(",\"{0}\":{{", "Properties");
+        output.Write(",\"Properties\":{");
         WritePropertiesValues(properties, output);
         output.Write('}');
     }
@@ -223,7 +199,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        var precedingDelimiter = "";
+        char? precedingDelimiter = null;
         foreach (var property in properties)
         {
             WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
@@ -233,7 +209,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the attached exception
     /// </summary>
-    void WriteException(Exception exception, ref string delim, TextWriter output)
+    void WriteException(Exception exception, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("Exception", exception, ref delim, output);
     }
@@ -241,7 +217,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// (Optionally) writes out the rendered message
     /// </summary>
-    void WriteRenderedMessage(string message, ref string delim, TextWriter output)
+    void WriteRenderedMessage(string message, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("RenderedMessage", message, ref delim, output);
     }
@@ -249,7 +225,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the message template for the logevent.
     /// </summary>
-    void WriteMessageTemplate(string template, ref string delim, TextWriter output)
+    void WriteMessageTemplate(string template, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("MessageTemplate", template, ref delim, output);
     }
@@ -257,7 +233,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the log level
     /// </summary>
-    void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
+    void WriteLevel(LogEventLevel level, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("Level", level, ref delim, output);
     }
@@ -265,7 +241,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the log timestamp
     /// </summary>
-    void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
+    void WriteTimestamp(DateTimeOffset timestamp, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("Timestamp", timestamp, ref delim, output);
     }
@@ -277,7 +253,7 @@ public class JsonFormatter : ITextFormatter
     {
         output.Write('{');
 
-        var delim = "";
+        char? delim = null;
         if (typeTag != null)
             WriteJsonProperty("_typeTag", typeTag, ref delim, output);
 
@@ -324,14 +300,18 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out a json property with the specified value on output writer
     /// </summary>
-    void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
+    void WriteJsonProperty(string name, object? value, ref char? precedingDelimiter, TextWriter output)
     {
-        output.Write(precedingDelimiter);
+        if (precedingDelimiter != null)
+        {
+            output.Write(precedingDelimiter.Value);
+        }
+
         output.Write('"');
         output.Write(name);
         output.Write("\":");
         WriteLiteral(value, output);
-        precedingDelimiter = ",";
+        precedingDelimiter = ',';
     }
 
     /// <summary>
@@ -382,7 +362,7 @@ public class JsonFormatter : ITextFormatter
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
@@ -395,7 +375,7 @@ public class JsonFormatter : ITextFormatter
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
@@ -409,7 +389,7 @@ public class JsonFormatter : ITextFormatter
         output.Write('"');
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "o"))
+        if (value.TryFormat(buffer, out var written, format: "o"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("o"));
@@ -424,7 +404,7 @@ public class JsonFormatter : ITextFormatter
         output.Write('"');
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "o"))
+        if (value.TryFormat(buffer, out var written, format: "o"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("o"));
@@ -440,7 +420,7 @@ public class JsonFormatter : ITextFormatter
     {
         output.Write('"');
         Span<char> buffer = stackalloc char[10];
-        if (value.TryFormat(buffer, out int written, format: "yyyy-MM-dd"))
+        if (value.TryFormat(buffer, out var written, format: "yyyy-MM-dd"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("yyyy-MM-dd"));
@@ -453,7 +433,7 @@ public class JsonFormatter : ITextFormatter
         output.Write('"');
 
         Span<char> buffer = stackalloc char[16];
-        if (value.TryFormat(buffer, out int written, format: "O"))
+        if (value.TryFormat(buffer, out var written, format: "O"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("O"));
