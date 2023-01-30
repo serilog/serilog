@@ -382,7 +382,7 @@ public class JsonFormatter : ITextFormatter
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
@@ -395,7 +395,7 @@ public class JsonFormatter : ITextFormatter
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "R", CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
@@ -409,7 +409,7 @@ public class JsonFormatter : ITextFormatter
         output.Write('"');
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "o"))
+        if (value.TryFormat(buffer, out var written, format: "o"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("o"));
@@ -424,7 +424,7 @@ public class JsonFormatter : ITextFormatter
         output.Write('"');
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "o"))
+        if (value.TryFormat(buffer, out var written, format: "o"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("o"));
@@ -440,7 +440,7 @@ public class JsonFormatter : ITextFormatter
     {
         output.Write('"');
         Span<char> buffer = stackalloc char[10];
-        if (value.TryFormat(buffer, out int written, format: "yyyy-MM-dd"))
+        if (value.TryFormat(buffer, out var written, format: "yyyy-MM-dd"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("yyyy-MM-dd"));
@@ -453,7 +453,7 @@ public class JsonFormatter : ITextFormatter
         output.Write('"');
 
         Span<char> buffer = stackalloc char[16];
-        if (value.TryFormat(buffer, out int written, format: "O"))
+        if (value.TryFormat(buffer, out var written, format: "O"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("O"));
