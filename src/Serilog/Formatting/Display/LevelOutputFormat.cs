@@ -51,12 +51,12 @@ static class LevelOutputFormat
 
     public static string GetLevelMoniker(LogEventLevel value, string? format = null)
     {
-        var index = (int)value;
-        if (index is < 0 or > (int)LogEventLevel.Fatal)
+        // handle unknown LogEventLevel
+        if (value is < 0 or > LogEventLevel.Fatal)
             return Casing.Format(value.ToString(), format);
 
         if (format == null || format.Length != 2 && format.Length != 3)
-            return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format);
+            return Casing.Format(GetLevelMoniker(_titleCaseLevelMap, value), format);
 
         // Using int.Parse() here requires allocating a string to exclude the first character prefix.
         // Junk like "wxy" will be accepted but produce benign results.
@@ -72,22 +72,22 @@ static class LevelOutputFormat
 
         return format[0] switch
         {
-            'w' => GetLevelMoniker(_lowerCaseLevelMap, index, width),
-            'u' => GetLevelMoniker(_upperCaseLevelMap, index, width),
-            't' => GetLevelMoniker(_titleCaseLevelMap, index, width),
-            _ => Casing.Format(GetLevelMoniker(_titleCaseLevelMap, index), format)
+            'w' => GetLevelMoniker(_lowerCaseLevelMap, value, width),
+            'u' => GetLevelMoniker(_upperCaseLevelMap, value, width),
+            't' => GetLevelMoniker(_titleCaseLevelMap, value, width),
+            _ => Casing.Format(GetLevelMoniker(_titleCaseLevelMap, value), format)
         };
     }
 
-    static string GetLevelMoniker(string[][] caseLevelMap, int index, int width)
+    static string GetLevelMoniker(string[][] caseLevelMap, LogEventLevel level, int width)
     {
-        var caseLevel = caseLevelMap[index];
+        var caseLevel = caseLevelMap[(int)level];
         return caseLevel[Math.Min(width, caseLevel.Length) - 1];
     }
 
-    static string GetLevelMoniker(string[][] caseLevelMap, int index)
+    static string GetLevelMoniker(string[][] caseLevelMap, LogEventLevel level)
     {
-        var caseLevel = caseLevelMap[index];
+        var caseLevel = caseLevelMap[(int)level];
         return caseLevel[caseLevel.Length - 1];
     }
 }
