@@ -129,12 +129,18 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
         var enricher = new FixedPropertyEnricher(new(propertyName, propertyValue));
 
-        var minimumLevel = _minimumLevel;
-        var levelSwitch = _levelSwitch;
-        if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
+        LogEventLevel minimumLevel;
+        LoggingLevelSwitch? levelSwitch;
+        if (_overrideMap != null &&
+            propertyName == Constants.SourceContextPropertyName &&
+            value is string context)
         {
-            if (value is string context)
-                _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+            _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+        }
+        else
+        {
+            minimumLevel = _minimumLevel;
+            levelSwitch = _levelSwitch;
         }
 
         return new Logger(
