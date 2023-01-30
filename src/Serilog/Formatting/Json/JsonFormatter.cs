@@ -88,7 +88,7 @@ public class JsonFormatter : ITextFormatter
 
         output.Write('{');
 
-        var delim = "";
+        char? delim = null;
         WriteTimestamp(logEvent.Timestamp, ref delim, output);
         WriteLevel(logEvent.Level, ref delim, output);
         WriteMessageTemplate(logEvent.MessageTemplate.Text, ref delim, output);
@@ -149,11 +149,15 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        var propertyDelimiter = "";
+        char? propertyDelimiter = null;
         foreach (var propertyFormats in tokensWithFormat)
         {
-            output.Write(propertyDelimiter);
-            propertyDelimiter = ",";
+            if (propertyDelimiter != null)
+            {
+                output.Write(propertyDelimiter);
+            }
+
+            propertyDelimiter = ',';
             output.Write('"');
             output.Write(propertyFormats.Key);
             output.Write("\":[");
@@ -165,7 +169,7 @@ public class JsonFormatter : ITextFormatter
                 formatDelimiter = ",";
 
                 output.Write('{');
-                var elementDelimiter = "";
+                char? elementDelimiter = null;
 
                 WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
 
@@ -195,7 +199,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        var precedingDelimiter = "";
+        char? precedingDelimiter = null;
         foreach (var property in properties)
         {
             WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
@@ -205,7 +209,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the attached exception
     /// </summary>
-    void WriteException(Exception exception, ref string delim, TextWriter output)
+    void WriteException(Exception exception, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("Exception", exception, ref delim, output);
     }
@@ -213,7 +217,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// (Optionally) writes out the rendered message
     /// </summary>
-    void WriteRenderedMessage(string message, ref string delim, TextWriter output)
+    void WriteRenderedMessage(string message, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("RenderedMessage", message, ref delim, output);
     }
@@ -221,7 +225,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the message template for the logevent.
     /// </summary>
-    void WriteMessageTemplate(string template, ref string delim, TextWriter output)
+    void WriteMessageTemplate(string template, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("MessageTemplate", template, ref delim, output);
     }
@@ -229,7 +233,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the log level
     /// </summary>
-    void WriteLevel(LogEventLevel level, ref string delim, TextWriter output)
+    void WriteLevel(LogEventLevel level, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("Level", level, ref delim, output);
     }
@@ -237,7 +241,7 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out the log timestamp
     /// </summary>
-    void WriteTimestamp(DateTimeOffset timestamp, ref string delim, TextWriter output)
+    void WriteTimestamp(DateTimeOffset timestamp, ref char? delim, TextWriter output)
     {
         WriteJsonProperty("Timestamp", timestamp, ref delim, output);
     }
@@ -249,7 +253,7 @@ public class JsonFormatter : ITextFormatter
     {
         output.Write('{');
 
-        var delim = "";
+        char? delim = null;
         if (typeTag != null)
             WriteJsonProperty("_typeTag", typeTag, ref delim, output);
 
@@ -296,14 +300,18 @@ public class JsonFormatter : ITextFormatter
     /// <summary>
     /// Writes out a json property with the specified value on output writer
     /// </summary>
-    void WriteJsonProperty(string name, object? value, ref string precedingDelimiter, TextWriter output)
+    void WriteJsonProperty(string name, object? value, ref char? precedingDelimiter, TextWriter output)
     {
-        output.Write(precedingDelimiter);
+        if (precedingDelimiter != null)
+        {
+            output.Write(precedingDelimiter);
+        }
+
         output.Write('"');
         output.Write(name);
         output.Write("\":");
         WriteLiteral(value, output);
-        precedingDelimiter = ",";
+        precedingDelimiter = ',';
     }
 
     /// <summary>
