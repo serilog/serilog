@@ -324,8 +324,6 @@ namespace Serilog.Debugging
     }
     public static class SelfLog
     {
-        [System.Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
-        public static System.IO.TextWriter? Out { set; }
         public static void Disable() { }
         public static void Enable(System.Action<string> output) { }
         public static void Enable(System.IO.TextWriter output) { }

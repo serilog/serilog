@@ -23,25 +23,6 @@ public static class SelfLog
     static Action<string>? _output;
 
     /// <summary>
-    /// The output mechanism for self-log messages.
-    /// </summary>
-    /// <example>
-    /// SelfLog.Out = Console.Error;
-    /// </example>
-    // ReSharper disable once MemberCanBePrivate.Global, UnusedAutoPropertyAccessor.Global
-    [Obsolete("Use SelfLog.Enable(value) and SelfLog.Disable() instead")]
-    public static TextWriter? Out
-    {
-        set
-        {
-            if (value != null)
-                Enable(value);
-            else
-                Disable();
-        }
-    }
-
-    /// <summary>
     /// Set the output mechanism for self-log messages.
     /// </summary>
     /// <param name="output">A synchronized <see cref="TextWriter"/> to which
