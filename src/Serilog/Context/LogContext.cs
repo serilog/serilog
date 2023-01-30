@@ -104,20 +104,6 @@ public static class LogContext
     }
 
     /// <summary>
-    /// Push enrichers onto the log context. This method is obsolete, please
-    /// use <see cref="Push(Serilog.Core.ILogEventEnricher[])"/> instead.
-    /// </summary>
-    /// <param name="properties">Enrichers to push onto the log context</param>
-    /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    [Obsolete("Please use `LogContext.Push(properties)` instead.")]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public static IDisposable PushProperties(params ILogEventEnricher[] properties)
-    {
-        return Push(properties);
-    }
-
-    /// <summary>
     /// Obtain an enricher that represents the current contents of the <see cref="LogContext"/>. This
     /// can be pushed back onto the context in a different location/thread when required.
     /// </summary>

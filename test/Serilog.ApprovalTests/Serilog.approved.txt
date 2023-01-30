@@ -81,8 +81,6 @@ namespace Serilog.Context
         public static Serilog.Core.ILogEventEnricher Clone() { }
         public static System.IDisposable Push(Serilog.Core.ILogEventEnricher enricher) { }
         public static System.IDisposable Push(params Serilog.Core.ILogEventEnricher[] enrichers) { }
-        [System.Obsolete("Please use `LogContext.Push(properties)` instead.")]
-        public static System.IDisposable PushProperties(params Serilog.Core.ILogEventEnricher[] properties) { }
         public static System.IDisposable PushProperty(string name, object? value, bool destructureObjects = false) { }
         public static void Reset() { }
         public static System.IDisposable Suspend() { }
