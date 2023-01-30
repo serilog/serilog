@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace Serilog.Formatting.Json;
 
 /// <summary>
@@ -303,7 +301,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, "R", CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
@@ -322,7 +320,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, "R", CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
@@ -335,7 +333,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -348,7 +346,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -361,7 +359,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -374,7 +372,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -387,7 +385,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -400,7 +398,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -413,7 +411,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -426,7 +424,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -439,7 +437,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, provider: CultureInfo.InvariantCulture))
+        if (value.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString(null, CultureInfo.InvariantCulture));
@@ -454,7 +452,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "O"))
+        if (value.TryFormat(buffer, out var written, format: "O"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("O", CultureInfo.InvariantCulture));
@@ -471,7 +469,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
 
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written, format: "O"))
+        if (value.TryFormat(buffer, out var written, format: "O"))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("O", CultureInfo.InvariantCulture));
@@ -487,7 +485,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
         output.Write('\"');
 #if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out int written))
+        if (value.TryFormat(buffer, out var written))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString());
