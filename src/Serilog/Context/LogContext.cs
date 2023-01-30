@@ -37,14 +37,7 @@ namespace Serilog.Context;
 /// (and so is preserved across async/await calls).</remarks>
 public static class LogContext
 {
-#if FEATURE_ASYNCLOCAL
     static readonly AsyncLocal<EnricherStack?> Data = new();
-#elif FEATURE_REMOTING
-    static readonly string DataSlotName = typeof(LogContext).FullName + "@" + Guid.NewGuid();
-#else // DOTNET_51
-    [ThreadStatic]
-    static EnricherStack? Data;
-#endif
 
     /// <summary>
     /// Push a property onto the context, returning an <see cref="IDisposable"/>
@@ -108,20 +101,6 @@ public static class LogContext
         Enrichers = stack;
 
         return bookmark;
-    }
-
-    /// <summary>
-    /// Push enrichers onto the log context. This method is obsolete, please
-    /// use <see cref="Push(Serilog.Core.ILogEventEnricher[])"/> instead.
-    /// </summary>
-    /// <param name="properties">Enrichers to push onto the log context</param>
-    /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    [Obsolete("Please use `LogContext.Push(properties)` instead.")]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public static IDisposable PushProperties(params ILogEventEnricher[] properties)
-    {
-        return Push(properties);
     }
 
     /// <summary>
@@ -199,70 +178,10 @@ public static class LogContext
         }
     }
 
-#if FEATURE_ASYNCLOCAL
-
     static EnricherStack? Enrichers
     {
         get => Data.Value;
         set => Data.Value = value;
     }
-
-#elif FEATURE_REMOTING
-
-    static EnricherStack? Enrichers
-    {
-        get
-        {
-            var objectHandle = CallContext.LogicalGetData(DataSlotName) as ObjectHandle;
-
-            return objectHandle?.Unwrap() as EnricherStack;
-        }
-        set
-        {
-            if (CallContext.LogicalGetData(DataSlotName) is IDisposable oldHandle)
-            {
-                oldHandle.Dispose();
-            }
-
-            if (value != null)
-            {
-                CallContext.LogicalSetData(DataSlotName, new DisposableObjectHandle(value));
-            }
-        }
-    }
-
-    sealed class DisposableObjectHandle : ObjectHandle, IDisposable
-    {
-        static readonly ISponsor LifeTimeSponsor = new ClientSponsor();
-
-        public DisposableObjectHandle(object o)
-            : base(o)
-        {
-        }
-
-        public override object? InitializeLifetimeService()
-        {
-            var lease = base.InitializeLifetimeService() as ILease;
-            lease?.Register(LifeTimeSponsor);
-            return lease;
-        }
-
-        public void Dispose()
-        {
-            if (GetLifetimeService() is ILease lease)
-            {
-                lease.Unregister(LifeTimeSponsor);
-            }
-        }
-    }
-
-#else // DOTNET_51
-
-    static EnricherStack? Enrichers
-    {
-        get => Data;
-        set => Data = value;
-    }
-#endif
 }
 

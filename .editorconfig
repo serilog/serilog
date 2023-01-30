@@ -19,3 +19,5 @@ end_of_line = crlf
 
 # C# formatting settings - Namespace options
 csharp_style_namespace_declarations = file_scoped:suggestion
+
+csharp_style_prefer_switch_expression = true:suggestion
