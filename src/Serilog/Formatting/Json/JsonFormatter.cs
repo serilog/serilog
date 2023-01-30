@@ -139,7 +139,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        output.Write(",\"{0}\":{{", "Renderings");
+        output.Write(",\"Renderings\":{");
         WriteRenderingsValues(tokensWithFormat, properties, output);
         output.Write('}');
     }
@@ -154,7 +154,7 @@ public class JsonFormatter : ITextFormatter
         {
             if (propertyDelimiter != null)
             {
-                output.Write(propertyDelimiter);
+                output.Write(propertyDelimiter.Value);
             }
 
             propertyDelimiter = ',';
@@ -189,7 +189,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        output.Write(",\"{0}\":{{", "Properties");
+        output.Write(",\"Properties\":{");
         WritePropertiesValues(properties, output);
         output.Write('}');
     }
@@ -304,7 +304,7 @@ public class JsonFormatter : ITextFormatter
     {
         if (precedingDelimiter != null)
         {
-            output.Write(precedingDelimiter);
+            output.Write(precedingDelimiter.Value);
         }
 
         output.Write('"');
