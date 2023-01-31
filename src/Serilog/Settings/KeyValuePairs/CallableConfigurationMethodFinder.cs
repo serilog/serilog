@@ -27,15 +27,10 @@ static class CallableConfigurationMethodFinder
                 [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Configuration methods are not trimming safe")]
 #endif
                 (a) => a.ExportedTypes
-                .Select(t => t.GetTypeInfo())
                 .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
-            .SelectMany(
-#if NET5_0_OR_GREATER
-                [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Configuration methods are not trimming safe")]
-#endif
-                (t) => t.DeclaredMethods)
-            .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
-            .Where(m => m.GetParameters()[0].ParameterType == configType)
+            .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public))
+            .Where(m => m.IsDefined(typeof(ExtensionAttribute), false) &&
+                        m.GetParameters()[0].ParameterType == configType)
             .ToList();
 
         // some configuration methods are not extension methods. They are added manually

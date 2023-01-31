@@ -185,7 +185,7 @@ public class PropertyValueConverterTests
         var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
         var pv = _converter.CreatePropertyValue(bytes);
         var lv = (string?)pv.LiteralValue();
-        Assert.EndsWith("(1025 bytes)", lv);
+        Assert.Equal("000102030405060708090A0B0C0D0E0F... (1025 bytes)", lv);
     }
 
 #if FEATURE_SPAN

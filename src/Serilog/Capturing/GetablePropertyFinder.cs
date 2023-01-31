@@ -32,27 +32,26 @@ static class GetablePropertyFinder
     {
         var seenNames = new HashSet<string>();
 
-        var currentTypeInfo = type.GetTypeInfo();
-
-        while (currentTypeInfo.AsType() != typeof(object))
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy))
         {
-            var unseenProperties = currentTypeInfo.DeclaredProperties.Where(p => p.CanRead &&
-                                                                                 p.GetMethod!.IsPublic && !p.GetMethod.IsStatic &&
-                                                                                 (p.Name != "Item" || p.GetIndexParameters().Length == 0) && !seenNames.Contains(p.Name));
-
-            foreach (var propertyInfo in unseenProperties)
+            if (!property.CanRead)
             {
-                seenNames.Add(propertyInfo.Name);
-                yield return propertyInfo;
+                continue;
             }
 
-            var baseType = currentTypeInfo.BaseType;
-            if (baseType == null)
+            if (seenNames.Contains(property.Name))
             {
-                yield break;
+                continue;
             }
 
-            currentTypeInfo = baseType.GetTypeInfo();
+            if (property.Name == "Item" &&
+                property.GetIndexParameters().Length != 0)
+            {
+                continue;
+            }
+
+            seenNames.Add(property.Name);
+            yield return property;
         }
     }
 #endif

@@ -39,29 +39,27 @@ class SettingValueConversions
 #endif
     public static object? ConvertToType(string value, Type toType)
     {
-        var toTypeInfo = toType.GetTypeInfo();
-        if (toTypeInfo.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+        if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-            if (value == String.Empty)
+            if (value == string.Empty)
                 return null;
 
             // unwrap Nullable<> type since we're not handling null situations
-            toType = toTypeInfo.GenericTypeArguments[0];
-            toTypeInfo = toType.GetTypeInfo();
+            toType = toType.GenericTypeArguments[0];
         }
 
-        if (toTypeInfo.IsEnum)
+        if (toType.IsEnum)
             return Enum.Parse(toType, value);
 
         var convertor = ExtendedTypeConversions
-            .Where(t => t.Key.GetTypeInfo().IsAssignableFrom(toTypeInfo))
+            .Where(t => t.Key.IsAssignableFrom(toType))
             .Select(t => t.Value)
             .FirstOrDefault();
 
         if (convertor != null)
             return convertor(value);
 
-        if ((toTypeInfo.IsInterface || toTypeInfo.IsAbstract) && !string.IsNullOrWhiteSpace(value))
+        if ((toType.IsInterface || toType.IsAbstract) && !string.IsNullOrWhiteSpace(value))
         {
             // check if value looks like a static property or field directive
             // like "Namespace.TypeName::StaticProperty, AssemblyName"
@@ -69,26 +67,26 @@ class SettingValueConversions
             {
                 var accessorType = Type.GetType(accessorTypeName, throwOnError: true)!;
                 // is there a public static property with that name ?
-                var publicStaticPropertyInfo = accessorType.GetTypeInfo().DeclaredProperties
-                    .Where(x => x.Name == memberName)
-                    .Where(x => x.GetMethod != null)
-                    .Where(x => x.GetMethod!.IsPublic)
-                    .FirstOrDefault(x => x.GetMethod!.IsStatic);
+                var publicStaticPropertyInfo = accessorType
+                    .GetProperties(BindingFlags.Static | BindingFlags.Public)
+                    .FirstOrDefault(x => x.Name == memberName &&
+                                         x.GetMethod != null);
 
                 if (publicStaticPropertyInfo != null)
                 {
-                    return publicStaticPropertyInfo.GetValue(null); // static property, no instance to pass
+                    // static property, no instance to pass
+                    return publicStaticPropertyInfo.GetValue(null);
                 }
 
                 // no property ? look for a public static field
-                var publicStaticFieldInfo = accessorType.GetTypeInfo().DeclaredFields
-                    .Where(x => x.Name == memberName)
-                    .Where(x => x.IsPublic)
-                    .FirstOrDefault(x => x.IsStatic);
+                var publicStaticFieldInfo = accessorType
+                    .GetFields(BindingFlags.Static | BindingFlags.Public)
+                    .FirstOrDefault(x => x.Name == memberName);
 
                 if (publicStaticFieldInfo != null)
                 {
-                    return publicStaticFieldInfo.GetValue(null); // static field, no instance to pass
+                    // static field, no instance to pass
+                    return publicStaticFieldInfo.GetValue(null);
                 }
 
                 throw new InvalidOperationException($"Could not find a public static property or field with name `{memberName}` on type `{accessorTypeName}`");
@@ -99,11 +97,12 @@ class SettingValueConversions
             var type = Type.GetType(value.Trim(), throwOnError: false);
             if (type != null)
             {
-                var ctor = type.GetTypeInfo().DeclaredConstructors.FirstOrDefault(ci =>
-                {
-                    var parameters = ci.GetParameters();
-                    return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
-                });
+                var ctor = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
+                    .FirstOrDefault(ci =>
+                    {
+                        var parameters = ci.GetParameters();
+                        return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
+                    });
 
                 if (ctor == null)
                     throw new InvalidOperationException($"A default constructor was not found on {type.FullName}.");

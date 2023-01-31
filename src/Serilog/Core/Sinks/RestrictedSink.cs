@@ -32,7 +32,7 @@ sealed class RestrictedSink : ILogEventSink, IDisposable
     {
         Guard.AgainstNull(logEvent);
 
-        if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
+        if (logEvent.Level < _levelSwitch.MinimumLevel)
             return;
 
         _sink.Emit(logEvent);
