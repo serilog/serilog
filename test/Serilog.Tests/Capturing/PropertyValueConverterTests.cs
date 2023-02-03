@@ -264,7 +264,6 @@ public class PropertyValueConverterTests
         Assert.Equal(typeof(string), pv.LiteralValue());
     }
 
-#if FEATURE_GETCURRENTMETHOD
     [Fact]
     public void SurvivesDestructuringMethodBase()
     {
@@ -272,7 +271,6 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
         Assert.Equal(theMethod, pv.LiteralValue());
     }
-#endif
 
     public class BaseWithProps
     {
