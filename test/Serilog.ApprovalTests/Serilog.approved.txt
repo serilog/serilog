@@ -60,6 +60,8 @@ namespace Serilog.Configuration
     }
     public class LoggerSettingsConfiguration
     {
+        [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible" +
+            " with trimming.")]
         public Serilog.LoggerConfiguration KeyValuePairs(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> settings) { }
         public Serilog.LoggerConfiguration Settings(Serilog.Configuration.ILoggerSettings settings) { }
     }
