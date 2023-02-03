@@ -382,8 +382,17 @@ public class PropertyValueConverterTests
         foreach (var t in tuples)
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
+    
+#if FEATURE_ITUPLE
 
-#if !FEATURE_ITUPLE
+    [Fact]
+    public void EightPlusValueTupleElementsAreSupportedForCapturing()
+    {
+        var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+        Assert.IsType<SequenceValue>(scalar);
+    }
+
+#else
 
     [Fact]
     public void EightPlusValueTupleElementsAreIgnoredByCapturing()

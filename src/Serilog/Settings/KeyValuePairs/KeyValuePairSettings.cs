@@ -12,8 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
+
 namespace Serilog.Settings.KeyValuePairs;
 
+#if NET6_0_OR_GREATER
+[RequiresUnreferencedCode("Scans assemblies at runtime")]
+#endif
 class KeyValuePairSettings : ILoggerSettings
 {
     const string UsingDirective = "using";
@@ -69,11 +76,22 @@ class KeyValuePairSettings : ILoggerSettings
 
     readonly IReadOnlyDictionary<string, string> _settings;
 
+#if NET5_0
+    // This is only needed on net5 because RequiresUnreferencedCode couldn't be applied to types
+    // in .NET 5. In net6+, RUC can be applied to types (as it is above) and it will warn on the
+    // constructor and hide warnings in members.
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds accessors by name")]
+#endif
     public KeyValuePairSettings(IReadOnlyDictionary<string, string> settings)
     {
         _settings = Guard.AgainstNull(settings);
     }
 
+#if NET5_0
+    // Suppressing warnings here in .NET 5 because RUC is placed on the constructor. See constructor 
+    // for more info on why this is not necessary in net6.
+    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("ILTrim", "IL2026")]
+#endif
     public void Configure(LoggerConfiguration loggerConfiguration)
     {
         Guard.AgainstNull(loggerConfiguration);
@@ -155,6 +173,9 @@ class KeyValuePairSettings : ILoggerSettings
         return Regex.IsMatch(input, LevelSwitchNameRegex);
     }
 
+#if NET6_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Reflects against accessors using dynamic string")]
+#endif
     static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
     {
         var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
@@ -204,6 +225,9 @@ class KeyValuePairSettings : ILoggerSettings
         throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
     }
 
+#if NET5_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds accessors by name")]
+#endif
     static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         if (type == typeof(LoggingLevelSwitch))
@@ -213,6 +237,9 @@ class KeyValuePairSettings : ILoggerSettings
         return SettingValueConversions.ConvertToType(valueOrSwitchName, type)!;
     }
 
+#if NET5_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds accessors by name")]
+#endif
     static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         foreach (var directiveInfo in directives)
@@ -228,7 +255,15 @@ class KeyValuePairSettings : ILoggerSettings
             {
                 var call = (from p in target.GetParameters().Skip(1)
                     let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
-                    select directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches)).ToList();
+                    select SuppressConvertCall(directive, p)).ToList();
+
+// Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
+#if NET5_0_OR_GREATER
+                    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026")]
+#endif
+                    object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
+                        => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
+
 
                 call.Insert(0, loggerConfigMethod);
 
