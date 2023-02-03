@@ -23,16 +23,16 @@
     <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_GETCURRENTMETHOD</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_GETCURRENTMETHOD</DefineConstants>
+    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_GETCURRENTMETHOD;FEATURE_ITUPLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DefineConstants>$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ASYNCDISPOSABLE;FEATURE_ITUPLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ASYNCDISPOSABLE;FEATURE_ITUPLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
