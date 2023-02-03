@@ -305,11 +305,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #endif
 
-    bool TryConvertCompilerGeneratedType(object value,
-#if NET5_0_OR_GREATER
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
-#endif
-        Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertCompilerGeneratedType(
+        object value,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
+        Destructuring destructuring,
+        [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (destructuring == Destructuring.Destructure)
         {
@@ -364,11 +364,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                valueType.IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value,
-#if NET5_0_OR_GREATER
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
-#endif
-        Type type)
+    IEnumerable<LogEventProperty> GetProperties(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
         foreach (var prop in type.GetPropertiesRecursive())
         {
