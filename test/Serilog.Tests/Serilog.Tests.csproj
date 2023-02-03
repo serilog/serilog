@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_GETCURRENTMETHOD</DefineConstants>
+    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_GETCURRENTMETHOD;FEATURE_ITUPLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ITUPLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DefineConstants>$(DefineConstants)</DefineConstants>
