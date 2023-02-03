@@ -366,7 +366,7 @@ public class PropertyValueConverterTests
     }
 
     [Fact]
-    public void AllTupleLengthsAreSupportedForCapturing()
+    public void AllTupleLengthsUpToSevenAreSupportedForCapturing()
     {
         var tuples = new object[]
         {
@@ -376,13 +376,32 @@ public class PropertyValueConverterTests
             (1, 2, 3, 4),
             (1, 2, 3, 4, 5),
             (1, 2, 3, 4, 5, 6),
-            (1, 2, 3, 4, 5, 6, 7),
-            (1, 2, 3, 4, 5, 6, 7, 8)
+            (1, 2, 3, 4, 5, 6, 7)
         };
 
         foreach (var t in tuples)
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
+    
+#if FEATURE_ITUPLE
+
+    [Fact]
+    public void EightPlusValueTupleElementsAreSupportedForCapturing()
+    {
+        var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+        Assert.IsType<SequenceValue>(scalar);
+    }
+
+#else
+
+    [Fact]
+    public void EightPlusValueTupleElementsAreIgnoredByCapturing()
+    {
+        var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+        Assert.IsType<ScalarValue>(scalar);
+    }
+
+#endif
 
     [Fact]
     public void ValueTupleDestructuringIsTransitivelyApplied()
