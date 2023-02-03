@@ -382,7 +382,7 @@ public class PropertyValueConverterTests
         foreach (var t in tuples)
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
-    
+
 #if FEATURE_ITUPLE
 
     [Fact]
