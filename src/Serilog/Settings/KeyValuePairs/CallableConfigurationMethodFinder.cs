@@ -16,10 +16,17 @@ namespace Serilog.Settings.KeyValuePairs;
 
 static class CallableConfigurationMethodFinder
 {
+#if NET5_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Configuration methods are not trimming safe")]
+#endif
     internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
     {
         var methods = configurationAssemblies
-            .SelectMany(a => a.ExportedTypes
+            .SelectMany(
+#if NET5_0_OR_GREATER
+                [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Configuration methods are not trimming safe")]
+#endif
+                (a) => a.ExportedTypes
                 .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
             .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public))
             .Where(m => m.IsDefined(typeof(ExtensionAttribute), false) &&
