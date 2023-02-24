@@ -362,28 +362,31 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-        if (CreateFunc == null) // ~ zero-cost check
+        if (BeforeDispatch == null) // ~ zero-cost null check
         {
             var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
         }
         else
         {
-            var logEvent = CreateFunc(logTimestamp, level, exception, parsedTemplate, boundProperties);
+            var logEvent = BeforeDispatch(logTimestamp, level, exception, parsedTemplate, boundProperties);
             Dispatch(logEvent);
-            ReturnFunc?.Invoke(logEvent);
+            AfterDispatch?.Invoke(logEvent);
         }
     }
 
     /// <summary>
-    /// 
+    /// A custom delegate that is called (when specified) to create LogEvent instances before dispatching them into Serilog pipeline.
+    /// With the help of this delegate, it becomes possible to pool LogEvent instances.
     /// </summary>
-    public Func<DateTimeOffset, LogEventLevel, Exception?, MessageTemplate, EventProperty[], LogEvent>? CreateFunc { get; set; }
+    public Func<DateTimeOffset, LogEventLevel, Exception?, MessageTemplate, EventProperty[], LogEvent>? BeforeDispatch { get; set; }
 
     /// <summary>
-    /// 
+    /// A custom delegate that is called (when specified an only if <see cref="BeforeDispatch"/> is not null) after LogEvent instance
+    /// has been dispatched into Serilog pipeline. With the help of this delegate, it becomes possible to pool LogEvent instances.
+    /// <br/>
     /// </summary>
-    public Action<LogEvent>? ReturnFunc { get; set; }
+    public Action<LogEvent>? AfterDispatch { get; set; }
 
     /// <summary>
     /// Write an event to the log.

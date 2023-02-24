@@ -37,7 +37,7 @@ public class LogEvent
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="timestamp"></param>
     /// <param name="level"></param>
@@ -51,15 +51,14 @@ public class LogEvent
         Exception = exception;
         MessageTemplate = messageTemplate;
 
-        if (_properties == null)
-            _properties = new Dictionary<string, LogEventPropertyValue>();
+        _properties ??= new Dictionary<string, LogEventPropertyValue>();
 
         for (var i = 0; i < properties.Length; ++i)
             _properties[properties[i].Name] = properties[i].Value;
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public void Reset()
     {

@@ -120,8 +120,8 @@ namespace Serilog.Core
     }
     public sealed class Logger : Serilog.Core.ILogEventSink, Serilog.ILogger, System.IAsyncDisposable, System.IDisposable
     {
-        public System.Func<System.DateTimeOffset, Serilog.Events.LogEventLevel, System.Exception?, Serilog.Events.MessageTemplate, Serilog.Events.EventProperty[], Serilog.Events.LogEvent>? CreateFunc { get; set; }
-        public System.Action<Serilog.Events.LogEvent>? ReturnFunc { get; set; }
+        public System.Action<Serilog.Events.LogEvent>? AfterDispatch { get; set; }
+        public System.Func<System.DateTimeOffset, Serilog.Events.LogEventLevel, System.Exception?, Serilog.Events.MessageTemplate, Serilog.Events.EventProperty[], Serilog.Events.LogEvent>? BeforeDispatch { get; set; }
         public static Serilog.ILogger None { get; }
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
         public bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties) { }

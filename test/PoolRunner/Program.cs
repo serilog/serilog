@@ -5,7 +5,6 @@ var log = new LoggerConfiguration()
     .WriteTo.Sink<NullSink>()
     .CreateLogger().Pooled();
 
-
 int i = 0;
 while (true)
 {
