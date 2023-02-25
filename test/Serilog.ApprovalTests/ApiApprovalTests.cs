@@ -1,11 +1,9 @@
 using PublicApiGenerator;
+using Serilog;
 using Shouldly;
 using Xunit;
 
-namespace Serilog.ApprovalTests;
-
 /// <summary>Tests for checking changes to the public API.</summary>
-/// <see href="https://github.com/JakeGinnivan/ApiApprover"/>
 public class ApiApprovalTests
 {
     /// <summary> Check for changes to the public APIs. </summary>
