@@ -3,7 +3,6 @@ using Serilog;
 using Shouldly;
 using Xunit;
 
-/// <summary>Tests for checking changes to the public API.</summary>
 public class ApiApprovalTests
 {
     /// <summary> Check for changes to the public APIs. </summary>
