@@ -20,43 +20,20 @@ $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($c
 Write-Output "build: Package version suffix is $suffix"
 Write-Output "build: Build version suffix is $buildSuffix"
 
-foreach ($src in Get-ChildItem src/*) {
-    Push-Location $src
+& dotnet build -configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
 
-    Write-Output "build: Packaging project in $src"
+if($LASTEXITCODE -ne 0) { exit 1 }
 
-    & dotnet build -c Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
-
-    if($suffix) {
-        & dotnet pack -c Release --no-build -o ..\..\artifacts --version-suffix=$suffix
-    } else {
-        & dotnet pack -c Release --no-build -o ..\..\artifacts
-    }
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
-    Pop-Location
+if($suffix) {
+    & dotnet pack -configuration Release --no-build --no-restore -o ..\..\artifacts --version-suffix=$suffix
+} else {
+    & dotnet pack -configuration Release --no-build --no-restore -o ..\..\artifacts
 }
 
-foreach ($test in Get-ChildItem test/*.Tests) {
-    Push-Location $test
+if($LASTEXITCODE -ne 0) { exit 2 }
 
-    Write-Output "build: Testing project in $test"
+Write-Output "build: Testing"
 
-    & dotnet test -c Release
-    if($LASTEXITCODE -ne 0) { exit 3 }
+& dotnet test -configuration Release --no-build --no-restore
 
-    Pop-Location
-}
-
-foreach ($test in Get-ChildItem test/*.PerformanceTests) {
-    Push-Location $test
-
-    Write-Output "build: Building performance test project in $test"
-
-    & dotnet build -c Release
-    if($LASTEXITCODE -ne 0) { exit 2 }
-
-    Pop-Location
-}
-
-Pop-Location
+if($LASTEXITCODE -ne 0) { exit 3 }
