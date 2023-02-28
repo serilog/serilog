@@ -1,15 +1,11 @@
 Write-Output "build: Build started"
 
-& dotnet --info
-
 Push-Location $PSScriptRoot
 
 if(Test-Path .\artifacts) {
     Write-Output "build: Cleaning .\artifacts"
     Remove-Item .\artifacts -Force -Recurse
 }
-
-& dotnet restore --no-cache
 
 $branch = @{ $true = $env:APPVEYOR_REPO_BRANCH; $false = $(git symbolic-ref --short -q HEAD) }[$NULL -ne $env:APPVEYOR_REPO_BRANCH];
 $revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$NULL -ne $env:APPVEYOR_BUILD_NUMBER];
@@ -20,20 +16,20 @@ $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($c
 Write-Output "build: Package version suffix is $suffix"
 Write-Output "build: Build version suffix is $buildSuffix"
 
-& dotnet build -configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
+& dotnet build --configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
 
 if($LASTEXITCODE -ne 0) { exit 1 }
 
 if($suffix) {
-    & dotnet pack -configuration Release --no-build --no-restore -o ..\..\artifacts --version-suffix=$suffix
+    & dotnet pack --configuration Release --no-build --no-restore -o ..\..\artifacts --version-suffix=$suffix
 } else {
-    & dotnet pack -configuration Release --no-build --no-restore -o ..\..\artifacts
+    & dotnet pack --configuration Release --no-build --no-restore -o ..\..\artifacts
 }
 
 if($LASTEXITCODE -ne 0) { exit 2 }
 
 Write-Output "build: Testing"
 
-& dotnet test -configuration Release --no-build --no-restore
+& dotnet test --configuration Release --no-build --no-restore
 
 if($LASTEXITCODE -ne 0) { exit 3 }
