@@ -21,9 +21,9 @@ Write-Output "build: Build version suffix is $buildSuffix"
 if($LASTEXITCODE -ne 0) { exit 1 }
 
 if($suffix) {
-    & dotnet pack --configuration Release --no-build --no-restore -o ..\..\artifacts --version-suffix=$suffix
+    & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts --version-suffix=$suffix
 } else {
-    & dotnet pack --configuration Release --no-build --no-restore -o ..\..\artifacts
+    & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts
 }
 
 if($LASTEXITCODE -ne 0) { exit 2 }
