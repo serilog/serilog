@@ -75,11 +75,14 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
         Guard.AgainstNull(sequence);
 
         state.Write('[');
-        var delim = "";
+        char? delim = null;
         for (var i = 0; i < sequence.Elements.Count; i++)
         {
-            state.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                state.Write(delim.Value);
+            }
+            delim = ',';
             Visit(state, sequence.Elements[i]);
         }
         state.Write(']');
@@ -96,12 +99,15 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     {
         state.Write('{');
 
-        var delim = "";
+        char? delim = null;
 
         for (var i = 0; i < structure.Properties.Count; i++)
         {
-            state.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                state.Write(delim.Value);
+            }
+            delim = ',';
             var prop = structure.Properties[i];
             WriteQuotedJsonString(prop.Name, state);
             state.Write(':');
@@ -129,11 +135,14 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
     protected override bool VisitDictionaryValue(TextWriter state, DictionaryValue dictionary)
     {
         state.Write('{');
-        var delim = "";
+        char? delim = null;
         foreach (var element in dictionary.Elements)
         {
-            state.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                state.Write(delim.Value);
+            }
+            delim = ',';
             WriteQuotedJsonString((element.Key.Value ?? "null").ToString()!, state);
             state.Write(':');
             Visit(state, element.Value);
