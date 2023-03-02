@@ -162,11 +162,14 @@ public class JsonFormatter : ITextFormatter
             output.Write(propertyFormats.Key);
             output.Write("\":[");
 
-            var formatDelimiter = "";
+            char? formatDelimiter = null;
             foreach (var format in propertyFormats)
             {
-                output.Write(formatDelimiter);
-                formatDelimiter = ",";
+                if (formatDelimiter != null)
+                {
+                    output.Write(formatDelimiter.Value);
+                }
+                formatDelimiter = ',';
 
                 output.Write('{');
                 char? elementDelimiter = null;
@@ -269,11 +272,14 @@ public class JsonFormatter : ITextFormatter
     void WriteSequence(IEnumerable elements, TextWriter output)
     {
         output.Write('[');
-        var delim = "";
+        char? delim = null;
         foreach (var value in elements)
         {
-            output.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                output.Write(delim.Value);
+            }
+            delim = ',';
             WriteLiteral(value, output);
         }
         output.Write(']');
@@ -285,11 +291,14 @@ public class JsonFormatter : ITextFormatter
     void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
     {
         output.Write('{');
-        var delim = "";
+        char? delim = null;
         foreach (var element in elements)
         {
-            output.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                output.Write(delim.Value);
+            }
+            delim = ',';
             WriteLiteral(element.Key, output, forceQuotation: true);
             output.Write(':');
             WriteLiteral(element.Value, output);
