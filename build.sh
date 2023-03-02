@@ -7,4 +7,4 @@ echo "🤖 Attempting to build..."
 dotnet build --configuration Release
 
 echo "🤖 Running tests..."
-dotnet test --configuration Release --no-build --no-restore
+dotnet test test/Serilog.Tests --configuration Release --no-build --no-restore
