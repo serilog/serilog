@@ -30,6 +30,6 @@ if($LASTEXITCODE -ne 0) { exit 2 }
 
 Write-Output "build: Testing"
 
-& dotnet test --configuration Release --no-build --no-restore
+& dotnet test  test\Serilog.Tests --configuration Release --no-build --no-restore
 
 if($LASTEXITCODE -ne 0) { exit 3 }
