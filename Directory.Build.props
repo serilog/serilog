@@ -3,8 +3,7 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)assets/Serilog.snk</AssemblyOriginatorKeyFile>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
