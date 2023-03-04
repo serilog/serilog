@@ -135,8 +135,18 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
         }
 
-        if (value is string)
-            return new ScalarValue(value);
+        if (value is string s)
+            return s == string.Empty ? ScalarValue.EmptyString : new ScalarValue(value);
+
+        if (value is bool b)
+            return b ? ScalarValue.True : ScalarValue.False;
+
+        if (value is int i)
+        {
+            if (i == 0) return ScalarValue.Zero;
+            if (i == 1) return ScalarValue.One;
+            if (i == -1) return ScalarValue.MinusOne;
+        }
 
         foreach (var scalarConversionPolicy in _scalarConversionPolicies)
         {
@@ -165,7 +175,15 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
             return compilerGeneratedResult;
 
-        return new ScalarValue(value.ToString() ?? "");
+        var stringified = value.ToString();
+
+        if (stringified == null)
+            return ScalarValue.EmptyString; // ScalarValue.Null; ?
+
+        if (stringified == string.Empty)
+            return ScalarValue.EmptyString;
+
+        return new ScalarValue(stringified);
     }
 
     bool TryConvertEnumerable(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
