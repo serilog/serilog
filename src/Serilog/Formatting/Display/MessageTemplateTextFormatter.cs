@@ -56,7 +56,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
         Guard.AgainstNull(logEvent);
         Guard.AgainstNull(output);
 
-        foreach (var token in _outputTemplate.Tokens)
+        foreach (var token in _outputTemplate.TokenArray)
         {
             if (token is TextToken tt)
             {
@@ -119,7 +119,11 @@ public class MessageTemplateTextFormatter : ITextFormatter
 
                 if (pt.Alignment.HasValue)
                 {
+#if FEATURE_WRITE_STRINGBUILDER
+                    Padding.Apply(output, ((StringWriter)writer).GetStringBuilder(), pt.Alignment);
+#else
                     Padding.Apply(output, ((StringWriter)writer).ToString(), pt.Alignment);
+#endif
                     writer.Dispose();
                 }
             }

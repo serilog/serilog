@@ -46,6 +46,7 @@ public class LoggerSettingsConfiguration
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <remarks>In case of duplicate keys, the last value for the key is kept and the previous ones are ignored.</remarks>
     /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
+    [RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible with trimming.")]
     public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
     {
         Guard.AgainstNull(settings);
@@ -58,6 +59,7 @@ public class LoggerSettingsConfiguration
         return KeyValuePairs(uniqueSettings);
     }
 
+    [RequiresUnreferencedCode("KeyValuePair scans for configuration settings at run time.")]
     LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
     {
         return Settings(new KeyValuePairSettings(settings));

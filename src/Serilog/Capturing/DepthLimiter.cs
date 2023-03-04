@@ -64,7 +64,7 @@ partial class PropertyValueConverter
             if (depth == _maximumDestructuringDepth)
             {
                 SelfLog.WriteLine("Maximum destructuring depth reached.");
-                return new ScalarValue(null);
+                return ScalarValue.Null;
             }
 
             return null;

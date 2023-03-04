@@ -36,11 +36,13 @@ public class MessageTemplateParser : IMessageTemplateParser
         return new(messageTemplate, Tokenize(messageTemplate));
     }
 
+    static TextToken emptyTextToken = new("", 0);
+
     static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
     {
         if (messageTemplate.Length == 0)
         {
-            yield return new TextToken("", 0);
+            yield return emptyTextToken;
             yield break;
         }
 

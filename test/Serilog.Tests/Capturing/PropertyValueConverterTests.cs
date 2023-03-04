@@ -185,7 +185,7 @@ public class PropertyValueConverterTests
         var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
         var pv = _converter.CreatePropertyValue(bytes);
         var lv = (string?)pv.LiteralValue();
-        Assert.EndsWith("(1025 bytes)", lv);
+        Assert.Equal("000102030405060708090A0B0C0D0E0F... (1025 bytes)", lv);
     }
 
 #if FEATURE_SPAN
@@ -264,7 +264,6 @@ public class PropertyValueConverterTests
         Assert.Equal(typeof(string), pv.LiteralValue());
     }
 
-#if FEATURE_GETCURRENTMETHOD
     [Fact]
     public void SurvivesDestructuringMethodBase()
     {
@@ -272,7 +271,6 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
         Assert.Equal(theMethod, pv.LiteralValue());
     }
-#endif
 
     public class BaseWithProps
     {
@@ -383,7 +381,16 @@ public class PropertyValueConverterTests
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
 
-#if !FEATURE_ITUPLE
+#if FEATURE_ITUPLE
+
+    [Fact]
+    public void EightPlusValueTupleElementsAreSupportedForCapturing()
+    {
+        var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+        Assert.IsType<SequenceValue>(scalar);
+    }
+
+#else
 
     [Fact]
     public void EightPlusValueTupleElementsAreIgnoredByCapturing()

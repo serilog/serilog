@@ -2,23 +2,6 @@ namespace Serilog.Tests.Context;
 
 public class LogContextTests
 {
-    static LogContextTests()
-    {
-#if FEATURE_REMOTING
-        LifetimeServices.LeaseTime = TimeSpan.FromMilliseconds(100);
-        LifetimeServices.LeaseManagerPollTime = TimeSpan.FromMilliseconds(10);
-#endif
-    }
-
-    public LogContextTests()
-    {
-#if FEATURE_REMOTING
-        // ReSharper disable AssignNullToNotNullAttribute
-        CallContext.LogicalSetData(typeof(LogContext).FullName, null);
-        // ReSharper restore AssignNullToNotNullAttribute
-#endif
-    }
-
     [Fact]
     public void PushedPropertiesAreAvailableToLoggers()
     {
@@ -183,7 +166,7 @@ public class LogContextTests
 
                     log.Write(Some.InformationEvent());
                     Assert.NotNull(lastEvent);
-                    Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
+                    Assert.Equal(1, lastEvent.Properties["A"].LiteralValue());
 
                     Assert.False(Thread.CurrentThread.IsThreadPoolThread);
                     Assert.True(Thread.CurrentThread.IsBackground);
@@ -274,73 +257,6 @@ public class LogContextTests
             if (domain != null)
                 AppDomain.Unload(domain);
         }
-    }
-#endif
-
-#if TEST_FEATURE_APPDOMAIN && FEATURE_REMOTING
-    [Fact]
-    public void DoesNotThrowOnCrossDomainCallsWhenLeaseExpired()
-    {
-        RemotingException? remotingException = null;
-
-        AppDomain.CurrentDomain.FirstChanceException +=
-            (_, e) => remotingException = e.Exception is RemotingException re ? re : remotingException;
-
-        var logger = new LoggerConfiguration().Enrich.FromLogContext().CreateLogger();
-        var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
-
-        try
-        {
-            using (LogContext.PushProperty("Prop", 42))
-            {
-                remote.DoCallBack(CallFromRemote);
-#pragma warning disable Serilog003
-                logger.Information("Prop = {Prop}");
-#pragma warning restore Serilog003
-            }
-        }
-        finally
-        {
-            AppDomain.Unload(remote);
-        }
-
-        Assert.Null(remotingException);
-
-        static void CallFromRemote() => Thread.Sleep(200);
-    }
-
-    [Fact]
-    public async Task DisconnectRemoteObjectsAfterCrossDomainCallsOnDispose()
-    {
-        var tracker = new InMemoryRemoteObjectTracker();
-        TrackingServices.RegisterTrackingHandler(tracker);
-
-        var remote = AppDomain.CreateDomain("Remote", null, AppDomain.CurrentDomain.SetupInformation);
-
-        try
-        {
-            using (LogContext.PushProperty("Prop1", 42))
-            {
-                remote.DoCallBack(CallFromRemote);
-
-                using (LogContext.PushProperty("Prop2", 24))
-                {
-                    remote.DoCallBack(CallFromRemote);
-                }
-            }
-        }
-        finally
-        {
-            AppDomain.Unload(remote);
-        }
-
-        await Task.Delay(200);
-
-        // This is intermittently 2 or 3 (now, 4), depending on the moods of the test runner;
-        // I think "at least two" is what we're concerned about, here.
-        Assert.InRange(tracker.DisconnectCount, 2, 4);
-
-        static void CallFromRemote() { }
     }
 #endif
 
