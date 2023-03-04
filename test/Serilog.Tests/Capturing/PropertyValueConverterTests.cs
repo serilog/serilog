@@ -53,7 +53,7 @@ public class PropertyValueConverterTests
 
                 Assert.IsType<StructureValue>(propValue);
 
-                var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value?.ToString();
+                var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root").Value?.ToString();
 
                 assertAction.Invoke(result);
             }

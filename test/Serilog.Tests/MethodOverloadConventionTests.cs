@@ -371,7 +371,7 @@ public class MethodOverloadConventionTests
         index++;
 
         Assert.Equal("property", parameters[index].Name);
-        Assert.Equal(parameters[index].ParameterType, typeof(LogEventProperty).MakeByRefType());
+        Assert.Equal(parameters[index].ParameterType, typeof(LogEventProperty?).MakeByRefType());
         Assert.True(parameters[index].IsOut);
 
         var logger = GetLogger(loggerType);

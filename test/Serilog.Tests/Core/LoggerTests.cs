@@ -116,8 +116,8 @@ public class LoggerTests
 
         Assert.True(log.BindProperty("Name", "World", false, out var property));
 
-        Assert.Equal("Name", property.Name);
-        Assert.Equal("World", property.Value.LiteralValue());
+        Assert.Equal("Name", property.Value.Name);
+        Assert.Equal("World", property.Value.Value.LiteralValue());
     }
 
     [Fact]

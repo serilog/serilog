@@ -366,7 +366,7 @@ namespace Serilog.Events
         Error = 4,
         Fatal = 5,
     }
-    public class LogEventProperty
+    public readonly struct LogEventProperty : System.IEquatable<Serilog.Events.LogEventProperty>
     {
         public LogEventProperty(string name, Serilog.Events.LogEventPropertyValue value) { }
         public string Name { get; }

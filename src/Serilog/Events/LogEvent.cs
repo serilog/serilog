@@ -119,8 +119,6 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
     public void AddOrUpdateProperty(LogEventProperty property)
     {
-        Guard.AgainstNull(property);
-
         _properties[property.Name] = property.Value;
     }
 
@@ -143,8 +141,6 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>null</code></exception>
     public void AddPropertyIfAbsent(LogEventProperty property)
     {
-        Guard.AgainstNull(property);
-
 #if FEATURE_DICTIONARYTRYADD
         _properties.TryAdd(property.Name, property.Value);
 #else

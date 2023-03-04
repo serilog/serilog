@@ -6,9 +6,9 @@ public class LogEventPropertyStructuralEqualityComparerTests
     public void HandlesNullAsNotEqual()
     {
         var sut = new LogEventPropertyStructuralEqualityComparer();
-        Assert.False(sut.Equals(null, new LogEventProperty("a", new ScalarValue(null))));
-        Assert.False(sut.Equals(new LogEventProperty("a", new ScalarValue(null)), null));
-        Assert.False(sut.Equals(null, null));
+        Assert.False(sut.Equals(default, new LogEventProperty("a", new ScalarValue(null))));
+        Assert.False(sut.Equals(new LogEventProperty("a", new ScalarValue(null)), default));
+        Assert.False(sut.Equals(default, default));
     }
 
     [Fact]

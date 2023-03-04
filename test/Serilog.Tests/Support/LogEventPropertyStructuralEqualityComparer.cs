@@ -11,9 +11,9 @@ class LogEventPropertyStructuralEqualityComparer : IEqualityComparer<LogEventPro
             valueEqualityComparer ?? new LogEventPropertyValueComparer(EqualityComparer<object>.Default);
     }
 
-    public bool Equals(LogEventProperty? x, LogEventProperty? y)
+    public bool Equals(LogEventProperty x, LogEventProperty y)
     {
-        if (x == null || y == null)
+        if (x == default || y == default)
             return false; // throw new Exception($"the comparer doesn't support nulls, x={x}, y={y}");
 
         return x.Name == y.Name
