@@ -20,9 +20,6 @@ namespace Serilog.Formatting.Json;
 /// </summary>
 public class JsonFormatter : ITextFormatter
 {
-    // Ignore obsoletion errors
-#pragma warning disable 618
-
     readonly string _closingDelimiter;
     readonly bool _renderMessage;
     readonly IFormatProvider? _formatProvider;
