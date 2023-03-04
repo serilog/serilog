@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -107,6 +107,8 @@ public class LogEvent
     /// </summary>
     public IReadOnlyDictionary<string, LogEventPropertyValue> Properties => _properties;
 
+    internal Dictionary<string, LogEventPropertyValue> PropertiesDictionary => _properties;
+
     /// <summary>
     /// An exception associated with the event, or null.
     /// </summary>
@@ -190,5 +192,20 @@ public class LogEvent
             Exception,
             MessageTemplate,
             properties);
+    }
+}
+
+internal static class LogEventExtensions
+{
+    public static void AddPropertyIfAbsent(this LogEvent evt, ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
+    {
+        if (!evt.Properties.ContainsKey(name))
+        {
+            evt.PropertiesDictionary.Add(
+                name,
+                factory is ILogEventPropertyValueFactory factory2
+                    ? factory2.CreatePropertyValue(value, destructureObjects)
+                    : factory.CreateProperty(name, value, destructureObjects).Value);
+        }
     }
 }

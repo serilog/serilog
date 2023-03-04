@@ -1190,7 +1190,7 @@ public static class Log
     /// <param name="property">The resulting property.</param>
     /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
     /// methods never throw exceptions).</returns>
-    public static bool BindProperty(string propertyName, object value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
+    public static bool BindProperty(string propertyName, object? value, bool destructureObjects, [NotNullWhen(true)] out LogEventProperty? property)
     {
         return Logger.BindProperty(propertyName, value, destructureObjects, out property);
     }
