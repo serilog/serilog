@@ -11,6 +11,9 @@ public class AllocationsBenchmark
     readonly object _dictionaryValue;
     readonly object _anonymousObject;
     readonly object _sequence;
+    readonly MessageTemplateTextFormatter formatter;
+    readonly LogEvent evt;
+    readonly StringWriter stringWriter;
 
     public AllocationsBenchmark()
     {
@@ -58,6 +61,11 @@ public class AllocationsBenchmark
         };
 
         _sequence = new List<object> { "1", 2, (int?)3, "4", (short)5 };
+
+        formatter = new MessageTemplateTextFormatter("{ThreadId,5}");
+        evt = Some.InformationEvent();
+        evt.AddOrUpdateProperty(new LogEventProperty("ThreadId", new ScalarValue(15)));
+        stringWriter = new StringWriter();
     }
 
     [Benchmark(Baseline = true)]
@@ -94,5 +102,12 @@ public class AllocationsBenchmark
     public void LogAnonymous()
     {
         _logger.Information("Template: {@AnonymousObject}.", _anonymousObject);
+    }
+
+    [Benchmark]
+    public void FormatMessage()
+    {
+        stringWriter.GetStringBuilder().Clear();
+        formatter.Format(evt, stringWriter);
     }
 }
