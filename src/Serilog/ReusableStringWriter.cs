@@ -19,17 +19,13 @@ internal class ReusableStringWriter: StringWriter
         _pooledWriter = null;
         if (writer == null || !Equals(writer.FormatProvider, fmtProvider))
         {
-            writer = formatProvider == null ? new ReusableStringWriter() : new ReusableStringWriter(formatProvider);
+            writer = new ReusableStringWriter(formatProvider);
         }
 
         return writer;
     }
 
-    ReusableStringWriter()
-    {
-    }
-
-    ReusableStringWriter(IFormatProvider formatProvider) : base(formatProvider)
+    ReusableStringWriter(IFormatProvider? formatProvider) : base(formatProvider ?? CultureInfo.CurrentCulture)
     {
     }
 
