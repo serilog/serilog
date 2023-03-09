@@ -176,7 +176,7 @@ public class JsonFormatter : ITextFormatter
 
                 WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
 
-                var sw = new StringWriter();
+                using var sw = ReusableStringWriter.GetOrCreate();
                 MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
                 WriteJsonProperty("Rendering", sw.ToString(), ref elementDelimiter, output);
 

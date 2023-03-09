@@ -51,7 +51,7 @@ public abstract class LogEventPropertyValue : IFormattable
     /// setting of the operating system. </param><filterpriority>2</filterpriority>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        var output = new StringWriter();
+        using var output = ReusableStringWriter.GetOrCreate();
         Render(output, format, formatProvider);
         return output.ToString();
     }
