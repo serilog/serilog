@@ -128,11 +128,17 @@ public class LoggerConfiguration
 
         _loggerCreated = true;
 
-        ILogEventSink sink = new SafeAggregateSink(_logEventSinks);
+        ILogEventSink? sink = null;
+        if (_logEventSinks.Count > 0)
+            sink = new SafeAggregateSink(_logEventSinks);
 
         var auditing = _auditSinks.Any();
         if (auditing)
-            sink = new AggregateSink(new[] { sink }.Concat(_auditSinks));
+        {
+            sink = new AggregateSink(sink == null ? _auditSinks : new[] { sink }.Concat(_auditSinks));
+        }
+
+        sink ??= SafeAggregateSink.Empty;
 
         if (_filters.Any())
         {
