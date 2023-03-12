@@ -33,7 +33,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     /// <param name="closingDelimiter">A string that will be written after each log event is formatted.
     /// If null, <see cref="Environment.NewLine"/> will be used.</param>
-    /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
+    /// <param name="renderMessage">If <see langword="true"/>, the message will be rendered and written to the output as a
     /// property named RenderedMessage.</param>
     /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
     public JsonFormatter(
