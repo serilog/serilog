@@ -18,8 +18,6 @@ class SafeAggregateSink : ILogEventSink
 {
     readonly ILogEventSink[] _sinks;
 
-    internal static SafeAggregateSink Empty = new(new ILogEventSink[0]);
-
     public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
     {
         Guard.AgainstNull(sinks);
