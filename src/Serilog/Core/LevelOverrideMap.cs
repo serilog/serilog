@@ -58,18 +58,15 @@ class LevelOverrideMap
     }
 
     public void GetEffectiveLevel(
-#if FEATURE_SPAN
         ReadOnlySpan<char> context,
-#else
-        string context,
-#endif
         out LogEventLevel minimumLevel,
         out LoggingLevelSwitch? levelSwitch)
     {
         foreach (var levelOverride in _overrides)
         {
-            if (context.StartsWith(levelOverride.Context) &&
-                (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
+            var overrideContext = levelOverride.Context;
+            if (context.StartsWith(overrideContext.AsSpan()) &&
+                (context.Length == overrideContext.Length || context[overrideContext.Length] == '.'))
             {
                 minimumLevel = LevelAlias.Minimum;
                 levelSwitch = levelOverride.LevelSwitch;

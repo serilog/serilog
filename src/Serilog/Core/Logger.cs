@@ -135,7 +135,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             propertyName == Constants.SourceContextPropertyName &&
             value is string context)
         {
-            _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+            _overrideMap.GetEffectiveLevel(context.AsSpan(), out minimumLevel, out levelSwitch);
         }
         else
         {

@@ -24,7 +24,7 @@ public class LevelOverrideMapTests
 
         var lom = new LevelOverrideMap(overrides, Fatal, null);
 
-        lom.GetEffectiveLevel(context, out var overriddenLevel, out var overriddenSwitch);
+        lom.GetEffectiveLevel(context.AsSpan(), out var overriddenLevel, out var overriddenSwitch);
 
         if (overrideExpected)
         {
