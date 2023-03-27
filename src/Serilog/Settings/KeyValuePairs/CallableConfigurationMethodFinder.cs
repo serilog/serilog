@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,16 +16,12 @@ namespace Serilog.Settings.KeyValuePairs;
 
 static class CallableConfigurationMethodFinder
 {
-#if NET5_0_OR_GREATER
-    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Configuration methods are not trimming safe")]
-#endif
+    [RequiresUnreferencedCode("Configuration methods are not trimming safe")]
     internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
     {
         var methods = configurationAssemblies
             .SelectMany(
-#if NET5_0_OR_GREATER
-                [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Configuration methods are not trimming safe")]
-#endif
+                [RequiresUnreferencedCode("Configuration methods are not trimming safe")]
                 (a) => a.ExportedTypes
                 .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
             .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public))
