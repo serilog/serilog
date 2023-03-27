@@ -25,18 +25,14 @@ class SettingValueConversions
     {
         { typeof(Uri), s => new Uri(s) },
         { typeof(TimeSpan), s => TimeSpan.Parse(s) },
-        { typeof(Type), 
-#if NET6_0_OR_GREATER
+        { typeof(Type),
             // Suppress this trimming warning. We'll annotate all the users of this dictionary instead
-            [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2057")]
-#endif
+            [UnconditionalSuppressMessage("Trimming", "IL2057")]
             (s) => Type.GetType(s, throwOnError: true)!
         },
     };
 
-#if NET5_0_OR_GREATER
-    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds accessors by name")]
-#endif
+    [RequiresUnreferencedCode("Finds accessors by name")]
     public static object? ConvertToType(string value, Type toType)
     {
         if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))

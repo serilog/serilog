@@ -1,15 +1,11 @@
 Write-Output "build: Build started"
 
-& dotnet --info
-
 Push-Location $PSScriptRoot
 
 if(Test-Path .\artifacts) {
     Write-Output "build: Cleaning .\artifacts"
     Remove-Item .\artifacts -Force -Recurse
 }
-
-& dotnet restore --no-cache
 
 $branch = @{ $true = $env:APPVEYOR_REPO_BRANCH; $false = $(git symbolic-ref --short -q HEAD) }[$NULL -ne $env:APPVEYOR_REPO_BRANCH];
 $revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$NULL -ne $env:APPVEYOR_BUILD_NUMBER];
@@ -20,43 +16,20 @@ $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($c
 Write-Output "build: Package version suffix is $suffix"
 Write-Output "build: Build version suffix is $buildSuffix"
 
-foreach ($src in Get-ChildItem src/*) {
-    Push-Location $src
+& dotnet build --configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
 
-    Write-Output "build: Packaging project in $src"
+if($LASTEXITCODE -ne 0) { exit 1 }
 
-    & dotnet build -c Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
-
-    if($suffix) {
-        & dotnet pack -c Release --no-build -o ..\..\artifacts --version-suffix=$suffix
-    } else {
-        & dotnet pack -c Release --no-build -o ..\..\artifacts
-    }
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
-    Pop-Location
+if($suffix) {
+    & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts --version-suffix=$suffix
+} else {
+    & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts
 }
 
-foreach ($test in Get-ChildItem test/*.Tests) {
-    Push-Location $test
+if($LASTEXITCODE -ne 0) { exit 2 }
 
-    Write-Output "build: Testing project in $test"
+Write-Output "build: Testing"
 
-    & dotnet test -c Release
-    if($LASTEXITCODE -ne 0) { exit 3 }
+& dotnet test  test\Serilog.Tests --configuration Release --no-build --no-restore
 
-    Pop-Location
-}
-
-foreach ($test in Get-ChildItem test/*.PerformanceTests) {
-    Push-Location $test
-
-    Write-Output "build: Building performance test project in $test"
-
-    & dotnet build -c Release
-    if($LASTEXITCODE -ne 0) { exit 2 }
-
-    Pop-Location
-}
-
-Pop-Location
+if($LASTEXITCODE -ne 0) { exit 3 }

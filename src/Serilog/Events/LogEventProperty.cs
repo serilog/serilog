@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class LogEventProperty
     /// Test <paramref name="name" /> to determine if it is a valid property name.
     /// </summary>
     /// <param name="name">The name to check.</param>
-    /// <returns>True if the name is valid; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the name is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidName([NotNullWhen(true)] string? name) => !string.IsNullOrWhiteSpace(name);
 
     /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>

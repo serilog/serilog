@@ -3,7 +3,8 @@
     <Description>Simple .NET logging with fully-structured events</Description>
     <VersionPrefix>3.0.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net461;net471;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net462;net471</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);netstandard2.1;netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
@@ -13,12 +14,13 @@
     <TreatSpecificWarningsAsErrors />
     <IsTrimmable>true</IsTrimmable>
     <NoWarn>$(NoWarn);CS1437;CS1570</NoWarn>
+    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
@@ -59,6 +61,6 @@
   <ItemGroup>
     <None Include="..\..\assets\icon.png" Pack="true" Visible="false" PackagePath="" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="Nullable" Version="1.3.1" PrivateAssets="All" />
+    <PackageReference Include="PolySharp" Version="1.12.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>

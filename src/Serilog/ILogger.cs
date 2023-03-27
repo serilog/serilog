@@ -76,8 +76,8 @@ public interface ILogger
     /// </summary>
     /// <param name="propertyName">The name of the property. Must be non-empty.</param>
     /// <param name="value">The property value.</param>
-    /// <param name="destructureObjects">If true, the value will be serialized as a structured
-    /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+    /// <param name="destructureObjects">If <see langword="true"/>, the value will be serialized as a structured
+    /// object if possible; if <see langword="false"/>, the object will be recorded as a scalar or simple array.</param>
     /// <returns>A logger that will enrich log events as specified.</returns>
 #if FEATURE_DEFAULT_INTERFACE
     [CustomDefaultMethodImplementation]
@@ -345,7 +345,7 @@ public interface ILogger
     /// to the log sinks.
     /// </summary>
     /// <param name="level">Level to check.</param>
-    /// <returns>True if the level is enabled; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the level is enabled; otherwise, <see langword="false"/>.</returns>
 #if FEATURE_DEFAULT_INTERFACE
     [CustomDefaultMethodImplementation]
 #endif
@@ -1347,8 +1347,8 @@ public interface ILogger
     /// </summary>
     /// <param name="propertyName">The name of the property. Must be non-empty.</param>
     /// <param name="value">The property value.</param>
-    /// <param name="destructureObjects">If true, the value will be serialized as a structured
-    /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+    /// <param name="destructureObjects">If <see langword="true"/>, the value will be serialized as a structured
+    /// object if possible; if <see langword="false"/>, the object will be recorded as a scalar or simple array.</param>
     /// <param name="property">The resulting property.</param>
     /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
     /// methods never throw exceptions).</returns>
