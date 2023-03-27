@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public class ScalarValue : LogEventPropertyValue
     /// Determine if this instance is equal to <paramref name="obj"/>.
     /// </summary>
     /// <param name="obj">The instance to compare with.</param>
-    /// <returns>True if the instances are equal; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the instances are equal; otherwise, <see langword="false"/>.</returns>
     public override bool Equals(object? obj)
     {
         return obj is ScalarValue sv && Equals(Value, sv.Value);

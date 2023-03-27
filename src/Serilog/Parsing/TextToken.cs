@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public sealed class TextToken : MessageTemplateToken
     /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
     /// </summary>
     /// <returns>
-    /// true if the specified object  is equal to the current object; otherwise, false.
+    /// <see langword="true"/> if the specified object  is equal to the current object; otherwise, <see langword="false"/>.
     /// </returns>
     /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
     public override bool Equals(object? obj)
