@@ -68,7 +68,7 @@ static class MessageTemplateRenderer
             return;
         }
 
-        var valueOutput = new StringWriter();
+        using var valueOutput = ReusableStringWriter.GetOrCreate();
         RenderValue(propertyValue, isLiteral, isJson, valueOutput, pt.Format, formatProvider);
         var sb = valueOutput.GetStringBuilder();
 
