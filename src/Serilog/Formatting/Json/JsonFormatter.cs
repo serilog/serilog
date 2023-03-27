@@ -20,9 +20,6 @@ namespace Serilog.Formatting.Json;
 /// </summary>
 public class JsonFormatter : ITextFormatter
 {
-    // Ignore obsoletion errors
-#pragma warning disable 618
-
     readonly string _closingDelimiter;
     readonly bool _renderMessage;
     readonly IFormatProvider? _formatProvider;
@@ -33,7 +30,7 @@ public class JsonFormatter : ITextFormatter
     /// </summary>
     /// <param name="closingDelimiter">A string that will be written after each log event is formatted.
     /// If null, <see cref="Environment.NewLine"/> will be used.</param>
-    /// <param name="renderMessage">If true, the message will be rendered and written to the output as a
+    /// <param name="renderMessage">If <see langword="true"/>, the message will be rendered and written to the output as a
     /// property named RenderedMessage.</param>
     /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
     public JsonFormatter(
@@ -162,18 +159,21 @@ public class JsonFormatter : ITextFormatter
             output.Write(propertyFormats.Key);
             output.Write("\":[");
 
-            var formatDelimiter = "";
+            char? formatDelimiter = null;
             foreach (var format in propertyFormats)
             {
-                output.Write(formatDelimiter);
-                formatDelimiter = ",";
+                if (formatDelimiter != null)
+                {
+                    output.Write(formatDelimiter.Value);
+                }
+                formatDelimiter = ',';
 
                 output.Write('{');
                 char? elementDelimiter = null;
 
                 WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
 
-                var sw = new StringWriter();
+                using var sw = ReusableStringWriter.GetOrCreate();
                 MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
                 WriteJsonProperty("Rendering", sw.ToString(), ref elementDelimiter, output);
 
@@ -269,11 +269,14 @@ public class JsonFormatter : ITextFormatter
     void WriteSequence(IEnumerable elements, TextWriter output)
     {
         output.Write('[');
-        var delim = "";
+        char? delim = null;
         foreach (var value in elements)
         {
-            output.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                output.Write(delim.Value);
+            }
+            delim = ',';
             WriteLiteral(value, output);
         }
         output.Write(']');
@@ -285,11 +288,14 @@ public class JsonFormatter : ITextFormatter
     void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
     {
         output.Write('{');
-        var delim = "";
+        char? delim = null;
         foreach (var element in elements)
         {
-            output.Write(delim);
-            delim = ",";
+            if (delim != null)
+            {
+                output.Write(delim.Value);
+            }
+            delim = ',';
             WriteLiteral(element.Key, output, forceQuotation: true);
             output.Write(':');
             WriteLiteral(element.Value, output);

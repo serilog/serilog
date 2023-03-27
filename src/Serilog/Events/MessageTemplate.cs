@@ -128,7 +128,7 @@ public class MessageTemplate
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     public string Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, IFormatProvider? formatProvider = null)
     {
-        var writer = new StringWriter(formatProvider);
+        using var writer = ReusableStringWriter.GetOrCreate(formatProvider);
         Render(properties, writer, formatProvider);
         return writer.ToString();
     }
