@@ -1,9 +1,9 @@
-﻿namespace Serilog;
+namespace Serilog;
 
 /// <summary>
 /// Class that provides reusable StringWriters to reduce memory allocations
 /// </summary>
-internal class ReusableStringWriter: StringWriter
+internal class ReusableStringWriter : StringWriter
 {
     [ThreadStatic]
     static ReusableStringWriter? _pooledWriter;

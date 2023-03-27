@@ -29,7 +29,7 @@ public class MessageTemplateTests
 
     class ToStringThrows
     {
-        public override string ToString() => throw new ArgumentNullException("","A possible a Bug in a class");
+        public override string ToString() => throw new ArgumentNullException("", "A possible a Bug in a class");
     }
 
     [Fact]

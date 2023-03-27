@@ -106,9 +106,9 @@ public class PropertyValueConverterTests
 
     class B
     {
-// ReSharper disable UnusedAutoPropertyAccessor.Local
+        // ReSharper disable UnusedAutoPropertyAccessor.Local
         public A? A { get; set; }
-// ReSharper restore UnusedAutoPropertyAccessor.Local
+        // ReSharper restore UnusedAutoPropertyAccessor.Local
     }
 
     [Fact]

@@ -13,7 +13,7 @@ public class ApiApprovalTests
             new()
             {
                 IncludeAssemblyAttributes = false,
-                ExcludeAttributes = new[] {"System.Diagnostics.DebuggerDisplayAttribute"},
+                ExcludeAttributes = new[] { "System.Diagnostics.DebuggerDisplayAttribute" },
             });
 
         publicApi.ShouldMatchApproved(options => options.WithFilenameGenerator((_, _, fileType, fileExtension) => $"{assembly.GetName().Name!}.{fileType}.{fileExtension}"));

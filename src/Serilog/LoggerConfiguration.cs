@@ -124,7 +124,7 @@ public class LoggerConfiguration
     /// <exception cref="InvalidOperationException">When the logger is already created</exception>
     public Logger CreateLogger()
     {
-        if (_loggerCreated)  throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
+        if (_loggerCreated) throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
 
         _loggerCreated = true;
 

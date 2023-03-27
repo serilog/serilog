@@ -22,7 +22,7 @@ static class CallableConfigurationMethodFinder
         var methods = configurationAssemblies
             .SelectMany(
                 [RequiresUnreferencedCode("Configuration methods are not trimming safe")]
-                (a) => a.ExportedTypes
+        (a) => a.ExportedTypes
                 .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
             .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public))
             .Where(m => m.IsDefined(typeof(ExtensionAttribute), false) &&
