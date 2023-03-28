@@ -213,20 +213,14 @@ public class MessageTemplateParser : IMessageTemplateParser
         switch (c)
         {
             case '@':
-            {
                 destructuring = Destructuring.Destructure;
                 return true;
-            }
             case '$':
-            {
                 destructuring = Destructuring.Stringify;
                 return true;
-            }
             default:
-            {
                 destructuring = Destructuring.Default;
                 return false;
-            }
         }
     }
 

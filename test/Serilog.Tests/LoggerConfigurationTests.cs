@@ -94,7 +94,7 @@ public class LoggerConfigurationTests
         public int B { get; set; }
     }
 
-// ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
+    // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
     [Fact]
     public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()

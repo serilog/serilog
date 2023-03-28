@@ -128,7 +128,7 @@ public class LoggerSinkConfiguration
     {
         Guard.AgainstNull(logger);
 
-        if (logger is Logger {HasOverrideMap: true})
+        if (logger is Logger { HasOverrideMap: true })
         {
             SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
                               "and may be removed completely in a future version.");
