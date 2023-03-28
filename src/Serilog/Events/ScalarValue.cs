@@ -78,7 +78,7 @@ public class ScalarValue : LogEventPropertyValue
             return;
         }
 
-        var custom = (ICustomFormatter?) formatProvider?.GetFormat(typeof(ICustomFormatter));
+        var custom = (ICustomFormatter?)formatProvider?.GetFormat(typeof(ICustomFormatter));
         if (custom != null)
         {
             output.Write(custom.Format(format, value, formatProvider));
