@@ -29,11 +29,9 @@ public sealed class PropertyToken : MessageTemplateToken
     /// <param name="format">The format applied to the property, if any.</param>
     /// <param name="alignment">The alignment applied to the property, if any.</param>
     /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
-    /// <param name="startIndex">The token's start index in the template.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="rawText"/> is <code>null</code></exception>
-    public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
-        : base(startIndex)
+    public PropertyToken(string propertyName, string rawText, string? format = null, in Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
     {
         PropertyName = Guard.AgainstNull(propertyName);
         Format = format;

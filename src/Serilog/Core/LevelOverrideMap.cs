@@ -19,7 +19,7 @@ class LevelOverrideMap
     readonly LogEventLevel _defaultMinimumLevel;
     readonly LoggingLevelSwitch? _defaultLevelSwitch;
 
-    struct LevelOverride
+    readonly struct LevelOverride
     {
         public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
         {
