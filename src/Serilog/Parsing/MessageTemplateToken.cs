@@ -20,21 +20,6 @@ namespace Serilog.Parsing;
 public abstract class MessageTemplateToken
 {
     /// <summary>
-    /// Construct a <see cref="MessageTemplateToken"/>.
-    /// </summary>
-    /// <param name="startIndex">The token's start index in the template.</param>
-    protected MessageTemplateToken(int startIndex)
-    {
-        StartIndex = startIndex;
-    }
-
-    /// <summary>
-    /// The token's start index in the template.
-    /// </summary>
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
-    public int StartIndex { get; }
-
-    /// <summary>
     /// The token's length.
     /// </summary>
     public abstract int Length { get; }
