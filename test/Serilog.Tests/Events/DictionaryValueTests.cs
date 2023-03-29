@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Events;
+namespace Serilog.Tests.Events;
 
 public class DictionaryValueTests
 {

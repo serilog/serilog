@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Capturing;
+namespace Serilog.Tests.Capturing;
 
 public class GetablePropertyFinderTests
 {

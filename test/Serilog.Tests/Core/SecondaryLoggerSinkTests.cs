@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Core;
+namespace Serilog.Tests.Core;
 
 public class SecondaryLoggerSinkTests
 {

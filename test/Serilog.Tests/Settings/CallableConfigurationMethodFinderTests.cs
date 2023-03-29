@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Settings;
+namespace Serilog.Tests.Settings;
 
 public class CallableConfigurationMethodFinderTests
 {

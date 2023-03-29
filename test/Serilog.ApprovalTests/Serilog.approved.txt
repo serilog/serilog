@@ -799,7 +799,7 @@ namespace Serilog
 }
 namespace Serilog.Parsing
 {
-    public struct Alignment
+    public readonly struct Alignment
     {
         public Alignment(Serilog.Parsing.AlignmentDirection direction, int width) { }
         public Serilog.Parsing.AlignmentDirection Direction { get; }
@@ -830,7 +830,7 @@ namespace Serilog.Parsing
     }
     public sealed class PropertyToken : Serilog.Parsing.MessageTemplateToken
     {
-        public PropertyToken(string propertyName, string rawText, string? format = null, Serilog.Parsing.Alignment? alignment = default, Serilog.Parsing.Destructuring destructuring = 0, int startIndex = -1) { }
+        public PropertyToken(string propertyName, string rawText, string? format = null, in Serilog.Parsing.Alignment? alignment = null, Serilog.Parsing.Destructuring destructuring = 0, int startIndex = -1) { }
         public Serilog.Parsing.Alignment? Alignment { get; }
         public Serilog.Parsing.Destructuring Destructuring { get; }
         public string? Format { get; }

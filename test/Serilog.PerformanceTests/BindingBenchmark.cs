@@ -26,7 +26,7 @@ public class BindingBenchmark
         MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
 
     ILogger _log = null!;
-    object[] _zero= null!, _one= null!, _five = null!;
+    object[] _zero = null!, _one = null!, _five = null!;
 
     [GlobalSetup]
     public void Setup()

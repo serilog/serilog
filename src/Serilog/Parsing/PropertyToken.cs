@@ -31,7 +31,8 @@ public sealed class PropertyToken : MessageTemplateToken
     /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="rawText"/> is <code>null</code></exception>
-    public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
+    public PropertyToken(string propertyName, string rawText, string? format = null, in Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
+        : base(startIndex)
     {
         PropertyName = Guard.AgainstNull(propertyName);
         Format = format;
