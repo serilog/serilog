@@ -43,9 +43,6 @@ public static class Matching
         return WithProperty<string>(
             Constants.SourceContextPropertyName,
             s => s != null && s
-#if FEATURE_SPAN
-                .AsSpan()
-#endif
                 .StartsWith(source) && (s.Length == source.Length || s[source.Length] == '.'));
     }
 
