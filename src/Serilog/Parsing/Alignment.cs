@@ -17,7 +17,7 @@ namespace Serilog.Parsing;
 /// <summary>
 /// A structure representing the alignment settings to apply when rendering a property.
 /// </summary>
-public struct Alignment
+public readonly struct Alignment
 {
     /// <summary>
     /// Initializes a new instance of <see cref="Alignment"/>.
