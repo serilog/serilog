@@ -37,6 +37,7 @@ public class LoggerSinkConfiguration
     /// <seealso cref="Sink(ILogEventSink, LogEventLevel, LoggingLevelSwitch?)"/>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <remarks>Sink configuration methods that specify <paramref name="restrictedToMinimumLevel"/> should also specify <see cref="LoggingLevelSwitch"/>.</remarks>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public LoggerConfiguration Sink(
         ILogEventSink logEventSink,
         LogEventLevel restrictedToMinimumLevel)
