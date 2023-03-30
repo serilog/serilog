@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if NET6_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
-
 namespace Serilog.Settings.KeyValuePairs;
 
 #if !NET5_0
@@ -250,7 +246,7 @@ class KeyValuePairSettings : ILoggerSettings
                             select SuppressConvertCall(directive, p)).ToList();
 
                 // Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
-                [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026")]
+                [UnconditionalSuppressMessage("Trimming", "IL2026")]
                 object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
                     => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
 
