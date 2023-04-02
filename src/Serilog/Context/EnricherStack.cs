@@ -20,7 +20,7 @@
 
 namespace Serilog.Context;
 
-class EnricherStack: IEnumerable<ILogEventEnricher>
+class EnricherStack : IEnumerable<ILogEventEnricher>
 {
     readonly EnricherStack? _under;
     readonly ILogEventEnricher? _top;

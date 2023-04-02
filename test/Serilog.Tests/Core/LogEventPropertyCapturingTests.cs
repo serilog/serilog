@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Core;
+namespace Serilog.Tests.Core;
 
 public class LogEventPropertyCapturingTests
 {
@@ -89,7 +89,7 @@ public class LogEventPropertyCapturingTests
                 new LogEventProperty("__2", new SequenceValue(new[] { new ScalarValue("__2") })),
                 new LogEventProperty("__3", new SequenceValue(new[] { new ScalarValue("__3") })),
             },
-            Capture("Hello {who} {what} where}", "who", "what", new [] { "__2" }, new [] { "__3" }),
+            Capture("Hello {who} {what} where}", "who", "what", new[] { "__2" }, new[] { "__3" }),
             new LogEventPropertyStructuralEqualityComparer());
     }
 

@@ -18,7 +18,7 @@ Write-Output "build: Build version suffix is $buildSuffix"
 
 & dotnet build --configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
 
-if($LASTEXITCODE -ne 0) { exit 1 }
+if($LASTEXITCODE -ne 0) { throw 'build failed' }
 
 if($suffix) {
     & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts --version-suffix=$suffix
@@ -26,10 +26,14 @@ if($suffix) {
     & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts
 }
 
-if($LASTEXITCODE -ne 0) { exit 2 }
+if($LASTEXITCODE -ne 0) { throw 'pack failed' }
 
 Write-Output "build: Testing"
 
 & dotnet test  test\Serilog.Tests --configuration Release --no-build --no-restore
 
-if($LASTEXITCODE -ne 0) { exit 3 }
+if($LASTEXITCODE -ne 0) { throw 'unit tests failed' }
+
+& dotnet test  test\Serilog.ApprovalTests --configuration Release --no-build --no-restore
+
+if($LASTEXITCODE -ne 0) { throw 'approval tests failed' }

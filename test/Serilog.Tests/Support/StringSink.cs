@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Support;
+namespace Serilog.Tests.Support;
 
 public class StringSink : ILogEventSink
 {

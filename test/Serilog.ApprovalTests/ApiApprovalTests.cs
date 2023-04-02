@@ -13,9 +13,14 @@ public class ApiApprovalTests
             new()
             {
                 IncludeAssemblyAttributes = false,
-                ExcludeAttributes = new[] {"System.Diagnostics.DebuggerDisplayAttribute"},
+                ExcludeAttributes = new[] { "System.Diagnostics.DebuggerDisplayAttribute" },
             });
 
-        publicApi.ShouldMatchApproved(options => options.WithFilenameGenerator((_, _, fileType, fileExtension) => $"{assembly.GetName().Name!}.{fileType}.{fileExtension}"));
+        publicApi.ShouldMatchApproved(options =>
+        {
+            // Comment this line out to view the failure as a diff. Leave it here so that CI builds don't hang when this test fails.
+            options.NoDiff();
+            options.WithFilenameGenerator((_, _, fileType, fileExtension) => $"{assembly.GetName().Name!}.{fileType}.{fileExtension}");
+        });
     }
 }

@@ -33,6 +33,23 @@ public class LoggerSinkConfiguration
     /// </summary>
     /// <param name="logEventSink">The sink.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
+    /// events passed through the sink.</param>
+    /// <seealso cref="Sink(ILogEventSink, LogEventLevel, LoggingLevelSwitch?)"/>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <remarks>Sink configuration methods that specify <paramref name="restrictedToMinimumLevel"/> should also specify <see cref="LoggingLevelSwitch"/>.</remarks>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public LoggerConfiguration Sink(
+        ILogEventSink logEventSink,
+        LogEventLevel restrictedToMinimumLevel)
+    {
+        return Sink(logEventSink, restrictedToMinimumLevel, null);
+    }
+
+    /// <summary>
+    /// Write log events to the specified <see cref="ILogEventSink"/>.
+    /// </summary>
+    /// <param name="logEventSink">The sink.</param>
+    /// <param name="restrictedToMinimumLevel">The minimum level for
     /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
     /// <param name="levelSwitch">A switch allowing the pass-through minimum level
     /// to be changed at runtime.</param>
@@ -40,6 +57,9 @@ public class LoggerSinkConfiguration
     public LoggerConfiguration Sink(
         ILogEventSink logEventSink,
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        // The warning here is redundant; the optional parameter allows `WriteTo.Sink(s)` usage. We would obsolete the two-argument
+        // version above for purposes of economy, but end-user `WriteTo.Sink(s, level)` is valid and shouldn't result in a warning.
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         LoggingLevelSwitch? levelSwitch = null)
     {
         var sink = logEventSink;
@@ -128,7 +148,7 @@ public class LoggerSinkConfiguration
     {
         Guard.AgainstNull(logger);
 
-        if (logger is Logger {HasOverrideMap: true})
+        if (logger is Logger { HasOverrideMap: true })
         {
             SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
                               "and may be removed completely in a future version.");

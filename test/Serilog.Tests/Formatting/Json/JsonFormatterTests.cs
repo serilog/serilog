@@ -128,7 +128,7 @@ public class JsonFormatterTests
     public void ASequencePropertySerializesAsArrayValue()
     {
         var name = Some.String();
-        var ints = new[]{ Some.Int(), Some.Int() };
+        var ints = new[] { Some.Int(), Some.Int() };
         var value = new SequenceValue(ints.Select(i => new ScalarValue(i)));
         var @event = Some.InformationEvent();
         @event.AddOrUpdateProperty(new(name, value));
