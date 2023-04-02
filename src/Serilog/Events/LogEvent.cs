@@ -172,6 +172,18 @@ public class LogEvent
 #endif
     }
 
+    internal void AddPropertyIfAbsent(ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
+    {
+        if (!Properties.ContainsKey(name))
+        {
+            PropertiesDictionary.Add(
+                name,
+                factory is ILogEventPropertyValueFactory factory2
+                    ? factory2.CreatePropertyValue(value, destructureObjects)
+                    : factory.CreateProperty(name, value, destructureObjects).Value);
+        }
+    }
+
     /// <summary>
     /// Remove a property from the event, if present. Otherwise no action
     /// is performed.
@@ -192,20 +204,5 @@ public class LogEvent
             Exception,
             MessageTemplate,
             properties);
-    }
-}
-
-internal static class LogEventExtensions
-{
-    public static void AddPropertyIfAbsent(this LogEvent evt, ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
-    {
-        if (!evt.Properties.ContainsKey(name))
-        {
-            evt.PropertiesDictionary.Add(
-                name,
-                factory is ILogEventPropertyValueFactory factory2
-                    ? factory2.CreatePropertyValue(value, destructureObjects)
-                    : factory.CreateProperty(name, value, destructureObjects).Value);
-        }
     }
 }
