@@ -142,9 +142,10 @@ public class LoggerSinkConfiguration
     /// events passed through the sink.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public LoggerConfiguration Logger(
         ILogger logger,
-        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        LogEventLevel restrictedToMinimumLevel)
         => Logger(logger, attemptDispose: false, restrictedToMinimumLevel);
 
     /// <summary>
@@ -162,7 +163,7 @@ public class LoggerSinkConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
     public LoggerConfiguration Logger(
         ILogger logger,
-        bool attemptDispose,
+        bool attemptDispose = false,
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
     {
         Guard.AgainstNull(logger);

@@ -13,6 +13,17 @@ public class ChildLoggerDisposalTests
         Assert.False(child.IsDisposed);
     }
 
+    [Fact]
+    public void ViaLegacyOverloadChildLoggerIsNotDisposedOnOuterDisposal()
+    {
+        var child = new DisposableLogger();
+        var outer = new LoggerConfiguration()
+            .WriteTo.Logger(child, Information)
+            .CreateLogger();
+        outer.Dispose();
+        Assert.False(child.IsDisposed);
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -33,6 +44,17 @@ public class ChildLoggerDisposalTests
         var child = new DisposableLogger();
         var outer = new LoggerConfiguration()
             .WriteTo.Logger(child)
+            .CreateLogger();
+        await outer.DisposeAsync();
+        Assert.False(child.IsDisposedAsync);
+    }
+
+    [Fact]
+    public async Task ViaLegacyOverloadChildLoggerIsNotAsyncDisposedOnOuterDisposal()
+    {
+        var child = new DisposableLogger();
+        var outer = new LoggerConfiguration()
+            .WriteTo.Logger(child, Information)
             .CreateLogger();
         await outer.DisposeAsync();
         Assert.False(child.IsDisposedAsync);
