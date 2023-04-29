@@ -70,6 +70,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration Conditional(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink) { }
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0) { }
         public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.ILogEventSink, new () { }
@@ -823,14 +824,13 @@ namespace Serilog.Parsing
     }
     public abstract class MessageTemplateToken
     {
-        protected MessageTemplateToken(int startIndex) { }
+        protected MessageTemplateToken() { }
         public abstract int Length { get; }
-        public int StartIndex { get; }
         public abstract void Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output, System.IFormatProvider? formatProvider = null);
     }
     public sealed class PropertyToken : Serilog.Parsing.MessageTemplateToken
     {
-        public PropertyToken(string propertyName, string rawText, string? format = null, in Serilog.Parsing.Alignment? alignment = null, Serilog.Parsing.Destructuring destructuring = 0, int startIndex = -1) { }
+        public PropertyToken(string propertyName, string rawText, string? format = null, in Serilog.Parsing.Alignment? alignment = null, Serilog.Parsing.Destructuring destructuring = 0) { }
         public Serilog.Parsing.Alignment? Alignment { get; }
         public Serilog.Parsing.Destructuring Destructuring { get; }
         public string? Format { get; }
@@ -845,7 +845,7 @@ namespace Serilog.Parsing
     }
     public sealed class TextToken : Serilog.Parsing.MessageTemplateToken
     {
-        public TextToken(string text, int startIndex = -1) { }
+        public TextToken(string text) { }
         public override int Length { get; }
         public string Text { get; }
         public override bool Equals(object? obj) { }
