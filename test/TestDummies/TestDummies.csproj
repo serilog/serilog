@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PolySharp" Version="1.12.1" PrivateAssets="All" />
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
   </ItemGroup>
 
