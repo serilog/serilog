@@ -346,13 +346,13 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     static bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (value is IDictionary && valueType.IsConstructedGenericType)
+        if (value is IDictionary idictionary && valueType.IsConstructedGenericType)
         {
             var definition = valueType.GetGenericTypeDefinition();
             if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
                 IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
             {
-                dictionary = (IDictionary)value;
+                dictionary = idictionary;
                 return true;
             }
         }
