@@ -61,7 +61,8 @@
   <ItemGroup>
     <None Include="..\..\assets\icon.png" Pack="true" Visible="false" PackagePath="" />
     <PackageReference Include="System.Memory" Version="4.5.5" Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" Condition="$(TargetFramework) == 'netstandard2.0' or $(TargetFrameworkIdentifier) == '.NETFramework'" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="Polyfill" Version="1.20.0" PrivateAssets="all" />
+    <PackageReference Include="Polyfill" Version="1.21.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>

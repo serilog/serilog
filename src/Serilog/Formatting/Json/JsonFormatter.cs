@@ -366,15 +366,11 @@ public class JsonFormatter : ITextFormatter
 
     static void WriteSingle(float value, TextWriter output)
     {
-#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
         if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-#else
-        output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-#endif
     }
 
     static void WriteDouble(double value, TextWriter output)
@@ -393,30 +389,23 @@ public class JsonFormatter : ITextFormatter
     static void WriteOffset(DateTimeOffset value, TextWriter output)
     {
         output.Write('"');
-#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out var written, format: "o"))
+        if (value.TryFormat(buffer, out var written, format: "o".AsSpan()))
+        {
             output.Write(buffer.Slice(0, written));
+        }
         else
             output.Write(value.ToString("o"));
-#else
-        output.Write(value.ToString("o"));
-#endif
-        output.Write('"');
     }
 
     static void WriteDateTime(DateTime value, TextWriter output)
     {
         output.Write('"');
-#if FEATURE_SPAN
         Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out var written, format: "o"))
+        if (value.TryFormat(buffer, out var written, format: "o".AsSpan()))
             output.Write(buffer.Slice(0, written));
         else
             output.Write(value.ToString("o"));
-#else
-        output.Write(value.ToString("o"));
-#endif
         output.Write('"');
     }
 

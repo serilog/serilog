@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if FEATURE_SPAN
-
 namespace Serilog.Policies;
 
 // Byte arrays, when logged, need to be copied so that they are
@@ -76,5 +74,3 @@ sealed class ByteMemoryScalarConversionPolicy : IScalarConversionPolicy
         });
     }
 }
-
-#endif

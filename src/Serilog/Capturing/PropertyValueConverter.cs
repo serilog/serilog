@@ -64,9 +64,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
             new EnumScalarConversionPolicy(),
             new ByteArrayScalarConversionPolicy(),
-#if FEATURE_SPAN
             new ByteMemoryScalarConversionPolicy(),
-#endif
         };
 
         _destructuringPolicies = additionalDestructuringPolicies
