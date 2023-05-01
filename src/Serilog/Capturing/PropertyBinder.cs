@@ -19,7 +19,7 @@ class PropertyBinder
 {
     readonly PropertyValueConverter _valueConverter;
 
-    static readonly EventProperty[] NoProperties = new EventProperty[0];
+    static readonly EventProperty[] NoProperties = Array.Empty<EventProperty>();
 
     public PropertyBinder(PropertyValueConverter valueConverter)
     {
