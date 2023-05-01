@@ -29,9 +29,9 @@ public sealed class PropertyToken : MessageTemplateToken
     /// <param name="format">The format applied to the property, if any.</param>
     /// <param name="alignment">The alignment applied to the property, if any.</param>
     /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="rawText"/> is <code>null</code></exception>
-    public PropertyToken(string propertyName, string rawText, string? format = null, in Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
+    /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <c>null</c></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="rawText"/> is <c>null</c></exception>
+    public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
     {
         PropertyName = Guard.AgainstNull(propertyName);
         Format = format;
@@ -57,8 +57,8 @@ public sealed class PropertyToken : MessageTemplateToken
     /// <param name="properties">Properties that may be represented by the token.</param>
     /// <param name="output">Output for the rendered string.</param>
     /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <c>null</c></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <c>null</c></exception>
     public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
         Guard.AgainstNull(properties);

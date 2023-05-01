@@ -28,14 +28,14 @@ public class ScalarValue : LogEventPropertyValue
     /// Construct a <see cref="ScalarValue"/> with the specified
     /// value.
     /// </summary>
-    /// <param name="value">The value, which may be <code>null</code>.</param>
+    /// <param name="value">The value, which may be <c>null</c>.</param>
     public ScalarValue(object? value)
     {
         Value = value;
     }
 
     /// <summary>
-    /// The value, which may be <code>null</code>.
+    /// The value, which may be <c>null</c>.
     /// </summary>
     public object? Value { get; }
 
@@ -46,13 +46,16 @@ public class ScalarValue : LogEventPropertyValue
     /// <param name="format">A format string applied to the value, or null.</param>
     /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
     /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <c>null</c></exception>
     public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
         Render(Value, output, format, formatProvider);
     }
 
-    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
+    /// <summary>
+    /// Render the value to the output.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <c>null</c></exception>
     internal static void Render(object? value, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
         Guard.AgainstNull(output);

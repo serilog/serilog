@@ -21,7 +21,7 @@ static class Padding
     /// <summary>
     /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
     /// </summary>
-    public static void Apply(TextWriter output, string value, in Alignment? alignment)
+    public static void Apply(TextWriter output, string value, Alignment? alignment)
     {
         if (alignment == null || value.Length >= alignment.Value.Width)
         {
@@ -53,7 +53,7 @@ static class Padding
     /// This is a full copy of the method above that allows to write <see cref="StringBuilder"/> directly into provided
     /// <paramref name="output"/> without <see cref="StringBuilder.ToString()"/> call on the caller side.
     /// </summary>
-    public static void Apply(TextWriter output, StringBuilder value, in Alignment? alignment)
+    public static void Apply(TextWriter output, StringBuilder value, Alignment? alignment)
     {
         if (alignment == null || value.Length >= alignment.Value.Width)
         {
