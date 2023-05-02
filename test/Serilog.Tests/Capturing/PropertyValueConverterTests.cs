@@ -183,56 +183,54 @@ public class PropertyValueConverterTests
         Assert.Equal("000102030405060708090A0B0C0D0E0F... (1025 bytes)", lv);
     }
 
-#if FEATURE_SPAN
-        [Fact]
-        public void ByteSpansAreConvertedToStrings()
-        {
-            var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray().AsMemory();
-            var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string?)pv.LiteralValue();
-            Assert.Equal("00010203040506070809", lv);
-        }
+    [Fact]
+    public void ByteSpansAreConvertedToStrings()
+    {
+        var bytes = Enumerable.Range(0, 10).Select(b => (byte)b).ToArray().AsMemory();
+        var pv = _converter.CreatePropertyValue(bytes);
+        var lv = (string?)pv.LiteralValue();
+        Assert.Equal("00010203040506070809", lv);
+    }
 
-        [Fact]
-        public void ByteSpansLargerThan1kAreLimitedAndConvertedToStrings()
-        {
-            var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray().AsMemory();
-            var pv = _converter.CreatePropertyValue(bytes);
-            var lv = (string?)pv.LiteralValue();
-            Assert.EndsWith("(1025 bytes)", lv);
-        }
+    [Fact]
+    public void ByteSpansLargerThan1kAreLimitedAndConvertedToStrings()
+    {
+        var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray().AsMemory();
+        var pv = _converter.CreatePropertyValue(bytes);
+        var lv = (string?)pv.LiteralValue();
+        Assert.EndsWith("(1025 bytes)", lv);
+    }
 
-        [Theory]
-        [InlineData(10)]
-        [InlineData(1000)]
-        [InlineData(10000)]
-        public void ByteSpansAreConvertedToTheSameStringsAsArrays(int length)
-        {
-            var bytes = Enumerable.Range(0, length).Select(b => (byte)b).ToArray();
-            var bytesSpan = bytes.AsMemory();
+    [Theory]
+    [InlineData(10)]
+    [InlineData(1000)]
+    [InlineData(10000)]
+    public void ByteSpansAreConvertedToTheSameStringsAsArrays(int length)
+    {
+        var bytes = Enumerable.Range(0, length).Select(b => (byte)b).ToArray();
+        var bytesSpan = bytes.AsMemory();
 
-            var bytesResult = _converter.CreatePropertyValue(bytes).LiteralValue();
-            var bytesSpanResult = _converter.CreatePropertyValue(bytesSpan).LiteralValue();
+        var bytesResult = _converter.CreatePropertyValue(bytes).LiteralValue();
+        var bytesSpanResult = _converter.CreatePropertyValue(bytesSpan).LiteralValue();
 
-            Assert.Equal(bytesResult, bytesSpanResult);
-        }
+        Assert.Equal(bytesResult, bytesSpanResult);
+    }
 
-        [Fact]
-        public void FailsGracefullyWhenAccessingPropertiesViaReflectionThrows()
-        {
-            var thrower = new[] { 1, 2, 3 }.AsMemory();
+    [Fact]
+    public void FailsGracefullyWhenAccessingPropertiesViaReflectionThrows()
+    {
+        var thrower = new[] { 1, 2, 3 }.AsMemory();
 
-            var pv = _converter.CreatePropertyValue(thrower, Destructuring.Destructure);
-            var sv = (StructureValue)pv;
-            Assert.Equal(3, sv.Properties.Count);
-            var t = sv.Properties.Single(m => m.Name == "Span");
-            Assert.Equal("Accessing this property is not supported via Reflection API", t.Value.LiteralValue());
-            var l = sv.Properties.Single(m => m.Name == "Length");
-            Assert.Equal(3, l.Value.LiteralValue());
-            var k = sv.Properties.Single(m => m.Name == "IsEmpty");
-            Assert.False((bool?)k.Value.LiteralValue());
-        }
-#endif
+        var pv = _converter.CreatePropertyValue(thrower, Destructuring.Destructure);
+        var sv = (StructureValue)pv;
+        Assert.Equal(3, sv.Properties.Count);
+        var t = sv.Properties.Single(m => m.Name == "Span");
+        Assert.Equal("Accessing this property is not supported via Reflection API", t.Value.LiteralValue());
+        var l = sv.Properties.Single(m => m.Name == "Length");
+        Assert.Equal(3, l.Value.LiteralValue());
+        var k = sv.Properties.Single(m => m.Name == "IsEmpty");
+        Assert.False((bool?)k.Value.LiteralValue());
+    }
 
     public class Thrower
     {
