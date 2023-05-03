@@ -107,8 +107,6 @@ public class LogEvent
     /// </summary>
     public IReadOnlyDictionary<string, LogEventPropertyValue> Properties => _properties;
 
-    internal Dictionary<string, LogEventPropertyValue> PropertiesDictionary => _properties;
-
     /// <summary>
     /// An exception associated with the event, or null.
     /// </summary>
@@ -174,9 +172,9 @@ public class LogEvent
 
     internal void AddPropertyIfAbsent(ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
     {
-        if (!Properties.ContainsKey(name))
+        if (!_properties.ContainsKey(name))
         {
-            PropertiesDictionary.Add(
+            _properties.Add(
                 name,
                 factory is ILogEventPropertyValueFactory factory2
                     ? factory2.CreatePropertyValue(value, destructureObjects)
