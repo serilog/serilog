@@ -47,7 +47,7 @@ partial class PropertyValueConverter
             return result;
         }
 
-        LogEventPropertyValue ILogEventPropertyValueFactory.CreatePropertyValue(object value, bool destructureObjects)
+        LogEventPropertyValue ILogEventPropertyValueFactory.CreatePropertyValue(object? value, bool destructureObjects)
         {
             var storedDepth = _currentDepth;
 
