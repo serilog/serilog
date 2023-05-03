@@ -52,9 +52,6 @@ class PropertyBinder
 
     EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters, PropertyToken[] positionalProperties)
     {
-        if (positionalProperties.Length != messageTemplateParameters.Length)
-            SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
-
         var result = new EventProperty[messageTemplateParameters.Length];
         foreach (var property in positionalProperties)
         {
@@ -76,6 +73,9 @@ class PropertyBinder
                 ++next;
             }
         }
+
+        if (result.Length != messageTemplateParameters.Length)
+            SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
 
         if (next != result.Length)
             Array.Resize(ref result, next);
