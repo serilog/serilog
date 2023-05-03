@@ -159,12 +159,15 @@ public class LoggerSinkConfiguration
     /// when the parent logger is disposed.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
     /// events passed through the sink.</param>
+    /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+    /// to be changed at runtime. Can be <code>null</code></param>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
     public LoggerConfiguration Logger(
         ILogger logger,
         bool attemptDispose = false,
-        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
     {
         Guard.AgainstNull(logger);
 
@@ -175,7 +178,7 @@ public class LoggerSinkConfiguration
         }
 
         var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: attemptDispose);
-        return Sink(secondarySink, restrictedToMinimumLevel);
+        return Sink(secondarySink, restrictedToMinimumLevel, levelSwitch);
     }
 
     /// <summary>
