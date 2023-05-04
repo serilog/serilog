@@ -142,9 +142,32 @@ public class LoggerSinkConfiguration
     /// events passed through the sink.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public LoggerConfiguration Logger(
         ILogger logger,
-        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        LogEventLevel restrictedToMinimumLevel)
+        => Logger(logger, attemptDispose: false, restrictedToMinimumLevel);
+
+    /// <summary>
+    /// Write log events to a sub-logger, where further processing may occur. Events through
+    /// the sub-logger will be constrained by filters and enriched by enrichers that are
+    /// active in the parent. A sub-logger cannot be used to log at a more verbose level, but
+    /// a less verbose level is possible.
+    /// </summary>
+    /// <param name="logger">The sub-logger.</param>
+    /// <param name="attemptDispose">Whether to shut down automatically the sub-logger
+    /// when the parent logger is disposed.</param>
+    /// <param name="restrictedToMinimumLevel">The minimum level for
+    /// events passed through the sink.</param>
+    /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+    /// to be changed at runtime. Can be <code>null</code></param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
+    public LoggerConfiguration Logger(
+        ILogger logger,
+        bool attemptDispose = false,
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
     {
         Guard.AgainstNull(logger);
 
@@ -154,8 +177,8 @@ public class LoggerSinkConfiguration
                               "and may be removed completely in a future version.");
         }
 
-        var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
-        return Sink(secondarySink, restrictedToMinimumLevel);
+        var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: attemptDispose);
+        return Sink(secondarySink, restrictedToMinimumLevel, levelSwitch);
     }
 
     /// <summary>

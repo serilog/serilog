@@ -15,5 +15,5 @@ public interface ILogEventPropertyValueFactory
     /// then the value will be converted to a structure; otherwise, unknown types will
     /// be converted to scalars, which are generally stored as strings.</param>
     /// <returns>The value.</returns>
-    LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false);
+    LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects = false);
 }

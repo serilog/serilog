@@ -68,8 +68,9 @@ namespace Serilog.Configuration
     public class LoggerSinkConfiguration
     {
         public Serilog.LoggerConfiguration Conditional(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink) { }
-        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0) { }
+        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, bool attemptDispose = false, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
@@ -113,7 +114,7 @@ namespace Serilog.Core
     }
     public interface ILogEventPropertyValueFactory
     {
-        Serilog.Events.LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false);
+        Serilog.Events.LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects = false);
     }
     public interface ILogEventSink
     {
@@ -630,7 +631,7 @@ namespace Serilog
         public static Serilog.ILogger Logger { get; set; }
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
         public static bool BindMessageTemplate(string messageTemplate, object?[] propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties) { }
-        public static bool BindProperty(string propertyName, object value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property) { }
+        public static bool BindProperty(string propertyName, object? value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property) { }
         public static void CloseAndFlush() { }
         public static System.Threading.Tasks.ValueTask CloseAndFlushAsync() { }
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]

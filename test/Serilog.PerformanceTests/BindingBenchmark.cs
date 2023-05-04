@@ -35,7 +35,7 @@ public class BindingBenchmark
             .WriteTo.Sink(new NullSink())
             .CreateLogger();
 
-        _zero = new object[0];
+        _zero = Array.Empty<object>();
         _one = new object[] { 1 };
         _five = new object[] { 1, 2, 3, 4, 5 };
     }
