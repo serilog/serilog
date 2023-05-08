@@ -20,6 +20,7 @@ namespace Serilog.Core;
 public class LoggingLevelSwitch
 {
     volatile LogEventLevel _minimumLevel;
+    readonly object locker = new();
 
     /// <summary>
     /// Create a <see cref="LoggingLevelSwitch"/> at the initial
@@ -32,6 +33,11 @@ public class LoggingLevelSwitch
     }
 
     /// <summary>
+    /// The event arises when <see cref="MinimumLevel"/> changed.
+    /// </summary>
+    public event EventHandler<LoggingLevelSwitchChangedEventArgs>? MinimumLevelChanged;
+
+    /// <summary>
     /// The current minimum level, below which no events
     /// should be generated.
     /// </summary>
@@ -40,6 +46,44 @@ public class LoggingLevelSwitch
     public LogEventLevel MinimumLevel
     {
         get { return _minimumLevel; }
-        set { _minimumLevel = value; }
+        set
+        {
+            lock (locker)
+            {
+                var old = _minimumLevel;
+                if (old != value)
+                {
+                    _minimumLevel = value;
+                    MinimumLevelChanged?.Invoke(this, new LoggingLevelSwitchChangedEventArgs(old, value));
+                }
+            }
+        }
     }
+}
+
+/// <summary>
+/// Event arguments for <see cref="LoggingLevelSwitch.MinimumLevelChanged"/> event.
+/// </summary>
+public class LoggingLevelSwitchChangedEventArgs : EventArgs
+{
+    /// <summary>
+    /// Creates an instance of <see cref="LoggingLevelSwitchChangedEventArgs"/> specifying old and new levels.
+    /// </summary>
+    /// <param name="oldLevel"></param>
+    /// <param name="newLevel"></param>
+    public LoggingLevelSwitchChangedEventArgs(LogEventLevel oldLevel, LogEventLevel newLevel)
+    {
+        OldLevel = oldLevel;
+        NewLevel = newLevel;
+    }
+
+    /// <summary>
+    /// Old level.
+    /// </summary>
+    public LogEventLevel OldLevel { get; }
+
+    /// <summary>
+    /// New level.
+    /// </summary>
+    public LogEventLevel NewLevel { get; }
 }

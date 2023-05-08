@@ -280,6 +280,13 @@ namespace Serilog.Core
     {
         public LoggingLevelSwitch(Serilog.Events.LogEventLevel initialMinimumLevel = 2) { }
         public Serilog.Events.LogEventLevel MinimumLevel { get; set; }
+        public event System.EventHandler<Serilog.Core.LoggingLevelSwitchChangedEventArgs>? MinimumLevelChanged;
+    }
+    public class LoggingLevelSwitchChangedEventArgs : System.EventArgs
+    {
+        public LoggingLevelSwitchChangedEventArgs(Serilog.Events.LogEventLevel oldLevel, Serilog.Events.LogEventLevel newLevel) { }
+        public Serilog.Events.LogEventLevel NewLevel { get; }
+        public Serilog.Events.LogEventLevel OldLevel { get; }
     }
     [System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method)]
     public sealed class MessageTemplateFormatMethodAttribute : System.Attribute
