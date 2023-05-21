@@ -11,7 +11,7 @@ public class ChildLoggerTests
         //
         static object?[] T(LogEventLevel el, int? rl, int? rt, int? cl, bool r)
         {
-            return new object?[]{ el, rl, rt, cl, r };
+            return new object?[] { el, rl, rt, cl, r };
         }
         // numbers are relative to incoming event level
         // Information + 1 = Warning
@@ -20,45 +20,45 @@ public class ChildLoggerTests
         //
         // - default case - nothing specified
         // equivalent to "Information+ allowed"
-        yield return T(Verbose,     null, null, null, false);
-        yield return T(Debug,       null, null, null, false);
+        yield return T(Verbose, null, null, null, false);
+        yield return T(Debug, null, null, null, false);
         yield return T(Information, null, null, null, true);
-        yield return T(Warning,     null, null, null, true);
-        yield return T(Error,       null, null, null, true);
-        yield return T(Fatal,       null, null, null, true);
+        yield return T(Warning, null, null, null, true);
+        yield return T(Error, null, null, null, true);
+        yield return T(Fatal, null, null, null, true);
 
         // - cases where event level is high enough all along the pipeline
         //                  e       -->  --> -->  = OK
-        yield return T(Verbose,     +0, +0, +0, true);
-        yield return T(Debug,       +0, +0, +0, true);
+        yield return T(Verbose, +0, +0, +0, true);
+        yield return T(Debug, +0, +0, +0, true);
         yield return T(Information, +0, +0, +0, true);
-        yield return T(Warning,     +0, +0, +0, true);
-        yield return T(Error,       +0, +0, +0, true);
-        yield return T(Fatal,       +0, +0, +0, true);
+        yield return T(Warning, +0, +0, +0, true);
+        yield return T(Error, +0, +0, +0, true);
+        yield return T(Fatal, +0, +0, +0, true);
 
         // - cases where event is blocked by root minimum level
         //                 e        -x>  -   -   = NO
-        yield return T(Verbose,     +1, +0, +0, false);
-        yield return T(Debug,       +1, +0, +0, false);
+        yield return T(Verbose, +1, +0, +0, false);
+        yield return T(Debug, +1, +0, +0, false);
         yield return T(Information, +1, +0, +0, false);
-        yield return T(Warning,     +1, +0, +0, false);
-        yield return T(Error,       +1, +0, +0, false);
+        yield return T(Warning, +1, +0, +0, false);
+        yield return T(Error, +1, +0, +0, false);
 
         // - cases where event is blocked by param restrictedToMinimumLevel
         //                 e        --> -x>  -   = NO
-        yield return T(Verbose,     +0, +1, +0, false);
-        yield return T(Debug,       +0, +1, +0, false);
+        yield return T(Verbose, +0, +1, +0, false);
+        yield return T(Debug, +0, +1, +0, false);
         yield return T(Information, +0, +1, +0, false);
-        yield return T(Warning,     +0, +1, +0, false);
-        yield return T(Error,       +0, +1, +0, false);
+        yield return T(Warning, +0, +1, +0, false);
+        yield return T(Error, +0, +1, +0, false);
 
         // - cases where event is blocked by child minimum level
         //                 e        --> --> -x>  = NO
-        yield return T(Verbose,     +0, +0, +1, false);
-        yield return T(Debug,       +0, +0, +1, false);
+        yield return T(Verbose, +0, +0, +1, false);
+        yield return T(Debug, +0, +0, +1, false);
         yield return T(Information, +0, +0, +1, false);
-        yield return T(Warning,     +0, +0, +1, false);
-        yield return T(Error,       +0, +0, +1, false);
+        yield return T(Warning, +0, +0, +1, false);
+        yield return T(Error, +0, +0, +1, false);
     }
 
     [Theory]

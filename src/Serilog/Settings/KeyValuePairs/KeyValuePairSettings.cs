@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if NET6_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
-
 namespace Serilog.Settings.KeyValuePairs;
 
 #if !NET5_0
@@ -138,16 +134,16 @@ class KeyValuePairSettings : ILoggerSettings
         var matchCallables = new Regex(CallableDirectiveRegex);
 
         var callableDirectives = (from wt in directives
-            where matchCallables.IsMatch(wt.Key)
-            let match = matchCallables.Match(wt.Key)
-            select new
-            {
-                ReceiverType = CallableDirectiveReceiverTypes[match.Groups["directive"].Value],
-                Call = new ConfigurationMethodCall(
-                    match.Groups["method"].Value,
-                    match.Groups["argument"].Value,
-                    wt.Value)
-            }).ToList();
+                                  where matchCallables.IsMatch(wt.Key)
+                                  let match = matchCallables.Match(wt.Key)
+                                  select new
+                                  {
+                                      ReceiverType = CallableDirectiveReceiverTypes[match.Groups["directive"].Value],
+                                      Call = new ConfigurationMethodCall(
+                                          match.Groups["method"].Value,
+                                          match.Groups["argument"].Value,
+                                          wt.Value)
+                                  }).ToList();
 
         if (!callableDirectives.Any()) return;
 
@@ -177,13 +173,13 @@ class KeyValuePairSettings : ILoggerSettings
         var matchLevelSwitchDeclarations = new Regex(LevelSwitchDeclarationDirectiveRegex);
 
         var switchDeclarationDirectives = (from wt in directives
-            where matchLevelSwitchDeclarations.IsMatch(wt.Key)
-            let match = matchLevelSwitchDeclarations.Match(wt.Key)
-            select new
-            {
-                SwitchName = match.Groups["switchName"].Value,
-                InitialSwitchLevel = wt.Value
-            }).ToList();
+                                           where matchLevelSwitchDeclarations.IsMatch(wt.Key)
+                                           let match = matchLevelSwitchDeclarations.Match(wt.Key)
+                                           select new
+                                           {
+                                               SwitchName = match.Groups["switchName"].Value,
+                                               InitialSwitchLevel = wt.Value
+                                           }).ToList();
 
         var namedSwitches = new Dictionary<string, LoggingLevelSwitch>();
         foreach (var switchDeclarationDirective in switchDeclarationDirectives)
@@ -202,7 +198,7 @@ class KeyValuePairSettings : ILoggerSettings
             }
             else
             {
-                var initialLevel = (LogEventLevel) Enum.Parse(typeof(LogEventLevel), switchInitialLevel);
+                var initialLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel), switchInitialLevel);
                 newSwitch = new(initialLevel);
             }
 
@@ -246,13 +242,13 @@ class KeyValuePairSettings : ILoggerSettings
             else
             {
                 var call = (from p in target.GetParameters().Skip(1)
-                    let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
-                    select SuppressConvertCall(directive, p)).ToList();
+                            let directive = directiveInfo.FirstOrDefault(s => s.ArgumentName == p.Name)
+                            select SuppressConvertCall(directive, p)).ToList();
 
-// Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
-                    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026")]
-                    object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
-                        => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
+                // Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
+                [UnconditionalSuppressMessage("Trimming", "IL2026")]
+                object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
+                    => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
 
                 call.Insert(0, loggerConfigMethod);
 

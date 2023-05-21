@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
 
 namespace Serilog.Tests.Formatting.Json;
 
@@ -12,7 +13,7 @@ public class JsonFormatterTests
             Information,
             null,
             Some.MessageTemplate(),
-            new LogEventProperty[0]);
+            Array.Empty<LogEventProperty>());
 
         var formatted = FormatJson(@event);
 
@@ -128,7 +129,7 @@ public class JsonFormatterTests
     public void ASequencePropertySerializesAsArrayValue()
     {
         var name = Some.String();
-        var ints = new[]{ Some.Int(), Some.Int() };
+        var ints = new[] { Some.Int(), Some.Int() };
         var value = new SequenceValue(ints.Select(i => new ScalarValue(i)));
         var @event = Some.InformationEvent();
         @event.AddOrUpdateProperty(new(name, value));
@@ -180,6 +181,22 @@ public class JsonFormatterTests
             { "hello", "world" },
             { "nums", new[] { 1.2 } }
         };
+
+        var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
+        var f = FormatJson(e);
+
+        Assert.Equal("world", (string)f.Properties.ADictionary["hello"]);
+        Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
+    }
+
+    [Fact]
+    public void ReadonlyDictionariesAreDestructuredViaDictionaryValue()
+    {
+        var dict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>
+        {
+            { "hello", "world" },
+            { "nums", new[] { 1.2 } }
+        });
 
         var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict));
         var f = FormatJson(e);

@@ -91,7 +91,7 @@ static class MessageTemplateRenderer
 
     static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string? format, IFormatProvider? formatProvider)
     {
-        if (literal && propertyValue is ScalarValue {Value: string str})
+        if (literal && propertyValue is ScalarValue { Value: string str })
         {
             output.Write(str);
         }

@@ -1,4 +1,4 @@
-﻿global using System.Diagnostics.CodeAnalysis;
+global using System.Diagnostics.CodeAnalysis;
 global using Serilog;
 global using Serilog.Configuration;
 global using Serilog.Core;

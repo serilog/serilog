@@ -36,7 +36,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         return new(messageTemplate, Tokenize(messageTemplate));
     }
 
-    static TextToken emptyTextToken = new("", 0);
+    static TextToken emptyTextToken = new("");
 
     static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
     {
@@ -77,7 +77,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         if (startAt == messageTemplate.Length || messageTemplate[startAt] != '}')
         {
             next = startAt;
-            return new TextToken(messageTemplate.Substring(first, next - first), first);
+            return new TextToken(messageTemplate.Substring(first, next - first));
         }
 
         next = startAt + 1;
@@ -85,10 +85,10 @@ public class MessageTemplateParser : IMessageTemplateParser
         var rawText = messageTemplate.Substring(first, next - first);
         var tagContent = rawText.Substring(1, next - (first + 2));
         if (tagContent.Length == 0)
-            return new TextToken(rawText, first);
+            return new TextToken(rawText);
 
         if (!TrySplitTagContent(tagContent, out var propertyNameAndDestructuring, out var format, out var alignment))
-            return new TextToken(rawText, first);
+            return new TextToken(rawText);
 
         var propertyName = propertyNameAndDestructuring;
         var destructuring = Destructuring.Default;
@@ -96,13 +96,13 @@ public class MessageTemplateParser : IMessageTemplateParser
             propertyName = propertyName.Substring(1);
 
         if (propertyName.Length == 0)
-            return new TextToken(rawText, first);
+            return new TextToken(rawText);
 
         for (var i = 0; i < propertyName.Length; ++i)
         {
             var c = propertyName[i];
             if (!IsValidInPropertyName(c))
-                return new TextToken(rawText, first);
+                return new TextToken(rawText);
         }
 
         if (format != null)
@@ -111,7 +111,7 @@ public class MessageTemplateParser : IMessageTemplateParser
             {
                 var c = format[i];
                 if (!IsValidInFormat(c))
-                    return new TextToken(rawText, first);
+                    return new TextToken(rawText);
             }
         }
 
@@ -122,15 +122,15 @@ public class MessageTemplateParser : IMessageTemplateParser
             {
                 var c = alignment[i];
                 if (!IsValidInAlignment(c))
-                    return new TextToken(rawText, first);
+                    return new TextToken(rawText);
             }
 
             var lastDash = alignment.LastIndexOf('-');
             if (lastDash > 0)
-                return new TextToken(rawText, first);
+                return new TextToken(rawText);
 
             if (!int.TryParse(lastDash == -1 ? alignment : alignment.Substring(1), out var width) || width == 0)
-                return new TextToken(rawText, first);
+                return new TextToken(rawText);
 
             var direction = lastDash == -1 ?
                 AlignmentDirection.Right :
@@ -144,8 +144,7 @@ public class MessageTemplateParser : IMessageTemplateParser
             rawText,
             format,
             alignmentValue,
-            destructuring,
-            first);
+            destructuring);
     }
 
     static bool TrySplitTagContent(string tagContent, [NotNullWhen(true)] out string? propertyNameAndDestructuring, out string? format, out string? alignment)
@@ -213,20 +212,14 @@ public class MessageTemplateParser : IMessageTemplateParser
         switch (c)
         {
             case '@':
-            {
                 destructuring = Destructuring.Destructure;
                 return true;
-            }
             case '$':
-            {
                 destructuring = Destructuring.Stringify;
                 return true;
-            }
             default:
-            {
                 destructuring = Destructuring.Default;
                 return false;
-            }
         }
     }
 
@@ -251,8 +244,6 @@ public class MessageTemplateParser : IMessageTemplateParser
 
     static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
     {
-        var first = startAt;
-
         var accum = new StringBuilder();
         do
         {
@@ -287,6 +278,6 @@ public class MessageTemplateParser : IMessageTemplateParser
         } while (startAt < messageTemplate.Length);
 
         next = startAt;
-        return new(accum.ToString(), first);
+        return new(accum.ToString());
     }
 }
