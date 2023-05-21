@@ -34,7 +34,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration With(params Serilog.Core.ILogEventEnricher[] enrichers) { }
         public Serilog.LoggerConfiguration With<TEnricher>()
             where TEnricher : Serilog.Core.ILogEventEnricher, new () { }
-        public Serilog.LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false) { }
+        public Serilog.LoggerConfiguration WithProperty(string name, object? value, bool destructureObjects = false) { }
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, System.Func<Serilog.Core.ILogEventEnricher, Serilog.Core.ILogEventEnricher> wrapEnricher, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureWrappedEnricher) { }
     }
     public class LoggerFilterConfiguration

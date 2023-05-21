@@ -72,7 +72,7 @@ public class LoggerEnrichmentConfiguration
     /// <param name="value">The property value to add.</param>
     /// <param name="destructureObjects">If <see langword="true"/>, objects of unknown type will be logged as structures; otherwise they will be converted using <see cref="object.ToString"/>.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
-    public LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false)
+    public LoggerConfiguration WithProperty(string name, object? value, bool destructureObjects = false)
     {
         return With(new PropertyEnricher(name, value, destructureObjects));
     }
