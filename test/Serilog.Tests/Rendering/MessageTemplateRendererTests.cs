@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Rendering;
+namespace Serilog.Tests.Rendering;
 
 public class MessageTemplateRendererTests
 {
@@ -12,7 +12,7 @@ public class MessageTemplateRendererTests
     public void PropertyTokenFormatsAreApplied(string template, string appliedFormat, string expected)
     {
         var eventTemplate = _messageTemplateParser.Parse(template);
-        var properties = new Dictionary<string, LogEventPropertyValue>{["Number"] = new ScalarValue(16)};
+        var properties = new Dictionary<string, LogEventPropertyValue> { ["Number"] = new ScalarValue(16) };
 
         var output = new StringWriter();
         MessageTemplateRenderer.Render(eventTemplate, properties, output, appliedFormat, CultureInfo.InvariantCulture);

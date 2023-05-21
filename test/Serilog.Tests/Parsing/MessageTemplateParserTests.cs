@@ -32,7 +32,6 @@ public class MessageTemplateParserTests
         var tt = Assert.IsType<TextToken>(mt);
         Assert.Equal("", tt.Text);
         Assert.Equal("", tt.ToString());
-        Assert.Equal(0, tt.StartIndex);
         Assert.Equal(0, tt.Length);
     }
 
@@ -44,7 +43,6 @@ public class MessageTemplateParserTests
         var tt = Assert.IsType<TextToken>(mt);
         Assert.Equal("{}", tt.Text);
         Assert.Equal("{}", tt.ToString());
-        Assert.Equal(0, tt.StartIndex);
         Assert.Equal(2, tt.Length);
     }
 
@@ -181,31 +179,26 @@ public class MessageTemplateParserTests
         Assert.Equal("0", prop1.PropertyName);
         Assert.Equal("{0}", prop1.RawText);
         Assert.True(prop1.IsPositional);
-        Assert.Equal(0, prop1.StartIndex);
         Assert.Equal(3, prop1.Length);
 
         var prop2 = (TextToken)parsed[1];
         Assert.Equal(", ", prop2.Text);
-        Assert.Equal(3, prop2.StartIndex);
         Assert.Equal(2, prop2.Length);
 
         var prop3 = (PropertyToken)parsed[2];
         Assert.Equal("1", prop3.PropertyName);
         Assert.Equal("{1}", prop3.RawText);
         Assert.True(prop3.IsPositional);
-        Assert.Equal(5, prop3.StartIndex);
         Assert.Equal(3, prop3.Length);
 
         var prop4 = (TextToken)parsed[3];
         Assert.Equal(", ", prop4.Text);
-        Assert.Equal(8, prop4.StartIndex);
         Assert.Equal(2, prop4.Length);
 
         var prop5 = (PropertyToken)parsed[4];
         Assert.Equal("2", prop5.PropertyName);
         Assert.Equal("{2}", prop5.RawText);
         Assert.True(prop5.IsPositional);
-        Assert.Equal(10, prop5.StartIndex);
         Assert.Equal(3, prop5.Length);
     }
 
@@ -373,9 +366,9 @@ public class MessageTemplateParserTests
     {
         AssertParsedAs("{Greeting}, {Name}!",
             new PropertyToken("Greeting", "{Greeting}"),
-            new TextToken(", ", 10),
-            new PropertyToken("Name", "{Name}", startIndex: 12),
-            new TextToken("!", 18));
+            new TextToken(", "),
+            new PropertyToken("Name", "{Name}"),
+            new TextToken("!"));
     }
 
     [Fact]

@@ -23,10 +23,8 @@ public sealed class TextToken : MessageTemplateToken
     /// Construct a <see cref="TextToken"/>.
     /// </summary>
     /// <param name="text">The text of the token.</param>
-    /// <param name="startIndex">The token's start index in the template.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="text"/> is <code>null</code></exception>
-    public TextToken(string text, int startIndex = -1)
-        : base(startIndex)
+    public TextToken(string text)
     {
         Text = Guard.AgainstNull(text);
     }

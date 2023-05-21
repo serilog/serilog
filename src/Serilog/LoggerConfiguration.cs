@@ -124,7 +124,7 @@ public class LoggerConfiguration
     /// <exception cref="InvalidOperationException">When the logger is already created</exception>
     public Logger CreateLogger()
     {
-        if (_loggerCreated)  throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
+        if (_loggerCreated) throw new InvalidOperationException("CreateLogger() was previously called and can only be called once.");
 
         _loggerCreated = true;
 
@@ -138,7 +138,7 @@ public class LoggerConfiguration
             sink = new AggregateSink(sink == null ? _auditSinks : new[] { sink }.Concat(_auditSinks));
         }
 
-        sink ??= new SafeAggregateSink(new ILogEventSink[0]);
+        sink ??= new SafeAggregateSink(Array.Empty<ILogEventSink>());
 
         if (_filters.Any())
         {

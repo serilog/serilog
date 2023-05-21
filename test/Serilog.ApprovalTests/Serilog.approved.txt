@@ -34,7 +34,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration With(params Serilog.Core.ILogEventEnricher[] enrichers) { }
         public Serilog.LoggerConfiguration With<TEnricher>()
             where TEnricher : Serilog.Core.ILogEventEnricher, new () { }
-        public Serilog.LoggerConfiguration WithProperty(string name, object value, bool destructureObjects = false) { }
+        public Serilog.LoggerConfiguration WithProperty(string name, object? value, bool destructureObjects = false) { }
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerEnrichmentConfiguration loggerEnrichmentConfiguration, System.Func<Serilog.Core.ILogEventEnricher, Serilog.Core.ILogEventEnricher> wrapEnricher, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureWrappedEnricher) { }
     }
     public class LoggerFilterConfiguration
@@ -68,8 +68,10 @@ namespace Serilog.Configuration
     public class LoggerSinkConfiguration
     {
         public Serilog.LoggerConfiguration Conditional(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink) { }
-        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0) { }
+        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, bool attemptDispose = false, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.ILogEventSink, new () { }
@@ -112,7 +114,7 @@ namespace Serilog.Core
     }
     public interface ILogEventPropertyValueFactory
     {
-        Serilog.Events.LogEventPropertyValue CreatePropertyValue(object value, bool destructureObjects = false);
+        Serilog.Events.LogEventPropertyValue CreatePropertyValue(object? value, bool destructureObjects = false);
     }
     public interface ILogEventSink
     {
@@ -629,7 +631,7 @@ namespace Serilog
         public static Serilog.ILogger Logger { get; set; }
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
         public static bool BindMessageTemplate(string messageTemplate, object?[] propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties) { }
-        public static bool BindProperty(string propertyName, object value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property) { }
+        public static bool BindProperty(string propertyName, object? value, bool destructureObjects, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventProperty? property) { }
         public static void CloseAndFlush() { }
         public static System.Threading.Tasks.ValueTask CloseAndFlushAsync() { }
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
@@ -799,7 +801,7 @@ namespace Serilog
 }
 namespace Serilog.Parsing
 {
-    public struct Alignment
+    public readonly struct Alignment
     {
         public Alignment(Serilog.Parsing.AlignmentDirection direction, int width) { }
         public Serilog.Parsing.AlignmentDirection Direction { get; }
@@ -823,14 +825,13 @@ namespace Serilog.Parsing
     }
     public abstract class MessageTemplateToken
     {
-        protected MessageTemplateToken(int startIndex) { }
+        protected MessageTemplateToken() { }
         public abstract int Length { get; }
-        public int StartIndex { get; }
         public abstract void Render(System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.IO.TextWriter output, System.IFormatProvider? formatProvider = null);
     }
     public sealed class PropertyToken : Serilog.Parsing.MessageTemplateToken
     {
-        public PropertyToken(string propertyName, string rawText, string? format = null, Serilog.Parsing.Alignment? alignment = default, Serilog.Parsing.Destructuring destructuring = 0, int startIndex = -1) { }
+        public PropertyToken(string propertyName, string rawText, string? format = null, in Serilog.Parsing.Alignment? alignment = null, Serilog.Parsing.Destructuring destructuring = 0) { }
         public Serilog.Parsing.Alignment? Alignment { get; }
         public Serilog.Parsing.Destructuring Destructuring { get; }
         public string? Format { get; }
@@ -845,7 +846,7 @@ namespace Serilog.Parsing
     }
     public sealed class TextToken : Serilog.Parsing.MessageTemplateToken
     {
-        public TextToken(string text, int startIndex = -1) { }
+        public TextToken(string text) { }
         public override int Length { get; }
         public string Text { get; }
         public override bool Equals(object? obj) { }
