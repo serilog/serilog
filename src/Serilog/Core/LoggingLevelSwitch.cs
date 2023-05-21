@@ -33,7 +33,8 @@ public class LoggingLevelSwitch
     }
 
     /// <summary>
-    /// The event arises when <see cref="MinimumLevel"/> changed.
+    /// The event arises when <see cref="MinimumLevel"/> changed. Note that the event is raised
+    /// under a lock so be careful within event handler to not fall into deadlock.
     /// </summary>
     public event EventHandler<LoggingLevelSwitchChangedEventArgs>? MinimumLevelChanged;
 
@@ -59,31 +60,4 @@ public class LoggingLevelSwitch
             }
         }
     }
-}
-
-/// <summary>
-/// Event arguments for <see cref="LoggingLevelSwitch.MinimumLevelChanged"/> event.
-/// </summary>
-public class LoggingLevelSwitchChangedEventArgs : EventArgs
-{
-    /// <summary>
-    /// Creates an instance of <see cref="LoggingLevelSwitchChangedEventArgs"/> specifying old and new levels.
-    /// </summary>
-    /// <param name="oldLevel"></param>
-    /// <param name="newLevel"></param>
-    public LoggingLevelSwitchChangedEventArgs(LogEventLevel oldLevel, LogEventLevel newLevel)
-    {
-        OldLevel = oldLevel;
-        NewLevel = newLevel;
-    }
-
-    /// <summary>
-    /// Old level.
-    /// </summary>
-    public LogEventLevel OldLevel { get; }
-
-    /// <summary>
-    /// New level.
-    /// </summary>
-    public LogEventLevel NewLevel { get; }
 }
