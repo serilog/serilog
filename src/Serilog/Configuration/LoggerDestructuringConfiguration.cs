@@ -101,7 +101,8 @@ public class LoggerDestructuringConfiguration
     }
 
     /// <summary>
-    /// When destructuring objects, allows to destructure inheritors of dictionaries.
+    /// Capture instances of the specified type as dictionaries.
+    /// By default, only concrete instantiations of are considered dictionary-like.
     /// </summary>
     /// <typeparam name="T">Type of dictionary.</typeparam>
     /// <returns>Configuration object allowing method chaining.</returns>
