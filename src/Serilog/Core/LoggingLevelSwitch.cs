@@ -20,7 +20,7 @@ namespace Serilog.Core;
 public class LoggingLevelSwitch
 {
     volatile LogEventLevel _minimumLevel;
-    readonly object locker = new();
+    readonly object _levelUpdateLock = new();
 
     /// <summary>
     /// Create a <see cref="LoggingLevelSwitch"/> at the initial
@@ -49,7 +49,7 @@ public class LoggingLevelSwitch
         get { return _minimumLevel; }
         set
         {
-            lock (locker)
+            lock (_levelUpdateLock)
             {
                 var old = _minimumLevel;
                 if (old != value)
