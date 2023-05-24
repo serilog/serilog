@@ -26,6 +26,47 @@ public class SelfLogTests
     }
 
     [Fact]
+    public void SelfLogReportsErrorWhenPositionalParameterCountIsMismatched()
+    {
+        Messages = new();
+        SelfLog.Enable(m =>
+        {
+            Messages.Add(m);
+        });
+
+        using var logger = new LoggerConfiguration()
+            .WriteTo.Logger(new SilentLogger())
+            .CreateLogger();
+
+        // ReSharper disable once StructuredMessageTemplateProblem
+        logger.Information("{0}{1}", "hello");
+
+        SelfLog.Disable();
+
+        Assert.Single(Messages);
+    }
+
+    [Fact]
+    public void SelfLogDoesNotReportErrorWhenPositionalParameterIsRepeated()
+    {
+        Messages = new();
+        SelfLog.Enable(m =>
+        {
+            Messages.Add(m);
+        });
+
+        using var logger = new LoggerConfiguration()
+            .WriteTo.Logger(new SilentLogger())
+            .CreateLogger();
+
+        logger.Information("{0}{0}", "hello");
+
+        SelfLog.Disable();
+
+        Assert.Empty(Messages);
+    }
+
+    [Fact]
     public void WritingToUndeclaredSinkWritesToSelfLog()
     {
         Messages = new();
