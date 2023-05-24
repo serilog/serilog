@@ -14,13 +14,17 @@ public class DelegatingSink : ILogEventSink
         _write(logEvent);
     }
 
-    public static LogEvent GetLogEvent(Action<ILogger> writeAction)
+    public static LogEvent GetLogEvent(Action<ILogger> writeAction, Func<LoggerConfiguration, LoggerConfiguration>? configure = null)
     {
         LogEvent? result = null;
-        var l = new LoggerConfiguration()
+        var configuration = new LoggerConfiguration()
             .MinimumLevel.Verbose()
-            .WriteTo.Sink(new DelegatingSink(le => result = le))
-            .CreateLogger();
+            .WriteTo.Sink(new DelegatingSink(le => result = le));
+
+        if (configure != null)
+            configuration = configure(configuration);
+
+        var l = configuration.CreateLogger();
 
         writeAction(l);
         Assert.NotNull(result);

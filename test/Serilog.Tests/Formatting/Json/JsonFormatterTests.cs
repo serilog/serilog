@@ -205,6 +205,23 @@ public class JsonFormatterTests
         Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
     }
 
+    private class MyDictionary : Dictionary<string, object> { }
+
+    [Fact]
+    public void CustomDictionariesAreDestructuredViaDictionaryValue_When_AsDictionary_Applied()
+    {
+        var dict = new MyDictionary {
+            { "hello", "world" },
+            { "nums", new[] { 1.2 } }
+        };
+
+        var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict), cfg => cfg.Destructure.AsDictionary<MyDictionary>());
+        var f = FormatJson(e);
+
+        Assert.Equal("world", (string)f.Properties.ADictionary["hello"]);
+        Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
+    }
+
     [Fact]
     public void PropertyTokensWithFormatStringsAreIncludedAsRenderings()
     {

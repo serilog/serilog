@@ -24,6 +24,7 @@ public class LoggerConfiguration
     readonly List<ILogEventEnricher> _enrichers = new();
     readonly List<ILogEventFilter> _filters = new();
     readonly List<Type> _additionalScalarTypes = new();
+    readonly HashSet<Type> _additionalDictionaryTypes = new();
     readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
     readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
     LogEventLevel _minimumLevel = LogEventLevel.Information;
@@ -102,6 +103,7 @@ public class LoggerConfiguration
             return new(
                 this,
                 _additionalScalarTypes.Add,
+                type => _additionalDictionaryTypes.Add(type),
                 _additionalDestructuringPolicies.Add,
                 depth => _maximumDestructuringDepth = depth,
                 length => _maximumStringLength = length,
@@ -152,6 +154,7 @@ public class LoggerConfiguration
             _maximumStringLength,
             _maximumCollectionCount,
             _additionalScalarTypes,
+            _additionalDictionaryTypes,
             _additionalDestructuringPolicies,
             auditing);
         var processor = new MessageTemplateProcessor(converter);
