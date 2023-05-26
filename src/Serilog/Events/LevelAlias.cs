@@ -33,7 +33,9 @@ public static class LevelAlias
     public const LogEventLevel Maximum = LogEventLevel.Fatal;
 
     /// <summary>
-    /// A
+    /// A value that, when used as a "minimum" level, will result in no
+    /// events being emitted.
     /// </summary>
+    /// <remarks>It is never correct to construct a <see cref="LogEvent"/> with this value.</remarks>
     public const LogEventLevel Off = Maximum + 1;
 }
