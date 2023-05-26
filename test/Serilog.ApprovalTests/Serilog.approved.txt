@@ -463,7 +463,7 @@ namespace Serilog.Formatting
 }
 namespace Serilog.Formatting.Json
 {
-    public class JsonFormatter : Serilog.Formatting.ITextFormatter
+    public sealed class JsonFormatter : Serilog.Formatting.ITextFormatter
     {
         public JsonFormatter(string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
