@@ -31,4 +31,9 @@ public static class LevelAlias
     /// The most significant level of event.
     /// </summary>
     public const LogEventLevel Maximum = LogEventLevel.Fatal;
+
+    /// <summary>
+    /// A
+    /// </summary>
+    public const LogEventLevel Off = Maximum + 1;
 }
