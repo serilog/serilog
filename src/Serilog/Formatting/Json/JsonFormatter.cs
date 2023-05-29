@@ -80,9 +80,15 @@ public sealed class JsonFormatter : ITextFormatter
         if (logEvent.Properties.Count != 0)
         {
             output.Write(",\"Properties\":{");
+
+            char? propertyDelimiter = null;
             foreach (var property in logEvent.Properties)
             {
-                output.Write(',');
+                if (propertyDelimiter != null)
+                    output.Write(propertyDelimiter.Value);
+                else
+                    propertyDelimiter = ',';
+
                 JsonValueFormatter.WriteQuotedJsonString(property.Key, output);
                 output.Write(':');
                 _jsonValueFormatter.Format(property.Value, output);
@@ -126,8 +132,9 @@ public sealed class JsonFormatter : ITextFormatter
         {
             if (propertyDelimiter != null)
                 output.Write(propertyDelimiter.Value);
+            else
+                propertyDelimiter = ',';
 
-            propertyDelimiter = ',';
             output.Write('"');
             output.Write(propertyFormats.Key);
             output.Write("\":[");
