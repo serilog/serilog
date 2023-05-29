@@ -353,6 +353,7 @@ namespace Serilog.Events
     {
         public const Serilog.Events.LogEventLevel Maximum = 5;
         public const Serilog.Events.LogEventLevel Minimum = 0;
+        public const Serilog.Events.LogEventLevel Off = 6;
     }
     public class LogEvent
     {
