@@ -59,7 +59,7 @@ public sealed class JsonFormatter : ITextFormatter
 
         output.Write("{\"Timestamp\":\"");
         output.Write(logEvent.Timestamp.ToString("O"));
-        output.Write(",\"Level\":\"");
+        output.Write("\",\"Level\":\"");
         output.Write(logEvent.Level);
         output.Write("\",\"MessageTemplate\":");
         JsonValueFormatter.WriteQuotedJsonString(logEvent.MessageTemplate.Text, output);
