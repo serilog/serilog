@@ -217,7 +217,6 @@ public class JsonFormatterTests
 
         var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict), cfg => cfg.Destructure.AsDictionary<MyDictionary>());
         var f = FormatJson(e);
-
         Assert.Equal("world", (string)f.Properties.ADictionary["hello"]);
         Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
     }

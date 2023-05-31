@@ -18,12 +18,14 @@ namespace Serilog.Formatting.Json;
 /// Formats log events in a simple JSON structure. Instances of this class
 /// are safe for concurrent access by multiple threads.
 /// </summary>
-public class JsonFormatter : ITextFormatter
+/// <remarks>New code should prefer formatters from <c>Serilog.Formatting.Compact</c>, or <c>ExpressionTemplate</c> from
+/// <c>Serilog.Expressions</c>.</remarks>
+public sealed class JsonFormatter : ITextFormatter
 {
     readonly string _closingDelimiter;
     readonly bool _renderMessage;
     readonly IFormatProvider? _formatProvider;
-    readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
+    readonly JsonValueFormatter _jsonValueFormatter = new();
 
     /// <summary>
     /// Construct a <see cref="JsonFormatter"/>.
@@ -41,34 +43,6 @@ public class JsonFormatter : ITextFormatter
         _closingDelimiter = closingDelimiter ?? Environment.NewLine;
         _renderMessage = renderMessage;
         _formatProvider = formatProvider;
-
-        _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
-        {
-            { typeof(bool), (v, _, w) => WriteBoolean((bool)v, w) },
-            { typeof(char), (v, _, w) => WriteString(((char)v).ToString(), w) },
-            { typeof(byte), WriteToString },
-            { typeof(sbyte), WriteToString },
-            { typeof(short), WriteToString },
-            { typeof(ushort), WriteToString },
-            { typeof(int), WriteToString },
-            { typeof(uint), WriteToString },
-            { typeof(long), WriteToString },
-            { typeof(ulong), WriteToString },
-            { typeof(float), (v, _, w) => WriteSingle((float)v, w) },
-            { typeof(double), (v, _, w) => WriteDouble((double)v, w) },
-            { typeof(decimal), WriteToString },
-            { typeof(string), (v, _, w) => WriteString((string)v, w) },
-            { typeof(DateTime), (v, _, w) => WriteDateTime((DateTime)v, w) },
-            { typeof(DateTimeOffset), (v, _, w) => WriteOffset((DateTimeOffset)v, w) },
-#if FEATURE_DATE_AND_TIME_ONLY
-            { typeof(DateOnly), (v, _, w) => WriteDateOnly((DateOnly)v, w) },
-            { typeof(TimeOnly), (v, _, w) => WriteTimeOnly((TimeOnly)v, w) },
-#endif
-            { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w, q) },
-            { typeof(SequenceValue), (v, _, w) => WriteSequence(((SequenceValue)v).Elements, w) },
-            { typeof(DictionaryValue), (v, _, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },
-            { typeof(StructureValue), (v, _, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
-        };
     }
 
     /// <summary>
@@ -83,23 +57,45 @@ public class JsonFormatter : ITextFormatter
         Guard.AgainstNull(logEvent);
         Guard.AgainstNull(output);
 
-        output.Write('{');
+        output.Write("{\"Timestamp\":\"");
+        output.Write(logEvent.Timestamp.ToString("O"));
+        output.Write("\",\"Level\":\"");
+        output.Write(logEvent.Level);
+        output.Write("\",\"MessageTemplate\":");
+        JsonValueFormatter.WriteQuotedJsonString(logEvent.MessageTemplate.Text, output);
 
-        char? delim = null;
-        WriteTimestamp(logEvent.Timestamp, ref delim, output);
-        WriteLevel(logEvent.Level, ref delim, output);
-        WriteMessageTemplate(logEvent.MessageTemplate.Text, ref delim, output);
         if (_renderMessage)
         {
-            var message = logEvent.RenderMessage(_formatProvider);
-            WriteRenderedMessage(message, ref delim, output);
+            output.Write("\",\"RenderedMessage\":");
+            var message = logEvent.MessageTemplate.Render(logEvent.Properties);
+            JsonValueFormatter.WriteQuotedJsonString(message, output);
         }
 
         if (logEvent.Exception != null)
-            WriteException(logEvent.Exception, ref delim, output);
+        {
+            output.Write(",\"Exception\":");
+            JsonValueFormatter.WriteQuotedJsonString(logEvent.Exception.ToString(), output);
+        }
 
         if (logEvent.Properties.Count != 0)
-            WriteProperties(logEvent.Properties, output);
+        {
+            output.Write(",\"Properties\":{");
+
+            char? propertyDelimiter = null;
+            foreach (var property in logEvent.Properties)
+            {
+                if (propertyDelimiter != null)
+                    output.Write(propertyDelimiter.Value);
+                else
+                    propertyDelimiter = ',';
+
+                JsonValueFormatter.WriteQuotedJsonString(property.Key, output);
+                output.Write(':');
+                _jsonValueFormatter.Format(property.Value, output);
+            }
+
+            output.Write('}');
+        }
 
         var tokensWithFormat = logEvent.MessageTemplate.TokenArray
             .OfType<PropertyToken>()
@@ -109,52 +105,36 @@ public class JsonFormatter : ITextFormatter
 
         if (tokensWithFormat.Length != 0)
         {
-            WriteRenderings(tokensWithFormat, logEvent.Properties, output);
+            output.Write(",\"Renderings\":{");
+            WriteRenderingsValues(tokensWithFormat, logEvent.Properties, output);
+            output.Write('}');
         }
 
         output.Write('}');
         output.Write(_closingDelimiter);
     }
 
-    /// <summary>
-    /// Adds a writer function for a given type.
-    /// </summary>
-    /// <param name="type">The type of values, which <paramref name="writer" /> handles.</param>
-    /// <param name="writer">The function, which writes the values.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="type"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="writer"/> is <code>null</code></exception>
-    void AddLiteralWriter(Type type, Action<object, TextWriter> writer)
+    void WriteRenderingsValues(IEnumerable<IGrouping<string, PropertyToken>> tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
     {
-        Guard.AgainstNull(type);
-        Guard.AgainstNull(writer);
+        static void WriteNameValuePair(string name, string value, ref char? precedingDelimiter, TextWriter output)
+        {
+            if (precedingDelimiter != null)
+                output.Write(precedingDelimiter.Value);
 
-        _literalWriters[type] = (v, _, w) => writer(v, w);
-    }
+            JsonValueFormatter.WriteQuotedJsonString(name, output);
+            output.Write(':');
+            JsonValueFormatter.WriteQuotedJsonString(value, output);
+            precedingDelimiter = ',';
+        }
 
-    /// <summary>
-    /// Writes out individual renderings of attached properties
-    /// </summary>
-    void WriteRenderings(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
-    {
-        output.Write(",\"Renderings\":{");
-        WriteRenderingsValues(tokensWithFormat, properties, output);
-        output.Write('}');
-    }
-
-    /// <summary>
-    /// Writes out the values of individual renderings of attached properties
-    /// </summary>
-    void WriteRenderingsValues(IGrouping<string, PropertyToken>[] tokensWithFormat, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
-    {
         char? propertyDelimiter = null;
         foreach (var propertyFormats in tokensWithFormat)
         {
             if (propertyDelimiter != null)
-            {
                 output.Write(propertyDelimiter.Value);
-            }
+            else
+                propertyDelimiter = ',';
 
-            propertyDelimiter = ',';
             output.Write('"');
             output.Write(propertyFormats.Key);
             output.Write("\":[");
@@ -163,294 +143,24 @@ public class JsonFormatter : ITextFormatter
             foreach (var format in propertyFormats)
             {
                 if (formatDelimiter != null)
-                {
                     output.Write(formatDelimiter.Value);
-                }
+
                 formatDelimiter = ',';
 
                 output.Write('{');
                 char? elementDelimiter = null;
 
-                WriteJsonProperty("Format", format.Format, ref elementDelimiter, output);
+                // Caller ensures that `tokensWithFormat` contains only property tokens that have non-null `Format`s.
+                WriteNameValuePair("Format", format.Format!, ref elementDelimiter, output);
 
                 using var sw = ReusableStringWriter.GetOrCreate();
                 MessageTemplateRenderer.RenderPropertyToken(format, properties, sw, _formatProvider, isLiteral: true, isJson: false);
-                WriteJsonProperty("Rendering", sw.ToString(), ref elementDelimiter, output);
+                WriteNameValuePair("Rendering", sw.ToString(), ref elementDelimiter, output);
 
                 output.Write('}');
             }
 
             output.Write(']');
         }
-    }
-
-    /// <summary>
-    /// Writes out the attached properties
-    /// </summary>
-    void WriteProperties(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
-    {
-        output.Write(",\"Properties\":{");
-        WritePropertiesValues(properties, output);
-        output.Write('}');
-    }
-
-    /// <summary>
-    /// Writes out the attached properties values
-    /// </summary>
-    void WritePropertiesValues(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
-    {
-        char? precedingDelimiter = null;
-        foreach (var property in properties)
-        {
-            WriteJsonProperty(property.Key, property.Value, ref precedingDelimiter, output);
-        }
-    }
-
-    /// <summary>
-    /// Writes out the attached exception
-    /// </summary>
-    void WriteException(Exception exception, ref char? delim, TextWriter output)
-    {
-        WriteJsonProperty("Exception", exception, ref delim, output);
-    }
-
-    /// <summary>
-    /// (Optionally) writes out the rendered message
-    /// </summary>
-    void WriteRenderedMessage(string message, ref char? delim, TextWriter output)
-    {
-        WriteJsonProperty("RenderedMessage", message, ref delim, output);
-    }
-
-    /// <summary>
-    /// Writes out the message template for the logevent.
-    /// </summary>
-    void WriteMessageTemplate(string template, ref char? delim, TextWriter output)
-    {
-        WriteJsonProperty("MessageTemplate", template, ref delim, output);
-    }
-
-    /// <summary>
-    /// Writes out the log level
-    /// </summary>
-    void WriteLevel(LogEventLevel level, ref char? delim, TextWriter output)
-    {
-        WriteJsonProperty("Level", level, ref delim, output);
-    }
-
-    /// <summary>
-    /// Writes out the log timestamp
-    /// </summary>
-    void WriteTimestamp(DateTimeOffset timestamp, ref char? delim, TextWriter output)
-    {
-        WriteJsonProperty("Timestamp", timestamp, ref delim, output);
-    }
-
-    /// <summary>
-    /// Writes out a structure property
-    /// </summary>
-    void WriteStructure(string? typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
-    {
-        output.Write('{');
-
-        char? delim = null;
-        if (typeTag != null)
-            WriteJsonProperty("_typeTag", typeTag, ref delim, output);
-
-        foreach (var property in properties)
-            WriteJsonProperty(property.Name, property.Value, ref delim, output);
-
-        output.Write('}');
-    }
-
-    /// <summary>
-    /// Writes out a sequence property
-    /// </summary>
-    void WriteSequence(IEnumerable elements, TextWriter output)
-    {
-        output.Write('[');
-        char? delim = null;
-        foreach (var value in elements)
-        {
-            if (delim != null)
-            {
-                output.Write(delim.Value);
-            }
-            delim = ',';
-            WriteLiteral(value, output);
-        }
-        output.Write(']');
-    }
-
-    /// <summary>
-    /// Writes out a dictionary
-    /// </summary>
-    void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
-    {
-        output.Write('{');
-        char? delim = null;
-        foreach (var element in elements)
-        {
-            if (delim != null)
-            {
-                output.Write(delim.Value);
-            }
-            delim = ',';
-            WriteLiteral(element.Key, output, forceQuotation: true);
-            output.Write(':');
-            WriteLiteral(element.Value, output);
-        }
-        output.Write('}');
-    }
-
-    /// <summary>
-    /// Writes out a json property with the specified value on output writer
-    /// </summary>
-    void WriteJsonProperty(string name, object? value, ref char? precedingDelimiter, TextWriter output)
-    {
-        if (precedingDelimiter != null)
-        {
-            output.Write(precedingDelimiter.Value);
-        }
-
-        output.Write('"');
-        output.Write(name);
-        output.Write("\":");
-        WriteLiteral(value, output);
-        precedingDelimiter = ',';
-    }
-
-    /// <summary>
-    /// Allows a subclass to write out objects that have no configured literal writer.
-    /// </summary>
-    /// <param name="value">The value to be written as a json construct</param>
-    /// <param name="output">The writer to write on</param>
-    static void WriteLiteralValue(object value, TextWriter output)
-    {
-        WriteString(value.ToString() ?? "", output);
-    }
-
-    void WriteLiteral(object? value, TextWriter output, bool forceQuotation = false)
-    {
-        if (value == null)
-        {
-            output.Write("null");
-            return;
-        }
-
-        if (_literalWriters.TryGetValue(value.GetType(), out var writer))
-        {
-            writer(value, forceQuotation, output);
-            return;
-        }
-
-        WriteLiteralValue(value, output);
-    }
-
-    static void WriteToString(object number, bool quote, TextWriter output)
-    {
-        if (quote) output.Write('"');
-
-        if (number is IFormattable fmt)
-            output.Write(fmt.ToString(null, CultureInfo.InvariantCulture));
-        else
-            output.Write(number.ToString());
-
-        if (quote) output.Write('"');
-    }
-
-    static void WriteBoolean(bool value, TextWriter output)
-    {
-        output.Write(value ? "true" : "false");
-    }
-
-    static void WriteSingle(float value, TextWriter output)
-    {
-#if FEATURE_SPAN
-        Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
-            output.Write(buffer.Slice(0, written));
-        else
-            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-#else
-        output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-#endif
-    }
-
-    static void WriteDouble(double value, TextWriter output)
-    {
-#if FEATURE_SPAN
-        Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out var written, format: "R", CultureInfo.InvariantCulture))
-            output.Write(buffer.Slice(0, written));
-        else
-            output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-#else
-        output.Write(value.ToString("R", CultureInfo.InvariantCulture));
-#endif
-    }
-
-    static void WriteOffset(DateTimeOffset value, TextWriter output)
-    {
-        output.Write('"');
-#if FEATURE_SPAN
-        Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out var written, format: "o"))
-            output.Write(buffer.Slice(0, written));
-        else
-            output.Write(value.ToString("o"));
-#else
-        output.Write(value.ToString("o"));
-#endif
-        output.Write('"');
-    }
-
-    static void WriteDateTime(DateTime value, TextWriter output)
-    {
-        output.Write('"');
-#if FEATURE_SPAN
-        Span<char> buffer = stackalloc char[64];
-        if (value.TryFormat(buffer, out var written, format: "o"))
-            output.Write(buffer.Slice(0, written));
-        else
-            output.Write(value.ToString("o"));
-#else
-        output.Write(value.ToString("o"));
-#endif
-        output.Write('"');
-    }
-
-#if FEATURE_DATE_AND_TIME_ONLY
-
-    static void WriteDateOnly(DateOnly value, TextWriter output)
-    {
-        output.Write('"');
-        Span<char> buffer = stackalloc char[10];
-        if (value.TryFormat(buffer, out var written, format: "yyyy-MM-dd"))
-            output.Write(buffer.Slice(0, written));
-        else
-            output.Write(value.ToString("yyyy-MM-dd"));
-
-        output.Write('"');
-    }
-
-    static void WriteTimeOnly(TimeOnly value, TextWriter output)
-    {
-        output.Write('"');
-
-        Span<char> buffer = stackalloc char[16];
-        if (value.TryFormat(buffer, out var written, format: "O"))
-            output.Write(buffer.Slice(0, written));
-        else
-            output.Write(value.ToString("O"));
-
-        output.Write('"');
-    }
-
-#endif
-
-    static void WriteString(string value, TextWriter output)
-    {
-        JsonValueFormatter.WriteQuotedJsonString(value, output);
     }
 }
