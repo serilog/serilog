@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,8 +145,12 @@ public class LogEvent
     {
         Guard.AgainstNull(property);
 
+#if FEATURE_DICTIONARYTRYADD
+        _properties.TryAdd(property.Name, property.Value);
+#else
         if (!_properties.ContainsKey(property.Name))
             _properties.Add(property.Name, property.Value);
+#endif
     }
 
     /// <summary>
@@ -158,8 +162,24 @@ public class LogEvent
     {
         if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
 
+#if FEATURE_DICTIONARYTRYADD
+        _properties.TryAdd(property.Name, property.Value);
+#else
         if (!_properties.ContainsKey(property.Name))
             _properties.Add(property.Name, property.Value);
+#endif
+    }
+
+    internal void AddPropertyIfAbsent(ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
+    {
+        if (!_properties.ContainsKey(name))
+        {
+            _properties.Add(
+                name,
+                factory is ILogEventPropertyValueFactory factory2
+                    ? factory2.CreatePropertyValue(value, destructureObjects)
+                    : factory.CreateProperty(name, value, destructureObjects).Value);
+        }
     }
 
     /// <summary>
@@ -174,9 +194,7 @@ public class LogEvent
 
     internal LogEvent Copy()
     {
-        var properties = new Dictionary<string, LogEventPropertyValue>(Properties.Count);
-        foreach (var key in _properties.Keys)
-            properties.Add(key, _properties[key]);
+        var properties = new Dictionary<string, LogEventPropertyValue>(_properties);
 
         return new LogEvent(
             Timestamp,

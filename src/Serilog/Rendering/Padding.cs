@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ static class Padding
     /// <summary>
     /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
     /// </summary>
-    public static void Apply(TextWriter output, string value, Alignment? alignment)
+    public static void Apply(TextWriter output, string value, in Alignment? alignment)
     {
         if (alignment == null || value.Length >= alignment.Value.Width)
         {
@@ -46,4 +46,38 @@ static class Padding
         if (alignment.Value.Direction == AlignmentDirection.Right)
             output.Write(value);
     }
+
+#if FEATURE_WRITE_STRINGBUILDER
+    /// <summary>
+    /// Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
+    /// This is a full copy of the method above that allows to write <see cref="StringBuilder"/> directly into provided
+    /// <paramref name="output"/> without <see cref="StringBuilder.ToString()"/> call on the caller side.
+    /// </summary>
+    public static void Apply(TextWriter output, StringBuilder value, in Alignment? alignment)
+    {
+        if (alignment == null || value.Length >= alignment.Value.Width)
+        {
+            output.Write(value);
+            return;
+        }
+
+        var pad = alignment.Value.Width - value.Length;
+
+        if (alignment.Value.Direction == AlignmentDirection.Left)
+            output.Write(value);
+
+        if (pad <= PaddingChars.Length)
+        {
+            output.Write(PaddingChars, 0, pad);
+        }
+        else
+        {
+            output.Write(new string(' ', pad));
+        }
+
+        if (alignment.Value.Direction == AlignmentDirection.Right)
+            output.Write(value);
+    }
+#endif
 }
+

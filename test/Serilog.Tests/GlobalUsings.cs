@@ -1,4 +1,4 @@
-﻿global using System.Collections;
+global using System.Collections;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Globalization;
 global using System.Reflection;
@@ -30,10 +30,3 @@ global using TestDummies.Console.Themes;
 global using Xunit;
 global using Xunit.Sdk;
 global using static Serilog.Events.LogEventLevel;
-
-#if FEATURE_REMOTING
-global using System.Runtime.Remoting;
-global using System.Runtime.Remoting.Lifetime;
-global using System.Runtime.Remoting.Messaging;
-global using System.Runtime.Remoting.Services;
-#endif

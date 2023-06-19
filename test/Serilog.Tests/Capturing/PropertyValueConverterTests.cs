@@ -1,16 +1,17 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local, ParameterOnlyUsedForPreconditionCheck.Local, RedundantExplicitNullableCreation, MemberHidesStaticFromOuterClass
+// ReSharper disable UnusedAutoPropertyAccessor.Local, UnusedMemberInSuper.Global, UnusedMember.Local, UseObjectOrCollectionInitializer, UnusedAutoPropertyAccessor.Local
 
 namespace Serilog.Tests.Capturing;
 
 public class PropertyValueConverterTests
 {
     readonly PropertyValueConverter _converter =
-        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
     [Fact]
     public async Task MaximumDepthIsEffectiveAndThreadSafe()
     {
-        var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
         var barrier = new Barrier(participantCount: 3);
 
@@ -53,7 +54,7 @@ public class PropertyValueConverterTests
 
                 Assert.IsType<StructureValue>(propValue);
 
-                var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value?.ToString();
+                var result = ((StructureValue)propValue).Properties.SingleOrDefault(p => p.Name == "Root")?.Value.ToString();
 
                 assertAction.Invoke(result);
             }
@@ -63,7 +64,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void UnderDestructuringAByteArrayIsAScalarValue()
     {
-        var pv = _converter.CreatePropertyValue(new byte[0], Destructuring.Destructure);
+        var pv = _converter.CreatePropertyValue(Array.Empty<byte>(), Destructuring.Destructure);
         Assert.IsType<ScalarValue>(pv);
         Assert.IsType<string>(((ScalarValue)pv).Value);
     }
@@ -79,7 +80,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void UnderDestructuringAnIntegerArrayIsASequenceValue()
     {
-        var pv = _converter.CreatePropertyValue(new int[0], Destructuring.Destructure);
+        var pv = _converter.CreatePropertyValue(Array.Empty<int>(), Destructuring.Destructure);
         Assert.IsType<SequenceValue>(pv);
     }
 
@@ -93,9 +94,7 @@ public class PropertyValueConverterTests
     [Fact]
     public void ByDefaultADestructuredNonNullNullableIsItsValue()
     {
-        // ReSharper disable RedundantExplicitNullableCreation
         var pv = _converter.CreatePropertyValue(new int?(2), Destructuring.Destructure);
-        // ReSharper restore RedundantExplicitNullableCreation
         Assert.Equal(2, ((ScalarValue)pv).Value);
     }
 
@@ -106,9 +105,7 @@ public class PropertyValueConverterTests
 
     class B
     {
-// ReSharper disable UnusedAutoPropertyAccessor.Local
         public A? A { get; set; }
-// ReSharper restore UnusedAutoPropertyAccessor.Local
     }
 
     [Fact]
@@ -128,8 +125,6 @@ public class PropertyValueConverterTests
 
     class D
     {
-        // ReSharper disable once MemberHidesStaticFromOuterClass
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public IList<C?>? C { get; set; }
     }
 
@@ -185,7 +180,7 @@ public class PropertyValueConverterTests
         var bytes = Enumerable.Range(0, 1025).Select(b => (byte)b).ToArray();
         var pv = _converter.CreatePropertyValue(bytes);
         var lv = (string?)pv.LiteralValue();
-        Assert.EndsWith("(1025 bytes)", lv);
+        Assert.Equal("000102030405060708090A0B0C0D0E0F... (1025 bytes)", lv);
     }
 
 #if FEATURE_SPAN
@@ -225,7 +220,7 @@ public class PropertyValueConverterTests
         [Fact]
         public void FailsGracefullyWhenAccessingPropertiesViaReflectionThrows()
         {
-            var thrower = new int[] { 1, 2, 3 }.AsMemory();
+            var thrower = new[] { 1, 2, 3 }.AsMemory();
 
             var pv = _converter.CreatePropertyValue(thrower, Destructuring.Destructure);
             var sv = (StructureValue)pv;
@@ -264,7 +259,6 @@ public class PropertyValueConverterTests
         Assert.Equal(typeof(string), pv.LiteralValue());
     }
 
-#if FEATURE_GETCURRENTMETHOD
     [Fact]
     public void SurvivesDestructuringMethodBase()
     {
@@ -272,7 +266,6 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(theMethod, Destructuring.Destructure);
         Assert.Equal(theMethod, pv.LiteralValue());
     }
-#endif
 
     public class BaseWithProps
     {
@@ -383,7 +376,16 @@ public class PropertyValueConverterTests
             Assert.IsType<SequenceValue>(_converter.CreatePropertyValue(t));
     }
 
-#if !FEATURE_ITUPLE
+#if FEATURE_ITUPLE
+
+    [Fact]
+    public void EightPlusValueTupleElementsAreSupportedForCapturing()
+    {
+        var scalar = _converter.CreatePropertyValue((1, 2, 3, 4, 5, 6, 7, 8));
+        Assert.IsType<SequenceValue>(scalar);
+    }
+
+#else
 
     [Fact]
     public void EightPlusValueTupleElementsAreIgnoredByCapturing()

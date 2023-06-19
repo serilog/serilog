@@ -1,5 +1,6 @@
 namespace Serilog.PerformanceTests;
 
+[MemoryDiagnoser]
 public class LogContextEnrichmentBenchmark
 {
     ILogger _bare = null!, _enriched = null!;

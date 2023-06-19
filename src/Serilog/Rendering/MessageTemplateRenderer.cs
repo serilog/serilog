@@ -68,22 +68,30 @@ static class MessageTemplateRenderer
             return;
         }
 
-        var valueOutput = new StringWriter();
+        using var valueOutput = ReusableStringWriter.GetOrCreate();
         RenderValue(propertyValue, isLiteral, isJson, valueOutput, pt.Format, formatProvider);
-        var value = valueOutput.ToString();
+        var sb = valueOutput.GetStringBuilder();
 
-        if (value.Length >= pt.Alignment.Value.Width)
+        if (sb.Length >= pt.Alignment.Value.Width)
         {
-            output.Write(value);
+#if FEATURE_WRITE_STRINGBUILDER
+            output.Write(sb);
+#else
+            output.Write(sb.ToString());
+#endif
             return;
         }
 
-        Padding.Apply(output, value, pt.Alignment.Value);
+#if FEATURE_WRITE_STRINGBUILDER
+        Padding.Apply(output, sb, pt.Alignment.Value);
+#else
+        Padding.Apply(output, sb.ToString(), pt.Alignment.Value);
+#endif
     }
 
     static void RenderValue(LogEventPropertyValue propertyValue, bool literal, bool json, TextWriter output, string? format, IFormatProvider? formatProvider)
     {
-        if (literal && propertyValue is ScalarValue {Value: string str})
+        if (literal && propertyValue is ScalarValue { Value: string str })
         {
             output.Write(str);
         }

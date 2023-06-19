@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ namespace Serilog.Tests.Events;
 public class LogEventPropertyValueTests
 {
     readonly PropertyValueConverter _converter =
-        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
 
     [Fact]
     public void AnEnumIsConvertedToANonStringScalarValue()

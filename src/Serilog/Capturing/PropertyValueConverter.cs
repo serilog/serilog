@@ -35,6 +35,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     };
 
     readonly IDestructuringPolicy[] _destructuringPolicies;
+    readonly Type[] _dictionaryTypes;
     readonly IScalarConversionPolicy[] _scalarConversionPolicies;
     readonly DepthLimiter _depthLimiter;
     readonly int _maximumStringLength;
@@ -46,6 +47,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         int maximumStringLength,
         int maximumCollectionCount,
         IEnumerable<Type> additionalScalarTypes,
+        IEnumerable<Type> additionalDictionaryTypes,
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
         bool propagateExceptions)
     {
@@ -77,6 +79,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             })
             .ToArray();
 
+        _dictionaryTypes = additionalDictionaryTypes.ToArray();
         _depthLimiter = new(maximumDestructuringDepth, this);
     }
 
@@ -120,7 +123,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     LogEventPropertyValue CreatePropertyValue(object? value, Destructuring destructuring, int depth)
     {
         if (value == null)
-            return new ScalarValue(null);
+            return ScalarValue.Null;
 
         if (destructuring == Destructuring.Stringify)
         {
@@ -155,22 +158,21 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
         }
 
-        if (TryConvertEnumerable(value, destructuring, out var enumerableResult))
+        var type = value.GetType();
+        if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
             return enumerableResult;
 
-        if (TryConvertValueTuple(value, destructuring, out var tupleResult))
+        if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-        if (TryConvertCompilerGeneratedType(value, destructuring, out var compilerGeneratedResult))
+        if (TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
             return compilerGeneratedResult;
 
         return new ScalarValue(value.ToString() ?? "");
     }
 
-    bool TryConvertEnumerable(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertEnumerable(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        var valueType = value.GetType();
-
         if (value is IEnumerable enumerable)
         {
             // Only dictionaries with 'scalar' keys are permitted, as
@@ -181,7 +183,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             // Only actual dictionaries are supported, as arbitrary types
             // can implement multiple IDictionary interfaces and thus introduce
             // multiple different interpretations.
-            if (TryGetDictionary(value, valueType, out var dictionary))
+            if (TryGetDictionary(value, type, out var dictionary))
             {
                 result = new DictionaryValue(MapToDictionaryElements(dictionary, destructuring));
                 return true;
@@ -206,7 +208,26 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
             }
 
-            result = new SequenceValue(MapToSequenceElements(enumerable, destructuring));
+            // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements.
+            // Allocation free for empty sequence.
+            if (enumerable is IList list && list.Count <= _maximumCollectionCount)
+            {
+                if (list.Count == 0)
+                {
+                    result = SequenceValue.Empty;
+                }
+                else
+                {
+                    var array = new LogEventPropertyValue[list.Count];
+                    for (int i = 0; i < list.Count; ++i)
+                        array[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
+                    result = new SequenceValue(array);
+                }
+            }
+            else
+            {
+                result = new SequenceValue(MapToSequenceElements(enumerable, destructuring));
+            }
             return true;
 
             IEnumerable<LogEventPropertyValue> MapToSequenceElements(IEnumerable sequence, Destructuring destructure)
@@ -230,7 +251,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #if FEATURE_ITUPLE
 
-    bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is not ITuple tuple)
         {
@@ -238,12 +259,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             return false;
         }
 
-        var elements = new List<LogEventPropertyValue>();
+        var elements = new LogEventPropertyValue[tuple.Length];
         for (var i = 0; i < tuple.Length; i++)
         {
             var fieldValue = tuple[i];
-            var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
-            elements.Add(propertyValue);
+            elements[i] = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
         }
 
         result = new SequenceValue(elements);
@@ -252,44 +272,30 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #else
 
-    bool TryConvertValueTuple(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        var valueType = value.GetType();
-        if (!(value is IStructuralEquatable && valueType.IsConstructedGenericType))
+        if (!(value is IStructuralEquatable && type.IsConstructedGenericType))
         {
             result = null;
             return false;
         }
 
-        var definition = valueType.GetGenericTypeDefinition();
+        var definition = type.GetGenericTypeDefinition();
 
         // Ignore the 8+ value case for now.
-#if FEATURE_VALUETUPLE
         if (definition == typeof(ValueTuple<>) || definition == typeof(ValueTuple<,>) ||
             definition == typeof(ValueTuple<,,>) || definition == typeof(ValueTuple<,,,>) ||
             definition == typeof(ValueTuple<,,,,>) || definition == typeof(ValueTuple<,,,,,>) ||
             definition == typeof(ValueTuple<,,,,,,>))
-#else
-        // ReSharper disable once PossibleNullReferenceException
-        if (definition.FullName is
-            "System.ValueTuple`1" or
-            "System.ValueTuple`2" or
-            "System.ValueTuple`3" or
-            "System.ValueTuple`4" or
-            "System.ValueTuple`5" or
-            "System.ValueTuple`6" or
-            "System.ValueTuple`7")
-#endif
         {
-            var elements = new List<LogEventPropertyValue>();
-            foreach (var field in valueType.GetTypeInfo().DeclaredFields)
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+            var elements = new LogEventPropertyValue[fields.Length];
+            for (var index = 0; index < fields.Length; index++)
             {
-                if (field.IsPublic && !field.IsStatic)
-                {
-                    var fieldValue = field.GetValue(value);
-                    var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
-                    elements.Add(propertyValue);
-                }
+                var field = fields[index];
+                var fieldValue = field.GetValue(value);
+                var propertyValue = _depthLimiter.CreatePropertyValue(fieldValue, destructuring);
+                elements[index] = propertyValue;
             }
 
             result = new SequenceValue(elements);
@@ -302,18 +308,21 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #endif
 
-    bool TryConvertCompilerGeneratedType(object value, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertCompilerGeneratedType(
+        object value,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
+        Destructuring destructuring,
+        [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        var valueType = value.GetType();
         if (destructuring == Destructuring.Destructure)
         {
-            var typeTag = valueType.Name;
-            if (typeTag.Length <= 0 || IsCompilerGeneratedType(valueType))
+            var typeTag = type.Name;
+            if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
             {
                 typeTag = null;
             }
 
-            result = new StructureValue(GetProperties(value), typeTag);
+            result = new StructureValue(GetProperties(value, type), typeTag);
             return true;
         }
 
@@ -338,14 +347,26 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return text;
     }
 
-    static bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
+    bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (valueType.IsConstructedGenericType &&
-            valueType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-            IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+        if (value is IDictionary idictionary)
         {
-            dictionary = (IDictionary)value;
-            return true;
+            if (_dictionaryTypes.Contains(valueType))
+            {
+                dictionary = idictionary;
+                return true;
+            }
+
+            if (valueType.IsConstructedGenericType)
+            {
+                var definition = valueType.GetGenericTypeDefinition();
+                if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
+                    IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+                {
+                    dictionary = idictionary;
+                    return true;
+                }
+            }
         }
 
         dictionary = null;
@@ -355,17 +376,17 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     static bool IsValidDictionaryKeyType(Type valueType)
     {
         return BuiltInScalarTypes.Contains(valueType) ||
-               valueType.GetTypeInfo().IsEnum;
+               valueType.IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value)
+    IEnumerable<LogEventProperty> GetProperties(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
-        foreach (var prop in value.GetType().GetPropertiesRecursive())
+        foreach (var prop in type.GetPropertiesRecursive())
         {
-            object propValue;
+            object? propValue;
             try
             {
-                propValue = prop.GetValue(value)!;
+                propValue = prop.GetValue(value);
             }
             catch (TargetParameterCountException)
             {
@@ -397,14 +418,16 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool IsCompilerGeneratedType(Type type)
+    static bool IsCompilerGeneratedType(Type type)
     {
-        var typeInfo = type.GetTypeInfo();
-        var typeName = type.Name;
+        if (!type.IsGenericType || !type.IsSealed || type.Namespace != null)
+        {
+            return false;
+        }
 
         // C# Anonymous types always start with "<>" and VB's start with "VB$"
-        return typeInfo.IsGenericType && typeInfo.IsSealed && type.Namespace == null
-               && (typeName[0] == '<'
-                   || (typeName.Length > 2 && typeName[0] == 'V' && typeName[1] == 'B' && typeName[2] == '$'));
+        var name = type.Name;
+        return name[0] == '<'
+               || (name.Length > 2 && name[0] == 'V' && name[1] == 'B' && name[2] == '$');
     }
 }

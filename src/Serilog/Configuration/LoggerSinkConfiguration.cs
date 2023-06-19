@@ -34,10 +34,9 @@ public class LoggerSinkConfiguration
     /// <param name="logEventSink">The sink.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
     /// events passed through the sink.</param>
+    /// <seealso cref="Sink(ILogEventSink, LogEventLevel, LoggingLevelSwitch?)"/>
     /// <returns>Configuration object allowing method chaining.</returns>
-    /// <remarks>Provided for binary compatibility for earlier versions,
-    /// should be removed in 3.0. Not marked obsolete because warnings
-    /// would be syntactically annoying to avoid.</remarks>
+    /// <remarks>Sink configuration methods that specify <paramref name="restrictedToMinimumLevel"/> should also specify <see cref="LoggingLevelSwitch"/>.</remarks>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public LoggerConfiguration Sink(
         ILogEventSink logEventSink,
@@ -58,6 +57,8 @@ public class LoggerSinkConfiguration
     public LoggerConfiguration Sink(
         ILogEventSink logEventSink,
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        // The warning here is redundant; the optional parameter allows `WriteTo.Sink(s)` usage. We would obsolete the two-argument
+        // version above for purposes of economy, but end-user `WriteTo.Sink(s, level)` is valid and shouldn't result in a warning.
         // ReSharper disable once MethodOverloadWithOptionalParameter
         LoggingLevelSwitch? levelSwitch = null)
     {
@@ -141,20 +142,43 @@ public class LoggerSinkConfiguration
     /// events passed through the sink.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public LoggerConfiguration Logger(
         ILogger logger,
-        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+        LogEventLevel restrictedToMinimumLevel)
+        => Logger(logger, attemptDispose: false, restrictedToMinimumLevel);
+
+    /// <summary>
+    /// Write log events to a sub-logger, where further processing may occur. Events through
+    /// the sub-logger will be constrained by filters and enriched by enrichers that are
+    /// active in the parent. A sub-logger cannot be used to log at a more verbose level, but
+    /// a less verbose level is possible.
+    /// </summary>
+    /// <param name="logger">The sub-logger.</param>
+    /// <param name="attemptDispose">Whether to shut down automatically the sub-logger
+    /// when the parent logger is disposed.</param>
+    /// <param name="restrictedToMinimumLevel">The minimum level for
+    /// events passed through the sink.</param>
+    /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+    /// to be changed at runtime. Can be <code>null</code></param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="logger"/> is <code>null</code></exception>
+    public LoggerConfiguration Logger(
+        ILogger logger,
+        bool attemptDispose = false,
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
     {
         Guard.AgainstNull(logger);
 
-        if (logger is Logger {HasOverrideMap: true})
+        if (logger is Logger { HasOverrideMap: true })
         {
             SelfLog.WriteLine("Minimum level overrides are not supported on sub-loggers " +
                               "and may be removed completely in a future version.");
         }
 
-        var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: false);
-        return Sink(secondarySink, restrictedToMinimumLevel);
+        var secondarySink = new SecondaryLoggerSink(logger, attemptDispose: attemptDispose);
+        return Sink(secondarySink, restrictedToMinimumLevel, levelSwitch);
     }
 
     /// <summary>
@@ -183,23 +207,6 @@ public class LoggerSinkConfiguration
     /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
     /// added in <paramref name="configureWrappedSink"/>.</param>
     /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
-    /// <returns>Configuration object allowing method chaining.</returns>
-    [Obsolete("Please use `LoggerConfiguration.Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, restrictedToMinimumLevel, levelSwitch)` instead.")]
-    public static LoggerConfiguration Wrap(
-        LoggerSinkConfiguration loggerSinkConfiguration,
-        Func<ILogEventSink, ILogEventSink> wrapSink,
-        Action<LoggerSinkConfiguration> configureWrappedSink)
-    {
-        return Wrap(loggerSinkConfiguration, wrapSink, configureWrappedSink, LevelAlias.Minimum, null);
-    }
-
-    /// <summary>
-    /// Helper method for wrapping sinks.
-    /// </summary>
-    /// <param name="loggerSinkConfiguration">The parent sink configuration.</param>
-    /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
-    /// added in <paramref name="configureWrappedSink"/>.</param>
-    /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
     /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
     /// <param name="levelSwitch">A switch allowing the pass-through minimum level
@@ -212,8 +219,8 @@ public class LoggerSinkConfiguration
         LoggerSinkConfiguration loggerSinkConfiguration,
         Func<ILogEventSink, ILogEventSink> wrapSink,
         Action<LoggerSinkConfiguration> configureWrappedSink,
-        LogEventLevel restrictedToMinimumLevel,
-        LoggingLevelSwitch? levelSwitch)
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
     {
         Guard.AgainstNull(loggerSinkConfiguration);
         Guard.AgainstNull(wrapSink);

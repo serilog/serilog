@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net462</TargetFrameworks>
     <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nullable" Version="1.3.1" PrivateAssets="all" />
+    <PackageReference Include="PolySharp" Version="1.12.1" PrivateAssets="All" />
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
   </ItemGroup>
 

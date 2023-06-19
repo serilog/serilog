@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@ namespace Serilog.Settings.KeyValuePairs;
 
 static class CallableConfigurationMethodFinder
 {
+    [RequiresUnreferencedCode("Configuration methods are not trimming safe")]
     internal static IList<MethodInfo> FindConfigurationMethods(IEnumerable<Assembly> configurationAssemblies, Type configType)
     {
         var methods = configurationAssemblies
-            .SelectMany(a => a.ExportedTypes
-                .Select(t => t.GetTypeInfo())
+            .SelectMany(
+                [RequiresUnreferencedCode("Configuration methods are not trimming safe")]
+                (a) => a.ExportedTypes
                 .Where(t => t.IsSealed && t.IsAbstract && !t.IsNested))
-            .SelectMany(t => t.DeclaredMethods)
-            .Where(m => m.IsStatic && m.IsPublic && m.IsDefined(typeof(ExtensionAttribute), false))
-            .Where(m => m.GetParameters()[0].ParameterType == configType)
+            .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public))
+            .Where(m => m.IsDefined(typeof(ExtensionAttribute), false) &&
+                        m.GetParameters()[0].ParameterType == configType)
             .ToList();
 
         // some configuration methods are not extension methods. They are added manually

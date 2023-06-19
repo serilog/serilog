@@ -101,8 +101,8 @@ public class LoggerTests
 
         Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
 
-        Assert.Equal("Hello, {Name}!", template!.Text);
-        Assert.Equal("World", properties!.Single().Value.LiteralValue());
+        Assert.Equal("Hello, {Name}!", template.Text);
+        Assert.Equal("World", properties.Single().Value.LiteralValue());
     }
 
     [Theory]
@@ -116,7 +116,7 @@ public class LoggerTests
 
         Assert.True(log.BindProperty("Name", "World", false, out var property));
 
-        Assert.Equal("Name", property!.Name);
+        Assert.Equal("Name", property.Name);
         Assert.Equal("World", property.Value.LiteralValue());
     }
 
@@ -137,7 +137,7 @@ public class LoggerTests
     [Fact]
     public void TheNoneLoggerIsSingleton()
     {
-        lock (new object())
+        lock (this)
         {
             Log.CloseAndFlush();
             Assert.Same(Log.Logger, Logger.None);

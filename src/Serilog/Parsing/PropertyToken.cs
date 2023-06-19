@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,28 +26,12 @@ public sealed class PropertyToken : MessageTemplateToken
     /// </summary>
     /// <param name="propertyName">The name of the property.</param>
     /// <param name="rawText">The token as it appears in the message template.</param>
-    /// <param name="formatObsolete">The format applied to the property, if any.</param>
-    /// <param name="destructuringObsolete">The destructuring strategy applied to the property, if any.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    [Obsolete("Use named arguments with this method to guarantee forwards-compatibility."), EditorBrowsable(EditorBrowsableState.Never)]
-    public PropertyToken(string propertyName, string rawText, string formatObsolete, Destructuring destructuringObsolete)
-        : this(propertyName, rawText, formatObsolete, null, destructuringObsolete)
-    {
-    }
-
-    /// <summary>
-    /// Construct a <see cref="PropertyToken"/>.
-    /// </summary>
-    /// <param name="propertyName">The name of the property.</param>
-    /// <param name="rawText">The token as it appears in the message template.</param>
     /// <param name="format">The format applied to the property, if any.</param>
     /// <param name="alignment">The alignment applied to the property, if any.</param>
     /// <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
-    /// <param name="startIndex">The token's start index in the template.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="propertyName"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="rawText"/> is <code>null</code></exception>
-    public PropertyToken(string propertyName, string rawText, string? format = null, Alignment? alignment = null, Destructuring destructuring = Destructuring.Default, int startIndex = -1)
-        : base(startIndex)
+    public PropertyToken(string propertyName, string rawText, string? format = null, in Alignment? alignment = null, Destructuring destructuring = Destructuring.Default)
     {
         PropertyName = Guard.AgainstNull(propertyName);
         Format = format;
@@ -104,7 +88,7 @@ public sealed class PropertyToken : MessageTemplateToken
     public Alignment? Alignment { get; }
 
     /// <summary>
-    /// True if the property name is a positional index; otherwise, false.
+    /// <see langword="true"/> if the property name is a positional index; otherwise, <see langword="false"/>.
     /// </summary>
     public bool IsPositional => _position.HasValue;
 
@@ -131,7 +115,7 @@ public sealed class PropertyToken : MessageTemplateToken
     /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
     /// </summary>
     /// <returns>
-    /// true if the specified object  is equal to the current object; otherwise, false.
+    /// <see langword="true"/> if the specified object  is equal to the current object; otherwise, <see langword="false"/>.
     /// </returns>
     /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
     public override bool Equals(object? obj)

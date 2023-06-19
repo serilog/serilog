@@ -22,6 +22,11 @@ public class SequenceValue : LogEventPropertyValue
     readonly LogEventPropertyValue[] _elements;
 
     /// <summary>
+    /// Empty sequence of values.
+    /// </summary>
+    public static SequenceValue Empty { get; } = new(Array.Empty<LogEventPropertyValue>());
+
+    /// <summary>
     /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
     /// </summary>
     /// <param name="elements">The elements of the sequence.</param>
@@ -31,6 +36,13 @@ public class SequenceValue : LogEventPropertyValue
         Guard.AgainstNull(elements);
 
         _elements = elements.ToArray();
+    }
+
+    internal SequenceValue(LogEventPropertyValue[] elements)
+    {
+        Guard.AgainstNull(elements);
+
+        _elements = elements;
     }
 
     /// <summary>

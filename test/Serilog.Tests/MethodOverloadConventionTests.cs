@@ -290,13 +290,13 @@ public class MethodOverloadConventionTests
         var method = loggerType.GetMethod("BindMessageTemplate");
 
         Assert.NotNull(method);
-        Assert.Equal(typeof(bool), method!.ReturnType);
+        Assert.Equal(typeof(bool), method.ReturnType);
         Assert.True(method.IsPublic);
 
         var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
         Assert.NotNull(messageTemplateAttr);
-        Assert.Equal(MessageTemplate, messageTemplateAttr!.MessageTemplateParameterName);
+        Assert.Equal(MessageTemplate, messageTemplateAttr.MessageTemplateParameterName);
 
         var parameters = method.GetParameters();
         var index = 0;
@@ -352,7 +352,7 @@ public class MethodOverloadConventionTests
         var method = loggerType.GetMethod("BindProperty");
 
         Assert.NotNull(method);
-        Assert.Equal(typeof(bool), method!.ReturnType);
+        Assert.Equal(typeof(bool), method.ReturnType);
         Assert.True(method.IsPublic);
 
         var parameters = method.GetParameters();
@@ -408,7 +408,7 @@ public class MethodOverloadConventionTests
         var method = loggerType.GetMethod("IsEnabled");
 
         Assert.NotNull(method);
-        Assert.True(method!.IsPublic);
+        Assert.True(method.IsPublic);
         Assert.Equal(typeof(bool), method.ReturnType);
 
         var parameters = method.GetParameters();
@@ -669,7 +669,7 @@ public class MethodOverloadConventionTests
                 var messageTemplateAttr = method.GetCustomAttribute<MessageTemplateFormatMethodAttribute>();
 
                 Assert.NotNull(messageTemplateAttr);
-                Assert.Equal(MessageTemplate, messageTemplateAttr!.MessageTemplateParameterName);
+                Assert.Equal(MessageTemplate, messageTemplateAttr.MessageTemplateParameterName);
             }
 
             var signatureMatchAndInvokeSuccess = false;

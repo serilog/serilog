@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests.Core;
+namespace Serilog.Tests.Core;
 
 public class LogEventPropertyCapturingTests
 {
@@ -89,7 +89,7 @@ public class LogEventPropertyCapturingTests
                 new LogEventProperty("__2", new SequenceValue(new[] { new ScalarValue("__2") })),
                 new LogEventProperty("__3", new SequenceValue(new[] { new ScalarValue("__3") })),
             },
-            Capture("Hello {who} {what} where}", "who", "what", new [] { "__2" }, new [] { "__3" }),
+            Capture("Hello {who} {what} where}", "who", "what", new[] { "__2" }, new[] { "__3" }),
             new LogEventPropertyStructuralEqualityComparer());
     }
 
@@ -167,7 +167,7 @@ public class LogEventPropertyCapturingTests
     {
         var mt = new MessageTemplateParser().Parse(messageTemplate);
         var binder = new PropertyBinder(
-            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
+            new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
         return binder.ConstructProperties(mt, properties).Select(p => new LogEventProperty(p.Name, p.Value));
     }
 }

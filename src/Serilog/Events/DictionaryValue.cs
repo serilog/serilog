@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class DictionaryValue : LogEventPropertyValue
             kvp.Key.Render(output, null, formatProvider);
             output.Write(": ");
             kvp.Value.Render(output, null, formatProvider);
-            output.Write(")");
+            output.Write(')');
         }
 
         output.Write(']');

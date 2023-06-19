@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@ namespace Serilog.Events;
 /// </summary>
 public class ScalarValue : LogEventPropertyValue
 {
+    /// <summary>
+    /// Scalar value representing <see langword="null"/>.
+    /// </summary>
+    public static ScalarValue Null { get; } = new(null);
+
     /// <summary>
     /// Construct a <see cref="ScalarValue"/> with the specified
     /// value.
@@ -62,9 +67,9 @@ public class ScalarValue : LogEventPropertyValue
         {
             if (format != "l")
             {
-                output.Write("\"");
+                output.Write('"');
                 output.Write(s.Replace("\"", "\\\""));
-                output.Write("\"");
+                output.Write('"');
             }
             else
             {
@@ -73,7 +78,7 @@ public class ScalarValue : LogEventPropertyValue
             return;
         }
 
-        var custom = (ICustomFormatter?) formatProvider?.GetFormat(typeof(ICustomFormatter));
+        var custom = (ICustomFormatter?)formatProvider?.GetFormat(typeof(ICustomFormatter));
         if (custom != null)
         {
             output.Write(custom.Format(format, value, formatProvider));
@@ -94,7 +99,7 @@ public class ScalarValue : LogEventPropertyValue
     /// Determine if this instance is equal to <paramref name="obj"/>.
     /// </summary>
     /// <param name="obj">The instance to compare with.</param>
-    /// <returns>True if the instances are equal; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the instances are equal; otherwise, <see langword="false"/>.</returns>
     public override bool Equals(object? obj)
     {
         return obj is ScalarValue sv && Equals(Value, sv.Value);

@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using File = System.IO.File;
 
 namespace Serilog.Tests;
@@ -23,7 +23,7 @@ public class ArgumentNullTests
                 continue;
             }
 
-            throw new($"Dont use ArgumentNullException. Instead use Guard.AgainstNull. Path: {csFile}");
+            throw new($"Don't throw ArgumentNullException directly. Instead use Guard.AgainstNull method. Path: {csFile}");
         }
     }
 

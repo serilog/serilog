@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public abstract class LogEventPropertyValue : IFormattable
     /// setting of the operating system. </param><filterpriority>2</filterpriority>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        var output = new StringWriter();
+        using var output = ReusableStringWriter.GetOrCreate();
         Render(output, format, formatProvider);
         return output.ToString();
     }

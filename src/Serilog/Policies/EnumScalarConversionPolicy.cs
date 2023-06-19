@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ class EnumScalarConversionPolicy : IScalarConversionPolicy
 {
     public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
     {
-        if (value.GetType().GetTypeInfo().IsEnum)
+        if (value is Enum)
         {
             result = new ScalarValue(value);
             return true;

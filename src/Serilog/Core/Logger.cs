@@ -26,8 +26,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     , IAsyncDisposable
 #endif
 {
-    static readonly object[] NoPropertyValues = new object[0];
-    static readonly LogEventProperty[] NoProperties = new LogEventProperty[0];
+    static readonly object[] NoPropertyValues = Array.Empty<object>();
+    static readonly LogEventProperty[] NoProperties = Array.Empty<LogEventProperty>();
 
     readonly MessageTemplateProcessor _messageTemplateProcessor;
     readonly ILogEventSink _sink;
@@ -113,8 +113,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// </summary>
     /// <param name="propertyName">The name of the property. Must be non-empty.</param>
     /// <param name="value">The property value.</param>
-    /// <param name="destructureObjects">If true, the value will be serialized as a structured
-    /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+    /// <param name="destructureObjects">If <see langword="true"/>, the value will be serialized as a structured
+    /// object if possible; if <see langword="false"/>, the object will be recorded as a scalar or simple array.</param>
     /// <returns>A logger that will enrich log events as specified.</returns>
     public ILogger ForContext(string propertyName, object? value, bool destructureObjects = false)
     {
@@ -129,12 +129,18 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var propertyValue = _messageTemplateProcessor.CreatePropertyValue(value, destructureObjects);
         var enricher = new FixedPropertyEnricher(new(propertyName, propertyValue));
 
-        var minimumLevel = _minimumLevel;
-        var levelSwitch = _levelSwitch;
-        if (_overrideMap != null && propertyName == Constants.SourceContextPropertyName)
+        LogEventLevel minimumLevel;
+        LoggingLevelSwitch? levelSwitch;
+        if (_overrideMap != null &&
+            propertyName == Constants.SourceContextPropertyName &&
+            value is string context)
         {
-            if (value is string context)
-                _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+            _overrideMap.GetEffectiveLevel(context, out minimumLevel, out levelSwitch);
+        }
+        else
+        {
+            minimumLevel = _minimumLevel;
+            levelSwitch = _levelSwitch;
         }
 
         return new Logger(
@@ -255,14 +261,14 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// to the log sinks.
     /// </summary>
     /// <param name="level">Level to check.</param>
-    /// <returns>True if the level is enabled; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the level is enabled; otherwise, <see langword="false"/>.</returns>
     public bool IsEnabled(LogEventLevel level)
     {
-        if ((int)level < (int)_minimumLevel)
+        if (level < _minimumLevel)
             return false;
 
         return _levelSwitch == null ||
-               (int)level >= (int)_levelSwitch.MinimumLevel;
+               level >= _levelSwitch.MinimumLevel;
     }
 
     /// <summary>
@@ -1337,8 +1343,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// </summary>
     /// <param name="propertyName">The name of the property. Must be non-empty.</param>
     /// <param name="value">The property value.</param>
-    /// <param name="destructureObjects">If true, the value will be serialized as a structured
-    /// object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+    /// <param name="destructureObjects">If <see langword="true"/>, the value will be serialized as a structured
+    /// object if possible; if <see langword="false"/>, the object will be recorded as a scalar or simple array.</param>
     /// <param name="property">The resulting property.</param>
     /// <returns>True if the property could be bound, otherwise false (<summary>ILogger</summary>
     /// methods never throw exceptions).</returns>
