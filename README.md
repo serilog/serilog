@@ -2,7 +2,7 @@
 
 Serilog is a diagnostic logging library for .NET applications. It is easy to set up, has a clean API, and runs on all recent .NET platforms. While it's useful even in the simplest applications, Serilog's support for structured logging shines when instrumenting complex, distributed, and asynchronous applications and systems.
 
-[![Serilog](https://serilog.net/images/serilog-180px.png)](https://serilog.net)
+[![Serilog](https://raw.githubusercontent.com/serilog/serilog.github.io/master/images/serilog-180px.png)](https://serilog.net)
 
 Like many other libraries for .NET, Serilog provides diagnostic logging to [files](https://github.com/serilog/serilog-sinks-file), the [console](https://github.com/serilog/serilog-sinks-console), and [many other outputs](https://github.com/serilog/serilog/wiki/Provided-Sinks).
 
