@@ -66,7 +66,7 @@ public sealed class JsonFormatter : ITextFormatter
 
         if (_renderMessage)
         {
-            output.Write("\",\"RenderedMessage\":");
+            output.Write(",\"RenderedMessage\":");
             var message = logEvent.MessageTemplate.Render(logEvent.Properties);
             JsonValueFormatter.WriteQuotedJsonString(message, output);
         }
