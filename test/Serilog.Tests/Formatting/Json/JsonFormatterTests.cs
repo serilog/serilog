@@ -274,4 +274,20 @@ public class JsonFormatterTests
         var h = (string)d.Properties.AProperty[0][0];
         Assert.Equal("Hello", h);
     }
+
+    [Fact] // See https://github.com/serilog/serilog/issues/1924
+    public void RenderedMessageIsIncludedCorrectlyWhenRequired()
+    {
+        var p = new MessageTemplateParser();
+        var e = new LogEvent(Some.OffsetInstant(), Information, null,
+            p.Parse("value: {AProperty}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
+
+        var formatter = new JsonFormatter(renderMessage: true);
+
+        var buffer = new StringWriter();
+        formatter.Format(e, buffer);
+        var json = buffer.ToString();
+
+        Assert.Contains(@",""MessageTemplate"":""value: {AProperty}"",""RenderedMessage"":""value: 12"",", json);
+    }
 }
