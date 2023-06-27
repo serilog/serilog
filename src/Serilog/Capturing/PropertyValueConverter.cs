@@ -35,6 +35,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     };
 
     readonly IDestructuringPolicy[] _destructuringPolicies;
+    readonly Type[] _dictionaryTypes;
     readonly IScalarConversionPolicy[] _scalarConversionPolicies;
     readonly DepthLimiter _depthLimiter;
     readonly int _maximumStringLength;
@@ -46,6 +47,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         int maximumStringLength,
         int maximumCollectionCount,
         IEnumerable<Type> additionalScalarTypes,
+        IEnumerable<Type> additionalDictionaryTypes,
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
         bool propagateExceptions)
     {
@@ -77,6 +79,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             })
             .ToArray();
 
+        _dictionaryTypes = additionalDictionaryTypes.ToArray();
         _depthLimiter = new(maximumDestructuringDepth, this);
     }
 
@@ -362,16 +365,25 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return text;
     }
 
-    static bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
+    bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (value is IDictionary idictionary && valueType.IsConstructedGenericType)
+        if (value is IDictionary idictionary)
         {
-            var definition = valueType.GetGenericTypeDefinition();
-            if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
-                IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+            if (_dictionaryTypes.Contains(valueType))
             {
                 dictionary = idictionary;
                 return true;
+            }
+
+            if (valueType.IsConstructedGenericType)
+            {
+                var definition = valueType.GetGenericTypeDefinition();
+                if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
+                    IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
+                {
+                    dictionary = idictionary;
+                    return true;
+                }
             }
         }
 
