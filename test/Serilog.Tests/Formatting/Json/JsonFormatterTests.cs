@@ -205,6 +205,22 @@ public class JsonFormatterTests
         Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
     }
 
+    private class MyDictionary : Dictionary<string, object> { }
+
+    [Fact]
+    public void CustomDictionariesAreDestructuredViaDictionaryValue_When_AsDictionary_Applied()
+    {
+        var dict = new MyDictionary {
+            { "hello", "world" },
+            { "nums", new[] { 1.2 } }
+        };
+
+        var e = DelegatingSink.GetLogEvent(l => l.Information("Value is {ADictionary}", dict), cfg => cfg.Destructure.AsDictionary<MyDictionary>());
+        var f = FormatJson(e);
+        Assert.Equal("world", (string)f.Properties.ADictionary["hello"]);
+        Assert.Equal(1.2, (double)f.Properties.ADictionary.nums[0]);
+    }
+
     [Fact]
     public void PropertyTokensWithFormatStringsAreIncludedAsRenderings()
     {
@@ -257,5 +273,21 @@ public class JsonFormatterTests
 
         var h = (string)d.Properties.AProperty[0][0];
         Assert.Equal("Hello", h);
+    }
+
+    [Fact] // See https://github.com/serilog/serilog/issues/1924
+    public void RenderedMessageIsIncludedCorrectlyWhenRequired()
+    {
+        var p = new MessageTemplateParser();
+        var e = new LogEvent(Some.OffsetInstant(), Information, null,
+            p.Parse("value: {AProperty}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
+
+        var formatter = new JsonFormatter(renderMessage: true);
+
+        var buffer = new StringWriter();
+        formatter.Format(e, buffer);
+        var json = buffer.ToString();
+
+        Assert.Contains(@",""MessageTemplate"":""value: {AProperty}"",""RenderedMessage"":""value: 12"",", json);
     }
 }
