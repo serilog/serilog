@@ -12,20 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Serilog.Parsing;
+namespace Serilog.Core;
 
 /// <summary>
-/// Defines the direction of the alignment.
+/// Event arguments for <see cref="LoggingLevelSwitch.MinimumLevelChanged"/> event.
 /// </summary>
-public enum AlignmentDirection
+public class LoggingLevelSwitchChangedEventArgs : EventArgs
 {
     /// <summary>
-    /// Text will be left-aligned.
+    /// Creates an instance of <see cref="LoggingLevelSwitchChangedEventArgs"/> specifying old and new levels.
     /// </summary>
-    Left,
+    /// <param name="oldLevel">Old level.</param>
+    /// <param name="newLevel">New level.</param>
+    public LoggingLevelSwitchChangedEventArgs(LogEventLevel oldLevel, LogEventLevel newLevel)
+    {
+        OldLevel = oldLevel;
+        NewLevel = newLevel;
+    }
 
     /// <summary>
-    /// Text will be right-aligned.
+    /// Old level.
     /// </summary>
-    Right
+    public LogEventLevel OldLevel { get; }
+
+    /// <summary>
+    /// New level.
+    /// </summary>
+    public LogEventLevel NewLevel { get; }
 }

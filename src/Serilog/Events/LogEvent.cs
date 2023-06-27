@@ -215,6 +215,18 @@ public class LogEvent
 #endif
     }
 
+    internal void AddPropertyIfAbsent(ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
+    {
+        if (!_properties.ContainsKey(name))
+        {
+            _properties.Add(
+                name,
+                factory is ILogEventPropertyValueFactory factory2
+                    ? factory2.CreatePropertyValue(value, destructureObjects)
+                    : factory.CreateProperty(name, value, destructureObjects).Value);
+        }
+    }
+
     /// <summary>
     /// Remove a property from the event, if present. Otherwise no action
     /// is performed.

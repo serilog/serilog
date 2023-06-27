@@ -137,7 +137,7 @@ public class LoggerTests
     [Fact]
     public void TheNoneLoggerIsSingleton()
     {
-        lock (new object())
+        lock (this)
         {
             Log.CloseAndFlush();
             Assert.Same(Log.Logger, Logger.None);

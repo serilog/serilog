@@ -24,7 +24,7 @@ public class SequenceValue : LogEventPropertyValue
     /// <summary>
     /// Empty sequence of values.
     /// </summary>
-    public static SequenceValue Empty { get; } = new SequenceValue(new LogEventPropertyValue[0]);
+    public static SequenceValue Empty { get; } = new(Array.Empty<LogEventPropertyValue>());
 
     /// <summary>
     /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.

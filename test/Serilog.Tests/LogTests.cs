@@ -1,4 +1,4 @@
-﻿namespace Serilog.Tests;
+namespace Serilog.Tests;
 
 [Collection("Log.Logger")]
 public class LogTests

@@ -580,41 +580,27 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
                 switch (c)
                 {
                     case '"':
-                    {
                         output.Write("\\\"");
                         break;
-                    }
                     case '\\':
-                    {
                         output.Write("\\\\");
                         break;
-                    }
                     case '\n':
-                    {
                         output.Write("\\n");
                         break;
-                    }
                     case '\r':
-                    {
                         output.Write("\\r");
                         break;
-                    }
                     case '\f':
-                    {
                         output.Write("\\f");
                         break;
-                    }
                     case '\t':
-                    {
                         output.Write("\\t");
                         break;
-                    }
                     default:
-                    {
                         output.Write("\\u");
                         output.Write(((int)c).ToString("X4"));
                         break;
-                    }
                 }
             }
         }

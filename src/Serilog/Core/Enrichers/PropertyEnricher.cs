@@ -28,7 +28,7 @@ public class PropertyEnricher : ILogEventEnricher
     /// </summary>
     /// <param name="name">The name of the property.</param>
     /// <param name="value">The value of the property.</param>
-    /// <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+    /// <param name="destructureObjects">If <see langword="true"/>, and the value is a non-primitive, non-array type,
     /// then the value will be converted to a structure; otherwise, unknown types will
     /// be converted to scalars, which are generally stored as strings.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
@@ -54,7 +54,6 @@ public class PropertyEnricher : ILogEventEnricher
         Guard.AgainstNull(logEvent);
         Guard.AgainstNull(propertyFactory);
 
-        var property = propertyFactory.CreateProperty(_name, _value, _destructureObjects);
-        logEvent.AddPropertyIfAbsent(property);
+        logEvent.AddPropertyIfAbsent(propertyFactory, _name, _value, _destructureObjects);
     }
 }

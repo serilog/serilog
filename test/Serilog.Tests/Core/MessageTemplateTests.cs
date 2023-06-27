@@ -29,7 +29,7 @@ public class MessageTemplateTests
 
     class ToStringThrows
     {
-        public override string ToString() => throw new ArgumentNullException("","A possible a Bug in a class");
+        public override string ToString() => throw new ArgumentNullException("", "A possible a Bug in a class");
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class MessageTemplateTests
     static string Render(IFormatProvider? formatProvider, string messageTemplate, params object[] properties)
     {
         var mt = new MessageTemplateParser().Parse(messageTemplate);
-        var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
+        var binder = new PropertyBinder(new PropertyValueConverter(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false));
         var props = binder.ConstructProperties(mt, properties);
         var output = new StringBuilder();
         var writer = new StringWriter(output);

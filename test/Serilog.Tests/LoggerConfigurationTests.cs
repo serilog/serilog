@@ -94,7 +94,7 @@ public class LoggerConfigurationTests
         public int B { get; set; }
     }
 
-// ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
+    // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
     [Fact]
     public void SpecifyingThatATypeIsScalarCausesItToBeLoggedAsScalarEvenWhenDestructuring()
@@ -844,5 +844,38 @@ public class LoggerConfigurationTests
 
         var error = Assert.Single(enricher.Events);
         Assert.True(error.Level == Error);
+    }
+
+    [Fact]
+    public void EventsAreNotEmittedWhenMinimumLevelIsOff()
+    {
+        var sink = new CollectingSink();
+
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Is(LevelAlias.Off)
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        logger.Fatal("Not emitted");
+
+        Assert.Empty(sink.Events);
+    }
+
+    [Fact]
+    public void EventsAreNotEmittedWhenMinimumLevelOverrideIsOff()
+    {
+        var sink = new CollectingSink();
+
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Override("Test", LevelAlias.Off)
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        logger.Fatal("Emitted");
+        logger.ForContext(Constants.SourceContextPropertyName, "Test").Fatal("Not emitted");
+        logger.ForContext(Constants.SourceContextPropertyName, "Another").Fatal("Emitted");
+
+        Assert.Equal(2, sink.Events.Count);
+        Assert.All(sink.Events, le => Assert.Equal("Emitted", le.MessageTemplate.Text));
     }
 }
