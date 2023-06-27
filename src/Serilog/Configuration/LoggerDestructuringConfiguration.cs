@@ -21,6 +21,7 @@ public class LoggerDestructuringConfiguration
 {
     readonly LoggerConfiguration _loggerConfiguration;
     readonly Action<Type> _addScalar;
+    readonly Action<Type> _addDictionaryType;
     readonly Action<IDestructuringPolicy> _addPolicy;
     readonly Action<int> _setMaximumDepth;
     readonly Action<int> _setMaximumStringLength;
@@ -29,6 +30,7 @@ public class LoggerDestructuringConfiguration
     internal LoggerDestructuringConfiguration(
         LoggerConfiguration loggerConfiguration,
         Action<Type> addScalar,
+        Action<Type> addDictionaryType,
         Action<IDestructuringPolicy> addPolicy,
         Action<int> setMaximumDepth,
         Action<int> setMaximumStringLength,
@@ -36,6 +38,7 @@ public class LoggerDestructuringConfiguration
     {
         _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
         _addScalar = Guard.AgainstNull(addScalar);
+        _addDictionaryType = Guard.AgainstNull(addDictionaryType);
         _addPolicy = Guard.AgainstNull(addPolicy);
         _setMaximumDepth = Guard.AgainstNull(setMaximumDepth);
         _setMaximumStringLength = Guard.AgainstNull(setMaximumStringLength);
@@ -95,6 +98,19 @@ public class LoggerDestructuringConfiguration
         where TDestructuringPolicy : IDestructuringPolicy, new()
     {
         return With(new TDestructuringPolicy());
+    }
+
+    /// <summary>
+    /// Capture instances of the specified type as dictionaries.
+    /// By default, only concrete instantiations of are considered dictionary-like.
+    /// </summary>
+    /// <typeparam name="T">Type of dictionary.</typeparam>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    public LoggerConfiguration AsDictionary<T>()
+        where T : IDictionary
+    {
+        _addDictionaryType(typeof(T));
+        return _loggerConfiguration;
     }
 
     /// <summary>

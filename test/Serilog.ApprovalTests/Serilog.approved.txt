@@ -14,6 +14,8 @@ namespace Serilog.Configuration
     }
     public class LoggerDestructuringConfiguration
     {
+        public Serilog.LoggerConfiguration AsDictionary<T>()
+            where T : System.Collections.IDictionary { }
         public Serilog.LoggerConfiguration AsScalar(System.Type scalarType) { }
         public Serilog.LoggerConfiguration AsScalar<TScalar>() { }
         public Serilog.LoggerConfiguration ByTransforming<TValue>(System.Func<TValue, object> transformation) { }
@@ -280,6 +282,13 @@ namespace Serilog.Core
     {
         public LoggingLevelSwitch(Serilog.Events.LogEventLevel initialMinimumLevel = 2) { }
         public Serilog.Events.LogEventLevel MinimumLevel { get; set; }
+        public event System.EventHandler<Serilog.Core.LoggingLevelSwitchChangedEventArgs>? MinimumLevelChanged;
+    }
+    public class LoggingLevelSwitchChangedEventArgs : System.EventArgs
+    {
+        public LoggingLevelSwitchChangedEventArgs(Serilog.Events.LogEventLevel oldLevel, Serilog.Events.LogEventLevel newLevel) { }
+        public Serilog.Events.LogEventLevel NewLevel { get; }
+        public Serilog.Events.LogEventLevel OldLevel { get; }
     }
     [System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method)]
     public sealed class MessageTemplateFormatMethodAttribute : System.Attribute
@@ -344,6 +353,7 @@ namespace Serilog.Events
     {
         public const Serilog.Events.LogEventLevel Maximum = 5;
         public const Serilog.Events.LogEventLevel Minimum = 0;
+        public const Serilog.Events.LogEventLevel Off = 6;
     }
     public class LogEvent
     {
@@ -454,7 +464,7 @@ namespace Serilog.Formatting
 }
 namespace Serilog.Formatting.Json
 {
-    public class JsonFormatter : Serilog.Formatting.ITextFormatter
+    public sealed class JsonFormatter : Serilog.Formatting.ITextFormatter
     {
         public JsonFormatter(string? closingDelimiter = null, bool renderMessage = false, System.IFormatProvider? formatProvider = null) { }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }

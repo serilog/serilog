@@ -1,6 +1,6 @@
 namespace Serilog.Tests.Capturing;
 
-public class GetablePropertyFinderTests
+public class GettablePropertyFinderTests
 {
     [Fact]
     public void GetPropertiesRecursiveIntegerTypeYieldNoResult()
