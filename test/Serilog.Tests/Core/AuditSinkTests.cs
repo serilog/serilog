@@ -50,6 +50,10 @@ public class AuditSinkTests
     public void ExceptionsThrownByPropertyAccessorsAreNotPropagated()
     {
         var logger = new LoggerConfiguration()
+            // should be called before ReadFrom.Configuration
+            .Setup.Configure<DelegatingSink>(s => { /*do something*/ }) // no hit
+            .Setup.Configure<CollectingSink>(s => { /*do something*/ }) // hit for particular sink
+            .Setup.Configure<ILogEventSink>(s => { /**/ }) // hit for all sinks
             .WriteTo.Sink(new CollectingSink())
             .CreateLogger();
 

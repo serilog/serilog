@@ -79,6 +79,11 @@ namespace Serilog.Configuration
             where TSink : Serilog.Core.ILogEventSink, new () { }
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
     }
+    public class LoggerSinkSetupConfiguration
+    {
+        public Serilog.LoggerConfiguration Configure<TSink>(System.Action<TSink> configure)
+            where TSink : Serilog.Core.ILogEventSink { }
+    }
 }
 namespace Serilog.Context
 {
@@ -801,6 +806,7 @@ namespace Serilog
         public Serilog.Configuration.LoggerFilterConfiguration Filter { get; }
         public Serilog.Configuration.LoggerMinimumLevelConfiguration MinimumLevel { get; }
         public Serilog.Configuration.LoggerSettingsConfiguration ReadFrom { get; }
+        public Serilog.Configuration.LoggerSinkSetupConfiguration Setup { get; }
         public Serilog.Configuration.LoggerSinkConfiguration WriteTo { get; }
         public Serilog.Core.Logger CreateLogger() { }
     }
