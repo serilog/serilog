@@ -42,7 +42,7 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
 09:14:22 [INF] Processed {"Latitude": 25, "Longitude": 134} in 34 ms.
 ```
 
-> **Upgrading from Serilog 1.x?** Check out the [2.0 Upgrade Guide](https://github.com/serilog/serilog/wiki/2.x-Upgrade-Guide) and [Release Notes](https://github.com/serilog/serilog/blob/dev/CHANGES.md).
+> **Upgrading from Serilog 1.x?** Check out the [2.0 Upgrade Guide](https://github.com/serilog/serilog/wiki/2.x-Upgrade-Guide) and [Release Notes](https://github.com/serilog/serilog/releases).
 
 ### Features
 
