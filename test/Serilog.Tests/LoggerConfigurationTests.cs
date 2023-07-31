@@ -168,7 +168,7 @@ public class LoggerConfigurationTests
 
         var logger = new LoggerConfiguration()
             .Destructure.With(new ProjectedDestructuringPolicy(
-                canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
+                canApply: t => typeof(Type).IsAssignableFrom(t),
                 projection: o => ((Type)o).AssemblyQualifiedName!))
             .WriteTo.Sink(sink)
             .CreateLogger();
