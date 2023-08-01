@@ -934,7 +934,7 @@ public class MethodOverloadConventionTests
                     {
                         Assert.Equal($"T{i}", genericTypeArgs[i].Name);
 
-                        var genericConstraints = genericTypeArgs[i].GetTypeInfo().GetGenericParameterConstraints();
+                        var genericConstraints = genericTypeArgs[i].GetGenericParameterConstraints();
 
                         Assert.Empty(genericConstraints);
                         Assert.Equal($"propertyValue{i}", parameters[index].Name);
@@ -947,7 +947,7 @@ public class MethodOverloadConventionTests
 
                     Assert.Equal("T", genericTypeArg.Name);
 
-                    var genericConstraints = genericTypeArg.GetTypeInfo().GetGenericParameterConstraints();
+                    var genericConstraints = genericTypeArg.GetGenericParameterConstraints();
 
                     Assert.Empty(genericConstraints);
                     Assert.Equal("propertyValue", parameters[index].Name);
