@@ -68,7 +68,7 @@ class LevelOverrideMap
     {
         foreach (var levelOverride in _overrides)
         {
-            if (context.StartsWith(levelOverride.Context) &&
+            if (context.StartsWith(levelOverride.Context, StringComparison.CurrentCultureIgnoreCase) &&
                 (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
             {
                 minimumLevel = LevelAlias.Minimum;
