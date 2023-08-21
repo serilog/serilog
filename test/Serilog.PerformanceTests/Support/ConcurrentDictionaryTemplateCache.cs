@@ -4,6 +4,7 @@ class ConcurrentDictionaryMessageTemplateCache : IMessageTemplateParser
 {
     readonly IMessageTemplateParser _innerParser;
 
+    readonly ConcurrentDictionary<string, MessageTemplate> _templatesByReference = new(ByReferenceStringComparer.Instance);
     readonly ConcurrentDictionary<string, MessageTemplate> _templates = new();
 
     const int MaxCacheItems = 1000;
@@ -21,7 +22,10 @@ class ConcurrentDictionaryMessageTemplateCache : IMessageTemplateParser
         if (messageTemplate.Length > MaxCachedTemplateLength)
             return _innerParser.Parse(messageTemplate);
 
-        if (_templates.TryGetValue(messageTemplate, out var result))
+        if (_templatesByReference.TryGetValue(messageTemplate, out var result))
+            return result;
+
+        if (_templates.TryGetValue(messageTemplate, out result))
             return result;
 
         result = _innerParser.Parse(messageTemplate);
@@ -36,8 +40,12 @@ class ConcurrentDictionaryMessageTemplateCache : IMessageTemplateParser
             // activities.
 
             if (_templates.Count == MaxCacheItems)
+            {
+                _templatesByReference.Clear();
                 _templates.Clear();
+            }
 
+            _templatesByReference[messageTemplate] = result;
             _templates[messageTemplate] = result;
         }
 
