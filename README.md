@@ -83,6 +83,7 @@ try
     // Your program here...
     const string name = "Serilog";
     Log.Information("Hello, {Name}!", name);
+    throw new InvalidOperationException("Oops...");
 }
 catch (Exception ex)
 {
