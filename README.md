@@ -7,7 +7,7 @@ Serilog is a diagnostic logging library for .NET applications. It is easy to set
 Like many other libraries for .NET, Serilog provides diagnostic logging to [files](https://github.com/serilog/serilog-sinks-file), the [console](https://github.com/serilog/serilog-sinks-console), and [many other outputs](https://github.com/serilog/serilog/wiki/Provided-Sinks).
 
 ```csharp
-var log = new LoggerConfiguration()
+using var log = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("log.txt")
     .CreateLogger();
@@ -58,7 +58,7 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
 
 ### Getting started
 
-Serilog is installed from NuGet. To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing console sink, and a rolling file set:
+Serilog is installed [from NuGet](https://nuget.org/packages/serilog). To view log events, one or more sinks need to be installed as well, here we'll use the pretty-printing console sink, and a rolling file set:
 
 ```
 dotnet add package Serilog
@@ -66,27 +66,32 @@ dotnet add package Serilog.Sinks.Console
 dotnet add package Serilog.Sinks.File
 ```
 
-The simplest way to set up Serilog is using the static `Log` class. A `LoggerConfiguration` is used to create and assign the default logger.
+The simplest way to set up Serilog is using the static `Log` class. A `LoggerConfiguration` is used to create and assign the default logger, normally in _Program.cs_:
 
 ```csharp
 using Serilog;
 
-public class Program
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("log.txt",
+        rollingInterval: RollingInterval.Day,
+        rollOnFileSizeLimit: true)
+    .CreateLogger();
+
+try
 {
-    public static void Main()
-    {
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .WriteTo.Console()
-            .WriteTo.File("log.txt",
-                rollingInterval: RollingInterval.Day,
-                rollOnFileSizeLimit: true)
-            .CreateLogger();
-
-        Log.Information("Hello, Serilog!");
-
-        Log.CloseAndFlush();
-    }
+    // Your program here...
+    const string name = "Serilog";
+    Log.Information("Hello, {Name}!", name);
+    throw new InvalidOperationException("Oops...");
+}
+catch (Exception ex)
+{
+    Log.Error(ex, "Unhandled exception");
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
 }
 ```
 
@@ -99,7 +104,6 @@ To learn more about Serilog, check out the [documentation](https://github.com/se
 Serilog has an active and helpful community who are happy to help point you in the right direction or work through any issues you might encounter. You can get in touch via:
 
  * [Stack Overflow](http://stackoverflow.com/questions/tagged/serilog) &mdash; this is the best place to start if you have a question
- * [Gitter chat](https://gitter.im/serilog/serilog)
  * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
  * [Serilog-related courses on Pluralsight](https://www.pluralsight.com/search/?q=serilog)
 
