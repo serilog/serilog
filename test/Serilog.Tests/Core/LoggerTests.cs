@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 #pragma warning disable Serilog003 // Property binding verifier
 
@@ -54,7 +56,9 @@ public class LoggerTests
     [Fact]
     public void ParametersForAnEmptyTemplateAreIgnored()
     {
+        // ReSharper disable StructuredMessageTemplateProblem
         var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
+        // ReSharper restore StructuredMessageTemplateProblem
         Assert.Equal("message", e.RenderMessage());
     }
 
@@ -99,7 +103,9 @@ public class LoggerTests
     {
         var log = CreateLogger(loggerType, lc => lc);
 
+        // ReSharper disable StructuredMessageTemplateProblem
         Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
+        // ReSharper restore StructuredMessageTemplateProblem
 
         Assert.Equal("Hello, {Name}!", template.Text);
         Assert.Equal("World", properties.Single().Value.LiteralValue());
@@ -258,6 +264,31 @@ public class LoggerTests
 
         Assert.True(sinkA.IsDisposed);
         Assert.True(sinkB.IsDisposed);
+    }
+
+    [Fact]
+    public void CurrentActivityIsCapturedAtLogEventCreation()
+    {
+        using var listener = new ActivityListener();
+        listener.ShouldListenTo = _ => true;
+        listener.SampleUsingParentId = (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData;
+        listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData;
+        ActivitySource.AddActivityListener(listener);
+
+        using var source = new ActivitySource(Some.String());
+        using var activity = source.StartActivity(Some.String());
+        Assert.NotNull(activity);
+
+        var sink = new CollectingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        log.Information("Hello, world!");
+
+        var single = sink.SingleEvent;
+        Assert.Equal(activity.TraceId, single.TraceId);
+        Assert.Equal(activity.SpanId, single.SpanId);
     }
 
 #if FEATURE_ASYNCDISPOSABLE

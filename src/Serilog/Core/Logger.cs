@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
+
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 
 namespace Serilog.Core;
@@ -362,7 +364,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
+        var currentActivity = Activity.Current;
+        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId, currentActivity?.SpanId);
         Dispatch(logEvent);
     }
 

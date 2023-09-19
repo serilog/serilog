@@ -358,11 +358,17 @@ namespace Serilog.Events
     public class LogEvent
     {
         public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties) { }
+        [System.CLSCompliant(false)]
+        public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, System.Diagnostics.ActivityTraceId? traceId, System.Diagnostics.ActivitySpanId? spanId) { }
         public System.Exception? Exception { get; }
         public Serilog.Events.LogEventLevel Level { get; }
         public Serilog.Events.MessageTemplate MessageTemplate { get; }
         public System.Collections.Generic.IReadOnlyDictionary<string, Serilog.Events.LogEventPropertyValue> Properties { get; }
+        [System.CLSCompliant(false)]
+        public System.Diagnostics.ActivitySpanId? SpanId { get; }
         public System.DateTimeOffset Timestamp { get; }
+        [System.CLSCompliant(false)]
+        public System.Diagnostics.ActivityTraceId? TraceId { get; }
         public void AddOrUpdateProperty(Serilog.Events.LogEventProperty property) { }
         public void AddPropertyIfAbsent(Serilog.Events.LogEventProperty property) { }
         public void RemovePropertyIfPresent(string propertyName) { }
@@ -452,7 +458,9 @@ namespace Serilog.Formatting.Display
         public const string MessagePropertyName = "Message";
         public const string NewLinePropertyName = "NewLine";
         public const string PropertiesPropertyName = "Properties";
+        public const string SpanIdPropertyName = "SpanId";
         public const string TimestampPropertyName = "Timestamp";
+        public const string TraceIdPropertyName = "TraceId";
     }
 }
 namespace Serilog.Formatting
