@@ -23,6 +23,8 @@ namespace Serilog.Events;
 public class LogEvent
 {
     readonly Dictionary<string, LogEventPropertyValue> _properties;
+    ActivityTraceId _traceId;
+    ActivitySpanId _spanId;
 
     LogEvent(
         DateTimeOffset timestamp,
@@ -36,8 +38,8 @@ public class LogEvent
         Timestamp = timestamp;
         Level = level;
         Exception = exception;
-        TraceId = traceId;
-        SpanId = spanId;
+        _traceId = traceId ?? default;
+        _spanId = spanId ?? default;
         MessageTemplate = Guard.AgainstNull(messageTemplate);
         _properties = Guard.AgainstNull(properties);
     }
@@ -100,13 +102,13 @@ public class LogEvent
     /// The id of the trace that was active when the event was created, if any.
     /// </summary>
     [CLSCompliant(false)]
-    public ActivityTraceId? TraceId { get; }
+    public ActivityTraceId? TraceId => _traceId == default ? null : _traceId;
 
     /// <summary>
     /// The id of the span that was active when the event was created, if any.
     /// </summary>
     [CLSCompliant(false)]
-    public ActivitySpanId? SpanId { get; }
+    public ActivitySpanId? SpanId => _spanId == default ? null : _spanId;
 
     /// <summary>
     /// The message template describing the event.
