@@ -359,7 +359,7 @@ namespace Serilog.Events
     {
         public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties) { }
         [System.CLSCompliant(false)]
-        public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, System.Diagnostics.ActivityTraceId? traceId, System.Diagnostics.ActivitySpanId? spanId) { }
+        public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, System.Diagnostics.ActivityTraceId traceId, System.Diagnostics.ActivitySpanId spanId) { }
         public System.Exception? Exception { get; }
         public Serilog.Events.LogEventLevel Level { get; }
         public Serilog.Events.MessageTemplate MessageTemplate { get; }

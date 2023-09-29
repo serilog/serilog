@@ -363,7 +363,7 @@ public class MessageTemplateTextFormatterTests
     public void TraceAndSpanAreEmptyWhenAbsent()
     {
         var formatter = new MessageTemplateTextFormatter("{TraceId}/{SpanId}", CultureInfo.InvariantCulture);
-        var evt = Some.LogEvent(traceId: null, spanId: null);
+        var evt = Some.LogEvent(traceId: default, spanId: default);
         var sw = new StringWriter();
         formatter.Format(evt, sw);
         Assert.Equal("/", sw.ToString());

@@ -365,7 +365,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
         var currentActivity = Activity.Current;
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId, currentActivity?.SpanId);
+        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
         Dispatch(logEvent);
     }
 

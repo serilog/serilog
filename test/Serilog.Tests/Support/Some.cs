@@ -24,8 +24,8 @@ static class Some
         Exception? exception = null,
         string? messageTemplate = null,
         object?[]? propertyValues = null,
-        ActivityTraceId? traceId = null,
-        ActivitySpanId? spanId = null)
+        ActivityTraceId traceId = default,
+        ActivitySpanId spanId = default)
     {
         var logger = new LoggerConfiguration().CreateLogger();
         Assert.True(logger.BindMessageTemplate(messageTemplate ?? "DEFAULT TEMPLATE", propertyValues, out var parsedTemplate, out var boundProperties));

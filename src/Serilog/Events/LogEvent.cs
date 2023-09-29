@@ -32,14 +32,14 @@ public class LogEvent
         Exception? exception,
         MessageTemplate messageTemplate,
         Dictionary<string, LogEventPropertyValue> properties,
-        ActivityTraceId? traceId,
-        ActivitySpanId? spanId)
+        ActivityTraceId traceId,
+        ActivitySpanId spanId)
     {
         Timestamp = timestamp;
         Level = level;
         Exception = exception;
-        _traceId = traceId ?? default;
-        _spanId = spanId ?? default;
+        _traceId = traceId;
+        _spanId = spanId;
         MessageTemplate = Guard.AgainstNull(messageTemplate);
         _properties = Guard.AgainstNull(properties);
     }
@@ -55,7 +55,7 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
-        : this(timestamp, level, exception, messageTemplate, properties, null, null)
+        : this(timestamp, level, exception, messageTemplate, properties, default, default)
     {
     }
 
@@ -72,7 +72,7 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     [CLSCompliant(false)]
-    public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties, ActivityTraceId? traceId, ActivitySpanId? spanId)
+    public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties, ActivityTraceId traceId, ActivitySpanId spanId)
         : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(), traceId, spanId)
     {
         Guard.AgainstNull(properties);
@@ -81,7 +81,7 @@ public class LogEvent
             AddOrUpdateProperty(property);
     }
 
-    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, ActivityTraceId? traceId, ActivitySpanId? spanId)
+    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, ActivityTraceId traceId, ActivitySpanId spanId)
         : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(Guard.AgainstNull(properties).Length), traceId, spanId)
     {
         for (var i = 0; i < properties.Length; ++i)
@@ -236,7 +236,7 @@ public class LogEvent
             Exception,
             MessageTemplate,
             properties,
-            TraceId,
-            SpanId);
+            TraceId ?? default,
+            SpanId ?? default);
     }
 }

@@ -295,7 +295,7 @@ public class JsonFormatterTests
     [Fact]
     public void TraceAndSpanAreIgnoredWhenAbsent()
     {
-        var evt = Some.LogEvent(traceId: null, spanId: null);
+        var evt = Some.LogEvent(traceId: default, spanId: default);
         var sw = new StringWriter();
         var formatter = new JsonFormatter();
         formatter.Format(evt, sw);
