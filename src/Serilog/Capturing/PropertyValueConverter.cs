@@ -22,10 +22,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 {
     static readonly HashSet<Type> BuiltInScalarTypes = new()
     {
-        typeof(bool),
-        typeof(char),
-        typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-        typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal),
+        typeof(decimal),
         typeof(string),
         typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
         typeof(Guid), typeof(Uri),
@@ -63,6 +60,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
         _scalarConversionPolicies = new IScalarConversionPolicy[]
         {
+            new PrimitiveScalarConversionPolicy(),
             new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
             new EnumScalarConversionPolicy(),
             new ByteArrayScalarConversionPolicy(),
@@ -375,7 +373,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     static bool IsValidDictionaryKeyType(Type valueType)
     {
-        return BuiltInScalarTypes.Contains(valueType) ||
+        return valueType.IsPrimitive ||
+               BuiltInScalarTypes.Contains(valueType) ||
                valueType.IsEnum;
     }
 
