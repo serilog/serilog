@@ -40,4 +40,10 @@ public class PipelineBenchmark
     {
         _log.Information(_exception, "Hello, {Name}!", "World");
     }
+
+    [Benchmark]
+    public void IntProperties()
+    {
+        _log.Information(_exception, "Hello, {A} {B} {C}!", 1, 2, 3);
+    }
 }
