@@ -270,7 +270,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #else
 
-    bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    bool TryConvertValueTuple(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)] Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (!(value is IStructuralEquatable && type.IsConstructedGenericType))
         {
