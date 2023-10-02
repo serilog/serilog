@@ -5,8 +5,7 @@ class DictionaryMessageTemplateCache : IMessageTemplateParser
     readonly IMessageTemplateParser _innerParser;
     readonly object _templatesLock = new();
 
-    readonly Dictionary<string, MessageTemplate> _templatesByReference = new(ByReferenceStringComparer.Instance);
-    readonly Dictionary<string, MessageTemplate> _templates = new();
+    readonly Dictionary<string, MessageTemplate> _templates = new(ByReferenceStringComparer.Instance);
 
     const int MaxCacheItems = 1000;
     const int MaxCachedTemplateLength = 1024;
@@ -25,12 +24,8 @@ class DictionaryMessageTemplateCache : IMessageTemplateParser
 
         MessageTemplate? result;
         lock (_templatesLock)
-        {
-            if (_templatesByReference.TryGetValue(messageTemplate, out result))
-                return result;
             if (_templates.TryGetValue(messageTemplate, out result))
                 return result;
-        }
 
         result = _innerParser.Parse(messageTemplate);
 
@@ -45,12 +40,8 @@ class DictionaryMessageTemplateCache : IMessageTemplateParser
             // activities.
 
             if (_templates.Count == MaxCacheItems)
-            {
-                _templatesByReference.Clear();
                 _templates.Clear();
-            }
 
-            _templatesByReference[messageTemplate] = result;
             _templates[messageTemplate] = result;
         }
 
