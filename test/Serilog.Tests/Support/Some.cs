@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Serilog.Tests.Support;
 
 static class Some
@@ -16,17 +18,25 @@ static class Some
 
     public static DateTimeOffset OffsetInstant() => new(Instant());
 
-    public static LogEvent LogEvent(string sourceContext, DateTimeOffset? timestamp = null, LogEventLevel level = Information)
+    public static LogEvent LogEvent(
+        DateTimeOffset? timestamp = null,
+        LogEventLevel level = Information,
+        Exception? exception = null,
+        string? messageTemplate = null,
+        object?[]? propertyValues = null,
+        ActivityTraceId traceId = default,
+        ActivitySpanId spanId = default)
     {
-        return new(timestamp ?? OffsetInstant(), level,
-            null, MessageTemplate(),
-            new List<LogEventProperty> { new(Constants.SourceContextPropertyName, new ScalarValue(sourceContext)) });
-    }
-
-    public static LogEvent LogEvent(DateTimeOffset? timestamp = null, LogEventLevel level = Information)
-    {
-        return new(timestamp ?? OffsetInstant(), level,
-            null, MessageTemplate(), Enumerable.Empty<LogEventProperty>());
+        var logger = new LoggerConfiguration().CreateLogger();
+        Assert.True(logger.BindMessageTemplate(messageTemplate ?? "DEFAULT TEMPLATE", propertyValues, out var parsedTemplate, out var boundProperties));
+        return new(
+            timestamp ?? OffsetInstant(),
+            level,
+            exception,
+            parsedTemplate,
+            boundProperties,
+            traceId,
+            spanId);
     }
 
     public static LogEvent InformationEvent(DateTimeOffset? timestamp = null)
@@ -36,7 +46,7 @@ static class Some
 
     public static LogEvent DebugEvent(DateTimeOffset? timestamp = null)
     {
-        return LogEvent(timestamp, Debug);
+        return LogEvent(timestamp, LogEventLevel.Debug);
     }
 
     public static LogEvent WarningEvent(DateTimeOffset? timestamp = null)

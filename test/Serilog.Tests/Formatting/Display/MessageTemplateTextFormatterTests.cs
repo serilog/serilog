@@ -1,4 +1,8 @@
 
+// ReSharper disable StringLiteralTypo
+
+using System.Diagnostics;
+
 namespace Serilog.Tests.Formatting.Display;
 
 public class MessageTemplateTextFormatterTests
@@ -53,12 +57,12 @@ public class MessageTemplateTextFormatterTests
     [InlineData(Verbose, 6, "Verbos")]
     [InlineData(Verbose, 7, "Verbose")]
     [InlineData(Verbose, 8, "Verbose")]
-    [InlineData(Debug, 1, "D")]
-    [InlineData(Debug, 2, "De")]
-    [InlineData(Debug, 3, "Dbg")]
-    [InlineData(Debug, 4, "Dbug")]
-    [InlineData(Debug, 5, "Debug")]
-    [InlineData(Debug, 6, "Debug")]
+    [InlineData(LogEventLevel.Debug, 1, "D")]
+    [InlineData(LogEventLevel.Debug, 2, "De")]
+    [InlineData(LogEventLevel.Debug, 3, "Dbg")]
+    [InlineData(LogEventLevel.Debug, 4, "Dbug")]
+    [InlineData(LogEventLevel.Debug, 5, "Debug")]
+    [InlineData(LogEventLevel.Debug, 6, "Debug")]
     [InlineData(Information, 1, "I")]
     [InlineData(Information, 2, "In")]
     [InlineData(Information, 3, "Inf")]
@@ -353,5 +357,27 @@ public class MessageTemplateTextFormatterTests
         var sw = new StringWriter();
         formatter.Format(evt, sw);
         Assert.Equal(expected, sw.ToString());
+    }
+
+    [Fact]
+    public void TraceAndSpanAreEmptyWhenAbsent()
+    {
+        var formatter = new MessageTemplateTextFormatter("{TraceId}/{SpanId}", CultureInfo.InvariantCulture);
+        var evt = Some.LogEvent(traceId: default, spanId: default);
+        var sw = new StringWriter();
+        formatter.Format(evt, sw);
+        Assert.Equal("/", sw.ToString());
+    }
+
+    [Fact]
+    public void TraceAndSpanAreIncludedWhenPresent()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var formatter = new MessageTemplateTextFormatter("{TraceId}/{SpanId}", CultureInfo.InvariantCulture);
+        var evt = Some.LogEvent(traceId: traceId, spanId: spanId);
+        var sw = new StringWriter();
+        formatter.Format(evt, sw);
+        Assert.Equal($"{traceId}/{spanId}", sw.ToString());
     }
 }

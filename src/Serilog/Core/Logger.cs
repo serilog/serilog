@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
+
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 
 namespace Serilog.Core;
@@ -79,7 +81,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// <returns>A logger that will enrich log events as specified.</returns>
     public ILogger ForContext(ILogEventEnricher enricher)
     {
-        if (enricher == null)
+        if (enricher == null!)
             return this; // No context here, so little point writing to SelfLog.
 
         return new Logger(
@@ -102,7 +104,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// <returns>A logger that will enrich log events as specified.</returns>
     public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
     {
-        if (enrichers == null)
+        if (enrichers == null!)
             return this; // No context here, so little point writing to SelfLog.
 
         return ForContext(new SafeAggregateEnricher(enrichers));
@@ -164,7 +166,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// <returns>A logger that will enrich log events as specified.</returns>
     public ILogger ForContext(Type source)
     {
-        if (source == null)
+        if (source == null!)
             return this; // Little point in writing to SelfLog here because we don't have any contextual information
 
         return ForContext(Constants.SourceContextPropertyName, source.FullName);
@@ -352,7 +354,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     public void Write(LogEventLevel level, Exception? exception, string messageTemplate, params object?[]? propertyValues)
     {
         if (!IsEnabled(level)) return;
-        if (messageTemplate == null) return;
+        if (messageTemplate == null!) return;
 
         // Catch a common pitfall when a single non-object array is cast to object[]
         if (propertyValues != null &&
@@ -362,7 +364,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties);
+        var currentActivity = Activity.Current;
+        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
         Dispatch(logEvent);
     }
 
@@ -372,7 +375,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// <param name="logEvent">The event to write.</param>
     public void Write(LogEvent logEvent)
     {
-        if (logEvent == null) return;
+        if (logEvent == null!) return;
         if (!IsEnabled(logEvent.Level)) return;
         Dispatch(logEvent);
     }

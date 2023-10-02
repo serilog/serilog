@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
 #pragma warning disable Serilog003 // Property binding verifier
 
@@ -5,6 +7,14 @@ namespace Serilog.Tests.Core;
 
 public class LoggerTests
 {
+    static LoggerTests()
+    {
+        // This is necessary to force activity id allocation on .NET Framework and early .NET Core versions. When this isn't
+        // done, log events end up carrying null trace and span ids (which is fine).
+        Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+        Activity.ForceDefaultIdFormat = true;
+    }
+
     [Theory]
     [InlineData(typeof(Logger))]
 #if FEATURE_DEFAULT_INTERFACE
@@ -54,7 +64,9 @@ public class LoggerTests
     [Fact]
     public void ParametersForAnEmptyTemplateAreIgnored()
     {
+        // ReSharper disable StructuredMessageTemplateProblem
         var e = DelegatingSink.GetLogEvent(l => l.Error("message", new object()));
+        // ReSharper restore StructuredMessageTemplateProblem
         Assert.Equal("message", e.RenderMessage());
     }
 
@@ -99,7 +111,9 @@ public class LoggerTests
     {
         var log = CreateLogger(loggerType, lc => lc);
 
+        // ReSharper disable StructuredMessageTemplateProblem
         Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
+        // ReSharper restore StructuredMessageTemplateProblem
 
         Assert.Equal("Hello, {Name}!", template.Text);
         Assert.Equal("World", properties.Single().Value.LiteralValue());
@@ -188,6 +202,7 @@ public class LoggerTests
         Assert.Equal("message", collectingSink.SingleEvent.Properties["prop"].LiteralValue());
         Assert.Equal(42, collectingSink.SingleEvent.Properties["number"].LiteralValue());
         Assert.Equal(
+            // ReSharper disable once CoVariantArrayConversion
             expected: new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2), new ScalarValue(3) }),
             actual: (SequenceValue)collectingSink.SingleEvent.Properties["values"],
             comparer: new LogEventPropertyValueComparer());
@@ -258,6 +273,34 @@ public class LoggerTests
 
         Assert.True(sinkA.IsDisposed);
         Assert.True(sinkB.IsDisposed);
+    }
+
+    [Fact]
+    public void CurrentActivityIsCapturedAtLogEventCreation()
+    {
+        using var listener = new ActivityListener();
+        listener.ShouldListenTo = _ => true;
+        listener.SampleUsingParentId = (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData;
+        listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData;
+        ActivitySource.AddActivityListener(listener);
+
+        using var source = new ActivitySource(Some.String());
+        using var activity = source.StartActivity(Some.String());
+        Assert.NotNull(activity);
+        Assert.NotEqual("00000000000000000000000000000000", activity.TraceId.ToHexString());
+        Assert.NotEqual("0000000000000000", activity.SpanId.ToHexString());
+
+        var sink = new CollectingSink();
+        var log = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        log.Information("Hello, world!");
+
+        var single = sink.SingleEvent;
+
+        Assert.Equal(activity.TraceId, single.TraceId);
+        Assert.Equal(activity.SpanId, single.SpanId);
     }
 
 #if FEATURE_ASYNCDISPOSABLE

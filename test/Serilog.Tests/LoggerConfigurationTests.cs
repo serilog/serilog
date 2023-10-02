@@ -602,12 +602,6 @@ public class LoggerConfigurationTests
         Assert.True(true, "No exception reached the caller");
     }
 
-    class ThrowingProperty
-    {
-        // ReSharper disable once UnusedMember.Local
-        public string Property => throw new("Boom!");
-    }
-
     [Fact]
     public void WrappingDecoratesTheConfiguredSink()
     {
