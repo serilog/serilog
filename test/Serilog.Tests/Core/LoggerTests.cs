@@ -303,6 +303,20 @@ public class LoggerTests
         Assert.Equal(activity.SpanId, single.SpanId);
     }
 
+    [Fact]
+    public void NullMessageTemplateParametersDoNotBreakBinding()
+    {
+        var log = new LoggerConfiguration().WriteTo.Sink(new CollectingSink()).CreateLogger();
+
+        // ReSharper disable RedundantCast
+        // ReSharper disable StructuredMessageTemplateProblem
+        log.Information("test", (object?[]?) null);
+        log.Write(Warning, (Exception?)null, "test", (object?[]?)null);
+        log.BindMessageTemplate("test", (object?[]?)null, out _, out _);
+        // ReSharper restore RedundantCast
+        // ReSharper restore StructuredMessageTemplateProblem
+    }
+
 #if FEATURE_ASYNCDISPOSABLE
 
     [Fact]
