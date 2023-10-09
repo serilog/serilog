@@ -85,6 +85,14 @@ public class ScalarValue : LogEventPropertyValue
             return;
         }
 
+#if FEATURE_SPANFORMATABLE
+        if (value is ISpanFormattable sf &&
+            TryWriteSpanFormattable(sf, output, format, formatProvider ?? CultureInfo.InvariantCulture))
+        {
+            return;
+        }
+#endif
+
         if (value is IFormattable f)
         {
             output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
@@ -94,6 +102,21 @@ public class ScalarValue : LogEventPropertyValue
             output.Write(value.ToString());
         }
     }
+
+#if FEATURE_SPANFORMATABLE
+    static bool TryWriteSpanFormattable(ISpanFormattable formattable, TextWriter output, string? format, IFormatProvider? formatProvider = null)
+    {
+        //buffer size 128 should be enough for all primitive types
+        Span<char> buffer = stackalloc char[128];
+        if (formattable.TryFormat(buffer, out var written, format, formatProvider))
+        {
+            output.Write(buffer.Slice(0, written));
+            return true;
+        }
+
+        return false;
+    }
+#endif
 
     /// <summary>
     /// Determine if this instance is equal to <paramref name="obj"/>.
