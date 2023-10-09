@@ -149,4 +149,8 @@ class NullTextWriter : TextWriter
     public override void WriteLine(ulong value)
     {
     }
+
+    public override void Write(ReadOnlySpan<char> value)
+    {
+    }
 }
