@@ -14,8 +14,13 @@ public class MessageTemplateRenderingBenchmark
             new { Latitude = 25, Longitude = 134 }, "Benchmark", 34);
 
     static readonly LogEvent EscapeString =
-        Some.InformationEvent("Template for string escape properties {ValueToEscape}",
-            $"This is simple {new string('"', 128)} string with \"quotes\"");
+        Some.InformationEvent("Template for string escape properties {ValueToEscape} Json: {JsonToEscape}",
+            $"This is simple string with \"quotes\"", Json);
+
+    const string Json =
+        "{\"StringField\":\"FieldsValues\",\"Amount\":666,\"Tax\":123.21,\"Id\":\"fae98759-d8a6-4b78-9bc8-60e4a2c33c7e\"," +
+        "\"StringField1\":\"FieldsValues\",\"Amount1\":666,\"Tax\":123.21,\"Id1\":\"437ac564-1c4c-4fdd-98b0-aecc7bf50a6b\"," +
+        "\"Data\":{\"Id\":21213,\"Name\":\"InnerName\",\"Value\":456.84},\"Data1\":{\"Id\":21213,\"Name\":\"InnerName\",\"Value\":456.84}}";
 
     readonly NullTextWriter _output = new();
 
