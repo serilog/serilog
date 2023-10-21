@@ -103,11 +103,14 @@ To learn more about Serilog, check out the [documentation](https://github.com/se
 
 Serilog has an active and helpful community who are happy to help point you in the right direction or work through any issues you might encounter. You can get in touch via:
 
- * [Stack Overflow](http://stackoverflow.com/questions/tagged/serilog) &mdash; this is the best place to start if you have a question
+ * [Stack Overflow](http://stackoverflow.com/questions/tagged/serilog) &mdash; this is the best place to start if you have a question. Many track the `serilog` tag there.
  * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
  * [Serilog-related courses on Pluralsight](https://www.pluralsight.com/search/?q=serilog)
 
 We welcome bug reports and suggestions through our [issue tracker](https://github.com/serilog/serilog/issues) here on GitHub.
+
+We welcome reproducible bug reports and detailed feature requests through [our GitHub issue tracker](https://github.com/serilog/serilog/issues);
+note the other resource are much better for quick questions or seeking usage help.
 
 ### Contributing
 
