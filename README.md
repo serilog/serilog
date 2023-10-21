@@ -91,7 +91,7 @@ catch (Exception ex)
 }
 finally
 {
-    await Log.CloseAndFlushAsync();
+    await Log.CloseAndFlushAsync(); // ensure buffering or async Sinks are flushed before app exits
 }
 ```
 
