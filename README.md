@@ -107,8 +107,6 @@ Serilog has an active and helpful community who are happy to help point you in t
  * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
  * [Serilog-related courses on Pluralsight](https://www.pluralsight.com/search/?q=serilog)
 
-We welcome bug reports and suggestions through our [issue tracker](https://github.com/serilog/serilog/issues) here on GitHub.
-
 We welcome reproducible bug reports and detailed feature requests through [our GitHub issue tracker](https://github.com/serilog/serilog/issues);
 note the other resource are much better for quick questions or seeking usage help.
 
