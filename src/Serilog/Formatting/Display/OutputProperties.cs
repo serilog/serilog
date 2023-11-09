@@ -36,6 +36,16 @@ public static class OutputProperties
     public const string LevelPropertyName = "Level";
 
     /// <summary>
+    /// The id of the trace that was active at the log event's time of creation, if any.
+    /// </summary>
+    public const string TraceIdPropertyName = "TraceId";
+
+    /// <summary>
+    /// The id of the span that was active at the log event's time of creation, if any.
+    /// </summary>
+    public const string SpanIdPropertyName = "SpanId";
+
+    /// <summary>
     /// A new line.
     /// </summary>
     public const string NewLinePropertyName = "NewLine";

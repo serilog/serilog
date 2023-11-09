@@ -5,7 +5,7 @@ class DictionaryMessageTemplateCache : IMessageTemplateParser
     readonly IMessageTemplateParser _innerParser;
     readonly object _templatesLock = new();
 
-    readonly Dictionary<string, MessageTemplate> _templates = new();
+    readonly Dictionary<string, MessageTemplate> _templates = new(ByReferenceStringComparer.Instance);
 
     const int MaxCacheItems = 1000;
     const int MaxCachedTemplateLength = 1024;

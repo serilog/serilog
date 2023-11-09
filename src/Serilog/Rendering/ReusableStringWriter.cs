@@ -9,6 +9,11 @@ class ReusableStringWriter : StringWriter
     static ReusableStringWriter? _pooledWriter;
 
     /// <summary>
+    /// Max capacity of StringBuilder we keep for next using
+    /// </summary>
+    const int StringBuilderCapacityThreshold = 32768;
+
+    /// <summary>
     /// Gets already created StringWriter if there is one available or creates a new one.
     /// </summary>
     /// <param name="formatProvider"></param>
@@ -34,9 +39,15 @@ class ReusableStringWriter : StringWriter
     /// </summary>
     protected override void Dispose(bool disposing)
     {
+        var sb = GetStringBuilder();
+        if (sb.Capacity > StringBuilderCapacityThreshold)
+        {
+            base.Dispose();
+            return;
+        }
         // We don't call base.Dispose because all it does is mark the writer as closed so it can't be
         // written to and we want to keep it open as reusable writer.
-        GetStringBuilder().Clear();
+        sb.Clear();
         _pooledWriter = this;
     }
 }
