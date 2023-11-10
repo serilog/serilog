@@ -42,7 +42,7 @@ class ReusableStringWriter : StringWriter
         var sb = GetStringBuilder();
         if (sb.Capacity > StringBuilderCapacityThreshold)
         {
-            base.Dispose();
+            base.Dispose(disposing);
             return;
         }
         // We don't call base.Dispose because all it does is mark the writer as closed so it can't be
