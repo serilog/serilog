@@ -39,6 +39,12 @@ class ReusableStringWriter : StringWriter
     /// </summary>
     protected override void Dispose(bool disposing)
     {
+        if (!disposing)
+        {
+            base.Dispose(disposing);
+            return;
+        }
+
         var sb = GetStringBuilder();
         if (sb.Capacity > StringBuilderCapacityThreshold)
         {
