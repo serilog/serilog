@@ -571,7 +571,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
                 anyEscaped = true;
 
 #if FEATURE_SPAN
-                output.Write(str.AsSpan().Slice(cleanSegmentStart, i - cleanSegmentStart));
+                output.Write(str.AsSpan(cleanSegmentStart, i - cleanSegmentStart));
 #else
                 output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
 #endif
@@ -609,7 +609,7 @@ public class JsonValueFormatter : LogEventPropertyValueVisitor<TextWriter, bool>
         {
             if (cleanSegmentStart != str.Length)
 #if FEATURE_SPAN
-                output.Write(str.AsSpan().Slice(cleanSegmentStart));
+                output.Write(str.AsSpan(cleanSegmentStart));
 #else
                 output.Write(str.Substring(cleanSegmentStart));
 #endif
