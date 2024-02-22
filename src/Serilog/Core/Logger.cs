@@ -478,6 +478,19 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             SelfLog.WriteLine("Exception {0} caught while enriching {1} with {2}.", ex, logEvent, _enricher);
         }
 
+        var eventProperties = logEvent.Properties;
+        var namedProperties = logEvent.MessageTemplate.NamedProperties;
+        if(namedProperties != null)
+        {
+            foreach (var property in namedProperties)
+            {
+                if (!eventProperties.ContainsKey(property.PropertyName))
+                {
+                    SelfLog.WriteLine("Could not find named property: {0}", property.PropertyName);
+                }
+            }
+        }
+
         _sink.Emit(logEvent);
     }
 

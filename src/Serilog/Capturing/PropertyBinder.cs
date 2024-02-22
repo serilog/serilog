@@ -42,9 +42,6 @@ class PropertyBinder
     {
         if (messageTemplateParameters.Length == 0)
         {
-            if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
-                SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
-
             return NoProperties;
         }
 

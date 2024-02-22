@@ -29,10 +29,7 @@ public class SelfLogTests
     public void EnsureNoSelfLogForEnriched()
     {
         Messages = new();
-        SelfLog.Enable(m =>
-        {
-            Messages.Add(m);
-        });
+        SelfLog.Enable(_ => Messages.Add(_));
 
         var sink = new CollectingSink();
         var configuration = new LoggerConfiguration();
@@ -49,6 +46,28 @@ public class SelfLogTests
         sink.SingleEvent.RenderMessage(writer);
         Assert.Equal("Message: \"Value\"", writer.ToString());
         Assert.Empty(Messages);
+        SelfLog.Disable();
+    }
+
+    [Fact]
+    public void SelfLogReportsErrorWhenNamedPropertyIsMissing()
+    {
+        Messages = new();
+        SelfLog.Enable(_ => Messages.Add(_));
+
+        var sink = new CollectingSink();
+        var configuration = new LoggerConfiguration();
+
+        var logger = configuration
+            .WriteTo.Dummy(w => w.Sink(sink))
+            .CreateLogger();
+
+        logger.Warning("Message: {property}");
+
+        var writer = new StringWriter();
+        sink.SingleEvent.RenderMessage(writer);
+        Assert.Equal("Message: {property}", writer.ToString());
+        Assert.EndsWith("Could not find named property: property", Messages.Single());
         SelfLog.Disable();
     }
 
