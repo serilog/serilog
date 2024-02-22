@@ -26,6 +26,33 @@ public class SelfLogTests
     }
 
     [Fact]
+    public void EnsureNoSelfLogForEnriched()
+    {
+        Messages = new();
+        SelfLog.Enable(m =>
+        {
+            Messages.Add(m);
+        });
+
+        var sink = new CollectingSink();
+        var configuration = new LoggerConfiguration();
+
+        var enrich = configuration.Enrich;
+        enrich.WithProperty("property", "Value");
+        var logger = configuration
+            .WriteTo.Dummy(w => w.Sink(sink))
+            .CreateLogger();
+
+        logger.Warning("Message: {property}");
+
+        var writer = new StringWriter();
+        sink.SingleEvent.RenderMessage(writer);
+        Assert.Equal("Message: \"Value\"", writer.ToString());
+        Assert.Empty(Messages);
+        SelfLog.Disable();
+    }
+
+    [Fact]
     public void SelfLogReportsErrorWhenPositionalParameterCountIsMismatched()
     {
         Messages = new();
