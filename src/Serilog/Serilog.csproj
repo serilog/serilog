@@ -4,7 +4,7 @@
     <VersionPrefix>4.0.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net462;net471</TargetFrameworks>
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.1;netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);netstandard2.1;netstandard2.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
