@@ -32,6 +32,7 @@ class SettingValueConversions
         },
     };
 
+    [RequiresDynamicCode("Finds accessors by name")]
     [RequiresUnreferencedCode("Finds accessors by name")]
     public static object? ConvertToType(string value, Type toType)
     {
