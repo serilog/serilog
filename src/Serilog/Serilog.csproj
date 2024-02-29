@@ -5,7 +5,7 @@
     <Authors>Serilog Contributors</Authors>
     <!-- .NET Framework version targeting is frozen at these two TFMs. -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net462;net471</TargetFrameworks>
-    <!-- Policy is to trim TFM-specific builds to `netstandard2.0`,
+    <!-- Policy is to trim TFM-specific builds to `netstandard2.0`, `net6.0`,
     all active LTS versions, and optionally the latest RTM version, when releasing new
     major Serilog versions. -->
     <TargetFrameworks>$(TargetFrameworks);netstandard2.0;net6.0;net8.0</TargetFrameworks>
