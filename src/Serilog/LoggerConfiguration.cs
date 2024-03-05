@@ -41,6 +41,7 @@ public class LoggerConfiguration
     {
         WriteTo = new(this, s => _logEventSinks.Add(s));
         Enrich = new(this, e => _enrichers.Add(e));
+        DictionaryFullNames = new List<string>();
     }
 
     /// <summary>
@@ -87,6 +88,20 @@ public class LoggerConfiguration
     /// modify the properties associated with events.
     /// </summary>
     public LoggerEnrichmentConfiguration Enrich { get; internal set; }
+
+    /// <summary>
+    /// Cast a custom dictionary inheritance class <see cref="Dictionary{String, Object}"/>
+    /// </summary>
+    public List<string> DictionaryFullNames { get; internal set; }
+
+    /// <summary>
+    /// Cast a custom dictionary inheritance class <see cref="Dictionary{String, Object}"/>
+    /// </summary>
+    public LoggerConfiguration SetDictionaryFullNames(List<string> names)
+    {
+        DictionaryFullNames = names;
+        return this;
+    }
 
     /// <summary>
     /// Configures global filtering of <see cref="LogEvent"/>s.
@@ -156,7 +171,8 @@ public class LoggerConfiguration
             _additionalScalarTypes,
             _additionalDictionaryTypes,
             _additionalDestructuringPolicies,
-            auditing);
+            auditing,
+            DictionaryFullNames);
         var processor = new MessageTemplateProcessor(converter);
 
         var enricher = _enrichers.Count switch

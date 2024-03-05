@@ -38,6 +38,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     readonly int _maximumStringLength;
     readonly int _maximumCollectionCount;
     readonly bool _propagateExceptions;
+    readonly List<string> _dictionaryFullNames;
 
     public PropertyValueConverter(
         int maximumDestructuringDepth,
@@ -46,7 +47,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         IEnumerable<Type> additionalScalarTypes,
         IEnumerable<Type> additionalDictionaryTypes,
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
-        bool propagateExceptions)
+        bool propagateExceptions,
+        List<string> dictionaryFullNames)
     {
         Guard.AgainstNull(additionalScalarTypes);
         Guard.AgainstNull(additionalDestructuringPolicies);
@@ -55,6 +57,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));
 
         _propagateExceptions = propagateExceptions;
+        _dictionaryFullNames = dictionaryFullNames;
         _maximumStringLength = maximumStringLength;
         _maximumCollectionCount = maximumCollectionCount;
 
@@ -354,7 +357,6 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 dictionary = idictionary;
                 return true;
             }
-
             if (valueType.IsConstructedGenericType)
             {
                 var definition = valueType.GetGenericTypeDefinition();
@@ -364,6 +366,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                     dictionary = idictionary;
                     return true;
                 }
+            }
+            if (value is Dictionary<string, object> && valueType?.FullName != null && _dictionaryFullNames.Contains(valueType.FullName))
+            {
+                dictionary = idictionary;
+                return true;
             }
         }
 
