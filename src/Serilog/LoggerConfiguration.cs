@@ -26,6 +26,7 @@ public class LoggerConfiguration
     readonly List<Type> _additionalScalarTypes = new();
     readonly HashSet<Type> _additionalDictionaryTypes = new();
     readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
+    readonly Dictionary<Type, Destructuring> _fallbackDestructuring = new();
     readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
     LogEventLevel _minimumLevel = LogEventLevel.Information;
     LoggingLevelSwitch? _levelSwitch;
@@ -107,7 +108,8 @@ public class LoggerConfiguration
                 _additionalDestructuringPolicies.Add,
                 depth => _maximumDestructuringDepth = depth,
                 length => _maximumStringLength = length,
-                count => _maximumCollectionCount = count);
+                count => _maximumCollectionCount = count,
+                _fallbackDestructuring.Add);
         }
     }
 
@@ -156,7 +158,8 @@ public class LoggerConfiguration
             _additionalScalarTypes,
             _additionalDictionaryTypes,
             _additionalDestructuringPolicies,
-            auditing);
+            auditing,
+            _fallbackDestructuring);
         var processor = new MessageTemplateProcessor(converter);
 
         var enricher = _enrichers.Count switch

@@ -99,4 +99,10 @@ static class SurrogateConfigurationMethods
     {
         return loggerFilterConfiguration.With(filter);
     }
+
+    internal static LoggerConfiguration WhenNoOperator(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
+        Type type, Destructuring destructuring)
+    {
+        return loggerDestructuringConfiguration.WhenNoOperator(type, destructuring);
+    }
 }

@@ -115,6 +115,42 @@ public class LoggerConfigurationTests
     }
 
     [Fact]
+    public void SpecifyingThatATypeShouldBeDestructuredCausesItToBeLoggedAsStructureEvenOnDefault()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.WhenNoOperator(typeof(AB), Destructuring.Destructure)
+            .CreateLogger();
+
+        logger.Information("{AB}", new AB());
+
+        var ev = events.Single();
+        var prop = ev.Properties["AB"];
+        Assert.IsType<StructureValue>(prop);
+    }
+
+    [Fact]
+    public void SpecifyingThatATypeShouldBeDestructuredCausesItToBeLoggedAsScalarWhenStringified()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.WhenNoOperator(typeof(AB), Destructuring.Destructure)
+            .CreateLogger();
+
+        logger.Information("{$AB}", new AB());
+
+        var ev = events.Single();
+        var prop = ev.Properties["AB"];
+        Assert.IsType<ScalarValue>(prop);
+    }
+
+    [Fact]
     public void DestructuringSystemTypeGivesScalarByDefault()
     {
         var events = new List<LogEvent>();

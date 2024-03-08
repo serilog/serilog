@@ -17,7 +17,7 @@ namespace Serilog.Tests.Events;
 public class LogEventPropertyValueTests
 {
     readonly PropertyValueConverter _converter =
-        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false, ImmutableDictionary<Type, Destructuring>.Empty);
 
     [Fact]
     public void AnEnumIsConvertedToANonStringScalarValue()

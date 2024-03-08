@@ -38,15 +38,16 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     readonly int _maximumStringLength;
     readonly int _maximumCollectionCount;
     readonly bool _propagateExceptions;
+    readonly IDictionary<Type, Destructuring> _fallbackDestructuring;
 
-    public PropertyValueConverter(
-        int maximumDestructuringDepth,
+    public PropertyValueConverter(int maximumDestructuringDepth,
         int maximumStringLength,
         int maximumCollectionCount,
         IEnumerable<Type> additionalScalarTypes,
         IEnumerable<Type> additionalDictionaryTypes,
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
-        bool propagateExceptions)
+        bool propagateExceptions,
+        IDictionary<Type, Destructuring> fallbackDestructuring)
     {
         Guard.AgainstNull(additionalScalarTypes);
         Guard.AgainstNull(additionalDestructuringPolicies);
@@ -79,6 +80,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
         _dictionaryTypes = additionalDictionaryTypes.ToArray();
         _depthLimiter = new(maximumDestructuringDepth, this);
+        _fallbackDestructuring = fallbackDestructuring;
     }
 
     public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)
@@ -123,6 +125,12 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (value == null)
             return ScalarValue.Null;
 
+        var type = value.GetType();
+        if (destructuring == Destructuring.Default && _fallbackDestructuring.TryGetValue(type, out var fallbackDestructuring))
+        {
+            destructuring = fallbackDestructuring;
+        }
+
         if (destructuring == Destructuring.Stringify)
         {
             return Stringify(value);
@@ -156,7 +164,6 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
         }
 
-        var type = value.GetType();
         if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
             return enumerableResult;
 

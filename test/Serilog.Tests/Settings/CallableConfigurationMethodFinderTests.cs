@@ -74,6 +74,7 @@ public class CallableConfigurationMethodFinderTests
         Assert.Contains(nameof(LoggerDestructuringConfiguration.ToMaximumStringLength), destructuringMethods);
         Assert.Contains(nameof(DummyLoggerConfigurationExtensions.WithDummyHardCodedString), destructuringMethods);
         Assert.Contains(nameof(LoggerDestructuringConfiguration.With), destructuringMethods);
+        Assert.Contains(nameof(LoggerDestructuringConfiguration.WhenNoOperator), destructuringMethods);
     }
 
     [Fact]
