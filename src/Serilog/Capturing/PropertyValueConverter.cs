@@ -40,7 +40,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     readonly bool _propagateExceptions;
     readonly IDictionary<Type, Destructuring> _fallbackDestructuring;
 
-    public PropertyValueConverter(int maximumDestructuringDepth,
+    public PropertyValueConverter(
+        int maximumDestructuringDepth,
         int maximumStringLength,
         int maximumCollectionCount,
         IEnumerable<Type> additionalScalarTypes,
