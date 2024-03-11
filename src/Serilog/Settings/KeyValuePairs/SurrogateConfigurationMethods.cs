@@ -101,7 +101,7 @@ static class SurrogateConfigurationMethods
     }
 
     internal static LoggerConfiguration WhenNoOperator(LoggerDestructuringConfiguration loggerDestructuringConfiguration,
-        Type type, Destructuring destructuring)
+        Type type, DestructuringFallback destructuring)
     {
         return loggerDestructuringConfiguration.WhenNoOperator(type, destructuring);
     }

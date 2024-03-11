@@ -94,6 +94,12 @@ public class LoggerConfigurationTests
         public int B { get; set; }
     }
 
+    // ReSharper disable UnusedMember.Local, UnusedAutoPropertyAccessor.Local
+    class ABC : AB
+    {
+        public int C { get; set; }
+    }
+
     // ReSharper restore UnusedAutoPropertyAccessor.Local, UnusedMember.Local
 
     [Fact]
@@ -122,7 +128,7 @@ public class LoggerConfigurationTests
 
         var logger = new LoggerConfiguration()
             .WriteTo.Sink(sink)
-            .Destructure.WhenNoOperator(typeof(AB), Destructuring.Destructure)
+            .Destructure.WhenNoOperator(typeof(AB), new DestructuringFallback(Destructuring.Destructure))
             .CreateLogger();
 
         logger.Information("{AB}", new AB());
@@ -140,13 +146,49 @@ public class LoggerConfigurationTests
 
         var logger = new LoggerConfiguration()
             .WriteTo.Sink(sink)
-            .Destructure.WhenNoOperator(typeof(AB), Destructuring.Destructure)
+            .Destructure.WhenNoOperator(typeof(AB), new DestructuringFallback(Destructuring.Destructure))
             .CreateLogger();
 
         logger.Information("{$AB}", new AB());
 
         var ev = events.Single();
         var prop = ev.Properties["AB"];
+        Assert.IsType<ScalarValue>(prop);
+    }
+
+    [Fact]
+    public void SpecifyingThatATypeShouldBeDestructuredCausesItToBeLoggedAsStructureEvenOnDefaultWithInheritance()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.WhenNoOperator(typeof(AB), new DestructuringFallback(Destructuring.Destructure, true))
+            .CreateLogger();
+
+        logger.Information("{ABC}", new ABC());
+
+        var ev = events.Single();
+        var prop = ev.Properties["ABC"];
+        Assert.IsType<StructureValue>(prop);
+    }
+
+    [Fact]
+    public void SpecifyingThatATypeShouldBeDestructuredCausesItToBeLoggedAsScalarEvenOnDefaultWithoutInheritance()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.WhenNoOperator(typeof(AB), new DestructuringFallback(Destructuring.Destructure))
+            .CreateLogger();
+
+        logger.Information("{ABC}", new ABC());
+
+        var ev = events.Single();
+        var prop = ev.Properties["ABC"];
         Assert.IsType<ScalarValue>(prop);
     }
 

@@ -23,8 +23,8 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration ToMaximumCollectionCount(int maximumCollectionCount) { }
         public Serilog.LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth) { }
         public Serilog.LoggerConfiguration ToMaximumStringLength(int maximumStringLength) { }
-        public Serilog.LoggerConfiguration WhenNoOperator(System.Type type, Serilog.Parsing.Destructuring destructuring) { }
-        public Serilog.LoggerConfiguration WhenNoOperator<T>(Serilog.Parsing.Destructuring destructuring) { }
+        public Serilog.LoggerConfiguration WhenNoOperator(System.Type type, Serilog.Parsing.DestructuringFallback destructuringFallback) { }
+        public Serilog.LoggerConfiguration WhenNoOperator<T>(Serilog.Parsing.DestructuringFallback destructuringFallback) { }
         public Serilog.LoggerConfiguration With(params Serilog.Core.IDestructuringPolicy[] destructuringPolicies) { }
         public Serilog.LoggerConfiguration With<TDestructuringPolicy>()
             where TDestructuringPolicy : Serilog.Core.IDestructuringPolicy, new () { }
@@ -837,6 +837,12 @@ namespace Serilog.Parsing
         Default = 0,
         Stringify = 1,
         Destructure = 2,
+    }
+    public readonly struct DestructuringFallback
+    {
+        public DestructuringFallback(Serilog.Parsing.Destructuring destructuring, bool applyToInheritance = false) { }
+        public bool ApplyToInheritance { get; }
+        public Serilog.Parsing.Destructuring Destructuring { get; }
     }
     public class MessageTemplateParser
     {

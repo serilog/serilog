@@ -26,7 +26,7 @@ public class LoggerConfiguration
     readonly List<Type> _additionalScalarTypes = new();
     readonly HashSet<Type> _additionalDictionaryTypes = new();
     readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
-    readonly Dictionary<Type, Destructuring> _fallbackDestructuring = new();
+    readonly Dictionary<Type, DestructuringFallback> _fallbackDestructuring = new();
     readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
     LogEventLevel _minimumLevel = LogEventLevel.Information;
     LoggingLevelSwitch? _levelSwitch;
