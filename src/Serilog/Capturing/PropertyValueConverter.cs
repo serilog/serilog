@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Concurrent;
+
 namespace Serilog.Capturing;
 
 // Values in Serilog are simplified down into a lowest-common-denominator internal
@@ -38,6 +40,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     readonly int _maximumStringLength;
     readonly int _maximumCollectionCount;
     readonly bool _propagateExceptions;
+    readonly IDictionary<Type, DestructuringFallback> _fallbackDestructuring;
+    readonly ConcurrentDictionary<Type, Destructuring?> _fallbackDestructuringCache;
 
     public PropertyValueConverter(
         int maximumDestructuringDepth,
@@ -46,7 +50,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         IEnumerable<Type> additionalScalarTypes,
         IEnumerable<Type> additionalDictionaryTypes,
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
-        bool propagateExceptions)
+        bool propagateExceptions,
+        IDictionary<Type, DestructuringFallback> fallbackDestructuring)
     {
         Guard.AgainstNull(additionalScalarTypes);
         Guard.AgainstNull(additionalDestructuringPolicies);
@@ -79,6 +84,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
         _dictionaryTypes = additionalDictionaryTypes.ToArray();
         _depthLimiter = new(maximumDestructuringDepth, this);
+        _fallbackDestructuring = fallbackDestructuring;
+        _fallbackDestructuringCache = new ConcurrentDictionary<Type, Destructuring?>();
     }
 
     public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)
@@ -123,6 +130,16 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (value == null)
             return ScalarValue.Null;
 
+        var type = value.GetType();
+        if (destructuring == Destructuring.Default)
+        {
+            var fallbackDestructuring = GetCachedFallbackDestructuring(type);
+            if (fallbackDestructuring.HasValue)
+            {
+                destructuring = fallbackDestructuring.Value;
+            }
+        }
+
         if (destructuring == Destructuring.Stringify)
         {
             return Stringify(value);
@@ -156,7 +173,6 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
         }
 
-        var type = value.GetType();
         if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
             return enumerableResult;
 
@@ -167,6 +183,61 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             return compilerGeneratedResult;
 
         return new ScalarValue(value.ToString() ?? "");
+    }
+
+    Destructuring? GetCachedFallbackDestructuring(
+#if !NET5_0
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+#endif
+        Type type)
+    {
+        if (_fallbackDestructuringCache.TryGetValue(type, out var fallbackDestructuring)) return fallbackDestructuring;
+
+        var fallback = GetFallbackDestructuring(type);
+        _fallbackDestructuringCache[type] = fallback;
+
+        return fallback;
+    }
+
+    Destructuring? GetFallbackDestructuring(
+#if !NET5_0
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+#endif
+        Type type)
+    {
+        // Check direct hit:
+        var destructuringFallback = GetFallbackDestructuring(type, true);
+        if (destructuringFallback != null) return destructuringFallback;
+
+        // Check interfaces:
+        foreach (var @interface in type.GetInterfaces())
+        {
+            destructuringFallback = GetFallbackDestructuring(@interface, false);
+            if (destructuringFallback != null) return destructuringFallback;
+        }
+
+        // Check base type hierarchy:
+        var baseType = type.BaseType;
+        while (baseType != null)
+        {
+            destructuringFallback = GetFallbackDestructuring(baseType, false);
+            if (destructuringFallback != null) return destructuringFallback;
+
+            baseType = baseType.BaseType;
+        }
+
+        return null;
+    }
+
+    Destructuring? GetFallbackDestructuring(Type type, bool isDirectHit)
+    {
+        if (_fallbackDestructuring.TryGetValue(type, out var fallbackDestructuring)
+            && (isDirectHit || fallbackDestructuring.ApplyToInheritance))
+        {
+            return fallbackDestructuring.Destructuring;
+        }
+
+        return null;
     }
 
     bool TryConvertEnumerable(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)

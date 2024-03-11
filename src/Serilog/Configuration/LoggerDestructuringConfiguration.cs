@@ -26,6 +26,7 @@ public class LoggerDestructuringConfiguration
     readonly Action<int> _setMaximumDepth;
     readonly Action<int> _setMaximumStringLength;
     readonly Action<int> _setMaximumCollectionCount;
+    readonly Action<Type, DestructuringFallback> _addFallbackDestructuring;
 
     internal LoggerDestructuringConfiguration(
         LoggerConfiguration loggerConfiguration,
@@ -34,7 +35,8 @@ public class LoggerDestructuringConfiguration
         Action<IDestructuringPolicy> addPolicy,
         Action<int> setMaximumDepth,
         Action<int> setMaximumStringLength,
-        Action<int> setMaximumCollectionCount)
+        Action<int> setMaximumCollectionCount,
+        Action<Type, DestructuringFallback> addFallbackDestructuring)
     {
         _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
         _addScalar = Guard.AgainstNull(addScalar);
@@ -43,6 +45,7 @@ public class LoggerDestructuringConfiguration
         _setMaximumDepth = Guard.AgainstNull(setMaximumDepth);
         _setMaximumStringLength = Guard.AgainstNull(setMaximumStringLength);
         _setMaximumCollectionCount = Guard.AgainstNull(setMaximumCollectionCount);
+        _addFallbackDestructuring = Guard.AgainstNull(addFallbackDestructuring);
     }
 
     /// <summary>
@@ -203,4 +206,26 @@ public class LoggerDestructuringConfiguration
         _setMaximumCollectionCount(maximumCollectionCount);
         return _loggerConfiguration;
     }
+
+    /// <summary>
+    /// If no explicit destructuring hint was given for the property, use the given
+    /// destructuring as fallback.
+    /// </summary>
+    /// <param name="destructuringFallback">The fallback destructuring.</param>
+    /// <param name="type">Type to define the fallback for.</typeparam>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    public LoggerConfiguration WhenNoOperator(Type type, DestructuringFallback destructuringFallback)
+    {
+        _addFallbackDestructuring(type, destructuringFallback);
+        return _loggerConfiguration;
+    }
+
+    /// <summary>
+    /// If no explicit destructuring hint was given for the property, use the given
+    /// destructuring as fallback.
+    /// </summary>
+    /// <param name="destructuringFallback">The fallback destructuring.</param>
+    /// <typeparam name="T">Type to define the fallback for.</typeparam>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    public LoggerConfiguration WhenNoOperator<T>(DestructuringFallback destructuringFallback) => WhenNoOperator(typeof(T), destructuringFallback);
 }
