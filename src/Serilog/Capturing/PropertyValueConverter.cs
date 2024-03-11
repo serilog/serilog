@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Concurrent;
+
 namespace Serilog.Capturing;
 
 // Values in Serilog are simplified down into a lowest-common-denominator internal
@@ -39,6 +41,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     readonly int _maximumCollectionCount;
     readonly bool _propagateExceptions;
     readonly IDictionary<Type, DestructuringFallback> _fallbackDestructuring;
+    readonly ConcurrentDictionary<Type, Destructuring?> _fallbackDestructuringCache;
 
     public PropertyValueConverter(
         int maximumDestructuringDepth,
@@ -82,6 +85,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         _dictionaryTypes = additionalDictionaryTypes.ToArray();
         _depthLimiter = new(maximumDestructuringDepth, this);
         _fallbackDestructuring = fallbackDestructuring;
+        _fallbackDestructuringCache = new ConcurrentDictionary<Type, Destructuring?>();
     }
 
     public LogEventProperty CreateProperty(string name, object? value, bool destructureObjects = false)
@@ -129,7 +133,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         var type = value.GetType();
         if (destructuring == Destructuring.Default)
         {
-            var fallbackDestructuring = GetFallbackDestructuring(type);
+            var fallbackDestructuring = GetCachedFallbackDestructuring(type);
             if (fallbackDestructuring.HasValue)
             {
                 destructuring = fallbackDestructuring.Value;
@@ -181,21 +185,56 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return new ScalarValue(value.ToString() ?? "");
     }
 
-    Destructuring? GetFallbackDestructuring(Type type)
+    Destructuring? GetCachedFallbackDestructuring(
+#if !NET5_0
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+#endif
+        Type type)
     {
-        var isDirectHit = true;
-        var typeToCheck = type;
+        if (_fallbackDestructuringCache.TryGetValue(type, out var fallbackDestructuring)) return fallbackDestructuring;
 
-        while (typeToCheck != null)
+        var fallback = GetFallbackDestructuring(type);
+        _fallbackDestructuringCache[type] = fallback;
+
+        return fallback;
+    }
+
+    Destructuring? GetFallbackDestructuring(
+#if !NET5_0
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+#endif
+        Type type)
+    {
+        // Check direct hit:
+        var destructuringFallback = GetFallbackDestructuring(type, true);
+        if (destructuringFallback != null) return destructuringFallback;
+
+        // Check interfaces:
+        foreach (var @interface in type.GetInterfaces())
         {
-            if (_fallbackDestructuring.TryGetValue(typeToCheck, out var fallbackDestructuring)
-                && (fallbackDestructuring.ApplyToInheritance || isDirectHit))
-            {
-                return fallbackDestructuring.Destructuring;
-            }
+            destructuringFallback = GetFallbackDestructuring(@interface, false);
+            if (destructuringFallback != null) return destructuringFallback;
+        }
 
-            isDirectHit = false;
-            typeToCheck = typeToCheck.BaseType;
+        // Check base type hierarchy:
+        var baseType = type.BaseType;
+        while (baseType != null)
+        {
+            destructuringFallback = GetFallbackDestructuring(baseType, false);
+            if (destructuringFallback != null) return destructuringFallback;
+
+            baseType = baseType.BaseType;
+        }
+
+        return null;
+    }
+
+    Destructuring? GetFallbackDestructuring(Type type, bool isDirectHit)
+    {
+        if (_fallbackDestructuring.TryGetValue(type, out var fallbackDestructuring)
+            && (isDirectHit || fallbackDestructuring.ApplyToInheritance))
+        {
+            return fallbackDestructuring.Destructuring;
         }
 
         return null;
