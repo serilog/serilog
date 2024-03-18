@@ -62,6 +62,8 @@ namespace Serilog.Configuration
     }
     public class LoggerSettingsConfiguration
     {
+        [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("KeyValuePair may need to create arrays, which requires dynamic code generation an" +
+            "d is not compatible with AOT.")]
         [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible" +
             " with trimming.")]
         public Serilog.LoggerConfiguration KeyValuePairs(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> settings) { }

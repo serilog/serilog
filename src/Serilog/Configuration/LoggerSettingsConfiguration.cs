@@ -47,6 +47,7 @@ public class LoggerSettingsConfiguration
     /// <remarks>In case of duplicate keys, the last value for the key is kept and the previous ones are ignored.</remarks>
     /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
     [RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible with trimming.")]
+    [RequiresDynamicCode("KeyValuePair may need to create arrays, which requires dynamic code generation and is not compatible with AOT.")]
     public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
     {
         Guard.AgainstNull(settings);
@@ -60,6 +61,7 @@ public class LoggerSettingsConfiguration
     }
 
     [RequiresUnreferencedCode("KeyValuePair scans for configuration settings at run time.")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
     {
         return Settings(new KeyValuePairSettings(settings));
