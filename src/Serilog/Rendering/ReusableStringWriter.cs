@@ -9,7 +9,7 @@ class ReusableStringWriter : StringWriter
     static ReusableStringWriter? _pooledWriter;
 
     /// <summary>
-    /// Max capacity of StringBuilder we keep for next using
+    /// Max capacity of StringBuilder we keep for next using.
     /// </summary>
     internal const int StringBuilderCapacityThreshold = 32768;
 
