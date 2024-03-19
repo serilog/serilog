@@ -168,7 +168,7 @@ public class LoggerConfigurationTests
 
         var logger = new LoggerConfiguration()
             .Destructure.With(new ProjectedDestructuringPolicy(
-                canApply: t => typeof(Type).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()),
+                canApply: t => typeof(Type).IsAssignableFrom(t),
                 projection: o => ((Type)o).AssemblyQualifiedName!))
             .WriteTo.Sink(sink)
             .CreateLogger();
@@ -600,12 +600,6 @@ public class LoggerConfigurationTests
         logger.Information("{@Value}", new Value());
 
         Assert.True(true, "No exception reached the caller");
-    }
-
-    class ThrowingProperty
-    {
-        // ReSharper disable once UnusedMember.Local
-        public string Property => throw new("Boom!");
     }
 
     [Fact]

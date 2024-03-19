@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Reflection.Emit;
-using System;
+using System.Diagnostics;
+// ReSharper disable IntroduceOptionalParameters.Global
 
 namespace Serilog.Events;
 
@@ -23,6 +23,8 @@ namespace Serilog.Events;
 public class LogEvent
 {
     Dictionary<string, LogEventPropertyValue> _properties;
+    ActivityTraceId _traceId;
+    ActivitySpanId _spanId;
 
     /// <summary>
     ///
@@ -66,11 +68,20 @@ public class LogEvent
         Exception = null;
     }
 
-    LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, Dictionary<string, LogEventPropertyValue> properties)
+    LogEvent(
+        DateTimeOffset timestamp,
+        LogEventLevel level,
+        Exception? exception,
+        MessageTemplate messageTemplate,
+        Dictionary<string, LogEventPropertyValue> properties,
+        ActivityTraceId traceId,
+        ActivitySpanId spanId)
     {
         Timestamp = timestamp;
         Level = level;
         Exception = exception;
+        _traceId = traceId;
+        _spanId = spanId;
         MessageTemplate = Guard.AgainstNull(messageTemplate);
         _properties = Guard.AgainstNull(properties);
     }
@@ -86,12 +97,8 @@ public class LogEvent
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
     public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties)
-        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>())
+        : this(timestamp, level, exception, messageTemplate, properties, default, default)
     {
-        Guard.AgainstNull(properties);
-
-        foreach (var property in properties)
-            AddOrUpdateProperty(property);
     }
 
     /// <summary>
@@ -102,10 +109,22 @@ public class LogEvent
     /// <param name="exception">An exception associated with the event, or null.</param>
     /// <param name="messageTemplate">The message template describing the event.</param>
     /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+    /// <param name="traceId">The id of the trace that was active when the event was created, if any.</param>
+    /// <param name="spanId">The id of the span that was active when the event was created, if any.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
-    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
-        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(Guard.AgainstNull(properties).Length))
+    [CLSCompliant(false)]
+    public LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, IEnumerable<LogEventProperty> properties, ActivityTraceId traceId, ActivitySpanId spanId)
+        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(), traceId, spanId)
+    {
+        Guard.AgainstNull(properties);
+
+        foreach (var property in properties)
+            AddOrUpdateProperty(property);
+    }
+
+    internal LogEvent(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, ActivityTraceId traceId, ActivitySpanId spanId)
+        : this(timestamp, level, exception, messageTemplate, new Dictionary<string, LogEventPropertyValue>(Guard.AgainstNull(properties).Length), traceId, spanId)
     {
         for (var i = 0; i < properties.Length; ++i)
             _properties[properties[i].Name] = properties[i].Value;
@@ -120,6 +139,18 @@ public class LogEvent
     /// The level of the event.
     /// </summary>
     public LogEventLevel Level { get; private set; }
+
+    /// <summary>
+    /// The id of the trace that was active when the event was created, if any.
+    /// </summary>
+    [CLSCompliant(false)]
+    public ActivityTraceId? TraceId => _traceId == default ? null : _traceId;
+
+    /// <summary>
+    /// The id of the span that was active when the event was created, if any.
+    /// </summary>
+    [CLSCompliant(false)]
+    public ActivitySpanId? SpanId => _spanId == default ? null : _spanId;
 
     /// <summary>
     /// The message template describing the event.
@@ -237,6 +268,40 @@ public class LogEvent
         _properties.Remove(propertyName);
     }
 
+    /// <summary>
+    /// Construct a <see cref="LogEvent"/> using pre-allocated values for internal fields. Normally,
+    /// the <see cref="LogEvent"/> constructor allocates a dictionary to back <see cref="Properties"/>,
+    /// so that this is not unexpectedly shared. This is unnecessary in many integration scenarios,
+    /// leading to an additional nontrivial <see cref="Dictionary{TKey,TValue}"/> allocation. This
+    /// method allows specialized callers to avoid that overhead.
+    /// </summary>
+    /// <remarks>
+    /// Because this method exposes parameters that essentially map 1:1 with internal fields of <see cref="LogEvent"/>,
+    /// the parameter list may change across major Serilog versions.
+    /// </remarks>
+    /// <param name="timestamp">The time at which the event occurred.</param>
+    /// <param name="level">The level of the event.</param>
+    /// <param name="exception">An exception associated with the event, or null.</param>
+    /// <param name="messageTemplate">The message template describing the event.</param>
+    /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+    /// <param name="traceId">The id of the trace that was active when the event was created, if any.</param>
+    /// <param name="spanId">The id of the span that was active when the event was created, if any.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
+    /// <returns>A constructed <see cref="LogEvent"/>.</returns>
+    [CLSCompliant(false)]
+    public static LogEvent UnstableAssembleFromParts(
+        DateTimeOffset timestamp,
+        LogEventLevel level,
+        Exception? exception,
+        MessageTemplate messageTemplate,
+        Dictionary<string, LogEventPropertyValue> properties,
+        ActivityTraceId traceId,
+        ActivitySpanId spanId)
+    {
+        return new LogEvent(timestamp, level, exception, messageTemplate, properties, traceId, spanId);
+    }
+
     internal LogEvent Copy()
     {
         var properties = new Dictionary<string, LogEventPropertyValue>(_properties);
@@ -246,6 +311,8 @@ public class LogEvent
             Level,
             Exception,
             MessageTemplate,
-            properties);
+            properties,
+            TraceId ?? default,
+            SpanId ?? default);
     }
 }

@@ -30,14 +30,17 @@ public class PipelineBenchmark
         _log = new LoggerConfiguration()
             .WriteTo.Sink(new NullSink())
             .CreateLogger();
-
-        // Ensure template is cached
-        _log.Information(_exception, "Hello, {Name}!", "World");
     }
 
     [Benchmark]
     public void EmitLogEvent()
     {
         _log.Information(_exception, "Hello, {Name}!", "World");
+    }
+
+    [Benchmark]
+    public void IntProperties()
+    {
+        _log.Information(_exception, "Hello, {A} {B} {C}!", 1, 2, 3);
     }
 }

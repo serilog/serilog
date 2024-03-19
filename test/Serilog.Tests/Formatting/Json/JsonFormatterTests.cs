@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Serilog.Tests.Formatting.Json;
 
@@ -288,6 +289,32 @@ public class JsonFormatterTests
         formatter.Format(e, buffer);
         var json = buffer.ToString();
 
-        Assert.Contains(@",""MessageTemplate"":""value: {AProperty}"",""RenderedMessage"":""value: 12"",", json);
+        Assert.Contains(""","MessageTemplate":"value: {AProperty}","RenderedMessage":"value: 12",""", json);
+    }
+
+    [Fact]
+    public void TraceAndSpanAreIgnoredWhenAbsent()
+    {
+        var evt = Some.LogEvent(traceId: default, spanId: default);
+        var sw = new StringWriter();
+        var formatter = new JsonFormatter();
+        formatter.Format(evt, sw);
+        var formatted = sw.ToString();
+        Assert.DoesNotContain("TraceId", formatted);
+        Assert.DoesNotContain("SpanId", formatted);
+    }
+
+    [Fact]
+    public void TraceAndSpanAreIncludedWhenPresent()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var evt = Some.LogEvent(traceId: traceId, spanId: spanId);
+        var sw = new StringWriter();
+        var formatter = new JsonFormatter();
+        formatter.Format(evt, sw);
+        var formatted = sw.ToString();
+        Assert.Contains($"\"TraceId\":\"{traceId}\"", formatted);
+        Assert.Contains($"\"SpanId\":\"{spanId}\"", formatted);
     }
 }
