@@ -424,9 +424,19 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         _messageTemplateProcessor.Process(messageTemplate, propertyValues ?? NoPropertyValues, out var parsedTemplate, out var boundProperties);
 #endif
 
-        var currentActivity = Activity.Current;
-        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
-        Dispatch(logEvent);
+        if (BeforeDispatch == null) // ~ zero-cost null check
+        {
+            var currentActivity = Activity.Current;
+            var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
+            Dispatch(logEvent);
+        }
+        else
+        {
+            var currentActivity = Activity.Current;
+            var logEvent = BeforeDispatch(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
+            Dispatch(logEvent);
+            AfterDispatch?.Invoke(logEvent);
+        }
     }
 
 #if FEATURE_SPAN
@@ -448,7 +458,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         else
         {
             var currentActivity = Activity.Current;
-            var logEvent = BeforeDispatch(logTimestamp, level, exception, parsedTemplate, boundProperties);
+            var logEvent = BeforeDispatch(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
             Dispatch(logEvent);
             AfterDispatch?.Invoke(logEvent);
         }
@@ -459,7 +469,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     /// A custom delegate that is called (when specified) to create LogEvent instances before dispatching them into Serilog pipeline.
     /// With the help of this delegate, it becomes possible to pool LogEvent instances.
     /// </summary>
-    public Func<DateTimeOffset, LogEventLevel, Exception?, MessageTemplate, EventProperty[], LogEvent>? BeforeDispatch { get; set; }
+    [CLSCompliant(false)]
+    public Func<DateTimeOffset, LogEventLevel, Exception?, MessageTemplate, EventProperty[], ActivityTraceId, ActivitySpanId, LogEvent>? BeforeDispatch { get; set; }
 
     /// <summary>
     /// A custom delegate that is called (when specified an only if <see cref="BeforeDispatch"/> is not null) after LogEvent instance

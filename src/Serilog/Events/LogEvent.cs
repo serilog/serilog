@@ -36,6 +36,8 @@ public class LogEvent
         Exception = default;
         MessageTemplate = default!;
         _properties = default!;
+        _traceId = default;
+        _spanId = default;
     }
 
     /// <summary>
@@ -46,12 +48,17 @@ public class LogEvent
     /// <param name="exception"></param>
     /// <param name="messageTemplate"></param>
     /// <param name="properties"></param>
-    public void Fill(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties)
+    /// <param name="traceId"></param>
+    /// <param name="spanId"></param>
+    [CLSCompliant(false)]
+    public void Fill(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, ActivityTraceId traceId, ActivitySpanId spanId)
     {
         Timestamp = timestamp;
         Level = level;
         Exception = exception;
         MessageTemplate = messageTemplate;
+        _traceId = traceId;
+        _spanId = spanId;
 
         _properties ??= new Dictionary<string, LogEventPropertyValue>();
 

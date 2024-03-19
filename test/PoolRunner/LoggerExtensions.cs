@@ -14,10 +14,10 @@ internal static class LoggerExtensions
 
         var pool = provider.Create(new EventLogPolicy());
 
-        logger.BeforeDispatch = (timestamp, level, exception, messageTemplate, properties) =>
+        logger.BeforeDispatch = (timestamp, level, exception, messageTemplate, properties, traceId, spanId) =>
         {
             var logEvent = pool.Get();
-            logEvent.Fill(timestamp, level, exception, messageTemplate, properties);
+            logEvent.Fill(timestamp, level, exception, messageTemplate, properties, traceId, spanId);
             return logEvent;
         };
 
