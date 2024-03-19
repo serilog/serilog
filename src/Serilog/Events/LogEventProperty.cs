@@ -24,9 +24,9 @@ public class LogEventProperty
     /// </summary>
     /// <param name="name">The name of the property.</param>
     /// <param name="value">The value of the property.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <c>null</c></exception>
     /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <c>null</c></exception>
     public LogEventProperty(string name, LogEventPropertyValue value)
     {
         Guard.AgainstNull(value);
@@ -40,7 +40,7 @@ public class LogEventProperty
     /// Construct a <see cref="LogEventProperty"/> from an existing <see cref="EventProperty"/> instance.
     /// </summary>
     /// <param name="property">The existing property.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <code>default</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="property"/> is <c>default</c></exception>
     internal LogEventProperty(EventProperty property)
     {
         if (property.Equals(EventProperty.None)) throw new ArgumentNullException(nameof(property));
@@ -66,7 +66,8 @@ public class LogEventProperty
     /// <returns><see langword="true"/> if the name is valid; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidName([NotNullWhen(true)] string? name) => !string.IsNullOrWhiteSpace(name);
 
-    /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <code>null</code></exception>
+    /// <summary>Ensures that provided name is valid.</summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="name"/> is <c>null</c></exception>
     /// <exception cref="ArgumentException">When <paramref name="name"/> is empty or only contains whitespace</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void EnsureValidName(string name)

@@ -14,14 +14,14 @@
 
 namespace Serilog.Settings.KeyValuePairs;
 
-class SettingValueConversions
+static class SettingValueConversions
 {
     // should match "The.NameSpace.TypeName::MemberName" optionally followed by
     // usual assembly qualifiers like :
     // ", MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-    static Regex StaticMemberAccessorRegex = new("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
+    static readonly Regex StaticMemberAccessorRegex = new("^(?<shortTypeName>[^:]+)::(?<memberName>[A-Za-z][A-Za-z0-9]*)(?<typeNameExtraQualifiers>[^:]*)$");
 
-    static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new()
+    static readonly Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new()
     {
         { typeof(Uri), s => new Uri(s) },
         { typeof(TimeSpan), s => TimeSpan.Parse(s) },
@@ -98,10 +98,8 @@ class SettingValueConversions
                     {
                         var parameters = ci.GetParameters();
                         return parameters.Length == 0 || parameters.All(pi => pi.HasDefaultValue);
-                    });
-
-                if (ctor == null)
-                    throw new InvalidOperationException($"A default constructor was not found on {type.FullName}.");
+                    })
+                    ?? throw new InvalidOperationException($"A default constructor was not found on {type.FullName}.");
 
                 var call = ctor.GetParameters().Select(pi => pi.DefaultValue).ToArray();
                 return ctor.Invoke(call);
