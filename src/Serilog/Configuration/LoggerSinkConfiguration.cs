@@ -263,3 +263,31 @@ public class LoggerSinkConfiguration
         return loggerSinkConfiguration.Sink(wrapper, restrictedToMinimumLevel, levelSwitch);
     }
 }
+
+/// <summary>
+/// TODO
+/// </summary>
+public class LoggerSinkSetupConfiguration
+{
+    readonly LoggerConfiguration _loggerConfiguration;
+    readonly Action<Delegate> _configureSink;
+
+    internal LoggerSinkSetupConfiguration(LoggerConfiguration loggerConfiguration, Action<Delegate> configureSink)
+    {
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+        _configureSink = Guard.AgainstNull(configureSink);
+    }
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <typeparam name="TSink"></typeparam>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    public LoggerConfiguration Configure<TSink>(Action<TSink> configure) where TSink : ILogEventSink
+    {
+        _configureSink(configure);
+        return _loggerConfiguration;
+    }
+}
+

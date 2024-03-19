@@ -20,6 +20,7 @@ namespace Serilog;
 public class LoggerConfiguration
 {
     readonly List<ILogEventSink> _logEventSinks = new();
+    readonly List<Delegate> _configureSinks = new();
     readonly List<ILogEventSink> _auditSinks = new();
     readonly List<ILogEventEnricher> _enrichers = new();
     readonly List<ILogEventFilter> _filters = new();
@@ -39,14 +40,30 @@ public class LoggerConfiguration
     /// </summary>
     public LoggerConfiguration()
     {
-        WriteTo = new(this, s => _logEventSinks.Add(s));
+        WriteTo = new(this, s =>
+        {
+            foreach (var configure in _configureSinks)
+            {
+                var declaredSinkType = configure.Method.GetParameters().First().ParameterType;
+                if (declaredSinkType.IsAssignableFrom(s.GetType()))
+                    configure.DynamicInvoke(s);
+            }
+            _logEventSinks.Add(s);
+        });
         Enrich = new(this, e => _enrichers.Add(e));
+        Setup = new(this, e => _configureSinks.Add(e));
     }
 
     /// <summary>
     /// Configures the sinks that log events will be emitted to.
     /// </summary>
     public LoggerSinkConfiguration WriteTo { get; internal set; }
+
+    /// <summary>
+    /// Additional sinks configuration after their creation. This may be
+    /// useful in case of building serilog pipeline from configuration.
+    /// </summary>
+    public LoggerSinkSetupConfiguration Setup { get; internal set; }
 
     /// <summary>
     /// Configures sinks for auditing, instead of regular (safe) logging. When auditing is used,
