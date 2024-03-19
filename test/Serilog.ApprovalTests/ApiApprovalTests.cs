@@ -13,7 +13,7 @@ public class ApiApprovalTests
             new()
             {
                 IncludeAssemblyAttributes = false,
-                ExcludeAttributes = new[] { "System.Diagnostics.DebuggerDisplayAttribute" },
+                ExcludeAttributes = ["System.Diagnostics.DebuggerDisplayAttribute"],
             });
 
         publicApi.ShouldMatchApproved(options =>

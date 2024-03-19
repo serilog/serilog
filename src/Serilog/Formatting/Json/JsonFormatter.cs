@@ -71,6 +71,18 @@ public sealed class JsonFormatter : ITextFormatter
             JsonValueFormatter.WriteQuotedJsonString(message, output);
         }
 
+        if (logEvent.TraceId != null)
+        {
+            output.Write(",\"TraceId\":");
+            JsonValueFormatter.WriteQuotedJsonString(logEvent.TraceId.ToString()!, output);
+        }
+
+        if (logEvent.SpanId != null)
+        {
+            output.Write(",\"SpanId\":");
+            JsonValueFormatter.WriteQuotedJsonString(logEvent.SpanId.ToString()!, output);
+        }
+
         if (logEvent.Exception != null)
         {
             output.Write(",\"Exception\":");
