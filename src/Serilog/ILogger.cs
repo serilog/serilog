@@ -64,7 +64,7 @@ public interface ILogger
     ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
 #if FEATURE_DEFAULT_INTERFACE
     {
-        if (enrichers == null!)
+        if (enrichers == null)
             return this; // No context here, so little point writing to SelfLog.
 
         return ForContext(new SafeAggregateEnricher(enrichers));
@@ -115,7 +115,7 @@ public interface ILogger
     ILogger ForContext(Type source)
 #if FEATURE_DEFAULT_INTERFACE
     {
-        if (source == null!)
+        if (source == null)
             return this; // Little point in writing to SelfLog here because we don't have any contextual information
 
         return ForContext(Constants.SourceContextPropertyName, source.FullName);
@@ -326,7 +326,7 @@ public interface ILogger
 #if FEATURE_DEFAULT_INTERFACE
     {
         if (!IsEnabled(level)) return;
-        if (messageTemplate == null!) return;
+        if (messageTemplate == null) return;
 
         // Catch a common pitfall when a single non-object array is cast to object[]
         if (propertyValues != null &&
