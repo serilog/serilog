@@ -32,13 +32,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.PerformanceTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.ApprovalTests", "test\Serilog.ApprovalTests\Serilog.ApprovalTests.csproj", "{7669BB99-A118-436B-8C58-1D8E8989A775}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3066AC91-9F08-4A3E-B0CE-2145739117A4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{359BFF0B-0BDF-4564-B9B9-23D2F1C47B48}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\test.yml = .github\workflows\test.yml
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,7 +112,6 @@ Global
 		{B11B911D-977A-42CE-900A-596CF59F6FFA} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{7669BB99-A118-436B-8C58-1D8E8989A775} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
-		{359BFF0B-0BDF-4564-B9B9-23D2F1C47B48} = {3066AC91-9F08-4A3E-B0CE-2145739117A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {268F5761-DAC2-4ECA-9AEC-59663B84854C}
