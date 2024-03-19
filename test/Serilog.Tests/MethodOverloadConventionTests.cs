@@ -22,11 +22,40 @@ public class MethodOverloadConventionTests
     const string MessageTemplate = "messageTemplate";
 
 #if FEATURE_DEFAULT_INTERFACE
+
+    /// <remarks>
+    /// <para>
+    /// Some methods are excluded from the method body comparison.
+    /// </para>
+    ///
+    /// <para>
+    /// Logger.Write methods with generic parameters call
+    /// <see cref="M:Serilog.Core.Logger.Write(Serilog.Events.LogEventLevel,System.Exception,System.String,System.ReadOnlySpan{System.Object})"/>
+    /// method to avoid params array allocation.
+    /// </para>
+    ///
+    /// <para>
+    /// A similar <see cref="ReadOnlySpan{T}"/> accepting method does not exists in the <see cref="ILogger"/> interface,
+    /// and introducing it is a breaking change.
+    /// </para>
+    /// </remarks>
+    static MethodInfo[] ExcludedMethods =
+#if FEATURE_SPAN
+        typeof(ILogger).GetMethods()
+            .Where(mi => mi.Name == nameof(ILogger.Write))
+            .Where(mi => mi.GetGenericArguments().Length > 0)
+            .Where(mi => mi.GetGenericArguments().All(x => x.GetGenericParameterConstraints().Length == 0))
+            .ToArray();
+#else
+        Array.Empty<MethodInfo>();
+#endif
+
     public static IEnumerable<object[]> DefaultInterfaceMethods =>
         typeof(ILogger).GetMethods()
             .Where(mi => mi.GetMethodBody() != null)
             .Where(mi => mi.GetCustomAttribute(typeof(CustomDefaultMethodImplementationAttribute)) == null)
             .Where(mi => typeof(Logger).GetInterfaceMap(typeof(ILogger)).InterfaceMethods.Contains(mi))
+            .Where(mi => !ExcludedMethods.Contains(mi))
             .Select(mi => new object[] { mi });
 
     [Theory]
@@ -934,7 +963,7 @@ public class MethodOverloadConventionTests
                     {
                         Assert.Equal($"T{i}", genericTypeArgs[i].Name);
 
-                        var genericConstraints = genericTypeArgs[i].GetTypeInfo().GetGenericParameterConstraints();
+                        var genericConstraints = genericTypeArgs[i].GetGenericParameterConstraints();
 
                         Assert.Empty(genericConstraints);
                         Assert.Equal($"propertyValue{i}", parameters[index].Name);
@@ -947,7 +976,7 @@ public class MethodOverloadConventionTests
 
                     Assert.Equal("T", genericTypeArg.Name);
 
-                    var genericConstraints = genericTypeArg.GetTypeInfo().GetGenericParameterConstraints();
+                    var genericConstraints = genericTypeArg.GetGenericParameterConstraints();
 
                     Assert.Empty(genericConstraints);
                     Assert.Equal("propertyValue", parameters[index].Name);

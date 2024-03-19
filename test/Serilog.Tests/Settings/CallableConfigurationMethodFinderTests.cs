@@ -2,8 +2,8 @@ namespace Serilog.Tests.Settings;
 
 public class CallableConfigurationMethodFinderTests
 {
-    static readonly Assembly SerilogAssembly = typeof(Log).GetTypeInfo().Assembly;
-    static readonly Assembly TestDummiesAssembly = typeof(DummyLoggerConfigurationExtensions).GetTypeInfo().Assembly;
+    static readonly Assembly SerilogAssembly = typeof(Log).Assembly;
+    static readonly Assembly TestDummiesAssembly = typeof(DummyLoggerConfigurationExtensions).Assembly;
 
     [Fact]
     public void FindsSinkSpecificConfigurationMethods()
