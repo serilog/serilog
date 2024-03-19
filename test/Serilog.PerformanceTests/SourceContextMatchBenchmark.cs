@@ -12,8 +12,8 @@ public class SourceContextMatchBenchmark
 
     public SourceContextMatchBenchmark()
     {
-        _contexts = new[]
-        {
+        _contexts =
+        [
             "Serilog",
             "MyApp",
             "MyAppSomething",
@@ -23,7 +23,7 @@ public class SourceContextMatchBenchmark
             "MyApp.Api.Controllers.AboutController",
             "MyApp.Api.Controllers.HomeController",
             "Api.Controllers.HomeController"
-        };
+        ];
 
         var overrides = new Dictionary<string, LoggingLevelSwitch>
         {

@@ -23,10 +23,10 @@ public class LogEventPropertyValueRewriterTests
     {
         var value = new SequenceValue(new[]
         {
-            new StructureValue(new[]
-            {
+            new StructureValue(
+            [
                 new LogEventProperty("S", new ScalarValue("abcde"))
-            })
+            ])
         });
 
         var limiter = new LimitingRewriter();
@@ -52,10 +52,10 @@ public class LogEventPropertyValueRewriterTests
     {
         var value = new SequenceValue(new[]
         {
-            new StructureValue(new[]
-            {
+            new StructureValue(
+            [
                 new LogEventProperty("S", new ScalarValue("abcde"))
-            })
+            ])
         });
         var limiter = new LimitingRewriter();
         var unchanged = limiter.LimitStringLength(value, 10);

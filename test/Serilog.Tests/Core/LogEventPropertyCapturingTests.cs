@@ -135,7 +135,7 @@ public class LogEventPropertyCapturingTests
                     new ScalarValue("2"),
                     new ScalarValue("3") })) };
 
-        Assert.Equal(expected, Capture(template, new object[] { templateArguments }),
+        Assert.Equal(expected, Capture(template, [templateArguments]),
             new LogEventPropertyStructuralEqualityComparer());
     }
 

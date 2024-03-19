@@ -37,7 +37,7 @@ class KeyValuePairSettings : ILoggerSettings
     const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
     static readonly string[] _supportedDirectives =
-    {
+    [
         UsingDirective,
         LevelSwitchDirective,
         AuditToDirective,
@@ -48,7 +48,7 @@ class KeyValuePairSettings : ILoggerSettings
         EnrichWithDirective,
         FilterDirective,
         DestructureDirective
-    };
+    ];
 
     static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new()
     {

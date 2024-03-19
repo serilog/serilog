@@ -33,7 +33,7 @@ public class JsonFormatterTests
             Information,
             null,
             Some.MessageTemplate(),
-            new[] {new LogEventProperty("name", new ScalarValue(DateOnly.MaxValue))});
+            [new LogEventProperty("name", new ScalarValue(DateOnly.MaxValue))]);
 
         var formatted = FormatJson(@event);
         Assert.Equal(
@@ -49,7 +49,7 @@ public class JsonFormatterTests
             Information,
             null,
             Some.MessageTemplate(),
-            new[] {new LogEventProperty("name", new ScalarValue(TimeOnly.MaxValue))});
+            [new LogEventProperty("name", new ScalarValue(TimeOnly.MaxValue))]);
 
         var formatted = FormatJson(@event);
         Assert.Equal(
@@ -148,7 +148,7 @@ public class JsonFormatterTests
     {
         var value = Some.Int();
         var memberProp = new LogEventProperty(Some.String(), new ScalarValue(value));
-        var structure = new StructureValue(new[] { memberProp });
+        var structure = new StructureValue([memberProp]);
         var structureProp = new LogEventProperty(Some.String(), structure);
         var @event = Some.InformationEvent();
         @event.AddOrUpdateProperty(structureProp);
@@ -227,7 +227,7 @@ public class JsonFormatterTests
     {
         var p = new MessageTemplateParser();
         var e = new LogEvent(Some.OffsetInstant(), Information, null,
-            p.Parse("{AProperty:000}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
+            p.Parse("{AProperty:000}"), [new LogEventProperty("AProperty", new ScalarValue(12))]);
 
         var d = FormatEvent(e);
 
@@ -255,7 +255,7 @@ public class JsonFormatterTests
     {
         var p = new MessageTemplateParser();
         var e = new LogEvent(Some.OffsetInstant(), Information, null,
-            p.Parse("{AProperty}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
+            p.Parse("{AProperty}"), [new LogEventProperty("AProperty", new ScalarValue(12))]);
 
         var d = FormatEvent(e);
 
@@ -268,7 +268,7 @@ public class JsonFormatterTests
     {
         var p = new MessageTemplateParser();
         var e = new LogEvent(Some.OffsetInstant(), Information, null,
-            p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
+            p.Parse("{@AProperty}"), [new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) }))]);
 
         var d = FormatEvent(e);
 
@@ -281,7 +281,7 @@ public class JsonFormatterTests
     {
         var p = new MessageTemplateParser();
         var e = new LogEvent(Some.OffsetInstant(), Information, null,
-            p.Parse("value: {AProperty}"), new[] { new LogEventProperty("AProperty", new ScalarValue(12)) });
+            p.Parse("value: {AProperty}"), [new LogEventProperty("AProperty", new ScalarValue(12))]);
 
         var formatter = new JsonFormatter(renderMessage: true);
 

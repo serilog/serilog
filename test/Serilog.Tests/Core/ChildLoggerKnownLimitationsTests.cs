@@ -66,7 +66,7 @@ public class ChildLoggerKnownLimitationsTests
         //
         static object?[] T(string? rs, int? rl, string cs, int? cl)
         {
-            return new object?[] { rs, rl, cs, cl };
+            return [rs, rl, cs, cl];
         }
         // numbers are relative to incoming event level
         // Information + 1 = Warning
