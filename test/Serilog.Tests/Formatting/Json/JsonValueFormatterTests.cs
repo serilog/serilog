@@ -164,7 +164,7 @@ public class JsonValueFormatterTests
     [Fact]
     public void StructuresFormatAsAnObject()
     {
-        var structure = new StructureValue(new[] { new LogEventProperty("A", new ScalarValue(123)) }, "T");
+        var structure = new StructureValue([new LogEventProperty("A", new ScalarValue(123))], "T");
         var f = Format(structure);
         Assert.Equal("{\"A\":123,\"_typeTag\":\"T\"}", f);
     }

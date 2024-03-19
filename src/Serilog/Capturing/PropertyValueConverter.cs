@@ -58,8 +58,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         _maximumStringLength = maximumStringLength;
         _maximumCollectionCount = maximumCollectionCount;
 
-        _scalarConversionPolicies = new IScalarConversionPolicy[]
-        {
+        _scalarConversionPolicies =
+        [
             new PrimitiveScalarConversionPolicy(),
             new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
             new EnumScalarConversionPolicy(),
@@ -67,14 +67,14 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #if FEATURE_SPAN
             new ByteMemoryScalarConversionPolicy(),
 #endif
-        };
+        ];
 
         _destructuringPolicies = additionalDestructuringPolicies
-            .Concat(new IDestructuringPolicy[]
-            {
+            .Concat(
+            [
                 new DelegateDestructuringPolicy(),
                 new ReflectionTypesScalarDestructuringPolicy()
-            })
+            ])
             .ToArray();
 
         _dictionaryTypes = additionalDictionaryTypes.ToArray();

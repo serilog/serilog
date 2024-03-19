@@ -112,7 +112,7 @@ public class LoggerTests
         var log = CreateLogger(loggerType, lc => lc);
 
         // ReSharper disable StructuredMessageTemplateProblem
-        Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
+        Assert.True(log.BindMessageTemplate("Hello, {Name}!", ["World"], out var template, out var properties));
         // ReSharper restore StructuredMessageTemplateProblem
 
         Assert.Equal("Hello, {Name}!", template.Text);
