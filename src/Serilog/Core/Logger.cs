@@ -208,10 +208,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         if (IsEnabled(level))
         {
 #if FEATURE_SPAN
-            var inlineArray = new PropertiesInlineArray();
-            var span = inlineArray.AsSpan(1);
-            span[0] = propertyValue;
-            Write(level, messageTemplate, span);
+            Write(level, messageTemplate, new PropertiesInlineArray1(propertyValue));
 #else
             Write(level, messageTemplate, new object?[] { propertyValue });
 #endif
@@ -232,11 +229,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         if (IsEnabled(level))
         {
 #if FEATURE_SPAN
-            var inlineArray = new PropertiesInlineArray();
-            var span = inlineArray.AsSpan(2);
-            span[0] = propertyValue0;
-            span[1] = propertyValue1;
-            Write(level, messageTemplate, span);
+            Write(level, messageTemplate, new PropertiesInlineArray2(propertyValue0, propertyValue1));
 #else
             Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
 #endif
@@ -258,12 +251,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         if (IsEnabled(level))
         {
 #if FEATURE_SPAN
-            var inlineArray = new PropertiesInlineArray();
-            var span = inlineArray.AsSpan(3);
-            span[0] = propertyValue0;
-            span[1] = propertyValue1;
-            span[2] = propertyValue2;
-            Write(level, messageTemplate, span);
+            Write(level, messageTemplate, new PropertiesInlineArray3(propertyValue0, propertyValue1, propertyValue2));
 #else
             Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
 #endif
@@ -334,10 +322,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         if (IsEnabled(level))
         {
 #if FEATURE_SPAN
-            var inlineArray = new PropertiesInlineArray();
-            var span = inlineArray.AsSpan(1);
-            span[0] = propertyValue;
-            Write(level, exception, messageTemplate, span);
+            Write(level, exception, messageTemplate, new PropertiesInlineArray1(propertyValue));
 #else
             Write(level, exception, messageTemplate, new object?[] { propertyValue });
 #endif
@@ -359,11 +344,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         if (IsEnabled(level))
         {
 #if FEATURE_SPAN
-            var inlineArray = new PropertiesInlineArray();
-            var span = inlineArray.AsSpan(2);
-            span[0] = propertyValue0;
-            span[1] = propertyValue1;
-            Write(level, exception, messageTemplate, span);
+            Write(level, exception, messageTemplate, new PropertiesInlineArray2(propertyValue0, propertyValue1));
 #else
             Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
 #endif
@@ -386,12 +367,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         if (IsEnabled(level))
         {
 #if FEATURE_SPAN
-            var inlineArray = new PropertiesInlineArray();
-            var span = inlineArray.AsSpan(3);
-            span[0] = propertyValue0;
-            span[1] = propertyValue1;
-            span[2] = propertyValue2;
-            Write(level, exception, messageTemplate, span);
+            Write(level, exception, messageTemplate, new PropertiesInlineArray3(propertyValue0, propertyValue1, propertyValue2));
 #else
             Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
 #endif
