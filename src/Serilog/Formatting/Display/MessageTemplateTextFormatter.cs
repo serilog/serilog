@@ -24,6 +24,7 @@ namespace Serilog.Formatting.Display;
 /// to them. Second, tokens without matching properties are skipped
 /// rather than being written as raw text.
 /// </summary>
+/// <remarks>New code should prefer <c>ExpressionTemplate</c> from <c>Serilog.Expressions</c>.</remarks>
 public class MessageTemplateTextFormatter : ITextFormatter
 {
     readonly IFormatProvider? _formatProvider;
@@ -69,6 +70,14 @@ public class MessageTemplateTextFormatter : ITextFormatter
             {
                 var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, pt.Format);
                 Padding.Apply(output, moniker, pt.Alignment);
+            }
+            else if (pt.PropertyName == OutputProperties.TraceIdPropertyName)
+            {
+                Padding.Apply(output, logEvent.TraceId?.ToString() ?? "", pt.Alignment);
+            }
+            else if (pt.PropertyName == OutputProperties.SpanIdPropertyName)
+            {
+                Padding.Apply(output, logEvent.SpanId?.ToString() ?? "", pt.Alignment);
             }
             else if (pt.PropertyName == OutputProperties.NewLinePropertyName)
             {

@@ -34,9 +34,13 @@ class PropertyBinder
     /// represented in the message template.</param>
     /// <returns>A list of properties; if the template is malformed then
     /// this will be empty.</returns>
-    public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[]? messageTemplateParameters)
+#if FEATURE_SPAN
+    public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, ReadOnlySpan<object?> messageTemplateParameters)
+#else
+    public EventProperty[] ConstructProperties(MessageTemplate messageTemplate, object?[] messageTemplateParameters)
+#endif
     {
-        if (messageTemplateParameters == null || messageTemplateParameters.Length == 0)
+        if (messageTemplateParameters.Length == 0)
         {
             if (messageTemplate.NamedProperties != null || messageTemplate.PositionalProperties != null)
                 SelfLog.WriteLine("Required properties not provided for: {0}", messageTemplate);
@@ -47,10 +51,14 @@ class PropertyBinder
         if (messageTemplate.PositionalProperties != null)
             return ConstructPositionalProperties(messageTemplate, messageTemplateParameters, messageTemplate.PositionalProperties);
 
-        return ConstructNamedProperties(messageTemplate, messageTemplateParameters!);
+        return ConstructNamedProperties(messageTemplate, messageTemplateParameters);
     }
 
+#if FEATURE_SPAN
+    EventProperty[] ConstructPositionalProperties(MessageTemplate template, ReadOnlySpan<object?> messageTemplateParameters, PropertyToken[] positionalProperties)
+#else
     EventProperty[] ConstructPositionalProperties(MessageTemplate template, object?[] messageTemplateParameters, PropertyToken[] positionalProperties)
+#endif
     {
         var result = new EventProperty[messageTemplateParameters.Length];
         foreach (var property in positionalProperties)
@@ -83,7 +91,11 @@ class PropertyBinder
         return result;
     }
 
-    EventProperty[] ConstructNamedProperties(MessageTemplate template, object[] messageTemplateParameters)
+#if FEATURE_SPAN
+    EventProperty[] ConstructNamedProperties(MessageTemplate template, ReadOnlySpan<object?> messageTemplateParameters)
+#else
+    EventProperty[] ConstructNamedProperties(MessageTemplate template, object?[] messageTemplateParameters)
+#endif
     {
         var namedProperties = template.NamedProperties;
         if (namedProperties == null)

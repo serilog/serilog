@@ -4,7 +4,7 @@ class ConcurrentDictionaryMessageTemplateCache : IMessageTemplateParser
 {
     readonly IMessageTemplateParser _innerParser;
 
-    readonly ConcurrentDictionary<string, MessageTemplate> _templates = new();
+    readonly ConcurrentDictionary<string, MessageTemplate> _templates = new(ByReferenceStringComparer.Instance);
 
     const int MaxCacheItems = 1000;
     const int MaxCachedTemplateLength = 1024;
