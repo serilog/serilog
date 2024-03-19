@@ -1,0 +1,66 @@
+name: Run unit tests
+
+on:
+  pull_request:
+    branches:
+      - master
+      - dev
+  # Upload code coverage results when PRs are merged
+  push:
+    branches:
+      - master
+      - dev
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          #source-url: https://nuget.pkg.github.com/serilog/index.json
+        #env:
+          #NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Check formatting
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        run: |
+          dotnet format --no-restore --verify-no-changes --severity warn || (echo "Run 'dotnet format' to fix issues" && exit 1)
+      - name: Build solution [Release]
+        run: dotnet build --no-restore -c Release
+      - name: Build solution [Debug]
+        run: dotnet build --no-restore -c Debug
+      - name: Test solution [Debug]
+        run: dotnet test --no-build -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput=.coverage/
+      - name: Upload coverage to codecov
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: .coverage/*.opencover.xml
+
+  buildcheck:
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Pass build check
+        if: ${{ needs.test.result == 'success' }}
+        run: exit 0
+      - name: Fail build check
+        if: ${{ needs.test.result != 'success' }}
+        run: exit 1
