@@ -77,4 +77,9 @@ static class Some
     {
         return new MessageTemplateParser().Parse(String());
     }
+
+    public static Exception? Exception()
+    {
+        return new ArgumentException(String());
+    }
 }

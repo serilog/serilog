@@ -207,7 +207,14 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
+#if FEATURE_SPAN
+            var inlineArray = new PropertiesInlineArray();
+            var span = inlineArray.AsSpan(1);
+            span[0] = propertyValue;
+            Write(level, messageTemplate, span);
+#else
             Write(level, messageTemplate, new object?[] { propertyValue });
+#endif
         }
     }
 
@@ -224,7 +231,15 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
+#if FEATURE_SPAN
+            var inlineArray = new PropertiesInlineArray();
+            var span = inlineArray.AsSpan(2);
+            span[0] = propertyValue0;
+            span[1] = propertyValue1;
+            Write(level, messageTemplate, span);
+#else
             Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+#endif
         }
     }
 
@@ -242,7 +257,16 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
+#if FEATURE_SPAN
+            var inlineArray = new PropertiesInlineArray();
+            var span = inlineArray.AsSpan(3);
+            span[0] = propertyValue0;
+            span[1] = propertyValue1;
+            span[2] = propertyValue2;
+            Write(level, messageTemplate, span);
+#else
             Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+#endif
         }
     }
 
@@ -257,6 +281,13 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         Write(level, (Exception?)null, messageTemplate, propertyValues);
     }
+
+#if FEATURE_SPAN
+    void Write(LogEventLevel level, string messageTemplate, ReadOnlySpan<object?> propertyValues)
+    {
+        Write(level, null, messageTemplate, propertyValues);
+    }
+#endif
 
     /// <summary>
     /// Determine if events at the specified level, and higher, will be passed through
@@ -302,7 +333,14 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
+#if FEATURE_SPAN
+            var inlineArray = new PropertiesInlineArray();
+            var span = inlineArray.AsSpan(1);
+            span[0] = propertyValue;
+            Write(level, exception, messageTemplate, span);
+#else
             Write(level, exception, messageTemplate, new object?[] { propertyValue });
+#endif
         }
     }
 
@@ -320,7 +358,15 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
+#if FEATURE_SPAN
+            var inlineArray = new PropertiesInlineArray();
+            var span = inlineArray.AsSpan(2);
+            span[0] = propertyValue0;
+            span[1] = propertyValue1;
+            Write(level, exception, messageTemplate, span);
+#else
             Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+#endif
         }
     }
 
@@ -339,7 +385,16 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
+#if FEATURE_SPAN
+            var inlineArray = new PropertiesInlineArray();
+            var span = inlineArray.AsSpan(3);
+            span[0] = propertyValue0;
+            span[1] = propertyValue1;
+            span[2] = propertyValue2;
+            Write(level, exception, messageTemplate, span);
+#else
             Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+#endif
         }
     }
 
@@ -362,12 +417,33 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             propertyValues = new object[] { propertyValues };
 
         var logTimestamp = DateTimeOffset.Now;
+#if FEATURE_SPAN
+        var propertiesSpan = propertyValues == null ? Span<object?>.Empty : propertyValues.AsSpan();
+        _messageTemplateProcessor.Process(messageTemplate, propertiesSpan, out var parsedTemplate, out var boundProperties);
+#else
+        _messageTemplateProcessor.Process(messageTemplate, propertyValues ?? NoPropertyValues, out var parsedTemplate, out var boundProperties);
+#endif
+
+        var currentActivity = Activity.Current;
+        var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
+        Dispatch(logEvent);
+    }
+
+#if FEATURE_SPAN
+    [MessageTemplateFormatMethod("messageTemplate")]
+    void Write(LogEventLevel level, Exception? exception, string messageTemplate, ReadOnlySpan<object?> propertyValues)
+    {
+        if (!IsEnabled(level)) return;
+        if (messageTemplate == null) return;
+
+        var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);
 
         var currentActivity = Activity.Current;
         var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
         Dispatch(logEvent);
     }
+#endif
 
     /// <summary>
     /// Write an event to the log.
@@ -1332,7 +1408,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             return false;
         }
 
-        _messageTemplateProcessor.Process(messageTemplate, propertyValues, out parsedTemplate, out var boundEventProperties);
+        _messageTemplateProcessor.Process(messageTemplate, propertyValues ?? NoPropertyValues, out parsedTemplate, out var boundEventProperties);
         boundProperties = boundEventProperties.Length == 0 ?
             NoProperties :
             boundEventProperties.Select(p => new LogEventProperty(p));

@@ -28,7 +28,7 @@ class MessageTemplateCache : IMessageTemplateParser
     // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2#thread-safety
     //
     // Hence the reason to use Hashtable, otherwise read operation should have been placed into the lock section
-    readonly Hashtable _templates = new();
+    readonly Hashtable _templates = new(ByReferenceStringComparer.Instance);
     const int MaxCacheItems = 1000;
     const int MaxCachedTemplateLength = 1024;
 
