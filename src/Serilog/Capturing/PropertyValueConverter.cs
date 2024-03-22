@@ -182,7 +182,6 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             {
                 return typeDestructuringPolicy.Destructure(value, _depthLimiter);
             }
-
         }
 
         if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
