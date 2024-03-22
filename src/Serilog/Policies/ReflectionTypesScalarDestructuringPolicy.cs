@@ -14,19 +14,16 @@
 
 namespace Serilog.Policies;
 
-class ReflectionTypesScalarDestructuringPolicy : IDestructuringPolicy
+class ReflectionTypesScalarDestructuringPolicy : ITypeDestructuringPolicy
 {
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    public LogEventPropertyValue Destructure(object value, ILogEventPropertyValueFactory propertyValueFactory)
     {
-        // These types and their subclasses are property-laden and deep;
-        // most sinks will convert them to strings.
-        if (value is Type or MemberInfo)
-        {
-            result = new ScalarValue(value);
-            return true;
-        }
+        return new ScalarValue(value);
+    }
 
-        result = null;
-        return false;
+    public bool CanDestructure(Type type)
+    {
+        return typeof(Type).IsAssignableFrom(type) ||
+               typeof(MemberInfo).IsAssignableFrom(type);
     }
 }

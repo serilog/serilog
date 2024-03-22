@@ -6,12 +6,12 @@ namespace Serilog.Tests.Capturing;
 public class PropertyValueConverterTests
 {
     readonly PropertyValueConverter _converter =
-        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), Enumerable.Empty<ITypeDestructuringPolicy>(), false);
 
     [Fact]
     public async Task MaximumDepthIsEffectiveAndThreadSafe()
     {
-        var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), Enumerable.Empty<ITypeDestructuringPolicy>(), false);
 
         var barrier = new Barrier(participantCount: 3);
 

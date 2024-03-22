@@ -24,6 +24,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth) { }
         public Serilog.LoggerConfiguration ToMaximumStringLength(int maximumStringLength) { }
         public Serilog.LoggerConfiguration With(params Serilog.Core.IDestructuringPolicy[] destructuringPolicies) { }
+        public Serilog.LoggerConfiguration With(params Serilog.Core.ITypeDestructuringPolicy[] typeDestructuringPolicies) { }
         public Serilog.LoggerConfiguration With<TDestructuringPolicy>()
             where TDestructuringPolicy : Serilog.Core.IDestructuringPolicy, new () { }
     }
@@ -121,6 +122,11 @@ namespace Serilog.Core
     public interface ILogEventSink
     {
         void Emit(Serilog.Events.LogEvent logEvent);
+    }
+    public interface ITypeDestructuringPolicy
+    {
+        bool CanDestructure(System.Type type);
+        Serilog.Events.LogEventPropertyValue Destructure(object value, Serilog.Core.ILogEventPropertyValueFactory propertyValueFactory);
     }
     public sealed class Logger : Serilog.Core.ILogEventSink, Serilog.ILogger, System.IAsyncDisposable, System.IDisposable
     {
