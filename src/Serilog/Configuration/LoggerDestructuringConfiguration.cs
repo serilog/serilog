@@ -23,6 +23,7 @@ public class LoggerDestructuringConfiguration
     readonly Action<Type> _addScalar;
     readonly Action<Type> _addDictionaryType;
     readonly Action<IDestructuringPolicy> _addPolicy;
+    readonly Action<ITypeDestructuringPolicy> _addTypePolicy;
     readonly Action<int> _setMaximumDepth;
     readonly Action<int> _setMaximumStringLength;
     readonly Action<int> _setMaximumCollectionCount;
@@ -32,6 +33,7 @@ public class LoggerDestructuringConfiguration
         Action<Type> addScalar,
         Action<Type> addDictionaryType,
         Action<IDestructuringPolicy> addPolicy,
+        Action<ITypeDestructuringPolicy> addTypePolicy,
         Action<int> setMaximumDepth,
         Action<int> setMaximumStringLength,
         Action<int> setMaximumCollectionCount)
@@ -40,6 +42,7 @@ public class LoggerDestructuringConfiguration
         _addScalar = Guard.AgainstNull(addScalar);
         _addDictionaryType = Guard.AgainstNull(addDictionaryType);
         _addPolicy = Guard.AgainstNull(addPolicy);
+        _addTypePolicy = Guard.AgainstNull(addTypePolicy);
         _setMaximumDepth = Guard.AgainstNull(setMaximumDepth);
         _setMaximumStringLength = Guard.AgainstNull(setMaximumStringLength);
         _setMaximumCollectionCount = Guard.AgainstNull(setMaximumCollectionCount);
@@ -85,6 +88,27 @@ public class LoggerDestructuringConfiguration
             if (destructuringPolicy == null) throw new ArgumentException("Null policy is not allowed.");
 
             _addPolicy(destructuringPolicy);
+        }
+        return _loggerConfiguration;
+    }
+
+    /// <summary>
+    /// When destructuring objects, transform instances with the provided policies.
+    /// </summary>
+    /// <param name="typeDestructuringPolicies">Policies to apply when destructuring.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="typeDestructuringPolicies"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentException">When any element of <paramref name="typeDestructuringPolicies"/> is <code>null</code></exception>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public LoggerConfiguration With(params ITypeDestructuringPolicy[] typeDestructuringPolicies)
+    {
+        Guard.AgainstNull(typeDestructuringPolicies);
+
+        foreach (var typeDestructuringPolicy in typeDestructuringPolicies)
+        {
+            if (typeDestructuringPolicy == null) throw new ArgumentException("Null policy is not allowed.");
+
+            _addTypePolicy(typeDestructuringPolicy);
         }
         return _loggerConfiguration;
     }

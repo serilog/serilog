@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Concurrent;
+
 namespace Serilog.Capturing;
 
 // Values in Serilog are simplified down into a lowest-common-denominator internal
@@ -31,7 +33,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #endif
     };
 
+
+    readonly ConcurrentDictionary<Type, ITypeDestructuringPolicy?> _typeDestructurers = new();
     readonly IDestructuringPolicy[] _destructuringPolicies;
+    readonly ITypeDestructuringPolicy[] _typeDestructuringPolicies;
     readonly Type[] _dictionaryTypes;
     readonly IScalarConversionPolicy[] _scalarConversionPolicies;
     readonly DepthLimiter _depthLimiter;
@@ -46,10 +51,12 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         IEnumerable<Type> additionalScalarTypes,
         IEnumerable<Type> additionalDictionaryTypes,
         IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
+        IEnumerable<ITypeDestructuringPolicy> additionalTypeDestructuringPolicies,
         bool propagateExceptions)
     {
         Guard.AgainstNull(additionalScalarTypes);
         Guard.AgainstNull(additionalDestructuringPolicies);
+        Guard.AgainstNull(additionalTypeDestructuringPolicies);
         if (maximumDestructuringDepth < 0) throw new ArgumentOutOfRangeException(nameof(maximumDestructuringDepth));
         if (maximumStringLength < 2) throw new ArgumentOutOfRangeException(nameof(maximumStringLength));
         if (maximumCollectionCount < 1) throw new ArgumentOutOfRangeException(nameof(maximumCollectionCount));
@@ -69,8 +76,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #endif
         };
 
-        _destructuringPolicies = additionalDestructuringPolicies
-            .Concat(new IDestructuringPolicy[]
+        _destructuringPolicies = additionalDestructuringPolicies.ToArray();
+
+        _typeDestructuringPolicies = additionalTypeDestructuringPolicies
+            .Concat(new ITypeDestructuringPolicy[]
             {
                 new DelegateDestructuringPolicy(),
                 new ReflectionTypesScalarDestructuringPolicy()
@@ -147,16 +156,32 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
         DepthLimiter.SetCurrentDepth(depth);
 
+        var type = value.GetType();
         if (destructuring == Destructuring.Destructure)
         {
-            foreach (var destructuringPolicy in _destructuringPolicies)
+            var typeDestructuringPolicy = _typeDestructurers.GetOrAdd(type, _ =>
             {
-                if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
-                    return result;
+                foreach (var destructuringPolicy in _typeDestructuringPolicies)
+                {
+                    if (destructuringPolicy.CanDestructure(_))
+                        return destructuringPolicy;
+                }
+
+                return null;
+            });
+
+            if (typeDestructuringPolicy != null)
+            {
+                return typeDestructuringPolicy.Destructure(value, _depthLimiter);
             }
         }
 
-        var type = value.GetType();
+        foreach (var destructuringPolicy in _destructuringPolicies)
+        {
+            if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
+                return result;
+        }
+
         if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
             return enumerableResult;
 

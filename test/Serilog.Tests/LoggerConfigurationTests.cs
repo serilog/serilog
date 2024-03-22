@@ -183,6 +183,37 @@ public class LoggerConfigurationTests
     }
 
     [Fact]
+    public void TypeDestructuring()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .Destructure.With(new TargetTypeDestructuringPolicy())
+            .WriteTo.Sink(sink)
+            .CreateLogger();
+
+        logger.Information("{@target}", new TargetTypeDestructuring() );
+
+        var ev = events.Single();
+        var prop = ev.Properties["target"];
+        var sv = Assert.IsAssignableFrom<ScalarValue>(prop);
+        Assert.Equal("Value", sv.LiteralValue());
+    }
+
+    public class TargetTypeDestructuring;
+
+    public class TargetTypeDestructuringPolicy :
+        ITypeDestructuringPolicy
+    {
+        public LogEventPropertyValue Destructure(object value, ILogEventPropertyValueFactory propertyValueFactory) =>
+            new ScalarValue("Value");
+
+        public bool CanDestructure(Type type) =>
+            type == typeof(TargetTypeDestructuring);
+    }
+
+    [Fact]
     public void TransformationsAreAppliedToEventProperties()
     {
         var events = new List<LogEvent>();

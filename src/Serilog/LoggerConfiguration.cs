@@ -26,6 +26,7 @@ public class LoggerConfiguration
     readonly List<Type> _additionalScalarTypes = new();
     readonly HashSet<Type> _additionalDictionaryTypes = new();
     readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
+    readonly List<ITypeDestructuringPolicy> _additionalTypeDestructuringPolicies = new();
     readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
     LogEventLevel _minimumLevel = LogEventLevel.Information;
     LoggingLevelSwitch? _levelSwitch;
@@ -105,6 +106,7 @@ public class LoggerConfiguration
                 _additionalScalarTypes.Add,
                 type => _additionalDictionaryTypes.Add(type),
                 _additionalDestructuringPolicies.Add,
+                _additionalTypeDestructuringPolicies.Add,
                 depth => _maximumDestructuringDepth = depth,
                 length => _maximumStringLength = length,
                 count => _maximumCollectionCount = count);
@@ -156,6 +158,7 @@ public class LoggerConfiguration
             _additionalScalarTypes,
             _additionalDictionaryTypes,
             _additionalDestructuringPolicies,
+            _additionalTypeDestructuringPolicies,
             auditing);
         var processor = new MessageTemplateProcessor(converter);
 

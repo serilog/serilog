@@ -14,17 +14,15 @@
 
 namespace Serilog.Policies;
 
-class DelegateDestructuringPolicy : IDestructuringPolicy
+class DelegateDestructuringPolicy : ITypeDestructuringPolicy
 {
-    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
+    public LogEventPropertyValue Destructure(object value, ILogEventPropertyValueFactory propertyValueFactory)
     {
-        if (value is Delegate del)
-        {
-            result = new ScalarValue(del.ToString());
-            return true;
-        }
+        return new ScalarValue(value.ToString());
+    }
 
-        result = null;
-        return false;
+    public bool CanDestructure(Type type)
+    {
+        return typeof(Delegate).IsAssignableFrom(type);
     }
 }
