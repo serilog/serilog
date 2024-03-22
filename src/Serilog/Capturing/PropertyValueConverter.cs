@@ -159,27 +159,30 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         var type = value.GetType();
         if (destructuring == Destructuring.Destructure)
         {
-            var typeDestructuringPolicy = _typeDestructurers.GetOrAdd(type, _ =>
+            foreach (var destructuringPolicy in _destructuringPolicies)
             {
-                foreach (var destructuringPolicy in _typeDestructuringPolicies)
-                {
-                    if (destructuringPolicy.CanDestructure(_))
-                        return destructuringPolicy;
-                }
+                if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
+                    return result;
+            }
 
-                return null;
-            });
+            var typeDestructuringPolicy = _typeDestructurers.GetOrAdd(
+                type,
+                _ =>
+                {
+                    foreach (var destructuringPolicy in _typeDestructuringPolicies)
+                    {
+                        if (destructuringPolicy.CanDestructure(_))
+                            return destructuringPolicy;
+                    }
+
+                    return null;
+                });
 
             if (typeDestructuringPolicy != null)
             {
                 return typeDestructuringPolicy.Destructure(value, _depthLimiter);
             }
 
-            foreach (var destructuringPolicy in _destructuringPolicies)
-            {
-                if (destructuringPolicy.TryDestructure(value, _depthLimiter, out var result))
-                    return result;
-            }
         }
 
         if (TryConvertEnumerable(value, type, destructuring, out var enumerableResult))
