@@ -1,3 +1,4 @@
+using Shouldly;
 using System.Diagnostics;
 
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
@@ -315,6 +316,54 @@ public class LoggerTests
         log.BindMessageTemplate("test", (object?[]?)null, out _, out _);
         // ReSharper restore RedundantCast
         // ReSharper restore StructuredMessageTemplateProblem
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void Two_Dimensional_Array_Should_Be_Logger_As_Sequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[3, 2] { { "a", "b" }, { "c", "d" }, { "e", "f" } };
+            l.Error("{@Value}", a);
+        });
+
+        evt.Properties.Count.ShouldBe(1);
+        var arr = evt.Properties["Value"].ShouldBeOfType<SequenceValue>();
+        arr.Elements.Count.ShouldBe(6);
+        arr.LiteralValue().ShouldBe("[a,b,c,d,e,f]");
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void Three_Dimensional_Array_Should_Be_Logger_As_Sequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[3, 2, 1] { { { "a" }, { "b" } }, { { "c" }, { "d" } }, { { "e" }, { "f" } } };
+            l.Error("{@Value}", a);
+        });
+
+        evt.Properties.Count.ShouldBe(1);
+        var arr = evt.Properties["Value"].ShouldBeOfType<SequenceValue>();
+        arr.Elements.Count.ShouldBe(6);
+        arr.LiteralValue().ShouldBe("[a,b,c,d,e,f]");
+    }
+
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void Four_Dimensional_Array_Not_Supported()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[4, 3, 2, 1];
+            l.Error("{@Value}", a);
+        });
+
+        evt.Properties.Count.ShouldBe(1);
+        var val = evt.Properties["Value"].ShouldBeOfType<ScalarValue>();
+        val.LiteralValue().ShouldBe("Capturing the property value threw an exception: NotSupportedException");
     }
 
 #if FEATURE_ASYNCDISPOSABLE

@@ -214,6 +214,29 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 {
                     result = SequenceValue.Empty;
                 }
+                else if (list is Array a && a.Rank > 1)
+                {
+                    int index = 0;
+                    var array = new LogEventPropertyValue[list.Count];
+                    if (a.Rank == 2)
+                    {
+                        for (int i = 0; i < a.GetLength(0); ++i)
+                            for (int j = 0; j < a.GetLength(1); ++j)
+                                array[index++] = _depthLimiter.CreatePropertyValue(a.GetValue(i, j), destructuring);
+                    }
+                    else if (a.Rank == 3)
+                    {
+                        for (int i = 0; i < a.GetLength(0); ++i)
+                            for (int j = 0; j < a.GetLength(1); ++j)
+                                for (int k = 0; k < a.GetLength(2); ++k)
+                                    array[index++] = _depthLimiter.CreatePropertyValue(a.GetValue(i, j, k), destructuring);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Serilog does not support multi-dimensional arrays with Rank > 3.");
+                    }
+                    result = new SequenceValue(array);
+                }
                 else
                 {
                     var array = new LogEventPropertyValue[list.Count];
