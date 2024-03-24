@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Tests target .NET Framework 4.6.2 plus the latest RTM of .NET Framework -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net462;net48</TargetFrameworks>
@@ -21,6 +21,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="Shouldly" Version="4.1.0" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
