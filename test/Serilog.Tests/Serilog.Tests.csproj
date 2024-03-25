@@ -20,7 +20,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1" PrivateAssets="all" />
     <PackageReference Include="xunit" Version="2.8.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Shouldly" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' or  '$(TargetFramework)' == 'net48' ">

@@ -1,4 +1,3 @@
-using Shouldly;
 using System.Diagnostics;
 
 #pragma warning disable Serilog004 // Constant MessageTemplate verifier
@@ -328,10 +327,10 @@ public class LoggerTests
             l.Error("{@Value}", a);
         });
 
-        evt.Properties.Count.ShouldBe(1);
-        var arr = evt.Properties["Value"].ShouldBeOfType<SequenceValue>();
-        arr.Elements.Count.ShouldBe(6);
-        arr.LiteralValue().ShouldBe("[a,b,c,d,e,f]");
+        Assert.Equal(1, evt.Properties.Count);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(3, arr.Elements.Count);
+        Assert.Equal("[[a,b],[c,d],[e,f]]", arr.LiteralValue());
     }
 
     // https://github.com/serilog/serilog/issues/2019
@@ -344,10 +343,10 @@ public class LoggerTests
             l.Error("{@Value}", a);
         });
 
-        evt.Properties.Count.ShouldBe(1);
-        var arr = evt.Properties["Value"].ShouldBeOfType<SequenceValue>();
-        arr.Elements.Count.ShouldBe(6);
-        arr.LiteralValue().ShouldBe("[a,b,c,d,e,f]");
+        Assert.Equal(1, evt.Properties.Count);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(3, arr.Elements.Count);
+        Assert.Equal("[[[a],[b]],[[c],[d]],[[e],[f]]]", arr.LiteralValue());
     }
 
 
@@ -361,9 +360,9 @@ public class LoggerTests
             l.Error("{@Value}", a);
         });
 
-        evt.Properties.Count.ShouldBe(1);
-        var val = evt.Properties["Value"].ShouldBeOfType<ScalarValue>();
-        val.LiteralValue().ShouldBe("Capturing the property value threw an exception: NotSupportedException");
+        Assert.Equal(1, evt.Properties.Count);
+        var val = evt.Properties["Value"].LiteralValue();
+        Assert.Equal("Capturing the property value threw an exception: NotSupportedException", val);
     }
 
 #if FEATURE_ASYNCDISPOSABLE
