@@ -1,55 +1,49 @@
-using System;
-using Serilog.Events;
-using Serilog.Tests.Support;
-using Xunit;
+namespace Serilog.Tests.Core;
 
-namespace Serilog.Tests.Core
+public class LoggerExtensionsTests
 {
-    public class LoggerExtensionsTests
+    [Theory]
+    [InlineData(Debug, Debug)]
+    [InlineData(Debug, Information)]
+    [InlineData(Debug, Error)]
+    [InlineData(Debug, Fatal)]
+    [InlineData(Debug, Warning)]
+    public void ShouldEnrichLogEventWhenLevelIsSameOrHigherThanMinLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
     {
-        [Theory]
-        [InlineData(LogEventLevel.Debug, LogEventLevel.Debug)]
-        [InlineData(LogEventLevel.Debug, LogEventLevel.Information)]
-        [InlineData(LogEventLevel.Debug, LogEventLevel.Error)]
-        [InlineData(LogEventLevel.Debug, LogEventLevel.Fatal)]
-        [InlineData(LogEventLevel.Debug, LogEventLevel.Warning)]
-        public void ShouldEnrichLogEventWhenLevelIsSameOrHigherThanMinLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
-        {
-            var propValue = Guid.NewGuid();
-            var propKey = Some.String();
-            var sink = new CollectingSink();
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Is(logMinLevel)
-                .WriteTo.Sink(sink)
-                .CreateLogger();
+        var propValue = Guid.NewGuid();
+        var propKey = Some.String();
+        var sink = new CollectingSink();
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Is(logMinLevel)
+            .WriteTo.Sink(sink)
+            .CreateLogger();
 
-            logger.ForContext(propertyLogLevel, propKey, propValue)
-                .Write(logMinLevel, string.Empty);
+        logger.ForContext(propertyLogLevel, propKey, propValue)
+            .Write(logMinLevel, string.Empty);
 
-            Assert.True(sink.SingleEvent.Properties.ContainsKey(propKey));
-            Assert.Equal(sink.SingleEvent.Properties[propKey].LiteralValue(), propValue);
-        }
+        Assert.True(sink.SingleEvent.Properties.ContainsKey(propKey));
+        Assert.Equal(sink.SingleEvent.Properties[propKey].LiteralValue(), propValue);
+    }
 
-        [Theory]
-        [InlineData(LogEventLevel.Debug, LogEventLevel.Verbose)]
-        [InlineData(LogEventLevel.Information, LogEventLevel.Debug)]
-        [InlineData(LogEventLevel.Warning, LogEventLevel.Information)]
-        [InlineData(LogEventLevel.Error, LogEventLevel.Warning)]
-        [InlineData(LogEventLevel.Fatal, LogEventLevel.Error)]
-        public void ShouldNotEnrichLogEventsWhenMinLevelIsHigherThanProvidedLogLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
-        {
-            var propValue = Guid.NewGuid();
-            var propKey = Some.String();
-            var sink = new CollectingSink();
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Is(logMinLevel)
-                .WriteTo.Sink(sink)
-                .CreateLogger();
+    [Theory]
+    [InlineData(Debug, Verbose)]
+    [InlineData(Information, Debug)]
+    [InlineData(Warning, Information)]
+    [InlineData(Error, Warning)]
+    [InlineData(Fatal, Error)]
+    public void ShouldNotEnrichLogEventsWhenMinLevelIsHigherThanProvidedLogLevel(LogEventLevel logMinLevel, LogEventLevel propertyLogLevel)
+    {
+        var propValue = Guid.NewGuid();
+        var propKey = Some.String();
+        var sink = new CollectingSink();
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Is(logMinLevel)
+            .WriteTo.Sink(sink)
+            .CreateLogger();
 
-            logger.ForContext(propertyLogLevel, propKey, propValue)
-                .Write(logMinLevel, string.Empty);
+        logger.ForContext(propertyLogLevel, propKey, propValue)
+            .Write(logMinLevel, string.Empty);
 
-            Assert.False(sink.SingleEvent.Properties.ContainsKey(propKey));
-        }
+        Assert.False(sink.SingleEvent.Properties.ContainsKey(propKey));
     }
 }

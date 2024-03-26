@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Serilog.Core;
-using Serilog.Events;
+namespace Serilog.Policies;
 
-namespace Serilog.Policies
+class DelegateDestructuringPolicy : IDestructuringPolicy
 {
-    class DelegateDestructuringPolicy : IDestructuringPolicy
+    public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
-        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        if (value is Delegate del)
         {
-            if (value is Delegate del)
-            {
-                result = new ScalarValue(del.ToString());
-                return true;
-            }
-
-            result = null;
-            return false;
+            result = new ScalarValue(del.ToString());
+            return true;
         }
+
+        result = null;
+        return false;
     }
 }

@@ -12,36 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using Serilog.Events;
+namespace Serilog.Core.Sinks;
 
-namespace Serilog.Core.Sinks
+sealed class RestrictedSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
-    class RestrictedSink : ILogEventSink, IDisposable
+    readonly ILogEventSink _sink;
+    readonly LoggingLevelSwitch _levelSwitch;
+
+    public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
     {
-        readonly ILogEventSink _sink;
-        readonly LoggingLevelSwitch _levelSwitch;
-
-        public RestrictedSink(ILogEventSink sink, LoggingLevelSwitch levelSwitch)
-        {
-            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
-            _levelSwitch = levelSwitch ?? throw new ArgumentNullException(nameof(levelSwitch));
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-
-            if ((int)logEvent.Level < (int)_levelSwitch.MinimumLevel)
-                return;
-
-            _sink.Emit(logEvent);
-        }
-
-        public void Dispose()
-        {
-           (_sink as IDisposable)?.Dispose();
-        }
+        _sink = Guard.AgainstNull(sink);
+        _levelSwitch = Guard.AgainstNull(levelSwitch);
     }
+
+    public void Emit(LogEvent logEvent)
+    {
+        Guard.AgainstNull(logEvent);
+
+        if (logEvent.Level < _levelSwitch.MinimumLevel)
+            return;
+
+        _sink.Emit(logEvent);
+    }
+
+    public void Dispose()
+    {
+        (_sink as IDisposable)?.Dispose();
+    }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public ValueTask DisposeAsync()
+    {
+        if (_sink is IAsyncDisposable asyncDisposable)
+            return asyncDisposable.DisposeAsync();
+
+        Dispose();
+        return default;
+    }
+#endif
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2017 Serilog Contributors
+// Copyright 2013-2017 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,40 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
-using Serilog.Core;
-using Serilog.Events;
+namespace Serilog.Policies;
 
-namespace Serilog.Policies
+// Byte arrays, when logged, need to be copied so that they are
+// safe from concurrent modification when written to asynchronous
+// sinks. Byte arrays larger than 1k are written as descriptive strings.
+class ByteArrayScalarConversionPolicy : IScalarConversionPolicy
 {
-    // Byte arrays, when logged, need to be copied so that they are
-    // safe from concurrent modification when written to asynchronous
-    // sinks. Byte arrays larger than 1k are written as descriptive strings.
-    class ByteArrayScalarConversionPolicy : IScalarConversionPolicy
+    const int MaximumByteArrayLength = 1024;
+
+    public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)
     {
-        const int MaximumByteArrayLength = 1024;
-
-        public bool TryConvertToScalar(object value, out ScalarValue result)
+        if (value is not byte[] bytes)
         {
-            var bytes = value as byte[];
-            if (bytes == null)
-            {
-                result = null;
-                return false;
-            }
-
-            if (bytes.Length > MaximumByteArrayLength)
-            {
-                var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
-                var description = start + "... (" + bytes.Length + " bytes)";
-                result = new ScalarValue(description);
-            }
-            else
-            {
-                result = new ScalarValue(string.Concat(bytes.Select(b => b.ToString("X2"))));
-            }
-
-            return true;
+            result = null;
+            return false;
         }
+
+        if (bytes.Length > MaximumByteArrayLength)
+        {
+#if FEATURE_TOHEXSTRING
+            var start = Convert.ToHexString(bytes, 0, 16);
+#else
+            var start = string.Concat(bytes.Take(16).Select(b => b.ToString("X2")));
+#endif
+            var description = start + "... (" + bytes.Length + " bytes)";
+            result = new ScalarValue(description);
+        }
+        else
+        {
+#if FEATURE_TOHEXSTRING
+            result = new ScalarValue(Convert.ToHexString(bytes));
+#else
+            result = new ScalarValue(string.Concat(bytes.Select(b => b.ToString("X2"))));
+#endif
+        }
+
+        return true;
     }
 }

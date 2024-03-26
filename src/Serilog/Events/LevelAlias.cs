@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Serilog.Events
+namespace Serilog.Events;
+
+/// <summary>
+/// Descriptive aliases for <see cref="LogEventLevel"/>.
+/// </summary>
+/// <remarks>These do not appear as members of the enumeration
+/// as duplicated underlying values result in issues when presenting
+/// enum values with <see cref="object.ToString()"/>.</remarks>
+public static class LevelAlias
 {
     /// <summary>
-    /// Descriptive aliases for <see cref="LogEventLevel"/>.
+    /// The least significant level of event.
     /// </summary>
-    /// <remarks>These do not appear as members of the enumeration
-    /// as duplicated underlying values result in issues when presenting
-    /// enum values with <see cref="object.ToString()"/>.</remarks>
-    public static class LevelAlias
-    {
-        /// <summary>
-        /// The least significant level of event.
-        /// </summary>
-        public const LogEventLevel Minimum = LogEventLevel.Verbose;
+    public const LogEventLevel Minimum = LogEventLevel.Verbose;
 
-        /// <summary>
-        /// The most significant level of event.
-        /// </summary>
-        public const LogEventLevel Maximum = LogEventLevel.Fatal;
-    }
+    /// <summary>
+    /// The most significant level of event.
+    /// </summary>
+    public const LogEventLevel Maximum = LogEventLevel.Fatal;
+
+    /// <summary>
+    /// A value that, when used as a "minimum" level, will result in no
+    /// events being emitted.
+    /// </summary>
+    /// <remarks>It is never correct to construct a <see cref="LogEvent"/> with this value.</remarks>
+    public const LogEventLevel Off = Maximum + 1;
 }

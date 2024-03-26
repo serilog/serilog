@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,109 +12,106 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Globalization;
-using System.IO;
+namespace Serilog.Events;
 
-namespace Serilog.Events
+/// <summary>
+/// A property value corresponding to a simple, scalar type.
+/// </summary>
+public class ScalarValue : LogEventPropertyValue
 {
     /// <summary>
-    /// A property value corresponding to a simple, scalar type.
+    /// Scalar value representing <see langword="null"/>.
     /// </summary>
-    public class ScalarValue : LogEventPropertyValue
+    public static ScalarValue Null { get; } = new(null);
+
+    /// <summary>
+    /// Construct a <see cref="ScalarValue"/> with the specified
+    /// value.
+    /// </summary>
+    /// <param name="value">The value, which may be <code>null</code>.</param>
+    public ScalarValue(object? value)
     {
-        /// <summary>
-        /// Construct a <see cref="ScalarValue"/> with the specified
-        /// value.
-        /// </summary>
-        /// <param name="value">The value, which may be <code>null</code>.</param>
-        public ScalarValue(object value)
+        Value = value;
+    }
+
+    /// <summary>
+    /// The value, which may be <code>null</code>.
+    /// </summary>
+    public object? Value { get; }
+
+    /// <summary>
+    /// Render the value to the output.
+    /// </summary>
+    /// <param name="output">The output.</param>
+    /// <param name="format">A format string applied to the value, or null.</param>
+    /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+    /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
+    public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+    {
+        Render(Value, output, format, formatProvider);
+    }
+
+    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
+    internal static void Render(object? value, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+    {
+        Guard.AgainstNull(output);
+
+        if (value == null)
         {
-            Value = value;
+            output.Write("null");
+            return;
         }
 
-        /// <summary>
-        /// The value, which may be <code>null</code>.
-        /// </summary>
-        public object Value { get; }
-
-        /// <summary>
-        /// Render the value to the output.
-        /// </summary>
-        /// <param name="output">The output.</param>
-        /// <param name="format">A format string applied to the value, or null.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
-        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        public override void Render(TextWriter output, string format = null, IFormatProvider formatProvider = null)
+        if (value is string s)
         {
-            Render(Value, output, format, formatProvider);
-        }
-
-        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        internal static void Render(object value, TextWriter output, string format = null, IFormatProvider formatProvider = null)
-        {
-            if (output == null) throw new ArgumentNullException(nameof(output));
-
-            if (value == null)
+            if (format != "l")
             {
-                output.Write("null");
-                return;
-            }
-
-            if (value is string s)
-            {
-                if (format != "l")
-                {
-                    output.Write("\"");
-                    output.Write(s.Replace("\"", "\\\""));
-                    output.Write("\"");
-                }
-                else
-                {
-                    output.Write(s);
-                }
-                return;
-            }
-
-            if (formatProvider != null)
-            {
-                var custom = (ICustomFormatter)formatProvider.GetFormat(typeof(ICustomFormatter));
-                if (custom != null)
-                {
-                    output.Write(custom.Format(format, value, formatProvider));
-                    return;
-                }
-            }
-
-            if (value is IFormattable f)
-            {
-                output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
+                output.Write('"');
+                output.Write(s.Replace("\"", "\\\""));
+                output.Write('"');
             }
             else
             {
-                output.Write(value.ToString());
+                output.Write(s);
             }
+            return;
         }
 
-        /// <summary>
-        /// Determine if this instance is equal to <paramref name="obj"/>.
-        /// </summary>
-        /// <param name="obj">The instance to compare with.</param>
-        /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        var custom = (ICustomFormatter?)formatProvider?.GetFormat(typeof(ICustomFormatter));
+        if (custom != null)
         {
-            return obj is ScalarValue sv && Equals(Value, sv.Value);
+            output.Write(custom.Format(format, value, formatProvider));
+            return;
         }
 
-        /// <summary>
-        /// Get a hash code representing the value.
-        /// </summary>
-        /// <returns>The instance's hash code.</returns>
-        public override int GetHashCode()
+        if (value is IFormattable f)
         {
-            if (Value == null) return 0;
-            return Value.GetHashCode();
+            output.Write(f.ToString(format, formatProvider ?? CultureInfo.InvariantCulture));
         }
+        else
+        {
+            output.Write(value.ToString());
+        }
+    }
+
+    /// <summary>
+    /// Determine if this instance is equal to <paramref name="obj"/>.
+    /// </summary>
+    /// <param name="obj">The instance to compare with.</param>
+    /// <returns><see langword="true"/> if the instances are equal; otherwise, <see langword="false"/>.</returns>
+    public override bool Equals(object? obj)
+    {
+        return obj is ScalarValue sv && Equals(Value, sv.Value);
+    }
+
+    /// <summary>
+    /// Get a hash code representing the value.
+    /// </summary>
+    /// <returns>The instance's hash code.</returns>
+    public override int GetHashCode()
+    {
+        if (Value == null) return 0;
+        return Value.GetHashCode();
     }
 }

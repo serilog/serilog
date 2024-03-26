@@ -12,32 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using Serilog.Events;
+namespace Serilog.Core.Sinks;
 
-namespace Serilog.Core.Sinks
+sealed class ConditionalSink : ILogEventSink, IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+    , IAsyncDisposable
+#endif
 {
-    class ConditionalSink : ILogEventSink, IDisposable
+    readonly ILogEventSink _wrapped;
+    readonly Func<LogEvent, bool> _condition;
+
+    public ConditionalSink(ILogEventSink wrapped, Func<LogEvent, bool> condition)
     {
-        readonly ILogEventSink _wrapped;
-        readonly Func<LogEvent, bool> _condition;
-
-        public ConditionalSink(ILogEventSink wrapped, Func<LogEvent, bool> condition)
-        {
-            _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
-            _condition = condition ?? throw new ArgumentNullException(nameof(condition));
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
-            if (_condition(logEvent))
-                _wrapped.Emit(logEvent);
-        }
-
-        public void Dispose()
-        {
-            (_wrapped as IDisposable)?.Dispose();
-        }
+        _wrapped = Guard.AgainstNull(wrapped);
+        _condition = Guard.AgainstNull(condition);
     }
+
+    public void Emit(LogEvent logEvent)
+    {
+        if (_condition(logEvent))
+            _wrapped.Emit(logEvent);
+    }
+
+    public void Dispose()
+    {
+        (_wrapped as IDisposable)?.Dispose();
+    }
+
+#if FEATURE_ASYNCDISPOSABLE
+    public ValueTask DisposeAsync()
+    {
+        if (_wrapped is IAsyncDisposable asyncDisposable)
+            return asyncDisposable.DisposeAsync();
+
+        Dispose();
+        return default;
+    }
+#endif
 }

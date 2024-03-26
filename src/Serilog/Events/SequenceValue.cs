@@ -12,62 +12,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+namespace Serilog.Events;
 
-namespace Serilog.Events
+/// <summary>
+/// A value represented as an ordered sequence of values.
+/// </summary>
+public class SequenceValue : LogEventPropertyValue
 {
+    readonly LogEventPropertyValue[] _elements;
+
     /// <summary>
-    /// A value represented as an ordered sequence of values.
+    /// Empty sequence of values.
     /// </summary>
-    public class SequenceValue : LogEventPropertyValue
+    public static SequenceValue Empty { get; } = new(Array.Empty<LogEventPropertyValue>());
+
+    /// <summary>
+    /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
+    /// </summary>
+    /// <param name="elements">The elements of the sequence.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
+    public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
     {
-        readonly LogEventPropertyValue[] _elements;
+        Guard.AgainstNull(elements);
 
-        /// <summary>
-        /// Create a <see cref="SequenceValue"/> with the provided <paramref name="elements"/>.
-        /// </summary>
-        /// <param name="elements">The elements of the sequence.</param>
-        /// <exception cref="ArgumentNullException">When <paramref name="elements"/> is <code>null</code></exception>
-        public SequenceValue(IEnumerable<LogEventPropertyValue> elements)
+        _elements = elements.ToArray();
+    }
+
+    internal SequenceValue(LogEventPropertyValue[] elements)
+    {
+        Guard.AgainstNull(elements);
+
+        _elements = elements;
+    }
+
+    /// <summary>
+    /// The elements of the sequence.
+    /// </summary>
+    public IReadOnlyList<LogEventPropertyValue> Elements => _elements;
+
+    /// <summary>
+    /// Render the value to the output.
+    /// </summary>
+    /// <param name="output">The output.</param>
+    /// <param name="format">A format string applied to the value, or null.</param>
+    /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+    /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
+    /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
+    public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
+    {
+        Guard.AgainstNull(output);
+
+        output.Write('[');
+        var allButLast = _elements.Length - 1;
+        for (var i = 0; i < allButLast; ++i)
         {
-            if (elements == null) throw new ArgumentNullException(nameof(elements));
-
-            _elements = elements.ToArray();
+            _elements[i].Render(output, format, formatProvider);
+            output.Write(", ");
         }
 
-        /// <summary>
-        /// The elements of the sequence.
-        /// </summary>
-        public IReadOnlyList<LogEventPropertyValue> Elements => _elements;
+        if (_elements.Length > 0)
+            _elements[_elements.Length - 1].Render(output, format, formatProvider);
 
-        /// <summary>
-        /// Render the value to the output.
-        /// </summary>
-        /// <param name="output">The output.</param>
-        /// <param name="format">A format string applied to the value, or null.</param>
-        /// <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
-        /// <seealso cref="LogEventPropertyValue.ToString(string, IFormatProvider)"/>.
-        /// <exception cref="ArgumentNullException">When <paramref name="output"/> is <code>null</code></exception>
-        public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
-        {
-            if (output == null) throw new ArgumentNullException(nameof(output));
-
-            output.Write('[');
-            var allButLast = _elements.Length - 1;
-            for (var i = 0; i < allButLast; ++i)
-            {
-                _elements[i].Render(output, format, formatProvider);
-                output.Write(", ");
-            }
-
-            if (_elements.Length > 0)
-                _elements[_elements.Length - 1].Render(output, format, formatProvider);
-
-            output.Write(']');
-        }
+        output.Write(']');
     }
 }

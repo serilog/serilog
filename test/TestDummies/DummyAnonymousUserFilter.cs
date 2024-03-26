@@ -1,24 +1,20 @@
-﻿using Serilog.Core;
-using Serilog.Events;
+namespace TestDummies;
 
-namespace TestDummies
+public class DummyAnonymousUserFilter : ILogEventFilter
 {
-    public class DummyAnonymousUserFilter : ILogEventFilter
+    public bool IsEnabled(LogEvent logEvent)
     {
-        public bool IsEnabled(LogEvent logEvent)
+        if (logEvent.Properties.ContainsKey("User"))
         {
-            if (logEvent.Properties.ContainsKey("User"))
+            if (logEvent.Properties["User"] is ScalarValue sv)
             {
-                if (logEvent.Properties["User"] is ScalarValue sv)
+                if (sv.Value is "anonymous")
                 {
-                    if (sv.Value is string s && s == "anonymous")
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
-
-            return true;
         }
+
+        return true;
     }
 }

@@ -12,37 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using BenchmarkDotNet.Attributes;
-using System;
-using Serilog.PerformanceTests.Support;
+namespace Serilog.PerformanceTests;
 
-namespace Serilog.PerformanceTests
+/// <summary>
+/// Tests the cost of writing through the logging pipeline.
+/// </summary>
+[MemoryDiagnoser]
+public class PipelineBenchmark
 {
-    /// <summary>
-    /// Tests the cost of writing through the logging pipeline.
-    /// </summary>
-    [MemoryDiagnoser]
-    public class PipelineBenchmark
+    ILogger _log = null!;
+    Exception _exception = null!;
+
+    [GlobalSetup]
+    public void Setup()
     {
-        ILogger _log = null!;
-        Exception _exception = null!;
+        _exception = new Exception("An Error");
+        _log = new LoggerConfiguration()
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger();
+    }
 
-        [GlobalSetup]
-        public void Setup()
-        {
-            _exception = new Exception("An Error");
-            _log = new LoggerConfiguration()
-                .WriteTo.Sink(new NullSink())
-                .CreateLogger();
+    [Benchmark]
+    public void EmitLogEvent()
+    {
+        _log.Information(_exception, "Hello, {Name}!", "World");
+    }
 
-            // Ensure template is cached
-            _log.Information(_exception, "Hello, {Name}!", "World");
-        }
-
-        [Benchmark]
-        public void EmitLogEvent()
-        {
-            _log.Information(_exception, "Hello, {Name}!", "World");
-        }
+    [Benchmark]
+    public void IntProperties()
+    {
+        _log.Information(_exception, "Hello, {A} {B} {C}!", 1, 2, 3);
     }
 }

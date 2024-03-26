@@ -1,14 +1,10 @@
-﻿using Serilog.Core;
-using Serilog.Events;
+namespace TestDummies;
 
-namespace TestDummies
+public class DummyThreadIdEnricher : ILogEventEnricher
 {
-    public class DummyThreadIdEnricher : ILogEventEnricher
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            logEvent.AddPropertyIfAbsent(propertyFactory
-                .CreateProperty("ThreadId", "SomeId"));
-        }
+        logEvent.AddPropertyIfAbsent(propertyFactory
+            .CreateProperty("ThreadId", "SomeId"));
     }
 }

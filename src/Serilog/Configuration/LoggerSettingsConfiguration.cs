@@ -12,60 +12,56 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using System.Collections.Generic;
-using Serilog.Settings.KeyValuePairs;
+namespace Serilog.Configuration;
 
-namespace Serilog.Configuration
+/// <summary>
+/// Allows additional setting sources to drive the logger configuration.
+/// </summary>
+public class LoggerSettingsConfiguration
 {
-    /// <summary>
-    /// Allows additional setting sources to drive the logger configuration.
-    /// </summary>
-    public class LoggerSettingsConfiguration
+    readonly LoggerConfiguration _loggerConfiguration;
+
+    internal LoggerSettingsConfiguration(LoggerConfiguration loggerConfiguration)
     {
-        readonly LoggerConfiguration _loggerConfiguration;
+        _loggerConfiguration = Guard.AgainstNull(loggerConfiguration);
+    }
 
-        internal LoggerSettingsConfiguration(LoggerConfiguration loggerConfiguration)
+    /// <summary>
+    /// Apply external settings to the logger configuration.
+    /// </summary>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
+    public LoggerConfiguration Settings(ILoggerSettings settings)
+    {
+        Guard.AgainstNull(settings);
+
+        settings.Configure(_loggerConfiguration);
+        return _loggerConfiguration;
+    }
+
+    /// <summary>
+    /// Apply settings specified in the Serilog key-value setting format to the logger configuration.
+    /// </summary>
+    /// <param name="settings">A list of key-value pairs describing logger settings.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <remarks>In case of duplicate keys, the last value for the key is kept and the previous ones are ignored.</remarks>
+    /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
+    [RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible with trimming.")]
+    public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
+    {
+        Guard.AgainstNull(settings);
+
+        var uniqueSettings = new Dictionary<string, string>();
+        foreach (var kvp in settings)
         {
-            _loggerConfiguration = loggerConfiguration ?? throw new ArgumentNullException(nameof(loggerConfiguration));
+            uniqueSettings[kvp.Key] = kvp.Value;
         }
+        return KeyValuePairs(uniqueSettings);
+    }
 
-        /// <summary>
-        /// Apply external settings to the logger configuration.
-        /// </summary>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
-        public LoggerConfiguration Settings(ILoggerSettings settings)
-        {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-
-            settings.Configure(_loggerConfiguration);
-            return _loggerConfiguration;
-        }
-
-        /// <summary>
-        /// Apply settings specified in the Serilog key-value setting format to the logger configuration.
-        /// </summary>
-        /// <param name="settings">A list of key-value pairs describing logger settings.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
-        /// <remarks>In case of duplicate keys, the last value for the key is kept and the previous ones are ignored.</remarks>
-        /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
-        public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
-        {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-
-            var uniqueSettings = new Dictionary<string, string>();
-            foreach (var kvp in settings)
-            {
-                uniqueSettings[kvp.Key] = kvp.Value;
-            }
-            return KeyValuePairs(uniqueSettings);
-        }
-
-        LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
-        {
-            return Settings(new KeyValuePairSettings(settings));
-        }
+    [RequiresUnreferencedCode("KeyValuePair scans for configuration settings at run time.")]
+    LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
+    {
+        return Settings(new KeyValuePairSettings(settings));
     }
 }

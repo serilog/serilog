@@ -12,79 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Events;
+namespace Serilog.Core;
 
-namespace Serilog.Core
+class LevelOverrideMap
 {
-    class LevelOverrideMap
+    readonly LogEventLevel _defaultMinimumLevel;
+    readonly LoggingLevelSwitch? _defaultLevelSwitch;
+
+    readonly struct LevelOverride
     {
-        readonly LogEventLevel _defaultMinimumLevel;
-        readonly LoggingLevelSwitch? _defaultLevelSwitch;
-
-        struct LevelOverride
+        public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
         {
-            public LevelOverride(string context, LoggingLevelSwitch levelSwitch)
-            {
-                Context = context;
-                LevelSwitch = levelSwitch;
-            }
-
-            public string Context { get; }
-
-            public LoggingLevelSwitch LevelSwitch { get; }
+            Context = context;
+            LevelSwitch = levelSwitch;
         }
 
-        // There are two possible strategies to apply:
-        //   1. Keep some bookkeeping data to consult when a new context is encountered, and a concurrent dictionary
-        //        for exact matching ~ O(1), but slow and requires fences/locks; or,
-        //   2. O(n) search over the raw configuration data every time (fast for small sets of overrides).
-        // This implementation assumes there will only be a few overrides in each application, so chooses (2). This
-        // is an assumption that's up for debate.
-        readonly LevelOverride[] _overrides;
+        public string Context { get; }
 
-        public LevelOverrideMap(
-            IDictionary<string, LoggingLevelSwitch> overrides,
-            LogEventLevel defaultMinimumLevel,
-            LoggingLevelSwitch? defaultLevelSwitch)
-        {
-            if (overrides == null) throw new ArgumentNullException(nameof(overrides));
+        public LoggingLevelSwitch LevelSwitch { get; }
+    }
 
-            _defaultLevelSwitch = defaultLevelSwitch;
-            _defaultMinimumLevel = defaultLevelSwitch != null ? LevelAlias.Minimum : defaultMinimumLevel;
+    // There are two possible strategies to apply:
+    //   1. Keep some bookkeeping data to consult when a new context is encountered, and a concurrent dictionary
+    //        for exact matching ~ O(1), but slow and requires fences/locks; or,
+    //   2. O(n) search over the raw configuration data every time (fast for small sets of overrides).
+    // This implementation assumes there will only be a few overrides in each application, so chooses (2). This
+    // is an assumption that's up for debate.
+    readonly LevelOverride[] _overrides;
 
-            // Descending order means that if we have a match, we're sure about it being the most specific.
-            _overrides = overrides
-                .OrderByDescending(o => o.Key)
-                .Select(o => new LevelOverride(o.Key, o.Value))
-                .ToArray();
-        }
+    public LevelOverrideMap(
+        IDictionary<string, LoggingLevelSwitch> overrides,
+        LogEventLevel defaultMinimumLevel,
+        LoggingLevelSwitch? defaultLevelSwitch)
+    {
+        Guard.AgainstNull(overrides);
 
-        public void GetEffectiveLevel(
+        _defaultLevelSwitch = defaultLevelSwitch;
+        _defaultMinimumLevel = defaultLevelSwitch != null ? LevelAlias.Minimum : defaultMinimumLevel;
+
+        // Descending order means that if we have a match, we're sure about it being the most specific.
+        _overrides = overrides
+            .OrderByDescending(o => o.Key)
+            .Select(o => new LevelOverride(o.Key, o.Value))
+            .ToArray();
+    }
+
+    public void GetEffectiveLevel(
 #if FEATURE_SPAN
-            ReadOnlySpan<char> context,
+        ReadOnlySpan<char> context,
 #else
-            string context,
+        string context,
 #endif
-            out LogEventLevel minimumLevel,
-            out LoggingLevelSwitch? levelSwitch)
+        out LogEventLevel minimumLevel,
+        out LoggingLevelSwitch? levelSwitch)
+    {
+        foreach (var levelOverride in _overrides)
         {
-            foreach (var levelOverride in _overrides)
+            if (context.StartsWith(levelOverride.Context) &&
+                (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
             {
-                if (context.StartsWith(levelOverride.Context) &&
-                   (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
-                {
-                    minimumLevel = LevelAlias.Minimum;
-                    levelSwitch = levelOverride.LevelSwitch;
-                    return;
-                }
+                minimumLevel = LevelAlias.Minimum;
+                levelSwitch = levelOverride.LevelSwitch;
+                return;
             }
-
-            minimumLevel = _defaultMinimumLevel;
-            levelSwitch = _defaultLevelSwitch;
         }
+
+        minimumLevel = _defaultMinimumLevel;
+        levelSwitch = _defaultLevelSwitch;
     }
 }

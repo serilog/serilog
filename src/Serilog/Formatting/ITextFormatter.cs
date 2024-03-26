@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.IO;
-using Serilog.Events;
+namespace Serilog.Formatting;
 
-namespace Serilog.Formatting
+/// <summary>
+/// Formats log events in a textual representation.
+/// </summary>
+public interface ITextFormatter
 {
     /// <summary>
-    /// Formats log events in a textual representation.
+    /// Format the log event into the output.
     /// </summary>
-    public interface ITextFormatter
-    {
-        /// <summary>
-        /// Format the log event into the output.
-        /// </summary>
-        /// <param name="logEvent">The event to format.</param>
-        /// <param name="output">The output.</param>
-        void Format(LogEvent logEvent, TextWriter output);
-    }
+    /// <param name="logEvent">The event to format.</param>
+    /// <param name="output">The output.</param>
+    void Format(LogEvent logEvent, TextWriter output);
 }

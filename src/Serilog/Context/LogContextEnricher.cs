@@ -1,4 +1,4 @@
-﻿// Copyright 2013-2015 Serilog Contributors
+// Copyright 2013-2015 Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Serilog.Core;
-using Serilog.Events;
+namespace Serilog.Context;
 
-namespace Serilog.Context
+sealed class LogContextEnricher : ILogEventEnricher
 {
-    sealed class LogContextEnricher : ILogEventEnricher
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
-        {
-            LogContext.Enrich(logEvent, propertyFactory);
-        }
+        LogContext.Enrich(logEvent, propertyFactory);
     }
 }
