@@ -216,6 +216,7 @@ public abstract class AllocationsBaseBenchmark
     {
         _logger.Information("Template: {Value1},{Value2},{Value3},{Value4},{Value5}", "42", 7, 108L, 1024M, (short?)-11);
     }
+
     [Benchmark]
     public void LogMixMany()
     {
