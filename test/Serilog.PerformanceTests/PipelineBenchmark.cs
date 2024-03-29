@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Data;
+
 namespace Serilog.PerformanceTests;
 
 /// <summary>
@@ -20,16 +22,109 @@ namespace Serilog.PerformanceTests;
 [MemoryDiagnoser]
 public class PipelineBenchmark
 {
-    ILogger _log = null!;
-    Exception _exception = null!;
+    readonly ILogger _log;
+    readonly ILogger _logOnlyFatal;
 
-    [GlobalSetup]
-    public void Setup()
+    readonly ILogger _log1e0fc0lc;
+    readonly ILogger _log0e1fc0lc;
+    readonly ILogger _log0e0fc1lc;
+
+    readonly ILogger _log1e1fc1lc;
+    readonly ILogger _log10e10fc10lc;
+    readonly ILogger _log100e100fc100lc;
+    readonly ILogger _log1000e1000fc1000lc;
+
+    readonly Exception _exception = new Exception("An Error");
+
+    public PipelineBenchmark()
     {
-        _exception = new Exception("An Error");
         _log = new LoggerConfiguration()
             .WriteTo.Sink(new NullSink())
             .CreateLogger();
+
+        _logOnlyFatal = new LoggerConfiguration()
+            .MinimumLevel.Fatal()
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger();
+
+
+        _log1e0fc0lc = new LoggerConfiguration()
+            .Enrich.AddManyProperties(1)
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger();
+
+        _log0e1fc0lc = new LoggerConfiguration()
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger()
+            .AddManyProperties(1);
+
+        _log0e0fc1lc = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger();
+
+
+        _log1e1fc1lc = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.AddManyProperties(1)
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger()
+            .AddManyProperties(1);
+
+        _log10e10fc10lc = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.AddManyProperties(10)
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger()
+            .AddManyProperties(10);
+
+        _log100e100fc100lc = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.AddManyProperties(100)
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger()
+            .AddManyProperties(100);
+
+        _log1000e1000fc1000lc = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.AddManyProperties(1000)
+            .WriteTo.Sink(new NullSink())
+            .CreateLogger()
+            .AddManyProperties(1000);
+
+        // Ensure template is cached
+        _log.Information(_exception, "Hello, {Name}!", "World");
+        _logOnlyFatal.Information(_exception, "Hello, {Name}!", "World");
+
+        _log1e0fc0lc.Information(_exception, "Hello, {Name}!", "World");
+        _log0e1fc0lc.Information(_exception, "Hello, {Name}!", "World");
+        using (PropertiesAdderHelper.ManyLogContext(1))
+        {
+            _log0e0fc1lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+
+        using (PropertiesAdderHelper.ManyLogContext(1))
+        {
+            _log1e1fc1lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+        using (PropertiesAdderHelper.ManyLogContext(10))
+        {
+            _log10e10fc10lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+        using (PropertiesAdderHelper.ManyLogContext(100))
+        {
+            _log100e100fc100lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+        using (PropertiesAdderHelper.ManyLogContext(1000))
+        {
+            _log1000e1000fc1000lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+    }
+
+    [Benchmark(Baseline = true)]
+    public void EmitLogAIgnoredEvent()
+    {
+        _logOnlyFatal.Information(_exception, "Hello, {Name}!", "World");
     }
 
     [Benchmark]
@@ -42,5 +137,57 @@ public class PipelineBenchmark
     public void IntProperties()
     {
         _log.Information(_exception, "Hello, {A} {B} {C}!", 1, 2, 3);
+    }
+
+    [Benchmark]
+    public void EmitLogEventWith1Enrich0ForContext0LogContext()
+    {
+        _log1e0fc0lc.Information(_exception, "Hello, {Name}!", "World");
+    }
+    [Benchmark]
+    public void EmitLogEventWith0Enrich1ForContext0LogContext()
+    {
+        _log0e1fc0lc.Information(_exception, "Hello, {Name}!", "World");
+    }
+    [Benchmark]
+    public void EmitLogEventWith0Enrich0ForContext1LogContext()
+    {
+        using (PropertiesAdderHelper.ManyLogContext(1))
+        {
+            _log0e0fc1lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+    }
+
+    [Benchmark]
+    public void EmitLogEventWith1Enrich1ForContext1LogContext()
+    {
+        using (PropertiesAdderHelper.ManyLogContext(1))
+        {
+            _log1e1fc1lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+    }
+    [Benchmark]
+    public void EmitLogEventWith10Enrich10ForContext10LogContext()
+    {
+        using (PropertiesAdderHelper.ManyLogContext(10))
+        {
+            _log10e10fc10lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+    }
+    [Benchmark]
+    public void EmitLogEventWith100Enrich100ForContext100LogContext()
+    {
+        using (PropertiesAdderHelper.ManyLogContext(100))
+        {
+            _log100e100fc100lc.Information(_exception, "Hello, {Name}!", "World");
+        }
+    }
+    [Benchmark]
+    public void EmitLogEventWith1000Enrich1000ForContext1000LogContext()
+    {
+        using (PropertiesAdderHelper.ManyLogContext(1000))
+        {
+            _log1000e1000fc1000lc.Information(_exception, "Hello, {Name}!", "World");
+        }
     }
 }
