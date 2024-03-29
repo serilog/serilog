@@ -8,12 +8,8 @@ public class SourceContextMatchBenchmark
     readonly Logger _loggerWithOverrides;
     readonly List<ILogger> _loggersWithFilters = new();
     readonly LogEvent _event = Some.InformationEvent();
-    readonly string[] _contexts;
-
-    public SourceContextMatchBenchmark()
-    {
-        _contexts = new[]
-        {
+    readonly string[] _contexts =
+        [
             "Serilog",
             "MyApp",
             "MyAppSomething",
@@ -23,8 +19,10 @@ public class SourceContextMatchBenchmark
             "MyApp.Api.Controllers.AboutController",
             "MyApp.Api.Controllers.HomeController",
             "Api.Controllers.HomeController"
-        };
+        ];
 
+    public SourceContextMatchBenchmark()
+    {
         var overrides = new Dictionary<string, LoggingLevelSwitch>
         {
             ["MyApp"] = new(LogEventLevel.Debug),

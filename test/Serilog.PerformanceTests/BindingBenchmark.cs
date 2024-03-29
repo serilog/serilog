@@ -25,19 +25,18 @@ public class BindingBenchmark
         MT1 = "Zero{A}one",
         MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
 
-    ILogger _log = null!;
-    object[] _zero = null!, _one = null!, _five = null!;
+    readonly ILogger _log;
+    readonly object[] _zero, _one, _five;
 
-    [GlobalSetup]
-    public void Setup()
+    public BindingBenchmark()
     {
         _log = new LoggerConfiguration()
             .WriteTo.Sink(new NullSink())
             .CreateLogger();
 
-        _zero = Array.Empty<object>();
-        _one = new object[] { 1 };
-        _five = new object[] { 1, 2, 3, 4, 5 };
+        _zero = [];
+        _one = [1];
+        _five = [1, 2, 3, 4, 5];
     }
 
     // The benchmarks run p.Count() to force enumeration; this will be representative of how the API

@@ -3,11 +3,10 @@ namespace Serilog.PerformanceTests;
 [MemoryDiagnoser]
 public class LogContextEnrichmentBenchmark
 {
-    ILogger _bare = null!, _enriched = null!;
+    readonly ILogger _bare, _enriched;
     readonly LogEvent _event = Some.InformationEvent();
 
-    [GlobalSetup]
-    public void Setup()
+    public LogContextEnrichmentBenchmark()
     {
         _bare = new LoggerConfiguration()
             .WriteTo.Sink(new NullSink())

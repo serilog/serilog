@@ -4,11 +4,11 @@ public class MessageTemplateCacheBenchmark_Cached
 {
     const string DefaultOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
 
-    List<string> _templateList = null!;
+    readonly ConcurrentDictionaryMessageTemplateCache _concurrentCache = new(NoOpMessageTemplateParser.Instance);
+    readonly DictionaryMessageTemplateCache _dictionaryCache = new(NoOpMessageTemplateParser.Instance);
+    readonly MessageTemplateCache _hashtableCache = new(NoOpMessageTemplateParser.Instance);
 
-    ConcurrentDictionaryMessageTemplateCache _concurrentCache = null!;
-    DictionaryMessageTemplateCache _dictionaryCache = null!;
-    MessageTemplateCache _hashtableCache = null!;
+    List<string> _templateList = null!;
 
     [Params(10, 20, 50, 100, 1000)]
     public int Items { get; set; }
@@ -21,10 +21,7 @@ public class MessageTemplateCacheBenchmark_Cached
     {
         _templateList = Enumerable.Range(0, Items).Select(_ => $"{DefaultOutputTemplate}_{Guid.NewGuid()}").ToList();
 
-        _concurrentCache = new(NoOpMessageTemplateParser.Instance);
-        _dictionaryCache = new(NoOpMessageTemplateParser.Instance);
-        _hashtableCache = new(NoOpMessageTemplateParser.Instance);
-
+        //Warm Cache
         foreach (var t in _templateList)
         {
             _concurrentCache.Parse(t);
