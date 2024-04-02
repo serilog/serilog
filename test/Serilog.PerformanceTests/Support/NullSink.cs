@@ -6,3 +6,13 @@ class NullSink : ILogEventSink
     {
     }
 }
+
+class DisposableNullSink : ILogEventSink, IDisposable
+{
+    public void Emit(LogEvent logEvent)
+    {
+    }
+    public void Dispose()
+    {
+    }
+}

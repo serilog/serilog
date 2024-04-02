@@ -94,4 +94,10 @@ public class Harness
     {
         BenchmarkRunner.Run<BindingBenchmark>();
     }
+
+    [Fact]
+    public void Initialization()
+    {
+        BenchmarkRunner.Run<InitializationBenchmark>();
+    }
 }
