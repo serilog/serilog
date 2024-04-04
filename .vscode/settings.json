@@ -1,0 +1,7 @@
+{
+  "cSpell.words": [
+    "serilog"
+  ],
+  "dotnet.defaultSolution": "Serilog.sln",
+  "omnisharp.enableEditorConfigSupport": true
+}

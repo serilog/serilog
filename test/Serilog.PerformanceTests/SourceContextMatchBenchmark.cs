@@ -1,7 +1,7 @@
 namespace Serilog.PerformanceTests;
 
-[SimpleJob(RuntimeMoniker.NetCoreApp21, baseline: true)]
-[SimpleJob(RuntimeMoniker.NetCoreApp31)]
+[SimpleJob(RuntimeMoniker.Net60, baseline: true)]
+[SimpleJob(RuntimeMoniker.Net80)]
 public class SourceContextMatchBenchmark
 {
     readonly LevelOverrideMap _levelOverrideMap;
