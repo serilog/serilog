@@ -1,39 +1,45 @@
 Write-Output "build: Build started"
 
 Push-Location $PSScriptRoot
+try {
 
-if(Test-Path .\artifacts) {
-    Write-Output "build: Cleaning .\artifacts"
-    Remove-Item .\artifacts -Force -Recurse
+    if (Test-Path .\artifacts) {
+        Write-Output "build: Cleaning .\artifacts"
+        Remove-Item .\artifacts -Force -Recurse
+    }
+
+    $branch = @{ $true = $env:APPVEYOR_REPO_BRANCH; $false = $(git symbolic-ref --short -q HEAD) }[$NULL -ne $env:APPVEYOR_REPO_BRANCH];
+    $revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$NULL -ne $env:APPVEYOR_BUILD_NUMBER];
+    $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)).Replace('/','-'))-$revision" }[$branch -eq "main" -and $revision -ne "local"]
+    $commitHash = $(git rev-parse --short HEAD)
+    $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
+
+    Write-Output "build: Package version suffix is $suffix"
+    Write-Output "build: Build version suffix is $buildSuffix"
+
+    & dotnet build --configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
+
+    if ($LASTEXITCODE -ne 0) { throw 'build failed' }
+
+    if ($suffix) {
+        & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts --version-suffix=$suffix
+    }
+    else {
+        & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts
+    }
+
+    if ($LASTEXITCODE -ne 0) { throw 'pack failed' }
+
+    Write-Output "build: Testing"
+
+    & dotnet test  test\Serilog.Tests --configuration Release --no-build --no-restore
+
+    if ($LASTEXITCODE -ne 0) { throw 'unit tests failed' }
+
+    & dotnet test  test\Serilog.ApprovalTests --configuration Release --no-build --no-restore
+
+    if ($LASTEXITCODE -ne 0) { throw 'approval tests failed' }
 }
-
-$branch = @{ $true = $env:APPVEYOR_REPO_BRANCH; $false = $(git symbolic-ref --short -q HEAD) }[$NULL -ne $env:APPVEYOR_REPO_BRANCH];
-$revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$NULL -ne $env:APPVEYOR_BUILD_NUMBER];
-$suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)).Replace('/','-'))-$revision"}[$branch -eq "main" -and $revision -ne "local"]
-$commitHash = $(git rev-parse --short HEAD)
-$buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
-
-Write-Output "build: Package version suffix is $suffix"
-Write-Output "build: Build version suffix is $buildSuffix"
-
-& dotnet build --configuration Release --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
-
-if($LASTEXITCODE -ne 0) { throw 'build failed' }
-
-if($suffix) {
-    & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts --version-suffix=$suffix
-} else {
-    & dotnet pack src\Serilog --configuration Release --no-build --no-restore -o artifacts
+finally {
+    Pop-Location
 }
-
-if($LASTEXITCODE -ne 0) { throw 'pack failed' }
-
-Write-Output "build: Testing"
-
-& dotnet test  test\Serilog.Tests --configuration Release --no-build --no-restore
-
-if($LASTEXITCODE -ne 0) { throw 'unit tests failed' }
-
-& dotnet test  test\Serilog.ApprovalTests --configuration Release --no-build --no-restore
-
-if($LASTEXITCODE -ne 0) { throw 'approval tests failed' }
