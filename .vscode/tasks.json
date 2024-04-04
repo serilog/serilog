@@ -26,7 +26,7 @@
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary",
         "--filter",
-        "FullyQualifiedName!~Benchmark"
+        "FullyQualifiedName!~PerformanceTests"
       ],
       "command": "dotnet",
       "group": {
