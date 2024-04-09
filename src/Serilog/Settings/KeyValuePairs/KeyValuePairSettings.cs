@@ -14,9 +14,9 @@
 
 namespace Serilog.Settings.KeyValuePairs;
 
-#if !NET5_0
+#if NET6_0_OR_GREATER
 [RequiresDynamicCode("Scans assemblies at runtime")]
-[RequiresUnreferencedCode("Scans assemblies at runtime")] // RequiresUnreferencedCode couldn't be applied to types in .NET 5.
+[RequiresUnreferencedCode("Scans assemblies at runtime")]
 #endif
 class KeyValuePairSettings : ILoggerSettings
 {
@@ -82,11 +82,6 @@ class KeyValuePairSettings : ILoggerSettings
         _settings = Guard.AgainstNull(settings);
     }
 
-#if NET5_0
-    // Suppressing warnings here in .NET 5 because RUC is placed on the constructor. See constructor
-    // for more info on why this is not necessary in .NET 6.
-    [UnconditionalSuppressMessage("ILTrim", "IL2026")]
-#endif
     public void Configure(LoggerConfiguration loggerConfiguration)
     {
         Guard.AgainstNull(loggerConfiguration);

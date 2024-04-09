@@ -376,6 +376,8 @@ namespace Serilog.Events
         public void RemovePropertyIfPresent(string propertyName) { }
         public string RenderMessage(System.IFormatProvider? formatProvider = null) { }
         public void RenderMessage(System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+        [System.CLSCompliant(false)]
+        public static Serilog.Events.LogEvent UnstableAssembleFromParts(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.Dictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.Diagnostics.ActivityTraceId traceId, System.Diagnostics.ActivitySpanId spanId) { }
     }
     public enum LogEventLevel
     {
