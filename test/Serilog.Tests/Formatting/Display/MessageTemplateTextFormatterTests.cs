@@ -382,7 +382,7 @@ public class MessageTemplateTextFormatterTests
     }
 
     [Fact]
-    public void UTCTimestampOutputsCorrectValue()
+    public void UtcTimestampOutputsCorrectValue()
     {
         var formatter = new MessageTemplateTextFormatter("{UtcTimestamp:yyyy-MM-dd hh:mm:ss.fffZ}", CultureInfo.InvariantCulture);
 
