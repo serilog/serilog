@@ -40,7 +40,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
     public MessageTemplateTextFormatter(string outputTemplate, IFormatProvider? formatProvider = null)
     {
         Guard.AgainstNull(outputTemplate);
-          
+
         _outputTemplate = new MessageTemplateParser().Parse(outputTemplate);
         _formatProvider = formatProvider;
     }
@@ -102,7 +102,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
                 {
                     ScalarValue.Render(logEvent.Timestamp, writer, pt.Format, _formatProvider);
                 }
-                else if (pt.PropertyName == OutputProperties.UTCTimestampPropertyName)
+                else if (pt.PropertyName == OutputProperties.UtcTimestampPropertyName)
                 {
                     ScalarValue.Render(logEvent.Timestamp.ToUniversalTime(), writer, pt.Format, _formatProvider);
                 }
