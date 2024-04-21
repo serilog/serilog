@@ -1,6 +1,7 @@
 
 // ReSharper disable StringLiteralTypo
 
+using System;
 using System.Diagnostics;
 
 namespace Serilog.Tests.Formatting.Display;
@@ -385,12 +386,8 @@ public class MessageTemplateTextFormatterTests
     public void UTCTimestampOutputsCorrectValue()
     {
         var formatter = new MessageTemplateTextFormatter("{UTCTimestamp:yyyy-MM-dd hh:mm:ss.fffZ}", CultureInfo.InvariantCulture);
-        var evt = new LogEvent(
-            new(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)),
-            Information,
-            null,
-            Some.MessageTemplate(),
-            Array.Empty<LogEventProperty>());
+
+        var evt = Some.LogEvent(timestamp: new(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)));
 
         var sw = new StringWriter();
         formatter.Format(evt, sw);
