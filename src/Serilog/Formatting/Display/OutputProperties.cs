@@ -31,6 +31,11 @@ public static class OutputProperties
     public const string TimestampPropertyName = "Timestamp";
 
     /// <summary>
+    /// The timestamp of the log event in UTC.
+    /// </summary>
+    public const string UTCTimestampPropertyName = "UTCTimestamp";
+
+    /// <summary>
     /// The level of the log event.
     /// </summary>
     public const string LevelPropertyName = "Level";
