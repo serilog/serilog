@@ -104,7 +104,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
                 }
                 else if (pt.PropertyName == OutputProperties.UtcTimestampPropertyName)
                 {
-                    ScalarValue.Render(logEvent.Timestamp.ToUniversalTime(), writer, pt.Format, _formatProvider);
+                    ScalarValue.Render(logEvent.Timestamp.UtcDateTime, writer, pt.Format, _formatProvider);
                 }
                 else if (pt.PropertyName == OutputProperties.PropertiesPropertyName)
                 {
