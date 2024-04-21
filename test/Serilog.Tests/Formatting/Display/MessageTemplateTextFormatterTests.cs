@@ -1,7 +1,6 @@
 
 // ReSharper disable StringLiteralTypo
 
-using System;
 using System.Diagnostics;
 
 namespace Serilog.Tests.Formatting.Display;
