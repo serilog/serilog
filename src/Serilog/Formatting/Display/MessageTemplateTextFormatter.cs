@@ -102,6 +102,10 @@ public class MessageTemplateTextFormatter : ITextFormatter
                 {
                     ScalarValue.Render(logEvent.Timestamp, writer, pt.Format, _formatProvider);
                 }
+                else if (pt.PropertyName == OutputProperties.UtcTimestampPropertyName)
+                {
+                    ScalarValue.Render(logEvent.Timestamp.UtcDateTime, writer, pt.Format, _formatProvider);
+                }
                 else if (pt.PropertyName == OutputProperties.PropertiesPropertyName)
                 {
                     PropertiesOutputFormat.Render(logEvent.MessageTemplate, logEvent.Properties, _outputTemplate, writer, pt.Format, _formatProvider);
