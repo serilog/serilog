@@ -68,8 +68,8 @@ class LevelOverrideMap
     {
         foreach (var levelOverride in _overrides)
         {
-            if (context.StartsWith(levelOverride.Context, StringComparison.OrdinalIgnoreCase) &&
-                (context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.'))
+            if ((context.Length == levelOverride.Context.Length || context[levelOverride.Context.Length] == '.') &&
+                context.StartsWith(levelOverride.Context, StringComparison.OrdinalIgnoreCase))
             {
                 minimumLevel = LevelAlias.Minimum;
                 levelSwitch = levelOverride.LevelSwitch;
