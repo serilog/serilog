@@ -12,7 +12,7 @@ public class DummyWithLevelSwitchSink : ILogEventSink
 
     [ThreadStatic]
     // ReSharper disable ThreadStaticFieldHasInitializer
-    public static List<LogEvent> Emitted = new();
+    public static List<LogEvent> Emitted = [];
     // ReSharper restore ThreadStaticFieldHasInitializer
 
     public void Emit(LogEvent logEvent)
