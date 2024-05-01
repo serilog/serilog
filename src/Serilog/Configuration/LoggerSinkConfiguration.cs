@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ReSharper disable MergeCastWithTypeCheck
+
+using Serilog.Core.Sinks.Batching;
+
 namespace Serilog.Configuration;
 
 /// <summary>
@@ -29,7 +33,7 @@ public class LoggerSinkConfiguration
     }
 
     /// <summary>
-    /// Write log events to the specified <see cref="ILogEventSink"/>.
+    /// Write log events to an <see cref="ILogEventSink"/>.
     /// </summary>
     /// <param name="logEventSink">The sink.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
@@ -46,7 +50,7 @@ public class LoggerSinkConfiguration
     }
 
     /// <summary>
-    /// Write log events to the specified <see cref="ILogEventSink"/>.
+    /// Write log events to an <see cref="ILogEventSink"/>.
     /// </summary>
     /// <param name="logEventSink">The sink.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
@@ -62,6 +66,8 @@ public class LoggerSinkConfiguration
         // ReSharper disable once MethodOverloadWithOptionalParameter
         LoggingLevelSwitch? levelSwitch = null)
     {
+        Guard.AgainstNull(logEventSink);
+
         var sink = logEventSink;
         if (levelSwitch != null)
         {
@@ -94,6 +100,50 @@ public class LoggerSinkConfiguration
         where TSink : ILogEventSink, new()
     {
         return Sink(new TSink(), restrictedToMinimumLevel, levelSwitch);
+    }
+
+    /// <summary>
+    /// Write log events to an <see cref="IBatchedLogEventSink"/>. Events will be internally buffered, and
+    /// written to the sink in batches.
+    /// </summary>
+    /// <param name="batchedLogEventSink">The batched sink to receive events.</param>
+    /// <param name="batchingOptions">Options that control batch sizes, buffering time, and backpressure.</param>
+    /// <param name="restrictedToMinimumLevel">The minimum level for
+    /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+    /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+    /// to be changed at runtime.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    public LoggerConfiguration Sink(
+        IBatchedLogEventSink batchedLogEventSink,
+        BatchingOptions batchingOptions,
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
+    {
+        Guard.AgainstNull(batchedLogEventSink);
+        Guard.AgainstNull(batchingOptions);
+
+        return Sink(new BatchingSink(batchedLogEventSink, batchingOptions), restrictedToMinimumLevel, levelSwitch);
+    }
+
+    /// <summary>
+    /// Write log events to an <see cref="IBatchedLogEventSink"/>. Events will be internally buffered, and
+    /// written to the sink in batches.
+    /// </summary>
+    /// <typeparam name="TSink">The type of a batched sink to receive events. The sink must provide a public,
+    /// parameterless constructor.</param>
+    /// <param name="batchingOptions">Options that control batch sizes, buffering time, and backpressure.</param>
+    /// <param name="restrictedToMinimumLevel">The minimum level for
+    /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
+    /// <param name="levelSwitch">A switch allowing the pass-through minimum level
+    /// to be changed at runtime.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    public LoggerConfiguration Sink<TSink>(
+        BatchingOptions batchingOptions,
+        LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+        LoggingLevelSwitch? levelSwitch = null)
+        where TSink : IBatchedLogEventSink, new()
+    {
+        return Sink(new TSink(), batchingOptions, restrictedToMinimumLevel, levelSwitch);
     }
 
     /// <summary>
@@ -197,7 +247,7 @@ public class LoggerSinkConfiguration
 
         // Level aliases and so on don't need to be accepted here; if the user wants both a condition and leveling, they
         // can specify `restrictedToMinimumLevel` etc in the wrapped sink configuration.
-        return Wrap(this, s => new ConditionalSink(s, condition), configureSink, LevelAlias.Minimum, null);
+        return Wrap(this, s => new ConditionalSink(s, condition), configureSink);
     }
 
     /// <summary>
@@ -251,7 +301,7 @@ public class LoggerSinkConfiguration
 #if FEATURE_ASYNCDISPOSABLE
                 or IAsyncDisposable
 #endif
-                )
+           )
         {
             wrapper = new DisposeDelegatingSink(wrapper, enclosed as IDisposable
 #if FEATURE_ASYNCDISPOSABLE
