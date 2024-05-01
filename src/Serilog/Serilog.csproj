@@ -57,15 +57,18 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net471' ">
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

@@ -75,8 +75,11 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, bool attemptDispose = false, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.IBatchedLogEventSink batchedLogEventSink, Serilog.Core.Sinks.Batching.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.ILogEventSink, new () { }
+        public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Core.Sinks.Batching.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
+            where TSink : Serilog.Core.IBatchedLogEventSink, new () { }
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
     }
 }
