@@ -101,6 +101,11 @@ namespace Serilog.Core
     {
         public const string SourceContextPropertyName = "SourceContext";
     }
+    public interface IBatchedLogEventSink
+    {
+        System.Threading.Tasks.Task EmitBatchAsync(System.Collections.Generic.IReadOnlyCollection<Serilog.Events.LogEvent> batch);
+        System.Threading.Tasks.Task OnEmptyBatchAsync();
+    }
     public interface IDestructuringPolicy
     {
         bool TryDestructure(object value, Serilog.Core.ILogEventPropertyValueFactory propertyValueFactory, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventPropertyValue? result);
@@ -306,6 +311,17 @@ namespace Serilog.Core.Enrichers
     {
         public PropertyEnricher(string name, object? value, bool destructureObjects = false) { }
         public void Enrich(Serilog.Events.LogEvent logEvent, Serilog.Core.ILogEventPropertyFactory propertyFactory) { }
+    }
+}
+namespace Serilog.Core.Sinks.Batching
+{
+    public class BatchingOptions
+    {
+        public BatchingOptions() { }
+        public int BatchSizeLimit { get; set; }
+        public System.TimeSpan BufferingTimeLimit { get; set; }
+        public bool EagerlyEmitFirstEvent { get; set; }
+        public int? QueueLimit { get; set; }
     }
 }
 namespace Serilog.Data

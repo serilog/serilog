@@ -1,5 +1,4 @@
 using Serilog.Core.Sinks.Batching;
-using Xunit.Abstractions;
 
 namespace Serilog.Core.Tests;
 
@@ -7,11 +6,6 @@ public class BatchingSinkTests
 {
     static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(200);
     static readonly TimeSpan MicroWait = TimeSpan.FromMilliseconds(1);
-
-    public BatchingSinkTests(ITestOutputHelper testOutputHelper)
-    {
-        SelfLog.Enable(testOutputHelper.WriteLine);
-    }
 
     [Fact]
     public void WhenAnEventIsEnqueuedItIsWrittenToABatchOnDispose()
