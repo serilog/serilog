@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Serilog.Core.Sinks.Batching;
+using Serilog.Core.Sinks.Batching;
+
+namespace Serilog.Configuration;
 
 /// <summary>
 /// Initialization options for <see cref="BatchingSink"/>.
