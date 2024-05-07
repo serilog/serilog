@@ -1,5 +1,13 @@
 namespace Serilog.Configuration
 {
+    public class BatchingOptions
+    {
+        public BatchingOptions() { }
+        public int BatchSizeLimit { get; set; }
+        public System.TimeSpan BufferingTimeLimit { get; set; }
+        public bool EagerlyEmitFirstEvent { get; set; }
+        public int? QueueLimit { get; set; }
+    }
     public interface ILoggerSettings
     {
         void Configure(Serilog.LoggerConfiguration loggerConfiguration);
@@ -77,10 +85,10 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, bool attemptDispose = false, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
-        public Serilog.LoggerConfiguration Sink(Serilog.Core.IBatchedLogEventSink batchedLogEventSink, Serilog.Core.Sinks.Batching.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.IBatchedLogEventSink batchedLogEventSink, Serilog.Configuration.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.ILogEventSink, new () { }
-        public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Core.Sinks.Batching.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
+        public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Configuration.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.IBatchedLogEventSink, new () { }
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
     }
@@ -313,17 +321,6 @@ namespace Serilog.Core.Enrichers
     {
         public PropertyEnricher(string name, object? value, bool destructureObjects = false) { }
         public void Enrich(Serilog.Events.LogEvent logEvent, Serilog.Core.ILogEventPropertyFactory propertyFactory) { }
-    }
-}
-namespace Serilog.Core.Sinks.Batching
-{
-    public class BatchingOptions
-    {
-        public BatchingOptions() { }
-        public int BatchSizeLimit { get; set; }
-        public System.TimeSpan BufferingTimeLimit { get; set; }
-        public bool EagerlyEmitFirstEvent { get; set; }
-        public int? QueueLimit { get; set; }
     }
 }
 namespace Serilog.Data
