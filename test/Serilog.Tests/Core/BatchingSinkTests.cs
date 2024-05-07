@@ -106,10 +106,11 @@ public class BatchingSinkTests
     [InlineData(false)]
     public async Task EagerlyEmitFirstEventCausesQuickInitialBatch(bool eagerlyEmit)
     {
-        var x = new ManualResetEvent(false);
+        long emitted = 0;
         var bs = new CallbackBatchedSink(_ =>
         {
-            x.Set();
+            // ReSharper disable once AccessToModifiedClosure
+            Interlocked.Increment(ref emitted);
             return Task.CompletedTask;
         });
 
@@ -127,7 +128,7 @@ public class BatchingSinkTests
         pbs.Emit(evt);
 
         await Task.Delay(1900);
-        Assert.Equal(eagerlyEmit, x.WaitOne(0));
+        Assert.Equal(eagerlyEmit, Interlocked.Read(ref emitted) == 1);
 
 #if FEATURE_ASYNCDISPOSABLE
         await pbs.DisposeAsync();
@@ -135,6 +136,6 @@ public class BatchingSinkTests
         pbs.Dispose();
 #endif
 
-        Assert.True(x.WaitOne(0));
+        Assert.Equal(1, Interlocked.Read(ref emitted));
     }
 }
