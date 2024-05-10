@@ -90,6 +90,10 @@ namespace Serilog.Configuration
             where TSink : Serilog.Core.ILogEventSink, new () { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Configuration.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.IBatchedLogEventSink, new () { }
+        public static Serilog.Core.ILogEventSink CreateSink(System.Action<Serilog.Configuration.LoggerSinkConfiguration> configure) { }
+        public static Serilog.Core.ILogEventSink Wrap(System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink) { }
+        [System.Obsolete("Use the two-argument `Wrap()` overload to construct a wrapper, then use `WriteTo." +
+            "Sink()` to add it to the configuration.")]
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
     }
 }
