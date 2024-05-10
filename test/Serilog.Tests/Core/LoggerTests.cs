@@ -252,7 +252,7 @@ public class LoggerTests
     {
         var sink = new DisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sink))
             .CreateLogger();
 
         log.Dispose();
@@ -266,7 +266,7 @@ public class LoggerTests
         var sinkA = new DisposeTrackingSink();
         var sinkB = new DisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
             .CreateLogger();
 
         log.Dispose();
@@ -395,7 +395,7 @@ public class LoggerTests
     {
         var sink = new DisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sink))
             .CreateLogger();
 
         await log.DisposeAsync();
@@ -408,7 +408,7 @@ public class LoggerTests
     {
         var sink = new AsyncDisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sink))
             .CreateLogger();
 
         await log.DisposeAsync();
@@ -422,7 +422,7 @@ public class LoggerTests
         var sinkA = new DisposeTrackingSink();
         var sinkB = new AsyncDisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
             .CreateLogger();
 
         await log.DisposeAsync();

@@ -31,7 +31,7 @@ public class AuditSinkTests
             .CreateLogger();
 
         Assert.Throws<AggregateException>(() => logger
-            .ForContext<LoggerConfigurationTests>()
+            .ForContext<AuditSinkTests>()
             .Write(Some.InformationEvent()));
     }
 
@@ -54,8 +54,6 @@ public class AuditSinkTests
             .CreateLogger();
 
         logger.Information("{@Value}", new ThrowingProperty());
-
-        Assert.True(true, "No exception reached the caller");
     }
 
     [Fact]

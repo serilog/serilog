@@ -246,12 +246,12 @@ public class LoggerSinkConfiguration
         Guard.AgainstNull(configureSink);
 
         // Level aliases and so on don't need to be accepted here; if the user wants both a condition and leveling, they
-        // can specify `restrictedToMinimumLevel` etc in the wrapped sink configuration.
-        return Wrap(this, s => new ConditionalSink(s, condition), configureSink);
+        // can specify `restrictedToMinimumLevel` etc. in the wrapped sink configuration.
+        return Sink(Wrap(s => new ConditionalSink(s, condition), configureSink));
     }
 
     /// <summary>
-    /// Helper method for wrapping sinks.
+    /// Helper method for constructing wrapper sinks.
     /// </summary>
     /// <param name="loggerSinkConfiguration">The parent sink configuration.</param>
     /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
@@ -265,6 +265,7 @@ public class LoggerSinkConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="loggerSinkConfiguration"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code></exception>
     /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code></exception>
+    [Obsolete("Use the two-argument `Wrap()` overload to construct a wrapper, then use `WriteTo.Sink()` to add it to the configuration.")]
     public static LoggerConfiguration Wrap(
         LoggerSinkConfiguration loggerSinkConfiguration,
         Func<ILogEventSink, ILogEventSink> wrapSink,
@@ -272,29 +273,29 @@ public class LoggerSinkConfiguration
         LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
         LoggingLevelSwitch? levelSwitch = null)
     {
-        Guard.AgainstNull(loggerSinkConfiguration);
+        var wrapper = Wrap(wrapSink, configureWrappedSink);
+        return loggerSinkConfiguration.Sink(wrapper, restrictedToMinimumLevel, levelSwitch);
+    }
+
+    /// <summary>
+    /// Helper method for constructing wrapper sinks. This may be preferred over <see cref="CreateSink"/> because it handles
+    /// delegation of <see cref="IDisposable.Dispose"/> through to the wrapped sink in cases where the wrapper is not
+    /// disposable.
+    /// </summary>
+    /// <param name="wrapSink">A function that allows for wrapping <see cref="ILogEventSink"/>s
+    /// added in <paramref name="configureWrappedSink"/>.</param>
+    /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
+    /// <returns>The wrapper, or a sink that will handle invoking the wrapper.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code></exception>
+    public static ILogEventSink Wrap(
+        Func<ILogEventSink, ILogEventSink> wrapSink,
+        Action<LoggerSinkConfiguration> configureWrappedSink)
+    {
         Guard.AgainstNull(wrapSink);
         Guard.AgainstNull(configureWrappedSink);
 
-        var sinksToWrap = new List<ILogEventSink>();
-
-        var capturingConfiguration = new LoggerConfiguration();
-        var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
-            capturingConfiguration,
-            sinksToWrap.Add);
-
-        // `WriteTo.Sink()` will return the capturing configuration; this ensures chained `WriteTo` gets back
-        // to the capturing sink configuration, enabling `WriteTo.X().WriteTo.Y()`.
-        capturingConfiguration.WriteTo = capturingLoggerSinkConfiguration;
-
-        configureWrappedSink(capturingLoggerSinkConfiguration);
-
-        if (sinksToWrap.Count == 0)
-            return loggerSinkConfiguration._loggerConfiguration;
-
-        var enclosed = sinksToWrap.Count == 1 ?
-            sinksToWrap.Single() :
-            new DisposingAggregateSink(sinksToWrap);
+        var enclosed = CreateSink(configureWrappedSink);
 
         var wrapper = wrapSink(enclosed);
         if (wrapper is not IDisposable && enclosed is IDisposable
@@ -310,6 +311,36 @@ public class LoggerSinkConfiguration
                 );
         }
 
-        return loggerSinkConfiguration.Sink(wrapper, restrictedToMinimumLevel, levelSwitch);
+        return wrapper;
+    }
+
+    /// <summary>
+    /// Helper method for constructing sinks outside of a logger pipeline.
+    /// </summary>
+    /// <param name="configure">An action that configures one or more sinks.</param>
+    /// <returns>If only a single sink is configured,
+    /// it will be returned from <see cref="CreateSink"/>. If zero or many sinks are configured, they will be combined
+    /// in an aggregating wrapper.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="configure"/> is <code>null</code>.</exception>
+    public static ILogEventSink CreateSink(Action<LoggerSinkConfiguration> configure)
+    {
+        Guard.AgainstNull(configure);
+
+        var sinksToWrap = new List<ILogEventSink>();
+
+        var capturingConfiguration = new LoggerConfiguration();
+        var capturingLoggerSinkConfiguration = new LoggerSinkConfiguration(
+            capturingConfiguration,
+            sinksToWrap.Add);
+
+        // `WriteTo.Sink()` will return the capturing configuration; this ensures chained `WriteTo` gets back
+        // to the capturing sink configuration, enabling `WriteTo.X().WriteTo.Y()`.
+        capturingConfiguration.WriteTo = capturingLoggerSinkConfiguration;
+
+        configure(capturingLoggerSinkConfiguration);
+
+        return sinksToWrap.Count == 1 ?
+            sinksToWrap.Single() :
+            new DisposingAggregateSink(sinksToWrap);
     }
 }
