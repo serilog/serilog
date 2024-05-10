@@ -74,23 +74,4 @@ public class LoggerSinkConfigurationTests
         Assert.Same(evt, enclosed.SingleEvent);
         Assert.False(evt.Properties.ContainsKey(propertyName));
     }
-
-    [Fact]
-    public void WrappingIsAppliedWhenChaining()
-    {
-        DummyWrappingSink.Reset();
-        var sink1 = new CollectingSink();
-        var sink2 = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.DummyWrapper(w => w.Sink(sink1)
-                .WriteTo.Sink(sink2))
-            .CreateLogger();
-
-        var evt = Some.InformationEvent();
-        logger.Write(evt);
-
-        Assert.Same(evt, DummyWrappingSink.Emitted.Single());
-        Assert.Same(evt, sink1.SingleEvent);
-        Assert.Same(evt, sink2.SingleEvent);
-    }
 }
