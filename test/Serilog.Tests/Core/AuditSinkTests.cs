@@ -54,6 +54,7 @@ public class AuditSinkTests
             .CreateLogger();
 
         logger.Information("{@Value}", new ThrowingProperty());
+        // ([implicit] 'assertion' is that the exception is handled and does not propagate)
     }
 
     [Fact]
