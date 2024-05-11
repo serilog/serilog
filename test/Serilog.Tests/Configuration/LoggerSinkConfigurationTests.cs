@@ -64,7 +64,7 @@ public class LoggerSinkConfigurationTests
         var propertyName = Some.String();
         var wrapper = LoggerSinkConfiguration.Wrap(
             s => new DelegatingSink(s.Emit),
-            w => w
+            wt => wt
                 .Sink(enclosed)
                 .Enrich.WithProperty(propertyName, 1));
 
