@@ -340,7 +340,7 @@ public class LoggerSinkConfiguration
         configure(capturingLoggerSinkConfiguration);
 
         return sinksToWrap.Count == 1 ?
-            sinksToWrap.Single() :
+            sinksToWrap[0] :
             new DisposingAggregateSink(sinksToWrap);
     }
 }
