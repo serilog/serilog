@@ -23,10 +23,10 @@ public class LogEventPropertyStructuralEqualityComparerTests
         var sequenceOfScalarsIntStringDoubleA = new LogEventProperty("a", new SequenceValue(intStringDoubleScalarArray));
 
         var sequenceOfScalarsIntStringDoubleAStructurallyEqual = new LogEventProperty("a",
-            new SequenceValue(new[] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.0), }));
+            new SequenceValue([new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.0)]));
 
         var sequenceOfScalarsIntStringDoubleAStructurallyNotEqual = new LogEventProperty("a",
-            new SequenceValue(new[] { new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.1), }));
+            new SequenceValue([new ScalarValue(1), new ScalarValue("2"), new ScalarValue(3.1)]));
 
         var sequenceOfScalarsIntStringFloatA = new LogEventProperty("a", new ScalarValue(intStringFloatScalarArray));
 

@@ -48,6 +48,7 @@ public class LoggerSettingsConfiguration
     /// <exception cref="ArgumentNullException">When <paramref name="settings"/> is <code>null</code></exception>
     [RequiresDynamicCode("KeyValuePair scans for configuration assemblies at run time and is not compatible with trimming.")]
     [RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible with trimming.")]
+    [RequiresDynamicCode("KeyValuePair may need to create arrays, which requires dynamic code generation and is not compatible with AOT.")]
     public LoggerConfiguration KeyValuePairs(IEnumerable<KeyValuePair<string, string>> settings)
     {
         Guard.AgainstNull(settings);
@@ -62,6 +63,7 @@ public class LoggerSettingsConfiguration
 
     [RequiresDynamicCode("KeyValuePair scans for configuration settings at run time.")]
     [RequiresUnreferencedCode("KeyValuePair scans for configuration settings at run time.")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     LoggerConfiguration KeyValuePairs(IReadOnlyDictionary<string, string> settings)
     {
         return Settings(new KeyValuePairSettings(settings));

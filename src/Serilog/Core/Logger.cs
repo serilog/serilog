@@ -213,7 +213,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             span[0] = propertyValue;
             Write(level, messageTemplate, span);
 #else
-            Write(level, messageTemplate, new object?[] { propertyValue });
+            Write(level, messageTemplate, [propertyValue]);
 #endif
         }
     }
@@ -238,7 +238,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             span[1] = propertyValue1;
             Write(level, messageTemplate, span);
 #else
-            Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+            Write(level, messageTemplate, [propertyValue0, propertyValue1]);
 #endif
         }
     }
@@ -265,7 +265,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             span[2] = propertyValue2;
             Write(level, messageTemplate, span);
 #else
-            Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+            Write(level, messageTemplate, [propertyValue0, propertyValue1, propertyValue2]);
 #endif
         }
     }
@@ -339,7 +339,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             span[0] = propertyValue;
             Write(level, exception, messageTemplate, span);
 #else
-            Write(level, exception, messageTemplate, new object?[] { propertyValue });
+            Write(level, exception, messageTemplate, [propertyValue]);
 #endif
         }
     }
@@ -365,7 +365,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             span[1] = propertyValue1;
             Write(level, exception, messageTemplate, span);
 #else
-            Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+            Write(level, exception, messageTemplate, [propertyValue0, propertyValue1]);
 #endif
         }
     }
@@ -393,7 +393,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
             span[2] = propertyValue2;
             Write(level, exception, messageTemplate, span);
 #else
-            Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+            Write(level, exception, messageTemplate, [propertyValue0, propertyValue1, propertyValue2]);
 #endif
         }
     }
@@ -414,7 +414,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         // Catch a common pitfall when a single non-object array is cast to object[]
         if (propertyValues != null &&
             propertyValues.GetType() != typeof(object[]))
-            propertyValues = new object[] { propertyValues };
+            propertyValues = [propertyValues];
 
         var logTimestamp = DateTimeOffset.Now;
 #if FEATURE_SPAN

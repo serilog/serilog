@@ -34,6 +34,7 @@ class SettingValueConversions
 
     [RequiresDynamicCode("Finds accessors by name")]
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     public static object? ConvertToType(string value, Type toType)
     {
         if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))

@@ -112,7 +112,7 @@ public class LoggerTests
         var log = CreateLogger(loggerType, lc => lc);
 
         // ReSharper disable StructuredMessageTemplateProblem
-        Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
+        Assert.True(log.BindMessageTemplate("Hello, {Name}!", ["World"], out var template, out var properties));
         // ReSharper restore StructuredMessageTemplateProblem
 
         Assert.Equal("Hello, {Name}!", template.Text);
@@ -203,7 +203,7 @@ public class LoggerTests
         Assert.Equal(42, collectingSink.SingleEvent.Properties["number"].LiteralValue());
         Assert.Equal(
             // ReSharper disable once CoVariantArrayConversion
-            expected: new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2), new ScalarValue(3) }),
+            expected: new SequenceValue([new ScalarValue(1), new ScalarValue(2), new ScalarValue(3)]),
             actual: (SequenceValue)collectingSink.SingleEvent.Properties["values"],
             comparer: new LogEventPropertyValueComparer());
 

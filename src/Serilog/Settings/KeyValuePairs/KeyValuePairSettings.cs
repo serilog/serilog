@@ -15,7 +15,7 @@
 namespace Serilog.Settings.KeyValuePairs;
 
 #if NET6_0_OR_GREATER
-[RequiresDynamicCode("Scans assemblies at runtime")]
+[RequiresDynamicCode("Creates arrays of unknown element type")]
 [RequiresUnreferencedCode("Scans assemblies at runtime")]
 #endif
 class KeyValuePairSettings : ILoggerSettings
@@ -40,7 +40,7 @@ class KeyValuePairSettings : ILoggerSettings
     const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
     static readonly string[] _supportedDirectives =
-    {
+    [
         UsingDirective,
         LevelSwitchDirective,
         AuditToDirective,
@@ -51,7 +51,7 @@ class KeyValuePairSettings : ILoggerSettings
         EnrichWithDirective,
         FilterDirective,
         DestructureDirective
-    };
+    ];
 
     static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new()
     {
@@ -216,6 +216,7 @@ class KeyValuePairSettings : ILoggerSettings
 
     [RequiresDynamicCode("Finds accessors by name")]
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         if (type == typeof(LoggingLevelSwitch))
@@ -227,6 +228,7 @@ class KeyValuePairSettings : ILoggerSettings
 
     [RequiresDynamicCode("Finds accessors by name")]
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         foreach (var directiveInfo in directives)
@@ -246,6 +248,7 @@ class KeyValuePairSettings : ILoggerSettings
 
                 // Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
                 [UnconditionalSuppressMessage("Trimming", "IL2026")]
+                [UnconditionalSuppressMessage("AOT", "IL3050")]
                 object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
                     => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
 

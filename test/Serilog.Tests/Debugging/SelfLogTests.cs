@@ -8,7 +8,7 @@ public class SelfLogTests
     [Fact]
     public void MessagesAreWrittenWhenOutputIsSet()
     {
-        Messages = new();
+        Messages = [];
         SelfLog.Enable(m =>
         {
             Messages.Add(m);
@@ -28,7 +28,7 @@ public class SelfLogTests
     [Fact]
     public void SelfLogReportsErrorWhenPositionalParameterCountIsMismatched()
     {
-        Messages = new();
+        Messages = [];
         SelfLog.Enable(m =>
         {
             Messages.Add(m);
@@ -49,7 +49,7 @@ public class SelfLogTests
     [Fact]
     public void SelfLogDoesNotReportErrorWhenPositionalParameterIsRepeated()
     {
-        Messages = new();
+        Messages = [];
         SelfLog.Enable(m =>
         {
             Messages.Add(m);
@@ -69,7 +69,7 @@ public class SelfLogTests
     [Fact]
     public void WritingToUndeclaredSinkWritesToSelfLog()
     {
-        Messages = new();
+        Messages = [];
         SelfLog.Enable(m =>
         {
             Messages.Add(m);
