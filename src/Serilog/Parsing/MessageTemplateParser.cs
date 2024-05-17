@@ -91,13 +91,12 @@ public class MessageTemplateParser : IMessageTemplateParser
     {
         var first = startAt;
         startAt++;
-        while (startAt < messageTemplate.Length && IsValidInPropertyTag(messageTemplate[startAt]))
-            startAt++;
 
-        if (startAt == messageTemplate.Length || messageTemplate[startAt] != '}')
+        startAt = messageTemplate.IndexOf('}', startAt);
+        if (startAt == -1)
         {
-            next = startAt;
-            return new TextToken(messageTemplate.Substring(first, next - first));
+            next = messageTemplate.Length;
+            return new TextToken(messageTemplate.Substring(first));
         }
 
         next = startAt + 1;
