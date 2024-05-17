@@ -107,8 +107,8 @@ public class MessageTemplateParserTests
     [Theory]
     [InlineData("{test.name}")]
     [InlineData("{test-name}")]
-    // Questionable cases
     [InlineData("{te.st.na.me}")]
+    // Questionable syntax but permitted by the experimental flag.
     [InlineData("{.te.st.na.me-}")]
     public void DashedAndDottedNamesAreAcceptedWhenFeatureFlaggedIn(string template)
     {
