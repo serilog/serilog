@@ -104,35 +104,39 @@ public class MessageTemplateParserTests
             new TextToken("Hello, {worl@d}!"));
     }
 
-    [Fact]
-    public void AMalformedPropertyTagIsParsedAsText()
+    [Theory]
+    [InlineData("{test.name}")]
+    [InlineData("{test-name}")]
+    // Questionable cases
+    [InlineData("{te.st.na.me}")]
+    [InlineData("{.te.st.na.me-}")]
+    public void DashedAndDottedNamesAreAcceptedWhenFeatureFlaggedIn(string template)
     {
-        AssertParsedAs("{0 space}",
-            new TextToken("{0 space}"));
+        var parser = new MessageTemplateParser(acceptExtendedPropertyNames: true);
+        var token = Assert.Single(parser.Parse(template).Tokens);
+        var propertyToken = Assert.IsType<PropertyToken>(token);
+        var expected = template.Trim('{', '}');
+        Assert.Equal(expected, propertyToken.PropertyName);
+        Assert.Null(propertyToken.Alignment);
+        Assert.Null(propertyToken.Format);
+        Assert.False(propertyToken.IsPositional);
+    }
 
-        AssertParsedAs("{0 space",
-            new TextToken("{0 space"));
-
-        AssertParsedAs("{0_space",
-            new TextToken("{0_space"));
+    [Theory]
+    [InlineData("{0 space}",   "{0 space}")]
+    [InlineData("{0 space",    "{0 space")]
+    [InlineData("{0_space",    "{0_space")]
+    [InlineData("{0_{{space}", "{0_{{space}")]
+    [InlineData("{0_{{space",  "{0_{{space")]
+    public void AMalformedPropertyTagIsParsedAsText(string template, string expected)
+    {
+        AssertParsedAs(template, new TextToken(expected));
     }
 
     [Fact]
-    public void AMalformedPropertyTagIsParsedAsText2()
+    public void ATrailingUnmatchedBracketIsParsedAsText()
     {
-        AssertParsedAs("{0_{{space}",
-            new TextToken("{0_{{space}"));
-
-        AssertParsedAs("{0_{{space",
-            new TextToken("{0_{{space"));
-    }
-
-    [Fact]
-    public void AMalformedPropertyTagIsParsedAsText3()
-    {
-        AssertParsedAs("{0_}}space}",
-            new PropertyToken("0_", "{0_}"),
-            new TextToken("}space}"));
+        AssertParsedAs("{0_}}space}", new PropertyToken("0_", "{0_}"), new TextToken("}space}"));
     }
 
     [Fact]
