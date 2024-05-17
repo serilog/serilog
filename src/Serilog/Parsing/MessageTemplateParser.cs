@@ -267,40 +267,85 @@ public class MessageTemplateParser : IMessageTemplateParser
 
     static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
     {
-        var accum = new StringBuilder();
-        do
+        // If we encounter escape sequences like {{ or }}, the result is not a strict substring of the
+        // template. But, this requires allocating a StringBuilder, so we try to parse as far as we can first, and
+        // only allocate the StringBuilder/fall through to the slow string-building path if we actually need to.
+        // Most of the time we won't hit escapes, so we can get away with just a single Substring() allocation at
+        // the end.
+
+        var i = messageTemplate.IndexOfAny(['{', '}'], startAt);
+        if (i == -1)
         {
-            var nc = messageTemplate[startAt];
-            if (nc == '{')
+            // No more interesting characters in the template, everything left is text.
+            next = messageTemplate.Length;
+            return new(messageTemplate[startAt..]);
+        }
+
+        StringBuilder accum;
+        var ch = messageTemplate[i];
+        ++i;
+
+        // The character must be either `{` or `}`, since we found its index.
+        if (ch == '{')
+        {
+            if (i < messageTemplate.Length && messageTemplate[i] == '{')
             {
-                if (startAt + 1 < messageTemplate.Length &&
-                    messageTemplate[startAt + 1] == '{')
+                // Hit an escape sequence; ignore the second (duplicate) `{`, and push the rest onto the
+                // accumulator to start the slow path.
+                accum = new(messageTemplate, startAt, i - startAt, messageTemplate.Length - startAt);
+                ++i;
+            }
+            else
+            {
+                // Hit the start of a property token. We're done, no StringBuilder was required.
+                next = i - 1;
+                return next == startAt ? EmptyTextToken : new(messageTemplate.Substring(startAt, i - 1 - startAt));
+            }
+        }
+        else // ch == '}'
+        {
+            accum = new(messageTemplate, startAt, i - startAt, messageTemplate.Length - startAt);
+            if (i < messageTemplate.Length && messageTemplate[i] == '}')
+            {
+                // Hit an escaped `}`; as before, skip the duplicate and start accumulating the result.
+                ++i;
+            }
+        }
+
+        // We must have encountered an escaped character sequence: finish the text token, using the
+        // accumulator. This is relatively uncommon so we just to it char-by-char.
+        while (i < messageTemplate.Length)
+        {
+            ch = messageTemplate[i];
+            ++i;
+
+            if (ch == '{')
+            {
+                if (i < messageTemplate.Length && messageTemplate[i] == '{')
                 {
-                    accum.Append(nc);
-                    startAt++;
+                    accum.Append(ch);
+                    ++i;
                 }
                 else
                 {
-                    break;
+                    next = i - 1;
+                    return new(accum.ToString());
                 }
             }
             else
             {
-                accum.Append(nc);
-                if (nc == '}')
+                accum.Append(ch);
+                if (ch == '}')
                 {
-                    if (startAt + 1 < messageTemplate.Length &&
-                        messageTemplate[startAt + 1] == '}')
+                    if (i < messageTemplate.Length && messageTemplate[i] == '}')
                     {
-                        startAt++;
+                        ++i;
                     }
                 }
             }
+        }
 
-            startAt++;
-        } while (startAt < messageTemplate.Length);
-
-        next = startAt;
+        next = i;
         return new(accum.ToString());
     }
 }

@@ -14,8 +14,8 @@ public class MessageTemplateParserTests
     {
         var parsed = Parse(message);
         Assert.Equal(
-            parsed,
-            messageTemplateTokens);
+            messageTemplateTokens,
+            parsed);
     }
 
     [Fact]
