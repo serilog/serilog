@@ -21,6 +21,28 @@ namespace Serilog.Parsing;
 public class MessageTemplateParser : IMessageTemplateParser
 {
     /// <summary>
+    /// When set, property names in templates may include `.` and `-`.
+    /// </summary>
+    static readonly bool DefaultAcceptExtendedPropertyNames = AppContext.TryGetSwitch("Serilog.Parsing.MessageTemplateParser.AcceptExtendedPropertyNames", out var isEnabled) && isEnabled;
+
+    static readonly TextToken EmptyTextToken = new("");
+
+    readonly bool _acceptExtendedPropertyNames;
+
+    /// <summary>
+    /// Construct a <see cref="MessageTemplateParser"/>.
+    /// </summary>
+    public MessageTemplateParser()
+        : this(DefaultAcceptExtendedPropertyNames)
+    {
+    }
+
+    internal MessageTemplateParser(bool acceptExtendedPropertyNames)
+    {
+        _acceptExtendedPropertyNames = acceptExtendedPropertyNames;
+    }
+
+    /// <summary>
     /// Parse the supplied message template.
     /// </summary>
     /// <param name="messageTemplate">The message template to parse.</param>
@@ -36,13 +58,11 @@ public class MessageTemplateParser : IMessageTemplateParser
         return new(messageTemplate, Tokenize(messageTemplate));
     }
 
-    static TextToken emptyTextToken = new("");
-
-    static IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
+    IEnumerable<MessageTemplateToken> Tokenize(string messageTemplate)
     {
         if (messageTemplate.Length == 0)
         {
-            yield return emptyTextToken;
+            yield return EmptyTextToken;
             yield break;
         }
 
@@ -67,7 +87,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         }
     }
 
-    static MessageTemplateToken ParsePropertyToken(int startAt, string messageTemplate, out int next)
+    MessageTemplateToken ParsePropertyToken(int startAt, string messageTemplate, out int next)
     {
         var first = startAt;
         startAt++;
@@ -188,7 +208,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         return true;
     }
 
-    static bool IsValidInPropertyTag(char c)
+    bool IsValidInPropertyTag(char c)
     {
         return IsValidInDestructuringHint(c) ||
                IsValidInPropertyName(c) ||
@@ -196,7 +216,10 @@ public class MessageTemplateParser : IMessageTemplateParser
                c == ':';
     }
 
-    static bool IsValidInPropertyName(char c) => char.IsLetterOrDigit(c) || c == '_';
+    bool IsValidInPropertyName(char c) =>
+        char.IsLetterOrDigit(c) ||
+        c is '_' ||
+        _acceptExtendedPropertyNames && c is '.' or '-';
 
     static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
     {
