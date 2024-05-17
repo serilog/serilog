@@ -6,14 +6,7 @@ namespace Serilog.PerformanceTests;
 [MemoryDiagnoser]
 public class MessageTemplateParsingBenchmark
 {
-    MessageTemplateParser _parser = null!;
-    const string _DefaultConsoleOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}";
-
-    [GlobalSetup]
-    public void Setup()
-    {
-        _parser = new MessageTemplateParser();
-    }
+    MessageTemplateParser _parser = new();
 
     [Benchmark(Baseline = true)]
     public void EmptyTemplate()
@@ -24,6 +17,12 @@ public class MessageTemplateParsingBenchmark
     [Benchmark]
     public void DefaultConsoleOutputTemplate()
     {
-        _parser.Parse(_DefaultConsoleOutputTemplate);
+        _parser.Parse("{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}");
+    }
+
+    [Benchmark]
+    public void LiteralTextOnly()
+    {
+        _parser.Parse("Token validated for claims principal with identifier `HJdfshjka678-HJK68SFHJKhjkfsdhjsd456`");
     }
 }

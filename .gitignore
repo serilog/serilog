@@ -331,3 +331,5 @@ ASALocalRun/
 *.orig
 
 *.received.txt
+
+.DS_Store

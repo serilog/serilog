@@ -216,14 +216,6 @@ public class MessageTemplateParser : IMessageTemplateParser
         return true;
     }
 
-    bool IsValidInPropertyTag(char c)
-    {
-        return IsValidInDestructuringHint(c) ||
-               IsValidInPropertyName(c) ||
-               IsValidInFormat(c) ||
-               c == ':';
-    }
-
     bool IsValidInPropertyName(char c) =>
         char.IsLetterOrDigit(c) ||
         c is '_' ||
