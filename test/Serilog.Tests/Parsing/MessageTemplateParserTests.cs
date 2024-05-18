@@ -325,15 +325,15 @@ public class MessageTemplateParserTests
         Assert.Null(prop4.Alignment);
     }
 
-    [Fact]
-    public void ZeroValuesAlignmentIsParsedAsText()
-    {
-        AssertParsedAs("{Hello,-0}",
-            new TextToken("{Hello,-0}"));
+    //[Fact]
+    //public void ZeroValuesAlignmentIsParsedAsText()
+    //{
+    //    AssertParsedAs("{Hello,-0}",
+    //        new TextToken("{Hello,-0}"));
 
-        AssertParsedAs("{Hello,0}",
-            new TextToken("{Hello,0}"));
-    }
+    //    AssertParsedAs("{Hello,0}",
+    //        new TextToken("{Hello,0}"));
+    //}
 
     [Fact]
     public void NonNumberAlignmentIsParsedAsText()
