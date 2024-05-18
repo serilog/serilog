@@ -118,23 +118,16 @@ public class MessageTemplateParser : IMessageTemplateParser
         Alignment? alignmentValue = null;
         if (alignment != null)
         {
-            for (var i = 0; i < alignment.Length; ++i)
+            if (!IsValidAlignment(alignment))
             {
-                var c = alignment[i];
-                if (!IsValidInAlignment(c))
-                    return new TextToken(rawText);
+                return new TextToken(rawText);
             }
 
-            var lastDash = alignment.LastIndexOf('-');
-            if (lastDash > 0)
-                return new TextToken(rawText);
+            var hasDash = alignment[0] == '-';
+            var direction = hasDash ? AlignmentDirection.Left : AlignmentDirection.Right;
 
-            if (!int.TryParse(lastDash == -1 ? alignment : alignment.Substring(1), out var width) || width == 0)
+            if (!int.TryParse(hasDash ? alignment.Substring(1): alignment, out var width))
                 return new TextToken(rawText);
-
-            var direction = lastDash == -1 ?
-                AlignmentDirection.Right :
-                AlignmentDirection.Left;
 
             alignmentValue = new(direction, width);
         }
@@ -232,6 +225,29 @@ public class MessageTemplateParser : IMessageTemplateParser
     {
         return char.IsDigit(c) ||
                c == '-';
+    }
+
+    static bool IsValidAlignment(string s)
+    {
+        for (int i = 0; i < s.Length; i++)
+        {
+            var c = s[i];
+            if (char.IsDigit(c))
+            {
+                i++;
+                continue;
+            }
+
+            if (i == 0 && c == '-')
+            {
+                i++;
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     static bool IsValidInFormat(char c)
