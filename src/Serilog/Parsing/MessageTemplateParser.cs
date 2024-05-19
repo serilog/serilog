@@ -21,25 +21,25 @@ namespace Serilog.Parsing;
 public class MessageTemplateParser : IMessageTemplateParser
 {
     /// <summary>
-    /// When set, property names in templates may include `.` and `-`.
+    /// When set, property names in templates may include `.`.
     /// </summary>
-    static readonly bool DefaultAcceptExtendedPropertyNames = AppContext.TryGetSwitch("Serilog.Parsing.MessageTemplateParser.AcceptExtendedPropertyNames", out var isEnabled) && isEnabled;
+    static readonly bool DefaultAcceptDottedPropertyNames = AppContext.TryGetSwitch("Serilog.Parsing.MessageTemplateParser.AcceptDottedPropertyNames", out var isEnabled) && isEnabled;
 
     static readonly TextToken EmptyTextToken = new("");
 
-    readonly bool _acceptExtendedPropertyNames;
+    readonly bool _acceptDottedPropertyNames;
 
     /// <summary>
     /// Construct a <see cref="MessageTemplateParser"/>.
     /// </summary>
     public MessageTemplateParser()
-        : this(DefaultAcceptExtendedPropertyNames)
+        : this(DefaultAcceptDottedPropertyNames)
     {
     }
 
-    internal MessageTemplateParser(bool acceptExtendedPropertyNames)
+    internal MessageTemplateParser(bool acceptDottedPropertyNames)
     {
-        _acceptExtendedPropertyNames = acceptExtendedPropertyNames;
+        _acceptDottedPropertyNames = acceptDottedPropertyNames;
     }
 
     /// <summary>
@@ -219,7 +219,7 @@ public class MessageTemplateParser : IMessageTemplateParser
     bool IsValidInPropertyName(char c) =>
         char.IsLetterOrDigit(c) ||
         c is '_' ||
-        _acceptExtendedPropertyNames && c is '.' or '-';
+        _acceptDottedPropertyNames && c is '.';
 
     static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
     {

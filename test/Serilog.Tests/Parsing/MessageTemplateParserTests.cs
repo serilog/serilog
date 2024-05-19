@@ -106,13 +106,17 @@ public class MessageTemplateParserTests
 
     [Theory]
     [InlineData("{test.name}")]
-    [InlineData("{test-name}")]
     [InlineData("{te.st.na.me}")]
-    // Questionable syntax but permitted by the experimental flag.
-    [InlineData("{.te.st.na.me-}")]
+    // Questionable syntax but permitted by the experimental flag. These are documented here so that if the
+    // feature progresses to first-class support, they can be detected and dealt with accordingly.
+    [InlineData("{.testname}")]
+    [InlineData("{testname.}")]
+    [InlineData("{.}")]
+    [InlineData("{..}")]
+    [InlineData("{test..name}")]
     public void DashedAndDottedNamesAreAcceptedWhenFeatureFlaggedIn(string template)
     {
-        var parser = new MessageTemplateParser(acceptExtendedPropertyNames: true);
+        var parser = new MessageTemplateParser(acceptDottedPropertyNames: true);
         var token = Assert.Single(parser.Parse(template).Tokens);
         var propertyToken = Assert.IsType<PropertyToken>(token);
         var expected = template.Trim('{', '}');
