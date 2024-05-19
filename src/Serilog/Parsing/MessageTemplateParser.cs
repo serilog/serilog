@@ -221,12 +221,6 @@ public class MessageTemplateParser : IMessageTemplateParser
         return c is '@' or '$';
     }
 
-    static bool IsValidInAlignment(char c)
-    {
-        return char.IsDigit(c) ||
-               c == '-';
-    }
-
     static bool IsValidAlignment(string s)
     {
         for (int i = 0; i < s.Length; i++)
