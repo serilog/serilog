@@ -118,10 +118,10 @@ public class MessageTemplateParser : IMessageTemplateParser
         Alignment? alignmentValue = null;
         if (alignment != null)
         {
-            if (!int.TryParse(alignment, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var width))
+            if (alignment[0] == '+')
                 return new TextToken(rawText);
 
-            if (alignment[0] == '+')
+            if (!int.TryParse(alignment, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var width))
                 return new TextToken(rawText);
 
             var hasDash = alignment[0] == '-';
