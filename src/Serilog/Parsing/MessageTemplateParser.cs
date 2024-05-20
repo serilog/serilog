@@ -289,7 +289,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         }
 
         // We must have encountered an escaped character sequence: finish the text token, using the
-        // accumulator. This is relatively uncommon so we just to it char-by-char.
+        // accumulator. This is relatively uncommon so we just do it char-by-char.
         while (i < messageTemplate.Length)
         {
             ch = messageTemplate[i];
