@@ -118,18 +118,13 @@ public class MessageTemplateParser : IMessageTemplateParser
         Alignment? alignmentValue = null;
         if (alignment != null)
         {
-            if (!IsValidAlignment(alignment))
-            {
+            if (!int.TryParse(alignment, out var width))
                 return new TextToken(rawText);
-            }
 
             var hasDash = alignment[0] == '-';
             var direction = hasDash ? AlignmentDirection.Left : AlignmentDirection.Right;
 
-            if (!int.TryParse(hasDash ? alignment.Substring(1): alignment, out var width))
-                return new TextToken(rawText);
-
-            alignmentValue = new(direction, width);
+            alignmentValue = new(direction, Math.Abs(width));
         }
 
         return new PropertyToken(
@@ -219,29 +214,6 @@ public class MessageTemplateParser : IMessageTemplateParser
     static bool IsValidInDestructuringHint(char c)
     {
         return c is '@' or '$';
-    }
-
-    static bool IsValidAlignment(string s)
-    {
-        for (int i = 0; i < s.Length; i++)
-        {
-            var c = s[i];
-            if (char.IsDigit(c))
-            {
-                i++;
-                continue;
-            }
-
-            if (i == 0 && c == '-')
-            {
-                i++;
-                continue;
-            }
-
-            return false;
-        }
-
-        return true;
     }
 
     static bool IsValidInFormat(char c)
