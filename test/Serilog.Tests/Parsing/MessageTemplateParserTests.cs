@@ -336,6 +336,13 @@ public class MessageTemplateParserTests
     }
 
     [Fact]
+    public void AlignmentWithPositiveSignParsedAsText()
+    {
+        AssertParsedAs("{Hello,+10}",
+            new TextToken("{Hello,+10}"));
+    }
+
+    [Fact]
     public void NonNumberAlignmentIsParsedAsText()
     {
         AssertParsedAs("{Hello,-aa}",
