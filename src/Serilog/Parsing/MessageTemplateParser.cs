@@ -228,17 +228,10 @@ public class MessageTemplateParser : IMessageTemplateParser
         }
     }
 
-    static bool IsValidInDestructuringHint(char c)
-    {
-        return c is '@' or '$';
-    }
-
     static bool IsValidInFormat(char c)
     {
-        return c != '}' &&
-               (char.IsLetterOrDigit(c) ||
-                char.IsPunctuation(c) ||
-                c is ' ' or '+');
+        // This is the entire ascii printable range minus '}' and DEL
+        return (byte)c >= 32 && (byte)c < 127 && c != '}';
     }
 
     static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
