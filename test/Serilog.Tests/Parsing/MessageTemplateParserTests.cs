@@ -243,10 +243,22 @@ public class MessageTemplateParserTests
     }
 
     [Fact]
-    public void APropertyWithValidNameAndInvalidFormatIsParsedAsText()
+    public void FormatsCanContainSymbolsAndOperators()
     {
         AssertParsedAs("{Hello:HH$MM}",
-            new TextToken("{Hello:HH$MM}"));
+            new PropertyToken("Hello", "{Hello:HH$MM}", "HH$MM"));
+
+        AssertParsedAs("{Hello:HH<MM}",
+            new PropertyToken("Hello", "{Hello:HH<MM}", "HH<MM"));
+
+        AssertParsedAs("{Hello:HH#MM}",
+            new PropertyToken("Hello", "{Hello:HH#MM}", "HH#MM"));
+
+        AssertParsedAs("{Hello:HH+MM}",
+            new PropertyToken("Hello", "{Hello:HH+MM}", "HH+MM"));
+
+        AssertParsedAs("{Hello:HH`MM}",
+            new PropertyToken("Hello", "{Hello:HH`MM}", "HH`MM"));
     }
 
     [Fact]
