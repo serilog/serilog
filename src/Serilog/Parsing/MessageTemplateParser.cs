@@ -228,11 +228,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         }
     }
 
-    static bool IsValidInFormat(char c)
-    {
-        // This is the entire ascii printable range minus '}' and DEL
-        return (byte)c >= 32 && (byte)c < 127 && c != '}';
-    }
+    static bool IsValidInFormat(char c) => c != (byte)'}';
 
     static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
     {
