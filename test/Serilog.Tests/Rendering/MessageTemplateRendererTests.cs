@@ -9,7 +9,7 @@ public class MessageTemplateRendererTests
     [InlineData("{Number:X8}", null, "00000010")]
     [InlineData("{Number}", "j", "16")]
     [InlineData("{Number:X8}", "j", "00000010")]
-    public void PropertyTokenFormatsAreApplied(string template, string appliedFormat, string expected)
+    public void PropertyTokenFormatsAreApplied(string template, string? appliedFormat, string expected)
     {
         var eventTemplate = _messageTemplateParser.Parse(template);
         var properties = new Dictionary<string, LogEventPropertyValue> { ["Number"] = new ScalarValue(16) };
