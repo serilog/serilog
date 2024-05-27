@@ -1,8 +1,8 @@
 <linker>
   <assembly fullname="Serilog">
-    <type fullname="Serilog.Configuration.TrimConfiguration" >
+    <type fullname="Serilog.Capturing.TrimConfiguration" >
       <method signature="System.Boolean get_IsCompilerGeneratedCodeSupported()" body="stub" value="false"
-              feature="Serilog.IsCompilerGeneratedCodeSupported" featurevalue="false" />
+              feature="Serilog.Capturing.IsCompilerGeneratedCodeSupported" featurevalue="false" />
     </type>
   </assembly>
 </linker>
