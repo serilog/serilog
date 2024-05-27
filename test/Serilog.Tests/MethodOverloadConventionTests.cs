@@ -300,7 +300,7 @@ public class MethodOverloadConventionTests
                     }
                     else
                     {
-                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.UserMessage}");
+                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.Message}");
                     }
                 }
             }
@@ -733,7 +733,7 @@ public class MethodOverloadConventionTests
                     }
                     else
                     {
-                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.UserMessage}");
+                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.Message}");
                     }
                 }
             }

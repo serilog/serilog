@@ -137,7 +137,7 @@ public class SettingValueConversionsTests
     // a full-qualified type name should not be considered a static member accessor
     [InlineData("My.NameSpace.Class, MyAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
         null, null)]
-    public void TryParseStaticMemberAccessorReturnsExpectedResults(string input, string expectedAccessorType, string expectedPropertyName)
+    public void TryParseStaticMemberAccessorReturnsExpectedResults(string input, string? expectedAccessorType, string? expectedPropertyName)
     {
         var actual = SettingValueConversions.TryParseStaticMemberAccessor(input,
             out var actualAccessorType,

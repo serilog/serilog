@@ -144,7 +144,7 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(new Dictionary<int, string> { { 1, "hello" } }, Destructuring.Default);
         Assert.IsType<DictionaryValue>(pv);
         var dv = (DictionaryValue)pv;
-        Assert.Equal(1, dv.Elements.Count);
+        Assert.Single(dv.Elements);
     }
 
     [Fact]
@@ -153,7 +153,7 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(new Dictionary<A, string> { { new A(), "hello" } }, Destructuring.Default);
         Assert.IsType<SequenceValue>(pv);
         var sv = (SequenceValue)pv;
-        Assert.Equal(1, sv.Elements.Count);
+        Assert.Single(sv.Elements);
     }
 
     [Fact]
@@ -312,7 +312,7 @@ public class PropertyValueConverterTests
     {
         var indexed = new HasIndexer();
         var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
-        Assert.Equal(0, pv.Properties.Count);
+        Assert.Empty(pv.Properties);
     }
 
     // Important because we use "Item" to short cut indexer checking

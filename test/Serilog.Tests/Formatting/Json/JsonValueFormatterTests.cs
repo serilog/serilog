@@ -4,7 +4,7 @@ public class JsonValueFormatterTests
 {
     class JsonLiteralValueFormatter : JsonValueFormatter
     {
-        public string Format(object literal)
+        public string Format(object? literal)
         {
             var output = new StringWriter();
             FormatLiteralValue(literal, output);
@@ -32,7 +32,7 @@ public class JsonValueFormatterTests
     [InlineData("a\nb", "\"a\\nb\"")]
     [InlineData("", "\"\"")]
     [InlineData(null, "null")]
-    public void JsonLiteralTypesAreFormatted(object value, string expectedJson)
+    public void JsonLiteralTypesAreFormatted(object? value, string expectedJson)
     {
         var formatter = new JsonLiteralValueFormatter();
         Assert.Equal(expectedJson, formatter.Format(value));
