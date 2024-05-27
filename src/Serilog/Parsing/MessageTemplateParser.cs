@@ -228,7 +228,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         }
     }
 
-    static bool IsValidInFormat(char c) => c != (byte)'}';
+    static bool IsValidInFormat(char c) => c != '}';
 
     static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
     {
