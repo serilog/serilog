@@ -16,13 +16,18 @@ namespace Serilog.Core.Enrichers;
 
 class SafeAggregateEnricher : ILogEventEnricher
 {
-    readonly ILogEventEnricher[] _enrichers;
+    readonly List<ILogEventEnricher> _enrichers;
+
+    public SafeAggregateEnricher(List<ILogEventEnricher> enrichers)
+    {
+        _enrichers = Guard.AgainstNull(enrichers);
+        _enrichers.TrimExcess();
+    }
 
     public SafeAggregateEnricher(IEnumerable<ILogEventEnricher> enrichers)
     {
-        Guard.AgainstNull(enrichers);
-
-        _enrichers = enrichers.ToArray();
+        _enrichers = Guard.AgainstNull(enrichers).ToList();
+        _enrichers.TrimExcess();
     }
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)

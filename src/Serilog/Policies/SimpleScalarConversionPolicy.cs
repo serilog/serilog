@@ -18,9 +18,10 @@ class SimpleScalarConversionPolicy : IScalarConversionPolicy
 {
     readonly HashSet<Type> _scalarTypes;
 
-    public SimpleScalarConversionPolicy(IEnumerable<Type> scalarTypes)
+    public SimpleScalarConversionPolicy(HashSet<Type> scalarTypes)
     {
-        _scalarTypes = new(scalarTypes);
+        _scalarTypes = Guard.AgainstNull(scalarTypes);
+        _scalarTypes.TrimExcess();
     }
 
     public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)

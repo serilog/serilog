@@ -16,12 +16,12 @@ namespace Serilog.Core.Sinks;
 
 class SafeAggregateSink : ILogEventSink
 {
-    readonly ILogEventSink[] _sinks;
+    readonly List<ILogEventSink> _sinks;
 
-    public SafeAggregateSink(IEnumerable<ILogEventSink> sinks)
+    public SafeAggregateSink(List<ILogEventSink> sinks)
     {
-        Guard.AgainstNull(sinks);
-        _sinks = sinks.ToArray();
+        _sinks = Guard.AgainstNull(sinks);
+        _sinks.TrimExcess();
     }
 
     public void Emit(LogEvent logEvent)

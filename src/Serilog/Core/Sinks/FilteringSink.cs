@@ -18,12 +18,13 @@ class FilteringSink : ILogEventSink
 {
     readonly ILogEventSink _sink;
     readonly bool _propagateExceptions;
-    readonly ILogEventFilter[] _filters;
+    readonly List<ILogEventFilter> _filters;
 
-    public FilteringSink(ILogEventSink sink, IEnumerable<ILogEventFilter> filters, bool propagateExceptions)
+    public FilteringSink(ILogEventSink sink, List<ILogEventFilter> filters, bool propagateExceptions)
     {
         _sink = Guard.AgainstNull(sink);
-        _filters = Guard.AgainstNull(filters).ToArray();
+        _filters = Guard.AgainstNull(filters);
+        _filters.TrimExcess();
         _propagateExceptions = propagateExceptions;
     }
 

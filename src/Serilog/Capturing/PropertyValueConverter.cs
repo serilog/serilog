@@ -20,8 +20,7 @@ namespace Serilog.Capturing;
 // writing a log event (roughly) in control of the cost of recording that event.
 partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventPropertyValueFactory
 {
-    static readonly HashSet<Type> BuiltInScalarTypes = new()
-    {
+    static readonly HashSet<Type> BuiltInScalarTypes = [
         typeof(decimal),
         typeof(string),
         typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
@@ -29,7 +28,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 #if FEATURE_DATE_AND_TIME_ONLY
             typeof(TimeOnly), typeof(DateOnly)
 #endif
-    };
+    ];
 
     readonly IDestructuringPolicy[] _destructuringPolicies;
     readonly Type[] _dictionaryTypes;
@@ -43,9 +42,9 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         int maximumDestructuringDepth,
         int maximumStringLength,
         int maximumCollectionCount,
-        IEnumerable<Type> additionalScalarTypes,
-        IEnumerable<Type> additionalDictionaryTypes,
-        IEnumerable<IDestructuringPolicy> additionalDestructuringPolicies,
+        List<Type> additionalScalarTypes,
+        HashSet<Type> additionalDictionaryTypes,
+        List<IDestructuringPolicy> additionalDestructuringPolicies,
         bool propagateExceptions)
     {
         Guard.AgainstNull(additionalScalarTypes);
@@ -58,24 +57,21 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         _maximumStringLength = maximumStringLength;
         _maximumCollectionCount = maximumCollectionCount;
 
-        _scalarConversionPolicies = new IScalarConversionPolicy[]
-        {
+        _scalarConversionPolicies = [
             new PrimitiveScalarConversionPolicy(),
-            new SimpleScalarConversionPolicy(BuiltInScalarTypes.Concat(additionalScalarTypes)),
+            new SimpleScalarConversionPolicy([..BuiltInScalarTypes, ..additionalScalarTypes]),
             new EnumScalarConversionPolicy(),
             new ByteArrayScalarConversionPolicy(),
 #if FEATURE_SPAN
             new ByteMemoryScalarConversionPolicy(),
 #endif
-        };
+        ];
 
-        _destructuringPolicies = additionalDestructuringPolicies
-            .Concat(new IDestructuringPolicy[]
-            {
-                new DelegateDestructuringPolicy(),
-                new ReflectionTypesScalarDestructuringPolicy()
-            })
-            .ToArray();
+        _destructuringPolicies = [
+            ..additionalDestructuringPolicies,
+            new DelegateDestructuringPolicy(),
+            new ReflectionTypesScalarDestructuringPolicy(),
+        ];
 
         _dictionaryTypes = additionalDictionaryTypes.ToArray();
         _depthLimiter = new(maximumDestructuringDepth, this);
