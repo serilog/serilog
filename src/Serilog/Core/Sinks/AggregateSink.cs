@@ -37,7 +37,7 @@ class AggregateSink : ILogEventSink
             catch (Exception ex)
             {
                 SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-                exceptions ??= new();
+                exceptions ??= [];
                 exceptions.Add(ex);
             }
         }

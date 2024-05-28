@@ -14,8 +14,8 @@ public class MessageTemplateParserTests
     {
         var parsed = Parse(message);
         Assert.Equal(
-            parsed,
-            messageTemplateTokens);
+            messageTemplateTokens,
+            parsed);
     }
 
     [Fact]
@@ -104,35 +104,43 @@ public class MessageTemplateParserTests
             new TextToken("Hello, {worl@d}!"));
     }
 
-    [Fact]
-    public void AMalformedPropertyTagIsParsedAsText()
+    [Theory]
+    [InlineData("{test.name}")]
+    [InlineData("{te.st.na.me}")]
+    // Questionable syntax but permitted by the experimental flag. These are documented here so that if the
+    // feature progresses to first-class support, they can be detected and dealt with accordingly.
+    [InlineData("{.testname}")]
+    [InlineData("{testname.}")]
+    [InlineData("{.}")]
+    [InlineData("{..}")]
+    [InlineData("{test..name}")]
+    public void DashedAndDottedNamesAreAcceptedWhenFeatureFlaggedIn(string template)
     {
-        AssertParsedAs("{0 space}",
-            new TextToken("{0 space}"));
+        var parser = new MessageTemplateParser(acceptDottedPropertyNames: true);
+        var token = Assert.Single(parser.Parse(template).Tokens);
+        var propertyToken = Assert.IsType<PropertyToken>(token);
+        var expected = template.Trim('{', '}');
+        Assert.Equal(expected, propertyToken.PropertyName);
+        Assert.Null(propertyToken.Alignment);
+        Assert.Null(propertyToken.Format);
+        Assert.False(propertyToken.IsPositional);
+    }
 
-        AssertParsedAs("{0 space",
-            new TextToken("{0 space"));
-
-        AssertParsedAs("{0_space",
-            new TextToken("{0_space"));
+    [Theory]
+    [InlineData("{0 space}",   "{0 space}")]
+    [InlineData("{0 space",    "{0 space")]
+    [InlineData("{0_space",    "{0_space")]
+    [InlineData("{0_{{space}", "{0_{{space}")]
+    [InlineData("{0_{{space",  "{0_{{space")]
+    public void AMalformedPropertyTagIsParsedAsText(string template, string expected)
+    {
+        AssertParsedAs(template, new TextToken(expected));
     }
 
     [Fact]
-    public void AMalformedPropertyTagIsParsedAsText2()
+    public void ATrailingUnmatchedBracketIsParsedAsText()
     {
-        AssertParsedAs("{0_{{space}",
-            new TextToken("{0_{{space}"));
-
-        AssertParsedAs("{0_{{space",
-            new TextToken("{0_{{space"));
-    }
-
-    [Fact]
-    public void AMalformedPropertyTagIsParsedAsText3()
-    {
-        AssertParsedAs("{0_}}space}",
-            new PropertyToken("0_", "{0_}"),
-            new TextToken("}space}"));
+        AssertParsedAs("{0_}}space}", new PropertyToken("0_", "{0_}"), new TextToken("}space}"));
     }
 
     [Fact]
@@ -235,10 +243,22 @@ public class MessageTemplateParserTests
     }
 
     [Fact]
-    public void APropertyWithValidNameAndInvalidFormatIsParsedAsText()
+    public void FormatsCanContainSymbolsAndOperators()
     {
         AssertParsedAs("{Hello:HH$MM}",
-            new TextToken("{Hello:HH$MM}"));
+            new PropertyToken("Hello", "{Hello:HH$MM}", "HH$MM"));
+
+        AssertParsedAs("{Hello:HH<MM}",
+            new PropertyToken("Hello", "{Hello:HH<MM}", "HH<MM"));
+
+        AssertParsedAs("{Hello:HH#MM}",
+            new PropertyToken("Hello", "{Hello:HH#MM}", "HH#MM"));
+
+        AssertParsedAs("{Hello:HH+MM}",
+            new PropertyToken("Hello", "{Hello:HH+MM}", "HH+MM"));
+
+        AssertParsedAs("{Hello:HH`MM}",
+            new PropertyToken("Hello", "{Hello:HH`MM}", "HH`MM"));
     }
 
     [Fact]
@@ -326,13 +346,20 @@ public class MessageTemplateParserTests
     }
 
     [Fact]
-    public void ZeroValuesAlignmentIsParsedAsText()
+    public void ZeroValuesAlignmentIsParsedAsProperty()
     {
-        AssertParsedAs("{Hello,-0}",
-            new TextToken("{Hello,-0}"));
+       AssertParsedAs("{Hello,-0}",
+           new PropertyToken("Hello", "{Hello,-0}", alignment: new Alignment(AlignmentDirection.Right, 0)));
 
-        AssertParsedAs("{Hello,0}",
-            new TextToken("{Hello,0}"));
+       AssertParsedAs("{Hello,0}",
+           new PropertyToken("Hello", "{Hello,0}", alignment: new Alignment(AlignmentDirection.Left, 0)));
+    }
+
+    [Fact]
+    public void AlignmentWithPositiveSignParsedAsText()
+    {
+        AssertParsedAs("{Hello,+10}",
+            new TextToken("{Hello,+10}"));
     }
 
     [Fact]

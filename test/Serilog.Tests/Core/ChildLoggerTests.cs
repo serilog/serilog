@@ -11,7 +11,7 @@ public class ChildLoggerTests
         //
         static object?[] T(LogEventLevel el, int? rl, int? rt, int? cl, bool r)
         {
-            return new object?[] { el, rl, rt, cl, r };
+            return [el, rl, rt, cl, r];
         }
         // numbers are relative to incoming event level
         // Information + 1 = Warning
@@ -144,7 +144,7 @@ public class ChildLoggerTests
         //
         static object?[] T(string? rs, int? rl, string? cs, int? cl, bool r, LogEventLevel dl = LevelAlias.Minimum)
         {
-            return new object?[] { dl, rs, rl, cs, cl, r };
+            return [dl, rs, rl, cs, cl, r];
         }
         // numbers are relative to incoming event level
         // Information + 1 = Warning

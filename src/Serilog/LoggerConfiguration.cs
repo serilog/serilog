@@ -19,13 +19,13 @@ namespace Serilog;
 /// </summary>
 public class LoggerConfiguration
 {
-    readonly List<ILogEventSink> _logEventSinks = new();
-    readonly List<ILogEventSink> _auditSinks = new();
-    readonly List<ILogEventEnricher> _enrichers = new();
-    readonly List<ILogEventFilter> _filters = new();
-    readonly List<Type> _additionalScalarTypes = new();
-    readonly HashSet<Type> _additionalDictionaryTypes = new();
-    readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = new();
+    readonly List<ILogEventSink> _logEventSinks = [];
+    readonly List<ILogEventSink> _auditSinks = [];
+    readonly List<ILogEventEnricher> _enrichers = [];
+    readonly List<ILogEventFilter> _filters = [];
+    readonly List<Type> _additionalScalarTypes = [];
+    readonly HashSet<Type> _additionalDictionaryTypes = [];
+    readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = [];
     readonly Dictionary<string, LoggingLevelSwitch> _overrides = new();
     LogEventLevel _minimumLevel = LogEventLevel.Information;
     LoggingLevelSwitch? _levelSwitch;

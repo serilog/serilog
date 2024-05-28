@@ -12,6 +12,9 @@ public class LevelOverrideMapTests
     [InlineData("MyApp.Api.Controllers.AboutController", true, Information)]
     [InlineData("MyApp.Api.Controllers.HomeController", true, Warning)]
     [InlineData("Api.Controllers.HomeController", false, LevelAlias.Minimum)]
+    [InlineData("serilog", false, LevelAlias.Minimum)]
+    [InlineData("myapp", true, Debug)]
+    [InlineData("myappsomething", false, LevelAlias.Minimum)]
     public void OverrideScenarios(string context, bool overrideExpected, LogEventLevel expected)
     {
         var overrides = new Dictionary<string, LoggingLevelSwitch>

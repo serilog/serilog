@@ -22,32 +22,35 @@ namespace Serilog.Formatting.Display;
 /// </summary>
 static class LevelOutputFormat
 {
-    static readonly string[][] _titleCaseLevelMap = {
-        new []{ "V", "Vb", "Vrb", "Verb", "Verbo", "Verbos", "Verbose" },
-        new []{ "D", "De", "Dbg", "Dbug", "Debug" },
-        new []{ "I", "In", "Inf", "Info", "Infor", "Inform", "Informa", "Informat", "Informati", "Informatio", "Information" },
-        new []{ "W", "Wn", "Wrn", "Warn", "Warni", "Warnin", "Warning" },
-        new []{ "E", "Er", "Err", "Eror", "Error" },
-        new []{ "F", "Fa", "Ftl", "Fatl", "Fatal" }
-    };
+    static readonly string[][] _titleCaseLevelMap =
+    [
+        ["V", "Vb", "Vrb", "Verb", "Verbo", "Verbos", "Verbose"],
+        ["D", "De", "Dbg", "Dbug", "Debug"],
+        ["I", "In", "Inf", "Info", "Infor", "Inform", "Informa", "Informat", "Informati", "Informatio", "Information"],
+        ["W", "Wn", "Wrn", "Warn", "Warni", "Warnin", "Warning"],
+        ["E", "Er", "Err", "Eror", "Error"],
+        ["F", "Fa", "Ftl", "Fatl", "Fatal"]
+    ];
 
-    static readonly string[][] _lowerCaseLevelMap = {
-        new []{ "v", "vb", "vrb", "verb", "verbo", "verbos", "verbose" },
-        new []{ "d", "de", "dbg", "dbug", "debug" },
-        new []{ "i", "in", "inf", "info", "infor", "inform", "informa", "informat", "informati", "informatio", "information" },
-        new []{ "w", "wn", "wrn", "warn", "warni", "warnin", "warning" },
-        new []{ "e", "er", "err", "eror", "error" },
-        new []{ "f", "fa", "ftl", "fatl", "fatal" }
-    };
+    static readonly string[][] _lowerCaseLevelMap =
+    [
+        ["v", "vb", "vrb", "verb", "verbo", "verbos", "verbose"],
+        ["d", "de", "dbg", "dbug", "debug"],
+        ["i", "in", "inf", "info", "infor", "inform", "informa", "informat", "informati", "informatio", "information"],
+        ["w", "wn", "wrn", "warn", "warni", "warnin", "warning"],
+        ["e", "er", "err", "eror", "error"],
+        ["f", "fa", "ftl", "fatl", "fatal"]
+    ];
 
-    static readonly string[][] _upperCaseLevelMap = {
-        new []{ "V", "VB", "VRB", "VERB", "VERBO", "VERBOS", "VERBOSE" },
-        new []{ "D", "DE", "DBG", "DBUG", "DEBUG" },
-        new []{ "I", "IN", "INF", "INFO", "INFOR", "INFORM", "INFORMA", "INFORMAT", "INFORMATI", "INFORMATIO", "INFORMATION" },
-        new []{ "W", "WN", "WRN", "WARN", "WARNI", "WARNIN", "WARNING" },
-        new []{ "E", "ER", "ERR", "EROR", "ERROR" },
-        new []{ "F", "FA", "FTL", "FATL", "FATAL" }
-    };
+    static readonly string[][] _upperCaseLevelMap =
+    [
+        ["V", "VB", "VRB", "VERB", "VERBO", "VERBOS", "VERBOSE"],
+        ["D", "DE", "DBG", "DBUG", "DEBUG"],
+        ["I", "IN", "INF", "INFO", "INFOR", "INFORM", "INFORMA", "INFORMAT", "INFORMATI", "INFORMATIO", "INFORMATION"],
+        ["W", "WN", "WRN", "WARN", "WARNI", "WARNIN", "WARNING"],
+        ["E", "ER", "ERR", "EROR", "ERROR"],
+        ["F", "FA", "FTL", "FATL", "FATAL"]
+    ];
 
     public static string GetLevelMoniker(LogEventLevel value, string? format = null)
     {
