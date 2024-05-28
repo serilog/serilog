@@ -31,6 +31,22 @@ public class LoggerEnrichmentConfiguration
     }
 
     /// <summary>
+    /// Specifies one enricher that may add properties dynamically to
+    /// log events.
+    /// </summary>
+    /// <param name="enricher">Enricher to apply to all events passing through
+    /// the logger.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="enricher"/> is <code>null</code></exception>
+    public LoggerConfiguration With(ILogEventEnricher enricher)
+    {
+        Guard.AgainstNull(enricher);
+
+        _addEnricher(enricher);
+        return _loggerConfiguration;
+    }
+
+    /// <summary>
     /// Specifies one or more enrichers that may add properties dynamically to
     /// log events.
     /// </summary>

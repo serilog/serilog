@@ -69,6 +69,21 @@ public class LoggerDestructuringConfiguration
     public LoggerConfiguration AsScalar<TScalar>() => AsScalar(typeof(TScalar));
 
     /// <summary>
+    /// When destructuring objects, transform instances with the provided policy.
+    /// </summary>
+    /// <param name="destructuringPolicy">Policy to apply when destructuring.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="destructuringPolicy"/> is <code>null</code></exception>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public LoggerConfiguration With(IDestructuringPolicy destructuringPolicy)
+    {
+        Guard.AgainstNull(destructuringPolicy);
+
+        _addPolicy(destructuringPolicy);
+        return _loggerConfiguration;
+    }
+
+    /// <summary>
     /// When destructuring objects, transform instances with the provided policies.
     /// </summary>
     /// <param name="destructuringPolicies">Policies to apply when destructuring.</param>

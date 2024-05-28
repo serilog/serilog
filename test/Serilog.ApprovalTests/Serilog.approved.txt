@@ -24,6 +24,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth) { }
         public Serilog.LoggerConfiguration ToMaximumStringLength(int maximumStringLength) { }
         public Serilog.LoggerConfiguration With(params Serilog.Core.IDestructuringPolicy[] destructuringPolicies) { }
+        public Serilog.LoggerConfiguration With(Serilog.Core.IDestructuringPolicy destructuringPolicy) { }
         public Serilog.LoggerConfiguration With<TDestructuringPolicy>()
             where TDestructuringPolicy : Serilog.Core.IDestructuringPolicy, new () { }
     }
@@ -33,6 +34,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration AtLevel(Serilog.Events.LogEventLevel enrichFromLevel, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureEnricher) { }
         public Serilog.LoggerConfiguration FromLogContext() { }
         public Serilog.LoggerConfiguration When(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerEnrichmentConfiguration> configureEnricher) { }
+        public Serilog.LoggerConfiguration With(Serilog.Core.ILogEventEnricher enricher) { }
         public Serilog.LoggerConfiguration With(params Serilog.Core.ILogEventEnricher[] enrichers) { }
         public Serilog.LoggerConfiguration With<TEnricher>()
             where TEnricher : Serilog.Core.ILogEventEnricher, new () { }
@@ -43,6 +45,7 @@ namespace Serilog.Configuration
     {
         public Serilog.LoggerConfiguration ByExcluding(System.Func<Serilog.Events.LogEvent, bool> exclusionPredicate) { }
         public Serilog.LoggerConfiguration ByIncludingOnly(System.Func<Serilog.Events.LogEvent, bool> inclusionPredicate) { }
+        public Serilog.LoggerConfiguration With(Serilog.Core.ILogEventFilter filter) { }
         public Serilog.LoggerConfiguration With(params Serilog.Core.ILogEventFilter[] filters) { }
         public Serilog.LoggerConfiguration With<TFilter>()
             where TFilter : Serilog.Core.ILogEventFilter, new () { }
