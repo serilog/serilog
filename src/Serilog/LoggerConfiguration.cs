@@ -19,14 +19,14 @@ namespace Serilog;
 /// </summary>
 public class LoggerConfiguration
 {
-    readonly List<ILogEventSink> _logEventSinks = [];
-    readonly List<ILogEventSink> _auditSinks = [];
-    readonly List<ILogEventEnricher> _enrichers = [];
-    readonly List<ILogEventFilter> _filters = [];
-    readonly List<Type> _additionalScalarTypes = [];
-    readonly HashSet<Type> _additionalDictionaryTypes = [];
-    readonly List<IDestructuringPolicy> _additionalDestructuringPolicies = [];
-    readonly Dictionary<string, LoggingLevelSwitch> _overrides = [];
+    private List<ILogEventSink>? _logEventSinks;
+    private List<ILogEventSink>? _auditSinks;
+    private List<ILogEventEnricher>? _enrichers;
+    private List<ILogEventFilter>? _filters;
+    private List<Type>? _additionalScalarTypes;
+    private HashSet<Type>? _additionalDictionaryTypes;
+    private List<IDestructuringPolicy>? _additionalDestructuringPolicies;
+    private Dictionary<string, LoggingLevelSwitch>? _overrides;
 
     LogEventLevel _minimumLevel = LogEventLevel.Information;
     LoggingLevelSwitch? _levelSwitch;
@@ -55,7 +55,7 @@ public class LoggerConfiguration
     /// </summary>
     public LoggerSinkConfiguration WriteTo
     {
-        get => _writeTo ??= new(this, s => _logEventSinks.Add(s));
+        get => _writeTo ??= new(this, s => (_logEventSinks ??= []).Add(s));
         internal set => this._writeTo = value;
     }
 
@@ -70,7 +70,7 @@ public class LoggerConfiguration
     /// extending <see cref="LoggerAuditSinkConfiguration"/>, though the generic <see cref="LoggerAuditSinkConfiguration.Sink"/>
     /// method allows any sink class to be adapted for auditing.
     /// </remarks>
-    public LoggerAuditSinkConfiguration AuditTo => _auditTo ??= new(this, s => _auditSinks.Add(s));
+    public LoggerAuditSinkConfiguration AuditTo => _auditTo ??= new(this, s => (_auditSinks ??= []).Add(s));
 
     /// <summary>
     /// Configures the minimum level at which events will be passed to sinks. If
@@ -85,7 +85,7 @@ public class LoggerConfiguration
                     _levelSwitch = null;
                 },
                 sw => _levelSwitch = sw,
-                (s, lls) => _overrides[s] = lls);
+                (s, lls) => (_overrides ??= [])[s] = lls);
 
     /// <summary>
     /// Configures enrichment of <see cref="LogEvent"/>s. Enrichers can add, remove and
@@ -93,25 +93,25 @@ public class LoggerConfiguration
     /// </summary>
     public LoggerEnrichmentConfiguration Enrich
     {
-        get => _enrich ??= new(this, e => _enrichers.Add(e));
+        get => _enrich ??= new(this, e => (_enrichers ??= []).Add(e));
         internal set => this._enrich = value;
     }
 
     /// <summary>
     /// Configures global filtering of <see cref="LogEvent"/>s.
     /// </summary>
-    public LoggerFilterConfiguration Filter => _filter ??= new(this, f => _filters.Add(f));
+    public LoggerFilterConfiguration Filter => _filter ??= new(this, f => (_filters ??= []).Add(f));
 
     /// <summary>
     /// Configures destructuring of message template parameters.
     /// </summary>
     public LoggerDestructuringConfiguration Destructure => _destructure ??= new(this,
-                _additionalScalarTypes.Add,
-                type => _additionalDictionaryTypes.Add(type),
-                _additionalDestructuringPolicies.Add,
+                type => (_additionalScalarTypes ??= []).Add(type),
+                type => (_additionalDictionaryTypes ??= []).Add(type),
+                type => (_additionalDestructuringPolicies ??= []).Add(type),
                 depth => _maximumDestructuringDepth = depth,
                 length => _maximumStringLength = length,
-                count => _maximumCollectionCount = count);
+                count => _maximumCollectionCount = count)!;
 
     /// <summary>
     /// Apply external settings to the logger configuration.
@@ -133,20 +133,20 @@ public class LoggerConfiguration
         _loggerCreated = true;
 
         ILogEventSink? sink = null;
-        if (_logEventSinks.Count != 0)
+        if (_logEventSinks is not null && _logEventSinks.Count != 0)
         {
             sink = new SafeAggregateSink(_logEventSinks);
         }
 
-        var auditing = _auditSinks.Count != 0;
+        var auditing = _auditSinks is not null && _auditSinks.Count != 0;
         if (auditing)
         {
-            sink = new AggregateSink(sink == null ? _auditSinks : [sink, .. _auditSinks]);
+            sink = new AggregateSink(sink == null ? _auditSinks! : [sink, .. _auditSinks!]);
         }
 
         sink ??= new EmptySink();
 
-        if (_filters.Count != 0)
+        if (_filters is not null && _filters.Count != 0)
         {
             // A throwing filter could drop an auditable event, so exceptions in filters must be propagated
             // if auditing is used.
@@ -157,15 +157,16 @@ public class LoggerConfiguration
             _maximumDestructuringDepth,
             _maximumStringLength,
             _maximumCollectionCount,
-            _additionalScalarTypes,
-            _additionalDictionaryTypes,
-            _additionalDestructuringPolicies,
+            _additionalScalarTypes ?? [],
+            _additionalDictionaryTypes ?? [],
+            _additionalDestructuringPolicies ?? [],
             auditing);
         var processor = new MessageTemplateProcessor(converter);
 
-        var enricher = _enrichers.Count switch
+        var enricher = _enrichers?.Count switch
         {
             // Should be a rare case, so no problem making that extra interface dispatch.
+            null => new EmptyEnricher(),
             0 => new EmptyEnricher(),
             1 => _enrichers[0],
             // Enrichment failures are not considered blocking for auditing purposes.
@@ -173,7 +174,7 @@ public class LoggerConfiguration
         };
 
         LevelOverrideMap? overrideMap = null;
-        if (_overrides.Count != 0)
+        if (_overrides is not null && _overrides.Count != 0)
         {
             overrideMap = new(_overrides, _minimumLevel, _levelSwitch);
         }
@@ -219,7 +220,7 @@ public class LoggerConfiguration
 
     static class Util
     {
-        public static IEnumerable<ILogEventSink> WhereIsDisposableSinks(List<ILogEventSink> sinks, List<ILogEventSink> auditSinks)
+        public static IEnumerable<ILogEventSink> WhereIsDisposableSinks(List<ILogEventSink>? sinks, List<ILogEventSink>? auditSinks)
         {
             foreach (var sink in WhereIsDisposable(sinks))
             {
@@ -231,8 +232,11 @@ public class LoggerConfiguration
             }
         }
 
-        public static IEnumerable<T> WhereIsDisposable<T>(List<T> items)
+        public static IEnumerable<T> WhereIsDisposable<T>(List<T>? items)
         {
+            if(items is null)
+                yield break;
+
             foreach (var item in items)
             {
                 if (item is IDisposable
