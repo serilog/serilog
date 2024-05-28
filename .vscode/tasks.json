@@ -1,0 +1,42 @@
+{
+  "tasks": [
+    {
+      "args": [
+        "build",
+        "${workspaceFolder}/Serilog.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "command": "dotnet",
+      "group": {
+        "isDefault": true,
+        "kind": "build"
+      },
+      "label": "build",
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile",
+      "type": "shell"
+    },
+    {
+      "args": [
+        "test",
+        "${workspaceFolder}/Serilog.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary",
+        "--filter",
+        "FullyQualifiedName!~PerformanceTests"
+      ],
+      "command": "dotnet",
+      "group": {
+        "isDefault": true,
+        "kind": "test"
+      },
+      "label": "test",
+      "problemMatcher": "$msCompile",
+      "type": "process"
+    }
+  ],
+  "version": "2.0.0"
+}

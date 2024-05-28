@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if FEATURE_DEFAULT_INTERFACE
 using System.Diagnostics;
+#endif
 
 namespace Serilog;
 
@@ -162,7 +164,7 @@ public interface ILogger
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, messageTemplate, new object?[] { propertyValue });
+            Write(level, messageTemplate, [propertyValue]);
         }
     }
 #else
@@ -183,7 +185,7 @@ public interface ILogger
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+            Write(level, messageTemplate, [propertyValue0, propertyValue1]);
         }
     }
 #else
@@ -205,7 +207,7 @@ public interface ILogger
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+            Write(level, messageTemplate, [propertyValue0, propertyValue1, propertyValue2]);
         }
     }
 #else
@@ -259,7 +261,7 @@ public interface ILogger
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, exception, messageTemplate, new object?[] { propertyValue });
+            Write(level, exception, messageTemplate, [propertyValue]);
         }
     }
 #else
@@ -281,7 +283,7 @@ public interface ILogger
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1 });
+            Write(level, exception, messageTemplate, [propertyValue0, propertyValue1]);
         }
     }
 #else
@@ -304,7 +306,7 @@ public interface ILogger
         // Avoid the array allocation and any boxing allocations when the level isn't enabled
         if (IsEnabled(level))
         {
-            Write(level, exception, messageTemplate, new object?[] { propertyValue0, propertyValue1, propertyValue2 });
+            Write(level, exception, messageTemplate, [propertyValue0, propertyValue1, propertyValue2]);
         }
     }
 #else
@@ -331,7 +333,7 @@ public interface ILogger
         // Catch a common pitfall when a single non-object array is cast to object[]
         if (propertyValues != null &&
             propertyValues.GetType() != typeof(object[]))
-            propertyValues = new object[] { propertyValues };
+            propertyValues = [propertyValues];
 
         var logTimestamp = DateTimeOffset.Now;
         if (BindMessageTemplate(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties))

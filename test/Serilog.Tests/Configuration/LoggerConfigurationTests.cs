@@ -1,6 +1,6 @@
 // ReSharper disable PossibleNullReferenceException
 
-namespace Serilog.Tests;
+namespace Serilog.Tests.Configuration;
 
 public class LoggerConfigurationTests
 {
@@ -600,129 +600,6 @@ public class LoggerConfigurationTests
         logger.Information("{@Value}", new Value());
 
         Assert.True(true, "No exception reached the caller");
-    }
-
-    [Fact]
-    public void WrappingDecoratesTheConfiguredSink()
-    {
-        DummyWrappingSink.Reset();
-        var sink = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.Dummy(w => w.Sink(sink))
-            .CreateLogger();
-
-        var evt = Some.InformationEvent();
-        logger.Write(evt);
-
-        Assert.Same(evt, DummyWrappingSink.Emitted.Single());
-        Assert.Same(evt, sink.SingleEvent);
-    }
-
-    [Fact]
-    public void WrappingDoesNotPermitEnrichment()
-    {
-        var sink = new CollectingSink();
-        var propertyName = Some.String();
-        var logger = new LoggerConfiguration()
-            .WriteTo.Dummy(w => w.Sink(sink)
-                .Enrich.WithProperty(propertyName, 1))
-            .CreateLogger();
-
-        var evt = Some.InformationEvent();
-        logger.Write(evt);
-
-        Assert.Same(evt, sink.SingleEvent);
-        Assert.False(evt.Properties.ContainsKey(propertyName));
-    }
-
-    [Fact]
-    public void WrappingIsAppliedWhenChaining()
-    {
-        DummyWrappingSink.Reset();
-        var sink1 = new CollectingSink();
-        var sink2 = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.Dummy(w => w.Sink(sink1)
-                .WriteTo.Sink(sink2))
-            .CreateLogger();
-
-        var evt = Some.InformationEvent();
-        logger.Write(evt);
-
-        Assert.Same(evt, DummyWrappingSink.Emitted.Single());
-        Assert.Same(evt, sink1.SingleEvent);
-        Assert.Same(evt, sink2.SingleEvent);
-    }
-
-    [Fact]
-    public void WrappingIsAppliedWhenCallingMultipleTimes()
-    {
-        DummyWrappingSink.Reset();
-        var sink1 = new CollectingSink();
-        var sink2 = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.Dummy(w =>
-            {
-                w.Sink(sink1);
-                w.Sink(sink2);
-            })
-            .CreateLogger();
-
-        var evt = Some.InformationEvent();
-        logger.Write(evt);
-
-        Assert.Same(evt, DummyWrappingSink.Emitted.Single());
-        Assert.Same(evt, sink1.SingleEvent);
-        Assert.Same(evt, sink2.SingleEvent);
-    }
-
-    [Fact]
-    public void WrappingSinkRespectsLogEventLevelSetting()
-    {
-        DummyWrappingSink.Reset();
-        var sink = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.DummyWrap(w => w.Sink(sink), Error, null)
-            .CreateLogger();
-
-        logger.Write(Some.InformationEvent());
-
-        Assert.Empty(DummyWrappingSink.Emitted);
-        Assert.Empty(sink.Events);
-    }
-
-    [Fact]
-    public void WrappingSinkRespectsLevelSwitchSetting()
-    {
-        DummyWrappingSink.Reset();
-        var sink = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.DummyWrap(
-                w => w.Sink(sink), LogEventLevel.Verbose,
-                new(Error))
-            .CreateLogger();
-
-        logger.Write(Some.InformationEvent());
-
-        Assert.Empty(DummyWrappingSink.Emitted);
-        Assert.Empty(sink.Events);
-    }
-
-    [Fact]
-    public void WrappingSinkReceivesEventsWhenLevelIsAppropriate()
-    {
-        DummyWrappingSink.Reset();
-        var sink = new CollectingSink();
-        var logger = new LoggerConfiguration()
-            .WriteTo.DummyWrap(
-                w => w.Sink(sink), LogEventLevel.Error,
-                new(Verbose))
-            .CreateLogger();
-
-        logger.Write(Some.InformationEvent());
-
-        Assert.NotEmpty(DummyWrappingSink.Emitted);
-        Assert.NotEmpty(sink.Events);
     }
 
     [Fact]

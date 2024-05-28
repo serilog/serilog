@@ -15,6 +15,7 @@
 namespace Serilog.Settings.KeyValuePairs;
 
 [RequiresUnreferencedCode("Scans assemblies at runtime")] // RequiresUnreferencedCode couldn't be applied to types in .NET 5.
+[RequiresDynamicCode("Creates arrays of unknown element type")]
 class KeyValuePairSettings : ILoggerSettings
 {
     const string UsingDirective = "using";
@@ -36,7 +37,8 @@ class KeyValuePairSettings : ILoggerSettings
     const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>.*)$";
     const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
-    static readonly string[] _supportedDirectives = [
+    static readonly string[] _supportedDirectives =
+    [
         UsingDirective,
         LevelSwitchDirective,
         AuditToDirective,
@@ -210,6 +212,7 @@ class KeyValuePairSettings : ILoggerSettings
     }
 
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         if (type == typeof(LoggingLevelSwitch))
@@ -220,6 +223,7 @@ class KeyValuePairSettings : ILoggerSettings
     }
 
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         foreach (var directiveInfo in directives)
@@ -239,6 +243,7 @@ class KeyValuePairSettings : ILoggerSettings
 
                 // Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
                 [UnconditionalSuppressMessage("Trimming", "IL2026")]
+                [UnconditionalSuppressMessage("AOT", "IL3050")]
                 object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
                     => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
 

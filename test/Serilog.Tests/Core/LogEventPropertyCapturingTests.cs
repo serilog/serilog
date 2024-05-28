@@ -86,8 +86,8 @@ public class LogEventPropertyCapturingTests
             {
                 new LogEventProperty("who", new ScalarValue("who")),
                 new LogEventProperty("what", new ScalarValue("what")),
-                new LogEventProperty("__2", new SequenceValue(new[] { new ScalarValue("__2") })),
-                new LogEventProperty("__3", new SequenceValue(new[] { new ScalarValue("__3") })),
+                new LogEventProperty("__2", new SequenceValue([new ScalarValue("__2")])),
+                new LogEventProperty("__3", new SequenceValue([new ScalarValue("__3")])),
             },
             Capture("Hello {who} {what} where}", "who", "what", new[] { "__2" }, new[] { "__3" }),
             new LogEventPropertyStructuralEqualityComparer());
@@ -114,10 +114,11 @@ public class LogEventPropertyCapturingTests
         var templateArguments = new[] { 1, 2, 3, };
         var expected = new[] {
             new LogEventProperty("sequence",
-                new SequenceValue(new[] {
+                new SequenceValue([
                     new ScalarValue(1),
                     new ScalarValue(2),
-                    new ScalarValue(3) })) };
+                    new ScalarValue(3)
+                ])) };
 
         Assert.Equal(expected, Capture(template, templateArguments),
             new LogEventPropertyStructuralEqualityComparer());
@@ -130,12 +131,13 @@ public class LogEventPropertyCapturingTests
         var templateArguments = new[] { "1", "2", "3", };
         var expected = new[] {
             new LogEventProperty("sequence",
-                new SequenceValue(new[] {
+                new SequenceValue([
                     new ScalarValue("1"),
                     new ScalarValue("2"),
-                    new ScalarValue("3") })) };
+                    new ScalarValue("3")
+                ])) };
 
-        Assert.Equal(expected, Capture(template, new object[] { templateArguments }),
+        Assert.Equal(expected, Capture(template, [templateArguments]),
             new LogEventPropertyStructuralEqualityComparer());
     }
 

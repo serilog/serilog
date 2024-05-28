@@ -268,7 +268,7 @@ public class JsonFormatterTests
     {
         var p = new MessageTemplateParser();
         var e = new LogEvent(Some.OffsetInstant(), Information, null,
-            p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) })) });
+            p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue([new SequenceValue([new ScalarValue("Hello")])])) });
 
         var d = FormatEvent(e);
 
