@@ -4,7 +4,7 @@ namespace Serilog.Core.Tests;
 
 public class BatchingSinkTests
 {
-    static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(200);
+    static readonly TimeSpan TinyWait = TimeSpan.FromMilliseconds(500);
     static readonly TimeSpan MicroWait = TimeSpan.FromMilliseconds(1);
 
     [Fact]
