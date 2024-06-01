@@ -14,8 +14,10 @@
 
 namespace Serilog.Settings.KeyValuePairs;
 
-[RequiresUnreferencedCode("Scans assemblies at runtime")] // RequiresUnreferencedCode couldn't be applied to types in .NET 5.
+#if NET6_0_OR_GREATER
 [RequiresDynamicCode("Creates arrays of unknown element type")]
+[RequiresUnreferencedCode("Scans assemblies at runtime")]
+#endif
 class KeyValuePairSettings : ILoggerSettings
 {
     const string UsingDirective = "using";
@@ -161,6 +163,7 @@ class KeyValuePairSettings : ILoggerSettings
         return Regex.IsMatch(input, LevelSwitchNameRegex);
     }
 
+    [RequiresDynamicCode("Reflects against accessors using dynamic string")]
     [RequiresUnreferencedCode("Reflects against accessors using dynamic string")]
     static IReadOnlyDictionary<string, LoggingLevelSwitch> ParseNamedLevelSwitchDeclarationDirectives(IReadOnlyDictionary<string, string> directives)
     {
@@ -211,6 +214,7 @@ class KeyValuePairSettings : ILoggerSettings
         throw new InvalidOperationException($"No LoggingLevelSwitch has been declared with name \"{switchName}\". You might be missing a key \"{LevelSwitchDirective}:{switchName}\"");
     }
 
+    [RequiresDynamicCode("Finds accessors by name")]
     [RequiresUnreferencedCode("Finds accessors by name")]
     [RequiresDynamicCode("Creates arrays of unknown element type")]
     static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
@@ -222,6 +226,7 @@ class KeyValuePairSettings : ILoggerSettings
         return SettingValueConversions.ConvertToType(valueOrSwitchName, type)!;
     }
 
+    [RequiresDynamicCode("Finds accessors by name")]
     [RequiresUnreferencedCode("Finds accessors by name")]
     [RequiresDynamicCode("Creates arrays of unknown element type")]
     static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
