@@ -146,6 +146,8 @@ namespace Serilog.Core
     }
     public sealed class Logger : Serilog.Core.ILogEventSink, Serilog.ILogger, System.IAsyncDisposable, System.IDisposable
     {
+        public System.Action<Serilog.Events.LogEvent>? AfterDispatch { get; set; }
+        public System.Func<System.DateTimeOffset, Serilog.Events.LogEventLevel, System.Exception?, Serilog.Events.MessageTemplate, Serilog.Events.EventProperty[], Serilog.Events.LogEvent>? BeforeDispatch { get; set; }
         public static Serilog.ILogger None { get; }
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
         public bool BindMessageTemplate(string messageTemplate, object?[]? propertyValues, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.MessageTemplate? parsedTemplate, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty>? boundProperties) { }
@@ -371,6 +373,17 @@ namespace Serilog.Events
         public System.Collections.Generic.IReadOnlyDictionary<Serilog.Events.ScalarValue, Serilog.Events.LogEventPropertyValue> Elements { get; }
         public override void Render(System.IO.TextWriter output, string? format = null, System.IFormatProvider? formatProvider = null) { }
     }
+    public readonly struct EventProperty
+    {
+        public static Serilog.Events.EventProperty None;
+        public EventProperty(string name, Serilog.Events.LogEventPropertyValue value) { }
+        public string Name { get; }
+        public Serilog.Events.LogEventPropertyValue Value { get; }
+        public void Deconstruct(out string name, out Serilog.Events.LogEventPropertyValue value) { }
+        public bool Equals(Serilog.Events.EventProperty other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+    }
     public static class LevelAlias
     {
         public const Serilog.Events.LogEventLevel Maximum = 5;
@@ -379,6 +392,7 @@ namespace Serilog.Events
     }
     public class LogEvent
     {
+        public LogEvent() { }
         public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties) { }
         [System.CLSCompliant(false)]
         public LogEvent(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.IEnumerable<Serilog.Events.LogEventProperty> properties, System.Diagnostics.ActivityTraceId traceId, System.Diagnostics.ActivitySpanId spanId) { }
@@ -393,9 +407,11 @@ namespace Serilog.Events
         public System.Diagnostics.ActivityTraceId? TraceId { get; }
         public void AddOrUpdateProperty(Serilog.Events.LogEventProperty property) { }
         public void AddPropertyIfAbsent(Serilog.Events.LogEventProperty property) { }
+        public void Fill(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, Serilog.Events.EventProperty[] properties) { }
         public void RemovePropertyIfPresent(string propertyName) { }
         public string RenderMessage(System.IFormatProvider? formatProvider = null) { }
         public void RenderMessage(System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+        public void Reset() { }
         [System.CLSCompliant(false)]
         public static Serilog.Events.LogEvent UnstableAssembleFromParts(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.Dictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.Diagnostics.ActivityTraceId traceId, System.Diagnostics.ActivitySpanId spanId) { }
     }

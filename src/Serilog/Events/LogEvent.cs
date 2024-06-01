@@ -22,9 +22,58 @@ namespace Serilog.Events;
 /// </summary>
 public class LogEvent
 {
-    readonly Dictionary<string, LogEventPropertyValue> _properties;
+    Dictionary<string, LogEventPropertyValue> _properties;
     ActivityTraceId _traceId;
     ActivitySpanId _spanId;
+
+    /// <summary>
+    ///
+    /// </summary>
+    public LogEvent()
+    {
+        Timestamp = default;
+        Level = default;
+        Exception = default;
+        MessageTemplate = default!;
+        _properties = default!;
+        _traceId = default;
+        _spanId = default;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="timestamp"></param>
+    /// <param name="level"></param>
+    /// <param name="exception"></param>
+    /// <param name="messageTemplate"></param>
+    /// <param name="properties"></param>
+    /// <param name="traceId"></param>
+    /// <param name="spanId"></param>
+    [CLSCompliant(false)]
+    public void Fill(DateTimeOffset timestamp, LogEventLevel level, Exception? exception, MessageTemplate messageTemplate, EventProperty[] properties, ActivityTraceId traceId, ActivitySpanId spanId)
+    {
+        Timestamp = timestamp;
+        Level = level;
+        Exception = exception;
+        MessageTemplate = messageTemplate;
+        _traceId = traceId;
+        _spanId = spanId;
+
+        _properties ??= new Dictionary<string, LogEventPropertyValue>();
+
+        for (var i = 0; i < properties.Length; ++i)
+            _properties[properties[i].Name] = properties[i].Value;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public void Reset()
+    {
+        _properties.Clear();
+        Exception = null;
+    }
 
     LogEvent(
         DateTimeOffset timestamp,
@@ -91,12 +140,12 @@ public class LogEvent
     /// <summary>
     /// The time at which the event occurred.
     /// </summary>
-    public DateTimeOffset Timestamp { get; }
+    public DateTimeOffset Timestamp { get; private set; }
 
     /// <summary>
     /// The level of the event.
     /// </summary>
-    public LogEventLevel Level { get; }
+    public LogEventLevel Level { get; private set; }
 
     /// <summary>
     /// The id of the trace that was active when the event was created, if any.
@@ -113,7 +162,7 @@ public class LogEvent
     /// <summary>
     /// The message template describing the event.
     /// </summary>
-    public MessageTemplate MessageTemplate { get; }
+    public MessageTemplate MessageTemplate { get; private set; }
 
     /// <summary>
     /// Render the message template to the specified output, given the properties associated
@@ -144,7 +193,7 @@ public class LogEvent
     /// <summary>
     /// An exception associated with the event, or null.
     /// </summary>
-    public Exception? Exception { get; }
+    public Exception? Exception { get; private set; }
 
     /// <summary>
     /// Add a property to the event if not already present, otherwise, update its value.

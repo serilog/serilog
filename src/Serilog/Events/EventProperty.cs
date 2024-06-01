@@ -19,7 +19,7 @@ namespace Serilog.Events;
 /// </summary>
 /// <remarks>This type is currently internal, while we consider future directions for the logging pipeline, but should end up public
 /// in future.</remarks>
-readonly struct EventProperty
+public readonly struct EventProperty
 {
     /// <summary>
     /// No property.
