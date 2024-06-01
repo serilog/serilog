@@ -380,4 +380,16 @@ public class MessageTemplateTextFormatterTests
         formatter.Format(evt, sw);
         Assert.Equal($"{traceId}/{spanId}", sw.ToString());
     }
+
+    [Fact]
+    public void UtcTimestampOutputsCorrectValue()
+    {
+        var formatter = new MessageTemplateTextFormatter("{UtcTimestamp:yyyy-MM-dd hh:mm:ss.fffZ}", CultureInfo.InvariantCulture);
+
+        var evt = Some.LogEvent(timestamp: new(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)));
+
+        var sw = new StringWriter();
+        formatter.Format(evt, sw);
+        Assert.Equal("2013-03-11 05:59:00.123Z", sw.ToString());
+    }
 }

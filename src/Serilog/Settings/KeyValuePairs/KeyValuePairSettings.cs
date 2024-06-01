@@ -14,9 +14,8 @@
 
 namespace Serilog.Settings.KeyValuePairs;
 
-#if !NET5_0
 [RequiresUnreferencedCode("Scans assemblies at runtime")] // RequiresUnreferencedCode couldn't be applied to types in .NET 5.
-#endif
+[RequiresDynamicCode("Creates arrays of unknown element type")]
 class KeyValuePairSettings : ILoggerSettings
 {
     const string UsingDirective = "using";
@@ -39,7 +38,7 @@ class KeyValuePairSettings : ILoggerSettings
     const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
     static readonly string[] _supportedDirectives =
-    {
+    [
         UsingDirective,
         LevelSwitchDirective,
         AuditToDirective,
@@ -50,7 +49,7 @@ class KeyValuePairSettings : ILoggerSettings
         EnrichWithDirective,
         FilterDirective,
         DestructureDirective
-    };
+    ];
 
     static readonly Dictionary<string, Type> CallableDirectiveReceiverTypes = new()
     {
@@ -81,11 +80,6 @@ class KeyValuePairSettings : ILoggerSettings
         _settings = Guard.AgainstNull(settings);
     }
 
-#if NET5_0
-    // Suppressing warnings here in .NET 5 because RUC is placed on the constructor. See constructor
-    // for more info on why this is not necessary in .NET 6.
-    [UnconditionalSuppressMessage("ILTrim", "IL2026")]
-#endif
     public void Configure(LoggerConfiguration loggerConfiguration)
     {
         Guard.AgainstNull(loggerConfiguration);
@@ -218,6 +212,7 @@ class KeyValuePairSettings : ILoggerSettings
     }
 
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     static object ConvertOrLookupByName(string valueOrSwitchName, Type type, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         if (type == typeof(LoggingLevelSwitch))
@@ -228,6 +223,7 @@ class KeyValuePairSettings : ILoggerSettings
     }
 
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     static void ApplyDirectives(List<IGrouping<string, ConfigurationMethodCall>> directives, IList<MethodInfo> configurationMethods, object loggerConfigMethod, IReadOnlyDictionary<string, LoggingLevelSwitch> declaredSwitches)
     {
         foreach (var directiveInfo in directives)
@@ -247,6 +243,7 @@ class KeyValuePairSettings : ILoggerSettings
 
                 // Work around inability to annotate lambdas in query expressions. The parent *must* have RUC for safety.
                 [UnconditionalSuppressMessage("Trimming", "IL2026")]
+                [UnconditionalSuppressMessage("AOT", "IL3050")]
                 object? SuppressConvertCall(ConfigurationMethodCall? directive, ParameterInfo p)
                     => directive == null ? p.DefaultValue : ConvertOrLookupByName(directive.Value, p.ParameterType, declaredSwitches);
 

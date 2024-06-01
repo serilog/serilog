@@ -49,28 +49,24 @@ public static class DummyLoggerConfigurationExtensions
         return loggerSinkConfiguration.Sink(new DummyConsoleSink(theme), restrictedToMinimumLevel);
     }
 
-    public static LoggerConfiguration Dummy(
+    public static LoggerConfiguration DummyWrapper(
         this LoggerSinkConfiguration loggerSinkConfiguration,
         Action<LoggerSinkConfiguration> wrappedSinkAction)
     {
-        return LoggerSinkConfiguration.Wrap(
-            loggerSinkConfiguration,
+        return loggerSinkConfiguration.Sink(LoggerSinkConfiguration.Wrap(
             s => new DummyWrappingSink(s),
-            wrappedSinkAction,
-            LevelAlias.Minimum,
-            null);
+            wrappedSinkAction));
     }
 
-    public static LoggerConfiguration DummyWrap(
+    public static LoggerConfiguration DummyWrapper(
         this LoggerSinkConfiguration loggerSinkConfiguration,
         Action<LoggerSinkConfiguration> wrappedSinkAction,
         LogEventLevel logEventLevel,
         LoggingLevelSwitch? levelSwitch)
     {
-        return LoggerSinkConfiguration.Wrap(
-            loggerSinkConfiguration,
+        return loggerSinkConfiguration.Sink(LoggerSinkConfiguration.Wrap(
             s => new DummyWrappingSink(s),
-            wrappedSinkAction,
+            wrappedSinkAction),
             logEventLevel,
             levelSwitch);
     }

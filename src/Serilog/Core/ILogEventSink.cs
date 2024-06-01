@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Serilog Contributors
+// Copyright © Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,15 @@ namespace Serilog.Core;
 /// <summary>
 /// A destination for log events.
 /// </summary>
+/// <seealso cref="ILogEventSink"/>
 public interface ILogEventSink
 {
     /// <summary>
     /// Emit the provided log event to the sink.
     /// </summary>
     /// <param name="logEvent">The log event to write.</param>
+    /// <seealso cref="IBatchedLogEventSink"/>
+    /// <remarks>Implementers should allow exceptions to propagate when event emission fails. The logger will handle
+    /// exceptions and produce diagnostics appropriately.
     void Emit(LogEvent logEvent);
 }

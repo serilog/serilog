@@ -1,5 +1,13 @@
 namespace Serilog.Configuration
 {
+    public class BatchingOptions
+    {
+        public BatchingOptions() { }
+        public int BatchSizeLimit { get; set; }
+        public System.TimeSpan BufferingTimeLimit { get; set; }
+        public bool EagerlyEmitFirstEvent { get; set; }
+        public int? QueueLimit { get; set; }
+    }
     public interface ILoggerSettings
     {
         void Configure(Serilog.LoggerConfiguration loggerConfiguration);
@@ -62,6 +70,8 @@ namespace Serilog.Configuration
     }
     public class LoggerSettingsConfiguration
     {
+        [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("KeyValuePair may need to create arrays, which requires dynamic code generation an" +
+            "d is not compatible with AOT.")]
         [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("KeyValuePair scans for configuration assemblies at run time and is not compatible" +
             " with trimming.")]
         public Serilog.LoggerConfiguration KeyValuePairs(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> settings) { }
@@ -75,8 +85,15 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, bool attemptDispose = false, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Sink(Serilog.Core.ILogEventSink logEventSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
+        public Serilog.LoggerConfiguration Sink(Serilog.Core.IBatchedLogEventSink batchedLogEventSink, Serilog.Configuration.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
             where TSink : Serilog.Core.ILogEventSink, new () { }
+        public Serilog.LoggerConfiguration Sink<TSink>(Serilog.Configuration.BatchingOptions batchingOptions, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null)
+            where TSink : Serilog.Core.IBatchedLogEventSink, new () { }
+        public static Serilog.Core.ILogEventSink CreateSink(System.Action<Serilog.Configuration.LoggerSinkConfiguration> configure) { }
+        public static Serilog.Core.ILogEventSink Wrap(System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink) { }
+        [System.Obsolete("Use the two-argument `Wrap()` overload to construct a wrapper, then use `WriteTo." +
+            "Sink()` to add it to the configuration.")]
         public static Serilog.LoggerConfiguration Wrap(Serilog.Configuration.LoggerSinkConfiguration loggerSinkConfiguration, System.Func<Serilog.Core.ILogEventSink, Serilog.Core.ILogEventSink> wrapSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureWrappedSink, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
     }
 }
@@ -97,6 +114,11 @@ namespace Serilog.Core
     public static class Constants
     {
         public const string SourceContextPropertyName = "SourceContext";
+    }
+    public interface IBatchedLogEventSink
+    {
+        System.Threading.Tasks.Task EmitBatchAsync(System.Collections.Generic.IReadOnlyCollection<Serilog.Events.LogEvent> batch);
+        System.Threading.Tasks.Task OnEmptyBatchAsync();
     }
     public interface IDestructuringPolicy
     {
@@ -374,6 +396,8 @@ namespace Serilog.Events
         public void RemovePropertyIfPresent(string propertyName) { }
         public string RenderMessage(System.IFormatProvider? formatProvider = null) { }
         public void RenderMessage(System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
+        [System.CLSCompliant(false)]
+        public static Serilog.Events.LogEvent UnstableAssembleFromParts(System.DateTimeOffset timestamp, Serilog.Events.LogEventLevel level, System.Exception? exception, Serilog.Events.MessageTemplate messageTemplate, System.Collections.Generic.Dictionary<string, Serilog.Events.LogEventPropertyValue> properties, System.Diagnostics.ActivityTraceId traceId, System.Diagnostics.ActivitySpanId spanId) { }
     }
     public enum LogEventLevel
     {
@@ -461,6 +485,7 @@ namespace Serilog.Formatting.Display
         public const string SpanIdPropertyName = "SpanId";
         public const string TimestampPropertyName = "Timestamp";
         public const string TraceIdPropertyName = "TraceId";
+        public const string UtcTimestampPropertyName = "UtcTimestamp";
     }
 }
 namespace Serilog.Formatting

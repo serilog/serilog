@@ -226,6 +226,40 @@ public class LogEvent
         _properties.Remove(propertyName);
     }
 
+    /// <summary>
+    /// Construct a <see cref="LogEvent"/> using pre-allocated values for internal fields. Normally,
+    /// the <see cref="LogEvent"/> constructor allocates a dictionary to back <see cref="Properties"/>,
+    /// so that this is not unexpectedly shared. This is unnecessary in many integration scenarios,
+    /// leading to an additional nontrivial <see cref="Dictionary{TKey,TValue}"/> allocation. This
+    /// method allows specialized callers to avoid that overhead.
+    /// </summary>
+    /// <remarks>
+    /// Because this method exposes parameters that essentially map 1:1 with internal fields of <see cref="LogEvent"/>,
+    /// the parameter list may change across major Serilog versions.
+    /// </remarks>
+    /// <param name="timestamp">The time at which the event occurred.</param>
+    /// <param name="level">The level of the event.</param>
+    /// <param name="exception">An exception associated with the event, or null.</param>
+    /// <param name="messageTemplate">The message template describing the event.</param>
+    /// <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+    /// <param name="traceId">The id of the trace that was active when the event was created, if any.</param>
+    /// <param name="spanId">The id of the span that was active when the event was created, if any.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="messageTemplate"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="properties"/> is <code>null</code></exception>
+    /// <returns>A constructed <see cref="LogEvent"/>.</returns>
+    [CLSCompliant(false)]
+    public static LogEvent UnstableAssembleFromParts(
+        DateTimeOffset timestamp,
+        LogEventLevel level,
+        Exception? exception,
+        MessageTemplate messageTemplate,
+        Dictionary<string, LogEventPropertyValue> properties,
+        ActivityTraceId traceId,
+        ActivitySpanId spanId)
+    {
+        return new LogEvent(timestamp, level, exception, messageTemplate, properties, traceId, spanId);
+    }
+
     internal LogEvent Copy()
     {
         var properties = new Dictionary<string, LogEventPropertyValue>(_properties);

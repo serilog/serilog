@@ -11,7 +11,7 @@ class ReusableStringWriter : StringWriter
     /// <summary>
     /// Max capacity of StringBuilder we keep for next using
     /// </summary>
-    const int StringBuilderCapacityThreshold = 32768;
+    internal const int StringBuilderCapacityThreshold = 32768;
 
     /// <summary>
     /// Gets already created StringWriter if there is one available or creates a new one.

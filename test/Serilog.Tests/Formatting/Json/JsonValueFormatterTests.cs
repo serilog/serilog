@@ -4,7 +4,7 @@ public class JsonValueFormatterTests
 {
     class JsonLiteralValueFormatter : JsonValueFormatter
     {
-        public string Format(object literal)
+        public string Format(object? literal)
         {
             var output = new StringWriter();
             FormatLiteralValue(literal, output);
@@ -32,7 +32,7 @@ public class JsonValueFormatterTests
     [InlineData("a\nb", "\"a\\nb\"")]
     [InlineData("", "\"\"")]
     [InlineData(null, "null")]
-    public void JsonLiteralTypesAreFormatted(object value, string expectedJson)
+    public void JsonLiteralTypesAreFormatted(object? value, string expectedJson)
     {
         var formatter = new JsonLiteralValueFormatter();
         Assert.Equal(expectedJson, formatter.Format(value));
@@ -157,7 +157,7 @@ public class JsonValueFormatterTests
     [Fact]
     public void SequencePropertiesFormatAsArrayValue()
     {
-        var f = Format(new SequenceValue(new[] { new ScalarValue(123), new ScalarValue(456) }));
+        var f = Format(new SequenceValue([new ScalarValue(123), new ScalarValue(456)]));
         Assert.Equal("[123,456]", f);
     }
 
@@ -183,7 +183,7 @@ public class JsonValueFormatterTests
     [Fact]
     public void SequencesOfSequencesAreFormatted()
     {
-        var s = new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") }) });
+        var s = new SequenceValue([new SequenceValue([new ScalarValue("Hello")])]);
 
         var f = Format(s);
         Assert.Equal("[[\"Hello\"]]", f);

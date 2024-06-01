@@ -36,8 +36,8 @@ public class BindingBenchmark
             .CreateLogger();
 
         _zero = Array.Empty<object>();
-        _one = new object[] { 1 };
-        _five = new object[] { 1, 2, 3, 4, 5 };
+        _one = [1];
+        _five = [1, 2, 3, 4, 5];
     }
 
     // The benchmarks run p.Count() to force enumeration; this will be representative of how the API

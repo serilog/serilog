@@ -163,8 +163,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-        if (TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
+#pragma warning disable IL2072 // analyzer doesn't support feature switches yet
+        if (TrimConfiguration.IsCompilerGeneratedCodeSupported && TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
             return compilerGeneratedResult;
+#pragma warning restore IL2072
 
         return new ScalarValue(value.ToString() ?? "");
     }
