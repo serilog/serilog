@@ -35,7 +35,7 @@ public class MethodOverloadConventionTests
     /// </para>
     ///
     /// <para>
-    /// A similar <see cref="ReadOnlySpan{T}"/> accepting method does not exists in the <see cref="ILogger"/> interface,
+    /// A similar <see cref="ReadOnlySpan{T}"/> accepting method does not exist in the <see cref="ILogger"/> interface,
     /// and introducing it is a breaking change.
     /// </para>
     /// </remarks>
