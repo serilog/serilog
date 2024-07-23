@@ -40,7 +40,7 @@ public class StructureValue : LogEventPropertyValue
     internal StructureValue(LogEventProperty[] properties, string? typeTag)
     {
         TypeTag = typeTag;
-        _properties = properties.ToArray();
+        _properties = properties;
     }
 
     /// <summary>
