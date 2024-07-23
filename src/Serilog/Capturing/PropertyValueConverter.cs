@@ -317,7 +317,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (destructuring == Destructuring.Destructure)
         {
             var typeTag = type.Name;
-            if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+            if (typeTag.Length == 0 || IsCompilerGeneratedType(type))
             {
                 typeTag = null;
             }
