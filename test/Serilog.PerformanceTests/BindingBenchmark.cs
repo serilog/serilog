@@ -23,10 +23,23 @@ public class BindingBenchmark
     const string
         MT0 = "Zero",
         MT1 = "Zero{A}one",
-        MT5 = "Zero{A}one{B}two{C}three{D}four{E}five";
+        MT5 = "Zero{A}one{B}two{C}three{D}four{E}five",
+        MTStructure = "{@Structure}";
 
     ILogger _log = null!;
-    object[] _zero = null!, _one = null!, _five = null!;
+    object[] _zero = null!, _one = null!, _five = null!, _structure = null!;
+
+    class StructureBase
+    {
+        public int A { get; } = 3;
+        public int C { get; } = 4;
+    }
+
+    class Structure: StructureBase
+    {
+        public new int A { get; } = 1;
+        public int B { get; } = 2;
+    }
 
     [GlobalSetup]
     public void Setup()
@@ -35,9 +48,10 @@ public class BindingBenchmark
             .WriteTo.Sink(new NullSink())
             .CreateLogger();
 
-        _zero = Array.Empty<object>();
+        _zero = [];
         _one = [1];
         _five = [1, 2, 3, 4, 5];
+        _structure = [new Structure()];
     }
 
     // The benchmarks run p.Count() to force enumeration; this will be representative of how the API
@@ -61,6 +75,13 @@ public class BindingBenchmark
     public (MessageTemplate, int) BindFive()
     {
         _log.BindMessageTemplate(MT5, _five, out var mt, out var p);
+        return (mt, p!.Count())!;
+    }
+
+    [Benchmark]
+    public (MessageTemplate, int) BindStructure()
+    {
+        _log.BindMessageTemplate(MTStructure, _structure, out var mt, out var p);
         return (mt, p!.Count())!;
     }
 }
