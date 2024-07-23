@@ -316,13 +316,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     {
         if (destructuring == Destructuring.Destructure)
         {
-            var typeTag = type.Name;
-            if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
-            {
-                typeTag = null;
-            }
-
-            result = new StructureValue(GetProperties(value, type), typeTag);
+            result = CreateStructureValue(value, type);
             return true;
         }
 
@@ -380,25 +374,59 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                valueType.IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+    [ThreadStatic] static HashSet<string>? _lastSeenNames;
+
+    internal StructureValue CreateStructureValue(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
-        foreach (var prop in type.GetPropertiesRecursive())
+        var typeTag = type.Name;
+        if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
         {
+            typeTag = null;
+        }
+
+        var seenNames = _lastSeenNames ?? [];
+        _lastSeenNames = null;
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var result = new LogEventProperty[properties.Length];
+        var nextResult = 0;
+
+        for (var i = 0; i < properties.Length; ++i)
+        {
+            var property = properties[i];
+            if (!property.CanRead)
+            {
+                continue;
+            }
+
+            if (seenNames.Contains(property.Name))
+            {
+                continue;
+            }
+
+            if (property.Name == "Item" &&
+                property.GetIndexParameters().Length != 0)
+            {
+                continue;
+            }
+
+            seenNames.Add(property.Name);
+
             object? propValue;
             try
             {
-                propValue = prop.GetValue(value);
+                propValue = property.GetValue(value);
             }
             catch (TargetParameterCountException)
             {
                 // These properties would ideally be ignored; since they never produce values they're not
                 // of concern to auditing and exceptions can be suppressed.
-                SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
+                SelfLog.WriteLine("The property accessor {0} is a non-default indexer", property);
                 continue;
             }
             catch (TargetInvocationException ex)
             {
-                SelfLog.WriteLine("The property accessor {0} threw exception: {1}", prop, ex);
+                SelfLog.WriteLine("The property accessor {0} threw exception: {1}", property, ex);
 
                 if (_propagateExceptions)
                     throw;
@@ -407,15 +435,23 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
             catch (NotSupportedException)
             {
-                SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", prop);
+                SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", property);
 
                 if (_propagateExceptions)
                     throw;
 
                 propValue = "Accessing this property is not supported via Reflection API";
             }
-            yield return new(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+
+            result[nextResult] = new(property.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+            nextResult += 1;
         }
+
+        seenNames.Clear();
+        _lastSeenNames = seenNames;
+
+        Array.Resize(ref result, nextResult);
+        return new StructureValue(result, typeTag);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

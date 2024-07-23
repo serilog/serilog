@@ -1,17 +1,18 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local, ParameterOnlyUsedForPreconditionCheck.Local, RedundantExplicitNullableCreation, MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedAutoPropertyAccessor.Local, UnusedMemberInSuper.Global, UnusedMember.Local, UseObjectOrCollectionInitializer, UnusedAutoPropertyAccessor.Local
 
+// ReSharper disable PropertyCanBeMadeInitOnly.Local
 namespace Serilog.Tests.Capturing;
 
 public class PropertyValueConverterTests
 {
     readonly PropertyValueConverter _converter =
-        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        new(10, 1000, 1000, [], [], [], false);
 
     [Fact]
     public async Task MaximumDepthIsEffectiveAndThreadSafe()
     {
-        var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        var converter = new PropertyValueConverter(3, 1000, 1000, [], [], [], false);
 
         var barrier = new Barrier(participantCount: 3);
 
@@ -402,5 +403,63 @@ public class PropertyValueConverterTests
         var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new { A = 1 }), true);
         var sequence = Assert.IsType<SequenceValue>(tuple);
         Assert.IsType<StructureValue>(sequence.Elements[0]);
+    }
+
+    [Fact]
+    public void StructureConversionYieldsEmptyStructureOnNoProperties()
+    {
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty));
+        Assert.Empty(structure.Properties);
+    }
+
+    [Fact]
+    // https://github.com/serilog/serilog/issues/1235
+    public void StructureConversionDoesNotThrowOnWcfProxyTypes()
+    {
+        var remoteAddress = new System.ServiceModel.EndpointAddress("http://localhost");
+        var binding = new System.ServiceModel.BasicHttpBinding();
+
+        var myFactory = new System.ServiceModel.ChannelFactory<IMyChannel>(binding, remoteAddress);
+        var channel = myFactory.CreateChannel();
+
+        _converter.CreateStructureValue(channel, channel.GetType());
+    }
+
+    [System.ServiceModel.ServiceContract]
+    interface IMyChannel
+    {
+        [System.ServiceModel.OperationContract]
+        string Get();
+    }
+
+    [Fact]
+    public void StructureConversionPrefersMostDerivedDefinition()
+    {
+        var structure = _converter.CreateStructureValue(new SubclassWithRedefinition(), typeof(SubclassWithRedefinition));
+        Assert.Equal("new", ((ScalarValue)structure.Properties.Single(p => p.Name == "Name").Value).Value);
+    }
+
+    [Fact]
+    public void StructureConversionPrefersMostDerivedOverride()
+    {
+        var structure = _converter.CreateStructureValue(new SubclassWithOverride(), typeof(SubclassWithOverride));
+        Assert.Equal("override", ((ScalarValue)structure.Properties.Single(p => p.Name == "Name").Value).Value);
+    }
+
+    class Empty;
+
+    public class BaseClass
+    {
+        public virtual string Name => "base";
+    }
+
+    public class SubclassWithRedefinition : BaseClass
+    {
+        public new string Name => "new";
+    }
+
+    public class SubclassWithOverride : BaseClass
+    {
+        public override string Name => "override";
     }
 }
