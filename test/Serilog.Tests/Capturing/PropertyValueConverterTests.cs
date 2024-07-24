@@ -408,8 +408,34 @@ public class PropertyValueConverterTests
     [Fact]
     public void StructureConversionYieldsEmptyStructureOnNoProperties()
     {
-        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty));
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty), false);
         Assert.Empty(structure.Properties);
+    }
+
+    [Fact]
+    public void TypeTagIsComputed()
+    {
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty), false);
+        Assert.Equal("Empty", structure.TypeTag);
+    }
+
+    [Fact]
+    public void TypeTagIsNotComputedForCompilerGeneratedTypes()
+    {
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty), true);
+        Assert.Null(structure.TypeTag);
+    }
+
+    [Fact]
+    public void RegularTypesAreNotCompilerGenerated()
+    {
+        Assert.False(PropertyValueConverter.IsCompilerGeneratedType(typeof(Empty)));
+    }
+
+    [Fact]
+    public void CompilerGeneratedTypesAreIdentified()
+    {
+        Assert.True(PropertyValueConverter.IsCompilerGeneratedType(new { A = 1 }.GetType()));
     }
 
     [Fact]
@@ -422,7 +448,7 @@ public class PropertyValueConverterTests
         var myFactory = new System.ServiceModel.ChannelFactory<IMyChannel>(binding, remoteAddress);
         var channel = myFactory.CreateChannel();
 
-        _converter.CreateStructureValue(channel, channel.GetType());
+        _converter.CreateStructureValue(channel, channel.GetType(), false);
     }
 
     [System.ServiceModel.ServiceContract]
@@ -435,14 +461,14 @@ public class PropertyValueConverterTests
     [Fact]
     public void StructureConversionPrefersMostDerivedDefinition()
     {
-        var structure = _converter.CreateStructureValue(new SubclassWithRedefinition(), typeof(SubclassWithRedefinition));
+        var structure = _converter.CreateStructureValue(new SubclassWithRedefinition(), typeof(SubclassWithRedefinition), false);
         Assert.Equal("new", ((ScalarValue)structure.Properties.Single(p => p.Name == "Name").Value).Value);
     }
 
     [Fact]
     public void StructureConversionPrefersMostDerivedOverride()
     {
-        var structure = _converter.CreateStructureValue(new SubclassWithOverride(), typeof(SubclassWithOverride));
+        var structure = _converter.CreateStructureValue(new SubclassWithOverride(), typeof(SubclassWithOverride), false);
         Assert.Equal("override", ((ScalarValue)structure.Properties.Single(p => p.Name == "Name").Value).Value);
     }
 

@@ -163,10 +163,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-#pragma warning disable IL2072 // analyzer doesn't support feature switches yet
-        if (TrimConfiguration.IsCompilerGeneratedCodeSupported && TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
-            return compilerGeneratedResult;
-#pragma warning restore IL2072
+        if (TryConvertStructure(value, type, destructuring, out var structureResult))
+            return structureResult;
 
         return new ScalarValue(value.ToString() ?? "");
     }
@@ -251,6 +249,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #if FEATURE_ITUPLE
 
+    // ReSharper disable once UnusedParameter.Local
     bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is not ITuple tuple)
@@ -308,15 +307,16 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #endif
 
-    bool TryConvertCompilerGeneratedType(
+    bool TryConvertStructure(
         object value,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
         Destructuring destructuring,
-        [NotNullWhen(true)] out LogEventPropertyValue? result)
+        [NotNullWhen(true)] out StructureValue? result)
     {
-        if (destructuring == Destructuring.Destructure)
+        var isCompilerGeneratedType = IsCompilerGeneratedType(type);
+        if (destructuring == Destructuring.Destructure && (!isCompilerGeneratedType || TrimConfiguration.IsCompilerGeneratedCodeSupported))
         {
-            result = CreateStructureValue(value, type);
+            result = CreateStructureValue(value, type, isCompilerGeneratedType);
             return true;
         }
 
@@ -324,7 +324,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return false;
     }
 
-    LogEventPropertyValue Stringify(object value)
+    ScalarValue Stringify(object value)
     {
         var stringified = value.ToString();
         var truncated = stringified == null ? "" : TruncateIfNecessary(stringified);
@@ -343,11 +343,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (value is IDictionary idictionary)
+        if (value is IDictionary iDictionary)
         {
             if (_dictionaryTypes.Contains(valueType))
             {
-                dictionary = idictionary;
+                dictionary = iDictionary;
                 return true;
             }
 
@@ -357,7 +357,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
                     IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
                 {
-                    dictionary = idictionary;
+                    dictionary = iDictionary;
                     return true;
                 }
             }
@@ -376,10 +376,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     [ThreadStatic] static HashSet<string>? _lastSeenNames;
 
-    internal StructureValue CreateStructureValue(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+    internal StructureValue CreateStructureValue(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, bool isCompilerGeneratedType)
     {
         var typeTag = type.Name;
-        if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+        if (typeTag.Length <= 0 || isCompilerGeneratedType)
         {
             typeTag = null;
         }
@@ -455,7 +455,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static bool IsCompilerGeneratedType(Type type)
+    internal static bool IsCompilerGeneratedType(Type type)
     {
         if (!type.IsGenericType || !type.IsSealed || type.Namespace != null)
         {
