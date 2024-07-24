@@ -313,11 +313,14 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         Destructuring destructuring,
         [NotNullWhen(true)] out StructureValue? result)
     {
-        var isCompilerGeneratedType = IsCompilerGeneratedType(type);
-        if (destructuring == Destructuring.Destructure && (!isCompilerGeneratedType || TrimConfiguration.IsCompilerGeneratedCodeSupported))
+        if (destructuring == Destructuring.Destructure)
         {
-            result = CreateStructureValue(value, type, isCompilerGeneratedType);
-            return true;
+            var isCompilerGeneratedType = IsCompilerGeneratedType(type);
+            if (!isCompilerGeneratedType || TrimConfiguration.IsCompilerGeneratedCodeSupported)
+            {
+                result = CreateStructureValue(value, type, isCompilerGeneratedType);
+                return true;
+            }
         }
 
         result = null;
