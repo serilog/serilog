@@ -5,35 +5,35 @@ public class GettablePropertyFinderTests
     [Fact]
     public void GetPropertiesRecursiveIntegerTypeYieldNoResult()
     {
-        var result = default(int).GetType().GetPropertiesRecursive();
+        var result = default(int).GetType().GetPropertiesInHierarchy();
         Assert.Empty(result);
     }
 
     [Fact]
     public void GetPropertiesRecursiveBooleanTypeYieldNoResult()
     {
-        var result = default(bool).GetType().GetPropertiesRecursive();
+        var result = default(bool).GetType().GetPropertiesInHierarchy();
         Assert.Empty(result);
     }
 
     [Fact]
     public void GetPropertiesRecursiveCharTypeYieldNoResult()
     {
-        var result = default(char).GetType().GetPropertiesRecursive();
+        var result = default(char).GetType().GetPropertiesInHierarchy();
         Assert.Empty(result);
     }
 
     [Fact]
     public void GetPropertiesRecursiveObjectTypeYieldNoResult()
     {
-        var result = new object().GetType().GetPropertiesRecursive();
+        var result = new object().GetType().GetPropertiesInHierarchy();
         Assert.Empty(result);
     }
 
     [Fact]
     public void GetPropertiesRecursiveStringTypeYieldResult()
     {
-        var result = string.Empty.GetType().GetPropertiesRecursive();
+        var result = string.Empty.GetType().GetPropertiesInHierarchy();
         Assert.NotEmpty(result);
     }
 
@@ -47,7 +47,7 @@ public class GettablePropertyFinderTests
         var myFactory = new System.ServiceModel.ChannelFactory<IMyChannel>(binding, remoteAddress);
         var channel = myFactory.CreateChannel();
 
-        var _ = channel.GetType().GetPropertiesRecursive().ToList();
+        var _ = channel.GetType().GetPropertiesInHierarchy().ToList();
     }
 
     [System.ServiceModel.ServiceContract]
@@ -60,7 +60,7 @@ public class GettablePropertyFinderTests
     [Fact]
     public void ShouldOnlyGetInheritedNewProperty()
     {
-        var property = typeof(InheritedNewClass).GetPropertiesRecursive().Single();
+        var property = typeof(InheritedNewClass).GetPropertiesInHierarchy().Single();
 
         Assert.Equal(typeof(InheritedNewClass).GetProperty("Property"), property);
     }
@@ -74,7 +74,7 @@ public class GettablePropertyFinderTests
     [Fact]
     public void ShouldOnlyGetInheritedProperty()
     {
-        var property = typeof(InheritedClass).GetPropertiesRecursive().Single();
+        var property = typeof(InheritedClass).GetPropertiesInHierarchy().Single();
 
         Assert.Equal(typeof(InheritedClass).GetProperty("Property"), property);
     }

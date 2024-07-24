@@ -14,9 +14,9 @@
 
 namespace Serilog.Capturing;
 
-static class GetablePropertyFinder
+static class GettablePropertyFinder
 {
-    internal static IEnumerable<PropertyInfo> GetPropertiesRecursive([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] this Type type)
+    internal static IEnumerable<PropertyInfo> GetPropertiesInHierarchy([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] this Type type)
     {
         var seenNames = new HashSet<string>();
 
