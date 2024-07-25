@@ -163,10 +163,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-#pragma warning disable IL2072 // analyzer doesn't support feature switches yet
-        if (TrimConfiguration.IsCompilerGeneratedCodeSupported && TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
-            return compilerGeneratedResult;
-#pragma warning restore IL2072
+        if (TryConvertStructure(value, type, destructuring, out var structureResult))
+            return structureResult;
 
         return new ScalarValue(value.ToString() ?? "");
     }
@@ -251,6 +249,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #if FEATURE_ITUPLE
 
+    // ReSharper disable once UnusedParameter.Local
     bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is not ITuple tuple)
@@ -308,29 +307,27 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #endif
 
-    bool TryConvertCompilerGeneratedType(
+    bool TryConvertStructure(
         object value,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
         Destructuring destructuring,
-        [NotNullWhen(true)] out LogEventPropertyValue? result)
+        [NotNullWhen(true)] out StructureValue? result)
     {
         if (destructuring == Destructuring.Destructure)
         {
-            var typeTag = type.Name;
-            if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+            var isCompilerGeneratedType = IsCompilerGeneratedType(type);
+            if (!isCompilerGeneratedType || TrimConfiguration.IsCompilerGeneratedCodeSupported)
             {
-                typeTag = null;
+                result = CreateStructureValue(value, type, isCompilerGeneratedType);
+                return true;
             }
-
-            result = new StructureValue(GetProperties(value, type), typeTag);
-            return true;
         }
 
         result = null;
         return false;
     }
 
-    LogEventPropertyValue Stringify(object value)
+    ScalarValue Stringify(object value)
     {
         var stringified = value.ToString();
         var truncated = stringified == null ? "" : TruncateIfNecessary(stringified);
@@ -349,11 +346,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (value is IDictionary idictionary)
+        if (value is IDictionary iDictionary)
         {
             if (_dictionaryTypes.Contains(valueType))
             {
-                dictionary = idictionary;
+                dictionary = iDictionary;
                 return true;
             }
 
@@ -363,7 +360,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
                     IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
                 {
-                    dictionary = idictionary;
+                    dictionary = iDictionary;
                     return true;
                 }
             }
@@ -380,25 +377,59 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                valueType.IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+    [ThreadStatic] static HashSet<string>? _lastSeenNames;
+
+    internal StructureValue CreateStructureValue(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, bool isCompilerGeneratedType)
     {
-        foreach (var prop in type.GetPropertiesRecursive())
+        var typeTag = type.Name;
+        if (typeTag.Length <= 0 || isCompilerGeneratedType)
         {
+            typeTag = null;
+        }
+
+        var seenNames = _lastSeenNames ?? [];
+        _lastSeenNames = null;
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var result = new LogEventProperty[properties.Length];
+        var nextResult = 0;
+
+        for (var i = 0; i < properties.Length; ++i)
+        {
+            var property = properties[i];
+            if (!property.CanRead)
+            {
+                continue;
+            }
+
+            if (seenNames.Contains(property.Name))
+            {
+                continue;
+            }
+
+            if (property.Name == "Item" &&
+                property.GetIndexParameters().Length != 0)
+            {
+                continue;
+            }
+
+            seenNames.Add(property.Name);
+
             object? propValue;
             try
             {
-                propValue = prop.GetValue(value);
+                propValue = property.GetValue(value);
             }
             catch (TargetParameterCountException)
             {
                 // These properties would ideally be ignored; since they never produce values they're not
                 // of concern to auditing and exceptions can be suppressed.
-                SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
+                SelfLog.WriteLine("The property accessor {0} is a non-default indexer", property);
                 continue;
             }
             catch (TargetInvocationException ex)
             {
-                SelfLog.WriteLine("The property accessor {0} threw exception: {1}", prop, ex);
+                SelfLog.WriteLine("The property accessor {0} threw exception: {1}", property, ex);
 
                 if (_propagateExceptions)
                     throw;
@@ -407,19 +438,27 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
             catch (NotSupportedException)
             {
-                SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", prop);
+                SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", property);
 
                 if (_propagateExceptions)
                     throw;
 
                 propValue = "Accessing this property is not supported via Reflection API";
             }
-            yield return new(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+
+            result[nextResult] = new(property.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+            nextResult += 1;
         }
+
+        seenNames.Clear();
+        _lastSeenNames = seenNames;
+
+        Array.Resize(ref result, nextResult);
+        return new StructureValue(result, typeTag);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static bool IsCompilerGeneratedType(Type type)
+    internal static bool IsCompilerGeneratedType(Type type)
     {
         if (!type.IsGenericType || !type.IsSealed || type.Namespace != null)
         {

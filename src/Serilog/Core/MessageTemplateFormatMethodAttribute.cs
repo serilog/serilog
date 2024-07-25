@@ -14,7 +14,7 @@ namespace Serilog.Core;
 ///
 /// public void Foo()
 /// {
-///     Information("Hello, {Name}!") // Warning: Non-existing argument in message template.
+///     Information("Hello, {Name}!") // Warning: Nonexistent argument in message template.
 /// }
 /// </code>
 /// </example>
