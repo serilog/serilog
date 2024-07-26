@@ -33,6 +33,20 @@ public class LoggerFilterConfiguration
     /// <summary>
     /// Filter out log events from the stream based on the provided filter.
     /// </summary>
+    /// <param name="filter">The filter to apply.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="filter"/> is <code>null</code></exception>
+    public LoggerConfiguration With(ILogEventFilter filter)
+    {
+        Guard.AgainstNull(filter);
+
+        _addFilter(filter);
+        return _loggerConfiguration;
+    }
+
+    /// <summary>
+    /// Filter out log events from the stream based on the provided filter.
+    /// </summary>
     /// <param name="filters">The filters to apply.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="filters"/> is <code>null</code></exception>
