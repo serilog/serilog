@@ -49,6 +49,19 @@ public class MessageTemplateTextFormatterTests
     }
 
     [Theory]
+    [InlineData(16)]
+    [InlineData(100)]
+    public void RendersTimestampFormatsOfDifferentLengths(int length)
+    {
+        var longFormatString = new string('-', length);
+        var formatter = new MessageTemplateTextFormatter($"{{Timestamp:{longFormatString}}}", CultureInfo.InvariantCulture);
+        var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
+        var sw = new StringWriter();
+        formatter.Format(evt, sw);
+        Assert.Contains(longFormatString, sw.ToString());
+    }
+
+    [Theory]
     [InlineData(Verbose, 1, "V")]
     [InlineData(Verbose, 2, "Vb")]
     [InlineData(Verbose, 3, "Vrb")]
