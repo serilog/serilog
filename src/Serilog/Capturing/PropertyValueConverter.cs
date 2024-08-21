@@ -397,7 +397,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         for (var i = 0; i < properties.Length; ++i)
         {
             var property = properties[i];
-            if (!property.CanRead)
+            if (property.GetMethod == null || !property.GetMethod.IsPublic)
             {
                 continue;
             }
