@@ -238,8 +238,8 @@ public class LoggerSinkConfiguration
     /// should be written to the configured sink.</param>
     /// <param name="configureSink">An action that configures the wrapped sink.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="condition"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="configureSink"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="condition"/> is <code>null</code>.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="configureSink"/> is <code>null</code>.</exception>
     public LoggerConfiguration Conditional(Func<LogEvent, bool> condition, Action<LoggerSinkConfiguration> configureSink)
     {
         Guard.AgainstNull(condition);
@@ -248,6 +248,81 @@ public class LoggerSinkConfiguration
         // Level aliases and so on don't need to be accepted here; if the user wants both a condition and leveling, they
         // can specify `restrictedToMinimumLevel` etc. in the wrapped sink configuration.
         return Sink(Wrap(s => new ConditionalSink(s, condition), configureSink));
+    }
+
+    /// <summary>
+    /// Write to a sink, and if the sink is unable to record the event, write to a second sink. Additional sinks can
+    /// be added to the chain if necessary.
+    /// </summary>
+    /// <param name="configureSink">A callback to configure the first sink to try. The argument to the callback supports
+    /// the same syntax as the <c>WriteTo</c> configuration object.</param>
+    /// <param name="configureFallback">A callback to configure the second sink.</param>
+    /// <param name="configureSubsequentFallbacks">Additional callbacks to configure more sinks in the fallback chain.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When any argument is <code>null</code>.</exception>
+    /// <remarks>
+    /// Fallbacks rely on the target sink either a) synchronously throwing exceptions on failure, or b) implementing the
+    /// <see cref="ISetLoggingFailureListener"/> interface.
+    /// </remarks>
+    public LoggerConfiguration FallbackChain(
+        Action<LoggerSinkConfiguration> configureSink,
+        Action<LoggerSinkConfiguration> configureFallback,
+        params Action<LoggerSinkConfiguration>[] configureSubsequentFallbacks)
+    {
+        Guard.AgainstNull(configureSink);
+        Guard.AgainstNull(configureFallback);
+        Guard.AgainstNull(configureSubsequentFallbacks);
+
+        Span<Action<LoggerSinkConfiguration>> chain = [configureSink, configureFallback, ..configureSubsequentFallbacks];
+        chain.Reverse();
+
+        var final = CreateSink(chain[0]);
+        foreach (var next in chain[1..])
+        {
+            var listener = new DelegatingLoggingFailureListener(final);
+            var sink = CreateSink(next);
+            if (sink is ISetLoggingFailureListener sfl)
+            {
+                sfl.SetFailureListener(listener);
+                final = sink;
+            }
+            else
+            {
+                final = new SynchronousFallbackSink(sink, listener);
+            }
+        }
+
+        return Sink(final);
+    }
+
+    /// <summary>
+    /// Write to a sink, reporting failures through an <see cref="ILoggingFailureListener"/>.
+    /// </summary>
+    /// <param name="configureSink">A callback to configure the target sink. The argument to the callback supports
+    /// the same syntax as the <c>WriteTo</c> configuration object.</param>
+    /// <param name="failureListener">The listener to which failures in the sink will be reported.</param>
+    /// <exception cref="ArgumentNullException">When any argument is <code>null</code>.</exception>
+    /// <remarks>
+    /// Failure reporting relies on the target sink either a) synchronously throwing exceptions on failure, or b) implementing the
+    /// <see cref="ISetLoggingFailureListener"/> interface.
+    public LoggerConfiguration Fallible(
+        Action<LoggerSinkConfiguration> configureSink,
+        ILoggingFailureListener failureListener)
+    {
+        Guard.AgainstNull(configureSink);
+        Guard.AgainstNull(failureListener);
+
+        var sink = CreateSink(configureSink);
+        if (sink is ISetLoggingFailureListener sfl)
+        {
+            sfl.SetFailureListener(failureListener);
+        }
+        else
+        {
+            sink = new SynchronousFallbackSink(sink, failureListener);
+        }
+
+        return Sink(sink);
     }
 
     /// <summary>
@@ -262,9 +337,9 @@ public class LoggerSinkConfiguration
     /// <param name="levelSwitch">A switch allowing the pass-through minimum level
     /// to be changed at runtime. Can be <code>null</code></param>
     /// <returns>Configuration object allowing method chaining.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="loggerSinkConfiguration"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="loggerSinkConfiguration"/> is <code>null</code>.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code>.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code>.</exception>
     [Obsolete("Use the two-argument `Wrap()` overload to construct a wrapper, then use `WriteTo.Sink()` to add it to the configuration.")]
     public static LoggerConfiguration Wrap(
         LoggerSinkConfiguration loggerSinkConfiguration,
@@ -286,8 +361,8 @@ public class LoggerSinkConfiguration
     /// added in <paramref name="configureWrappedSink"/>.</param>
     /// <param name="configureWrappedSink">An action that configures sinks to be wrapped in <paramref name="wrapSink"/>.</param>
     /// <returns>The wrapper, or a sink that will handle invoking the wrapper.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code></exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code></exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="wrapSink"/> is <code>null</code>.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="configureWrappedSink"/> is <code>null</code>.</exception>
     public static ILogEventSink Wrap(
         Func<ILogEventSink, ILogEventSink> wrapSink,
         Action<LoggerSinkConfiguration> configureWrappedSink)
