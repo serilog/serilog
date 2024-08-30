@@ -281,8 +281,8 @@ public class LoggerSinkConfiguration
         {
             var listener = new DelegatingLoggingFailureListener(final);
             var chained = Wrap(sink => new FailureListenerSink(sink, listener), next);
-            final = WellKnownInterfaceForwardingSink.SupportsAny(final)
-                ? new WellKnownInterfaceForwardingSink(chained, final) : chained;
+            final = OptionalInterfaceForwardingSink.SupportsAny(final)
+                ? new OptionalInterfaceForwardingSink(chained, final) : chained;
         }
 
         return Sink(final);
@@ -358,9 +358,9 @@ public class LoggerSinkConfiguration
         var enclosed = CreateSink(configureWrappedSink);
 
         var wrapper = wrapSink(enclosed);
-        if (!WellKnownInterfaceForwardingSink.SupportsAll(wrapper) && WellKnownInterfaceForwardingSink.SupportsAny(enclosed))
+        if (!OptionalInterfaceForwardingSink.SupportsAll(wrapper) && OptionalInterfaceForwardingSink.SupportsAny(enclosed))
         {
-            wrapper = new WellKnownInterfaceForwardingSink(wrapper, enclosed);
+            wrapper = new OptionalInterfaceForwardingSink(wrapper, enclosed);
         }
 
         return wrapper;

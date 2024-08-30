@@ -14,7 +14,7 @@
 
 namespace Serilog.Core.Sinks;
 
-class DelegatingLoggingFailureListener(ILogEventSink sink) : ILoggingFailureListener
+sealed class DelegatingLoggingFailureListener(ILogEventSink sink) : ILoggingFailureListener
 {
     public void OnLoggingFailed(object sender, LoggingFailureKind kind, string message, IReadOnlyCollection<LogEvent>? events, Exception? exception)
     {

@@ -14,7 +14,7 @@
 
 namespace Serilog.Core.Sinks;
 
-class FailureListenerSink : ILogEventSink
+sealed class FailureListenerSink : ILogEventSink
 {
     readonly ILogEventSink _inner;
     readonly ILoggingFailureListener _listener;

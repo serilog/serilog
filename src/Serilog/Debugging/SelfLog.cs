@@ -84,13 +84,14 @@ public static class SelfLog
             var o = _output;
             if (o == null) return;
 
+            var count = events?.Count ?? (object)"unspecified";
             if (exception != null)
             {
-                o.Invoke(string.Format($"{DateTime.UtcNow:o} {sender.GetType()}: {message} ({kind}){Environment.NewLine}{exception}"));
+                o.Invoke(string.Format($"{DateTime.UtcNow:o} {sender.GetType()}: {message} ({kind}, {count} events){Environment.NewLine}{exception}"));
             }
             else
             {
-                o.Invoke(string.Format($"{DateTime.UtcNow:o} {sender.GetType()}: {message} ({kind})"));
+                o.Invoke(string.Format($"{DateTime.UtcNow:o} {sender.GetType()}: {message} ({kind}, {count} events)"));
             }
         }
     }

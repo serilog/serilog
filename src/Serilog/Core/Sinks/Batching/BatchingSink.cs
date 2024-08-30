@@ -192,6 +192,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         }
         catch (Exception ex)
         {
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
             DrainOnFailure(LoggingFailureKind.Final, "failed emitting a batch during shutdown; dropping remaining queued events", ex, ignoreShutdownSignal: true);
         }
     }

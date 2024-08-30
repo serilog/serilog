@@ -14,7 +14,7 @@
 
 namespace Serilog.Core.Sinks;
 
-sealed class WellKnownInterfaceForwardingSink : ILogEventSink, IDisposable, ISetLoggingFailureListener
+sealed class OptionalInterfaceForwardingSink : ILogEventSink, IDisposable, ISetLoggingFailureListener
 #if FEATURE_ASYNCDISPOSABLE
     , IAsyncDisposable
 #endif
@@ -22,7 +22,7 @@ sealed class WellKnownInterfaceForwardingSink : ILogEventSink, IDisposable, ISet
     readonly ILogEventSink _sink;
     readonly ILogEventSink _receiver;
 
-    public WellKnownInterfaceForwardingSink(ILogEventSink sink, ILogEventSink receiver)
+    public OptionalInterfaceForwardingSink(ILogEventSink sink, ILogEventSink receiver)
     {
         _sink = sink;
         _receiver = receiver;
