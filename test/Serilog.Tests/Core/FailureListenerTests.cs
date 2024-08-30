@@ -8,7 +8,7 @@ public class FailureListenerTests
         var listener = new CollectingFailureListener();
 
         var disposeTracker = new DisposeTrackingSink();
-        var sink = new DisposeDelegatingSink(new ThrowingSink(), disposeTracker, null);
+        var sink = new WellKnownInterfaceForwardingSink(new ThrowingSink(), disposeTracker);
 
         var evt = Some.InformationEvent();
         using (var logger = new LoggerConfiguration()
@@ -32,10 +32,10 @@ public class FailureListenerTests
     {
         var disposeTracker1 = new DisposeTrackingSink();
         var collector = new CollectingSink();
-        var fallback = new DisposeDelegatingSink(collector, disposeTracker1, null);
+        var fallback = new WellKnownInterfaceForwardingSink(collector, disposeTracker1);
 
         var disposeTracker2 = new DisposeTrackingSink();
-        var initial = new DisposeDelegatingSink(new ThrowingSink(), disposeTracker2, null);
+        var initial = new WellKnownInterfaceForwardingSink(new ThrowingSink(), disposeTracker2);
 
         var evt = Some.InformationEvent();
         using (var logger = new LoggerConfiguration()

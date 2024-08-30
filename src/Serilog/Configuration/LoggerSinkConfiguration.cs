@@ -281,17 +281,8 @@ public class LoggerSinkConfiguration
         {
             var listener = new DelegatingLoggingFailureListener(final);
             var chained = Wrap(sink => new FailureListenerSink(sink, listener), next);
-            final = final is IDisposable
-#if FEATURE_ASYNCDISPOSABLE
-                or IAsyncDisposable
-#endif
-                ? new DisposeDelegatingSink(
-                    chained,
-                    final as IDisposable
-#if FEATURE_ASYNCDISPOSABLE
-                    , final as IAsyncDisposable
-#endif
-                , disposeInner: true) : chained;
+            final = WellKnownInterfaceForwardingSink.SupportsAny(final)
+                ? new WellKnownInterfaceForwardingSink(chained, final) : chained;
         }
 
         return Sink(final);
@@ -367,17 +358,9 @@ public class LoggerSinkConfiguration
         var enclosed = CreateSink(configureWrappedSink);
 
         var wrapper = wrapSink(enclosed);
-        if (wrapper is not IDisposable && enclosed is IDisposable
-#if FEATURE_ASYNCDISPOSABLE
-                or IAsyncDisposable
-#endif
-           )
+        if (!WellKnownInterfaceForwardingSink.SupportsAll(wrapper) && WellKnownInterfaceForwardingSink.SupportsAny(enclosed))
         {
-            wrapper = new DisposeDelegatingSink(wrapper, enclosed as IDisposable
-#if FEATURE_ASYNCDISPOSABLE
-                , enclosed as IAsyncDisposable
-#endif
-                );
+            wrapper = new WellKnownInterfaceForwardingSink(wrapper, enclosed);
         }
 
         return wrapper;
