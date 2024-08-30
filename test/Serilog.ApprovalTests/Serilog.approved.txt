@@ -80,6 +80,8 @@ namespace Serilog.Configuration
     public class LoggerSinkConfiguration
     {
         public Serilog.LoggerConfiguration Conditional(System.Func<Serilog.Events.LogEvent, bool> condition, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink) { }
+        public Serilog.LoggerConfiguration FallbackChain(System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink, System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureFallback, params System.Action<Serilog.Configuration.LoggerSinkConfiguration>[] configureSubsequentFallbacks) { }
+        public Serilog.LoggerConfiguration Fallible(System.Action<Serilog.Configuration.LoggerSinkConfiguration> configureSink, Serilog.Core.ILoggingFailureListener failureListener) { }
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, Serilog.Events.LogEventLevel restrictedToMinimumLevel) { }
         public Serilog.LoggerConfiguration Logger(System.Action<Serilog.LoggerConfiguration> configureLogger, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
         public Serilog.LoggerConfiguration Logger(Serilog.ILogger logger, bool attemptDispose = false, Serilog.Events.LogEventLevel restrictedToMinimumLevel = 0, Serilog.Core.LoggingLevelSwitch? levelSwitch = null) { }
@@ -143,6 +145,14 @@ namespace Serilog.Core
     public interface ILogEventSink
     {
         void Emit(Serilog.Events.LogEvent logEvent);
+    }
+    public interface ILoggingFailureListener
+    {
+        void OnLoggingFailed(object sender, Serilog.Core.LoggingFailureKind kind, string message, System.Collections.Generic.IReadOnlyCollection<Serilog.Events.LogEvent>? events, System.Exception? exception);
+    }
+    public interface ISetLoggingFailureListener
+    {
+        void SetFailureListener(Serilog.Core.ILoggingFailureListener failureListener);
     }
     public sealed class Logger : Serilog.Core.ILogEventSink, Serilog.ILogger, System.IAsyncDisposable, System.IDisposable
     {
@@ -300,6 +310,12 @@ namespace Serilog.Core
         [Serilog.Core.MessageTemplateFormatMethod("messageTemplate")]
         public void Write<T0, T1, T2>(Serilog.Events.LogEventLevel level, System.Exception? exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) { }
     }
+    public enum LoggingFailureKind
+    {
+        Temporary = 0,
+        Permanent = 1,
+        Final = 2,
+    }
     public class LoggingLevelSwitch
     {
         public LoggingLevelSwitch(Serilog.Events.LogEventLevel initialMinimumLevel = 2) { }
@@ -357,6 +373,7 @@ namespace Serilog.Debugging
     }
     public static class SelfLog
     {
+        public static Serilog.Core.ILoggingFailureListener FailureListener { get; }
         public static void Disable() { }
         public static void Enable(System.Action<string> output) { }
         public static void Enable(System.IO.TextWriter output) { }

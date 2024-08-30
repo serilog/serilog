@@ -21,6 +21,7 @@ sealed class DisposeDelegatingSink : ILogEventSink, IDisposable
 {
     readonly ILogEventSink _sink;
     readonly IDisposable? _disposable;
+    readonly bool _disposeInner;
 
 #if FEATURE_ASYNCDISPOSABLE
     readonly IAsyncDisposable? _asyncDisposable;
@@ -30,10 +31,11 @@ sealed class DisposeDelegatingSink : ILogEventSink, IDisposable
 #if FEATURE_ASYNCDISPOSABLE
         , IAsyncDisposable? asyncDisposable
 #endif
-        )
+        , bool disposeInner = false)
     {
         _sink = sink;
         _disposable = disposable;
+        _disposeInner = disposeInner;
 
 #if FEATURE_ASYNCDISPOSABLE
         _asyncDisposable = asyncDisposable;
@@ -42,17 +44,36 @@ sealed class DisposeDelegatingSink : ILogEventSink, IDisposable
 
     public void Dispose()
     {
+        if (_disposeInner && _sink is IDisposable inner)
+        {
+            inner.Dispose();
+        }
+
         _disposable?.Dispose();
     }
 
 #if FEATURE_ASYNCDISPOSABLE
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        if (_asyncDisposable != null)
-            return _asyncDisposable.DisposeAsync();
+        if (_disposeInner)
+        {
+            if (_sink is IAsyncDisposable innerAsync)
+            {
+                await innerAsync.DisposeAsync();
+            }
+            else if (_sink is IDisposable inner)
+            {
+                inner.Dispose();
+            }
+        }
 
-        Dispose();
-        return default;
+        if (_asyncDisposable != null)
+        {
+            await _asyncDisposable.DisposeAsync();
+            return;
+        }
+
+        _disposable?.Dispose();
     }
 #endif
 

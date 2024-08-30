@@ -280,16 +280,18 @@ public class LoggerSinkConfiguration
         foreach (var next in chain[1..])
         {
             var listener = new DelegatingLoggingFailureListener(final);
-            var sink = CreateSink(next);
-            if (sink is ISetLoggingFailureListener sfl)
-            {
-                sfl.SetFailureListener(listener);
-                final = sink;
-            }
-            else
-            {
-                final = new SynchronousFallbackSink(sink, listener);
-            }
+            var chained = Wrap(sink => new FailureListenerSink(sink, listener), next);
+            final = final is IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+                or IAsyncDisposable
+#endif
+                ? new DisposeDelegatingSink(
+                    chained,
+                    final as IDisposable
+#if FEATURE_ASYNCDISPOSABLE
+                    , final as IAsyncDisposable
+#endif
+                , disposeInner: true) : chained;
         }
 
         return Sink(final);
@@ -312,17 +314,9 @@ public class LoggerSinkConfiguration
         Guard.AgainstNull(configureSink);
         Guard.AgainstNull(failureListener);
 
-        var sink = CreateSink(configureSink);
-        if (sink is ISetLoggingFailureListener sfl)
-        {
-            sfl.SetFailureListener(failureListener);
-        }
-        else
-        {
-            sink = new SynchronousFallbackSink(sink, failureListener);
-        }
+        var wrapped = Wrap(sink => new FailureListenerSink(sink, failureListener), configureSink);
 
-        return Sink(sink);
+        return Sink(wrapped);
     }
 
     /// <summary>

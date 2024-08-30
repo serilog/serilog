@@ -14,17 +14,31 @@
 
 namespace Serilog.Core.Sinks;
 
-class SynchronousFallbackSink(ILogEventSink inner, ILoggingFailureListener listener) : ILogEventSink
+class FailureListenerSink : ILogEventSink
 {
+    readonly ILogEventSink _inner;
+    readonly ILoggingFailureListener _listener;
+
+    public FailureListenerSink(ILogEventSink inner, ILoggingFailureListener listener)
+    {
+        if (inner is ISetLoggingFailureListener sfl)
+        {
+            sfl.SetFailureListener(listener);
+        }
+
+        _inner = inner;
+        _listener = listener;
+    }
+
     public void Emit(LogEvent logEvent)
     {
         try
         {
-            inner.Emit(logEvent);
+            _inner.Emit(logEvent);
         }
         catch (Exception ex)
         {
-            listener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "failed emitting an event", [logEvent], ex);
+            _listener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "failed emitting an event", [logEvent], ex);
         }
     }
 }
