@@ -43,6 +43,7 @@ public class LogTests
     public async Task CloseAndFlushAsyncDisposesTheLoggerEvenWhenItIsNotAsyncDisposable()
     {
         var disposableLogger = new SyncDisposableLogger();
+        Assert.IsNotAssignableFrom<IAsyncDisposable>(disposableLogger);
         Log.Logger = disposableLogger;
         await Log.CloseAndFlushAsync();
         Assert.True(disposableLogger.IsDisposed);
