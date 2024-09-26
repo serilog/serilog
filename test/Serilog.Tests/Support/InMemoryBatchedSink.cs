@@ -6,18 +6,58 @@ sealed class InMemoryBatchedSink(TimeSpan batchEmitDelay) : IBatchedLogEventSink
 #endif
 {
     readonly object _stateLock = new();
-    bool _stopped;
+    readonly SyncState _syncState = new();
 
-    // Postmortem only
-    public bool WasCalledAfterDisposal { get; private set; }
-    public IList<IList<LogEvent>> Batches { get; } = new List<IList<LogEvent>>();
-    public bool IsDisposed { get; private set; }
+    sealed class SyncState
+    {
+        public bool Stopped { get; set; }
+        public bool WasCalledAfterDisposal { get; set; }
+        public List<IReadOnlyCollection<LogEvent>> Batches { get; } = new();
+        public bool IsDisposed { get; set; }
+        public bool IsDisposedAsync { get; set; }
+    }
+
+    public bool WasCalledAfterDisposal
+    {
+        get
+        {
+            lock (_stateLock)
+                return _syncState.WasCalledAfterDisposal;
+        }
+    }
+
+    public IReadOnlyList<IReadOnlyCollection<LogEvent>> Batches
+    {
+        get
+        {
+            lock (_stateLock)
+                return _syncState.Batches.ToList();
+        }
+    }
+
+    public bool IsDisposed
+    {
+        get
+        {
+            lock (_stateLock)
+                return _syncState.IsDisposed;
+        }
+    }
+
+    public bool IsDisposedAsync
+    {
+        get
+        {
+            lock (_stateLock)
+                return _syncState.IsDisposedAsync;
+        }
+    }
 
     public void Stop()
     {
         lock (_stateLock)
         {
-            _stopped = true;
+            _syncState.Stopped = true;
         }
     }
 
@@ -25,14 +65,14 @@ sealed class InMemoryBatchedSink(TimeSpan batchEmitDelay) : IBatchedLogEventSink
     {
         lock (_stateLock)
         {
-            if (_stopped)
+            if (_syncState.Stopped)
                 return Task.CompletedTask;
 
             if (IsDisposed)
-                WasCalledAfterDisposal = true;
+                _syncState.WasCalledAfterDisposal = true;
 
             Thread.Sleep(batchEmitDelay);
-            Batches.Add(events.ToList());
+            _syncState.Batches.Add(events.ToList());
         }
 
         return Task.CompletedTask;
@@ -43,17 +83,15 @@ sealed class InMemoryBatchedSink(TimeSpan batchEmitDelay) : IBatchedLogEventSink
     public void Dispose()
     {
         lock (_stateLock)
-            IsDisposed = true;
+            _syncState.IsDisposed = true;
     }
 
 #if FEATURE_ASYNCDISPOSABLE
-    public bool IsDisposedAsync { get; private set; }
-
     public ValueTask DisposeAsync()
     {
         lock (_stateLock)
         {
-            IsDisposedAsync = true;
+            _syncState.IsDisposedAsync = true;
             Dispose();
             return default;
         }
