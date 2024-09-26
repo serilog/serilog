@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace Serilog.Tests.Support;
 
 public class DisposableLogger : ILogger, IDisposable
