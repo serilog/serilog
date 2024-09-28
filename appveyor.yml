@@ -24,7 +24,7 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: JbUCIGD4FHOxmhM49oqvJdLb0TtGQAmBD5vOG9fSROaa85d7sddTLA8suvm407Dk
+    secure: lu34cvbiff0dEmnVQ18sLlrTJd3NJ0nNACtXKfIYkjK9bcGMSTO1WgwMHsVv1WCo
   on:
     branch: /^(main|dev)$/
 - provider: GitHub

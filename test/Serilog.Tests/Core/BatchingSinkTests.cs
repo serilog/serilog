@@ -15,9 +15,9 @@ public class BatchingSinkTests
         var evt = Some.InformationEvent();
         pbs.Emit(evt);
         pbs.Dispose();
-        Assert.Single(bs.Batches);
-        Assert.Single(bs.Batches[0]);
-        Assert.Same(evt, bs.Batches[0][0]);
+        var batch = Assert.Single(bs.Batches);
+        var actual = Assert.Single(batch);
+        Assert.Same(evt, actual);
         Assert.True(bs.IsDisposed);
         Assert.False(bs.WasCalledAfterDisposal);
     }
@@ -35,9 +35,9 @@ public class BatchingSinkTests
             var evt = Some.InformationEvent();
             pbs.Emit(evt);
             await pbs.DisposeAsync();
-            Assert.Single(bs.Batches);
-            Assert.Single(bs.Batches[0]);
-            Assert.Same(evt, bs.Batches[0][0]);
+            var batch = Assert.Single(bs.Batches);
+            var actual = Assert.Single(batch);
+            Assert.Same(evt, actual);
             Assert.True(bs.IsDisposed);
             Assert.True(bs.IsDisposedAsync);
             Assert.False(bs.WasCalledAfterDisposal);

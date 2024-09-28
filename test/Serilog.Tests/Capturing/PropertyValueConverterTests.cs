@@ -488,4 +488,18 @@ public class PropertyValueConverterTests
     {
         public override string Name => "override";
     }
+
+    [Fact]
+    public void PrivateGettersAreIgnoredWhenCapturing()
+    {
+        var structure = _converter.CreateStructureValue(new HasPropertyWithPrivateGetter(), typeof(HasPropertyWithPrivateGetter), false);
+        Assert.Contains(structure.Properties, p => p.Name == "A");
+        Assert.DoesNotContain(structure.Properties, p => p.Name == "B");
+    }
+
+    public class HasPropertyWithPrivateGetter
+    {
+        public string A { get; set; } = "A";
+        public string B { private get; set; } = "B";
+    }
 }

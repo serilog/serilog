@@ -3,7 +3,7 @@ namespace Serilog.Rendering;
 /// <summary>
 /// Class that provides reusable StringWriters to reduce memory allocations
 /// </summary>
-class ReusableStringWriter : StringWriter
+sealed class ReusableStringWriter : StringWriter
 {
     [ThreadStatic]
     static ReusableStringWriter? _pooledWriter;
@@ -52,8 +52,20 @@ class ReusableStringWriter : StringWriter
             return;
         }
         // We don't call base.Dispose because all it does is mark the writer as closed so it can't be
-        // written to and we want to keep it open as reusable writer.
+        // written to, and we want to keep it open as reusable writer.
         sb.Clear();
         _pooledWriter = this;
     }
+
+#if FEATURE_SPAN
+    public override void Write(ReadOnlySpan<char> buffer)
+    {
+        GetStringBuilder().Append(buffer);
+    }
+
+    public override void WriteLine(ReadOnlySpan<char> buffer)
+    {
+        GetStringBuilder().Append(buffer).AppendLine();
+    }
+#endif
 }

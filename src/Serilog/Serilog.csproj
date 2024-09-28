@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>4.0.1</VersionPrefix>
+    <VersionPrefix>4.0.2</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix.Substring(0,3)).0.0</AssemblyVersion>
     <Authors>Serilog Contributors</Authors>
     <!-- .NET Framework version targeting is frozen at these two TFMs. -->

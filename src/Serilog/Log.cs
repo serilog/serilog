@@ -59,11 +59,18 @@ public static class Log
     /// <summary>
     /// Resets <see cref="Logger"/> to the default and disposes the original if possible
     /// </summary>
-    public static ValueTask CloseAndFlushAsync()
+    public static async ValueTask CloseAndFlushAsync()
     {
         var logger = Interlocked.Exchange(ref _logger, Serilog.Core.Logger.None);
 
-        return (logger as IAsyncDisposable)?.DisposeAsync() ?? default;
+        if (logger is IAsyncDisposable asyncDisposable)
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        else
+        {
+            (logger as IDisposable)?.Dispose();
+        }
     }
 #endif
 
