@@ -28,31 +28,59 @@ namespace Serilog.Core.Sinks.Batching;
 class FailureAwareBatchScheduler
 {
     static readonly TimeSpan MinimumBackoffPeriod = TimeSpan.FromSeconds(5);
-    static readonly TimeSpan MaximumBackoffInterval = TimeSpan.FromMinutes(10);
+    static readonly TimeSpan MaximumBackoffInterval = TimeSpan.FromMinutes(1);
+    const int DroppedBatchesBeforeDroppingQueue = 10;
 
-    const int FailuresBeforeDroppingBatch = 8;
-    const int FailuresBeforeDroppingQueue = 10;
+    readonly TimeSpan _bufferingTimeLimit, _retryTimeLimit;
+    readonly TimeProvider _timeProvider;
 
-    readonly TimeSpan _period;
+    long? _firstFailureTimestamp;
+    int _failuresSinceSuccessfulBatch, _consecutiveDroppedBatches;
 
-    int _failuresSinceSuccessfulBatch;
-
-    public FailureAwareBatchScheduler(TimeSpan period)
+    public FailureAwareBatchScheduler(TimeSpan bufferingTimeLimit, TimeSpan retryTimeLimit)
+        : this(bufferingTimeLimit, retryTimeLimit, TimeProvider.System)
     {
-        if (period < TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(period), "The batching period must be a positive timespan.");
+    }
 
-        _period = period;
+    internal FailureAwareBatchScheduler(TimeSpan bufferingTimeLimit, TimeSpan retryTimeLimit, TimeProvider timeProvider)
+    {
+        if (bufferingTimeLimit < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(bufferingTimeLimit), "The batching period must be a positive timespan.");
+
+        if (retryTimeLimit < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(retryTimeLimit), "The retry time limit must be a positive timespan.");
+
+        _bufferingTimeLimit = bufferingTimeLimit;
+        _retryTimeLimit = retryTimeLimit;
+        _timeProvider = timeProvider;
     }
 
     public void MarkSuccess()
     {
         _failuresSinceSuccessfulBatch = 0;
+        _consecutiveDroppedBatches = 0;
+        _firstFailureTimestamp = null;
     }
 
-    public void MarkFailure()
+    public void MarkFailure(out bool shouldDropBatch, out bool shouldDropQueue)
     {
         ++_failuresSinceSuccessfulBatch;
+        _firstFailureTimestamp ??= _timeProvider.GetTimestamp();
+
+        // Once we're up against the time limit, we'll try each subsequent batch once and then drop it.
+        var now = _timeProvider.GetElapsedTime(_firstFailureTimestamp.Value);
+        var wouldRetryAt = now.Add(NextInterval);
+        shouldDropBatch = wouldRetryAt >= _retryTimeLimit;
+
+        if (shouldDropBatch)
+        {
+            ++_consecutiveDroppedBatches;
+        }
+
+        // After trying and dropping enough batches consecutively, we'll try to get out of the way and just drop
+        // everything after each subsequent failure. Each time a batch is tried and fails, we'll drop it and
+        // drain the whole queue.
+        shouldDropQueue = _consecutiveDroppedBatches >= DroppedBatchesBeforeDroppingQueue;
     }
 
     public TimeSpan NextInterval
@@ -60,14 +88,14 @@ class FailureAwareBatchScheduler
         get
         {
             // Available, and first failure, just try the batch interval
-            if (_failuresSinceSuccessfulBatch <= 1) return _period;
+            if (_failuresSinceSuccessfulBatch <= 1) return _bufferingTimeLimit;
 
             // Second failure, start ramping up the interval - first 2x, then 4x, ...
             var backoffFactor = Math.Pow(2, _failuresSinceSuccessfulBatch - 1);
 
             // If the period is ridiculously short, give it a boost so we get some
             // visible backoff.
-            var backoffPeriod = Math.Max(_period.Ticks, MinimumBackoffPeriod.Ticks);
+            var backoffPeriod = Math.Max(_bufferingTimeLimit.Ticks, MinimumBackoffPeriod.Ticks);
 
             // The "ideal" interval
             var backedOff = (long) (backoffPeriod * backoffFactor);
@@ -76,13 +104,9 @@ class FailureAwareBatchScheduler
             var cappedBackoff = Math.Min(MaximumBackoffInterval.Ticks, backedOff);
 
             // Unless that's shorter than the period, in which case we'll just apply the period
-            var actual = Math.Max(_period.Ticks, cappedBackoff);
+            var actual = Math.Max(_bufferingTimeLimit.Ticks, cappedBackoff);
 
             return TimeSpan.FromTicks(actual);
         }
     }
-
-    public bool ShouldDropBatch => _failuresSinceSuccessfulBatch >= FailuresBeforeDroppingBatch;
-
-    public bool ShouldDropQueue => _failuresSinceSuccessfulBatch >= FailuresBeforeDroppingQueue;
 }
