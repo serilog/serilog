@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Serilog Contributors
+// Copyright © Serilog Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,7 +74,31 @@ public static class SelfLog
     public static void WriteLine(string format, object? arg0 = null, object? arg1 = null, object? arg2 = null)
     {
         var o = _output;
-
-        o?.Invoke(string.Format(DateTime.UtcNow.ToString("o") + " " + format, arg0, arg1, arg2));
+        o?.Invoke(string.Format($"{DateTime.UtcNow:o} {format}", arg0, arg1, arg2));
     }
+
+    class SelfLogFailureListener : ILoggingFailureListener
+    {
+        public void OnLoggingFailed(object sender, LoggingFailureKind kind, string message, IReadOnlyCollection<LogEvent>? events, Exception? exception)
+        {
+            var o = _output;
+            if (o == null) return;
+
+            var count = events?.Count ?? (object)"unspecified";
+            if (exception != null)
+            {
+                o.Invoke(string.Format($"{DateTime.UtcNow:o} {sender.GetType()}: {message} ({kind}, {count} events){Environment.NewLine}{exception}"));
+            }
+            else
+            {
+                o.Invoke(string.Format($"{DateTime.UtcNow:o} {sender.GetType()}: {message} ({kind}, {count} events)"));
+            }
+        }
+    }
+
+    /// <summary>
+    /// An <see cref="ILoggingFailureListener"/> that writes diagnostic information to <see cref="SelfLog"/>. Sinks
+    /// that support failure listeners should use this instance by default.
+    /// </summary>
+    public static ILoggingFailureListener FailureListener { get; } = new SelfLogFailureListener();
 }
