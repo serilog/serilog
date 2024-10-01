@@ -45,7 +45,7 @@ class FailureAwareBatchScheduler
     internal FailureAwareBatchScheduler(TimeSpan bufferingTimeLimit, TimeSpan retryTimeLimit, TimeProvider timeProvider)
     {
         if (bufferingTimeLimit < TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(bufferingTimeLimit), "The batching period must be a positive timespan.");
+            throw new ArgumentOutOfRangeException(nameof(bufferingTimeLimit), "The buffering time limit must be a positive timespan.");
 
         if (retryTimeLimit < TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(retryTimeLimit), "The retry time limit must be a positive timespan.");

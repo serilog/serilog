@@ -62,7 +62,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         if (options.BatchSizeLimit <= 0)
             throw new ArgumentOutOfRangeException(nameof(options), "The batch size limit must be greater than zero.");
         if (options.BufferingTimeLimit <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(options), "The period must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(options), "The buffering time limit must be greater than zero.");
         if (options.RetryTimeLimit < TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(options), "The retry time limit must not be negative.");
 
