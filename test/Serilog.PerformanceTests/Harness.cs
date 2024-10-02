@@ -32,6 +32,7 @@ public class Harness
     public void Allocations()
     {
         BenchmarkRunner.Run<AllocationsBenchmark>();
+        BenchmarkRunner.Run<AllocationsIgnoringEventsBenchmark>();
     }
 
     [Fact]
