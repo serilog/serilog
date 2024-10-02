@@ -62,14 +62,16 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         if (options.BatchSizeLimit <= 0)
             throw new ArgumentOutOfRangeException(nameof(options), "The batch size limit must be greater than zero.");
         if (options.BufferingTimeLimit <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(options), "The period must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(options), "The buffering time limit must be greater than zero.");
+        if (options.RetryTimeLimit < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(options), "The retry time limit must not be negative.");
 
         _targetSink = batchedSink ?? throw new ArgumentNullException(nameof(batchedSink));
         _batchSizeLimit = options.BatchSizeLimit;
         _queue = options.QueueLimit is { } limit
             ? Channel.CreateBounded<LogEvent>(new BoundedChannelOptions(limit) { SingleReader = true })
             : Channel.CreateUnbounded<LogEvent>(new UnboundedChannelOptions { SingleReader = true });
-        _batchScheduler = new FailureAwareBatchScheduler(options.BufferingTimeLimit);
+        _batchScheduler = new FailureAwareBatchScheduler(options.BufferingTimeLimit, options.RetryTimeLimit);
         _eagerlyEmitFirstEvent = options.EagerlyEmitFirstEvent;
         _waitForShutdownSignal = Task.Delay(Timeout.InfiniteTimeSpan, _shutdownSignal.Token)
             .ContinueWith(e => e.Exception, TaskContinuationOptions.OnlyOnFaulted);
@@ -143,15 +145,15 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
             catch (Exception ex)
             {
                 _failureListener.OnLoggingFailed(this, LoggingFailureKind.Temporary, "failed emitting a batch", _currentBatch, ex);
-                _batchScheduler.MarkFailure();
+                _batchScheduler.MarkFailure(out var shouldDropBatch, out var shouldDropQueue);
 
-                if (_batchScheduler.ShouldDropBatch)
+                if (shouldDropBatch)
                 {
                     _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
                     _currentBatch.Clear();
                 }
 
-                if (_batchScheduler.ShouldDropQueue)
+                if (shouldDropQueue)
                 {
                     DrainOnFailure(LoggingFailureKind.Permanent, "dropping all queued events", ex);
                 }
