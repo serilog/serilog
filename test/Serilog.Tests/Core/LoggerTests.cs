@@ -317,6 +317,54 @@ public class LoggerTests
         // ReSharper restore StructuredMessageTemplateProblem
     }
 
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void Two_Dimensional_Array_Should_Be_Logger_As_Sequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[3, 2] { { "a", "b" }, { "c", "d" }, { "e", "f" } };
+            l.Error("{@Value}", a);
+        });
+
+        Assert.Equal(1, evt.Properties.Count);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(3, arr.Elements.Count);
+        Assert.Equal("[[a,b],[c,d],[e,f]]", arr.LiteralValue());
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void Three_Dimensional_Array_Should_Be_Logger_As_Sequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[3, 2, 1] { { { "a" }, { "b" } }, { { "c" }, { "d" } }, { { "e" }, { "f" } } };
+            l.Error("{@Value}", a);
+        });
+
+        Assert.Equal(1, evt.Properties.Count);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(3, arr.Elements.Count);
+        Assert.Equal("[[[a],[b]],[[c],[d]],[[e],[f]]]", arr.LiteralValue());
+    }
+
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void Four_Dimensional_Array_Not_Supported()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[4, 3, 2, 1];
+            l.Error("{@Value}", a);
+        });
+
+        Assert.Equal(1, evt.Properties.Count);
+        var val = evt.Properties["Value"].LiteralValue();
+        Assert.Equal("Capturing the property value threw an exception: NotSupportedException", val);
+    }
+
 #if FEATURE_ASYNCDISPOSABLE
 
     [Fact]
