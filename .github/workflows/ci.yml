@@ -30,7 +30,7 @@ jobs:
       - name: Compute build number
         shell: bash
         run: |
-          echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+200))" >> $GITHUB_ENV
+          echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+2300))" >> $GITHUB_ENV
       - name: Build and Publish
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: true
