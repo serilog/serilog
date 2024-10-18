@@ -5,16 +5,13 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{E9D1B5E1-DEB9-4A04-8BAB-24EC7240ADAF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
-		build.sh = build.sh
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		global.json = global.json
 		NuGet.config = NuGet.config
 		README.md = README.md
 		RunPerfTests.ps1 = RunPerfTests.ps1
-		run_perf_tests.sh = run_perf_tests.sh
 		assets\Serilog.snk = assets\Serilog.snk
 	EndProjectSection
 EndProject
@@ -31,6 +28,20 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.PerformanceTests", "test\Serilog.PerformanceTests\Serilog.PerformanceTests.csproj", "{B4AC7ED9-517B-47E9-BB49-15F8A8478E62}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.ApprovalTests", "test\Serilog.ApprovalTests\Serilog.ApprovalTests.csproj", "{7669BB99-A118-436B-8C58-1D8E8989A775}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{17C8775C-0621-438E-81D4-3B9E98A616BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{3BFAB570-11C6-4C85-97A6-2740219F5B48}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
+		.github\ISSUE_TEMPLATE\config.yml = .github\ISSUE_TEMPLATE\config.yml
+		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{D44EC05A-1374-4053-A9A2-41E8EA1CE0D2}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,6 +123,8 @@ Global
 		{B11B911D-977A-42CE-900A-596CF59F6FFA} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{B4AC7ED9-517B-47E9-BB49-15F8A8478E62} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{7669BB99-A118-436B-8C58-1D8E8989A775} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
+		{3BFAB570-11C6-4C85-97A6-2740219F5B48} = {17C8775C-0621-438E-81D4-3B9E98A616BD}
+		{D44EC05A-1374-4053-A9A2-41E8EA1CE0D2} = {17C8775C-0621-438E-81D4-3B9E98A616BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {268F5761-DAC2-4ECA-9AEC-59663B84854C}
