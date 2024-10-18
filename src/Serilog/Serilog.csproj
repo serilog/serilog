@@ -3,7 +3,6 @@
     <Description>Simple .NET logging with fully-structured events</Description>
     <Authors>Serilog Contributors</Authors>
     <Copyright>Copyright © Serilog Contributors</Copyright>
-    <VersionPrefix>4.1.0</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix.Substring(0,3)).0.0</AssemblyVersion>
     <!-- .NET Framework version targeting is frozen at these two TFMs. -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net471;net462</TargetFrameworks>
@@ -50,6 +49,7 @@
     <EmbeddedResource Include="ILLink.Substitutions.xml">
       <LogicalName>ILLink.Substitutions.xml</LogicalName>
     </EmbeddedResource>
+    <Using Remove="System.Net.Http" />
   </ItemGroup>
 
   <!-- Per-TFM `ItemGroup` for exceptions only: -->

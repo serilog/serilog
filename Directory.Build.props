@@ -1,6 +1,7 @@
 <Project>
   <!-- Properties in this file are expected to be identical for all Serilog organization projects. If
    a property value is project-specific, please record it in the CSPROJ file instead. -->
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Version.props" />
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
