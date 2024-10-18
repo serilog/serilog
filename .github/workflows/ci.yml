@@ -7,7 +7,7 @@ on:
     branches: [ "dev", "main" ]
   pull_request:
     branches: [ "dev", "main" ]
-      
+
 env:
   CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
   CI_TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
@@ -15,7 +15,8 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    # The build must run on Windows so that .NET Framework targets can be built and tested.
+    runs-on: windows-latest
 
     permissions:
       contents: write
@@ -27,6 +28,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
       - name: Compute build number
+        shell: bash
         run: |
           echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+200))" >> $GITHUB_ENV
       - name: Build and Publish
