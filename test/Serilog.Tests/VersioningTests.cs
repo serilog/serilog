@@ -17,4 +17,11 @@ public class VersioningTests
         Assert.True(version?.Build is 0);
         Assert.True(version.Revision is 0);
     }
+
+    [Fact]
+    public void AssemblyIsSigned()
+    {
+        var key = typeof(Log).Assembly.GetName().GetPublicKey();
+        Assert.NotNull(key);
+    }
 }

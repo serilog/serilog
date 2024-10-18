@@ -4,7 +4,8 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <SignAssembly>true</SignAssembly>
+    <!-- The condition is required to support BenchmarkDotNet -->
+    <SignAssembly Condition="Exists('$(MSBuildThisFileDirectory)assets/Serilog.snk')">true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)assets/Serilog.snk</AssemblyOriginatorKeyFile>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <Nullable>enable</Nullable>
