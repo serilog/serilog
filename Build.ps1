@@ -61,7 +61,7 @@ try {
         Pop-Location
     }
 
-    if ($env:NUGET_API_KEY -and -not $env:CI_PULL_REQUEST_NUMBER) {
+    if ($env:NUGET_API_KEY -and -not $env:CI_IS_PULL_REQUEST_SYNC) {
         # GitHub Actions will only supply this to branch builds and not PRs. We publish
         # builds from any branch this action targets (i.e. main and dev).
 
