@@ -6,6 +6,7 @@
     <TargetFrameworks>$(TargetFrameworks);net8.0;net7.0;net6.0</TargetFrameworks>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

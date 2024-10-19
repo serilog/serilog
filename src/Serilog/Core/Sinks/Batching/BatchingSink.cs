@@ -21,7 +21,7 @@ namespace Serilog.Core.Sinks.Batching;
 /// <summary>
 /// Buffers log events into batches for background flushing.
 /// </summary>
-sealed class BatchingSink : ILogEventSink, IDisposable
+sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListener
 #if FEATURE_ASYNCDISPOSABLE
         , IAsyncDisposable
 #endif
@@ -47,6 +47,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable
     readonly Queue<LogEvent> _currentBatch = new();
     readonly Task _waitForShutdownSignal;
     Task<bool>? _cachedWaitToRead;
+    ILoggingFailureListener _failureListener = SelfLog.FailureListener;
 
     /// <summary>
     /// Construct a <see cref="BatchingSink"/>.
@@ -61,14 +62,16 @@ sealed class BatchingSink : ILogEventSink, IDisposable
         if (options.BatchSizeLimit <= 0)
             throw new ArgumentOutOfRangeException(nameof(options), "The batch size limit must be greater than zero.");
         if (options.BufferingTimeLimit <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(options), "The period must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(options), "The buffering time limit must be greater than zero.");
+        if (options.RetryTimeLimit < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(options), "The retry time limit must not be negative.");
 
         _targetSink = batchedSink ?? throw new ArgumentNullException(nameof(batchedSink));
         _batchSizeLimit = options.BatchSizeLimit;
         _queue = options.QueueLimit is { } limit
             ? Channel.CreateBounded<LogEvent>(new BoundedChannelOptions(limit) { SingleReader = true })
             : Channel.CreateUnbounded<LogEvent>(new UnboundedChannelOptions { SingleReader = true });
-        _batchScheduler = new FailureAwareBatchScheduler(options.BufferingTimeLimit);
+        _batchScheduler = new FailureAwareBatchScheduler(options.BufferingTimeLimit, options.RetryTimeLimit);
         _eagerlyEmitFirstEvent = options.EagerlyEmitFirstEvent;
         _waitForShutdownSignal = Task.Delay(Timeout.InfiniteTimeSpan, _shutdownSignal.Token)
             .ContinueWith(e => e.Exception, TaskContinuationOptions.OnlyOnFaulted);
@@ -141,23 +144,18 @@ sealed class BatchingSink : ILogEventSink, IDisposable
             }
             catch (Exception ex)
             {
-                WriteToSelfLog("failed emitting a batch", ex);
-                _batchScheduler.MarkFailure();
+                _failureListener.OnLoggingFailed(this, LoggingFailureKind.Temporary, "failed emitting a batch", _currentBatch, ex);
+                _batchScheduler.MarkFailure(out var shouldDropBatch, out var shouldDropQueue);
 
-                if (_batchScheduler.ShouldDropBatch)
+                if (shouldDropBatch)
                 {
-                    WriteToSelfLog("dropping the current batch");
+                    _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
                     _currentBatch.Clear();
                 }
 
-                if (_batchScheduler.ShouldDropQueue)
+                if (shouldDropQueue)
                 {
-                    WriteToSelfLog("dropping all queued events");
-
-                    // Not ideal, uses some CPU capacity unnecessarily and doesn't complete in bounded time. The goal is
-                    // to reduce memory pressure on the client if the server is offline for extended periods. May be
-                    // worth reviewing and possibly abandoning this.
-                    while (_queue.Reader.TryRead(out _) && !_shutdownSignal.IsCancellationRequested) { }
+                    DrainOnFailure(LoggingFailureKind.Permanent, "dropping all queued events", ex);
                 }
 
                 // Wait out the remainder of the batch fill time so that we don't overwhelm the server. With each
@@ -196,8 +194,31 @@ sealed class BatchingSink : ILogEventSink, IDisposable
         }
         catch (Exception ex)
         {
-            WriteToSelfLog("failed emitting a batch during shutdown; dropping remaining queued events", ex);
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
+            DrainOnFailure(LoggingFailureKind.Final, "failed emitting a batch during shutdown; dropping remaining queued events", ex, ignoreShutdownSignal: true);
         }
+    }
+
+    void DrainOnFailure(LoggingFailureKind kind, string message, Exception? exception, bool ignoreShutdownSignal = false)
+    {
+        const int bufferLimit = 1024;
+        var buffer = new List<LogEvent>();
+
+        // Not ideal, uses some CPU capacity unnecessarily and doesn't complete in bounded time. The goal is
+        // to reduce memory pressure on the client if the server is offline for extended periods. May be
+        // worth reviewing and possibly abandoning this.
+        while (_queue.Reader.TryRead(out var logEvent) && (ignoreShutdownSignal || !_shutdownSignal.IsCancellationRequested))
+        {
+            buffer.Add(logEvent);
+
+            if (buffer.Count == bufferLimit)
+            {
+                _failureListener.OnLoggingFailed(this, kind, message, buffer, exception);
+                buffer.Clear();
+            }
+        }
+
+        _failureListener.OnLoggingFailed(this, kind, message, buffer, exception);
     }
 
     // Wait until `reader` has items to read. Returns `false` if the `timeout` task completes, or if the reader is cancelled.
@@ -212,7 +233,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable
         // read task cancellation exceptions during shutdown, may be some room to improve.
         if (completed is { Exception: not null, IsCanceled: false })
         {
-            WriteToSelfLog($"could not read from queue: {completed.Exception}");
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Temporary, "could not read from queue", events: null, completed.Exception);
         }
 
         if (completed == timeout)
@@ -231,6 +252,13 @@ sealed class BatchingSink : ILogEventSink, IDisposable
         return await waitToRead;
     }
 
+    /// <inheritdoc />
+    public void SetFailureListener(ILoggingFailureListener failureListener)
+    {
+        Guard.AgainstNull(failureListener);
+        _failureListener = failureListener;
+    }
+
     /// <inheritdoc/>
     public void Dispose()
     {
@@ -244,7 +272,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable
         {
             // E.g. the task was canceled before ever being run, or internally failed and threw
             // an unexpected exception.
-            WriteToSelfLog("caught exception during disposal", ex);
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Final, "caught exception during disposal", events: null, ex);
         }
 
         (_targetSink as IDisposable)?.Dispose();
@@ -264,7 +292,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable
             {
                 // E.g. the task was canceled before ever being run, or internally failed and threw
                 // an unexpected exception.
-                WriteToSelfLog("caught exception during async disposal", ex);
+                _failureListener.OnLoggingFailed(this, LoggingFailureKind.Final, "caught exception during async disposal", events: null, ex);
             }
 
             if (_targetSink is IAsyncDisposable asyncDisposable)
@@ -286,11 +314,5 @@ sealed class BatchingSink : ILogEventSink, IDisposable
                 _shutdownSignal.Cancel();
             }
         }
-    }
-
-    void WriteToSelfLog(string message, Exception? exception = null)
-    {
-        var ex = exception != null ? $"{Environment.NewLine}{exception}" : "";
-        SelfLog.WriteLine($"BatchingSink ({_targetSink}): {message}{ex}");
     }
 }

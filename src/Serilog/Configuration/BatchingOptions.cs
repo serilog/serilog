@@ -45,4 +45,10 @@ public class BatchingOptions
     /// backpressure is applied.
     /// </summary>
     public int? QueueLimit { get; set; } = 100000;
+
+    /// <summary>
+    /// The maximum time that the sink will keep retrying failed batches for. The default is ten minutes. Lower
+    /// this value to reduce buffering and backpressure in high-load scenarios.
+    /// </summary>
+    public TimeSpan RetryTimeLimit { get; set; } = TimeSpan.FromMinutes(10);
 }

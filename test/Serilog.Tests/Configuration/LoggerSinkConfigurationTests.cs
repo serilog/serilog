@@ -74,4 +74,29 @@ public class LoggerSinkConfigurationTests
         Assert.Same(evt, enclosed.SingleEvent);
         Assert.False(evt.Properties.ContainsKey(propertyName));
     }
+
+    class SupportsFailureListener : ILogEventSink, ISetLoggingFailureListener
+    {
+        public ILoggingFailureListener? FailureListener { get; set; }
+
+        public void Emit(LogEvent logEvent)
+        {
+        }
+
+        public void SetFailureListener(ILoggingFailureListener failureListener)
+        {
+            FailureListener = failureListener;
+        }
+    }
+
+    [Fact]
+    public void FailureListenersCanTraverseWrappers()
+    {
+        var inner = new SupportsFailureListener();
+        var sink = LoggerSinkConfiguration.Wrap(s => new DummyWrappingSink(s), wt => wt.Sink(inner));
+        var sfl = Assert.IsAssignableFrom<ISetLoggingFailureListener>(sink);
+        var listener = new CollectingFailureListener();
+        sfl.SetFailureListener(listener);
+        Assert.Same(listener, inner.FailureListener);
+    }
 }

@@ -4,101 +4,88 @@ namespace Serilog.Core.Tests;
 
 public class FailureAwareBatchSchedulerTests
 {
-    static TimeSpan Period => TimeSpan.FromSeconds(2);
-    FailureAwareBatchScheduler Scheduler { get; } = new(Period);
+    TimeSpan _bufferingTimeLimit = TimeSpan.FromSeconds(2), _retryTimeLimit = TimeSpan.FromMinutes(10);
+    TestTimeProvider _timeProvider = new();
+    FailureAwareBatchScheduler _scheduler { get; }
+
+    public FailureAwareBatchSchedulerTests()
+    {
+        _scheduler = new(_bufferingTimeLimit, _retryTimeLimit, _timeProvider);
+    }
 
     [Fact]
     public void WhenNoFailuresHaveOccurredTheInitialIntervalIsUsed()
     {
-        Assert.Equal(Period, Scheduler.NextInterval);
+        Assert.Equal(_bufferingTimeLimit, _scheduler.NextInterval);
     }
 
     [Fact]
     public void WhenOneFailureHasOccurredTheInitialIntervalIsUsed()
     {
-        Scheduler.MarkFailure();
-        Assert.Equal(Period, Scheduler.NextInterval);
+        _scheduler.MarkFailure(out _, out _);
+        Assert.Equal(_bufferingTimeLimit, _scheduler.NextInterval);
     }
 
     [Fact]
     public void WhenTwoFailuresHaveOccurredTheIntervalBacksOff()
     {
-        Scheduler.MarkFailure();
-        Scheduler.MarkFailure();
-        Assert.Equal(TimeSpan.FromSeconds(10), Scheduler.NextInterval);
+        _scheduler.MarkFailure(out _, out _);
+        _scheduler.MarkFailure(out _, out _);
+        Assert.Equal(TimeSpan.FromSeconds(10), _scheduler.NextInterval);
     }
 
     [Fact]
     public void WhenABatchSucceedsTheStatusResets()
     {
-        Scheduler.MarkFailure();
-        Scheduler.MarkFailure();
-        Scheduler.MarkSuccess();
-        Assert.Equal(Period, Scheduler.NextInterval);
+        _scheduler.MarkFailure(out _, out _);
+        _scheduler.MarkFailure(out _, out _);
+        _scheduler.MarkSuccess();
+        Assert.Equal(_bufferingTimeLimit, _scheduler.NextInterval);
     }
 
     [Fact]
     public void WhenThreeFailuresHaveOccurredTheIntervalBacksOff()
     {
-        Scheduler.MarkFailure();
-        Scheduler.MarkFailure();
-        Scheduler.MarkFailure();
-        Assert.Equal(TimeSpan.FromSeconds(20), Scheduler.NextInterval);
-        Assert.False(Scheduler.ShouldDropBatch);
+        _scheduler.MarkFailure(out _, out _);
+        _scheduler.MarkFailure(out _, out _);
+        _scheduler.MarkFailure(out var shouldDropBatch, out _);
+        Assert.Equal(TimeSpan.FromSeconds(20), _scheduler.NextInterval);
+        Assert.False(shouldDropBatch);
     }
 
     [Fact]
-    public void WhenEightFailuresHaveOccurredTheIntervalBacksOffAndBatchIsDropped()
+    public void WhenRetryTimeLimitHasElapsedTheBatchIsDropped()
     {
         for (var i = 0; i < 8; ++i)
         {
-            Assert.False(Scheduler.ShouldDropBatch);
-            Scheduler.MarkFailure();
+            _scheduler.MarkFailure(out var shouldDropBatch, out var shouldDropQueue);
+            Assert.False(shouldDropBatch);
+            Assert.False(shouldDropQueue);
         }
-        Assert.Equal(TimeSpan.FromMinutes(10), Scheduler.NextInterval);
-        Assert.True(Scheduler.ShouldDropBatch);
-        Assert.False(Scheduler.ShouldDropQueue);
+
+        _timeProvider.Advance(_retryTimeLimit);
+        _scheduler.MarkFailure(out var shouldDropBatch_, out var shouldDropQueue_);
+
+        Assert.True(shouldDropBatch_);
+        Assert.False(shouldDropQueue_);
     }
 
     [Fact]
-    public void WhenTenFailuresHaveOccurredTheQueueIsDropped()
+    public void WhenTenConsecutiveBatchesAreDroppedTheQueueIsDropped()
     {
-        for (var i = 0; i < 10; ++i)
+        _scheduler.MarkFailure(out var shouldDropBatch, out var shouldDropQueue);
+        _timeProvider.Advance(_retryTimeLimit);
+
+        for (var i = 0; i < 9; ++i)
         {
-            Assert.False(Scheduler.ShouldDropQueue);
-            Scheduler.MarkFailure();
+            _scheduler.MarkFailure(out shouldDropBatch, out shouldDropQueue);
+            Assert.True(shouldDropBatch);
+            Assert.False(shouldDropQueue);
         }
-        Assert.True(Scheduler.ShouldDropQueue);
-    }
 
-    [Fact]
-    public void AtTheDefaultIntervalRetriesForTenMinutesBeforeDroppingBatch()
-    {
-        var cumulative = TimeSpan.Zero;
-        do
-        {
-            Scheduler.MarkFailure();
+        _scheduler.MarkFailure(out shouldDropBatch, out shouldDropQueue);
 
-            if (!Scheduler.ShouldDropBatch)
-                cumulative += Scheduler.NextInterval;
-        } while (!Scheduler.ShouldDropBatch);
-
-        Assert.False(Scheduler.ShouldDropQueue);
-        Assert.Equal(TimeSpan.Parse("00:10:32", CultureInfo.InvariantCulture), cumulative);
-    }
-
-    [Fact]
-    public void AtTheDefaultIntervalRetriesForThirtyMinutesBeforeDroppingQueue()
-    {
-        var cumulative = TimeSpan.Zero;
-        do
-        {
-            Scheduler.MarkFailure();
-
-            if (!Scheduler.ShouldDropQueue)
-                cumulative += Scheduler.NextInterval;
-        } while (!Scheduler.ShouldDropQueue);
-
-        Assert.Equal(TimeSpan.Parse("00:30:32", CultureInfo.InvariantCulture), cumulative);
+        Assert.True(shouldDropBatch);
+        Assert.True(shouldDropQueue);
     }
 }
