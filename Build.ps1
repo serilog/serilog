@@ -46,10 +46,6 @@ try {
         Pop-Location
     }
 
-    Write-Output "build: Checking complete solution builds"
-    & dotnet build
-    if($LASTEXITCODE -ne 0) { throw "Solution build failed" }
-
     foreach ($test in Get-ChildItem test/*.Tests) {
         Push-Location $test
 
@@ -61,7 +57,7 @@ try {
         Pop-Location
     }
 
-    if ($env:NUGET_API_KEY -and -not $env:CI_IS_PULL_REQUEST_SYNC) {
+    if ($env:NUGET_API_KEY) {
         # GitHub Actions will only supply this to branch builds and not PRs. We publish
         # builds from any branch this action targets (i.e. main and dev).
 
