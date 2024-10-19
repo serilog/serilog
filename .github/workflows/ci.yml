@@ -11,6 +11,7 @@ on:
 env:
   CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
   CI_TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+  CI_PULL_REQUEST_NUMBER: $${{ github.event.pull_request.number }}
 
 jobs:
   build:
