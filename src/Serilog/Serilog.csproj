@@ -1,28 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>4.1.0</VersionPrefix>
-    <AssemblyVersion>$(VersionPrefix.Substring(0,3)).0.0</AssemblyVersion>
     <Authors>Serilog Contributors</Authors>
+    <Copyright>Copyright © Serilog Contributors</Copyright>
+    <AssemblyVersion>$(VersionPrefix.Substring(0,3)).0.0</AssemblyVersion>
     <!-- .NET Framework version targeting is frozen at these two TFMs. -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net471;net462</TargetFrameworks>
     <!-- Policy is to trim TFM-specific builds to `netstandard2.0`, `net6.0`,
     all active LTS versions, and optionally the latest RTM version, when releasing new
     major Serilog versions. -->
     <TargetFrameworks>$(TargetFrameworks);net8.0;net6.0;netstandard2.0</TargetFrameworks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://serilog.net/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <TreatSpecificWarningsAsErrors />
     <IsTrimmable>true</IsTrimmable>
     <NoWarn>$(NoWarn);CS1437;CS1570</NoWarn>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -55,6 +49,7 @@
     <EmbeddedResource Include="ILLink.Substitutions.xml">
       <LogicalName>ILLink.Substitutions.xml</LogicalName>
     </EmbeddedResource>
+    <Using Remove="System.Net.Http" />
   </ItemGroup>
 
   <!-- Per-TFM `ItemGroup` for exceptions only: -->
