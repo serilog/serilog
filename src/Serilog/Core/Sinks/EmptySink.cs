@@ -14,28 +14,9 @@
 
 namespace Serilog.Core.Sinks;
 
-class SafeAggregateSink : ILogEventSink
+class EmptySink : ILogEventSink
 {
-    readonly List<ILogEventSink> _sinks;
-
-    public SafeAggregateSink(List<ILogEventSink> sinks)
-    {
-        _sinks = Guard.AgainstNull(sinks);
-        _sinks.TrimExcess();
-    }
-
     public void Emit(LogEvent logEvent)
     {
-        foreach (var sink in _sinks)
-        {
-            try
-            {
-                sink.Emit(logEvent);
-            }
-            catch (Exception ex)
-            {
-                SelfLog.WriteLine("Caught exception while emitting to sink {0}: {1}", sink, ex);
-            }
-        }
     }
 }
