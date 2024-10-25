@@ -49,6 +49,19 @@ public class MessageTemplateTextFormatterTests
     }
 
     [Theory]
+    [InlineData(16)]
+    [InlineData(100)]
+    public void RendersTimestampFormatsOfDifferentLengths(int length)
+    {
+        var longFormatString = new string('-', length);
+        var formatter = new MessageTemplateTextFormatter($"{{Timestamp:{longFormatString}}}", CultureInfo.InvariantCulture);
+        var evt = DelegatingSink.GetLogEvent(l => l.Information("{Name}", "Nick"));
+        var sw = new StringWriter();
+        formatter.Format(evt, sw);
+        Assert.Contains(longFormatString, sw.ToString());
+    }
+
+    [Theory]
     [InlineData(Verbose, 1, "V")]
     [InlineData(Verbose, 2, "Vb")]
     [InlineData(Verbose, 3, "Vrb")]
@@ -379,5 +392,17 @@ public class MessageTemplateTextFormatterTests
         var sw = new StringWriter();
         formatter.Format(evt, sw);
         Assert.Equal($"{traceId}/{spanId}", sw.ToString());
+    }
+
+    [Fact]
+    public void UtcTimestampOutputsCorrectValue()
+    {
+        var formatter = new MessageTemplateTextFormatter("{UtcTimestamp:yyyy-MM-dd hh:mm:ss.fffZ}", CultureInfo.InvariantCulture);
+
+        var evt = Some.LogEvent(timestamp: new(2013, 3, 11, 15, 59, 0, 123, TimeSpan.FromHours(10)));
+
+        var sw = new StringWriter();
+        formatter.Format(evt, sw);
+        Assert.Equal("2013-03-11 05:59:00.123Z", sw.ToString());
     }
 }

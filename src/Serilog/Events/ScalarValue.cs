@@ -98,6 +98,43 @@ public class ScalarValue : LogEventPropertyValue
         }
     }
 
+#if FEATURE_SPAN
+    internal static void Render<T>(T value, TextWriter output, string? format = null, IFormatProvider? formatProvider = null) where T : struct, IFormattable, ISpanFormattable
+    {
+        Guard.AgainstNull(output);
+
+        var custom = (ICustomFormatter?)formatProvider?.GetFormat(typeof(ICustomFormatter));
+        if (custom != null)
+        {
+            WriteWithCustomFormatter(value, output, format, formatProvider, custom);
+            return;
+        }
+
+        formatProvider ??= CultureInfo.InvariantCulture;
+        if (TryWriteSpanFormattable(value, output, format, formatProvider))
+            return;
+
+        output.Write(value.ToString(format, formatProvider));
+    }
+
+    static void WriteWithCustomFormatter<T>(T value, TextWriter output, string? format, IFormatProvider? formatProvider, ICustomFormatter custom) where T : struct, IFormattable
+    {
+        output.Write(custom.Format(format, value, formatProvider));
+    }
+
+    static bool TryWriteSpanFormattable<T>(T value, TextWriter output, string? format, IFormatProvider formatProvider) where T : struct, ISpanFormattable
+    {
+        Span<char> buffer = stackalloc char[36]; // large enough to fit ISO 8601 timestamp (DateTimeOffset.ToString("O"))
+        if (value.TryFormat(buffer, out var charsWritten, format, formatProvider))
+        {
+            output.Write(buffer[..charsWritten]);
+            return true;
+        }
+
+        return false;
+    }
+#endif
+
     /// <summary>
     /// Determine if this instance is equal to <paramref name="obj"/>.
     /// </summary>

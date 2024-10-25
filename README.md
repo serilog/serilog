@@ -1,4 +1,4 @@
-# Serilog [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev) [![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/) [![NuGet Downloads](https://img.shields.io/nuget/dt/serilog.svg)](https://www.nuget.org/packages/Serilog/) [![Stack Overflow](https://img.shields.io/badge/stack%20overflow-serilog-orange.svg)](http://stackoverflow.com/questions/tagged/serilog)
+# Serilog&nbsp;[![Build status](https://github.com/serilog/serilog/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/serilog/serilog/actions)&nbsp;[![NuGet Version](http://img.shields.io/nuget/v/Serilog.svg?style=flat)](https://www.nuget.org/packages/Serilog/)&nbsp;[![NuGet Downloads](https://img.shields.io/nuget/dt/serilog.svg)](https://www.nuget.org/packages/Serilog/)&nbsp;[![Stack Overflow](https://img.shields.io/badge/stack%20overflow-serilog-orange.svg)](http://stackoverflow.com/questions/tagged/serilog)
 
 Serilog is a diagnostic logging library for .NET applications. It is easy to set up, has a clean API, and runs on all recent .NET platforms. While it's useful even in the simplest applications, Serilog's support for structured logging shines when instrumenting complex, distributed, and asynchronous applications and systems.
 
@@ -115,12 +115,5 @@ note the other resource are much better for quick questions or seeking usage hel
 Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+user%3Aserilog+label%3Aup-for-grabs) label (accessible only when logged into GitHub). Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts.  For more details check out our [contributing guide](CONTRIBUTING.md).
 
 When contributing please keep in mind our [Code of Conduct](CODE_OF_CONDUCT.md).
-
-### Detailed build status
-
-| Branch | AppVeyor                                                                                                                                                              |
-|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `dev`  | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/dev?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/dev)       |
-| `main` | [![Build status](https://ci.appveyor.com/api/projects/status/b9rm3l7kduryjgcj/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog/branch/master) |
 
 _Serilog is copyright &copy; Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](http://www.kensets.com/)._

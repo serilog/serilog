@@ -20,7 +20,7 @@ class SimpleScalarConversionPolicy : IScalarConversionPolicy
 
     public SimpleScalarConversionPolicy(IEnumerable<Type> scalarTypes)
     {
-        _scalarTypes = new(scalarTypes);
+        _scalarTypes = [..scalarTypes];
     }
 
     public bool TryConvertToScalar(object value, [NotNullWhen(true)] out ScalarValue? result)

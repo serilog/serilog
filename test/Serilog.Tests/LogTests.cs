@@ -40,6 +40,16 @@ public class LogTests
     }
 
     [Fact]
+    public async Task CloseAndFlushAsyncDisposesTheLoggerEvenWhenItIsNotAsyncDisposable()
+    {
+        var disposableLogger = new SyncDisposableLogger();
+        Assert.IsNotAssignableFrom<IAsyncDisposable>(disposableLogger);
+        Log.Logger = disposableLogger;
+        await Log.CloseAndFlushAsync();
+        Assert.True(disposableLogger.IsDisposed);
+    }
+
+    [Fact]
     public async Task CloseAndFlushAsyncResetsLoggerToSilentLogger()
     {
         Log.Logger = new DisposableLogger();

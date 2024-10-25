@@ -35,7 +35,7 @@ public class MethodOverloadConventionTests
     /// </para>
     ///
     /// <para>
-    /// A similar <see cref="ReadOnlySpan{T}"/> accepting method does not exists in the <see cref="ILogger"/> interface,
+    /// A similar <see cref="ReadOnlySpan{T}"/> accepting method does not exist in the <see cref="ILogger"/> interface,
     /// and introducing it is a breaking change.
     /// </para>
     /// </remarks>
@@ -247,7 +247,7 @@ public class MethodOverloadConventionTests
 
         var logger = GetLogger(loggerType, out var sink);
 
-        InvokeMethod(writeMethod, logger, new object[] { Some.LogEvent(DateTimeOffset.Now, level) });
+        InvokeMethod(writeMethod, logger, [Some.LogEvent(DateTimeOffset.Now, level)]);
 
         //handle silent logger special case i.e. no result validation
         if (loggerType == typeof(SilentLogger))
@@ -283,7 +283,7 @@ public class MethodOverloadConventionTests
             {
                 try
                 {
-                    testMethod.Invoke(this, new object[] { method });
+                    testMethod.Invoke(this, [method]);
 
                     signatureMatchAndInvokeSuccess = true;
 
@@ -300,7 +300,7 @@ public class MethodOverloadConventionTests
                     }
                     else
                     {
-                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.UserMessage}");
+                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.Message}");
                     }
                 }
             }
@@ -365,7 +365,7 @@ public class MethodOverloadConventionTests
         Assert.True(result as bool?);
 
         //test null arg path
-        var falseResult = InvokeMethod(method, logger, new object?[] { null, null, null, null });
+        var falseResult = InvokeMethod(method, logger, [null, null, null, null]);
 
         Assert.IsType<bool>(falseResult);
         Assert.False(falseResult as bool?);
@@ -421,7 +421,7 @@ public class MethodOverloadConventionTests
         Assert.True(result as bool?);
 
         //test null arg path/ invalid property name
-        var falseResult = InvokeMethod(method, logger, new object?[] { " ", null, false, null });
+        var falseResult = InvokeMethod(method, logger, [" ", null, false, null]);
 
         Assert.IsType<bool>(falseResult);
         Assert.False(falseResult as bool?);
@@ -451,12 +451,12 @@ public class MethodOverloadConventionTests
 
         var logger = GetLogger(loggerType, out _, Information);
 
-        var falseResult = InvokeMethod(method, logger, new object[] { Verbose });
+        var falseResult = InvokeMethod(method, logger, [Verbose]);
 
         Assert.IsType<bool>(falseResult);
         Assert.False(falseResult as bool?);
 
-        var trueResult = InvokeMethod(method, logger, new object[] { Warning });
+        var trueResult = InvokeMethod(method, logger, [Warning]);
 
         Assert.IsType<bool>(trueResult);
 
@@ -492,7 +492,7 @@ public class MethodOverloadConventionTests
 
         var logEnricher = new DummyThreadIdEnricher();
 
-        var enrichedLogger = InvokeMethod(method, logger, new object[] { logEnricher });
+        var enrichedLogger = InvokeMethod(method, logger, [logEnricher]);
 
         TestForContextResult(method, logger, normalResult: enrichedLogger);
     }
@@ -525,7 +525,7 @@ public class MethodOverloadConventionTests
         var logEnricher = new DummyThreadIdEnricher();
 
         var enrichedLogger = InvokeMethod(method, logger,
-            new object[] { new ILogEventEnricher[] { logEnricher, logEnricher } });
+            [new ILogEventEnricher[] { logEnricher, logEnricher }]);
 
         TestForContextResult(method, logger, normalResult: enrichedLogger);
     }
@@ -564,7 +564,7 @@ public class MethodOverloadConventionTests
         var propertyName = "SomeString";
         var propertyValue = "someString";
 
-        var enrichedLogger = InvokeMethod(method, logger, new object[] { propertyName, propertyValue, false });
+        var enrichedLogger = InvokeMethod(method, logger, [propertyName, propertyValue, false]);
 
         Assert.NotNull(enrichedLogger);
         Assert.True(enrichedLogger is ILogger);
@@ -576,7 +576,7 @@ public class MethodOverloadConventionTests
         Assert.NotSame(logger, enrichedLogger);
 
         //invalid args path
-        var sameLogger = InvokeMethod(method, logger, new object?[] { null, null, false });
+        var sameLogger = InvokeMethod(method, logger, [null, null, false]);
 
         Assert.NotNull(sameLogger);
         Assert.True(sameLogger is ILogger);
@@ -611,7 +611,7 @@ public class MethodOverloadConventionTests
 
         var logger = GetLogger(method.DeclaringType!);
 
-        var enrichedLogger = InvokeMethod(method, logger, null, new[] { typeof(object) });
+        var enrichedLogger = InvokeMethod(method, logger, null, [typeof(object)]);
 
         Assert.NotNull(enrichedLogger);
         Assert.True(enrichedLogger is ILogger);
@@ -640,7 +640,7 @@ public class MethodOverloadConventionTests
 
         var logger = GetLogger(method.DeclaringType!);
 
-        var enrichedLogger = InvokeMethod(method, logger, new object[] { typeof(object) });
+        var enrichedLogger = InvokeMethod(method, logger, [typeof(object)]);
 
         TestForContextResult(method, logger, normalResult: enrichedLogger);
     }
@@ -657,7 +657,7 @@ public class MethodOverloadConventionTests
         Assert.NotSame(logger, normalResult);
 
         //if invoked with null args it should return the same instance
-        var sameLogger = InvokeMethod(method, logger, new object?[] { null });
+        var sameLogger = InvokeMethod(method, logger, [null]);
 
         Assert.NotNull(sameLogger);
 
@@ -716,7 +716,7 @@ public class MethodOverloadConventionTests
                     else
                         invokeTestMethod = InvokeConventionMethod;
 
-                    testMethod.Invoke(this, new object[] { method, invokeTestMethod });
+                    testMethod.Invoke(this, [method, invokeTestMethod]);
 
                     signatureMatchAndInvokeSuccess = true;
 
@@ -733,7 +733,7 @@ public class MethodOverloadConventionTests
                     }
                     else
                     {
-                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.UserMessage}");
+                        report.AppendLine($"{testMethod.Name} Invocation Failure on: {method} with: {xunitException.Message}");
                     }
                 }
             }
