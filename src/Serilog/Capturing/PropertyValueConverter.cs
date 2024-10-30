@@ -206,6 +206,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
             }
 
+            // To handle multidimensional arrays.
             if (value is Array array && array.Rank > 1)
             {
                 result = BuildArrayValue(array, new int[array.Rank], 0, destructuring);
