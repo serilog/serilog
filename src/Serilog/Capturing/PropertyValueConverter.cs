@@ -206,6 +206,12 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
             }
 
+            if (value is Array array && array.Rank > 1)
+            {
+                result = BuildArrayValue(array, new int[array.Rank], 0, destructuring);
+                return true;
+            }
+
             // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements.
             // Allocation free for empty sequence.
             if (enumerable is IList list && list.Count <= _maximumCollectionCount)
@@ -214,46 +220,12 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 {
                     result = SequenceValue.Empty;
                 }
-                else if (list is Array a && a.Rank > 1)
-                {
-                    var rows = new LogEventPropertyValue[a.GetLength(0)];
-                    if (a.Rank == 2)
-                    {
-                        for (int i = 0; i < rows.Length; ++i)
-                        {
-                            var columns = new LogEventPropertyValue[a.GetLength(1)];
-                            for (int j = 0; j < columns.Length; ++j)
-                                columns[j] = _depthLimiter.CreatePropertyValue(a.GetValue(i, j), destructuring);
-                            rows[i] = new SequenceValue(columns);
-                        }
-                    }
-                    else if (a.Rank == 3)
-                    {
-                        for (int i = 0; i < rows.Length; ++i)
-                        {
-                            var columns = new LogEventPropertyValue[a.GetLength(1)];
-                            for (int j = 0; j < columns.Length; ++j)
-                            {
-                                var heights = new LogEventPropertyValue[a.GetLength(2)];
-                                for (int k = 0; k < heights.Length; ++k)
-                                    heights[k] = _depthLimiter.CreatePropertyValue(a.GetValue(i, j, k), destructuring);
-                                columns[j] = new SequenceValue(heights);
-                            }
-                            rows[i] = new SequenceValue(columns);
-                        }
-                    }
-                    else
-                    {
-                        throw new NotSupportedException("Serilog does not support multi-dimensional arrays with Rank > 3.");
-                    }
-                    result = new SequenceValue(rows);
-                }
                 else
                 {
-                    var array = new LogEventPropertyValue[list.Count];
+                    var valueArray = new LogEventPropertyValue[list.Count];
                     for (int i = 0; i < list.Count; ++i)
-                        array[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
-                    result = new SequenceValue(array);
+                        valueArray[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
+                    result = new SequenceValue(valueArray);
                 }
             }
             else
@@ -279,6 +251,43 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
         result = null;
         return false;
+    }
+
+    /// <summary>
+    /// Recursively traverses a multidimensional array and constructs a nested SequenceValue representation.
+    /// </summary>
+    /// <param name="array">The multidimensional array to traverse.</param>
+    /// <param name="indices">An array of indices representing the current position in each dimension.</param>
+    /// <param name="dimension">The current dimension being processed.</param>
+    /// <param name="destructuring">The destructuring strategy.</param>
+    /// <returns>A LogEventPropertyValue representing the array's structure and elements.</returns>
+    LogEventPropertyValue BuildArrayValue(Array array, int[] indices, int dimension, Destructuring destructuring)
+    {
+        if (dimension == array.Rank)
+        {
+            // Base case: get the value at the current indices
+            object? value = array.GetValue(indices);
+            return _depthLimiter.CreatePropertyValue(value, destructuring);
+        }
+
+        int length = array.GetLength(dimension);
+        if (length == 0)
+        {
+            return SequenceValue.Empty;
+        }
+
+        var elements = new List<LogEventPropertyValue>(length);
+        for (int i = 0; i < length; i++)
+        {
+            indices[dimension] = i;
+            elements.Add(BuildArrayValue(array, indices, dimension + 1, destructuring));
+
+            if (elements.Count >= _maximumCollectionCount)
+            {
+                break;
+            }
+        }
+        return new SequenceValue(elements);
     }
 
 #if FEATURE_ITUPLE
