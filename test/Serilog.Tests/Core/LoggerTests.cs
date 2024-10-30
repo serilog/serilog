@@ -319,7 +319,7 @@ public class LoggerTests
 
     // https://github.com/serilog/serilog/issues/2019
     [Fact]
-    public void Two_Dimensional_Array_Should_Be_Logger_As_Sequence()
+    public void TwoDimensionalArrayShouldBeLoggedAsSequence()
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
@@ -327,7 +327,7 @@ public class LoggerTests
             l.Error("{@Value}", a);
         });
 
-        Assert.Equal(1, evt.Properties.Count);
+        Assert.Single(evt.Properties);
         var arr = (SequenceValue)evt.Properties["Value"];
         Assert.Equal(3, arr.Elements.Count);
         Assert.Equal("[[a,b],[c,d],[e,f]]", arr.LiteralValue());
@@ -335,7 +335,7 @@ public class LoggerTests
 
     // https://github.com/serilog/serilog/issues/2019
     [Fact]
-    public void Three_Dimensional_Array_Should_Be_Logger_As_Sequence()
+    public void ThreeDimensionalArrayShouldBeLoggedAsSequence()
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
@@ -343,7 +343,7 @@ public class LoggerTests
             l.Error("{@Value}", a);
         });
 
-        Assert.Equal(1, evt.Properties.Count);
+        Assert.Single(evt.Properties);
         var arr = (SequenceValue)evt.Properties["Value"];
         Assert.Equal(3, arr.Elements.Count);
         Assert.Equal("[[[a],[b]],[[c],[d]],[[e],[f]]]", arr.LiteralValue());
@@ -351,7 +351,7 @@ public class LoggerTests
 
     // https://github.com/serilog/serilog/issues/2019
     [Fact]
-    public void Four_Dimensional_Array_Should_Be_Logged_As_Sequence()
+    public void FourDimensionalArrayShouldBeLoggedAsSequence()
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
@@ -381,7 +381,7 @@ public class LoggerTests
             l.Error("{@Value}", a);
         });
 
-        Assert.Equal(1, evt.Properties.Count);
+        Assert.Single(evt.Properties);
         var arr = (SequenceValue)evt.Properties["Value"];
         Assert.Equal(2, arr.Elements.Count);
         Assert.Equal("[[[[a,b],[c,d]],[[e,f],[g,h]]],[[[i,j],[k,l]],[[m,n],[o,p]]]]", arr.LiteralValue());
@@ -389,7 +389,7 @@ public class LoggerTests
 
     // https://github.com/serilog/serilog/issues/2019
     [Fact]
-    public void Empty_Multi_Dimensional_Arrays_Should_Be_Serialized() // Same behaviour as Newtonsoft.Json
+    public void EmptyMultiDimensionalArraysShouldBeSerializedProperly() // Same behaviour as Newtonsoft.Json
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
@@ -410,7 +410,7 @@ public class LoggerTests
 
     // https://github.com/serilog/serilog/issues/2019
     [Fact]
-    public void JaggedArray_Should_Respect_MaximumCollectionCount()
+    public void JaggedArrayShouldRespectMaximumCollectionCount()
     {
         // Arrange
         var collectingSink = new CollectingSink();
@@ -449,7 +449,7 @@ public class LoggerTests
 
     // https://github.com/serilog/serilog/issues/2019
     [Fact]
-    public void MultiDimensionalArray_Should_Respect_MaximumCollectionCount()
+    public void MultiDimensionalArrayShouldRespectMaximumCollectionCount()
     {
         // Arrange
         var collectingSink = new CollectingSink();
