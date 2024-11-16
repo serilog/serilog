@@ -26,6 +26,6 @@ public interface ILogEventSink
     /// <param name="logEvent">The log event to write.</param>
     /// <seealso cref="IBatchedLogEventSink"/>
     /// <remarks>Implementers should allow exceptions to propagate when event emission fails. The logger will handle
-    /// exceptions and produce diagnostics appropriately.
+    /// exceptions and produce diagnostics appropriately.</remarks>
     void Emit(LogEvent logEvent);
 }
