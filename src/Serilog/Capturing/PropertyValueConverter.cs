@@ -163,8 +163,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
+        // This appears to be a hole in analysis prior to .NET 9
+#pragma warning disable IL2072
         if (TryConvertStructure(value, type, destructuring, out var structureResult))
             return structureResult;
+#pragma warning restore IL2072
 
         return new ScalarValue(value.ToString() ?? "");
     }
@@ -207,7 +210,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
 
             // To handle multidimensional arrays.
-            if (value is Array array && array.Rank > 1)
+            if (value is Array { Rank: > 1 } array)
             {
                 result = BuildArrayValue(array, new int[array.Rank], 0, destructuring);
                 return true;

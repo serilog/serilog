@@ -3,7 +3,7 @@
     <!-- Tests target .NET Framework 4.6.2 plus the latest RTM of .NET Framework -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net48;net462</TargetFrameworks>
     <!-- All supported .NET RTMs are tested -->
-    <TargetFrameworks>$(TargetFrameworks);net8.0;net7.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
@@ -15,33 +15,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1" PrivateAssets="all" />
-    <PackageReference Include="xunit" Version="2.8.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="all" />
+    <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' or  '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' or  '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="System.ServiceModel.Http" Version="6.2.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="6.2.0" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
-    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN</DefineConstants>
+    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;TEST_FEATURE_WCF</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ITUPLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ITUPLE;TEST_FEATURE_WCF</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
