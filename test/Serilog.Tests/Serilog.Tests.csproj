@@ -27,12 +27,7 @@
     <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
     <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
   </ItemGroup>
@@ -50,6 +45,9 @@
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;TEST_FEATURE_WCF</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE;TEST_FEATURE_WCF</DefineConstants>
   </PropertyGroup>
 </Project>
