@@ -438,7 +438,6 @@ public class PropertyValueConverterTests
         Assert.True(PropertyValueConverter.IsCompilerGeneratedType(new { A = 1 }.GetType()));
     }
 
-#if TEST_FEATURE_WCF
     [Fact]
     // https://github.com/serilog/serilog/issues/1235
     public void StructureConversionDoesNotThrowOnWcfProxyTypes()
@@ -458,7 +457,6 @@ public class PropertyValueConverterTests
         [System.ServiceModel.OperationContract]
         string Get();
     }
-#endif
 
     [Fact]
     public void StructureConversionPrefersMostDerivedDefinition()
