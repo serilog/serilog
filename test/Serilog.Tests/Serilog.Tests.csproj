@@ -21,8 +21,14 @@
     <PackageReference Include="xunit" Version="2.9.2" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net4.6.2' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <Reference Include="System.ServiceModel.Primitives" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <Reference Include="System.ServiceModel.Primitives" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
