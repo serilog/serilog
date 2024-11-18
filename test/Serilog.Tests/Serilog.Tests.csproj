@@ -2,8 +2,8 @@
   <PropertyGroup>
     <!-- Tests target .NET Framework 4.6.2 plus the latest RTM of .NET Framework -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net48;net462</TargetFrameworks>
-    <!-- All supported .NET RTMs are tested -->
-    <TargetFrameworks>$(TargetFrameworks);net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
+    <!-- All (Microsoft-) supported .NET RTMs are tested -->
+    <TargetFrameworks>$(TargetFrameworks);net9.0;net8.0</TargetFrameworks>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
@@ -28,7 +28,7 @@
     <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.0" />
   </ItemGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" />
@@ -37,20 +37,6 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="System.ServiceModel.Http" Version="6.2.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="6.2.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="6.0.1" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.5" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="System.ServiceModel.Http" Version="6.2.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="6.2.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.1" />
-  </ItemGroup>
-  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
     <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
@@ -64,18 +50,15 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ITUPLE</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
-  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
