@@ -130,6 +130,9 @@ public class MessageTemplateParserTests
     [InlineData("{.}")]
     [InlineData("{..}")]
     [InlineData("{test..name}")]
+    [InlineData("{10.name}")]
+    [InlineData("{0_}")]
+    [InlineData("{0a}")]
     public void AMalformedPropertyTagIsParsedAsText(string template)
     {
         AssertParsedAs(template, new TextToken(template));
@@ -138,7 +141,7 @@ public class MessageTemplateParserTests
     [Fact]
     public void ATrailingUnmatchedBracketIsParsedAsText()
     {
-        AssertParsedAs("{0_}}space}", new PropertyToken("0_", "{0_}"), new TextToken("}space}"));
+        AssertParsedAs("{0}}space}", new PropertyToken("0", "{0}"), new TextToken("}space}"));
     }
 
     [Fact]

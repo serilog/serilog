@@ -101,17 +101,34 @@ public class MessageTemplateParser : IMessageTemplateParser
         if (propertyName.Length != 0 && TryGetDestructuringHint(propertyName[0], out destructuring))
             propertyName = propertyName[1..];
 
-        var beginIdent = true;
-        for (var i = 0; i < propertyName.Length; ++i)
-        {
-            var c = propertyName[i];
-            if (!TryContinuePropertyName(c, i == 0, ref beginIdent))
-                return new TextToken(rawText);
-        }
-
-        if (beginIdent)
+        if (propertyName.Length == 0)
         {
             return new TextToken(rawText);
+        }
+
+        if (char.IsDigit(propertyName[0]))
+        {
+            for (var i = 0; i < propertyName.Length; ++i)
+            {
+                var c = propertyName[i];
+                if (!char.IsDigit(c))
+                    return new TextToken(rawText);
+            }
+        }
+        else
+        {
+            var beginIdent = true;
+            for (var i = 0; i < propertyName.Length; ++i)
+            {
+                var c = propertyName[i];
+                if (!TryContinuePropertyName(c, ref beginIdent))
+                    return new TextToken(rawText);
+            }
+
+            if (beginIdent)
+            {
+                return new TextToken(rawText);
+            }
         }
 
         if (format != null)
@@ -197,20 +214,25 @@ public class MessageTemplateParser : IMessageTemplateParser
         return true;
     }
 
-    static bool TryContinuePropertyName(char c, bool first, ref bool beginIdent)
+    static bool TryContinuePropertyName(char c, ref bool beginIdent)
     {
-        if (beginIdent && !first && char.IsDigit(c))
+        if (beginIdent)
         {
+            if (char.IsLetter(c) || c is '_')
+            {
+                beginIdent = false;
+                return true;
+            }
+
             return false;
         }
 
         if (char.IsLetterOrDigit(c) || c is '_')
         {
-            beginIdent = false;
             return true;
         }
 
-        if (!beginIdent && c is '.')
+        if (c is '.')
         {
             beginIdent = true;
             return true;
