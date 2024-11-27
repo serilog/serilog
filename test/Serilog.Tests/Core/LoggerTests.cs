@@ -323,7 +323,7 @@ public class LoggerTests
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
-            var a = new object[3, 2] { { "a", "b" }, { "c", "d" }, { "e", "f" } };
+            var a = new object[,] { { "a", "b" }, { "c", "d" }, { "e", "f" } };
             l.Error("{@Value}", a);
         });
 
@@ -339,7 +339,7 @@ public class LoggerTests
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
-            var a = new object[3, 2, 1] { { { "a" }, { "b" } }, { { "c" }, { "d" } }, { { "e" }, { "f" } } };
+            var a = new object[,,] { { { "a" }, { "b" } }, { { "c" }, { "d" } }, { { "e" }, { "f" } } };
             l.Error("{@Value}", a);
         });
 
@@ -355,7 +355,7 @@ public class LoggerTests
     {
         var evt = DelegatingSink.GetLogEvent(l =>
         {
-            var a = new object[2, 2, 2, 2]
+            var a = new object[,,,]
             {
                 {
                     {
@@ -419,11 +419,11 @@ public class LoggerTests
             .WriteTo.Sink(collectingSink)
             .CreateLogger();
 
-        var array = new int[3][]
+        var array = new int[][]
         {
-            new int[] { 1, 2, 3 },
-            new int[] { 4, 5, 6 },
-            new int[] { 7, 8, 9, 10 }
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9, 10]
         };
 
         // Act
@@ -458,7 +458,7 @@ public class LoggerTests
             .WriteTo.Sink(collectingSink)
             .CreateLogger();
 
-        var array = new int[3, 3]
+        var array = new[,]
         {
             { 1, 2, 3 },
             { 4, 5, 6 },
