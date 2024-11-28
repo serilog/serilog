@@ -20,26 +20,13 @@ namespace Serilog.Parsing;
 /// </summary>
 public class MessageTemplateParser : IMessageTemplateParser
 {
-    /// <summary>
-    /// When set, property names in templates may include `.`.
-    /// </summary>
-    static readonly bool DefaultAcceptDottedPropertyNames = AppContext.TryGetSwitch("Serilog.Parsing.MessageTemplateParser.AcceptDottedPropertyNames", out var isEnabled) && isEnabled;
-
     static readonly TextToken EmptyTextToken = new("");
-
-    readonly bool _acceptDottedPropertyNames;
 
     /// <summary>
     /// Construct a <see cref="MessageTemplateParser"/>.
     /// </summary>
     public MessageTemplateParser()
-        : this(DefaultAcceptDottedPropertyNames)
     {
-    }
-
-    internal MessageTemplateParser(bool acceptDottedPropertyNames)
-    {
-        _acceptDottedPropertyNames = acceptDottedPropertyNames;
     }
 
     /// <summary>
@@ -96,7 +83,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         if (startAt == -1)
         {
             next = messageTemplate.Length;
-            return new TextToken(messageTemplate.Substring(first));
+            return new TextToken(messageTemplate[first..]);
         }
 
         next = startAt + 1;
@@ -112,16 +99,36 @@ public class MessageTemplateParser : IMessageTemplateParser
         var propertyName = propertyNameAndDestructuring;
         var destructuring = Destructuring.Default;
         if (propertyName.Length != 0 && TryGetDestructuringHint(propertyName[0], out destructuring))
-            propertyName = propertyName.Substring(1);
+            propertyName = propertyName[1..];
 
         if (propertyName.Length == 0)
-            return new TextToken(rawText);
-
-        for (var i = 0; i < propertyName.Length; ++i)
         {
-            var c = propertyName[i];
-            if (!IsValidInPropertyName(c))
+            return new TextToken(rawText);
+        }
+
+        if (char.IsDigit(propertyName[0]))
+        {
+            for (var i = 0; i < propertyName.Length; ++i)
+            {
+                var c = propertyName[i];
+                if (!char.IsDigit(c))
+                    return new TextToken(rawText);
+            }
+        }
+        else
+        {
+            var beginIdent = true;
+            for (var i = 0; i < propertyName.Length; ++i)
+            {
+                var c = propertyName[i];
+                if (!TryContinuePropertyName(c, ref beginIdent))
+                    return new TextToken(rawText);
+            }
+
+            if (beginIdent)
+            {
                 return new TextToken(rawText);
+            }
         }
 
         if (format != null)
@@ -171,7 +178,7 @@ public class MessageTemplateParser : IMessageTemplateParser
 
         if (alignmentDelim == -1 || (formatDelim != -1 && alignmentDelim > formatDelim))
         {
-            propertyNameAndDestructuring = tagContent.Substring(0, formatDelim);
+            propertyNameAndDestructuring = tagContent[..formatDelim];
             format = formatDelim == tagContent.Length - 1 ?
                 null :
                 tagContent.Substring(formatDelim + 1);
@@ -179,7 +186,7 @@ public class MessageTemplateParser : IMessageTemplateParser
             return true;
         }
 
-        propertyNameAndDestructuring = tagContent.Substring(0, alignmentDelim);
+        propertyNameAndDestructuring = tagContent[..alignmentDelim];
         if (formatDelim == -1)
         {
             if (alignmentDelim == tagContent.Length - 1)
@@ -189,7 +196,7 @@ public class MessageTemplateParser : IMessageTemplateParser
             }
 
             format = null;
-            alignment = tagContent.Substring(alignmentDelim + 1);
+            alignment = tagContent[(alignmentDelim + 1)..];
             return true;
         }
 
@@ -202,15 +209,37 @@ public class MessageTemplateParser : IMessageTemplateParser
         alignment = tagContent.Substring(alignmentDelim + 1, formatDelim - alignmentDelim - 1);
         format = formatDelim == tagContent.Length - 1 ?
             null :
-            tagContent.Substring(formatDelim + 1);
+            tagContent[(formatDelim + 1)..];
 
         return true;
     }
 
-    bool IsValidInPropertyName(char c) =>
-        char.IsLetterOrDigit(c) ||
-        c is '_' ||
-        _acceptDottedPropertyNames && c is '.';
+    static bool TryContinuePropertyName(char c, ref bool beginIdent)
+    {
+        if (beginIdent)
+        {
+            if (char.IsLetter(c) || c is '_')
+            {
+                beginIdent = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        if (char.IsLetterOrDigit(c) || c is '_')
+        {
+            return true;
+        }
+
+        if (c is '.')
+        {
+            beginIdent = true;
+            return true;
+        }
+
+        return false;
+    }
 
     static bool TryGetDestructuringHint(char c, out Destructuring destructuring)
     {
