@@ -23,9 +23,26 @@ public class LoggingFailedException : Exception
     /// <summary>
     /// Construct a <see cref="LoggingFailedException"/> to communicate a logging failure.
     /// </summary>
+    public LoggingFailedException()
+    {
+    }
+
+    /// <summary>
+    /// Construct a <see cref="LoggingFailedException"/> to communicate a logging failure.
+    /// </summary>
     /// <param name="message">A message describing the logging failure.</param>
     public LoggingFailedException(string message)
         : base(message)
+    {
+    }
+
+    /// <summary>
+    /// Construct a <see cref="LoggingFailedException"/> to communicate a logging failure.
+    /// </summary>
+    /// <param name="message">A message describing the logging failure.</param>
+    /// <param name="innerException">The exception that is the cause of the current exception.</param>
+    public LoggingFailedException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }
