@@ -99,7 +99,7 @@ class KeyValuePairSettings : ILoggerSettings
         foreach (var enrichPropertyDirective in directives.Where(dir =>
                      dir.Key.StartsWith(EnrichWithPropertyDirectivePrefix) && dir.Key.Length > EnrichWithPropertyDirectivePrefix.Length))
         {
-            var name = enrichPropertyDirective.Key.Substring(EnrichWithPropertyDirectivePrefix.Length);
+            var name = enrichPropertyDirective.Key[EnrichWithPropertyDirectivePrefix.Length..];
             loggerConfiguration.Enrich.WithProperty(name, enrichPropertyDirective.Value);
         }
 
@@ -112,7 +112,7 @@ class KeyValuePairSettings : ILoggerSettings
         foreach (var minimumLevelOverrideDirective in directives.Where(dir =>
                      dir.Key.StartsWith(MinimumLevelOverrideDirectivePrefix) && dir.Key.Length > MinimumLevelOverrideDirectivePrefix.Length))
         {
-            var namespacePrefix = minimumLevelOverrideDirective.Key.Substring(MinimumLevelOverrideDirectivePrefix.Length);
+            var namespacePrefix = minimumLevelOverrideDirective.Key[MinimumLevelOverrideDirectivePrefix.Length..];
 
             if (Enum.TryParse(minimumLevelOverrideDirective.Value, out LogEventLevel overriddenLevel))
             {
@@ -249,7 +249,7 @@ class KeyValuePairSettings : ILoggerSettings
 
                 call.Insert(0, loggerConfigMethod);
 
-                target.Invoke(null, call.ToArray());
+                target.Invoke(null, [.. call]);
             }
         }
     }
