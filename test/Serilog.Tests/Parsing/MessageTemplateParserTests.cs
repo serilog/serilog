@@ -107,16 +107,9 @@ public class MessageTemplateParserTests
     [Theory]
     [InlineData("{test.name}")]
     [InlineData("{te.st.na.me}")]
-    // Questionable syntax but permitted by the experimental flag. These are documented here so that if the
-    // feature progresses to first-class support, they can be detected and dealt with accordingly.
-    [InlineData("{.testname}")]
-    [InlineData("{testname.}")]
-    [InlineData("{.}")]
-    [InlineData("{..}")]
-    [InlineData("{test..name}")]
-    public void DashedAndDottedNamesAreAcceptedWhenFeatureFlaggedIn(string template)
+    public void DashedAndDottedNamesAreAccepted(string template)
     {
-        var parser = new MessageTemplateParser(acceptDottedPropertyNames: true);
+        var parser = new MessageTemplateParser();
         var token = Assert.Single(parser.Parse(template).Tokens);
         var propertyToken = Assert.IsType<PropertyToken>(token);
         var expected = template.Trim('{', '}');
@@ -127,20 +120,28 @@ public class MessageTemplateParserTests
     }
 
     [Theory]
-    [InlineData("{0 space}",   "{0 space}")]
-    [InlineData("{0 space",    "{0 space")]
-    [InlineData("{0_space",    "{0_space")]
-    [InlineData("{0_{{space}", "{0_{{space}")]
-    [InlineData("{0_{{space",  "{0_{{space")]
-    public void AMalformedPropertyTagIsParsedAsText(string template, string expected)
+    [InlineData("{0 space}")]
+    [InlineData("{0 space")]
+    [InlineData("{0_space")]
+    [InlineData("{0_{{space}")]
+    [InlineData("{0_{{space")]
+    [InlineData("{.testname}")]
+    [InlineData("{testname.}")]
+    [InlineData("{.}")]
+    [InlineData("{..}")]
+    [InlineData("{test..name}")]
+    [InlineData("{10.name}")]
+    [InlineData("{0_}")]
+    [InlineData("{0a}")]
+    public void AMalformedPropertyTagIsParsedAsText(string template)
     {
-        AssertParsedAs(template, new TextToken(expected));
+        AssertParsedAs(template, new TextToken(template));
     }
 
     [Fact]
     public void ATrailingUnmatchedBracketIsParsedAsText()
     {
-        AssertParsedAs("{0_}}space}", new PropertyToken("0_", "{0_}"), new TextToken("}space}"));
+        AssertParsedAs("{0}}space}", new PropertyToken("0", "{0}"), new TextToken("}space}"));
     }
 
     [Fact]

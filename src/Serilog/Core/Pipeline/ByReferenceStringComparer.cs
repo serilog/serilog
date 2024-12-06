@@ -39,6 +39,6 @@ class ByReferenceStringComparer : IEqualityComparer, IEqualityComparer<string>
 
     public int GetHashCode(string obj)
     {
-        return GetHashCode((object) obj);
+        return RuntimeHelpers.GetHashCode(obj);
     }
 }

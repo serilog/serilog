@@ -163,8 +163,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
+        // This appears to be a hole in analysis prior to .NET 9
+#pragma warning disable IL2072
         if (TryConvertStructure(value, type, destructuring, out var structureResult))
             return structureResult;
+#pragma warning restore IL2072
 
         return new ScalarValue(value.ToString() ?? "");
     }
@@ -206,6 +209,13 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
             }
 
+            // To handle multidimensional arrays.
+            if (value is Array { Rank: > 1 } array)
+            {
+                result = BuildArrayValue(array, new int[array.Rank], 0, destructuring);
+                return true;
+            }
+
             // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements.
             // Allocation free for empty sequence.
             if (enumerable is IList list && list.Count <= _maximumCollectionCount)
@@ -216,10 +226,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
                 else
                 {
-                    var array = new LogEventPropertyValue[list.Count];
+                    var valueArray = new LogEventPropertyValue[list.Count];
                     for (int i = 0; i < list.Count; ++i)
-                        array[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
-                    result = new SequenceValue(array);
+                        valueArray[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
+                    result = new SequenceValue(valueArray);
                 }
             }
             else
@@ -245,6 +255,43 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
         result = null;
         return false;
+    }
+
+    /// <summary>
+    /// Recursively traverses a multidimensional array and constructs a nested SequenceValue representation.
+    /// </summary>
+    /// <param name="array">The multidimensional array to traverse.</param>
+    /// <param name="indices">An array of indices representing the current position in each dimension.</param>
+    /// <param name="dimension">The current dimension being processed.</param>
+    /// <param name="destructuring">The destructuring strategy.</param>
+    /// <returns>A LogEventPropertyValue representing the array's structure and elements.</returns>
+    LogEventPropertyValue BuildArrayValue(Array array, int[] indices, int dimension, Destructuring destructuring)
+    {
+        if (dimension == array.Rank)
+        {
+            // Base case: get the value at the current indices
+            object? value = array.GetValue(indices);
+            return _depthLimiter.CreatePropertyValue(value, destructuring);
+        }
+
+        int length = array.GetLength(dimension);
+        if (length == 0)
+        {
+            return SequenceValue.Empty;
+        }
+
+        var elements = new List<LogEventPropertyValue>(length);
+        for (int i = 0; i < length; i++)
+        {
+            indices[dimension] = i;
+            elements.Add(BuildArrayValue(array, indices, dimension + 1, destructuring));
+
+            if (elements.Count >= _maximumCollectionCount)
+            {
+                break;
+            }
+        }
+        return new SequenceValue(elements);
     }
 
 #if FEATURE_ITUPLE

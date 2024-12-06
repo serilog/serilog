@@ -434,7 +434,7 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     void Write(LogEventLevel level, Exception? exception, string messageTemplate, ReadOnlySpan<object?> propertyValues)
     {
         if (!IsEnabled(level)) return;
-        if (messageTemplate == null) return;
+        if (messageTemplate == null!) return;
 
         var logTimestamp = DateTimeOffset.Now;
         _messageTemplateProcessor.Process(messageTemplate, propertyValues, out var parsedTemplate, out var boundProperties);

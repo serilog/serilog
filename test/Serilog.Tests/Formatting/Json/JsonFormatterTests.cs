@@ -33,7 +33,7 @@ public class JsonFormatterTests
             Information,
             null,
             Some.MessageTemplate(),
-            new[] {new LogEventProperty("name", new ScalarValue(DateOnly.MaxValue))});
+            [new LogEventProperty("name", new ScalarValue(DateOnly.MaxValue))]);
 
         var formatted = FormatJson(@event);
         Assert.Equal(
