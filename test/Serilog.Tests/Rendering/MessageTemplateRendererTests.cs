@@ -19,4 +19,20 @@ public class MessageTemplateRendererTests
 
         Assert.Equal(expected, output.ToString());
     }
+
+    [Theory]
+    [InlineData("Hello {Username}", false, "Hello \"User1\"")]
+    [InlineData("Hello {Username}", true, "Hello User1")]
+    public void CanApplyGlobalIsLiteral(string template, bool isLiteral, string expected)
+    {
+        var eventTemplate = _messageTemplateParser.Parse(template);
+        var properties = new Dictionary<string, LogEventPropertyValue> { ["Username"] = new ScalarValue("User1") };
+
+        MessageTemplateRenderer.DefaultIsLiteral = isLiteral;
+
+        var output = new StringWriter();
+        MessageTemplateRenderer.Render(eventTemplate, properties, output);
+
+        Assert.Equal(expected, output.ToString());
+    }
 }

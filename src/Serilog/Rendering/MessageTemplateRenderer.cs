@@ -18,10 +18,14 @@ static class MessageTemplateRenderer
 {
     static readonly JsonValueFormatter JsonValueFormatter = new("$type");
 
+    public static bool DefaultIsLiteral = false;
+    public static bool DefaultIsJson = false;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Render(MessageTemplate messageTemplate, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
-        bool isLiteral = false, isJson = false;
+        bool isLiteral = DefaultIsLiteral;
+        bool isJson = DefaultIsJson;
 
         if (format != null)
         {
