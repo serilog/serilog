@@ -204,8 +204,20 @@ public class LogEvent
 #endif
     }
 
-    internal void AddPropertyIfAbsent(ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
+    /// <summary>
+    /// Add a property to the event if not already present.
+    /// </summary>
+    /// <param name="factory">Factory for creating the property to add to the event.</param>
+    /// <param name="name">The name of the property.</param>
+    /// <param name="value">The value of the property.</param>
+    /// <param name="destructureObjects">If <see langword="true"/>, and the value is a non-primitive, non-array type,
+    /// then the value will be converted to a structure; otherwise, unknown types will
+    /// be converted to scalars, which are generally stored as strings.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="factory"/> is <code>null</code></exception>
+    public void AddPropertyIfAbsent(ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false)
     {
+        Guard.AgainstNull(factory);
+
         if (!_properties.ContainsKey(name))
         {
             _properties.Add(

@@ -411,6 +411,7 @@ namespace Serilog.Events
         public System.Diagnostics.ActivityTraceId? TraceId { get; }
         public void AddOrUpdateProperty(Serilog.Events.LogEventProperty property) { }
         public void AddPropertyIfAbsent(Serilog.Events.LogEventProperty property) { }
+        public void AddPropertyIfAbsent(Serilog.Core.ILogEventPropertyFactory factory, string name, object? value, bool destructureObjects = false) { }
         public void RemovePropertyIfPresent(string propertyName) { }
         public string RenderMessage(System.IFormatProvider? formatProvider = null) { }
         public void RenderMessage(System.IO.TextWriter output, System.IFormatProvider? formatProvider = null) { }
