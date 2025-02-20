@@ -1,17 +1,18 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global, UnusedParameter.Local, ParameterOnlyUsedForPreconditionCheck.Local, RedundantExplicitNullableCreation, MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedAutoPropertyAccessor.Local, UnusedMemberInSuper.Global, UnusedMember.Local, UseObjectOrCollectionInitializer, UnusedAutoPropertyAccessor.Local
 
+// ReSharper disable PropertyCanBeMadeInitOnly.Local
 namespace Serilog.Tests.Capturing;
 
 public class PropertyValueConverterTests
 {
     readonly PropertyValueConverter _converter =
-        new(10, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        new(10, 1000, 1000, [], [], [], false);
 
     [Fact]
     public async Task MaximumDepthIsEffectiveAndThreadSafe()
     {
-        var converter = new PropertyValueConverter(3, 1000, 1000, Enumerable.Empty<Type>(), Enumerable.Empty<Type>(), Enumerable.Empty<IDestructuringPolicy>(), false);
+        var converter = new PropertyValueConverter(3, 1000, 1000, [], [], [], false);
 
         var barrier = new Barrier(participantCount: 3);
 
@@ -144,7 +145,7 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(new Dictionary<int, string> { { 1, "hello" } }, Destructuring.Default);
         Assert.IsType<DictionaryValue>(pv);
         var dv = (DictionaryValue)pv;
-        Assert.Equal(1, dv.Elements.Count);
+        Assert.Single(dv.Elements);
     }
 
     [Fact]
@@ -153,7 +154,7 @@ public class PropertyValueConverterTests
         var pv = _converter.CreatePropertyValue(new Dictionary<A, string> { { new A(), "hello" } }, Destructuring.Default);
         Assert.IsType<SequenceValue>(pv);
         var sv = (SequenceValue)pv;
-        Assert.Equal(1, sv.Elements.Count);
+        Assert.Single(sv.Elements);
     }
 
     [Fact]
@@ -312,7 +313,7 @@ public class PropertyValueConverterTests
     {
         var indexed = new HasIndexer();
         var pv = (StructureValue)_converter.CreatePropertyValue(indexed, true);
-        Assert.Equal(0, pv.Properties.Count);
+        Assert.Empty(pv.Properties);
     }
 
     // Important because we use "Item" to short cut indexer checking
@@ -402,5 +403,103 @@ public class PropertyValueConverterTests
         var tuple = _converter.CreatePropertyValue(ValueTuple.Create(new { A = 1 }), true);
         var sequence = Assert.IsType<SequenceValue>(tuple);
         Assert.IsType<StructureValue>(sequence.Elements[0]);
+    }
+
+    [Fact]
+    public void StructureConversionYieldsEmptyStructureOnNoProperties()
+    {
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty), false);
+        Assert.Empty(structure.Properties);
+    }
+
+    [Fact]
+    public void TypeTagIsComputed()
+    {
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty), false);
+        Assert.Equal("Empty", structure.TypeTag);
+    }
+
+    [Fact]
+    public void TypeTagIsNotComputedForCompilerGeneratedTypes()
+    {
+        var structure = _converter.CreateStructureValue(new Empty(), typeof(Empty), true);
+        Assert.Null(structure.TypeTag);
+    }
+
+    [Fact]
+    public void RegularTypesAreNotCompilerGenerated()
+    {
+        Assert.False(PropertyValueConverter.IsCompilerGeneratedType(typeof(Empty)));
+    }
+
+    [Fact]
+    public void CompilerGeneratedTypesAreIdentified()
+    {
+        Assert.True(PropertyValueConverter.IsCompilerGeneratedType(new { A = 1 }.GetType()));
+    }
+
+    [Fact]
+    // https://github.com/serilog/serilog/issues/1235
+    public void StructureConversionDoesNotThrowOnWcfProxyTypes()
+    {
+        var remoteAddress = new System.ServiceModel.EndpointAddress("http://localhost");
+        var binding = new System.ServiceModel.BasicHttpBinding();
+
+        var myFactory = new System.ServiceModel.ChannelFactory<IMyChannel>(binding, remoteAddress);
+        var channel = myFactory.CreateChannel();
+
+        _converter.CreateStructureValue(channel, channel.GetType(), false);
+    }
+
+    [System.ServiceModel.ServiceContract]
+    interface IMyChannel
+    {
+        [System.ServiceModel.OperationContract]
+        string Get();
+    }
+
+    [Fact]
+    public void StructureConversionPrefersMostDerivedDefinition()
+    {
+        var structure = _converter.CreateStructureValue(new SubclassWithRedefinition(), typeof(SubclassWithRedefinition), false);
+        Assert.Equal("new", ((ScalarValue)structure.Properties.Single(p => p.Name == "Name").Value).Value);
+    }
+
+    [Fact]
+    public void StructureConversionPrefersMostDerivedOverride()
+    {
+        var structure = _converter.CreateStructureValue(new SubclassWithOverride(), typeof(SubclassWithOverride), false);
+        Assert.Equal("override", ((ScalarValue)structure.Properties.Single(p => p.Name == "Name").Value).Value);
+    }
+
+    class Empty;
+
+    public class BaseClass
+    {
+        public virtual string Name => "base";
+    }
+
+    public class SubclassWithRedefinition : BaseClass
+    {
+        public new string Name => "new";
+    }
+
+    public class SubclassWithOverride : BaseClass
+    {
+        public override string Name => "override";
+    }
+
+    [Fact]
+    public void PrivateGettersAreIgnoredWhenCapturing()
+    {
+        var structure = _converter.CreateStructureValue(new HasPropertyWithPrivateGetter(), typeof(HasPropertyWithPrivateGetter), false);
+        Assert.Contains(structure.Properties, p => p.Name == "A");
+        Assert.DoesNotContain(structure.Properties, p => p.Name == "B");
+    }
+
+    public class HasPropertyWithPrivateGetter
+    {
+        public string A { get; set; } = "A";
+        public string B { private get; set; } = "B";
     }
 }

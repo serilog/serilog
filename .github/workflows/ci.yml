@@ -1,0 +1,41 @@
+# If this file is renamed, the incrementing run attempt number will be reset.
+
+name: CI
+
+on:
+  push:
+    branches: [ "dev", "main" ]
+  pull_request:
+    branches: [ "dev", "main" ]
+
+env:
+  CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
+  CI_TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  build:
+
+    # The build must run on Windows so that .NET Framework targets can be built and tested.
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Compute build number
+        shell: bash
+        run: |
+          echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+2300))" >> $GITHUB_ENV
+      - name: Build and Publish
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: true
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          ./Build.ps1

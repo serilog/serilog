@@ -163,8 +163,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-        if (TryConvertCompilerGeneratedType(value, type, destructuring, out var compilerGeneratedResult))
-            return compilerGeneratedResult;
+        // This appears to be a hole in analysis prior to .NET 9
+#pragma warning disable IL2072
+        if (TryConvertStructure(value, type, destructuring, out var structureResult))
+            return structureResult;
+#pragma warning restore IL2072
 
         return new ScalarValue(value.ToString() ?? "");
     }
@@ -206,6 +209,13 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
             }
 
+            // To handle multidimensional arrays.
+            if (value is Array { Rank: > 1 } array)
+            {
+                result = BuildArrayValue(array, new int[array.Rank], 0, destructuring);
+                return true;
+            }
+
             // Avoids allocation of two iterators - one from List and another one from MapToSequenceElements.
             // Allocation free for empty sequence.
             if (enumerable is IList list && list.Count <= _maximumCollectionCount)
@@ -216,10 +226,10 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 }
                 else
                 {
-                    var array = new LogEventPropertyValue[list.Count];
+                    var valueArray = new LogEventPropertyValue[list.Count];
                     for (int i = 0; i < list.Count; ++i)
-                        array[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
-                    result = new SequenceValue(array);
+                        valueArray[i] = _depthLimiter.CreatePropertyValue(list[i], destructuring);
+                    result = new SequenceValue(valueArray);
                 }
             }
             else
@@ -247,8 +257,46 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         return false;
     }
 
+    /// <summary>
+    /// Recursively traverses a multidimensional array and constructs a nested SequenceValue representation.
+    /// </summary>
+    /// <param name="array">The multidimensional array to traverse.</param>
+    /// <param name="indices">An array of indices representing the current position in each dimension.</param>
+    /// <param name="dimension">The current dimension being processed.</param>
+    /// <param name="destructuring">The destructuring strategy.</param>
+    /// <returns>A LogEventPropertyValue representing the array's structure and elements.</returns>
+    LogEventPropertyValue BuildArrayValue(Array array, int[] indices, int dimension, Destructuring destructuring)
+    {
+        if (dimension == array.Rank)
+        {
+            // Base case: get the value at the current indices
+            object? value = array.GetValue(indices);
+            return _depthLimiter.CreatePropertyValue(value, destructuring);
+        }
+
+        int length = array.GetLength(dimension);
+        if (length == 0)
+        {
+            return SequenceValue.Empty;
+        }
+
+        var elements = new List<LogEventPropertyValue>(length);
+        for (int i = 0; i < length; i++)
+        {
+            indices[dimension] = i;
+            elements.Add(BuildArrayValue(array, indices, dimension + 1, destructuring));
+
+            if (elements.Count >= _maximumCollectionCount)
+            {
+                break;
+            }
+        }
+        return new SequenceValue(elements);
+    }
+
 #if FEATURE_ITUPLE
 
+    // ReSharper disable once UnusedParameter.Local
     bool TryConvertValueTuple(object value, Type type, Destructuring destructuring, [NotNullWhen(true)] out LogEventPropertyValue? result)
     {
         if (value is not ITuple tuple)
@@ -306,29 +354,27 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
 #endif
 
-    bool TryConvertCompilerGeneratedType(
+    bool TryConvertStructure(
         object value,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
         Destructuring destructuring,
-        [NotNullWhen(true)] out LogEventPropertyValue? result)
+        [NotNullWhen(true)] out StructureValue? result)
     {
         if (destructuring == Destructuring.Destructure)
         {
-            var typeTag = type.Name;
-            if (typeTag.Length <= 0 || IsCompilerGeneratedType(type))
+            var isCompilerGeneratedType = IsCompilerGeneratedType(type);
+            if (!isCompilerGeneratedType || TrimConfiguration.IsCompilerGeneratedCodeSupported)
             {
-                typeTag = null;
+                result = CreateStructureValue(value, type, isCompilerGeneratedType);
+                return true;
             }
-
-            result = new StructureValue(GetProperties(value, type), typeTag);
-            return true;
         }
 
         result = null;
         return false;
     }
 
-    LogEventPropertyValue Stringify(object value)
+    ScalarValue Stringify(object value)
     {
         var stringified = value.ToString();
         var truncated = stringified == null ? "" : TruncateIfNecessary(stringified);
@@ -347,11 +393,11 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     bool TryGetDictionary(object value, Type valueType, [NotNullWhen(true)] out IDictionary? dictionary)
     {
-        if (value is IDictionary idictionary)
+        if (value is IDictionary iDictionary)
         {
             if (_dictionaryTypes.Contains(valueType))
             {
-                dictionary = idictionary;
+                dictionary = iDictionary;
                 return true;
             }
 
@@ -361,7 +407,7 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                 if ((definition == typeof(Dictionary<,>) || definition == typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>)) &&
                     IsValidDictionaryKeyType(valueType.GenericTypeArguments[0]))
                 {
-                    dictionary = idictionary;
+                    dictionary = iDictionary;
                     return true;
                 }
             }
@@ -378,25 +424,59 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
                valueType.IsEnum;
     }
 
-    IEnumerable<LogEventProperty> GetProperties(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+    [ThreadStatic] static HashSet<string>? _lastSeenNames;
+
+    internal StructureValue CreateStructureValue(object value, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, bool isCompilerGeneratedType)
     {
-        foreach (var prop in type.GetPropertiesRecursive())
+        var typeTag = type.Name;
+        if (typeTag.Length <= 0 || isCompilerGeneratedType)
         {
+            typeTag = null;
+        }
+
+        var seenNames = _lastSeenNames ?? [];
+        _lastSeenNames = null;
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var result = new LogEventProperty[properties.Length];
+        var nextResult = 0;
+
+        for (var i = 0; i < properties.Length; ++i)
+        {
+            var property = properties[i];
+            if (property.GetMethod == null || !property.GetMethod.IsPublic)
+            {
+                continue;
+            }
+
+            if (seenNames.Contains(property.Name))
+            {
+                continue;
+            }
+
+            if (property.Name == "Item" &&
+                property.GetIndexParameters().Length != 0)
+            {
+                continue;
+            }
+
+            seenNames.Add(property.Name);
+
             object? propValue;
             try
             {
-                propValue = prop.GetValue(value);
+                propValue = property.GetValue(value);
             }
             catch (TargetParameterCountException)
             {
                 // These properties would ideally be ignored; since they never produce values they're not
                 // of concern to auditing and exceptions can be suppressed.
-                SelfLog.WriteLine("The property accessor {0} is a non-default indexer", prop);
+                SelfLog.WriteLine("The property accessor {0} is a non-default indexer", property);
                 continue;
             }
             catch (TargetInvocationException ex)
             {
-                SelfLog.WriteLine("The property accessor {0} threw exception: {1}", prop, ex);
+                SelfLog.WriteLine("The property accessor {0} threw exception: {1}", property, ex);
 
                 if (_propagateExceptions)
                     throw;
@@ -405,19 +485,27 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             }
             catch (NotSupportedException)
             {
-                SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", prop);
+                SelfLog.WriteLine("The property accessor {0} is not supported via Reflection API", property);
 
                 if (_propagateExceptions)
                     throw;
 
                 propValue = "Accessing this property is not supported via Reflection API";
             }
-            yield return new(prop.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+
+            result[nextResult] = new(property.Name, _depthLimiter.CreatePropertyValue(propValue, Destructuring.Destructure));
+            nextResult += 1;
         }
+
+        seenNames.Clear();
+        _lastSeenNames = seenNames;
+
+        Array.Resize(ref result, nextResult);
+        return new StructureValue(result, typeTag);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static bool IsCompilerGeneratedType(Type type)
+    internal static bool IsCompilerGeneratedType(Type type)
     {
         if (!type.IsGenericType || !type.IsSealed || type.Namespace != null)
         {

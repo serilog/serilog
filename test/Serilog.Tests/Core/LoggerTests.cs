@@ -112,7 +112,7 @@ public class LoggerTests
         var log = CreateLogger(loggerType, lc => lc);
 
         // ReSharper disable StructuredMessageTemplateProblem
-        Assert.True(log.BindMessageTemplate("Hello, {Name}!", new object[] { "World" }, out var template, out var properties));
+        Assert.True(log.BindMessageTemplate("Hello, {Name}!", ["World"], out var template, out var properties));
         // ReSharper restore StructuredMessageTemplateProblem
 
         Assert.Equal("Hello, {Name}!", template.Text);
@@ -203,7 +203,7 @@ public class LoggerTests
         Assert.Equal(42, collectingSink.SingleEvent.Properties["number"].LiteralValue());
         Assert.Equal(
             // ReSharper disable once CoVariantArrayConversion
-            expected: new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2), new ScalarValue(3) }),
+            expected: new SequenceValue([new ScalarValue(1), new ScalarValue(2), new ScalarValue(3)]),
             actual: (SequenceValue)collectingSink.SingleEvent.Properties["values"],
             comparer: new LogEventPropertyValueComparer());
 
@@ -252,7 +252,7 @@ public class LoggerTests
     {
         var sink = new DisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sink))
             .CreateLogger();
 
         log.Dispose();
@@ -266,7 +266,7 @@ public class LoggerTests
         var sinkA = new DisposeTrackingSink();
         var sinkB = new DisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
             .CreateLogger();
 
         log.Dispose();
@@ -315,6 +315,175 @@ public class LoggerTests
         log.BindMessageTemplate("test", (object?[]?)null, out _, out _);
         // ReSharper restore RedundantCast
         // ReSharper restore StructuredMessageTemplateProblem
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void TwoDimensionalArrayShouldBeLoggedAsSequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[,] { { "a", "b" }, { "c", "d" }, { "e", "f" } };
+            l.Error("{@Value}", a);
+        });
+
+        Assert.Single(evt.Properties);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(3, arr.Elements.Count);
+        Assert.Equal("[[a,b],[c,d],[e,f]]", arr.LiteralValue());
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void ThreeDimensionalArrayShouldBeLoggedAsSequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[,,] { { { "a" }, { "b" } }, { { "c" }, { "d" } }, { { "e" }, { "f" } } };
+            l.Error("{@Value}", a);
+        });
+
+        Assert.Single(evt.Properties);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(3, arr.Elements.Count);
+        Assert.Equal("[[[a],[b]],[[c],[d]],[[e],[f]]]", arr.LiteralValue());
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void FourDimensionalArrayShouldBeLoggedAsSequence()
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new object[,,,]
+            {
+                {
+                    {
+                        { "a", "b" },
+                        { "c", "d" }
+                    },
+                    {
+                        { "e", "f" },
+                        { "g", "h" }
+                    }
+                },
+                {
+                    {
+                        { "i", "j" },
+                        { "k", "l" }
+                    },
+                    {
+                        { "m", "n" },
+                        { "o", "p" }
+                    }
+                }
+            };
+            l.Error("{@Value}", a);
+        });
+
+        Assert.Single(evt.Properties);
+        var arr = (SequenceValue)evt.Properties["Value"];
+        Assert.Equal(2, arr.Elements.Count);
+        Assert.Equal("[[[[a,b],[c,d]],[[e,f],[g,h]]],[[[i,j],[k,l]],[[m,n],[o,p]]]]", arr.LiteralValue());
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void EmptyMultiDimensionalArraysShouldBeSerializedProperly() // Same behaviour as Newtonsoft.Json
+    {
+        var evt = DelegatingSink.GetLogEvent(l =>
+        {
+            var a = new int[0, 0];
+            var b = new int[0, 1];
+            var c = new int[1, 0];
+            l.Error("{@Value1} {@Value2} {@Value3}", a, b, c);
+        });
+
+        Assert.Equal(3, evt.Properties.Count);
+        var arr1 = (SequenceValue)evt.Properties["Value1"];
+        Assert.Equal("[]", arr1.LiteralValue());
+        var arr2 = (SequenceValue)evt.Properties["Value2"];
+        Assert.Equal("[]", arr2.LiteralValue());
+        var arr3 = (SequenceValue)evt.Properties["Value3"];
+        Assert.Equal("[[]]", arr3.LiteralValue());
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void JaggedArrayShouldRespectMaximumCollectionCount()
+    {
+        // Arrange
+        var collectingSink = new CollectingSink();
+        var log = new LoggerConfiguration()
+            .Destructure.ToMaximumCollectionCount(2)
+            .WriteTo.Sink(collectingSink)
+            .CreateLogger();
+
+        var array = new int[][]
+        {
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9, 10]
+        };
+
+        // Act
+        log.Information("{@Array}", array);
+
+        // Assert
+        var logEvent = collectingSink.Events.Single();
+        var loggedArray = (SequenceValue)logEvent.Properties["Array"];
+
+        // Outer sequence should have at most 2 elements (rows)
+        Assert.Equal(2, loggedArray.Elements.Count);
+
+        // Each inner sequence (row) should have at most 2 elements (columns)
+        foreach (var element in loggedArray.Elements)
+        {
+            var row = (SequenceValue)element;
+            Assert.Equal(2, row.Elements.Count);
+        }
+
+        // Check the actual logged value
+        Assert.Equal("[[1,2],[4,5]]", loggedArray.LiteralValue());
+    }
+
+    // https://github.com/serilog/serilog/issues/2019
+    [Fact]
+    public void MultiDimensionalArrayShouldRespectMaximumCollectionCount()
+    {
+        // Arrange
+        var collectingSink = new CollectingSink();
+        var log = new LoggerConfiguration()
+            .Destructure.ToMaximumCollectionCount(2)
+            .WriteTo.Sink(collectingSink)
+            .CreateLogger();
+
+        var array = new[,]
+        {
+            { 1, 2, 3 },
+            { 4, 5, 6 },
+            { 7, 8, 9 }
+        };
+
+        // Act
+        log.Information("{@Array}", array);
+
+        // Assert
+        var logEvent = collectingSink.Events.Single();
+        var loggedArray = (SequenceValue)logEvent.Properties["Array"];
+
+        // Outer sequence should have at most 2 elements (rows)
+        Assert.Equal(2, loggedArray.Elements.Count);
+
+        // Each inner sequence (row) should have at most 2 elements (columns)
+        foreach (var element in loggedArray.Elements)
+        {
+            var row = (SequenceValue)element;
+            Assert.Equal(2, row.Elements.Count);
+        }
+
+        // Check the actual logged value
+        Assert.Equal("[[1,2],[4,5]]", loggedArray.LiteralValue());
     }
 
 #if FEATURE_ASYNCDISPOSABLE
@@ -395,7 +564,7 @@ public class LoggerTests
     {
         var sink = new DisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sink))
             .CreateLogger();
 
         await log.DisposeAsync();
@@ -408,7 +577,7 @@ public class LoggerTests
     {
         var sink = new AsyncDisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sink))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sink))
             .CreateLogger();
 
         await log.DisposeAsync();
@@ -422,7 +591,7 @@ public class LoggerTests
         var sinkA = new DisposeTrackingSink();
         var sinkB = new AsyncDisposeTrackingSink();
         var log = new LoggerConfiguration()
-            .WriteTo.Dummy(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
+            .WriteTo.DummyWrapper(wrapped => wrapped.Sink(sinkA).WriteTo.Sink(sinkB))
             .CreateLogger();
 
         await log.DisposeAsync();

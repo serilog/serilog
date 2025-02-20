@@ -1,27 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Simple .NET logging with fully-structured events</Description>
-    <VersionPrefix>4.0.0</VersionPrefix>
     <Authors>Serilog Contributors</Authors>
+    <Copyright>Copyright © Serilog Contributors</Copyright>
+    <AssemblyVersion>$(VersionPrefix.Substring(0,3)).0.0</AssemblyVersion>
     <!-- .NET Framework version targeting is frozen at these two TFMs. -->
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net462;net471</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net471;net462</TargetFrameworks>
     <!-- Policy is to trim TFM-specific builds to `netstandard2.0`, `net6.0`,
     all active LTS versions, and optionally the latest RTM version, when releasing new
     major Serilog versions. -->
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.0;net6.0;net8.0</TargetFrameworks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TargetFrameworks>$(TargetFrameworks);net9.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
     <PackageTags>serilog;logging;semantic;structured</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://serilog.net/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <TreatSpecificWarningsAsErrors />
     <IsTrimmable>true</IsTrimmable>
     <NoWarn>$(NoWarn);CS1437;CS1570</NoWarn>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -46,26 +41,37 @@
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="../../assets/icon.png" Pack="true" Visible="false" PackagePath="/" />
     <None Include="../../README.md" Pack="true" Visible="false" PackagePath="/" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="PolySharp" Version="1.12.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
+    <EmbeddedResource Include="ILLink.Substitutions.xml">
+      <LogicalName>ILLink.Substitutions.xml</LogicalName>
+    </EmbeddedResource>
+    <Using Remove="System.Net.Http" />
   </ItemGroup>
 
   <!-- Per-TFM `ItemGroup` for exceptions only: -->
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net471' ">
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

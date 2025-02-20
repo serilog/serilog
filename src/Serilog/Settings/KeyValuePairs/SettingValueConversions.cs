@@ -27,12 +27,14 @@ class SettingValueConversions
         { typeof(TimeSpan), s => TimeSpan.Parse(s) },
         { typeof(Type),
             // Suppress this trimming warning. We'll annotate all the users of this dictionary instead
-            [UnconditionalSuppressMessage("Trimming", "IL2057")]
-            (s) => Type.GetType(s, throwOnError: true)!
+#pragma warning disable IL2057
+            s => Type.GetType(s, throwOnError: true)!
+#pragma warning restore IL2057
         },
     };
 
     [RequiresUnreferencedCode("Finds accessors by name")]
+    [RequiresDynamicCode("Creates arrays of unknown element type")]
     public static object? ConvertToType(string value, Type toType)
     {
         if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))

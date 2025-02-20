@@ -21,13 +21,12 @@ public class LogEventPropertyValueRewriterTests
     [Fact]
     public void StatePropagatesAndNestedStructuresAreRewritten()
     {
-        var value = new SequenceValue(new[]
-        {
+        var value = new SequenceValue([
             new StructureValue(new[]
             {
                 new LogEventProperty("S", new ScalarValue("abcde"))
             })
-        });
+        ]);
 
         var limiter = new LimitingRewriter();
         var limited = limiter.LimitStringLength(value, 3);
@@ -50,13 +49,12 @@ public class LogEventPropertyValueRewriterTests
     [Fact]
     public void WhenNoRewritingTakesPlaceAllElementsAreUnchanged()
     {
-        var value = new SequenceValue(new[]
-        {
+        var value = new SequenceValue([
             new StructureValue(new[]
             {
                 new LogEventProperty("S", new ScalarValue("abcde"))
             })
-        });
+        ]);
         var limiter = new LimitingRewriter();
         var unchanged = limiter.LimitStringLength(value, 10);
         Assert.Same(value, unchanged);
