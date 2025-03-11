@@ -88,15 +88,35 @@ public static class LogContext
     /// <param name="enrichers">Enrichers to push onto the log context</param>
     /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
+    [OverloadResolutionPriority(0)]
+    [Obsolete("Use Push(IEnumerable<ILogEventEnricher> enrichers) instead.")]
     public static IDisposable Push(params ILogEventEnricher[] enrichers)
+    {
+        return Push(enrichers);
+    }
+
+    /// <summary>
+    /// Push multiple enrichers onto the context, returning an <see cref="IDisposable"/>
+    /// that must later be used to remove the property, along with any others that
+    /// may have been pushed on top of it and not yet popped. The property must
+    /// be popped from the same thread/logical call context.
+    /// </summary>
+    /// <seealso cref="PropertyEnricher"/>.
+    /// <param name="enrichers">Enrichers to push onto the log context</param>
+    /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
+    [OverloadResolutionPriority(1) ]
+    public static IDisposable Push(params IEnumerable<ILogEventEnricher> enrichers)
     {
         Guard.AgainstNull(enrichers);
 
         var stack = GetOrCreateEnricherStack();
         var bookmark = new ContextStackBookmark(stack);
 
-        for (var i = 0; i < enrichers.Length; ++i)
-            stack = stack.Push(enrichers[i]);
+        foreach (var enricher in enrichers)
+        {
+            stack = stack.Push(enricher);
+        }
 
         Enrichers = stack;
 
