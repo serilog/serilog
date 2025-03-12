@@ -66,7 +66,7 @@ public static class LogContext
     /// <param name="enricher">An enricher to push onto the log context</param>
     /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="enricher"/> is <code>null</code></exception>
-    [OverloadResolutionPriority(2)]
+    [OverloadResolutionPriority(3)]
     public static IDisposable Push(ILogEventEnricher enricher)
     {
         Guard.AgainstNull(enricher);
@@ -104,6 +104,7 @@ public static class LogContext
     /// <seealso cref="PropertyEnricher"/>.
     /// <param name="enrichers">Enrichers to push onto the log context</param>
     /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
+    [OverloadResolutionPriority(2)]
     public static IDisposable Push(params ReadOnlySpan<ILogEventEnricher> enrichers)
     {
         var stack = GetOrCreateEnricherStack();
