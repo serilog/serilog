@@ -66,6 +66,7 @@ public static class LogContext
     /// <param name="enricher">An enricher to push onto the log context</param>
     /// <returns>A token that must be disposed, in order, to pop properties back off the stack.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="enricher"/> is <code>null</code></exception>
+    [OverloadResolutionPriority(2)]
     public static IDisposable Push(ILogEventEnricher enricher)
     {
         Guard.AgainstNull(enricher);
