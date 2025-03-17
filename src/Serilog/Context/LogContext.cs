@@ -90,7 +90,7 @@ public static class LogContext
     /// <exception cref="ArgumentNullException">When <paramref name="enrichers"/> is <code>null</code></exception>
     public static IDisposable Push(params ILogEventEnricher[] enrichers)
     {
-        return Push(enrichers);
+        return Push(enrichers.AsSpan());
     }
 
     /// <summary>
