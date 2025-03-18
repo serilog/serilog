@@ -92,6 +92,8 @@ public static class LogContext
     [OverloadResolutionPriority(0)]
     public static IDisposable Push(params ILogEventEnricher[] enrichers)
     {
+        Guard.AgainstNull(enrichers);
+        
         return Push(enrichers.AsSpan());
     }
 
