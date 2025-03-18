@@ -105,8 +105,14 @@ namespace Serilog.Context
     public static class LogContext
     {
         public static Serilog.Core.ILogEventEnricher Clone() { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(3)]
         public static System.IDisposable Push(Serilog.Core.ILogEventEnricher enricher) { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
         public static System.IDisposable Push(params Serilog.Core.ILogEventEnricher[] enrichers) { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+        public static System.IDisposable Push([System.Runtime.CompilerServices.ParamCollection] System.Collections.Generic.IEnumerable<Serilog.Core.ILogEventEnricher> enrichers) { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
+        public static System.IDisposable Push([System.Runtime.CompilerServices.ParamCollection] [System.Runtime.CompilerServices.ScopedRef] System.ReadOnlySpan<Serilog.Core.ILogEventEnricher> enrichers) { }
         public static System.IDisposable PushProperty(string name, object? value, bool destructureObjects = false) { }
         public static void Reset() { }
         public static System.IDisposable Suspend() { }
