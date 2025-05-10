@@ -1,3 +1,4 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
@@ -42,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AotTestApp", "test\AotTestApp\AotTestApp.csproj", "{445C4888-6DA3-411B-8284-7CFB0E5768A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +116,18 @@ Global
 		{7669BB99-A118-436B-8C58-1D8E8989A775}.Release|x64.Build.0 = Release|Any CPU
 		{7669BB99-A118-436B-8C58-1D8E8989A775}.Release|x86.ActiveCfg = Release|Any CPU
 		{7669BB99-A118-436B-8C58-1D8E8989A775}.Release|x86.Build.0 = Release|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Debug|x64.Build.0 = Debug|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Debug|x86.Build.0 = Debug|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Release|x64.ActiveCfg = Release|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Release|x64.Build.0 = Release|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Release|x86.ActiveCfg = Release|Any CPU
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +140,7 @@ Global
 		{7669BB99-A118-436B-8C58-1D8E8989A775} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 		{3BFAB570-11C6-4C85-97A6-2740219F5B48} = {17C8775C-0621-438E-81D4-3B9E98A616BD}
 		{D44EC05A-1374-4053-A9A2-41E8EA1CE0D2} = {17C8775C-0621-438E-81D4-3B9E98A616BD}
+		{445C4888-6DA3-411B-8284-7CFB0E5768A9} = {290A2775-7CA0-4F81-9DDC-32E28C3A7565}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {268F5761-DAC2-4ECA-9AEC-59663B84854C}
