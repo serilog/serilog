@@ -363,14 +363,14 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
             {
                 var isCompilerGeneratedType = IsCompilerGeneratedType(type);
                 // !!IMPORTANT!!
-                // This block of code is guarded by the IsStructureValueSupported check,
-                // meaning that it will not be trimmed away if the switch is disabled.
-                // This is important because CreateStructureValue is not trim-compatible, so
-                // the switch must be disabled during trimming to ensure that the code is removed.
-                // We suppress the warning below because the analyzer doesn't understand feature
-                // switch removal (and #pragma warnings are meaningless to the IL trimmer), but
-                // this pragma cannot be expanded outside of the scope of this check, and all
-                // calls to CreateStructureValue must be guarded by this check.
+                // This block of code is guarded by the IsStructureValueSupported check, meaning
+                // that it will be trimmed away if the switch is disabled.  This is important
+                // because CreateStructureValue is not trim-compatible, so the switch must be
+                // disabled during trimming to ensure that the code is removed.  We suppress the
+                // warning below because the analyzer doesn't understand feature switch removal (and
+                // #pragma warnings are meaningless to the IL trimmer), but this pragma cannot be
+                // expanded outside of the scope of this check, and all calls to
+                // CreateStructureValue must be guarded by this check.
 #pragma warning disable IL2067
                 result = CreateStructureValue(value, type, isCompilerGeneratedType);
 #pragma warning restore IL2067
