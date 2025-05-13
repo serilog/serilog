@@ -14,7 +14,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://serilog.net/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <IsTrimmable>true</IsTrimmable>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
     <NoWarn>$(NoWarn);CS1437;CS1570</NoWarn>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -48,8 +48,9 @@
   <ItemGroup>
     <None Include="../../assets/icon.png" Pack="true" Visible="false" PackagePath="/" />
     <None Include="../../README.md" Pack="true" Visible="false" PackagePath="/" />
+    <None Include="Serilog.props" Pack="true" Visible="false" PackagePath="/build" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-    <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
+    <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
     <EmbeddedResource Include="ILLink.Substitutions.xml">
       <LogicalName>ILLink.Substitutions.xml</LogicalName>
     </EmbeddedResource>

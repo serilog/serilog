@@ -1,0 +1,7 @@
+<Project>
+    <ItemGroup>
+        <RuntimeHostConfigurationOption
+        Include="Serilog.Capturing.IsStructureValueSupported"
+        Value="false" Trim="true" />
+    </ItemGroup>
+</Project>

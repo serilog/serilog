@@ -3,6 +3,63 @@ namespace Serilog.Tests.Context;
 public class LogContextTests
 {
     [Fact]
+    public void PushedSpanPropertiesAreAvailableToLoggers()
+    {
+        LogEvent? lastEvent = null;
+
+        var log = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+            .CreateLogger();
+        ReadOnlySpan<ILogEventEnricher> enrichers = [new PropertyEnricher("A", 1), new PropertyEnricher("B", 2)];
+        using (LogContext.Push(enrichers))
+        {
+            log.Write(Some.InformationEvent());
+            Assert.NotNull(lastEvent);
+            Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
+            Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
+        }
+    }
+
+    [Fact]
+    public void PushedArrayPropertiesAreAvailableToLoggers()
+    {
+        LogEvent? lastEvent = null;
+
+        var log = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+            .CreateLogger();
+        PropertyEnricher[] enrichers = [new("A", 1), new("B", 2)];
+        using (LogContext.Push(enrichers))
+        {
+            log.Write(Some.InformationEvent());
+            Assert.NotNull(lastEvent);
+            Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
+            Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
+        }
+    }
+
+    [Fact]
+    public void PushedEnumerablePropertiesAreAvailableToLoggers()
+    {
+        LogEvent? lastEvent = null;
+
+        var log = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Sink(new DelegatingSink(e => lastEvent = e))
+            .CreateLogger();
+        IEnumerable<PropertyEnricher> enrichers = [new("A", 1), new("B", 2)];
+        using (LogContext.Push(enrichers))
+        {
+            log.Write(Some.InformationEvent());
+            Assert.NotNull(lastEvent);
+            Assert.Equal(1, lastEvent!.Properties["A"].LiteralValue());
+            Assert.Equal(2, lastEvent.Properties["B"].LiteralValue());
+        }
+    }
+
+    [Fact]
     public void PushedPropertiesAreAvailableToLoggers()
     {
         LogEvent? lastEvent = null;
