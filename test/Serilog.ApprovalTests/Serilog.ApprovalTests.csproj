@@ -18,4 +18,6 @@
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
   </ItemGroup>
 
+  <Import Project="..\..\src\Serilog\Serilog.targets" />
+
 </Project>
