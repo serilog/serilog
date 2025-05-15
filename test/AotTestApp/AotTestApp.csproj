@@ -9,13 +9,13 @@
     <UseCurrentRuntimeIdentifier>true</UseCurrentRuntimeIdentifier>
   </PropertyGroup>
 
-  <Import Project="..\..\src\Serilog\Serilog.props" />
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
     <TrimmerRootAssembly Include="Serilog" />
   </ItemGroup>
 
   <Target Name="PublishOnBuild" AfterTargets="Build" DependsOnTargets="Publish" />
+
+  <Import Project="..\..\src\Serilog\Serilog.targets" />
 
 </Project>

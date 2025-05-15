@@ -1,6 +1,7 @@
 <Project>
     <ItemGroup>
         <RuntimeHostConfigurationOption
+        Condition="'$(PublishTrimmed)' == 'true'"
         Include="Serilog.Capturing.IsStructureValueSupported"
         Value="false" Trim="true" />
     </ItemGroup>
