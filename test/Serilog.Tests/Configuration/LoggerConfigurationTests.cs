@@ -206,6 +206,61 @@ public class LoggerConfigurationTests
     }
 
     [Fact]
+    public void TransformationsAreAppliedToStructEventProperties()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.ByTransforming<InputStruct>(_ => new
+            {
+                Property = _.B
+            })
+            .CreateLogger();
+
+        logger.Information("{@InputStruct}", new InputStruct{A = 'a', B = 'b'});
+
+        var ev = events.Single();
+        var prop = ev.Properties["InputStruct"];
+        var value = (StructureValue)prop;
+        var property = value.Properties.Single();
+        Assert.Equal("Property", property.Name);
+        Assert.Equal('b', property.Value.LiteralValue());
+    }
+
+    [Fact]
+    public void TransformationsAreAppliedToNullableStructEventProperties()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.ByTransforming<InputStruct?>(_ => new
+            {
+                Property = _!.Value.B
+            })
+            .CreateLogger();
+
+        InputStruct? inputStruct = new InputStruct{A = 'a', B = 'b'};
+        logger.Information("{@InputStruct}", inputStruct);
+
+        var ev = events.Single();
+        var prop = ev.Properties["InputStruct"];
+        var value = (StructureValue)prop;
+        var property = value.Properties.Single();
+        Assert.Equal("Property", property.Name);
+        Assert.Equal('b', property.Value.LiteralValue());
+    }
+
+    public struct InputStruct
+    {
+        public char A { get; set; }
+        public char B { get; set; }
+    }
+
+    [Fact]
     public void WritingToALoggerWritesToSubLogger()
     {
         var eventReceived = false;
