@@ -114,6 +114,22 @@ public class LoggerDestructuringConfiguration
     }
 
     /// <summary>
+    /// When destructuring objects, transform any instance that is assignable to <typeparamref name="TValue"/>.
+    /// </summary>
+    /// <param name="transformation">Function mapping instances of <typeparamref name="TValue"/>
+    /// to an alternative representation.</param>
+    /// <typeparam name="TValue">Type of values to transform is an instance that is assignable.</typeparam>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="transformation"/> is <code>null</code></exception>
+    public LoggerConfiguration ByTransformingAssignableTo<TValue>(Func<TValue, object> transformation)
+    {
+        Guard.AgainstNull(transformation);
+
+        var policy = new TypeDestructuringPolicy<TValue>(transformation, true);
+        return With(policy);
+    }
+
+    /// <summary>
     /// When destructuring objects, transform instances of the specified type with
     /// the provided function.
     /// </summary>
@@ -126,7 +142,7 @@ public class LoggerDestructuringConfiguration
     {
         Guard.AgainstNull(transformation);
 
-        var policy = new TypeDestructuringPolicy<TValue>(transformation);
+        var policy = new TypeDestructuringPolicy<TValue>(transformation, false);
         return With(policy);
     }
 

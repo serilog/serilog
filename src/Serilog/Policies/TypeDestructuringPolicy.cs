@@ -16,11 +16,15 @@ namespace Serilog.Policies;
 
 class TypeDestructuringPolicy<T> : IDestructuringPolicy
 {
+    readonly bool _allowInherited;
     readonly Func<T, object> _projection;
+    readonly Type _type;
 
-    public TypeDestructuringPolicy(Func<T, object> projection)
+    public TypeDestructuringPolicy(Func<T, object> projection, bool allowInherited)
     {
+        _allowInherited = allowInherited;
         _projection = Guard.AgainstNull(projection);
+        _type = typeof(T);
     }
 
     public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
@@ -31,6 +35,15 @@ class TypeDestructuringPolicy<T> : IDestructuringPolicy
         {
             result = null;
             return false;
+        }
+
+        if (!_allowInherited)
+        {
+            if(value.GetType() != _type)
+            {
+                result = null;
+                return false;
+            }
         }
 
         var projected = _projection(typedValue);
