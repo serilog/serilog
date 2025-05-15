@@ -39,7 +39,7 @@ class TypeDestructuringPolicy<T> : IDestructuringPolicy
 
         if (!_allowInherited)
         {
-            if(value.GetType() != _type)
+            if (value.GetType() != _type)
             {
                 result = null;
                 return false;
