@@ -62,4 +62,6 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
+
+  <Import Project="..\..\src\Serilog\Serilog.targets" />
 </Project>

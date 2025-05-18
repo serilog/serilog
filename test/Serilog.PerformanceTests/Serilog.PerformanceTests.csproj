@@ -19,4 +19,6 @@
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
   </ItemGroup>
+
+  <Import Project="..\..\src\Serilog\Serilog.targets" />
 </Project>

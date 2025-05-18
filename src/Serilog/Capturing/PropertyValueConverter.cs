@@ -163,11 +163,8 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
         if (TryConvertValueTuple(value, type, destructuring, out var tupleResult))
             return tupleResult;
 
-        // This appears to be a hole in analysis prior to .NET 9
-#pragma warning disable IL2072
         if (TryConvertStructure(value, type, destructuring, out var structureResult))
             return structureResult;
-#pragma warning restore IL2072
 
         return new ScalarValue(value.ToString() ?? "");
     }
@@ -356,16 +353,27 @@ partial class PropertyValueConverter : ILogEventPropertyFactory, ILogEventProper
 
     bool TryConvertStructure(
         object value,
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
+        Type type,
         Destructuring destructuring,
         [NotNullWhen(true)] out StructureValue? result)
     {
         if (destructuring == Destructuring.Destructure)
         {
-            var isCompilerGeneratedType = IsCompilerGeneratedType(type);
-            if (!isCompilerGeneratedType || TrimConfiguration.IsCompilerGeneratedCodeSupported)
+            if (TrimConfiguration.IsStructureValueSupported)
             {
+                var isCompilerGeneratedType = IsCompilerGeneratedType(type);
+                // !!IMPORTANT!!
+                // This block of code is guarded by the IsStructureValueSupported check, meaning
+                // that it will be trimmed away if the switch is disabled.  This is important
+                // because CreateStructureValue is not trim-compatible, so the switch must be
+                // disabled during trimming to ensure that the code is removed.  We suppress the
+                // warning below because the analyzer doesn't understand feature switch removal (and
+                // #pragma warnings are meaningless to the IL trimmer), but this pragma cannot be
+                // expanded outside of the scope of this check, and all calls to
+                // CreateStructureValue must be guarded by this check.
+#pragma warning disable IL2067
                 result = CreateStructureValue(value, type, isCompilerGeneratedType);
+#pragma warning restore IL2067
                 return true;
             }
         }

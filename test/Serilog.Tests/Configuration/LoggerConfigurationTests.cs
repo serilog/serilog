@@ -254,6 +254,24 @@ public class LoggerConfigurationTests
     }
 
     [Fact]
+    public void EnrichersWithPropertyFactoryExecuteInConfigurationOrder()
+    {
+        var propertyName = Some.String();
+        var propertyValue = Some.String();
+        var enrichedPropertySeen = false;
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(new StringSink())
+            .Enrich.With(new DelegatingEnricher((e, factory) => e.AddPropertyIfAbsent(factory, propertyName, propertyValue)))
+            .Enrich.With(new DelegatingEnricher((e, _) => enrichedPropertySeen = e.Properties.ContainsKey(propertyName)))
+            .CreateLogger();
+
+        logger.Write(Some.InformationEvent());
+
+        Assert.True(enrichedPropertySeen);
+    }
+
+    [Fact]
     public void MaximumDestructuringDepthDefaultIsEffective()
     {
         var x = new

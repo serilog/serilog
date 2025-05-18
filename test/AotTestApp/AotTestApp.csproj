@@ -6,14 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishAot>true</PublishAot>
+    <UseCurrentRuntimeIdentifier>true</UseCurrentRuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Serilog\Serilog.csproj" />
     <TrimmerRootAssembly Include="Serilog" />
-    <RuntimeHostConfigurationOption
-      Include="Serilog.IsCompilerGeneratedCodeSupported"
-      Value="false" Trim="true" />
   </ItemGroup>
+
+  <Target Name="PublishOnBuild" AfterTargets="Build" DependsOnTargets="Publish" />
+
+  <Import Project="..\..\src\Serilog\Serilog.targets" />
 
 </Project>
