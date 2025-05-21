@@ -25,6 +25,36 @@ public class ScalarValue : LogEventPropertyValue
     public static ScalarValue Null { get; } = new(null);
 
     /// <summary>
+    /// Scalar value representing empty string.
+    /// </summary>
+    public static ScalarValue EmptyString { get; } = new(string.Empty);
+
+    /// <summary>
+    /// Scalar value representing <see langword="true"/>.
+    /// </summary>
+    public static ScalarValue True { get; } = new(true);
+
+    /// <summary>
+    /// Scalar value representing <see langword="false"/>.
+    /// </summary>
+    public static ScalarValue False { get; } = new(false);
+
+    /// <summary>
+    /// Scalar value representing 0 integer value.
+    /// </summary>
+    public static ScalarValue Zero { get; } = new(0);
+
+    /// <summary>
+    /// Scalar value representing 1 integer value.
+    /// </summary>
+    public static ScalarValue One { get; } = new(1);
+
+    /// <summary>
+    /// Scalar value representing -1 integer value.
+    /// </summary>
+    public static ScalarValue MinusOne { get; } = new(-1);
+
+    /// <summary>
     /// Construct a <see cref="ScalarValue"/> with the specified
     /// value.
     /// </summary>
