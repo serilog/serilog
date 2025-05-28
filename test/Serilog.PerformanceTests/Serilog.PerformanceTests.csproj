@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +16,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="all" />
-    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0" PrivateAssets="all" />
+    <PackageReference Include="xunit.v3" Version="2.0.2" />
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
   </ItemGroup>
 

@@ -127,7 +127,7 @@ public class BatchingSinkTests
         var evt = Some.InformationEvent();
         pbs.Emit(evt);
 
-        await Task.Delay(1900);
+        await Task.Delay(1900, TestContext.Current.CancellationToken);
         Assert.Equal(eagerlyEmit, Interlocked.Read(ref emitted) == 1);
 
 #if FEATURE_ASYNCDISPOSABLE
