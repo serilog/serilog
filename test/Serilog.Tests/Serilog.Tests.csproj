@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <!-- Tests target .NET Framework 4.6.2 plus the latest RTM of .NET Framework -->
+    <!-- Tests target .NET Framework 4.7.2 plus the latest RTM of .NET Framework -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net48;net472</TargetFrameworks>
     <!-- All (Microsoft-) supported .NET RTMs are tested -->
     <TargetFrameworks>$(TargetFrameworks);net9.0;net8.0</TargetFrameworks>
