@@ -1,6 +1,6 @@
 Write-Output "build: Tool versions follow"
 
-dotnet --version
+dotnet --version....
 dotnet --list-sdks
 
 Write-Output "build: Build started"
