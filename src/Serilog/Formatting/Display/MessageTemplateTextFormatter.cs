@@ -85,7 +85,16 @@ public class MessageTemplateTextFormatter : ITextFormatter
             }
             else if (pt.PropertyName == OutputProperties.ExceptionPropertyName)
             {
-                var exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
+                string exception;
+                try
+                {
+                    exception = logEvent.Exception == null ? "" : logEvent.Exception + Environment.NewLine;
+                }
+                catch (Exception e)
+                {
+                    exception = $"[Exception.ToString() failed: {e.Message}] Original exception type: {logEvent.Exception?.GetType().FullName}, message: {logEvent.Exception?.Message}{Environment.NewLine}";
+                }
+
                 Padding.Apply(output, exception, pt.Alignment);
             }
             else
