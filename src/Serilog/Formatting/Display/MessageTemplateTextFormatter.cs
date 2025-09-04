@@ -98,7 +98,7 @@ public class MessageTemplateTextFormatter : ITextFormatter
                     }
                     catch (Exception ex)
                     {
-                        exception = $"[Exception.ToString() failed: {ex.Message}] Original exception type: {logEvent.Exception.GetType().FullName}, message: {logEvent.Exception.Message}{Environment.NewLine}";
+                        exception = $"[Exception.ToString() failed: {ex.Message}] Original exception type: {logEvent.Exception.GetType().FullName}{Environment.NewLine}";
                     }
                 }
 
