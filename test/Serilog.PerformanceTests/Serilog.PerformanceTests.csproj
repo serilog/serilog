@@ -18,7 +18,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="all" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
-    <PackageReference Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers" Version="18.0.36421.1" />
   </ItemGroup>
 
   <Import Project="..\..\src\Serilog\Serilog.targets" />
