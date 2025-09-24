@@ -107,7 +107,7 @@ public class LoggerSinkConfiguration
     /// written to the sink in batches.
     /// </summary>
     /// <param name="batchedLogEventSink">The batched sink to receive events.</param>
-    /// <param name="batchingOptions">Options that control batch sizes, buffering time, and backpressure.</param>
+    /// <param name="batchingOptions">Options that control batch sizes and buffering time.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
     /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
     /// <param name="levelSwitch">A switch allowing the pass-through minimum level
@@ -131,7 +131,7 @@ public class LoggerSinkConfiguration
     /// </summary>
     /// <typeparam name="TSink">The type of a batched sink to receive events. The sink must provide a public,
     /// parameterless constructor.</param>
-    /// <param name="batchingOptions">Options that control batch sizes, buffering time, and backpressure.</param>
+    /// <param name="batchingOptions">Options that control batch sizes and buffering time.</param>
     /// <param name="restrictedToMinimumLevel">The minimum level for
     /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
     /// <param name="levelSwitch">A switch allowing the pass-through minimum level
