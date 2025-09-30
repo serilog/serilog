@@ -28,6 +28,7 @@ namespace Serilog.Configuration
         public Serilog.LoggerConfiguration AsScalar(System.Type scalarType) { }
         public Serilog.LoggerConfiguration AsScalar<TScalar>() { }
         public Serilog.LoggerConfiguration ByTransforming<TValue>(System.Func<TValue, object> transformation) { }
+        public Serilog.LoggerConfiguration ByTransformingAssignableTo<TValue>(System.Func<TValue, object> transformation) { }
         public Serilog.LoggerConfiguration ByTransformingWhere<TValue>(System.Func<System.Type, bool> predicate, System.Func<TValue, object> transformation) { }
         public Serilog.LoggerConfiguration ToMaximumCollectionCount(int maximumCollectionCount) { }
         public Serilog.LoggerConfiguration ToMaximumDepth(int maximumDestructuringDepth) { }

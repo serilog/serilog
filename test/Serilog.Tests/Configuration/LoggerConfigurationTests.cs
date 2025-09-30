@@ -205,6 +205,80 @@ public class LoggerConfigurationTests
         Assert.Equal("C", c.Name);
     }
 
+    class BaseInput
+    {
+        public char Property { get; set; }
+    }
+
+    class InheritedInput :
+        BaseInput;
+
+    [Fact]
+    public void ByTransformingAreNotAppliedToInheritedEventProperties()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.ByTransforming<BaseInput>(_ => throw new())
+            .CreateLogger();
+
+        logger.Information("{@input}", new InheritedInput {Property = 'a'});
+
+        var ev = events.Single();
+        var structureValue = (StructureValue)ev.Properties["input"];
+        var property = structureValue.Properties.Single();
+        Assert.Equal("Property", property.Name);
+        Assert.Equal('a', property.Value.LiteralValue());
+    }
+
+    [Fact]
+    public void ByTransformingAssignableToAreAppliedToInheritedEventProperties()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.ByTransformingAssignableTo<BaseInput>(_ => new
+            {
+                TransformedProperty = _.Property
+            })
+            .CreateLogger();
+
+        logger.Information("{@input}", new InheritedInput {Property = 'a'});
+
+        var ev = events.Single();
+        var structureValue = (StructureValue)ev.Properties["input"];
+        var property = structureValue.Properties.Single();
+        Assert.Equal("TransformedProperty", property.Name);
+        Assert.Equal('a', property.Value.LiteralValue());
+    }
+
+    [Fact]
+    public void ByTransformingAssignableToAreAppliedToSpecificEventProperties()
+    {
+        var events = new List<LogEvent>();
+        var sink = new DelegatingSink(events.Add);
+
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(sink)
+            .Destructure.ByTransformingAssignableTo<BaseInput>(_ => new
+            {
+                TransformedProperty = _.Property
+            })
+            .CreateLogger();
+
+        logger.Information("{@input}", new BaseInput {Property = 'a'});
+
+        var ev = events.Single();
+        var structureValue = (StructureValue)ev.Properties["input"];
+        var property = structureValue.Properties.Single();
+        Assert.Equal("TransformedProperty", property.Name);
+        Assert.Equal('a', property.Value.LiteralValue());
+    }
+
     [Fact]
     public void WritingToALoggerWritesToSubLogger()
     {
