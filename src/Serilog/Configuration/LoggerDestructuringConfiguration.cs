@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Serilog.Configuration;
 
 /// <summary>
@@ -202,5 +204,21 @@ public class LoggerDestructuringConfiguration
 
         _setMaximumCollectionCount(maximumCollectionCount);
         return _loggerConfiguration;
+    }
+
+    /// <summary>
+    /// When destructuring objects of the specified type, only include the selected properties
+    /// in the log output. This is useful for logging only relevant parts of complex objects.
+    /// </summary>
+    /// <typeparam name="T">Type of objects to apply selective destructuring to.</typeparam>
+    /// <param name="propertyNames">Names of the properties to include when destructuring.</param>
+    /// <returns>Configuration object allowing method chaining.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="propertyNames"/> is <code>null</code></exception>
+    public LoggerConfiguration BySelecting<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(params string[] propertyNames)
+    {
+        Guard.AgainstNull(propertyNames);
+
+        var policy = new SelectiveDestructuringPolicy<T>(propertyNames);
+        return With(policy);
     }
 }
