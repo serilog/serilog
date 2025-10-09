@@ -123,6 +123,7 @@ public class LoggerDestructuringConfiguration
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="transformation"/> is <code>null</code></exception>
     public LoggerConfiguration ByTransforming<TValue>(Func<TValue, object> transformation)
+        where TValue : notnull
     {
         Guard.AgainstNull(transformation);
 
@@ -147,6 +148,7 @@ public class LoggerDestructuringConfiguration
     public LoggerConfiguration ByTransformingWhere<TValue>(
         Func<Type, bool> predicate,
         Func<TValue, object> transformation)
+        where TValue : notnull
     {
         Guard.AgainstNull(predicate);
         Guard.AgainstNull(transformation);
