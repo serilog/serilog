@@ -13,10 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />
-    <PackageReference Include="xunit.v3" Version="3.2.1" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
     <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
   </ItemGroup>
 
