@@ -15,10 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0" PrivateAssets="all" />
-    <PackageReference Include="xunit.v3" Version="2.0.2" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
