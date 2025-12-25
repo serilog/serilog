@@ -3,10 +3,9 @@
     <!-- Tests target .NET Framework 4.7.2 plus the latest RTM of .NET Framework -->
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net48;net472</TargetFrameworks>
     <!-- All (Microsoft-) supported .NET RTMs are tested -->
-    <TargetFrameworks>$(TargetFrameworks);net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net10.0;net9.0;net8.0</TargetFrameworks>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
@@ -48,6 +47,11 @@
     <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.0" />
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ITUPLE</DefineConstants>
   </PropertyGroup>
@@ -61,6 +65,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
   </PropertyGroup>
 

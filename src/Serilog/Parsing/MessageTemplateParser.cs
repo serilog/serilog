@@ -258,6 +258,7 @@ public class MessageTemplateParser : IMessageTemplateParser
     }
 
     static bool IsValidInFormat(char c) => c != '}';
+    static readonly char[] CurlyBraceChars = ['{', '}'];
 
     static TextToken ParseTextToken(int startAt, string messageTemplate, out int next)
     {
@@ -267,7 +268,7 @@ public class MessageTemplateParser : IMessageTemplateParser
         // Most of the time we won't hit escapes, so we can get away with just a single Substring() allocation at
         // the end.
 
-        var i = messageTemplate.IndexOfAny(['{', '}'], startAt);
+        var i = messageTemplate.IndexOfAny(CurlyBraceChars, startAt);
         if (i == -1)
         {
             // No more interesting characters in the template, everything left is text.
