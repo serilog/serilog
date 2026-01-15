@@ -52,5 +52,10 @@ public enum LogEventLevel
     /// If you have a pager, it goes off when one of these
     /// occurs.
     /// </summary>
-    Fatal
+    Fatal,
+
+    /// <summary>
+    /// Logging is disabled.
+    /// </summary>
+    Off
 }
