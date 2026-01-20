@@ -52,7 +52,7 @@
   <ItemGroup>
     <None Include="../../assets/icon.png" Pack="true" Visible="false" PackagePath="/" />
     <None Include="../../README.md" Pack="true" Visible="false" PackagePath="/" />
-    <None Include="Serilog.targets" Pack="true" Visible="false" PackagePath="/build" />
+    <None Include="Serilog.targets" Pack="true" Visible="false" PackagePath="build\;buildTransitive\" />
     <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
     <EmbeddedResource Include="ILLink.Substitutions.xml">
       <LogicalName>ILLink.Substitutions.xml</LogicalName>
