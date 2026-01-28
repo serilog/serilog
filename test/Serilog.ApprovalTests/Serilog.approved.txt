@@ -376,7 +376,9 @@ namespace Serilog.Debugging
 {
     public class LoggingFailedException : System.Exception
     {
+        public LoggingFailedException() { }
         public LoggingFailedException(string message) { }
+        public LoggingFailedException(string message, System.Exception innerException) { }
     }
     public static class SelfLog
     {
@@ -899,7 +901,7 @@ namespace Serilog.Parsing
     }
     public sealed class PropertyToken : Serilog.Parsing.MessageTemplateToken
     {
-        public PropertyToken(string propertyName, string rawText, string? format = null, in Serilog.Parsing.Alignment? alignment = null, Serilog.Parsing.Destructuring destructuring = 0) { }
+        public PropertyToken(string propertyName, string rawText, string? format = null, Serilog.Parsing.Alignment? alignment = default, Serilog.Parsing.Destructuring destructuring = 0) { }
         public Serilog.Parsing.Alignment? Alignment { get; }
         public Serilog.Parsing.Destructuring Destructuring { get; }
         public string? Format { get; }

@@ -34,7 +34,7 @@ class KeyValuePairSettings : ILoggerSettings
     const string MinimumLevelOverrideDirectivePrefix = "minimum-level:override:";
 
     const string CallableDirectiveRegex = @"^(?<directive>audit-to|write-to|enrich|filter|destructure):(?<method>[A-Za-z0-9]*)(\.(?<argument>[A-Za-z0-9]*)){0,1}$";
-    const string LevelSwitchDeclarationDirectiveRegex = @"^level-switch:(?<switchName>.*)$";
+    const string LevelSwitchDeclarationDirectiveRegex = "^level-switch:(?<switchName>.*)$";
     const string LevelSwitchNameRegex = @"^\$[A-Za-z]+[A-Za-z0-9]*$";
 
     static readonly string[] _supportedDirectives =
