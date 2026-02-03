@@ -62,8 +62,6 @@ public class MessageTemplate
                     allPositional = false;
                     break;
                 }
-                else
-                    allPositional = false;
             }
 
             if (allPositional)
