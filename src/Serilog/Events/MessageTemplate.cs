@@ -53,13 +53,13 @@ public class MessageTemplate
         var propertyTokens = GetElementsOfTypeToArray<PropertyToken>(TokenArray);
         if (propertyTokens.Length != 0)
         {
-            var allPositional = true;
+            var allPositional = false;
             var anyPositional = false;
             foreach (var propertyToken in propertyTokens)
             {
                 if (propertyToken.IsPositional)
                 {
-                    allPositional = false;
+                    allPositional = true;
                     break;
                 }
             }
