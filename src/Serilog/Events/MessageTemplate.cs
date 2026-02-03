@@ -58,7 +58,10 @@ public class MessageTemplate
             foreach (var propertyToken in propertyTokens)
             {
                 if (propertyToken.IsPositional)
-                    anyPositional = true;
+                {
+                    allPositional = false;
+                    break;
+                }
                 else
                     allPositional = false;
             }
