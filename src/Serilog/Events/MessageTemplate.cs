@@ -60,7 +60,10 @@ public class MessageTemplate
                 if (propertyToken.IsPositional)
                     anyPositional = true;
                 else
+                {
                     allPositional = false;
+                    break;
+                }
             }
 
             if (allPositional)

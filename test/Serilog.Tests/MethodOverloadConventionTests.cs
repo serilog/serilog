@@ -88,12 +88,12 @@ public class MethodOverloadConventionTests
             var ifaceBytes = ifaceMethod.GetMethodBody()!.GetILAsByteArray().AsSpan();
             var classBytes = classMethod.GetMethodBody()!.GetILAsByteArray().AsSpan();
 
-            while (ifaceBytes[0] == OpCodes.Nop.Value)
+            while (ifaceBytes.Length > 0 && ifaceBytes[0] == OpCodes.Nop.Value)
             {
                 ifaceBytes = ifaceBytes.Slice(1);
             }
 
-            while (classBytes[0] == OpCodes.Nop.Value)
+            while (classBytes.Length > 0 && classBytes[0] == OpCodes.Nop.Value)
             {
                 classBytes = classBytes.Slice(1);
             }
@@ -132,6 +132,7 @@ public class MethodOverloadConventionTests
 
                     if (ifaceMethodDef == classMethodDef)
                     {
+                        i += 4;
                         continue;
                     }
 
