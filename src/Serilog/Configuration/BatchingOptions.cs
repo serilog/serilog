@@ -42,13 +42,13 @@ public class BatchingOptions
     /// <summary>
     /// Maximum number of events to hold in the sink's internal queue, or <c>null</c>
     /// for an unbounded queue. The default is <c>100000</c>. When the limit is exceeded,
-    /// backpressure is applied.
+    /// events are discarded.
     /// </summary>
     public int? QueueLimit { get; set; } = 100000;
 
     /// <summary>
     /// The maximum time that the sink will keep retrying failed batches for. The default is ten minutes. Lower
-    /// this value to reduce buffering and backpressure in high-load scenarios.
+    /// this value to reduce buffering in high-load scenarios.
     /// </summary>
     public TimeSpan RetryTimeLimit { get; set; } = TimeSpan.FromMinutes(10);
 }

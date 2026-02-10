@@ -317,4 +317,62 @@ public class JsonFormatterTests
         Assert.Contains($"\"TraceId\":\"{traceId}\"", formatted);
         Assert.Contains($"\"SpanId\":\"{spanId}\"", formatted);
     }
+
+    [Fact]
+    public void TraceIdIsFormattedAsValidJsonString()
+    {
+        var traceId = ActivityTraceId.CreateFromString("0af7651916cd43dd8448eb211c80319c".AsSpan());
+        var evt = Some.LogEvent(traceId: traceId, spanId: default);
+        var formatted = FormatJson(evt);
+
+        Assert.Equal("0af7651916cd43dd8448eb211c80319c", (string)formatted.TraceId);
+    }
+
+    [Fact]
+    public void SpanIdIsFormattedAsValidJsonString()
+    {
+        var spanId = ActivitySpanId.CreateFromString("00f067aa0ba902b7".AsSpan());
+        var evt = Some.LogEvent(traceId: default, spanId: spanId);
+        var formatted = FormatJson(evt);
+
+        Assert.Equal("00f067aa0ba902b7", (string)formatted.SpanId);
+    }
+
+    [Fact]
+    public void TraceIdAndSpanIdProduceValidJson()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var evt = Some.LogEvent(traceId: traceId, spanId: spanId);
+
+        // FormatJson uses Newtonsoft.Json to parse - will throw if invalid JSON
+        var formatted = FormatJson(evt);
+
+        Assert.NotNull(formatted.TraceId);
+        Assert.NotNull(formatted.SpanId);
+        Assert.Equal(32, ((string)formatted.TraceId).Length);
+        Assert.Equal(16, ((string)formatted.SpanId).Length);
+    }
+
+    [Fact]
+    public void TraceIdContainsOnlyHexCharacters()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var evt = Some.LogEvent(traceId: traceId, spanId: default);
+        var formatted = FormatJson(evt);
+
+        var traceIdString = (string)formatted.TraceId;
+        Assert.Matches("^[0-9a-f]{32}$", traceIdString);
+    }
+
+    [Fact]
+    public void SpanIdContainsOnlyHexCharacters()
+    {
+        var spanId = ActivitySpanId.CreateRandom();
+        var evt = Some.LogEvent(traceId: default, spanId: spanId);
+        var formatted = FormatJson(evt);
+
+        var spanIdString = (string)formatted.SpanId;
+        Assert.Matches("^[0-9a-f]{16}$", spanIdString);
+    }
 }

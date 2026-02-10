@@ -74,13 +74,17 @@ public sealed class JsonFormatter : ITextFormatter
         if (logEvent.TraceId != null)
         {
             output.Write(",\"TraceId\":");
-            JsonValueFormatter.WriteQuotedJsonString(logEvent.TraceId.ToString()!, output);
+            output.Write('\"');
+            output.Write(logEvent.TraceId.ToString()!);
+            output.Write('\"');
         }
 
         if (logEvent.SpanId != null)
         {
             output.Write(",\"SpanId\":");
-            JsonValueFormatter.WriteQuotedJsonString(logEvent.SpanId.ToString()!, output);
+            output.Write('\"');
+            output.Write(logEvent.SpanId.ToString()!);
+            output.Write('\"');
         }
 
         if (logEvent.Exception != null)
