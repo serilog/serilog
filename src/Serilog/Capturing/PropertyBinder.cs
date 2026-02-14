@@ -99,7 +99,12 @@ class PropertyBinder
     {
         var namedProperties = template.NamedProperties;
         if (namedProperties == null)
+        {
+            if (messageTemplateParameters.Length > 0)
+                SelfLog.WriteLine("Parameters provided for message template with no properties: {0}", template);
+
             return NoProperties;
+        }
 
         var matchedRun = namedProperties.Length;
         if (namedProperties.Length != messageTemplateParameters.Length)
