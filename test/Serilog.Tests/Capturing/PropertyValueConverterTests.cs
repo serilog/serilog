@@ -24,7 +24,7 @@ public class PropertyValueConverterTests
                     Assert.Contains("C", result);
                     Assert.DoesNotContain("D", result);
                     Assert.DoesNotContain("E", result);
-                }));
+                }), TestContext.Current.CancellationToken);
 
         var t2 =
             Task.Run(() => DoThreadTest(new { Root = new { Y = new { Z = "5" } } },
@@ -32,7 +32,7 @@ public class PropertyValueConverterTests
                 {
                     Assert.Contains("Y", result);
                     Assert.Contains("Z", result);
-                }));
+                }), TestContext.Current.CancellationToken);
 
         var t3 =
             Task.Run(() => DoThreadTest(new { Root = new { M = new { N = new { V = 8 } } } },
@@ -41,7 +41,7 @@ public class PropertyValueConverterTests
                     Assert.Contains("M", result);
                     Assert.Contains("N", result);
                     Assert.DoesNotContain("V", result);
-                }));
+                }), TestContext.Current.CancellationToken);
 
         await Task.WhenAll(t1, t2, t3);
 

@@ -249,7 +249,7 @@ public class LogContextTests
             {
                 LogContext.Reset();
                 log.Write(Some.InformationEvent());
-            });
+            }, TestContext.Current.CancellationToken);
 
             Assert.NotNull(lastEvent);
             Assert.Empty(lastEvent!.Properties);
@@ -278,7 +278,7 @@ public class LogContextTests
                 await Task.Run(() =>
                 {
                     log.Write(Some.InformationEvent());
-                });
+                }, TestContext.Current.CancellationToken);
 
                 Assert.NotNull(lastEvent);
                 Assert.Empty(lastEvent!.Properties);
