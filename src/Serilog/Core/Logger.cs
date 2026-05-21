@@ -479,6 +479,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         }
 
         _sink.Emit(logEvent);
+
+        SelfMetrics.PipelineEventEmitted.Add(1);
     }
 
     /// <summary>
