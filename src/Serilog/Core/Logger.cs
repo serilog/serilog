@@ -426,7 +426,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 
         var currentActivity = Activity.Current;
         var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
-        Dispatch(logEvent);
+        PostLevelCheckEmit(logEvent);
+        SelfMetrics.PipelineEventEmitted.Add(1);
     }
 
 #if FEATURE_SPAN
@@ -441,7 +442,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 
         var currentActivity = Activity.Current;
         var logEvent = new LogEvent(logTimestamp, level, exception, parsedTemplate, boundProperties, currentActivity?.TraceId ?? default, currentActivity?.SpanId ?? default);
-        Dispatch(logEvent);
+        PostLevelCheckEmit(logEvent);
+        SelfMetrics.PipelineEventEmitted.Add(1);
     }
 #endif
 
@@ -453,7 +455,8 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
     {
         if (logEvent == null!) return;
         if (!IsEnabled(logEvent.Level)) return;
-        Dispatch(logEvent);
+        PostLevelCheckEmit(logEvent);
+        SelfMetrics.PipelineEventEmitted.Add(1);
     }
 
     void ILogEventSink.Emit(LogEvent logEvent)
@@ -462,10 +465,13 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
 
         // Bypasses the level check so that child loggers
         // using this one as a sink can increase verbosity.
-        Dispatch(logEvent);
+        PostLevelCheckEmit(logEvent);
+
+        // No metric increment, here. If the event arrives via `ILogEventSink.Emit()`, it's already been
+        // written through a `Logger` (or logger-like thing), which would be responsible for metrics recording.
     }
 
-    void Dispatch(LogEvent logEvent)
+    void PostLevelCheckEmit(LogEvent logEvent)
     {
         // The enricher may be a "safe" aggregate one, but is most commonly bare and so
         // the exception handling from SafeAggregateEnricher is duplicated here.
@@ -479,8 +485,6 @@ public sealed class Logger : ILogger, ILogEventSink, IDisposable
         }
 
         _sink.Emit(logEvent);
-
-        SelfMetrics.PipelineEventEmitted.Add(1);
     }
 
     /// <summary>
