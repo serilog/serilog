@@ -142,6 +142,35 @@ public class LogEventPropertyCapturingTests
     }
 
     [Fact]
+    public void ProvidingMoreParametersThanNamedPropertiesInTheTemplateWillSelfLog()
+    {
+        var selfLogOutput = new List<string>();
+        SelfLog.Enable(selfLogOutput.Add);
+
+        Capture("Hello {who}", "world", "extra").ToList();
+
+        Assert.Single(selfLogOutput,
+            s => s.EndsWith("Named property count does not match parameter count: Hello {who}"));
+
+        SelfLog.Disable();
+    }
+
+    [Fact]
+    public void ProvidingParametersWhenTemplateHasNoPropertiesWillSelfLog()
+    {
+        var selfLogOutput = new List<string>();
+        SelfLog.Enable(selfLogOutput.Add);
+
+        var result = Capture("No properties here", 42).ToList();
+
+        Assert.Empty(result);
+        Assert.Single(selfLogOutput,
+            s => s.EndsWith("Parameters provided for message template with no properties: No properties here"));
+
+        SelfLog.Disable();
+    }
+
+    [Fact]
     public void WillCaptureProvidedPositionalValuesEvenIfSomeAreMissing()
     {
         Assert.Equal(new[]

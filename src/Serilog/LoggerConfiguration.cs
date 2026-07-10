@@ -208,6 +208,8 @@ public class LoggerConfiguration
         }
 #endif
 
+        SelfMetrics.PipelineCreated.Add(1);
+
         return new(
             processor,
             _levelSwitch != null ? LevelAlias.Minimum : _minimumLevel, _levelSwitch,

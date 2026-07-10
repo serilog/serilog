@@ -74,11 +74,19 @@ public class LoggerSinkConfiguration
             if (restrictedToMinimumLevel != LevelAlias.Minimum)
                 SelfLog.WriteLine("Sink {0} was configured with both a level switch and minimum level '{1}'; the minimum level will be ignored and the switch level used", sink, restrictedToMinimumLevel);
 
-            sink = new RestrictedSink(sink, levelSwitch);
+            sink = new RestrictedSink(logEventSink, levelSwitch);
+            if (!OptionalInterfaceForwardingSink.SupportsAll(sink) && OptionalInterfaceForwardingSink.SupportsAny(logEventSink))
+            {
+                sink = new OptionalInterfaceForwardingSink(sink, logEventSink);
+            }
         }
         else if (restrictedToMinimumLevel > LevelAlias.Minimum)
         {
-            sink = new RestrictedSink(sink, new(restrictedToMinimumLevel));
+            sink = new RestrictedSink(logEventSink, new(restrictedToMinimumLevel));
+            if (!OptionalInterfaceForwardingSink.SupportsAll(sink) && OptionalInterfaceForwardingSink.SupportsAny(logEventSink))
+            {
+                sink = new OptionalInterfaceForwardingSink(sink, logEventSink);
+            }
         }
 
         _addSink(sink);

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
+
 namespace Serilog.Debugging;
 
 /// <summary>
@@ -75,12 +77,23 @@ public static class SelfLog
     {
         var o = _output;
         o?.Invoke(string.Format($"{DateTime.UtcNow:o} {format}", arg0, arg1, arg2));
+
+        SelfMetrics.DiagnosticsSelfLogWrites.Add(1);
     }
 
     class SelfLogFailureListener : ILoggingFailureListener
     {
         public void OnLoggingFailed(object sender, LoggingFailureKind kind, string message, IReadOnlyCollection<LogEvent>? events, Exception? exception)
         {
+            var tags = new TagList
+            {
+                // Calling `ToString()` on a valid enum member is non-allocating, so we avoid boxing, here (at the
+                // cost of invoking some minor internal `Enum` machinery).
+                { SelfMetrics.TagNames.LoggingFailureKind, kind.ToString() },
+            };
+
+            SelfMetrics.DiagnosticsDefaultFailureListenerLoggingFailures.Add(1, tags);
+
             var o = _output;
             if (o == null) return;
 
