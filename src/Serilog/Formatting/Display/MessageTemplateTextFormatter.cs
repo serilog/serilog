@@ -131,7 +131,11 @@ public class MessageTemplateTextFormatter : ITextFormatter
                 {
                     // If a property is missing, don't render anything (message templates render the raw token here).
                     if (!logEvent.Properties.TryGetValue(pt.PropertyName, out var propertyValue))
+                    {
+                        if (pt.Alignment.HasValue)
+                            writer?.Dispose();
                         continue;
+                    }
 
                     // If the value is a scalar string, support some additional formats: 'u' for uppercase
                     // and 'w' for lowercase.
