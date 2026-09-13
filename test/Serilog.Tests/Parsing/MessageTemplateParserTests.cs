@@ -380,6 +380,13 @@ public class MessageTemplateParserTests
     }
 
     [Fact]
+    public void AlignmentOfIntMinValueIsParsedAsText()
+    {
+        AssertParsedAs("{Hello,-2147483648}",
+            new TextToken("{Hello,-2147483648}"));
+    }
+
+    [Fact]
     public void EmptyAlignmentIsParsedAsText()
     {
         AssertParsedAs("{Hello,}",
