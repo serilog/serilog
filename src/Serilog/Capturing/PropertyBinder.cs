@@ -82,7 +82,7 @@ class PropertyBinder
             }
         }
 
-        if (result.Length != messageTemplateParameters.Length)
+        if (next != messageTemplateParameters.Length)
             SelfLog.WriteLine("Positional property count does not match parameter count: {0}", template);
 
         if (next != result.Length)
