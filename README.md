@@ -50,10 +50,12 @@ Supporting structured data doesn't mean giving up text: when Serilog writes even
  * Format-based logging API with familiar [levels](https://github.com/serilog/serilog/wiki/Configuration-Basics#minimum-level) like `Debug`, `Information`, `Warning`, `Error`, and so-on
  * Discoverable C# configuration syntax and optional [XML](https://github.com/serilog/serilog-settings-appsettings) or [JSON](https://github.com/serilog/serilog-settings-configuration) configuration support
  * Efficient when enabled, extremely low overhead when a logging level is switched off
+ * Mature [OpenTelemetry Protocol (OTLP)](https://github.com/serilog/serilog-sinks-opentelemetry) support
  * Best-in-class .NET Core support, including [rich integration with ASP.NET Core](https://github.com/serilog/serilog-aspnetcore)
- * Support for a [comprehensive range of sinks](https://github.com/serilog/serilog/wiki/Provided-Sinks), including files, the console, on-premises and cloud-based log servers, databases, and message queues
+ * A [comprehensive range of sinks](https://github.com/serilog/serilog/wiki/Provided-Sinks), including files, the console, on-premises and cloud-based log servers, databases, and message queues
  * Sophisticated [enrichment](https://github.com/serilog/serilog/wiki/Enrichment) of log events with contextual information, including scoped (`LogContext`) properties, thread and process identifiers, and domain-specific correlation ids such as `HttpRequestId`
  * Zero-shared-state `Logger` objects, with an optional global static `Log` class
+ * A lightweight, OpenTelemetry-compatible [tracing extension](https://github.com/serilog-tracing/serilog-tracing)
  * Format-agnostic logging pipeline that can emit events in plain text, JSON, in-memory `LogEvent` objects (including [Rx pipelines](https://github.com/serilog/serilog-sinks-observable)) and other formats
 
 ### Getting started
@@ -101,19 +103,18 @@ Find more, including a runnable example application, under the [Getting Started 
 
 To learn more about Serilog, check out the [documentation](https://github.com/serilog/serilog/wiki) - you'll find information there on the most common scenarios. If Serilog isn't working the way you expect, you may find the [troubleshooting guide](https://github.com/serilog/serilog/wiki/Debugging-and-Diagnostics) useful.
 
-Serilog has an active and helpful community who are happy to help point you in the right direction or work through any issues you might encounter. You can get in touch via:
+Serilog has an active and helpful community who are happy to help point you in the right direction or work through any issues you might encounter. We welcome reproducible bug reports and detailed feature requests through [our GitHub issue tracker](https://github.com/serilog/serilog/issues).
 
- * [Stack Overflow](https://stackoverflow.com/questions/tagged/serilog) &mdash; this is the best place to start if you have a question. Many track the `serilog` tag there.
- * The [#serilog tag on Twitter](https://twitter.com/search?q=%23serilog)
- * [Serilog-related courses on Pluralsight](https://www.pluralsight.com/search/?q=serilog)
+### Maintenance status
 
-We welcome reproducible bug reports and detailed feature requests through [our GitHub issue tracker](https://github.com/serilog/serilog/issues);
-note the other resource are much better for quick questions or seeking usage help.
+All projects in the https://github.com/serilog GitHub organization are actively maintained, on varying development cadences. Legacy/unmaintained projects are preserved in the [Serilog Archive](https://github.com/serilog-archive).
 
 ### Contributing
 
-Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+user%3Aserilog+label%3Aup-for-grabs) label (accessible only when logged into GitHub). Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts.  For more details check out our [contributing guide](CONTRIBUTING.md).
+Would you like to help make Serilog even better? We keep a list of issues that are approachable for newcomers under the [up-for-grabs](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+user%3Aserilog+label%3Aup-for-grabs) label (accessible only when logged into GitHub).
 
-When contributing please keep in mind our [Code of Conduct](CODE_OF_CONDUCT.md).
+Before starting work on a pull request, we suggest commenting on, or raising, an issue on the issue tracker so that we can help and coordinate efforts. Generatively-authored PRs are not reviewed unless previously invited by a project maintainer.
+
+For further information, check out our [contributing guide](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 _Serilog is copyright &copy; Serilog Contributors - Provided under the [Apache License, Version 2.0](https://apache.org/licenses/LICENSE-2.0.html). Needle and thread logo a derivative of work by [Kenneth Appiah](https://www.kensets.com/)._
