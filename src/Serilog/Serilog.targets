@@ -1,8 +1,11 @@
 <Project>
-    <ItemGroup>
+    <PropertyGroup Condition="'$(SerilogIsStructureValueSupported)' == '' and '$(PublishTrimmed)' == 'true'">
+        <SerilogIsStructureValueSupported>false</SerilogIsStructureValueSupported>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(SerilogIsStructureValueSupported)' != ''">
         <RuntimeHostConfigurationOption
-        Condition="'$(PublishTrimmed)' == 'true'"
         Include="Serilog.Capturing.IsStructureValueSupported"
-        Value="false" Trim="true" />
+        Value="$(SerilogIsStructureValueSupported)" Trim="true" />
     </ItemGroup>
 </Project>
