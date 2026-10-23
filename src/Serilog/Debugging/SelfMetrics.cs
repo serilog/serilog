@@ -9,6 +9,8 @@ static class SelfMetrics
     public static class TagNames
     {
         public const string LoggingFailureKind = "serilog.logging_failure_kind";
+        public const string BatchedSinkType = "serilog.batched_sink_type";
+        public const string ErrorType = "error.type";
     }
 
     // Most applications should create only a single pipeline; creating and disposing multiple pipelines isn't a
@@ -23,6 +25,11 @@ static class SelfMetrics
         "serilog.pipeline.event_emitted",
         unit: "{event}",
         description: "The number of events dispatched to sinks through the logging pipeline.");
+
+    public static readonly Histogram<double> BatchingEmitBatchDuration = Meter.CreateHistogram<double>(
+        "serilog.batching.emit_batch.duration",
+        unit: "ms",
+        description: "The time taken by a batched sink to accept a batch of log events.");
 
     public static readonly Counter<long> DiagnosticsSelfLogWrites = Meter.CreateCounter<long>(
         "serilog.diagnostics.self_log_writes",
