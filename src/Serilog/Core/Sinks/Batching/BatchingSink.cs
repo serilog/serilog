@@ -217,15 +217,15 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         {
             await _targetSink.EmitBatchAsync(_currentBatch).ConfigureAwait(false);
         }
-        catch (Exception ex) when (RecordEmitBatchDuration(startTimestamp, ex))
+        catch (Exception ex) when (RecordEmitBatchMetrics(startTimestamp, ex))
         {
         }
 
-        RecordEmitBatchDuration(startTimestamp, error: null);
+        RecordEmitBatchMetrics(startTimestamp, error: null);
     }
 
     // Always returns false, so that it can be used from an exception filter.
-    bool RecordEmitBatchDuration(long startTimestamp, Exception? error)
+    bool RecordEmitBatchMetrics(long startTimestamp, Exception? error)
     {
         var tags = new TagList { { SelfMetrics.TagNames.BatchedSinkType, _targetSinkTypeName } };
         if (error != null)
@@ -239,6 +239,8 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         var elapsedMilliseconds = (Stopwatch.GetTimestamp() - startTimestamp) * 1000.0 / Stopwatch.Frequency;
 #endif
         SelfMetrics.BatchingEmitBatchDuration.Record(elapsedMilliseconds, tags);
+
+        SelfMetrics.BatchingEmitBatchSize.Record(_currentBatch.Count, tags);
 
         return false;
     }

@@ -31,6 +31,12 @@ static class SelfMetrics
         unit: "ms",
         description: "The time taken by a batched sink to accept a batch of log events.");
 
+    // Recorded per attempt, so a retried batch is measured again.
+    public static readonly Histogram<int> BatchingEmitBatchSize = Meter.CreateHistogram<int>(
+        "serilog.batching.emit_batch.size",
+        unit: "{event}",
+        description: "The number of events in a batch offered to a batched sink.");
+
     // Counts events dropped when the queue is limited by BatchingOptions.QueueLimit.
     public static readonly Counter<long> BatchingDroppedEvents = Meter.CreateCounter<long>(
         "serilog.batching.dropped_events",

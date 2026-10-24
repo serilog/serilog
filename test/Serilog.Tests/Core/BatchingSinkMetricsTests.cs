@@ -7,6 +7,7 @@ public class BatchingSinkMetricsTests
 {
     const string MeterName = "Serilog";
     const string EmitBatchDurationInstrumentName = "serilog.batching.emit_batch.duration";
+    const string EmitBatchSizeInstrumentName = "serilog.batching.emit_batch.size";
     const string DroppedEventsInstrumentName = "serilog.batching.dropped_events";
     const string BatchedSinkTypeTagName = "serilog.batched_sink_type";
     const string ErrorTypeTagName = "error.type";
@@ -50,6 +51,26 @@ public class BatchingSinkMetricsTests
     }
 
     [Fact]
+    public void TheSizeOfEmittedBatchesIsRecorded()
+    {
+        using var collector = new MeasurementCollector<CountingBatchedSink>(EmitBatchSizeInstrumentName);
+
+        const int emitted = 25;
+
+        var bs = new CountingBatchedSink();
+        var pbs = new BatchingSink(bs, new() { BatchSizeLimit = 10, BufferingTimeLimit = TimeSpan.FromMilliseconds(100), EagerlyEmitFirstEvent = true });
+        for (var i = 0; i < emitted; ++i)
+        {
+            pbs.Emit(Some.InformationEvent());
+        }
+        pbs.Dispose();
+
+        Assert.Equal(emitted, bs.Events);
+        Assert.Equal(bs.Batches, collector.Measurements.Count);
+        Assert.Equal(bs.Events, collector.Measurements.Sum(measurement => measurement.Value));
+    }
+
+    [Fact]
     public void EventsDroppedByAFullQueueAreCounted()
     {
         using var collector = new MeasurementCollector<BlockingBatchedSink>(DroppedEventsInstrumentName);
@@ -88,6 +109,22 @@ public class BatchingSinkMetricsTests
     {
         public Task EmitBatchAsync(IReadOnlyCollection<LogEvent> batch) =>
             throw new InvalidOperationException("The batch could not be accepted.");
+
+        public Task OnEmptyBatchAsync() => Task.CompletedTask;
+    }
+
+    class CountingBatchedSink : IBatchedLogEventSink
+    {
+        public int Batches { get; private set; }
+
+        public int Events { get; private set; }
+
+        public Task EmitBatchAsync(IReadOnlyCollection<LogEvent> batch)
+        {
+            Batches++;
+            Events += batch.Count;
+            return Task.CompletedTask;
+        }
 
         public Task OnEmptyBatchAsync() => Task.CompletedTask;
     }
