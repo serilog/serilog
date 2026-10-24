@@ -6,7 +6,8 @@ namespace Serilog.Core.Tests;
 public class BatchingSinkMetricsTests
 {
     const string MeterName = "Serilog";
-    const string InstrumentName = "serilog.batching.emit_batch.duration";
+    const string EmitBatchDurationInstrumentName = "serilog.batching.emit_batch.duration";
+    const string DroppedEventsInstrumentName = "serilog.batching.dropped_events";
     const string BatchedSinkTypeTagName = "serilog.batched_sink_type";
     const string ErrorTypeTagName = "error.type";
 
@@ -15,7 +16,7 @@ public class BatchingSinkMetricsTests
     [Fact]
     public void TheDurationOfSuccessfulBatchesIsRecorded()
     {
-        using var collector = new MeasurementCollector<DelayingBatchedSink>();
+        using var collector = new MeasurementCollector<DelayingBatchedSink>(EmitBatchDurationInstrumentName);
 
         var bs = new DelayingBatchedSink();
         var pbs = new BatchingSink(bs, new() { BatchSizeLimit = 10, BufferingTimeLimit = TimeSpan.FromMilliseconds(100), EagerlyEmitFirstEvent = true });
@@ -32,7 +33,7 @@ public class BatchingSinkMetricsTests
     [Fact]
     public void FailedBatchesAreRecordedWithTheErrorType()
     {
-        using var collector = new MeasurementCollector<ThrowingBatchedSink>();
+        using var collector = new MeasurementCollector<ThrowingBatchedSink>(EmitBatchDurationInstrumentName);
 
         var bs = new ThrowingBatchedSink();
         var pbs = new BatchingSink(bs, new() { BatchSizeLimit = 10, BufferingTimeLimit = TimeSpan.FromMilliseconds(100), EagerlyEmitFirstEvent = true });
@@ -46,6 +47,34 @@ public class BatchingSinkMetricsTests
             measurement => Assert.Contains(
                 measurement.Tags,
                 tag => tag.Key == ErrorTypeTagName && (string?)tag.Value == typeof(InvalidOperationException).FullName));
+    }
+
+    [Fact]
+    public void EventsDroppedByAFullQueueAreCounted()
+    {
+        using var collector = new MeasurementCollector<BlockingBatchedSink>(DroppedEventsInstrumentName);
+
+        const int queueLimit = 1;
+        const int expectedDropped = 9;
+
+        var bs = new BlockingBatchedSink();
+        var pbs = new BatchingSink(bs, new() { BatchSizeLimit = 1, BufferingTimeLimit = TimeSpan.FromMilliseconds(10), QueueLimit = queueLimit });
+
+        pbs.Emit(Some.InformationEvent());
+        Assert.True(
+            bs.BatchReceived.Wait(TimeSpan.FromSeconds(10)),
+            "The target sink did not receive a batch.");
+
+        for (var i = 0; i < queueLimit + expectedDropped; ++i)
+        {
+            pbs.Emit(Some.InformationEvent());
+        }
+
+        bs.Release();
+        pbs.Dispose();
+
+        Assert.Equal(expectedDropped, collector.Measurements.Count);
+        Assert.All(collector.Measurements, measurement => Assert.Equal(1, measurement.Value));
     }
 
     class DelayingBatchedSink : IBatchedLogEventSink
@@ -63,6 +92,24 @@ public class BatchingSinkMetricsTests
         public Task OnEmptyBatchAsync() => Task.CompletedTask;
     }
 
+    class BlockingBatchedSink : IBatchedLogEventSink
+    {
+        readonly TaskCompletionSource<object?> _released = new();
+        readonly ManualResetEventSlim _batchReceived = new();
+
+        public ManualResetEventSlim BatchReceived => _batchReceived;
+
+        public Task EmitBatchAsync(IReadOnlyCollection<LogEvent> batch)
+        {
+            _batchReceived.Set();
+            return _released.Task;
+        }
+
+        public Task OnEmptyBatchAsync() => Task.CompletedTask;
+
+        public void Release() => _released.TrySetResult(null);
+    }
+
     // The meter is static and shared, and test classes run in parallel, so measurements are matched on the
     // tag identifying the target sink: a test that uses a sink type of its own will see only its own batches.
     sealed class MeasurementCollector<TBatchedSink> : IDisposable
@@ -72,30 +119,34 @@ public class BatchingSinkMetricsTests
         readonly object _sync = new();
         readonly List<Measurement> _measurements = [];
 
-        public MeasurementCollector()
+        public MeasurementCollector(string instrumentName)
         {
             _listener.InstrumentPublished = (instrument, listener) =>
             {
-                if (instrument.Meter.Name == MeterName && instrument.Name == InstrumentName)
+                if (instrument.Meter.Name == MeterName && instrument.Name == instrumentName)
                 {
                     listener.EnableMeasurementEvents(instrument);
                 }
             };
 
-            _listener.SetMeasurementEventCallback<double>((_, value, tags, _) =>
-            {
-                var recorded = tags.ToArray();
-                if (!recorded.Any(tag => tag.Key == BatchedSinkTypeTagName &&
-                                         (string?)tag.Value == typeof(TBatchedSink).FullName))
-                    return;
-
-                lock (_sync)
-                {
-                    _measurements.Add(new(value, recorded));
-                }
-            });
+            _listener.SetMeasurementEventCallback<double>((_, value, tags, _) => Record(value, tags));
+            _listener.SetMeasurementEventCallback<long>((_, value, tags, _) => Record(value, tags));
+            _listener.SetMeasurementEventCallback<int>((_, value, tags, _) => Record(value, tags));
 
             _listener.Start();
+        }
+
+        void Record(double value, ReadOnlySpan<KeyValuePair<string, object?>> tags)
+        {
+            var recorded = tags.ToArray();
+            if (!recorded.Any(tag => tag.Key == BatchedSinkTypeTagName &&
+                                     (string?)tag.Value == typeof(TBatchedSink).FullName))
+                return;
+
+            lock (_sync)
+            {
+                _measurements.Add(new(value, recorded));
+            }
         }
 
         public IReadOnlyList<Measurement> Measurements

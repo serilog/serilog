@@ -31,6 +31,12 @@ static class SelfMetrics
         unit: "ms",
         description: "The time taken by a batched sink to accept a batch of log events.");
 
+    // Counts events dropped when the queue is limited by BatchingOptions.QueueLimit.
+    public static readonly Counter<long> BatchingDroppedEvents = Meter.CreateCounter<long>(
+        "serilog.batching.dropped_events",
+        unit: "{event}",
+        description: "The number of events discarded because the batching sink's queue was full.");
+
     public static readonly Counter<long> DiagnosticsSelfLogWrites = Meter.CreateCounter<long>(
         "serilog.diagnostics.self_log_writes",
         unit: "{write}",

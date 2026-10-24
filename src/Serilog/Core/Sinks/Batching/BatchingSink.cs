@@ -47,6 +47,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
     readonly FailureAwareBatchScheduler _batchScheduler;
     readonly Queue<LogEvent> _currentBatch = new();
     readonly Task _waitForShutdownSignal;
+    readonly string? _targetSinkTypeName;
     Task<bool>? _cachedWaitToRead;
     ILoggingFailureListener _failureListener = SelfLog.FailureListener;
 
@@ -68,6 +69,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
             throw new ArgumentOutOfRangeException(nameof(options), "The retry time limit must not be negative.");
 
         _targetSink = batchedSink ?? throw new ArgumentNullException(nameof(batchedSink));
+        _targetSinkTypeName = _targetSink.GetType().FullName;
         _batchSizeLimit = options.BatchSizeLimit;
         _queue = options.QueueLimit is { } limit
             ? Channel.CreateBounded<LogEvent>(new BoundedChannelOptions(limit) { SingleReader = true })
@@ -102,7 +104,12 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         if (_shutdownSignal.IsCancellationRequested)
             return;
 
-        _queue.Writer.TryWrite(logEvent);
+        if (!_queue.Writer.TryWrite(logEvent))
+        {
+            SelfMetrics.BatchingDroppedEvents.Add(
+                1,
+                new KeyValuePair<string, object?>(SelfMetrics.TagNames.BatchedSinkType, _targetSinkTypeName));
+        }
     }
 
     async Task LoopAsync()
@@ -220,7 +227,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
     // Always returns false, so that it can be used from an exception filter.
     bool RecordEmitBatchDuration(long startTimestamp, Exception? error)
     {
-        var tags = new TagList { { SelfMetrics.TagNames.BatchedSinkType, _targetSink.GetType().FullName } };
+        var tags = new TagList { { SelfMetrics.TagNames.BatchedSinkType, _targetSinkTypeName } };
         if (error != null)
         {
             tags.Add(SelfMetrics.TagNames.ErrorType, error.GetType().FullName);
