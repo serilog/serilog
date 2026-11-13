@@ -1,0 +1,330 @@
+// Primitives
+null                                 ⇶ null
+true                                 ⇶ true
+false                                ⇶ false
+
+// Arrays
+[]                                   ⇶ []
+[5, 6]                               ⇶ [5, 6]
+[5, undefined()]                     ⇶ [5]
+[1]                                  ⇶ [1]
+[[1]]                                ⇶ [[1]]
+[1, ..[2, 3], 4, ..[undefined(), 5]] ⇶ [1, 2, 3, 4, 5]
+
+// Objects
+{}                                   ⇶ {}
+{a: 1, 'b c': 2}                     ⇶ {a: 1, 'b c': 2}
+{User}                               ⇶ {User: {Id: 42, Name: 'nblumhardt'}}
+{@l}                                 ⇶ {'@l': @l}
+{a: 1, a: 2}                         ⇶ {a: 2}
+{a: 1, b: undefined()}               ⇶ {a: 1}
+{a: 1, a: undefined()}               ⇶ {}
+{a: 1, ..{b: 2, c: 3}}               ⇶ {a: 1, b: 2, c: 3}
+{a: 1, ..{b: 2}, a: undefined()}     ⇶ {b: 2}
+{a: 1, ..{b: 2}, b: undefined()}     ⇶ {a: 1}
+{a: 1, ..{a: undefined()}}           ⇶ {a: 1}
+{..{a: 1}, ..{b: 2, c: 3}}           ⇶ {a: 1, b: 2, c: 3}
+{a: 1}['a']                          ⇶ 1
+{a: 1}['A']                          ⇶ undefined()
+{a: 1}.a                             ⇶ 1
+{a: 1}.A                             ⇶ undefined()
+ElementAt({a: 1}, 'A')               ⇶ undefined()
+ElementAt({a: 1}, 'A') ci            ⇶ 1
+
+// Strings
+''                                   ⇶ ''
+'foo'                                ⇶ 'foo'
+''''                                 ⇶ ''''
+'a'                                  ⇶ 'a'
+'''b'                                ⇶ '''b'
+'b'''                                ⇶ 'b'''
+'a''b'                               ⇶ 'a''b'
+'😂'                                 ⇶ '😂'
+
+// Numbers
+0                                    ⇶ 0
+0.0                                  ⇶ 0
+1                                    ⇶ 1
+1.0                                  ⇶ 1
+123                                  ⇶ 123
+1.23                                 ⇶ 1.23
+-1                                   ⇶ -1
+-1.23                                ⇶ -1.23
+
+// Math
+1 + 1                                ⇶ 2
+1 + 2 + 3                            ⇶ 6
+'foo' + 1                            ⇶ undefined()
+1 - 2                                ⇶ -1
+-1 - -1                              ⇶ 0
+3 - 2                                ⇶ 1
+'foo' - - 1                          ⇶ undefined()
+1.0 + 2.0                            ⇶ 3
+1 * 0                                ⇶ 0
+12 * 12                              ⇶ 144
+3 / 1                                ⇶ 3
+3 / 0                                ⇶ undefined()
+3 ^ 2                                ⇶ 9
+0 ^ 1                                ⇶ 0
+0 ^ 0                                ⇶ 1
+0 % 0                                ⇶ undefined()
+0 % 1                                ⇶ 0
+1 % 0                                ⇶ undefined()
+1 % 1                                ⇶ 0
+5 % 2                                ⇶ 1
+79228162514264337593543950334 + 1    ⇶ 79228162514264337593543950335
+round(1.4343434343, 2)               ⇶ 1.43
+round(1.435, 2)                      ⇶ 1.44
+round(0.00000000, 5)                 ⇶ 0
+round(0.99999999, 5)                 ⇶ 1
+52 ^ -3                              ⇶ 0.00000711197086936732
+2 ^ 3.14                             ⇶ 8.81524092701289
+
+// Boolean logic
+true or false and false              ⇶ true
+(true or false) and false            ⇶ false
+not false and false                  ⇶ false
+not (false and false)                ⇶ true
+false and true                       ⇶ false
+false and false                      ⇶ false
+true and true                        ⇶ true
+true and null                        ⇶ false
+false and null                       ⇶ false
+null and null                        ⇶ false
+undefined() and undefined()          ⇶ false
+undefined() and true                 ⇶ false
+true and undefined()                 ⇶ false
+false or false                       ⇶ false
+true or false                        ⇶ true
+true or true                         ⇶ true
+false or true                        ⇶ true
+true or null                         ⇶ true
+null or true                         ⇶ true
+true or undefined()                  ⇶ true
+undefined() or true                  ⇶ true
+undefined() or undefined()           ⇶ false
+not true                             ⇶ false
+not false                            ⇶ true
+not undefined()                      ⇶ true
+not(true)                            ⇶ false
+not(false and false)                 ⇶ true
+not(undefined())                     ⇶ true
+'not a bool' or true                 ⇶ true
+
+// Coalesce
+coalesce(null, 1)                    ⇶ 1
+coalesce(undefined(), 1)             ⇶ 1
+coalesce(1, null)                    ⇶ 1
+coalesce(undefined(), undefined())   ⇶ undefined()
+coalesce(null, null)                 ⇶ null
+coalesce(null, null, 3)              ⇶ 3
+coalesce()                           ⇶ undefined()
+coalesce(1)                          ⇶ 1
+
+// Identifiers
+A                                    ⇶ undefined()
+_a                                   ⇶ undefined()
+a1                                   ⇶ undefined()
+
+// EQ
+1 = 1                                ⇶ true
+1 = 0                                ⇶ false
+null = 0                             ⇶ false
+null = null                          ⇶ true
+null = undefined()                   ⇶ undefined()
+undefined() = undefined()            ⇶ undefined()
+
+// NEQ
+1 <> 1                               ⇶ false
+1 <> 0                               ⇶ true
+null <> 0                            ⇶ true
+null <> null                         ⇶ false
+undefined() <> null                  ⇶ undefined()
+undefined() <> undefined()           ⇶ undefined()
+
+// LT
+1 < 2                                ⇶ true
+1 < 1                                ⇶ false
+1 < 0                                ⇶ false
+null < 0                             ⇶ undefined()
+null < null                          ⇶ undefined()
+undefined() < null                   ⇶ undefined()
+undefined() < undefined()            ⇶ undefined()
+
+// LTE
+1 <= 2                               ⇶ true
+1 <= 1                               ⇶ true
+1 <= 0                               ⇶ false
+null <= 0                            ⇶ undefined()
+null <= null                         ⇶ undefined()
+undefined() <= null                  ⇶ undefined()
+undefined() <= undefined()           ⇶ undefined()
+
+// GT
+3 > 1                                ⇶ true
+1 > 1                                ⇶ false
+1 > 0                                ⇶ true
+null > 0                             ⇶ undefined()
+null > null                          ⇶ undefined()
+undefined() > null                   ⇶ undefined()
+undefined() > undefined()            ⇶ undefined()
+
+// GTE
+2 >= 1                               ⇶ true
+1 >= 1                               ⇶ true
+1 >= 0                               ⇶ true
+-1 >= 0                              ⇶ false
+null >= 0                            ⇶ undefined()
+null >= null                         ⇶ undefined()
+undefined() >= null                  ⇶ undefined()
+undefined() >= undefined()           ⇶ undefined()
+
+// in/not in
+1 in [1, 2, 3]                       ⇶ true
+5 in [1, 2, 3]                       ⇶ false
+1 not in [1, 2, 3]                   ⇶ false
+5 not in [1, 2, 3]                   ⇶ true
+undefined() in [1, 2, 3]             ⇶ undefined()
+undefined() not in [1, 2, 3]         ⇶ undefined()
+1 in undefined()                     ⇶ undefined()
+null in [1, null, 3]                 ⇶ true
+
+// is null/is not null
+null is null                         ⇶ true
+null is not null                     ⇶ false
+undefined() is null                  ⇶ true
+10 is null                           ⇶ false
+
+// Property names and accessors
+[5, 6, 7][1]                         ⇶ 6
+User.Name                            ⇶ 'nblumhardt'
+{Name: 'nblumhardt'}.Name            ⇶ 'nblumhardt'
+
+// Wildcards
+[1,2,3][?] > 2                       ⇶ true
+[1,2,3][*] > 2                       ⇶ false
+{k:'test'}[?] = 'test'               ⇶ true
+{k:'test'}[?] like 'test'            ⇶ true
+{k:'test'}[?] like 'TEST'            ⇶ false
+{k:'test'}[?] like 'TEST' ci         ⇶ true
+{k:'test'}[?] like '%TES%' ci        ⇶ true
+{k:'test'}[?] = 'none'               ⇶ false
+test_dict({k:'test'})[?] = 'test'               ⇶ true
+test_dict({k:'test'})[?] like 'test'            ⇶ true
+test_dict({k:'test'})[?] like 'TEST'            ⇶ false
+test_dict({k:'test'})[?] like 'TEST' ci         ⇶ true
+test_dict({k:'test'})[?] like '%TES%' ci        ⇶ true
+test_dict({k:'test'})[?] = 'none'               ⇶ false
+
+// Text and regex
+ismatch('foo', 'f')                  ⇶ true
+indexofmatch('foo', 'o')             ⇶ 1
+ismatch('foo', '^f')                 ⇶ true
+ismatch('foo', 'F')                  ⇶ false
+ismatch('foo', 'F') ci               ⇶ true
+ismatch('foo', '^o')                 ⇶ false
+indexofmatch('foo', 'x')             ⇶ -1
+substring('abcd', 1, 2)              ⇶ 'bc'
+substring('abcd', 1)                 ⇶ 'bcd'
+concat('a', 'b', 'c')                ⇶ 'abc'
+concat('a', 42, 'c')                 ⇶ undefined()
+concat('a', undefined())             ⇶ undefined()
+concat(undefined(), 'b')             ⇶ undefined()
+
+// Conditional
+if true then 1 else 2                ⇶ 1
+if 1 + 2 = 3 then 1 else 2           ⇶ 1
+if false then 1 else 2               ⇶ 2
+if undefined() then 1 else 2         ⇶ 2
+if 'string' then 1 else 2            ⇶ 2
+if true then if false then 1 else 2 else 3 ⇶ 2
+
+// ToString
+tostring(16)                         ⇶ '16'
+tostring('test')                     ⇶ 'test'
+tostring({})                         ⇶ undefined()
+tostring([])                         ⇶ undefined()
+tostring(16, '000')                  ⇶ '016'
+tostring(null)                       ⇶ undefined()
+tostring(undefined())                ⇶ undefined()
+tostring('test', '000')              ⇶ 'test'
+tostring('test', [])                 ⇶ undefined()
+tostring('test', 42)                 ⇶ undefined()
+tostring(16, undefined())            ⇶ '16'
+tostring(16, null)                   ⇶ '16'
+
+// Tests are in fr-FR
+tostring(16.3)                       ⇶ '16,3'
+
+// TypeOf
+typeof(undefined())                  ⇶ 'undefined'
+typeof('test')                       ⇶ 'System.String'
+typeof(10)                           ⇶ 'System.Decimal'
+typeof(true)                         ⇶ 'System.Boolean'
+typeof(null)                         ⇶ 'null'
+typeof([])                           ⇶ 'array'
+typeof({})                           ⇶ 'object'
+typeof(@x)                           ⇶ 'System.DivideByZeroException'
+
+// UtcDateTime
+tostring(utcdatetime(now()), 'o') like '20%' ⇶ true
+
+// Case comparison
+'test' = 'TEST'                      ⇶ false
+'tschüß' = 'TSCHÜSS'                 ⇶ false
+'ὈΔΥΣΣΕΎΣ!' = 'ὀδυσσεύς!'            ⇶ false
+'ὈΔΥΣΣΕΎΣ!' = 'ὀδυσσεύσ!'            ⇶ false
+'test' = 'TEST' ci                   ⇶ true
+'tschüß' = 'TSCHÜSS' ci              ⇶ false
+'ὈΔΥΣΣΕΎΣ!' = 'ὀδυσσεύσ!' ci         ⇶ true
+null = 0 ci                          ⇶ false
+null = null ci                       ⇶ true
+null = undefined() ci                ⇶ undefined()
+undefined() = undefined() ci         ⇶ undefined()
+
+// Like
+'test' like 'test'                   ⇶ true
+'test' like 'Test'                   ⇶ false
+'test' like 'Test' ci                ⇶ true
+'test' like '%st'                    ⇶ true
+'test' like '_est'                   ⇶ true
+'test' like 't%t'                    ⇶ true
+'test' like 't_st'                   ⇶ true
+'test' like 'te%'                    ⇶ true
+'test' like 'tes_'                   ⇶ true
+'test' like '%su'                    ⇶ false
+'test' like '_esu'                   ⇶ false
+'test' like 't%u'                    ⇶ false
+'test' like 't_su'                   ⇶ false
+'test' like 'ue%'                    ⇶ false
+'test' like 'ues_'                   ⇶ false
+'test' like '%s_'                    ⇶ true
+'test' like '%'                      ⇶ true
+'test' like 't%s%'                   ⇶ true
+'test' like 'es'                     ⇶ false
+'test' like ''                       ⇶ false
+'' like ''                           ⇶ true
+
+// Built-ins
+
+@m                                   ⇶ 'Hello, World!'
+@mt                                  ⇶ 'Hello, {Name}!'
+tostring(@x) like 'System.DivideByZeroException%' ⇶ true
+@l                                   ⇶ 'Warning'
+@sp                                  ⇶ 'bb1111820570b80e'
+@tr                                  ⇶ '1befc31e94b01d1a473f63a7905f6c9b'
+
+// Inspect
+inspect(@x).Message                  ⇶ 'Attempted to divide by zero.'
+
+// Replace
+replace('xYX', 'x', 'z')           ⇶ 'zYX'
+replace('xYX', 'x', 'z') ci        ⇶ 'zYz'
+replace('mess', 'ss', 'an')        ⇶ 'mean'
+replace('mess', 's', 'an')         ⇶ 'meanan'
+replace('xyz', 'x', '$0')          ⇶ '$0yz'
+replace('xyz', 'x', concat('$', '0'))  ⇶ '$0yz'
+
+// Nest
+nest({'a.b': 1, 'a.c': 2, 'a.c.d': 3}) ⇶ {a: {b: 1, c: 2, 'c.d': 3}}
+nest('a.b.c')                      ⇶ undefined()
