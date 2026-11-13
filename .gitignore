@@ -333,3 +333,6 @@ ASALocalRun/
 *.received.txt
 
 .DS_Store
+
+# Claude Code personal notes
+CLAUDE.local.md
