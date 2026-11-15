@@ -138,4 +138,21 @@ public class BatchingSinkTests
 
         Assert.Equal(1, Interlocked.Read(ref emitted));
     }
+
+    [Fact]
+    public void WhenTheBufferingTimeLimitExceedsTheTaskDelayLimitEventsAreStillEmitted()
+    {
+        var bs = new InMemoryBatchedSink(TimeSpan.Zero);
+        using var pbs = new BatchingSink(bs, new()
+        {
+            BatchSizeLimit = 2,
+            BufferingTimeLimit = TimeSpan.FromDays(60),
+            EagerlyEmitFirstEvent = false,
+        });
+
+        pbs.Emit(Some.InformationEvent());
+        pbs.Emit(Some.InformationEvent());
+
+        Assert.True(SpinWait.SpinUntil(() => bs.Batches.Count > 0, TimeSpan.FromSeconds(5)));
+    }
 }

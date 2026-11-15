@@ -27,6 +27,11 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         , IAsyncDisposable
 #endif
 {
+    // `Task.Delay()` throws for intervals beyond the runtime's maximum: `int.MaxValue` milliseconds on
+    // .NET Framework, `uint.MaxValue - 1` on modern .NET. Clamping to the lower limit keeps the read
+    // loop delivering events for buffering intervals that are equivalent in practice.
+    static readonly TimeSpan MaxTaskDelay = TimeSpan.FromMilliseconds(int.MaxValue);
+
     // Buffers events from the write- to the read side.
     readonly Channel<LogEvent> _queue;
 
@@ -114,7 +119,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
             // any failure modes within it haven't been accounted for in the rest of the sink design, and would need
             // consideration in order for the sink to function robustly (i.e. to avoid hot/infinite looping).
 
-            var fillBatch = Task.Delay(_batchScheduler.NextInterval);
+            var fillBatch = Task.Delay(_batchScheduler.NextInterval > MaxTaskDelay ? MaxTaskDelay : _batchScheduler.NextInterval);
             do
             {
                 while (_currentBatch.Count < _batchSizeLimit &&
