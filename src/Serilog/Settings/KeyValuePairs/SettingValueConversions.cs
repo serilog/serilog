@@ -24,7 +24,7 @@ class SettingValueConversions
     static Dictionary<Type, Func<string, object>> ExtendedTypeConversions = new()
     {
         { typeof(Uri), s => new Uri(s) },
-        { typeof(TimeSpan), s => TimeSpan.Parse(s) },
+        { typeof(TimeSpan), s => TimeSpan.Parse(s, CultureInfo.InvariantCulture) },
         { typeof(Type),
             // Suppress this trimming warning. We'll annotate all the users of this dictionary instead
             [UnconditionalSuppressMessage("Trimming", "IL2057",
@@ -133,7 +133,7 @@ class SettingValueConversions
             return result;
         }
 
-        return Convert.ChangeType(value, toType);
+        return Convert.ChangeType(value, toType, CultureInfo.InvariantCulture);
     }
 
     internal static bool TryParseStaticMemberAccessor(string input, [NotNullWhen(true)] out string? accessorTypeName, [NotNullWhen(true)] out string? memberName)
