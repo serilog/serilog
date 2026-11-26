@@ -2,7 +2,7 @@ Push-Location $PSScriptRoot
 
 ./Build.ps1
 
-foreach ($test in ls test/*.PerformanceTests) {
+foreach ($test in ls benchmark/*.PerformanceTests) {
     Push-Location $test
 
 	echo "perf: Running performance test project in $test"

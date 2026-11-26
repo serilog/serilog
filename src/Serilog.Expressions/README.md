@@ -1,4 +1,4 @@
-# Serilog.Expressions&nbsp;[![Build status](https://github.com/serilog/serilog-expressions/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/serilog/serilog-expressions/actions)&nbsp;[![NuGet Package](https://img.shields.io/nuget/vpre/serilog.expressions)](https://nuget.org/packages/serilog.expressions)
+# Serilog.Expressions&nbsp;[![Build status](https://github.com/serilog/serilog/actions/workflows/publish.yml/badge.svg?branch=main)](https://github.com/serilog/serilog/actions)&nbsp;[![NuGet Package](https://img.shields.io/nuget/vpre/serilog.expressions)](https://nuget.org/packages/serilog.expressions)
 
 An embeddable mini-language for filtering, enriching, and formatting Serilog
 events, ideal for use with JSON or XML configuration.
@@ -107,7 +107,7 @@ Templates support customizable color themes when used with the `Console` sink:
         "[{@t:HH:mm:ss} {@l:u3}] {@m}\n{@x}", theme: TemplateTheme.Code))
 ```
 
-![Screenshot showing colored terminal output](https://raw.githubusercontent.com/serilog/serilog-expressions/dev/assets/screenshot.png)
+![Screenshot showing colored terminal output](https://raw.githubusercontent.com/serilog/serilog/main/assets/serilog-expressions-screenshot.png)
 
 Newline-delimited JSON (for example, replicating the [CLEF format](https://github.com/serilog/serilog-formatting-compact)) can be generated
 using object literals:

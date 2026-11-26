@@ -1,0 +1,63 @@
+# Publishes packages to NuGet.org using trusted publishing. The NuGet.org trusted publishing policy
+# identifies this workflow by file name; if this file is renamed, the policy must be updated, and the
+# incrementing run number used to version pre-release packages will be reset. See PUBLISHING.md.
+
+name: Publish
+
+on:
+  push:
+    branches: [ "main", "release/**" ]
+
+# Runs for the same branch never overlap, and a run that has started is never cancelled.
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
+
+jobs:
+  publish:
+
+    # The build must run on Windows so that .NET Framework targets can be built and tested.
+    runs-on: windows-latest
+
+    permissions:
+      # Required for NuGet.org trusted publishing.
+      id-token: write
+      # Required for pushing release tags and creating GitHub releases.
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # `Build.ps1` plans versions by comparing each package with its release tag.
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Setup
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          # Runtimes for the test target frameworks; the SDK version comes from `global.json`.
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Compute build number
+        # The offset keeps pre-release versions sorting above those published by earlier build setups.
+        shell: bash
+        run: |
+          echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+2500))" >> $GITHUB_ENV
+      - name: Log in to NuGet
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Build and Publish
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: true
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          ./Build.ps1
