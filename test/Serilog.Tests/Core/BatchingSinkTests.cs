@@ -138,4 +138,148 @@ public class BatchingSinkTests
 
         Assert.Equal(1, Interlocked.Read(ref emitted));
     }
+
+    [Fact]
+    public void ABatchWaitingToBeRetriedAtShutdownIsReportedAsDroppedAndReachesTheFallbackSink()
+    {
+        const int eventCount = 20;
+        var attempts = 0;
+        var bs = new CallbackBatchedSink(_ =>
+        {
+            Interlocked.Increment(ref attempts);
+            throw new InvalidOperationException("sink down");
+        });
+
+        // The whole first batch is pulled from the queue, and the long buffering time limit keeps it waiting for a
+        // retry until shutdown; the longer retry time limit stops it being dropped before then.
+        var pbs = new BatchingSink(bs, new() { BatchSizeLimit = eventCount, BufferingTimeLimit = TimeSpan.FromHours(1), RetryTimeLimit = TimeSpan.FromDays(1), EagerlyEmitFirstEvent = false });
+        var recorder = new RecordingFailureListener();
+        var fallback = new CollectingSink();
+        var logger = new LoggerConfiguration()
+            .WriteTo.FallbackChain(
+                wt => wt.Sink(new ListenerInterceptingSink(pbs, recorder)),
+                wt => wt.Sink(fallback))
+            .CreateLogger();
+
+        var events = Enumerable.Range(0, eventCount).Select(_ => Some.InformationEvent()).ToList();
+        foreach (var evt in events)
+            logger.Write(evt);
+
+        // Once the failure has been reported, the batch is retained for a retry.
+        Assert.True(recorder.TemporaryReported.Wait(TimeSpan.FromSeconds(30)));
+
+        logger.Dispose();
+
+        Assert.Equal(1, attempts);
+        Assert.Collection(
+            recorder.Failures,
+            f =>
+            {
+                Assert.Equal(LoggingFailureKind.Temporary, f.Kind);
+                Assert.Equal(events, f.Events);
+            },
+            f =>
+            {
+                Assert.Equal(LoggingFailureKind.Permanent, f.Kind);
+                Assert.Equal(events, f.Events);
+                Assert.IsType<InvalidOperationException>(f.Exception);
+            });
+        Assert.Equal(events, fallback.Events);
+    }
+
+#if FEATURE_ASYNCDISPOSABLE
+    [Fact]
+    public async Task ABatchThatFailsAfterShutdownIsSignaledIsReportedOnlyAsDroppedOnDisposeAsync()
+    {
+        var bs = new BlockingFailingBatchedSink();
+        var recorder = new RecordingFailureListener();
+        var pbs = new BatchingSink(bs, new() { BatchSizeLimit = 3, BufferingTimeLimit = TimeSpan.FromHours(1), RetryTimeLimit = TimeSpan.FromDays(1), EagerlyEmitFirstEvent = false });
+        pbs.SetFailureListener(recorder);
+
+        var events = Enumerable.Range(0, 3).Select(_ => Some.InformationEvent()).ToList();
+        foreach (var evt in events)
+            pbs.Emit(evt);
+
+        Assert.True(bs.AttemptStarted.Wait(TimeSpan.FromSeconds(30)));
+
+        // Shutdown is signaled synchronously, before the pending attempt is allowed to fail.
+        var disposal = pbs.DisposeAsync();
+        bs.FailAttempt();
+        await disposal;
+
+        Assert.Equal(1, bs.Attempts);
+        var failure = Assert.Single(recorder.Failures);
+        Assert.Equal(LoggingFailureKind.Permanent, failure.Kind);
+        Assert.Equal(events, failure.Events);
+        Assert.IsType<InvalidOperationException>(failure.Exception);
+    }
+
+    class BlockingFailingBatchedSink : IBatchedLogEventSink
+    {
+        readonly TaskCompletionSource<bool> _fail = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int _attempts;
+
+        public int Attempts => Volatile.Read(ref _attempts);
+
+        public ManualResetEventSlim AttemptStarted { get; } = new();
+
+        public void FailAttempt() => _fail.TrySetResult(true);
+
+        public async Task EmitBatchAsync(IReadOnlyCollection<LogEvent> batch)
+        {
+            Interlocked.Increment(ref _attempts);
+            AttemptStarted.Set();
+            await _fail.Task;
+            throw new InvalidOperationException("sink down");
+        }
+
+        public Task OnEmptyBatchAsync() => Task.CompletedTask;
+    }
+#endif
+
+    // Records failures, copying the reported events because the sink reuses its batch collection, then forwards
+    // them to `Next`.
+    class RecordingFailureListener : ILoggingFailureListener
+    {
+        readonly List<(LoggingFailureKind Kind, List<LogEvent> Events, Exception? Exception)> _failures = [];
+
+        public ILoggingFailureListener? Next { get; set; }
+
+        public ManualResetEventSlim TemporaryReported { get; } = new();
+
+        public List<(LoggingFailureKind Kind, List<LogEvent> Events, Exception? Exception)> Failures
+        {
+            get
+            {
+                lock (_failures)
+                    return [.._failures];
+            }
+        }
+
+        public void OnLoggingFailed(object sender, LoggingFailureKind kind, string message, IReadOnlyCollection<LogEvent>? events, Exception? exception)
+        {
+            lock (_failures)
+                _failures.Add((kind, events?.ToList() ?? [], exception));
+
+            Next?.OnLoggingFailed(sender, kind, message, events, exception);
+
+            if (kind == LoggingFailureKind.Temporary)
+                TemporaryReported.Set();
+        }
+    }
+
+    // Lets the test observe failures that the fallback chain's listener receives from the wrapped sink.
+    sealed class ListenerInterceptingSink(BatchingSink inner, RecordingFailureListener recorder)
+        : ILogEventSink, ISetLoggingFailureListener, IDisposable
+    {
+        public void Emit(LogEvent logEvent) => inner.Emit(logEvent);
+
+        public void SetFailureListener(ILoggingFailureListener failureListener)
+        {
+            recorder.Next = failureListener;
+            inner.SetFailureListener(recorder);
+        }
+
+        public void Dispose() => inner.Dispose();
+    }
 }

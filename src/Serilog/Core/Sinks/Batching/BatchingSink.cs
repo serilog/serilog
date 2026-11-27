@@ -108,6 +108,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
     async Task LoopAsync()
     {
         var isEagerBatch = _eagerlyEmitFirstEvent;
+        Exception? lastBatchFailure = null;
         do
         {
             // Code from here through to the `try` block is expected to be infallible. It's structured this way because
@@ -143,8 +144,15 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
                     _batchScheduler.MarkSuccess();
                 }
             }
+            catch (Exception ex) when (_shutdownSignal.IsCancellationRequested && _currentBatch.Count != 0)
+            {
+                // The batch won't be retried once shutdown has been signaled, so this attempt was its last.
+                _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "failed emitting a batch during shutdown; dropping the current batch", _currentBatch, ex);
+                _currentBatch.Clear();
+            }
             catch (Exception ex)
             {
+                lastBatchFailure = ex;
                 _failureListener.OnLoggingFailed(this, LoggingFailureKind.Temporary, "failed emitting a batch", _currentBatch, ex);
                 _batchScheduler.MarkFailure(out var shouldDropBatch, out var shouldDropQueue);
 
@@ -173,6 +181,14 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         //  - The queue may or may not be empty
         //  - The waiting batch may or may not be empty
         //  - The target sink may or may not be accepting events
+
+        // A waiting batch has already been attempted and failed. It isn't retried here, so that disposal isn't delayed
+        // by another call to a failing sink.
+        if (_currentBatch.Count != 0)
+        {
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch, which could not be emitted before shutdown", _currentBatch, lastBatchFailure);
+            _currentBatch.Clear();
+        }
 
         // Try flushing the rest of the queue, but bail out on any failure. Shutdown time is unbounded, but it
         // doesn't make sense to pick an arbitrary limit - a future version might add a new option to control this.
