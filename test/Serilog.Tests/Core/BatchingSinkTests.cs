@@ -371,6 +371,55 @@ public class BatchingSinkTests
         Assert.IsType<InvalidOperationException>(failure.Exception);
     }
 
+    [Fact]
+    public async Task QueuedEventsAreFlushedAtShutdownWhenReportingAFailedInFlightAttemptThrows()
+    {
+        var attemptStarted = new ManualResetEventSlim();
+        var failAttempt = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var bs = new ScriptedBatchedSink(
+            beforeAttempt: n =>
+            {
+                if (n != 1) return Task.CompletedTask;
+                attemptStarted.Set();
+                return failAttempt.Task;
+            },
+            shouldFail: n => n == 1);
+        var recorder = new RecordingFailureListener { ThrowOnPermanent = true };
+        var pbs = new BatchingSink(bs, new() { BatchSizeLimit = 3, BufferingTimeLimit = TimeSpan.FromHours(1), RetryTimeLimit = TimeSpan.FromDays(1), EagerlyEmitFirstEvent = false });
+        pbs.SetFailureListener(recorder);
+
+        var events = Enumerable.Range(0, 4).Select(_ => Some.InformationEvent()).ToList();
+        foreach (var evt in events.Take(3))
+            pbs.Emit(evt);
+
+        // The last event is queued while the first attempt is in progress.
+        Assert.True(attemptStarted.Wait(TimeSpan.FromSeconds(30)));
+        pbs.Emit(events[3]);
+
+        // Shutdown is signaled synchronously, before the pending attempt is allowed to fail.
+        var disposal = pbs.DisposeAsync();
+        failAttempt.SetResult(true);
+        await disposal;
+
+        Assert.Collection(
+            bs.Attempts,
+            a => Assert.Equal(events.Take(3), a),
+            a => Assert.Equal([events[3]], a));
+        Assert.Collection(
+            recorder.Failures,
+            f =>
+            {
+                Assert.Equal(LoggingFailureKind.Permanent, f.Kind);
+                Assert.Equal(events.Take(3), f.Events);
+            },
+            f =>
+            {
+                // The listener's exception still faults the sink's worker, and is reported by `DisposeAsync()`.
+                Assert.Equal(LoggingFailureKind.Final, f.Kind);
+                Assert.IsType<NotSupportedException>(f.Exception);
+            });
+    }
+
     class BlockingFailingBatchedSink : IBatchedLogEventSink
     {
         readonly TaskCompletionSource<bool> _fail = new(TaskCreationOptions.RunContinuationsAsynchronously);

@@ -112,6 +112,8 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         Exception? lastBatchFailure = null;
         // The number of events at the front of `_currentBatch` that were included in the last, failed, attempt.
         var failedCount = 0;
+        // An exception thrown by the failure listener during shutdown, rethrown once the queue has been flushed.
+        ExceptionDispatchInfo? listenerFailure = null;
         do
         {
             // Code from here through to the `try` block is expected to be infallible. It's structured this way because
@@ -156,7 +158,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
             catch (Exception ex) when (_shutdownSignal.IsCancellationRequested && _currentBatch.Count != 0)
             {
                 // The batch won't be retried once shutdown has been signaled, so this attempt was its last.
-                _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "failed emitting a batch during shutdown; dropping the current batch", _currentBatch, ex);
+                listenerFailure ??= ReportShutdownFailure("failed emitting a batch during shutdown; dropping the current batch", _currentBatch, ex);
                 _currentBatch.Clear();
                 failedCount = 0;
             }
@@ -189,7 +191,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
 
         // At this point:
         //  - The sink is being disposed
-        //  - The queue has been completed
+        //  - The queue has been, or is about to be, completed
         //  - The queue may or may not be empty
         //  - The waiting batch may or may not be empty
         //  - The target sink may or may not be accepting events
@@ -197,7 +199,6 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         // Events that have already been attempted and failed aren't retried, so that disposal isn't delayed by another
         // call to a failing sink. Any events added to the batch since then haven't been attempted, and are flushed
         // below along with the rest of the queue.
-        ExceptionDispatchInfo? listenerFailure = null;
         if (failedCount != 0)
         {
             var failed = new List<LogEvent>(failedCount);
@@ -206,15 +207,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
 
             failedCount = 0;
 
-            try
-            {
-                _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch, which could not be emitted before shutdown", failed, lastBatchFailure);
-            }
-            catch (Exception ex)
-            {
-                // Rethrown once the queue has been flushed.
-                listenerFailure = ExceptionDispatchInfo.Capture(ex);
-            }
+            listenerFailure ??= ReportShutdownFailure("dropping the current batch, which could not be emitted before shutdown", failed, lastBatchFailure);
         }
 
         // Try flushing the rest of the batch and queue, but bail out on any failure. Shutdown time is unbounded, but it
@@ -243,6 +236,21 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         }
 
         listenerFailure?.Throw();
+    }
+
+    // Reports a batch dropped at shutdown as a permanent failure. Any exception thrown by the failure listener is
+    // returned rather than thrown, so that the queue can still be flushed.
+    ExceptionDispatchInfo? ReportShutdownFailure(string message, IReadOnlyCollection<LogEvent> events, Exception? exception)
+    {
+        try
+        {
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, message, events, exception);
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ExceptionDispatchInfo.Capture(ex);
+        }
     }
 
     // Emits the current batch, timing the call so that the latency of the target (usually remote) sink can be
