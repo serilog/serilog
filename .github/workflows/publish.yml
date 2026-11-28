@@ -1,14 +1,9 @@
-# Publishes packages to NuGet.org using trusted publishing. The NuGet.org trusted publishing policy
-# identifies this workflow by file name; if this file is renamed, the policy must be updated, and the
-# incrementing run number used to version pre-release packages will be reset. See PUBLISHING.md.
-
 name: Publish
 
 on:
   push:
     branches: [ "main", "release/**" ]
 
-# Runs for the same branch never overlap, and a run that has started is never cancelled.
 concurrency:
   group: publish-${{ github.ref }}
   cancel-in-progress: false
@@ -19,32 +14,29 @@ env:
 jobs:
   publish:
 
-    # The build must run on Windows so that .NET Framework targets can be built and tested.
     runs-on: windows-latest
 
     permissions:
-      # Required for NuGet.org trusted publishing.
+      # NuGet.org trusted publishing
       id-token: write
-      # Required for pushing release tags and creating GitHub releases.
+      # GitHub tags and releases
       contents: write
 
     steps:
       - uses: actions/checkout@v7
         with:
-          # `Build.ps1` plans versions by comparing each package with its release tag.
           fetch-depth: 0
           fetch-tags: true
       - name: Setup
         uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
-          # Runtimes for the test target frameworks; the SDK version comes from `global.json`.
+          # All builds use the `global.json` SDK version, these support unit tests.
           dotnet-version: |
             8.0.x
             9.0.x
             10.0.x
       - name: Compute build number
-        # The offset keeps pre-release versions sorting above those published by earlier build setups.
         shell: bash
         run: |
           echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+2500))" >> $GITHUB_ENV
