@@ -218,6 +218,11 @@ public class SettingValueConversionsTests
             Assert.Equal(1.5, SettingValueConversions.ConvertToType("1.5", typeof(double)));
             Assert.Equal(1234.5m, SettingValueConversions.ConvertToType("1234.5", typeof(decimal)));
             Assert.Equal(TimeSpan.FromSeconds(1.5), SettingValueConversions.ConvertToType("00:00:01.5", typeof(TimeSpan)));
+
+            // The current culture's own format is no longer accepted
+            Assert.Throws<FormatException>(() =>
+                SettingValueConversions.ConvertToType("00:00:01,5", typeof(TimeSpan))
+            );
         }
         finally
         {
