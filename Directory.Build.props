@@ -1,7 +1,10 @@
 <Project>
   <!-- Properties in this file are expected to be identical for all Serilog organization projects. If
    a property value is project-specific, please record it in the CSPROJ file instead. -->
-  <Import Project="$(MSBuildThisFileDirectory)Directory.Version.props" />
+  <Import Project="$(MSBuildProjectDirectory)/Version.props"
+          Condition="Exists('$(MSBuildProjectDirectory)/Version.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)artifacts/versions/$(MSBuildProjectName).props"
+          Condition="Exists('$(MSBuildThisFileDirectory)artifacts/versions/$(MSBuildProjectName).props')" />
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>

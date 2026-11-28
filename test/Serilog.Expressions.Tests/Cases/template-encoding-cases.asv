@@ -1,0 +1,8 @@
+{@m}                              ⇶ (Hello, nblumhardt!)
+{'world'}!                        ⇶ (world)!
+{unsafe('world')}!                ⇶ world!
+{substring('world', 0, 2)}!       ⇶ (wo)!
+|{somethingnothere}|              ⇶ |()|
+{#if true}x{'A'}x{#end}           ⇶ x(A)x
+{#each a in [1,2,3]}<{a}>{#delimit},{#end}           ⇶ <(1)>,<(2)>,<(3)>
+{ {name: 'world' } }!             ⇶ ({"name":"world"})!

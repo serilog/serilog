@@ -150,6 +150,11 @@ public class MessageTemplateParser : IMessageTemplateParser
             if (!int.TryParse(alignment, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var width))
                 return new TextToken(rawText);
 
+            // int.MinValue has no positive counterpart, so it cannot be an alignment
+            // width; treat it as text rather than overflowing below.
+            if (width == int.MinValue)
+                return new TextToken(rawText);
+
             var hasDash = alignment[0] == '-';
             var direction = hasDash ? AlignmentDirection.Left : AlignmentDirection.Right;
 

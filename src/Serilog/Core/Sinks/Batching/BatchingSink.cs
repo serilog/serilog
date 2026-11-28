@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
 using System.Threading.Channels;
 
 // ReSharper disable UnusedParameter.Global, ConvertIfStatementToConditionalTernaryExpression, MemberCanBePrivate.Global, UnusedMember.Global, VirtualMemberNeverOverridden.Global, ClassWithVirtualMembersNeverInherited.Global, SuspiciousTypeConversion.Global
@@ -136,7 +137,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
                 {
                     isEagerBatch = false;
 
-                    await _targetSink.EmitBatchAsync(_currentBatch).ConfigureAwait(false);
+                    await EmitCurrentBatchAsync().ConfigureAwait(false);
 
                     _currentBatch.Clear();
                     _batchScheduler.MarkSuccess();
@@ -187,7 +188,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
 
                 if (_currentBatch.Count != 0)
                 {
-                    await _targetSink.EmitBatchAsync(_currentBatch).ConfigureAwait(false);
+                    await EmitCurrentBatchAsync().ConfigureAwait(false);
                     _currentBatch.Clear();
                 }
             }
@@ -197,6 +198,42 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
             _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
             DrainOnFailure(LoggingFailureKind.Final, "failed emitting a batch during shutdown; dropping remaining queued events", ex, ignoreShutdownSignal: true);
         }
+    }
+
+    // Emits the current batch, timing the call so that the latency of the target (usually remote) sink can be
+    // observed. Failed batches are timed, too: a sink that has begun timing out is the case most worth measuring.
+    async Task EmitCurrentBatchAsync()
+    {
+        var startTimestamp = Stopwatch.GetTimestamp();
+
+        try
+        {
+            await _targetSink.EmitBatchAsync(_currentBatch).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (RecordEmitBatchDuration(startTimestamp, ex))
+        {
+        }
+
+        RecordEmitBatchDuration(startTimestamp, error: null);
+    }
+
+    // Always returns false, so that it can be used from an exception filter.
+    bool RecordEmitBatchDuration(long startTimestamp, Exception? error)
+    {
+        var tags = new TagList { { SelfMetrics.TagNames.BatchedSinkType, _targetSink.GetType().FullName } };
+        if (error != null)
+        {
+            tags.Add(SelfMetrics.TagNames.ErrorType, error.GetType().FullName);
+        }
+
+#if FEATURE_STOPWATCHGETELAPSEDTIME
+        var elapsedMilliseconds = Stopwatch.GetElapsedTime(startTimestamp).TotalMilliseconds;
+#else
+        var elapsedMilliseconds = (Stopwatch.GetTimestamp() - startTimestamp) * 1000.0 / Stopwatch.Frequency;
+#endif
+        SelfMetrics.BatchingEmitBatchDuration.Record(elapsedMilliseconds, tags);
+
+        return false;
     }
 
     void DrainOnFailure(LoggingFailureKind kind, string message, Exception? exception, bool ignoreShutdownSignal = false)

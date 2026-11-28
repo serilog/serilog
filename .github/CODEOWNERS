@@ -1,0 +1,5 @@
+# Merging a change to any of these can publish a package. See PUBLISHING.md.
+**/Version.props          @serilog/maintainers
+/Build.ps1                @serilog/maintainers
+/Directory.Build.props    @serilog/maintainers
+/.github/                 @serilog/maintainers

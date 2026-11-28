@@ -1,0 +1,55 @@
+name: Publish
+
+on:
+  push:
+    branches: [ "main", "release/**" ]
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
+
+jobs:
+  publish:
+
+    runs-on: windows-latest
+
+    permissions:
+      # NuGet.org trusted publishing
+      id-token: write
+      # GitHub tags and releases
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Setup
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          # All builds use the `global.json` SDK version, these support unit tests.
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Compute build number
+        shell: bash
+        run: |
+          echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+2500))" >> $GITHUB_ENV
+      - name: Log in to NuGet
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Build and Publish
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: true
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          ./Build.ps1

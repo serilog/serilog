@@ -1,16 +1,13 @@
-# If this file is renamed, the incrementing run attempt number will be reset.
-
 name: CI
 
+# Pull requests only: pushes to `main` and `release/**` are built, tested, and published by `publish.yml`.
 on:
-  push:
-    branches: [ "dev", "main" ]
   pull_request:
-    branches: [ "dev", "main" ]
+    branches: [ "main", "release/**" ]
 
-env:
-  CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
-  CI_TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -19,23 +16,26 @@ jobs:
     runs-on: windows-latest
 
     permissions:
-      contents: write
+      contents: read
 
     steps:
-      - uses: actions/checkout@v5
-      - name: Setup
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v7
         with:
-          dotnet-version: 10.0.x
-      - name: Compute build number
-        shell: bash
-        run: |
-          echo "CI_BUILD_NUMBER=$(($CI_BUILD_NUMBER_BASE+2300))" >> $GITHUB_ENV
-      - name: Build and Publish
+          # `Build.ps1` plans versions by comparing each package with its release tag.
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Setup
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          # Runtimes for the test target frameworks; the SDK version comes from `global.json`.
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Build
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: true
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
         run: |
           ./Build.ps1
