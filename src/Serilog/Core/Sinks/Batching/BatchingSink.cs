@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading.Channels;
 
 // ReSharper disable UnusedParameter.Global, ConvertIfStatementToConditionalTernaryExpression, MemberCanBePrivate.Global, UnusedMember.Global, VirtualMemberNeverOverridden.Global, ClassWithVirtualMembersNeverInherited.Global, SuspiciousTypeConversion.Global
@@ -108,6 +109,11 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
     async Task LoopAsync()
     {
         var isEagerBatch = _eagerlyEmitFirstEvent;
+        Exception? lastBatchFailure = null;
+        // The number of events at the front of `_currentBatch` that were included in the last, failed, attempt.
+        var failedCount = 0;
+        // An exception thrown by the failure listener during shutdown, rethrown once the queue has been flushed.
+        ExceptionDispatchInfo? listenerFailure = null;
         do
         {
             // Code from here through to the `try` block is expected to be infallible. It's structured this way because
@@ -127,6 +133,11 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
                      !_shutdownSignal.IsCancellationRequested &&
                      await TryWaitToReadAsync(_queue.Reader, fillBatch, _shutdownSignal.Token).ConfigureAwait(false));
 
+            // Shutdown was signaled while a failed batch was waiting to be retried; it's reported, rather than
+            // retried, below.
+            if (_shutdownSignal.IsCancellationRequested && failedCount != 0)
+                break;
+
             try
             {
                 if (_currentBatch.Count == 0)
@@ -140,11 +151,21 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
                     await EmitCurrentBatchAsync().ConfigureAwait(false);
 
                     _currentBatch.Clear();
+                    failedCount = 0;
                     _batchScheduler.MarkSuccess();
                 }
             }
+            catch (Exception ex) when (_shutdownSignal.IsCancellationRequested && _currentBatch.Count != 0)
+            {
+                // The batch won't be retried once shutdown has been signaled, so this attempt was its last.
+                listenerFailure ??= ReportShutdownFailure("failed emitting a batch during shutdown; dropping the current batch", _currentBatch, ex);
+                _currentBatch.Clear();
+                failedCount = 0;
+            }
             catch (Exception ex)
             {
+                lastBatchFailure = ex;
+                failedCount = _currentBatch.Count;
                 _failureListener.OnLoggingFailed(this, LoggingFailureKind.Temporary, "failed emitting a batch", _currentBatch, ex);
                 _batchScheduler.MarkFailure(out var shouldDropBatch, out var shouldDropQueue);
 
@@ -152,6 +173,7 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
                 {
                     _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
                     _currentBatch.Clear();
+                    failedCount = 0;
                 }
 
                 if (shouldDropQueue)
@@ -169,16 +191,30 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
 
         // At this point:
         //  - The sink is being disposed
-        //  - The queue has been completed
+        //  - The queue has been, or is about to be, completed
         //  - The queue may or may not be empty
         //  - The waiting batch may or may not be empty
         //  - The target sink may or may not be accepting events
 
-        // Try flushing the rest of the queue, but bail out on any failure. Shutdown time is unbounded, but it
+        // Events that have already been attempted and failed aren't retried, so that disposal isn't delayed by another
+        // call to a failing sink. Any events added to the batch since then haven't been attempted, and are flushed
+        // below along with the rest of the queue.
+        if (failedCount != 0)
+        {
+            var failed = new List<LogEvent>(failedCount);
+            for (var i = 0; i < failedCount; ++i)
+                failed.Add(_currentBatch.Dequeue());
+
+            failedCount = 0;
+
+            listenerFailure ??= ReportShutdownFailure("dropping the current batch, which could not be emitted before shutdown", failed, lastBatchFailure);
+        }
+
+        // Try flushing the rest of the batch and queue, but bail out on any failure. Shutdown time is unbounded, but it
         // doesn't make sense to pick an arbitrary limit - a future version might add a new option to control this.
         try
         {
-            while (_queue.Reader.TryPeek(out _))
+            while (_currentBatch.Count != 0 || _queue.Reader.TryPeek(out _))
             {
                 while (_currentBatch.Count < _batchSizeLimit &&
                        _queue.Reader.TryRead(out var next))
@@ -197,6 +233,23 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
         {
             _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, "dropping the current batch", _currentBatch, ex);
             DrainOnFailure(LoggingFailureKind.Final, "failed emitting a batch during shutdown; dropping remaining queued events", ex, ignoreShutdownSignal: true);
+        }
+
+        listenerFailure?.Throw();
+    }
+
+    // Reports a batch dropped at shutdown as a permanent failure. Any exception thrown by the failure listener is
+    // returned rather than thrown, so that the queue can still be flushed.
+    ExceptionDispatchInfo? ReportShutdownFailure(string message, IReadOnlyCollection<LogEvent> events, Exception? exception)
+    {
+        try
+        {
+            _failureListener.OnLoggingFailed(this, LoggingFailureKind.Permanent, message, events, exception);
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ExceptionDispatchInfo.Capture(ex);
         }
     }
 
@@ -346,9 +399,10 @@ sealed class BatchingSink : ILogEventSink, IDisposable, ISetLoggingFailureListen
             if (!_shutdownSignal.IsCancellationRequested)
             {
                 // Relies on synchronization via `_stateLock`: once the writer is completed, subsequent attempts to
-                // complete it will throw.
-                _queue.Writer.Complete();
+                // complete it will throw. The shutdown signal is set first, so that the read loop, when woken by
+                // the writer's completion, always observes it.
                 _shutdownSignal.Cancel();
+                _queue.Writer.Complete();
             }
         }
     }
