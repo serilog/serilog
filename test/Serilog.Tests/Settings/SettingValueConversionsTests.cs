@@ -203,4 +203,30 @@ public class SettingValueConversionsTests
         Assert.Contains("Could not find a public static property or field ", exception.Message);
         Assert.Contains("on type `Serilog.Tests.Support.ClassWithStaticAccessors, Serilog.Tests`", exception.Message);
     }
+
+    [Theory]
+    [InlineData("de-DE")]
+    [InlineData("tr-TR")]
+    [InlineData("fr-FR")]
+    public void NumericAndTimeSpanValuesAreConvertedIndependentlyOfTheCurrentCulture(string cultureName)
+    {
+        var original = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(cultureName);
+
+            Assert.Equal(1.5, SettingValueConversions.ConvertToType("1.5", typeof(double)));
+            Assert.Equal(1234.5m, SettingValueConversions.ConvertToType("1234.5", typeof(decimal)));
+            Assert.Equal(TimeSpan.FromSeconds(1.5), SettingValueConversions.ConvertToType("00:00:01.5", typeof(TimeSpan)));
+
+            // The current culture's own format is no longer accepted
+            Assert.Throws<FormatException>(() =>
+                SettingValueConversions.ConvertToType("00:00:01,5", typeof(TimeSpan))
+            );
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = original;
+        }
+    }
 }
