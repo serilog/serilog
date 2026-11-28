@@ -1,6 +1,10 @@
-# Releasing packages from serilog/serilog
+# Releasing packages from `serilog/serilog`
 
-Each package's `Version.props` declares the newest version that should exist on NuGet, and merging a change to that file into `main` publishes the package. Every other push to `main` publishes prereleases of only the packages whose source changed.
+> This is a machine-generated, human-readable overview of the project setup and publishing processes. It's here to ease
+> the migration of our satellite projects back into this repository. Once that work is complete, we can reevaluate what
+> we need to document here, and consider replacing it with a handwritten maintainer guide.
+
+Each package's `Version.props` declares the newest version that should exist on NuGet, and merging a change to that file into `main` publishes the package. Every other push to `main` publishes `latest + 0.0.1` prereleases of only the packages whose source changed.
 
 ## How publishing is decided
 
